@@ -6566,43 +6566,6 @@
   "adminSessions": [],
   "auditLogs": [
     {
-      "id": "audit-33a5a523",
-      "at": "2026-04-24T04:19:06.738Z",
-      "event": "admin.logout",
-      "ip": "127.0.0.1",
-      "method": "POST",
-      "path": "/api/admin/logout",
-      "meta": {}
-    },
-    {
-      "id": "audit-b73ce114",
-      "at": "2026-04-24T04:19:06.730Z",
-      "event": "admin.maintenance.pruned",
-      "ip": "127.0.0.1",
-      "method": "POST",
-      "path": "/api/admin/maintenance/prune",
-      "meta": {
-        "keep": 20,
-        "removed": [
-          "db-2026-04-24T03-31-35-050Z.json",
-          "db-2026-04-24T03-31-35-045Z.json",
-          "db-2026-04-24T03-31-22-756Z.json"
-        ]
-      }
-    },
-    {
-      "id": "audit-4fb1c5e2",
-      "at": "2026-04-24T04:19:06.719Z",
-      "event": "admin.backup.restored",
-      "ip": "127.0.0.1",
-      "method": "POST",
-      "path": "/api/admin/backups/restore",
-      "meta": {
-        "name": "db-2026-04-24T04-19-06-668Z.json",
-        "restoredFrom": "/mnt/data/work_phase14_fix/runtime/backups/db-2026-04-24T04-19-06-668Z.json"
-      }
-    },
-    {
       "id": "audit-628d2b03",
       "at": "2026-04-24T04:19:06.659Z",
       "event": "admin.backup.created",

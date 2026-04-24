@@ -36,6 +36,7 @@ const BUSINESS_PROFILE = Object.freeze({
 });
 
 const PORT = Number(process.env.PORT || 3210);
+const HOST = String(process.env.HOST || process.env.NV0_HOST || '0.0.0.0');
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const PLATFORM = createPlatformProfile(process.env);
 const TRUST_PROXY_HEADERS = process.env.NV0_TRUST_PROXY_HEADERS === 'true';
@@ -2844,8 +2845,8 @@ ensureRuntime().then(async () => {
   const db = await readDb();
   await ensureBootstrapAdmin(db, process.env, uid, nowIso);
   await writeDb(db);
-  server.listen(PORT, () => {
-    console.log(`nv0 cleanroom server listening on http://127.0.0.1:${PORT}`);
+  server.listen(PORT, HOST, () => {
+    console.log(`nv0 cleanroom server listening on http://${HOST}:${PORT}`);
   });
 }).catch((error) => {
   console.error('server startup failed', error);

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-24T03:24:34.716Z",
+  "generatedAt": "2026-04-24T04:19:06.882Z",
   "ok": true,
   "gate": "commercial-launch-ci-strict",
   "results": [
@@ -14,7 +14,7 @@
       "ok": true,
       "code": 0,
       "signal": null,
-      "durationMs": 1420,
+      "durationMs": 274,
       "stdout": "> nv0-veridion-cleanroom@0.1.0 check:syntax\n> node scripts/check-source-syntax.mjs\n\n{\n  \"ok\": true,\n  \"checkedCount\": 72,\n  \"failures\": []\n}",
       "stderr": ""
     },
@@ -29,8 +29,8 @@
       "ok": true,
       "code": 0,
       "signal": null,
-      "durationMs": 1875,
-      "stdout": "> nv0-veridion-cleanroom@0.1.0 validate:commercial\n> node scripts/validate-commercial-release.mjs\n\n{\n  \"ok\": true,\n  \"checkedAt\": \"2026-04-24T03:24:08.525Z\",\n  \"commercialReleaseGuards\": 10,\n  \"legalPages\": 4,\n  \"businessProfile\": true\n}",
+      "durationMs": 409,
+      "stdout": "> nv0-veridion-cleanroom@0.1.0 validate:commercial\n> node scripts/validate-commercial-release.mjs\n\n{\n  \"ok\": true,\n  \"checkedAt\": \"2026-04-24T04:18:38.955Z\",\n  \"commercialReleaseGuards\": 10,\n  \"legalPages\": 4,\n  \"businessProfile\": true\n}",
       "stderr": ""
     },
     {
@@ -44,8 +44,8 @@
       "ok": true,
       "code": 0,
       "signal": null,
-      "durationMs": 830,
-      "stdout": "> nv0-veridion-cleanroom@0.1.0 validate:pipeline\n> node scripts/validate-pipeline.mjs\n\n{\n  \"ok\": true,\n  \"checkedAt\": \"2026-04-24T03:24:09.418Z\",\n  \"requiredFiles\": 10\n}",
+      "durationMs": 1146,
+      "stdout": "> nv0-veridion-cleanroom@0.1.0 validate:pipeline\n> node scripts/validate-pipeline.mjs\n\n{\n  \"ok\": true,\n  \"checkedAt\": \"2026-04-24T04:18:40.033Z\",\n  \"requiredFiles\": 10\n}",
       "stderr": ""
     },
     {
@@ -59,8 +59,8 @@
       "ok": true,
       "code": 0,
       "signal": null,
-      "durationMs": 527,
-      "stdout": "> nv0-veridion-cleanroom@0.1.0 validate:commercial-runtime\n> node scripts/validate-commercial-runtime.mjs\n\n{\n  \"ok\": true,\n  \"checkedAt\": \"2026-04-24T03:24:09.950Z\",\n  \"platformTarget\": \"commercial\",\n  \"controls\": {\n    \"auth\": \"account_rbac\",\n    \"persistence\": \"postgres_primary\",\n    \"session\": \"redis\",\n    \"rateLimit\": \"redis\",\n    \"lock\": \"redis\",\n    \"storage\": \"s3\",\n    \"scan\": \"external_http\",\n    \"payment\": \"portone_v2\"\n  }\n}",
+      "durationMs": 2396,
+      "stdout": "> nv0-veridion-cleanroom@0.1.0 validate:commercial-runtime\n> node scripts/validate-commercial-runtime.mjs\n\n{\n  \"ok\": true,\n  \"checkedAt\": \"2026-04-24T04:18:42.405Z\",\n  \"platformTarget\": \"commercial\",\n  \"controls\": {\n    \"auth\": \"account_rbac\",\n    \"persistence\": \"postgres_primary\",\n    \"session\": \"redis\",\n    \"rateLimit\": \"redis\",\n    \"lock\": \"redis\",\n    \"storage\": \"s3\",\n    \"scan\": \"external_http\",\n    \"payment\": \"portone_v2\"\n  }\n}",
       "stderr": ""
     },
     {
@@ -74,8 +74,8 @@
       "ok": true,
       "code": 0,
       "signal": null,
-      "durationMs": 24748,
-      "stdout": "> nv0-veridion-cleanroom@0.1.0 test:all\n> node scripts/test-all.mjs\n\nPASS check:syntax 256ms\nPASS check:data 570ms\nPASS check:pages 1631ms\nPASS check:links 1290ms\nPASS check:env-examples 783ms\nPASS check:handoff-docs 599ms\nPASS check:no-debug-client 927ms\nPASS check:render-safety 588ms\nPASS test:providers 1579ms\nPASS test:session 1851ms\nPASS test:runtime 1765ms\nPASS test:routes 1707ms\nPASS test:contracts 1832ms\nPASS test:security-stateful 1496ms\nPASS test:portone 994ms\nPASS test:portone-events 1480ms\nPASS validate:commercial 590ms\nPASS validate:pipeline 896ms\nPASS smoke 1641ms\nPASS test:e2e 2020ms\n{\n  \"ok\": true,\n  \"passed\": 20,\n  \"failed\": 0,\n  \"report\": \"/mnt/data/veridion_work/docs/PHASE10_FULL_TEST_SUMMARY_20260424.json\"\n}",
+      "durationMs": 24362,
+      "stdout": "> nv0-veridion-cleanroom@0.1.0 test:all\n> node scripts/test-all.mjs\n\nPASS check:syntax 809ms\nPASS check:data 407ms\nPASS check:pages 436ms\nPASS check:links 1834ms\nPASS check:env-examples 2214ms\nPASS check:handoff-docs 990ms\nPASS check:no-debug-client 497ms\nPASS check:render-safety 256ms\nPASS test:providers 656ms\nPASS test:session 2390ms\nPASS test:runtime 1299ms\nPASS test:routes 2128ms\nPASS test:contracts 1684ms\nPASS test:security-stateful 579ms\nPASS test:portone 1316ms\nPASS test:portone-events 1837ms\nPASS validate:commercial 220ms\nPASS validate:pipeline 263ms\nPASS smoke 665ms\nPASS test:e2e 2754ms\n{\n  \"ok\": true,\n  \"passed\": 20,\n  \"failed\": 0,\n  \"report\": \"/mnt/data/work_phase14_fix/docs/PHASE10_FULL_TEST_SUMMARY_20260424.json\"\n}",
       "stderr": ""
     }
   ]
