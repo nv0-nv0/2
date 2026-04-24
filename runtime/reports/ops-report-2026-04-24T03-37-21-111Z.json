@@ -1,0 +1,366 @@
+{
+  "generatedAt": "2026-04-24T03:37:21.116Z",
+  "runtime": {
+    "pid": 45762,
+    "uptimeSec": 0,
+    "memoryRss": 140369920
+  },
+  "config": {
+    "NODE_ENV": "production",
+    "PORT": 3218,
+    "PLATFORM_TARGET": "mvp",
+    "COMMERCIAL_TARGET": false,
+    "TRUST_PROXY_HEADERS": true,
+    "ENABLE_TURNSTILE": false,
+    "TURNSTILE_SITE_KEY_PRESENT": false,
+    "TURNSTILE_SECRET_PRESENT": false,
+    "PUBLIC_SCAN_LIMIT": 20,
+    "PUBLIC_SCAN_WINDOW_MS": 60000,
+    "ADMIN_AUTH_LIMIT": 8,
+    "ADMIN_AUTH_WINDOW_MS": 600000,
+    "SESSION_TTL_MS": 3600000,
+    "MAX_JSON_BODY_BYTES": 65536,
+    "MAX_MULTIPART_BODY_BYTES": 5242880,
+    "BACKUP_RETENTION_COUNT": 20,
+    "AUDIT_LOG_RETENTION_COUNT": 200,
+    "STORAGE_MODE": "local_fs",
+    "SCAN_PROVIDER": "builtin",
+    "SCAN_PROVIDER_URL_PRESENT": false,
+    "SCAN_PROVIDER_FALLBACK": true,
+    "TARGET_FETCH_ENABLED": false,
+    "PAYMENT_PROVIDER": "demo",
+    "PAYMENT_PROVIDER_URL_PRESENT": false,
+    "ALLOWED_ADMIN_ORIGINS": [],
+    "ADMIN_AUTH_MODE": "shared_key",
+    "ADMIN_KEY_CONFIGURED": true,
+    "BOOTSTRAP_ADMIN_EMAIL_PRESENT": false,
+    "BOOTSTRAP_ADMIN_PASSWORD_PRESENT": false
+  },
+  "counts": {
+    "orders": 1,
+    "subscriptions": 2,
+    "publications": 5,
+    "boards": 5,
+    "library": 0,
+    "scans": 5,
+    "sites": 2,
+    "legalUpdates": 0,
+    "autoFixJobs": 7,
+    "paymentSessions": 1,
+    "paymentEvents": 1,
+    "webhookInbox": 0,
+    "auditLogs": 12,
+    "backups": 12,
+    "uploads": 9,
+    "sessions": 6,
+    "adminUsers": 0,
+    "adminRoleBindings": 0,
+    "adminSessions": 0
+  },
+  "sessions": [
+    {
+      "sidTail": "ab96f8e8",
+      "createdAt": 1777001835982,
+      "lastSeenAt": 1777001835982,
+      "expiresAt": 1777005435982,
+      "csrfToken": "67741abb70545934eaa76647cb2cdc77",
+      "roles": [
+        "super_admin"
+      ],
+      "permissions": [
+        "*"
+      ]
+    },
+    {
+      "sidTail": "80660d4e",
+      "createdAt": 1777001836722,
+      "lastSeenAt": 1777001836722,
+      "expiresAt": 1777005436722,
+      "csrfToken": "e82847aa4f79c9e005b1a751bb457b5c",
+      "roles": [
+        "super_admin"
+      ],
+      "permissions": [
+        "*"
+      ]
+    },
+    {
+      "sidTail": "1f395f10",
+      "createdAt": 1777001837032,
+      "lastSeenAt": 1777001837032,
+      "expiresAt": 1777005437032,
+      "csrfToken": "8d67279d17173bbe02bf7689684abeb9",
+      "roles": [
+        "super_admin"
+      ],
+      "permissions": [
+        "*"
+      ]
+    },
+    {
+      "sidTail": "1cd9fdb8",
+      "createdAt": 1777001838184,
+      "lastSeenAt": 1777001838184,
+      "expiresAt": 1777005438184,
+      "csrfToken": "8b1ad0ab1f4b627ecee7095eaa5314f3",
+      "roles": [
+        "super_admin"
+      ],
+      "permissions": [
+        "*"
+      ]
+    },
+    {
+      "sidTail": "28c03d12",
+      "createdAt": 1777001839519,
+      "lastSeenAt": 1777001839519,
+      "expiresAt": 1777005439519,
+      "csrfToken": "aea49ef0f5146dcaa3d57a736f0d5efe",
+      "roles": [
+        "super_admin"
+      ],
+      "permissions": [
+        "*"
+      ]
+    },
+    {
+      "sidTail": "3f675f6a",
+      "createdAt": 1777001841059,
+      "lastSeenAt": 1777001841108,
+      "expiresAt": 1777005441108,
+      "csrfToken": "2b80bcb97bb4577b0ac7b1d8c8d4530c",
+      "roles": [
+        "super_admin"
+      ],
+      "permissions": [
+        "*"
+      ]
+    }
+  ],
+  "backups": [
+    {
+      "name": "db-2026-04-24T03-37-16-732Z.json",
+      "size": 10795,
+      "mtime": "2026-04-24T03:37:16.733Z"
+    },
+    {
+      "name": "db-2026-04-24T03-35-58-843Z.json",
+      "size": 366693,
+      "mtime": "2026-04-24T03:35:58.844Z"
+    },
+    {
+      "name": "db-2026-04-24T03-35-58-833Z.json",
+      "size": 366355,
+      "mtime": "2026-04-24T03:35:58.834Z"
+    },
+    {
+      "name": "db-2026-04-24T03-35-42-612Z.json",
+      "size": 283947,
+      "mtime": "2026-04-24T03:35:42.620Z"
+    },
+    {
+      "name": "db-2026-04-24T03-35-11-732Z.json",
+      "size": 229973,
+      "mtime": "2026-04-24T03:35:11.733Z"
+    },
+    {
+      "name": "db-2026-04-24T03-34-17-299Z.json",
+      "size": 175579,
+      "mtime": "2026-04-24T03:34:17.300Z"
+    },
+    {
+      "name": "db-2026-04-24T03-33-53-256Z.json",
+      "size": 181184,
+      "mtime": "2026-04-24T03:33:53.257Z"
+    },
+    {
+      "name": "db-2026-04-24T03-33-53-244Z.json",
+      "size": 180846,
+      "mtime": "2026-04-24T03:33:53.246Z"
+    },
+    {
+      "name": "db-2026-04-24T03-33-41-773Z.json",
+      "size": 98063,
+      "mtime": "2026-04-24T03:33:41.778Z"
+    },
+    {
+      "name": "db-2026-04-24T03-31-35-050Z.json",
+      "size": 96749,
+      "mtime": "2026-04-24T03:31:35.103Z"
+    },
+    {
+      "name": "db-2026-04-24T03-31-35-045Z.json",
+      "size": 96411,
+      "mtime": "2026-04-24T03:31:35.045Z"
+    },
+    {
+      "name": "db-2026-04-24T03-31-22-756Z.json",
+      "size": 10795,
+      "mtime": "2026-04-24T03:31:22.803Z"
+    }
+  ],
+  "uploads": [
+    "1777001482812-persist.txt",
+    "1777001495011-hello.txt",
+    "1777001621785-persist.txt",
+    "1777001633203-hello.txt",
+    "1777001657316-persist.txt",
+    "1777001711817-persist.txt",
+    "1777001742633-persist.txt",
+    "1777001758726-hello.txt",
+    "1777001836745-persist.txt"
+  ],
+  "recentAuditLogs": [
+    {
+      "id": "audit-913505c2",
+      "at": "2026-04-24T03:37:21.060Z",
+      "event": "admin.auth.succeeded",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/session",
+      "meta": {
+        "mode": "shared_key"
+      }
+    },
+    {
+      "id": "audit-1babc53c",
+      "at": "2026-04-24T03:37:19.521Z",
+      "event": "admin.auth.succeeded",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/session",
+      "meta": {
+        "mode": "shared_key"
+      }
+    },
+    {
+      "id": "audit-8bbc6794",
+      "at": "2026-04-24T03:37:19.435Z",
+      "event": "public.scan.created",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/public/scan",
+      "meta": {
+        "requestId": "scan-ee9c54ac",
+        "target": "https://example.com",
+        "siteId": "site-490ba665",
+        "provider": "builtin"
+      }
+    },
+    {
+      "id": "audit-f9de48d8",
+      "at": "2026-04-24T03:37:19.427Z",
+      "event": "public.scan.created",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/public/scan",
+      "meta": {
+        "requestId": "scan-5b381cf1",
+        "target": "https://example.com",
+        "siteId": "site-490ba665",
+        "provider": "builtin"
+      }
+    },
+    {
+      "id": "audit-4cac5093",
+      "at": "2026-04-24T03:37:19.420Z",
+      "event": "public.scan.created",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/public/scan",
+      "meta": {
+        "requestId": "scan-e18ad406",
+        "target": "https://example.com",
+        "siteId": "site-490ba665",
+        "provider": "builtin"
+      }
+    },
+    {
+      "id": "audit-60c3465d",
+      "at": "2026-04-24T03:37:19.406Z",
+      "event": "public.scan.created",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/public/scan",
+      "meta": {
+        "requestId": "scan-29371d7b",
+        "target": "https://example.com",
+        "siteId": "site-490ba665",
+        "provider": "builtin"
+      }
+    },
+    {
+      "id": "audit-8cb9501b",
+      "at": "2026-04-24T03:37:18.186Z",
+      "event": "admin.auth.succeeded",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/session",
+      "meta": {
+        "mode": "shared_key"
+      }
+    },
+    {
+      "id": "audit-8da832ed",
+      "at": "2026-04-24T03:37:17.050Z",
+      "event": "admin.backup.restored",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/backups/restore",
+      "meta": {
+        "name": "db-2026-04-24T03-37-16-732Z.json",
+        "restoredFrom": "/mnt/data/veridion_audit/runtime/backups/db-2026-04-24T03-37-16-732Z.json"
+      }
+    },
+    {
+      "id": "audit-8f18fe1f",
+      "at": "2026-04-24T03:37:16.723Z",
+      "event": "admin.auth.succeeded",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/session",
+      "meta": {
+        "mode": "shared_key"
+      }
+    },
+    {
+      "id": "audit-e0c531a3",
+      "at": "2026-04-24T03:37:15.984Z",
+      "event": "admin.auth.succeeded",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/session",
+      "meta": {
+        "mode": "shared_key"
+      }
+    },
+    {
+      "id": "audit-28a61048",
+      "at": "2026-04-24T03:37:14.943Z",
+      "event": "public.checkout.created",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/public/checkout-session",
+      "meta": {
+        "orderId": "ord-d7d2f8ec",
+        "provider": "external_http",
+        "siteId": "site-73e8dd45",
+        "plan": "Pro"
+      }
+    },
+    {
+      "id": "audit-6eb8a0cc",
+      "at": "2026-04-24T03:37:14.931Z",
+      "event": "public.scan.created",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/public/scan",
+      "meta": {
+        "requestId": "scan-external-001",
+        "target": "https://ext-shop.example",
+        "siteId": "site-73e8dd45",
+        "provider": "external_http"
+      }
+    }
+  ]
+}

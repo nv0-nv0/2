@@ -1,0 +1,98 @@
+{
+  "generatedAt": "2026-04-23T11:44:43.045Z",
+  "ok": false,
+  "status": "완성 선언 보류",
+  "results": [
+    {
+      "name": "npm run check:syntax",
+      "code": 0,
+      "ok": true,
+      "startedAt": "2026-04-23T11:44:24.631Z",
+      "finishedAt": "2026-04-23T11:44:32.549Z"
+    },
+    {
+      "name": "npm run check:data",
+      "code": 0,
+      "ok": true,
+      "startedAt": "2026-04-23T11:44:32.549Z",
+      "finishedAt": "2026-04-23T11:44:34.217Z"
+    },
+    {
+      "name": "npm run check:pages",
+      "code": 0,
+      "ok": true,
+      "startedAt": "2026-04-23T11:44:34.217Z",
+      "finishedAt": "2026-04-23T11:44:35.226Z"
+    },
+    {
+      "name": "npm run check:links",
+      "code": 0,
+      "ok": true,
+      "startedAt": "2026-04-23T11:44:35.226Z",
+      "finishedAt": "2026-04-23T11:44:35.935Z"
+    },
+    {
+      "name": "npm run check:env-examples",
+      "code": 0,
+      "ok": true,
+      "startedAt": "2026-04-23T11:44:35.935Z",
+      "finishedAt": "2026-04-23T11:44:36.376Z"
+    },
+    {
+      "name": "npm run check:handoff-docs",
+      "code": 0,
+      "ok": true,
+      "startedAt": "2026-04-23T11:44:36.376Z",
+      "finishedAt": "2026-04-23T11:44:36.788Z"
+    },
+    {
+      "name": "npm run check:no-debug-client",
+      "code": 0,
+      "ok": true,
+      "startedAt": "2026-04-23T11:44:36.788Z",
+      "finishedAt": "2026-04-23T11:44:37.469Z"
+    },
+    {
+      "name": "npm run check:render-safety",
+      "code": 0,
+      "ok": true,
+      "startedAt": "2026-04-23T11:44:37.469Z",
+      "finishedAt": "2026-04-23T11:44:38.965Z"
+    },
+    {
+      "name": "node --check server/index.mjs",
+      "code": 0,
+      "ok": true,
+      "startedAt": "2026-04-23T11:44:38.965Z",
+      "finishedAt": "2026-04-23T11:44:39.227Z"
+    },
+    {
+      "name": "npm run reset:demo",
+      "code": 0,
+      "ok": true,
+      "startedAt": "2026-04-23T11:44:39.227Z",
+      "finishedAt": "2026-04-23T11:44:40.164Z"
+    },
+    {
+      "name": "npm run validate:env -- ./deploy/env.production.nv0.kr.example",
+      "code": 0,
+      "ok": true,
+      "startedAt": "2026-04-23T11:44:40.164Z",
+      "finishedAt": "2026-04-23T11:44:41.016Z"
+    },
+    {
+      "name": "npm run validate:deploy",
+      "code": 0,
+      "ok": true,
+      "startedAt": "2026-04-23T11:44:41.016Z",
+      "finishedAt": "2026-04-23T11:44:41.443Z"
+    },
+    {
+      "name": "npm run test:e2e",
+      "code": 1,
+      "ok": false,
+      "startedAt": "2026-04-23T11:44:41.443Z",
+      "finishedAt": "2026-04-23T11:44:43.044Z"
+    }
+  ]
+}

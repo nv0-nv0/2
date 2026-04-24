@@ -1,0 +1,500 @@
+{
+  "generatedAt": "2026-04-24T03:31:35.036Z",
+  "runtime": {
+    "pid": 23616,
+    "uptimeSec": 1,
+    "memoryRss": 149217280
+  },
+  "config": {
+    "NODE_ENV": "production",
+    "PORT": 3288,
+    "PLATFORM_TARGET": "mvp",
+    "COMMERCIAL_TARGET": false,
+    "TRUST_PROXY_HEADERS": true,
+    "ENABLE_TURNSTILE": false,
+    "TURNSTILE_SITE_KEY_PRESENT": false,
+    "TURNSTILE_SECRET_PRESENT": false,
+    "PUBLIC_SCAN_LIMIT": 20,
+    "PUBLIC_SCAN_WINDOW_MS": 60000,
+    "ADMIN_AUTH_LIMIT": 8,
+    "ADMIN_AUTH_WINDOW_MS": 600000,
+    "SESSION_TTL_MS": 3600000,
+    "MAX_JSON_BODY_BYTES": 65536,
+    "MAX_MULTIPART_BODY_BYTES": 5242880,
+    "BACKUP_RETENTION_COUNT": 20,
+    "AUDIT_LOG_RETENTION_COUNT": 200,
+    "STORAGE_MODE": "local_fs",
+    "SCAN_PROVIDER": "builtin",
+    "SCAN_PROVIDER_URL_PRESENT": false,
+    "SCAN_PROVIDER_FALLBACK": true,
+    "TARGET_FETCH_ENABLED": false,
+    "PAYMENT_PROVIDER": "demo",
+    "PAYMENT_PROVIDER_URL_PRESENT": false,
+    "ALLOWED_ADMIN_ORIGINS": [],
+    "ADMIN_AUTH_MODE": "shared_key",
+    "ADMIN_KEY_CONFIGURED": true,
+    "BOOTSTRAP_ADMIN_EMAIL_PRESENT": false,
+    "BOOTSTRAP_ADMIN_PASSWORD_PRESENT": false
+  },
+  "counts": {
+    "orders": 4,
+    "subscriptions": 2,
+    "publications": 10,
+    "boards": 9,
+    "library": 2,
+    "scans": 7,
+    "sites": 2,
+    "legalUpdates": 0,
+    "autoFixJobs": 7,
+    "paymentSessions": 4,
+    "paymentEvents": 9,
+    "webhookInbox": 3,
+    "auditLogs": 39,
+    "backups": 1,
+    "uploads": 2,
+    "sessions": 8,
+    "adminUsers": 0,
+    "adminRoleBindings": 0,
+    "adminSessions": 0
+  },
+  "sessions": [
+    {
+      "sidTail": "1eedc27b",
+      "createdAt": 1777001480425,
+      "lastSeenAt": 1777001480425,
+      "expiresAt": 1777005080425,
+      "csrfToken": "efed9fba2951aba1e37318f083703421",
+      "roles": [
+        "super_admin"
+      ],
+      "permissions": [
+        "*"
+      ]
+    },
+    {
+      "sidTail": "374e9b39",
+      "createdAt": 1777001482744,
+      "lastSeenAt": 1777001482744,
+      "expiresAt": 1777005082744,
+      "csrfToken": "93a721f04d2959e149f0465728bb1fa6",
+      "roles": [
+        "super_admin"
+      ],
+      "permissions": [
+        "*"
+      ]
+    },
+    {
+      "sidTail": "8026ad29",
+      "createdAt": 1777001483326,
+      "lastSeenAt": 1777001483326,
+      "expiresAt": 1777005083326,
+      "csrfToken": "d5f0c4abc2622f147a3523986f6d54ae",
+      "roles": [
+        "super_admin"
+      ],
+      "permissions": [
+        "*"
+      ]
+    },
+    {
+      "sidTail": "425cc1ca",
+      "createdAt": 1777001484630,
+      "lastSeenAt": 1777001484630,
+      "expiresAt": 1777005084630,
+      "csrfToken": "53b9869d304746abcb4d42a00c602fe1",
+      "roles": [
+        "super_admin"
+      ],
+      "permissions": [
+        "*"
+      ]
+    },
+    {
+      "sidTail": "a6fd0e35",
+      "createdAt": 1777001487252,
+      "lastSeenAt": 1777001487252,
+      "expiresAt": 1777005087252,
+      "csrfToken": "61db4ed4eb656ee4d9dfce294e518dad",
+      "roles": [
+        "super_admin"
+      ],
+      "permissions": [
+        "*"
+      ]
+    },
+    {
+      "sidTail": "9733b4a2",
+      "createdAt": 1777001487844,
+      "lastSeenAt": 1777001487844,
+      "expiresAt": 1777005087844,
+      "csrfToken": "42b9812d2e3c0e0b54bc7c63ee79ec76",
+      "roles": [
+        "super_admin"
+      ],
+      "permissions": [
+        "*"
+      ]
+    },
+    {
+      "sidTail": "8ee21961",
+      "createdAt": 1777001491023,
+      "lastSeenAt": 1777001491023,
+      "expiresAt": 1777005091023,
+      "csrfToken": "98acffee1da4de065e76b0821ad29482",
+      "roles": [
+        "super_admin"
+      ],
+      "permissions": [
+        "*"
+      ]
+    },
+    {
+      "sidTail": "64560df5",
+      "createdAt": 1777001494719,
+      "lastSeenAt": 1777001495031,
+      "expiresAt": 1777005095031,
+      "csrfToken": "8a664c33db6ea608911884402b1a704d",
+      "roles": [
+        "super_admin"
+      ],
+      "permissions": [
+        "*"
+      ]
+    }
+  ],
+  "backups": [
+    {
+      "name": "db-2026-04-24T03-31-22-756Z.json",
+      "size": 10795,
+      "mtime": "2026-04-24T03:31:22.803Z"
+    }
+  ],
+  "uploads": [
+    "1777001482812-persist.txt",
+    "1777001495011-hello.txt"
+  ],
+  "recentAuditLogs": [
+    {
+      "id": "audit-de21cada",
+      "at": "2026-04-24T03:31:35.016Z",
+      "event": "admin.settings.updated",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/settings",
+      "meta": {
+        "keys": [
+          "ctaAutopublishEnabled",
+          "legalWatchEnabled",
+          "autoFixMode",
+          "defaultJurisdiction",
+          "defaultAlertChannel",
+          "supportEmail"
+        ]
+      }
+    },
+    {
+      "id": "audit-80c852a3",
+      "at": "2026-04-24T03:31:35.011Z",
+      "event": "admin.library.uploaded",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/library/upload",
+      "meta": {
+        "id": "upload-bdd65933",
+        "filename": "1777001495011-hello.txt"
+      }
+    },
+    {
+      "id": "audit-af518427",
+      "at": "2026-04-24T03:31:35.003Z",
+      "event": "admin.library.posted",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/library/post",
+      "meta": {
+        "id": "lib-e6febdcc",
+        "title": "자료실 테스트"
+      }
+    },
+    {
+      "id": "audit-11e4d3e6",
+      "at": "2026-04-24T03:31:34.940Z",
+      "event": "admin.subscription.upserted",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/subscriptions/upsert",
+      "meta": {
+        "id": "sub-e577c333",
+        "plan": "Pro",
+        "status": "active"
+      }
+    },
+    {
+      "id": "audit-888419ff",
+      "at": "2026-04-24T03:31:34.928Z",
+      "event": "admin.order.advanced",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/orders/advance",
+      "meta": {
+        "id": "ord-411f4c31",
+        "stage": "completed"
+      }
+    },
+    {
+      "id": "audit-3a8215c5",
+      "at": "2026-04-24T03:31:34.922Z",
+      "event": "admin.order.status_updated",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/orders/status",
+      "meta": {
+        "id": "ord-411f4c31",
+        "status": "paid"
+      }
+    },
+    {
+      "id": "audit-de28f86d",
+      "at": "2026-04-24T03:31:34.915Z",
+      "event": "admin.publication.cta_generated",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/publications/cta-generate",
+      "meta": {
+        "id": "pub-49b6f0dc",
+        "requestId": "scan-14eb08e3"
+      }
+    },
+    {
+      "id": "audit-34a3617d",
+      "at": "2026-04-24T03:31:34.909Z",
+      "event": "admin.system_item.created",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/system-items",
+      "meta": {
+        "id": "board-4e235e5a",
+        "type": "board"
+      }
+    },
+    {
+      "id": "audit-e812ecbc",
+      "at": "2026-04-24T03:31:34.847Z",
+      "event": "admin.publication.publish_now",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/publications/publish-now",
+      "meta": {
+        "id": "pub-896b63a5",
+        "title": "테스트 발행"
+      }
+    },
+    {
+      "id": "audit-1c2dcfa0",
+      "at": "2026-04-24T03:31:34.833Z",
+      "event": "admin.auto_fix.rolled_back",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/auto-fix-jobs/rollback",
+      "meta": {
+        "id": "fix-f43ccff5",
+        "rollbackToken": "rollback-ecc56394"
+      }
+    },
+    {
+      "id": "audit-5982fa9f",
+      "at": "2026-04-24T03:31:34.828Z",
+      "event": "admin.auto_fix.approved",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/auto-fix-jobs/approve",
+      "meta": {
+        "id": "fix-f43ccff5",
+        "rollbackToken": "rollback-ecc56394"
+      }
+    },
+    {
+      "id": "audit-c3adfbab",
+      "at": "2026-04-24T03:31:34.816Z",
+      "event": "admin.rule.upserted",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/rules",
+      "meta": {
+        "code": "CONTACT-CHANNEL"
+      }
+    },
+    {
+      "id": "audit-77d6e6b7",
+      "at": "2026-04-24T03:31:34.720Z",
+      "event": "admin.auth.succeeded",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/session",
+      "meta": {
+        "mode": "shared_key"
+      }
+    },
+    {
+      "id": "audit-4c089069",
+      "at": "2026-04-24T03:31:34.627Z",
+      "event": "public.payment.completed",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/public/payment/complete",
+      "meta": {
+        "orderId": "ord-411f4c31",
+        "provider": "demo"
+      }
+    },
+    {
+      "id": "audit-11b79b2d",
+      "at": "2026-04-24T03:31:34.617Z",
+      "event": "public.checkout.created",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/public/checkout-session",
+      "meta": {
+        "orderId": "ord-411f4c31",
+        "provider": "demo",
+        "siteId": "site-64eb760c",
+        "plan": "Auto"
+      }
+    },
+    {
+      "id": "audit-d9e4022a",
+      "at": "2026-04-24T03:31:34.537Z",
+      "event": "public.scan.created",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/public/scan",
+      "meta": {
+        "requestId": "scan-51e5cee5",
+        "target": "https://example.com",
+        "siteId": "site-64eb760c",
+        "provider": "builtin"
+      }
+    },
+    {
+      "id": "audit-5c075be1",
+      "at": "2026-04-24T03:31:34.518Z",
+      "event": "public.scan.created",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/public/scan",
+      "meta": {
+        "requestId": "scan-14eb08e3",
+        "target": "https://example.com",
+        "siteId": "site-64eb760c",
+        "provider": "builtin"
+      }
+    },
+    {
+      "id": "audit-e16f30c1",
+      "at": "2026-04-24T03:31:31.025Z",
+      "event": "admin.auth.succeeded",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/session",
+      "meta": {
+        "mode": "shared_key"
+      }
+    },
+    {
+      "id": "audit-88f70bd8",
+      "at": "2026-04-24T03:31:31.009Z",
+      "event": "public.payment.portone.webhook_rejected",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/public/payment/portone/webhook",
+      "meta": {
+        "paymentId": "ord-db0a5163",
+        "reason": "webhook_signature_invalid",
+        "verificationMode": "standard_webhooks_v1"
+      }
+    },
+    {
+      "id": "audit-d19a2932",
+      "at": "2026-04-24T03:31:30.938Z",
+      "event": "public.payment.portone.webhook_synced",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/public/payment/portone/webhook",
+      "meta": {
+        "orderId": "ord-db0a5163",
+        "paymentId": "ord-db0a5163",
+        "reason": null,
+        "verificationMode": "standard_webhooks_v1"
+      }
+    },
+    {
+      "id": "audit-2884a9b5",
+      "at": "2026-04-24T03:31:30.924Z",
+      "event": "public.payment.portone.completed",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/public/payment/complete",
+      "meta": {
+        "orderId": "ord-db0a5163",
+        "paymentId": "ord-db0a5163",
+        "reason": null
+      }
+    },
+    {
+      "id": "audit-2703405f",
+      "at": "2026-04-24T03:31:30.913Z",
+      "event": "public.checkout.created",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/public/checkout-session",
+      "meta": {
+        "orderId": "ord-db0a5163",
+        "provider": "portone_v2",
+        "siteId": null,
+        "plan": "Basic"
+      }
+    },
+    {
+      "id": "audit-b3e5655f",
+      "at": "2026-04-24T03:31:28.613Z",
+      "event": "public.payment.portone.webhook_synced",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/public/payment/portone/webhook",
+      "meta": {
+        "orderId": "ord-c814389f",
+        "paymentId": "ord-c814389f",
+        "reason": "webhook_secret_missing",
+        "verificationMode": "provider_refetch"
+      }
+    },
+    {
+      "id": "audit-9cb39645",
+      "at": "2026-04-24T03:31:28.604Z",
+      "event": "public.payment.portone.completed",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/public/payment/complete",
+      "meta": {
+        "orderId": "ord-c814389f",
+        "paymentId": "ord-c814389f",
+        "reason": null
+      }
+    },
+    {
+      "id": "audit-ca608e55",
+      "at": "2026-04-24T03:31:28.545Z",
+      "event": "public.checkout.created",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/public/checkout-session",
+      "meta": {
+        "orderId": "ord-c814389f",
+        "provider": "portone_v2",
+        "siteId": null,
+        "plan": "Basic"
+      }
+    }
+  ]
+}

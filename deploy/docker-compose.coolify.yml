@@ -1,0 +1,67 @@
+services:
+  app:
+    build: ..
+    restart: unless-stopped
+    env_file:
+      - ./env.commercial.template
+    environment:
+      NV0_PLATFORM_TARGET: commercial
+      NV0_PERSISTENCE_MODE: postgres_primary
+      NV0_SESSION_STORE: redis
+      NV0_RATE_LIMIT_STORE: redis
+      NV0_LOCK_PROVIDER: redis
+      NV0_STORAGE_MODE: s3
+      NV0_PAYMENT_PROVIDER: portone_v2
+      NV0_SCAN_PROVIDER: external_http
+      NV0_DATABASE_URL: postgres://nv0:${POSTGRES_PASSWORD:-replace_me}@postgres:5432/nv0
+      NV0_REDIS_URL: redis://redis:6379/0
+    ports:
+      - "3210:3210"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nv0.rule=Host(`nv0.kr`) || Host(`www.nv0.kr`)"
+      - "traefik.http.routers.nv0.entrypoints=websecure"
+      - "traefik.http.routers.nv0.tls.certresolver=letsencrypt"
+      - "traefik.http.services.nv0.loadbalancer.server.port=3210"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3210/readyz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: nv0
+      POSTGRES_USER: nv0
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-replace_me}
+    volumes:
+      - nv0_postgres:/var/lib/postgresql/data
+      - ./postgres/schema.sql:/docker-entrypoint-initdb.d/001_schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nv0 -d nv0"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - nv0_redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  nv0_postgres:
+  nv0_redis:

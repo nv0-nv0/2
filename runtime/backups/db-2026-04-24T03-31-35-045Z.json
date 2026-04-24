@@ -1,0 +1,2547 @@
+{
+  "settings": {
+    "autoPublicationEnabled": true,
+    "publicationChannel": "internal-board",
+    "supportEmail": "admin@example.com",
+    "defaultJurisdiction": "KR",
+    "businessProfile": {
+      "tradeName": "엔브이제로(NV0)",
+      "representative": "나금상",
+      "registrationNumber": "584-77-00586",
+      "address": "경기도 남양주시 와부읍 덕소로97번길 34, 105동 402호",
+      "businessTypes": [
+        "정보통신업",
+        "소프트웨어 개발 및 공급업",
+        "전자상거래업",
+        "데이터베이스 및 온라인 정보 제공업",
+        "광고 대행업"
+      ],
+      "contactEmail": "support@nv0.kr",
+      "domain": "https://nv0.kr"
+    },
+    "defaultAlertChannel": "email",
+    "autoFixMode": "approval_required",
+    "operatorMode": "multi_operator",
+    "adminAuthMode": "account_rbac",
+    "ctaAutopublishEnabled": true,
+    "legalWatchEnabled": true,
+    "maxAutoFixPerRun": 5,
+    "scanProviderMode": "external_http",
+    "paymentProviderMode": "portone_v2",
+    "storageMode": "s3_compatible"
+  },
+  "orders": [
+    {
+      "id": "ord-411f4c31",
+      "customer": "홍길동",
+      "email": "owner@example.com",
+      "plan": "Auto",
+      "siteId": "site-64eb760c",
+      "domain": "https://example.com",
+      "status": "paid",
+      "stage": "completed",
+      "amount": 149000,
+      "paymentProvider": "demo",
+      "createdAt": "2026-04-24T03:31:34.616Z",
+      "paymentSessionId": "pay-8a0d4641",
+      "paidAt": "2026-04-24T03:31:34.627Z"
+    },
+    {
+      "id": "ord-db0a5163",
+      "customer": "이벤트",
+      "email": "event@example.com",
+      "plan": "Basic",
+      "siteId": null,
+      "domain": null,
+      "status": "paid",
+      "stage": "completed",
+      "amount": 49000,
+      "paymentProvider": "portone_v2",
+      "createdAt": "2026-04-24T03:31:30.843Z",
+      "paymentSessionId": "pay-ord-db0a5163",
+      "paidAt": "2026-04-24T03:31:30.936Z"
+    },
+    {
+      "id": "ord-c814389f",
+      "customer": "포트원",
+      "email": "portone@example.com",
+      "plan": "Basic",
+      "siteId": null,
+      "domain": null,
+      "status": "pending",
+      "stage": "checkout_ready",
+      "amount": 49000,
+      "paymentProvider": "portone_v2",
+      "createdAt": "2026-04-24T03:31:28.526Z",
+      "paymentSessionId": "pay-ord-c814389f"
+    },
+    {
+      "id": "ord-4cfd9606",
+      "customer": "외부결제테스트",
+      "email": "",
+      "plan": "Pro",
+      "siteId": "site-faab53ac",
+      "domain": "https://ext-shop.example",
+      "status": "pending",
+      "stage": "checkout_ready",
+      "amount": 89000,
+      "paymentProvider": "external_http",
+      "createdAt": "2026-04-24T03:31:19.769Z",
+      "paymentSessionId": "ext-pay-ord-4cfd9606"
+    }
+  ],
+  "subscriptions": [
+    {
+      "id": "sub-e577c333",
+      "siteId": "site-64eb760c",
+      "plan": "Pro",
+      "status": "active",
+      "monthlyPrice": 149000,
+      "createdAt": "2026-04-24T03:31:27.190Z",
+      "activatedAt": "2026-04-24T03:31:34.627Z"
+    },
+    {
+      "id": "sub-ffacacaa",
+      "siteId": "site-faab53ac",
+      "plan": "Pro",
+      "status": "trial",
+      "monthlyPrice": 89000,
+      "createdAt": "2026-04-24T03:31:19.748Z"
+    }
+  ],
+  "publications": [
+    {
+      "id": "pub-49b6f0dc",
+      "title": "일반 이커머스 사이트 법률 리스크 진단: 6개 항목 점검",
+      "status": "published",
+      "type": "cta",
+      "ctaType": "free_scan",
+      "relatedRequestId": "scan-14eb08e3",
+      "body": "https://example.com 스캔 결과 위험도 100점. 상위 이슈는 개인정보처리방침 링크 또는 본문 (P0), 사업자 정보 고지 (P0), 환불·교환·청약철회 안내 (P1), 이용약관 링크 또는 본문 (P2), 고객센터 연락수단 (P2) 입니다. 무료 진단 후 상세 리포트와 자동수정까지 연결하세요.",
+      "createdAt": "2026-04-24T03:31:34.915Z"
+    },
+    {
+      "id": "pub-896b63a5",
+      "title": "테스트 발행",
+      "status": "published",
+      "type": "manual",
+      "body": "본문",
+      "createdAt": "2026-04-24T03:31:34.847Z"
+    },
+    {
+      "id": "pub-213104ad",
+      "title": "일반 이커머스 사이트 법률 리스크 진단: 6개 항목 점검",
+      "status": "published",
+      "type": "cta",
+      "ctaType": "free_scan",
+      "relatedRequestId": "scan-51e5cee5",
+      "body": "https://example.com 스캔 결과 위험도 100점. 상위 이슈는 개인정보처리방침 링크 또는 본문 (P0), 사업자 정보 고지 (P0), 환불·교환·청약철회 안내 (P1), 이용약관 링크 또는 본문 (P2), 고객센터 연락수단 (P2) 입니다. 무료 진단 후 상세 리포트와 자동수정까지 연결하세요.",
+      "createdAt": "2026-04-24T03:31:34.537Z"
+    },
+    {
+      "id": "pub-9448eb64",
+      "title": "일반 이커머스 사이트 법률 리스크 진단: 6개 항목 점검",
+      "status": "published",
+      "type": "cta",
+      "ctaType": "free_scan",
+      "relatedRequestId": "scan-14eb08e3",
+      "body": "https://example.com 스캔 결과 위험도 100점. 상위 이슈는 개인정보처리방침 링크 또는 본문 (P0), 사업자 정보 고지 (P0), 환불·교환·청약철회 안내 (P1), 이용약관 링크 또는 본문 (P2), 고객센터 연락수단 (P2) 입니다. 무료 진단 후 상세 리포트와 자동수정까지 연결하세요.",
+      "createdAt": "2026-04-24T03:31:34.518Z"
+    },
+    {
+      "id": "pub-313caaa2",
+      "title": "보안상태 테스트",
+      "status": "published",
+      "type": "manual",
+      "body": "ok",
+      "createdAt": "2026-04-24T03:31:27.871Z"
+    },
+    {
+      "id": "pub-53db68fd",
+      "title": "일반 이커머스 사이트 법률 리스크 진단: 6개 항목 점검",
+      "status": "published",
+      "type": "cta",
+      "ctaType": "free_scan",
+      "relatedRequestId": "scan-1ce7dcd3",
+      "body": "https://example.com 스캔 결과 위험도 100점. 상위 이슈는 개인정보처리방침 링크 또는 본문 (P0), 사업자 정보 고지 (P0), 환불·교환·청약철회 안내 (P1), 이용약관 링크 또는 본문 (P2), 고객센터 연락수단 (P2) 입니다. 무료 진단 후 상세 리포트와 자동수정까지 연결하세요.",
+      "createdAt": "2026-04-24T03:31:27.229Z"
+    },
+    {
+      "id": "pub-964b80ea",
+      "title": "일반 이커머스 사이트 법률 리스크 진단: 6개 항목 점검",
+      "status": "published",
+      "type": "cta",
+      "ctaType": "free_scan",
+      "relatedRequestId": "scan-617cb56e",
+      "body": "https://example.com 스캔 결과 위험도 100점. 상위 이슈는 개인정보처리방침 링크 또는 본문 (P0), 사업자 정보 고지 (P0), 환불·교환·청약철회 안내 (P1), 이용약관 링크 또는 본문 (P2), 고객센터 연락수단 (P2) 입니다. 무료 진단 후 상세 리포트와 자동수정까지 연결하세요.",
+      "createdAt": "2026-04-24T03:31:27.222Z"
+    },
+    {
+      "id": "pub-94e1693e",
+      "title": "일반 이커머스 사이트 법률 리스크 진단: 6개 항목 점검",
+      "status": "published",
+      "type": "cta",
+      "ctaType": "free_scan",
+      "relatedRequestId": "scan-b7c1966e",
+      "body": "https://example.com 스캔 결과 위험도 100점. 상위 이슈는 개인정보처리방침 링크 또는 본문 (P0), 사업자 정보 고지 (P0), 환불·교환·청약철회 안내 (P1), 이용약관 링크 또는 본문 (P2), 고객센터 연락수단 (P2) 입니다. 무료 진단 후 상세 리포트와 자동수정까지 연결하세요.",
+      "createdAt": "2026-04-24T03:31:27.216Z"
+    },
+    {
+      "id": "pub-c4d4133f",
+      "title": "일반 이커머스 사이트 법률 리스크 진단: 6개 항목 점검",
+      "status": "published",
+      "type": "cta",
+      "ctaType": "free_scan",
+      "relatedRequestId": "scan-c578ebc4",
+      "body": "https://example.com 스캔 결과 위험도 100점. 상위 이슈는 개인정보처리방침 링크 또는 본문 (P0), 사업자 정보 고지 (P0), 환불·교환·청약철회 안내 (P1), 이용약관 링크 또는 본문 (P2), 고객센터 연락수단 (P2) 입니다. 무료 진단 후 상세 리포트와 자동수정까지 연결하세요.",
+      "createdAt": "2026-04-24T03:31:27.203Z"
+    },
+    {
+      "id": "pub-dab1eda5",
+      "title": "일반 이커머스 사이트 법률 리스크 진단: 2개 항목 점검",
+      "status": "published",
+      "type": "cta",
+      "ctaType": "free_scan",
+      "relatedRequestId": "scan-external-001",
+      "body": "https://ext-shop.example 스캔 결과 위험도 66점. 상위 이슈는 개인정보처리방침 누락 (P0), 사업자 고지 누락 (P1) 입니다. 무료 진단 후 상세 리포트와 자동수정까지 연결하세요.",
+      "createdAt": "2026-04-24T03:31:19.762Z"
+    }
+  ],
+  "boards": [
+    {
+      "id": "board-8a6892ae",
+      "boardType": "legal-update",
+      "title": "일반 이커머스 사이트 법률 리스크 진단: 6개 항목 점검",
+      "body": "https://example.com 스캔 결과 위험도 100점. 상위 이슈는 개인정보처리방침 링크 또는 본문 (P0), 사업자 정보 고지 (P0), 환불·교환·청약철회 안내 (P1), 이용약관 링크 또는 본문 (P2), 고객센터 연락수단 (P2) 입니다. 무료 진단 후 상세 리포트와 자동수정까지 연결하세요.",
+      "createdAt": "2026-04-24T03:31:34.915Z",
+      "visibility": "public"
+    },
+    {
+      "id": "board-4e235e5a",
+      "boardType": "notice",
+      "title": "통합 게시글",
+      "body": "본문",
+      "createdAt": "2026-04-24T03:31:34.909Z",
+      "visibility": "public"
+    },
+    {
+      "id": "board-a6d253b7",
+      "boardType": "legal-update",
+      "title": "일반 이커머스 사이트 법률 리스크 진단: 6개 항목 점검",
+      "body": "https://example.com 스캔 결과 위험도 100점. 상위 이슈는 개인정보처리방침 링크 또는 본문 (P0), 사업자 정보 고지 (P0), 환불·교환·청약철회 안내 (P1), 이용약관 링크 또는 본문 (P2), 고객센터 연락수단 (P2) 입니다. 무료 진단 후 상세 리포트와 자동수정까지 연결하세요.",
+      "createdAt": "2026-04-24T03:31:34.537Z",
+      "visibility": "public"
+    },
+    {
+      "id": "board-be83e3d7",
+      "boardType": "legal-update",
+      "title": "일반 이커머스 사이트 법률 리스크 진단: 6개 항목 점검",
+      "body": "https://example.com 스캔 결과 위험도 100점. 상위 이슈는 개인정보처리방침 링크 또는 본문 (P0), 사업자 정보 고지 (P0), 환불·교환·청약철회 안내 (P1), 이용약관 링크 또는 본문 (P2), 고객센터 연락수단 (P2) 입니다. 무료 진단 후 상세 리포트와 자동수정까지 연결하세요.",
+      "createdAt": "2026-04-24T03:31:34.518Z",
+      "visibility": "public"
+    },
+    {
+      "id": "board-ee0baccd",
+      "boardType": "legal-update",
+      "title": "일반 이커머스 사이트 법률 리스크 진단: 6개 항목 점검",
+      "body": "https://example.com 스캔 결과 위험도 100점. 상위 이슈는 개인정보처리방침 링크 또는 본문 (P0), 사업자 정보 고지 (P0), 환불·교환·청약철회 안내 (P1), 이용약관 링크 또는 본문 (P2), 고객센터 연락수단 (P2) 입니다. 무료 진단 후 상세 리포트와 자동수정까지 연결하세요.",
+      "createdAt": "2026-04-24T03:31:27.229Z",
+      "visibility": "public"
+    },
+    {
+      "id": "board-30f38b7d",
+      "boardType": "legal-update",
+      "title": "일반 이커머스 사이트 법률 리스크 진단: 6개 항목 점검",
+      "body": "https://example.com 스캔 결과 위험도 100점. 상위 이슈는 개인정보처리방침 링크 또는 본문 (P0), 사업자 정보 고지 (P0), 환불·교환·청약철회 안내 (P1), 이용약관 링크 또는 본문 (P2), 고객센터 연락수단 (P2) 입니다. 무료 진단 후 상세 리포트와 자동수정까지 연결하세요.",
+      "createdAt": "2026-04-24T03:31:27.222Z",
+      "visibility": "public"
+    },
+    {
+      "id": "board-7491f0fd",
+      "boardType": "legal-update",
+      "title": "일반 이커머스 사이트 법률 리스크 진단: 6개 항목 점검",
+      "body": "https://example.com 스캔 결과 위험도 100점. 상위 이슈는 개인정보처리방침 링크 또는 본문 (P0), 사업자 정보 고지 (P0), 환불·교환·청약철회 안내 (P1), 이용약관 링크 또는 본문 (P2), 고객센터 연락수단 (P2) 입니다. 무료 진단 후 상세 리포트와 자동수정까지 연결하세요.",
+      "createdAt": "2026-04-24T03:31:27.216Z",
+      "visibility": "public"
+    },
+    {
+      "id": "board-e1b2ef49",
+      "boardType": "legal-update",
+      "title": "일반 이커머스 사이트 법률 리스크 진단: 6개 항목 점검",
+      "body": "https://example.com 스캔 결과 위험도 100점. 상위 이슈는 개인정보처리방침 링크 또는 본문 (P0), 사업자 정보 고지 (P0), 환불·교환·청약철회 안내 (P1), 이용약관 링크 또는 본문 (P2), 고객센터 연락수단 (P2) 입니다. 무료 진단 후 상세 리포트와 자동수정까지 연결하세요.",
+      "createdAt": "2026-04-24T03:31:27.203Z",
+      "visibility": "public"
+    },
+    {
+      "id": "board-43757ba6",
+      "boardType": "legal-update",
+      "title": "일반 이커머스 사이트 법률 리스크 진단: 2개 항목 점검",
+      "body": "https://ext-shop.example 스캔 결과 위험도 66점. 상위 이슈는 개인정보처리방침 누락 (P0), 사업자 고지 누락 (P1) 입니다. 무료 진단 후 상세 리포트와 자동수정까지 연결하세요.",
+      "createdAt": "2026-04-24T03:31:19.762Z",
+      "visibility": "public"
+    }
+  ],
+  "library": [
+    {
+      "id": "upload-bdd65933",
+      "type": "file",
+      "title": "ìë¡ë íì¤í¸",
+      "filename": "1777001495011-hello.txt",
+      "objectUrl": null,
+      "storageMode": "local_fs",
+      "contentType": "text/plain",
+      "createdAt": "2026-04-24T03:31:35.011Z"
+    },
+    {
+      "id": "lib-e6febdcc",
+      "type": "document",
+      "title": "자료실 테스트",
+      "body": "본문",
+      "createdAt": "2026-04-24T03:31:35.003Z"
+    }
+  ],
+  "scans": [
+    {
+      "siteId": "site-64eb760c",
+      "subscriptionId": "sub-e577c333",
+      "createdAt": "2026-04-24T03:31:27.203Z",
+      "requestId": "scan-51e5cee5",
+      "provider": "builtin",
+      "target": "https://example.com",
+      "normalizedTarget": "https://example.com",
+      "summary": "https://example.com/ 최근 분석 결과를 재사용했습니다.",
+      "fetched": false,
+      "fetchStatus": 0,
+      "fetchError": "target fetch disabled",
+      "industry": "일반 이커머스",
+      "siteProfile": {
+        "industry": "일반 이커머스",
+        "siteType": "일반 웹사이트",
+        "likelyHighRegulation": false,
+        "signals": {
+          "hasSignup": false,
+          "hasCheckout": false,
+          "hasProductDetail": false,
+          "hasPrivacyPolicy": false,
+          "hasTerms": false,
+          "hasRefundPolicy": false,
+          "hasContactInfo": false
+        },
+        "keyPages": [
+          "홈",
+          "푸터"
+        ]
+      },
+      "categoryScores": {
+        "전자상거래": 93,
+        "개인정보": 91,
+        "환불·청약철회": 43,
+        "고객지원": 21
+      },
+      "ruleVersion": "2026.04.23-core3",
+      "scanMode": "focused_key_pages",
+      "cached": true,
+      "riskScore": 100,
+      "riskLevel": "매우 높음",
+      "totalFindings": 6,
+      "categoryCounts": {
+        "전자상거래": 2,
+        "개인정보": 2,
+        "환불·청약철회": 1,
+        "고객지원": 1
+      },
+      "estimatedMaxPenalty": 27000000,
+      "topFindings": [
+        "개인정보처리방침 링크 또는 본문 (P0)",
+        "사업자 정보 고지 (P0)",
+        "환불·교환·청약철회 안내 (P1)",
+        "이용약관 링크 또는 본문 (P2)",
+        "고객센터 연락수단 (P2)"
+      ],
+      "detailFindings": [
+        {
+          "id": "finding-c3cbcdde",
+          "code": "PRIVACY-POLICY",
+          "category": "개인정보",
+          "title": "개인정보처리방침 링크 또는 본문",
+          "severity": 26,
+          "priority": "P0",
+          "estimatedPenaltyMax": 10000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "푸터와 회원가입 영역에 개인정보처리방침 링크를 노출합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-4cad458e",
+          "code": "ECOM-BUSINESS-INFO",
+          "category": "전자상거래",
+          "title": "사업자 정보 고지",
+          "severity": 24,
+          "priority": "P0",
+          "estimatedPenaltyMax": 5000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "푸터에 상호/대표자/사업자등록번호/통신판매신고번호/주소/연락처를 추가합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-30ddd152",
+          "code": "REFUND-POLICY",
+          "category": "환불·청약철회",
+          "title": "환불·교환·청약철회 안내",
+          "severity": 18,
+          "priority": "P1",
+          "estimatedPenaltyMax": 5000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "상품상세·푸터·정책 페이지에 환불/교환/청약철회 기준을 분리 표기합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-8fa303ff",
+          "code": "TERMS-OF-USE",
+          "category": "전자상거래",
+          "title": "이용약관 링크 또는 본문",
+          "severity": 12,
+          "priority": "P2",
+          "estimatedPenaltyMax": 3000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "푸터와 가입/결제 구간에 이용약관 링크를 배치합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-b55c5395",
+          "code": "CONTACT-CHANNEL",
+          "category": "고객지원",
+          "title": "고객센터 연락수단",
+          "severity": 10,
+          "priority": "P2",
+          "estimatedPenaltyMax": 2000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "대표 이메일 또는 전화번호를 푸터와 문의영역에 추가합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-20bc81bc",
+          "code": "TRACKING-CONSENT",
+          "category": "개인정보",
+          "title": "쿠키/추적 고지 부족",
+          "severity": 8,
+          "priority": "P2",
+          "estimatedPenaltyMax": 2000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "분석·광고 쿠키 사용 시 배너 또는 정책 내 고지 항목을 추가합니다.",
+          "autoFixEligible": true
+        }
+      ],
+      "autoFixCandidates": [
+        {
+          "findingCode": "PRIVACY-POLICY",
+          "title": "개인정보처리방침 링크 또는 본문",
+          "patchSummary": "푸터와 회원가입 영역에 개인정보처리방침 링크를 노출합니다."
+        },
+        {
+          "findingCode": "ECOM-BUSINESS-INFO",
+          "title": "사업자 정보 고지",
+          "patchSummary": "푸터에 상호/대표자/사업자등록번호/통신판매신고번호/주소/연락처를 추가합니다."
+        },
+        {
+          "findingCode": "REFUND-POLICY",
+          "title": "환불·교환·청약철회 안내",
+          "patchSummary": "상품상세·푸터·정책 페이지에 환불/교환/청약철회 기준을 분리 표기합니다."
+        },
+        {
+          "findingCode": "TERMS-OF-USE",
+          "title": "이용약관 링크 또는 본문",
+          "patchSummary": "푸터와 가입/결제 구간에 이용약관 링크를 배치합니다."
+        },
+        {
+          "findingCode": "CONTACT-CHANNEL",
+          "title": "고객센터 연락수단",
+          "patchSummary": "대표 이메일 또는 전화번호를 푸터와 문의영역에 추가합니다."
+        }
+      ],
+      "recommendedPlan": "Auto",
+      "lockedPreviewCount": 3,
+      "generatedAt": "2026-04-24T03:31:34.537Z",
+      "elapsedMs": 1,
+      "findings": [
+        {
+          "key": "PRIVACY-POLICY",
+          "label": "개인정보처리방침 링크 또는 본문",
+          "status": "P0"
+        },
+        {
+          "key": "ECOM-BUSINESS-INFO",
+          "label": "사업자 정보 고지",
+          "status": "P0"
+        },
+        {
+          "key": "REFUND-POLICY",
+          "label": "환불·교환·청약철회 안내",
+          "status": "P1"
+        }
+      ],
+      "nextActions": [
+        "/plans",
+        "/checkout",
+        "/portal"
+      ],
+      "cachedFromRequestId": "scan-14eb08e3"
+    },
+    {
+      "siteId": "site-64eb760c",
+      "subscriptionId": "sub-e577c333",
+      "createdAt": "2026-04-24T03:31:27.203Z",
+      "requestId": "scan-14eb08e3",
+      "provider": "builtin",
+      "target": "https://example.com",
+      "normalizedTarget": "https://example.com",
+      "summary": "https://example.com/ 최근 분석 결과를 재사용했습니다.",
+      "fetched": false,
+      "fetchStatus": 0,
+      "fetchError": "target fetch disabled",
+      "industry": "일반 이커머스",
+      "siteProfile": {
+        "industry": "일반 이커머스",
+        "siteType": "일반 웹사이트",
+        "likelyHighRegulation": false,
+        "signals": {
+          "hasSignup": false,
+          "hasCheckout": false,
+          "hasProductDetail": false,
+          "hasPrivacyPolicy": false,
+          "hasTerms": false,
+          "hasRefundPolicy": false,
+          "hasContactInfo": false
+        },
+        "keyPages": [
+          "홈",
+          "푸터"
+        ]
+      },
+      "categoryScores": {
+        "전자상거래": 93,
+        "개인정보": 91,
+        "환불·청약철회": 43,
+        "고객지원": 21
+      },
+      "ruleVersion": "2026.04.23-core3",
+      "scanMode": "focused_key_pages",
+      "cached": true,
+      "riskScore": 100,
+      "riskLevel": "매우 높음",
+      "totalFindings": 6,
+      "categoryCounts": {
+        "전자상거래": 2,
+        "개인정보": 2,
+        "환불·청약철회": 1,
+        "고객지원": 1
+      },
+      "estimatedMaxPenalty": 27000000,
+      "topFindings": [
+        "개인정보처리방침 링크 또는 본문 (P0)",
+        "사업자 정보 고지 (P0)",
+        "환불·교환·청약철회 안내 (P1)",
+        "이용약관 링크 또는 본문 (P2)",
+        "고객센터 연락수단 (P2)"
+      ],
+      "detailFindings": [
+        {
+          "id": "finding-c3cbcdde",
+          "code": "PRIVACY-POLICY",
+          "category": "개인정보",
+          "title": "개인정보처리방침 링크 또는 본문",
+          "severity": 26,
+          "priority": "P0",
+          "estimatedPenaltyMax": 10000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "푸터와 회원가입 영역에 개인정보처리방침 링크를 노출합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-4cad458e",
+          "code": "ECOM-BUSINESS-INFO",
+          "category": "전자상거래",
+          "title": "사업자 정보 고지",
+          "severity": 24,
+          "priority": "P0",
+          "estimatedPenaltyMax": 5000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "푸터에 상호/대표자/사업자등록번호/통신판매신고번호/주소/연락처를 추가합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-30ddd152",
+          "code": "REFUND-POLICY",
+          "category": "환불·청약철회",
+          "title": "환불·교환·청약철회 안내",
+          "severity": 18,
+          "priority": "P1",
+          "estimatedPenaltyMax": 5000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "상품상세·푸터·정책 페이지에 환불/교환/청약철회 기준을 분리 표기합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-8fa303ff",
+          "code": "TERMS-OF-USE",
+          "category": "전자상거래",
+          "title": "이용약관 링크 또는 본문",
+          "severity": 12,
+          "priority": "P2",
+          "estimatedPenaltyMax": 3000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "푸터와 가입/결제 구간에 이용약관 링크를 배치합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-b55c5395",
+          "code": "CONTACT-CHANNEL",
+          "category": "고객지원",
+          "title": "고객센터 연락수단",
+          "severity": 10,
+          "priority": "P2",
+          "estimatedPenaltyMax": 2000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "대표 이메일 또는 전화번호를 푸터와 문의영역에 추가합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-20bc81bc",
+          "code": "TRACKING-CONSENT",
+          "category": "개인정보",
+          "title": "쿠키/추적 고지 부족",
+          "severity": 8,
+          "priority": "P2",
+          "estimatedPenaltyMax": 2000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "분석·광고 쿠키 사용 시 배너 또는 정책 내 고지 항목을 추가합니다.",
+          "autoFixEligible": true
+        }
+      ],
+      "autoFixCandidates": [
+        {
+          "findingCode": "PRIVACY-POLICY",
+          "title": "개인정보처리방침 링크 또는 본문",
+          "patchSummary": "푸터와 회원가입 영역에 개인정보처리방침 링크를 노출합니다."
+        },
+        {
+          "findingCode": "ECOM-BUSINESS-INFO",
+          "title": "사업자 정보 고지",
+          "patchSummary": "푸터에 상호/대표자/사업자등록번호/통신판매신고번호/주소/연락처를 추가합니다."
+        },
+        {
+          "findingCode": "REFUND-POLICY",
+          "title": "환불·교환·청약철회 안내",
+          "patchSummary": "상품상세·푸터·정책 페이지에 환불/교환/청약철회 기준을 분리 표기합니다."
+        },
+        {
+          "findingCode": "TERMS-OF-USE",
+          "title": "이용약관 링크 또는 본문",
+          "patchSummary": "푸터와 가입/결제 구간에 이용약관 링크를 배치합니다."
+        },
+        {
+          "findingCode": "CONTACT-CHANNEL",
+          "title": "고객센터 연락수단",
+          "patchSummary": "대표 이메일 또는 전화번호를 푸터와 문의영역에 추가합니다."
+        }
+      ],
+      "recommendedPlan": "Auto",
+      "lockedPreviewCount": 3,
+      "generatedAt": "2026-04-24T03:31:34.503Z",
+      "elapsedMs": 1,
+      "findings": [
+        {
+          "key": "PRIVACY-POLICY",
+          "label": "개인정보처리방침 링크 또는 본문",
+          "status": "P0"
+        },
+        {
+          "key": "ECOM-BUSINESS-INFO",
+          "label": "사업자 정보 고지",
+          "status": "P0"
+        },
+        {
+          "key": "REFUND-POLICY",
+          "label": "환불·교환·청약철회 안내",
+          "status": "P1"
+        }
+      ],
+      "nextActions": [
+        "/plans",
+        "/checkout",
+        "/portal"
+      ],
+      "cachedFromRequestId": "scan-1ce7dcd3"
+    },
+    {
+      "siteId": "site-64eb760c",
+      "subscriptionId": "sub-e577c333",
+      "createdAt": "2026-04-24T03:31:27.203Z",
+      "requestId": "scan-1ce7dcd3",
+      "provider": "builtin",
+      "target": "https://example.com",
+      "normalizedTarget": "https://example.com",
+      "summary": "https://example.com/ 최근 분석 결과를 재사용했습니다.",
+      "fetched": false,
+      "fetchStatus": 0,
+      "fetchError": "target fetch disabled",
+      "industry": "일반 이커머스",
+      "siteProfile": {
+        "industry": "일반 이커머스",
+        "siteType": "일반 웹사이트",
+        "likelyHighRegulation": false,
+        "signals": {
+          "hasSignup": false,
+          "hasCheckout": false,
+          "hasProductDetail": false,
+          "hasPrivacyPolicy": false,
+          "hasTerms": false,
+          "hasRefundPolicy": false,
+          "hasContactInfo": false
+        },
+        "keyPages": [
+          "홈",
+          "푸터"
+        ]
+      },
+      "categoryScores": {
+        "전자상거래": 93,
+        "개인정보": 91,
+        "환불·청약철회": 43,
+        "고객지원": 21
+      },
+      "ruleVersion": "2026.04.23-core3",
+      "scanMode": "focused_key_pages",
+      "cached": true,
+      "riskScore": 100,
+      "riskLevel": "매우 높음",
+      "totalFindings": 6,
+      "categoryCounts": {
+        "전자상거래": 2,
+        "개인정보": 2,
+        "환불·청약철회": 1,
+        "고객지원": 1
+      },
+      "estimatedMaxPenalty": 27000000,
+      "topFindings": [
+        "개인정보처리방침 링크 또는 본문 (P0)",
+        "사업자 정보 고지 (P0)",
+        "환불·교환·청약철회 안내 (P1)",
+        "이용약관 링크 또는 본문 (P2)",
+        "고객센터 연락수단 (P2)"
+      ],
+      "detailFindings": [
+        {
+          "id": "finding-c3cbcdde",
+          "code": "PRIVACY-POLICY",
+          "category": "개인정보",
+          "title": "개인정보처리방침 링크 또는 본문",
+          "severity": 26,
+          "priority": "P0",
+          "estimatedPenaltyMax": 10000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "푸터와 회원가입 영역에 개인정보처리방침 링크를 노출합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-4cad458e",
+          "code": "ECOM-BUSINESS-INFO",
+          "category": "전자상거래",
+          "title": "사업자 정보 고지",
+          "severity": 24,
+          "priority": "P0",
+          "estimatedPenaltyMax": 5000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "푸터에 상호/대표자/사업자등록번호/통신판매신고번호/주소/연락처를 추가합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-30ddd152",
+          "code": "REFUND-POLICY",
+          "category": "환불·청약철회",
+          "title": "환불·교환·청약철회 안내",
+          "severity": 18,
+          "priority": "P1",
+          "estimatedPenaltyMax": 5000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "상품상세·푸터·정책 페이지에 환불/교환/청약철회 기준을 분리 표기합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-8fa303ff",
+          "code": "TERMS-OF-USE",
+          "category": "전자상거래",
+          "title": "이용약관 링크 또는 본문",
+          "severity": 12,
+          "priority": "P2",
+          "estimatedPenaltyMax": 3000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "푸터와 가입/결제 구간에 이용약관 링크를 배치합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-b55c5395",
+          "code": "CONTACT-CHANNEL",
+          "category": "고객지원",
+          "title": "고객센터 연락수단",
+          "severity": 10,
+          "priority": "P2",
+          "estimatedPenaltyMax": 2000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "대표 이메일 또는 전화번호를 푸터와 문의영역에 추가합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-20bc81bc",
+          "code": "TRACKING-CONSENT",
+          "category": "개인정보",
+          "title": "쿠키/추적 고지 부족",
+          "severity": 8,
+          "priority": "P2",
+          "estimatedPenaltyMax": 2000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "분석·광고 쿠키 사용 시 배너 또는 정책 내 고지 항목을 추가합니다.",
+          "autoFixEligible": true
+        }
+      ],
+      "autoFixCandidates": [
+        {
+          "findingCode": "PRIVACY-POLICY",
+          "title": "개인정보처리방침 링크 또는 본문",
+          "patchSummary": "푸터와 회원가입 영역에 개인정보처리방침 링크를 노출합니다."
+        },
+        {
+          "findingCode": "ECOM-BUSINESS-INFO",
+          "title": "사업자 정보 고지",
+          "patchSummary": "푸터에 상호/대표자/사업자등록번호/통신판매신고번호/주소/연락처를 추가합니다."
+        },
+        {
+          "findingCode": "REFUND-POLICY",
+          "title": "환불·교환·청약철회 안내",
+          "patchSummary": "상품상세·푸터·정책 페이지에 환불/교환/청약철회 기준을 분리 표기합니다."
+        },
+        {
+          "findingCode": "TERMS-OF-USE",
+          "title": "이용약관 링크 또는 본문",
+          "patchSummary": "푸터와 가입/결제 구간에 이용약관 링크를 배치합니다."
+        },
+        {
+          "findingCode": "CONTACT-CHANNEL",
+          "title": "고객센터 연락수단",
+          "patchSummary": "대표 이메일 또는 전화번호를 푸터와 문의영역에 추가합니다."
+        }
+      ],
+      "recommendedPlan": "Auto",
+      "lockedPreviewCount": 3,
+      "generatedAt": "2026-04-24T03:31:27.229Z",
+      "elapsedMs": 1,
+      "findings": [
+        {
+          "key": "PRIVACY-POLICY",
+          "label": "개인정보처리방침 링크 또는 본문",
+          "status": "P0"
+        },
+        {
+          "key": "ECOM-BUSINESS-INFO",
+          "label": "사업자 정보 고지",
+          "status": "P0"
+        },
+        {
+          "key": "REFUND-POLICY",
+          "label": "환불·교환·청약철회 안내",
+          "status": "P1"
+        }
+      ],
+      "nextActions": [
+        "/plans",
+        "/checkout",
+        "/portal"
+      ],
+      "cachedFromRequestId": "scan-617cb56e"
+    },
+    {
+      "siteId": "site-64eb760c",
+      "subscriptionId": "sub-e577c333",
+      "createdAt": "2026-04-24T03:31:27.203Z",
+      "requestId": "scan-617cb56e",
+      "provider": "builtin",
+      "target": "https://example.com",
+      "normalizedTarget": "https://example.com",
+      "summary": "https://example.com/ 최근 분석 결과를 재사용했습니다.",
+      "fetched": false,
+      "fetchStatus": 0,
+      "fetchError": "target fetch disabled",
+      "industry": "일반 이커머스",
+      "siteProfile": {
+        "industry": "일반 이커머스",
+        "siteType": "일반 웹사이트",
+        "likelyHighRegulation": false,
+        "signals": {
+          "hasSignup": false,
+          "hasCheckout": false,
+          "hasProductDetail": false,
+          "hasPrivacyPolicy": false,
+          "hasTerms": false,
+          "hasRefundPolicy": false,
+          "hasContactInfo": false
+        },
+        "keyPages": [
+          "홈",
+          "푸터"
+        ]
+      },
+      "categoryScores": {
+        "전자상거래": 93,
+        "개인정보": 91,
+        "환불·청약철회": 43,
+        "고객지원": 21
+      },
+      "ruleVersion": "2026.04.23-core3",
+      "scanMode": "focused_key_pages",
+      "cached": true,
+      "riskScore": 100,
+      "riskLevel": "매우 높음",
+      "totalFindings": 6,
+      "categoryCounts": {
+        "전자상거래": 2,
+        "개인정보": 2,
+        "환불·청약철회": 1,
+        "고객지원": 1
+      },
+      "estimatedMaxPenalty": 27000000,
+      "topFindings": [
+        "개인정보처리방침 링크 또는 본문 (P0)",
+        "사업자 정보 고지 (P0)",
+        "환불·교환·청약철회 안내 (P1)",
+        "이용약관 링크 또는 본문 (P2)",
+        "고객센터 연락수단 (P2)"
+      ],
+      "detailFindings": [
+        {
+          "id": "finding-c3cbcdde",
+          "code": "PRIVACY-POLICY",
+          "category": "개인정보",
+          "title": "개인정보처리방침 링크 또는 본문",
+          "severity": 26,
+          "priority": "P0",
+          "estimatedPenaltyMax": 10000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "푸터와 회원가입 영역에 개인정보처리방침 링크를 노출합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-4cad458e",
+          "code": "ECOM-BUSINESS-INFO",
+          "category": "전자상거래",
+          "title": "사업자 정보 고지",
+          "severity": 24,
+          "priority": "P0",
+          "estimatedPenaltyMax": 5000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "푸터에 상호/대표자/사업자등록번호/통신판매신고번호/주소/연락처를 추가합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-30ddd152",
+          "code": "REFUND-POLICY",
+          "category": "환불·청약철회",
+          "title": "환불·교환·청약철회 안내",
+          "severity": 18,
+          "priority": "P1",
+          "estimatedPenaltyMax": 5000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "상품상세·푸터·정책 페이지에 환불/교환/청약철회 기준을 분리 표기합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-8fa303ff",
+          "code": "TERMS-OF-USE",
+          "category": "전자상거래",
+          "title": "이용약관 링크 또는 본문",
+          "severity": 12,
+          "priority": "P2",
+          "estimatedPenaltyMax": 3000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "푸터와 가입/결제 구간에 이용약관 링크를 배치합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-b55c5395",
+          "code": "CONTACT-CHANNEL",
+          "category": "고객지원",
+          "title": "고객센터 연락수단",
+          "severity": 10,
+          "priority": "P2",
+          "estimatedPenaltyMax": 2000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "대표 이메일 또는 전화번호를 푸터와 문의영역에 추가합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-20bc81bc",
+          "code": "TRACKING-CONSENT",
+          "category": "개인정보",
+          "title": "쿠키/추적 고지 부족",
+          "severity": 8,
+          "priority": "P2",
+          "estimatedPenaltyMax": 2000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "분석·광고 쿠키 사용 시 배너 또는 정책 내 고지 항목을 추가합니다.",
+          "autoFixEligible": true
+        }
+      ],
+      "autoFixCandidates": [
+        {
+          "findingCode": "PRIVACY-POLICY",
+          "title": "개인정보처리방침 링크 또는 본문",
+          "patchSummary": "푸터와 회원가입 영역에 개인정보처리방침 링크를 노출합니다."
+        },
+        {
+          "findingCode": "ECOM-BUSINESS-INFO",
+          "title": "사업자 정보 고지",
+          "patchSummary": "푸터에 상호/대표자/사업자등록번호/통신판매신고번호/주소/연락처를 추가합니다."
+        },
+        {
+          "findingCode": "REFUND-POLICY",
+          "title": "환불·교환·청약철회 안내",
+          "patchSummary": "상품상세·푸터·정책 페이지에 환불/교환/청약철회 기준을 분리 표기합니다."
+        },
+        {
+          "findingCode": "TERMS-OF-USE",
+          "title": "이용약관 링크 또는 본문",
+          "patchSummary": "푸터와 가입/결제 구간에 이용약관 링크를 배치합니다."
+        },
+        {
+          "findingCode": "CONTACT-CHANNEL",
+          "title": "고객센터 연락수단",
+          "patchSummary": "대표 이메일 또는 전화번호를 푸터와 문의영역에 추가합니다."
+        }
+      ],
+      "recommendedPlan": "Auto",
+      "lockedPreviewCount": 3,
+      "generatedAt": "2026-04-24T03:31:27.222Z",
+      "elapsedMs": 1,
+      "findings": [
+        {
+          "key": "PRIVACY-POLICY",
+          "label": "개인정보처리방침 링크 또는 본문",
+          "status": "P0"
+        },
+        {
+          "key": "ECOM-BUSINESS-INFO",
+          "label": "사업자 정보 고지",
+          "status": "P0"
+        },
+        {
+          "key": "REFUND-POLICY",
+          "label": "환불·교환·청약철회 안내",
+          "status": "P1"
+        }
+      ],
+      "nextActions": [
+        "/plans",
+        "/checkout",
+        "/portal"
+      ],
+      "cachedFromRequestId": "scan-b7c1966e"
+    },
+    {
+      "siteId": "site-64eb760c",
+      "subscriptionId": "sub-e577c333",
+      "createdAt": "2026-04-24T03:31:27.203Z",
+      "requestId": "scan-b7c1966e",
+      "provider": "builtin",
+      "target": "https://example.com",
+      "normalizedTarget": "https://example.com",
+      "summary": "https://example.com/ 최근 분석 결과를 재사용했습니다.",
+      "fetched": false,
+      "fetchStatus": 0,
+      "fetchError": "target fetch disabled",
+      "industry": "일반 이커머스",
+      "siteProfile": {
+        "industry": "일반 이커머스",
+        "siteType": "일반 웹사이트",
+        "likelyHighRegulation": false,
+        "signals": {
+          "hasSignup": false,
+          "hasCheckout": false,
+          "hasProductDetail": false,
+          "hasPrivacyPolicy": false,
+          "hasTerms": false,
+          "hasRefundPolicy": false,
+          "hasContactInfo": false
+        },
+        "keyPages": [
+          "홈",
+          "푸터"
+        ]
+      },
+      "categoryScores": {
+        "전자상거래": 93,
+        "개인정보": 91,
+        "환불·청약철회": 43,
+        "고객지원": 21
+      },
+      "ruleVersion": "2026.04.23-core3",
+      "scanMode": "focused_key_pages",
+      "cached": true,
+      "riskScore": 100,
+      "riskLevel": "매우 높음",
+      "totalFindings": 6,
+      "categoryCounts": {
+        "전자상거래": 2,
+        "개인정보": 2,
+        "환불·청약철회": 1,
+        "고객지원": 1
+      },
+      "estimatedMaxPenalty": 27000000,
+      "topFindings": [
+        "개인정보처리방침 링크 또는 본문 (P0)",
+        "사업자 정보 고지 (P0)",
+        "환불·교환·청약철회 안내 (P1)",
+        "이용약관 링크 또는 본문 (P2)",
+        "고객센터 연락수단 (P2)"
+      ],
+      "detailFindings": [
+        {
+          "id": "finding-c3cbcdde",
+          "code": "PRIVACY-POLICY",
+          "category": "개인정보",
+          "title": "개인정보처리방침 링크 또는 본문",
+          "severity": 26,
+          "priority": "P0",
+          "estimatedPenaltyMax": 10000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "푸터와 회원가입 영역에 개인정보처리방침 링크를 노출합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-4cad458e",
+          "code": "ECOM-BUSINESS-INFO",
+          "category": "전자상거래",
+          "title": "사업자 정보 고지",
+          "severity": 24,
+          "priority": "P0",
+          "estimatedPenaltyMax": 5000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "푸터에 상호/대표자/사업자등록번호/통신판매신고번호/주소/연락처를 추가합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-30ddd152",
+          "code": "REFUND-POLICY",
+          "category": "환불·청약철회",
+          "title": "환불·교환·청약철회 안내",
+          "severity": 18,
+          "priority": "P1",
+          "estimatedPenaltyMax": 5000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "상품상세·푸터·정책 페이지에 환불/교환/청약철회 기준을 분리 표기합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-8fa303ff",
+          "code": "TERMS-OF-USE",
+          "category": "전자상거래",
+          "title": "이용약관 링크 또는 본문",
+          "severity": 12,
+          "priority": "P2",
+          "estimatedPenaltyMax": 3000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "푸터와 가입/결제 구간에 이용약관 링크를 배치합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-b55c5395",
+          "code": "CONTACT-CHANNEL",
+          "category": "고객지원",
+          "title": "고객센터 연락수단",
+          "severity": 10,
+          "priority": "P2",
+          "estimatedPenaltyMax": 2000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "대표 이메일 또는 전화번호를 푸터와 문의영역에 추가합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-20bc81bc",
+          "code": "TRACKING-CONSENT",
+          "category": "개인정보",
+          "title": "쿠키/추적 고지 부족",
+          "severity": 8,
+          "priority": "P2",
+          "estimatedPenaltyMax": 2000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "분석·광고 쿠키 사용 시 배너 또는 정책 내 고지 항목을 추가합니다.",
+          "autoFixEligible": true
+        }
+      ],
+      "autoFixCandidates": [
+        {
+          "findingCode": "PRIVACY-POLICY",
+          "title": "개인정보처리방침 링크 또는 본문",
+          "patchSummary": "푸터와 회원가입 영역에 개인정보처리방침 링크를 노출합니다."
+        },
+        {
+          "findingCode": "ECOM-BUSINESS-INFO",
+          "title": "사업자 정보 고지",
+          "patchSummary": "푸터에 상호/대표자/사업자등록번호/통신판매신고번호/주소/연락처를 추가합니다."
+        },
+        {
+          "findingCode": "REFUND-POLICY",
+          "title": "환불·교환·청약철회 안내",
+          "patchSummary": "상품상세·푸터·정책 페이지에 환불/교환/청약철회 기준을 분리 표기합니다."
+        },
+        {
+          "findingCode": "TERMS-OF-USE",
+          "title": "이용약관 링크 또는 본문",
+          "patchSummary": "푸터와 가입/결제 구간에 이용약관 링크를 배치합니다."
+        },
+        {
+          "findingCode": "CONTACT-CHANNEL",
+          "title": "고객센터 연락수단",
+          "patchSummary": "대표 이메일 또는 전화번호를 푸터와 문의영역에 추가합니다."
+        }
+      ],
+      "recommendedPlan": "Auto",
+      "lockedPreviewCount": 3,
+      "generatedAt": "2026-04-24T03:31:27.216Z",
+      "elapsedMs": 1,
+      "findings": [
+        {
+          "key": "PRIVACY-POLICY",
+          "label": "개인정보처리방침 링크 또는 본문",
+          "status": "P0"
+        },
+        {
+          "key": "ECOM-BUSINESS-INFO",
+          "label": "사업자 정보 고지",
+          "status": "P0"
+        },
+        {
+          "key": "REFUND-POLICY",
+          "label": "환불·교환·청약철회 안내",
+          "status": "P1"
+        }
+      ],
+      "nextActions": [
+        "/plans",
+        "/checkout",
+        "/portal"
+      ],
+      "cachedFromRequestId": "scan-c578ebc4"
+    },
+    {
+      "siteId": "site-64eb760c",
+      "subscriptionId": "sub-e577c333",
+      "createdAt": "2026-04-24T03:31:27.203Z",
+      "requestId": "scan-c578ebc4",
+      "provider": "builtin",
+      "target": "https://example.com",
+      "normalizedTarget": "https://example.com",
+      "summary": "https://example.com 핵심 페이지 중심 분석이 완료되었습니다.",
+      "fetched": false,
+      "fetchStatus": 0,
+      "fetchError": "target fetch disabled",
+      "industry": "일반 이커머스",
+      "siteProfile": {
+        "industry": "일반 이커머스",
+        "siteType": "일반 웹사이트",
+        "likelyHighRegulation": false,
+        "signals": {
+          "hasSignup": false,
+          "hasCheckout": false,
+          "hasProductDetail": false,
+          "hasPrivacyPolicy": false,
+          "hasTerms": false,
+          "hasRefundPolicy": false,
+          "hasContactInfo": false
+        },
+        "keyPages": [
+          "홈",
+          "푸터"
+        ]
+      },
+      "categoryScores": {
+        "전자상거래": 93,
+        "개인정보": 91,
+        "환불·청약철회": 43,
+        "고객지원": 21
+      },
+      "ruleVersion": "2026.04.23-core3",
+      "scanMode": "focused_key_pages",
+      "cached": false,
+      "riskScore": 100,
+      "riskLevel": "매우 높음",
+      "totalFindings": 6,
+      "categoryCounts": {
+        "전자상거래": 2,
+        "개인정보": 2,
+        "환불·청약철회": 1,
+        "고객지원": 1
+      },
+      "estimatedMaxPenalty": 27000000,
+      "topFindings": [
+        "개인정보처리방침 링크 또는 본문 (P0)",
+        "사업자 정보 고지 (P0)",
+        "환불·교환·청약철회 안내 (P1)",
+        "이용약관 링크 또는 본문 (P2)",
+        "고객센터 연락수단 (P2)"
+      ],
+      "detailFindings": [
+        {
+          "id": "finding-c3cbcdde",
+          "code": "PRIVACY-POLICY",
+          "category": "개인정보",
+          "title": "개인정보처리방침 링크 또는 본문",
+          "severity": 26,
+          "priority": "P0",
+          "estimatedPenaltyMax": 10000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "푸터와 회원가입 영역에 개인정보처리방침 링크를 노출합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-4cad458e",
+          "code": "ECOM-BUSINESS-INFO",
+          "category": "전자상거래",
+          "title": "사업자 정보 고지",
+          "severity": 24,
+          "priority": "P0",
+          "estimatedPenaltyMax": 5000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "푸터에 상호/대표자/사업자등록번호/통신판매신고번호/주소/연락처를 추가합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-30ddd152",
+          "code": "REFUND-POLICY",
+          "category": "환불·청약철회",
+          "title": "환불·교환·청약철회 안내",
+          "severity": 18,
+          "priority": "P1",
+          "estimatedPenaltyMax": 5000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "상품상세·푸터·정책 페이지에 환불/교환/청약철회 기준을 분리 표기합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-8fa303ff",
+          "code": "TERMS-OF-USE",
+          "category": "전자상거래",
+          "title": "이용약관 링크 또는 본문",
+          "severity": 12,
+          "priority": "P2",
+          "estimatedPenaltyMax": 3000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "푸터와 가입/결제 구간에 이용약관 링크를 배치합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-b55c5395",
+          "code": "CONTACT-CHANNEL",
+          "category": "고객지원",
+          "title": "고객센터 연락수단",
+          "severity": 10,
+          "priority": "P2",
+          "estimatedPenaltyMax": 2000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "대표 이메일 또는 전화번호를 푸터와 문의영역에 추가합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-20bc81bc",
+          "code": "TRACKING-CONSENT",
+          "category": "개인정보",
+          "title": "쿠키/추적 고지 부족",
+          "severity": 8,
+          "priority": "P2",
+          "estimatedPenaltyMax": 2000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "분석·광고 쿠키 사용 시 배너 또는 정책 내 고지 항목을 추가합니다.",
+          "autoFixEligible": true
+        }
+      ],
+      "autoFixCandidates": [
+        {
+          "findingCode": "PRIVACY-POLICY",
+          "title": "개인정보처리방침 링크 또는 본문",
+          "patchSummary": "푸터와 회원가입 영역에 개인정보처리방침 링크를 노출합니다."
+        },
+        {
+          "findingCode": "ECOM-BUSINESS-INFO",
+          "title": "사업자 정보 고지",
+          "patchSummary": "푸터에 상호/대표자/사업자등록번호/통신판매신고번호/주소/연락처를 추가합니다."
+        },
+        {
+          "findingCode": "REFUND-POLICY",
+          "title": "환불·교환·청약철회 안내",
+          "patchSummary": "상품상세·푸터·정책 페이지에 환불/교환/청약철회 기준을 분리 표기합니다."
+        },
+        {
+          "findingCode": "TERMS-OF-USE",
+          "title": "이용약관 링크 또는 본문",
+          "patchSummary": "푸터와 가입/결제 구간에 이용약관 링크를 배치합니다."
+        },
+        {
+          "findingCode": "CONTACT-CHANNEL",
+          "title": "고객센터 연락수단",
+          "patchSummary": "대표 이메일 또는 전화번호를 푸터와 문의영역에 추가합니다."
+        }
+      ],
+      "recommendedPlan": "Auto",
+      "lockedPreviewCount": 3,
+      "generatedAt": "2026-04-24T03:31:27.190Z",
+      "elapsedMs": 2,
+      "findings": [
+        {
+          "key": "PRIVACY-POLICY",
+          "label": "개인정보처리방침 링크 또는 본문",
+          "status": "P0"
+        },
+        {
+          "key": "ECOM-BUSINESS-INFO",
+          "label": "사업자 정보 고지",
+          "status": "P0"
+        },
+        {
+          "key": "REFUND-POLICY",
+          "label": "환불·교환·청약철회 안내",
+          "status": "P1"
+        }
+      ],
+      "nextActions": [
+        "/plans",
+        "/checkout",
+        "/portal"
+      ]
+    },
+    {
+      "siteId": "site-faab53ac",
+      "subscriptionId": "sub-ffacacaa",
+      "createdAt": "2026-04-24T03:31:19.762Z",
+      "requestId": "scan-external-001",
+      "provider": "external_http",
+      "target": "https://ext-shop.example",
+      "normalizedTarget": "https://ext-shop.example",
+      "summary": "external provider scan",
+      "fetched": true,
+      "fetchStatus": 200,
+      "fetchError": null,
+      "industry": "일반 이커머스",
+      "siteProfile": {
+        "industry": "일반 이커머스",
+        "siteType": "이커머스",
+        "likelyHighRegulation": false,
+        "signals": {
+          "hasSignup": false,
+          "hasCheckout": false,
+          "hasProductDetail": false,
+          "hasPrivacyPolicy": true,
+          "hasTerms": false,
+          "hasRefundPolicy": false,
+          "hasContactInfo": false
+        },
+        "keyPages": [
+          "홈",
+          "푸터",
+          "개인정보처리방침"
+        ]
+      },
+      "categoryScores": {
+        "개인정보": 74,
+        "전자상거래": 43
+      },
+      "ruleVersion": "2026.04.23-core3",
+      "scanMode": "focused_key_pages",
+      "cached": false,
+      "riskScore": 66,
+      "riskLevel": "높음",
+      "totalFindings": 2,
+      "categoryCounts": {
+        "개인정보": 1,
+        "전자상거래": 1
+      },
+      "estimatedMaxPenalty": 7000000,
+      "topFindings": [
+        "개인정보처리방침 누락 (P0)",
+        "사업자 고지 누락 (P1)"
+      ],
+      "detailFindings": [
+        {
+          "id": "finding0-3fb89e6b",
+          "code": "PRIVACY-POLICY",
+          "category": "개인정보",
+          "title": "개인정보처리방침 누락",
+          "severity": 26,
+          "priority": "P0",
+          "estimatedPenaltyMax": 5000000,
+          "evidence": "외부 엔진 제공 근거 없음",
+          "recommendation": "정책 링크 추가",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding1-16e8ea02",
+          "code": "ECOM-BUSINESS-INFO",
+          "category": "전자상거래",
+          "title": "사업자 고지 누락",
+          "severity": 18,
+          "priority": "P1",
+          "estimatedPenaltyMax": 2000000,
+          "evidence": "외부 엔진 제공 근거 없음",
+          "recommendation": "푸터 고지 추가",
+          "autoFixEligible": true
+        }
+      ],
+      "autoFixCandidates": [
+        {
+          "findingCode": "PRIVACY-POLICY",
+          "title": "개인정보처리방침 누락",
+          "patchSummary": "정책 링크 추가"
+        },
+        {
+          "findingCode": "ECOM-BUSINESS-INFO",
+          "title": "사업자 고지 누락",
+          "patchSummary": "푸터 고지 추가"
+        }
+      ],
+      "recommendedPlan": "Pro",
+      "lockedPreviewCount": 0,
+      "generatedAt": "2026-04-24T03:31:19.748Z",
+      "elapsedMs": 19,
+      "findings": [
+        {
+          "key": "PRIVACY-POLICY",
+          "label": "개인정보처리방침 누락",
+          "status": "P0"
+        },
+        {
+          "key": "ECOM-BUSINESS-INFO",
+          "label": "사업자 고지 누락",
+          "status": "P1"
+        }
+      ],
+      "nextActions": [
+        "/plans",
+        "/checkout",
+        "/portal"
+      ]
+    }
+  ],
+  "sites": [
+    {
+      "id": "site-64eb760c",
+      "domain": "https://example.com",
+      "industry": "일반 이커머스",
+      "jurisdiction": "KR",
+      "latestRiskScore": 100,
+      "latestRiskLevel": "매우 높음",
+      "latestEstimatedMaxPenalty": 27000000,
+      "lastScanAt": "2026-04-24T03:31:34.537Z",
+      "createdAt": "2026-04-24T03:31:27.190Z",
+      "status": "active"
+    },
+    {
+      "id": "site-faab53ac",
+      "domain": "https://ext-shop.example",
+      "industry": "일반 이커머스",
+      "jurisdiction": "KR",
+      "latestRiskScore": 66,
+      "latestRiskLevel": "높음",
+      "latestEstimatedMaxPenalty": 7000000,
+      "lastScanAt": "2026-04-24T03:31:19.748Z",
+      "createdAt": "2026-04-24T03:31:19.748Z",
+      "status": "active"
+    }
+  ],
+  "legalUpdates": [],
+  "systemItems": [],
+  "rules": [
+    {
+      "id": "rule-b1310eb8",
+      "code": "CONTACT-CHANNEL",
+      "createdAt": "2026-04-24T03:31:34.816Z",
+      "category": "고객지원",
+      "title": "고객센터 연락수단",
+      "severity": 11,
+      "penaltyMax": 2500000,
+      "fixTemplate": "푸터와 문의영역에 이메일/전화번호를 추가합니다.",
+      "updatedAt": "2026-04-24T03:31:34.816Z"
+    }
+  ],
+  "autoFixJobs": [
+    {
+      "id": "fix-f43ccff5",
+      "siteId": "site-64eb760c",
+      "findingCode": "CONTACT-CHANNEL",
+      "title": "고객센터 연락수단",
+      "status": "rolled_back",
+      "mode": "approval_required",
+      "patchSummary": "대표 이메일 또는 전화번호를 푸터와 문의영역에 추가합니다.",
+      "createdAt": "2026-04-24T03:31:27.203Z",
+      "previousStatus": "pending",
+      "approvedAt": "2026-04-24T03:31:34.828Z",
+      "rollbackToken": "rollback-ecc56394",
+      "rolledBackAt": "2026-04-24T03:31:34.833Z"
+    },
+    {
+      "id": "fix-fd3634a6",
+      "siteId": "site-64eb760c",
+      "findingCode": "TERMS-OF-USE",
+      "title": "이용약관 링크 또는 본문",
+      "status": "pending",
+      "mode": "approval_required",
+      "patchSummary": "푸터와 가입/결제 구간에 이용약관 링크를 배치합니다.",
+      "createdAt": "2026-04-24T03:31:27.203Z"
+    },
+    {
+      "id": "fix-32b003e6",
+      "siteId": "site-64eb760c",
+      "findingCode": "REFUND-POLICY",
+      "title": "환불·교환·청약철회 안내",
+      "status": "pending",
+      "mode": "approval_required",
+      "patchSummary": "상품상세·푸터·정책 페이지에 환불/교환/청약철회 기준을 분리 표기합니다.",
+      "createdAt": "2026-04-24T03:31:27.203Z"
+    },
+    {
+      "id": "fix-5ce6a8f0",
+      "siteId": "site-64eb760c",
+      "findingCode": "ECOM-BUSINESS-INFO",
+      "title": "사업자 정보 고지",
+      "status": "pending",
+      "mode": "approval_required",
+      "patchSummary": "푸터에 상호/대표자/사업자등록번호/통신판매신고번호/주소/연락처를 추가합니다.",
+      "createdAt": "2026-04-24T03:31:27.203Z"
+    },
+    {
+      "id": "fix-fc970db5",
+      "siteId": "site-64eb760c",
+      "findingCode": "PRIVACY-POLICY",
+      "title": "개인정보처리방침 링크 또는 본문",
+      "status": "pending",
+      "mode": "approval_required",
+      "patchSummary": "푸터와 회원가입 영역에 개인정보처리방침 링크를 노출합니다.",
+      "createdAt": "2026-04-24T03:31:27.203Z"
+    },
+    {
+      "id": "fix-c6b93b2e",
+      "siteId": "site-faab53ac",
+      "findingCode": "ECOM-BUSINESS-INFO",
+      "title": "사업자 고지 누락",
+      "status": "pending",
+      "mode": "approval_required",
+      "patchSummary": "푸터 고지 추가",
+      "createdAt": "2026-04-24T03:31:19.762Z"
+    },
+    {
+      "id": "fix-b0d1a35a",
+      "siteId": "site-faab53ac",
+      "findingCode": "PRIVACY-POLICY",
+      "title": "개인정보처리방침 누락",
+      "status": "pending",
+      "mode": "approval_required",
+      "patchSummary": "정책 링크 추가",
+      "createdAt": "2026-04-24T03:31:19.762Z"
+    }
+  ],
+  "guidanceDocuments": [
+    {
+      "id": "guide-60cadca8",
+      "siteId": "site-64eb760c",
+      "title": "https://example.com 맞춤 운영 지침",
+      "type": "site_guideline",
+      "version": "v1777001494537",
+      "content": "# https://example.com 맞춤 운영 지침\n\n- 업종: 일반 이커머스\n- 관할: KR\n- 최근 위험도: 100점 (매우 높음)\n- 예상 최대 과태료 노출: 27,000,000원\n\n## 즉시 수정 우선순위\n1. [P0] 개인정보처리방침 링크 또는 본문 — 푸터와 회원가입 영역에 개인정보처리방침 링크를 노출합니다.\n2. [P0] 사업자 정보 고지 — 푸터에 상호/대표자/사업자등록번호/통신판매신고번호/주소/연락처를 추가합니다.\n3. [P1] 환불·교환·청약철회 안내 — 상품상세·푸터·정책 페이지에 환불/교환/청약철회 기준을 분리 표기합니다.\n\n## 운영 체크리스트\n- 푸터에 사업자 정보와 고객센터 연락수단 유지\n- 개인정보처리방침 / 이용약관 / 환불정책 링크를 홈·결제·회원가입에 동시 노출\n- 광고 문구는 확정형 표현 대신 조건형 표현으로 완화\n- 법령 변경 알림 수신 시 48시간 안에 재스캔 실행\n- 자동수정은 승인형으로 유지하고, 승인 전 diff를 확인\n\n## CTA 콘텐츠 운영 기준\n- 무료 진단 → 상세 결과 해금 → 자동수정 체험 흐름 유지\n- 과태료 공포 과장 금지, 근거 조항과 조치 문구를 함께 노출\n- 게시글 말미에 무료 진단 CTA 1개만 배치",
+      "createdAt": "2026-04-24T03:31:34.537Z"
+    },
+    {
+      "id": "guide-d78c1871",
+      "siteId": "site-64eb760c",
+      "title": "https://example.com 맞춤 운영 지침",
+      "type": "site_guideline",
+      "version": "v1777001494518",
+      "content": "# https://example.com 맞춤 운영 지침\n\n- 업종: 일반 이커머스\n- 관할: KR\n- 최근 위험도: 100점 (매우 높음)\n- 예상 최대 과태료 노출: 27,000,000원\n\n## 즉시 수정 우선순위\n1. [P0] 개인정보처리방침 링크 또는 본문 — 푸터와 회원가입 영역에 개인정보처리방침 링크를 노출합니다.\n2. [P0] 사업자 정보 고지 — 푸터에 상호/대표자/사업자등록번호/통신판매신고번호/주소/연락처를 추가합니다.\n3. [P1] 환불·교환·청약철회 안내 — 상품상세·푸터·정책 페이지에 환불/교환/청약철회 기준을 분리 표기합니다.\n\n## 운영 체크리스트\n- 푸터에 사업자 정보와 고객센터 연락수단 유지\n- 개인정보처리방침 / 이용약관 / 환불정책 링크를 홈·결제·회원가입에 동시 노출\n- 광고 문구는 확정형 표현 대신 조건형 표현으로 완화\n- 법령 변경 알림 수신 시 48시간 안에 재스캔 실행\n- 자동수정은 승인형으로 유지하고, 승인 전 diff를 확인\n\n## CTA 콘텐츠 운영 기준\n- 무료 진단 → 상세 결과 해금 → 자동수정 체험 흐름 유지\n- 과태료 공포 과장 금지, 근거 조항과 조치 문구를 함께 노출\n- 게시글 말미에 무료 진단 CTA 1개만 배치",
+      "createdAt": "2026-04-24T03:31:34.518Z"
+    },
+    {
+      "id": "guide-97351352",
+      "siteId": "site-64eb760c",
+      "title": "https://example.com 맞춤 운영 지침",
+      "type": "site_guideline",
+      "version": "v1777001487229",
+      "content": "# https://example.com 맞춤 운영 지침\n\n- 업종: 일반 이커머스\n- 관할: KR\n- 최근 위험도: 100점 (매우 높음)\n- 예상 최대 과태료 노출: 27,000,000원\n\n## 즉시 수정 우선순위\n1. [P0] 개인정보처리방침 링크 또는 본문 — 푸터와 회원가입 영역에 개인정보처리방침 링크를 노출합니다.\n2. [P0] 사업자 정보 고지 — 푸터에 상호/대표자/사업자등록번호/통신판매신고번호/주소/연락처를 추가합니다.\n3. [P1] 환불·교환·청약철회 안내 — 상품상세·푸터·정책 페이지에 환불/교환/청약철회 기준을 분리 표기합니다.\n\n## 운영 체크리스트\n- 푸터에 사업자 정보와 고객센터 연락수단 유지\n- 개인정보처리방침 / 이용약관 / 환불정책 링크를 홈·결제·회원가입에 동시 노출\n- 광고 문구는 확정형 표현 대신 조건형 표현으로 완화\n- 법령 변경 알림 수신 시 48시간 안에 재스캔 실행\n- 자동수정은 승인형으로 유지하고, 승인 전 diff를 확인\n\n## CTA 콘텐츠 운영 기준\n- 무료 진단 → 상세 결과 해금 → 자동수정 체험 흐름 유지\n- 과태료 공포 과장 금지, 근거 조항과 조치 문구를 함께 노출\n- 게시글 말미에 무료 진단 CTA 1개만 배치",
+      "createdAt": "2026-04-24T03:31:27.229Z"
+    },
+    {
+      "id": "guide-3af9affe",
+      "siteId": "site-64eb760c",
+      "title": "https://example.com 맞춤 운영 지침",
+      "type": "site_guideline",
+      "version": "v1777001487222",
+      "content": "# https://example.com 맞춤 운영 지침\n\n- 업종: 일반 이커머스\n- 관할: KR\n- 최근 위험도: 100점 (매우 높음)\n- 예상 최대 과태료 노출: 27,000,000원\n\n## 즉시 수정 우선순위\n1. [P0] 개인정보처리방침 링크 또는 본문 — 푸터와 회원가입 영역에 개인정보처리방침 링크를 노출합니다.\n2. [P0] 사업자 정보 고지 — 푸터에 상호/대표자/사업자등록번호/통신판매신고번호/주소/연락처를 추가합니다.\n3. [P1] 환불·교환·청약철회 안내 — 상품상세·푸터·정책 페이지에 환불/교환/청약철회 기준을 분리 표기합니다.\n\n## 운영 체크리스트\n- 푸터에 사업자 정보와 고객센터 연락수단 유지\n- 개인정보처리방침 / 이용약관 / 환불정책 링크를 홈·결제·회원가입에 동시 노출\n- 광고 문구는 확정형 표현 대신 조건형 표현으로 완화\n- 법령 변경 알림 수신 시 48시간 안에 재스캔 실행\n- 자동수정은 승인형으로 유지하고, 승인 전 diff를 확인\n\n## CTA 콘텐츠 운영 기준\n- 무료 진단 → 상세 결과 해금 → 자동수정 체험 흐름 유지\n- 과태료 공포 과장 금지, 근거 조항과 조치 문구를 함께 노출\n- 게시글 말미에 무료 진단 CTA 1개만 배치",
+      "createdAt": "2026-04-24T03:31:27.222Z"
+    },
+    {
+      "id": "guide-05c075e9",
+      "siteId": "site-64eb760c",
+      "title": "https://example.com 맞춤 운영 지침",
+      "type": "site_guideline",
+      "version": "v1777001487216",
+      "content": "# https://example.com 맞춤 운영 지침\n\n- 업종: 일반 이커머스\n- 관할: KR\n- 최근 위험도: 100점 (매우 높음)\n- 예상 최대 과태료 노출: 27,000,000원\n\n## 즉시 수정 우선순위\n1. [P0] 개인정보처리방침 링크 또는 본문 — 푸터와 회원가입 영역에 개인정보처리방침 링크를 노출합니다.\n2. [P0] 사업자 정보 고지 — 푸터에 상호/대표자/사업자등록번호/통신판매신고번호/주소/연락처를 추가합니다.\n3. [P1] 환불·교환·청약철회 안내 — 상품상세·푸터·정책 페이지에 환불/교환/청약철회 기준을 분리 표기합니다.\n\n## 운영 체크리스트\n- 푸터에 사업자 정보와 고객센터 연락수단 유지\n- 개인정보처리방침 / 이용약관 / 환불정책 링크를 홈·결제·회원가입에 동시 노출\n- 광고 문구는 확정형 표현 대신 조건형 표현으로 완화\n- 법령 변경 알림 수신 시 48시간 안에 재스캔 실행\n- 자동수정은 승인형으로 유지하고, 승인 전 diff를 확인\n\n## CTA 콘텐츠 운영 기준\n- 무료 진단 → 상세 결과 해금 → 자동수정 체험 흐름 유지\n- 과태료 공포 과장 금지, 근거 조항과 조치 문구를 함께 노출\n- 게시글 말미에 무료 진단 CTA 1개만 배치",
+      "createdAt": "2026-04-24T03:31:27.216Z"
+    },
+    {
+      "id": "guide-aee82dac",
+      "siteId": "site-64eb760c",
+      "title": "https://example.com 맞춤 운영 지침",
+      "type": "site_guideline",
+      "version": "v1777001487202",
+      "content": "# https://example.com 맞춤 운영 지침\n\n- 업종: 일반 이커머스\n- 관할: KR\n- 최근 위험도: 100점 (매우 높음)\n- 예상 최대 과태료 노출: 27,000,000원\n\n## 즉시 수정 우선순위\n1. [P0] 개인정보처리방침 링크 또는 본문 — 푸터와 회원가입 영역에 개인정보처리방침 링크를 노출합니다.\n2. [P0] 사업자 정보 고지 — 푸터에 상호/대표자/사업자등록번호/통신판매신고번호/주소/연락처를 추가합니다.\n3. [P1] 환불·교환·청약철회 안내 — 상품상세·푸터·정책 페이지에 환불/교환/청약철회 기준을 분리 표기합니다.\n\n## 운영 체크리스트\n- 푸터에 사업자 정보와 고객센터 연락수단 유지\n- 개인정보처리방침 / 이용약관 / 환불정책 링크를 홈·결제·회원가입에 동시 노출\n- 광고 문구는 확정형 표현 대신 조건형 표현으로 완화\n- 법령 변경 알림 수신 시 48시간 안에 재스캔 실행\n- 자동수정은 승인형으로 유지하고, 승인 전 diff를 확인\n\n## CTA 콘텐츠 운영 기준\n- 무료 진단 → 상세 결과 해금 → 자동수정 체험 흐름 유지\n- 과태료 공포 과장 금지, 근거 조항과 조치 문구를 함께 노출\n- 게시글 말미에 무료 진단 CTA 1개만 배치",
+      "createdAt": "2026-04-24T03:31:27.202Z"
+    },
+    {
+      "id": "guide-95d86f3e",
+      "siteId": "site-faab53ac",
+      "title": "https://ext-shop.example 맞춤 운영 지침",
+      "type": "site_guideline",
+      "version": "v1777001479762",
+      "content": "# https://ext-shop.example 맞춤 운영 지침\n\n- 업종: 일반 이커머스\n- 관할: KR\n- 최근 위험도: 66점 (높음)\n- 예상 최대 과태료 노출: 7,000,000원\n\n## 즉시 수정 우선순위\n1. [P0] 개인정보처리방침 누락 — 정책 링크 추가\n2. [P1] 사업자 고지 누락 — 푸터 고지 추가\n\n## 운영 체크리스트\n- 푸터에 사업자 정보와 고객센터 연락수단 유지\n- 개인정보처리방침 / 이용약관 / 환불정책 링크를 홈·결제·회원가입에 동시 노출\n- 광고 문구는 확정형 표현 대신 조건형 표현으로 완화\n- 법령 변경 알림 수신 시 48시간 안에 재스캔 실행\n- 자동수정은 승인형으로 유지하고, 승인 전 diff를 확인\n\n## CTA 콘텐츠 운영 기준\n- 무료 진단 → 상세 결과 해금 → 자동수정 체험 흐름 유지\n- 과태료 공포 과장 금지, 근거 조항과 조치 문구를 함께 노출\n- 게시글 말미에 무료 진단 CTA 1개만 배치",
+      "createdAt": "2026-04-24T03:31:19.762Z"
+    }
+  ],
+  "paymentSessions": [
+    {
+      "id": "pay-8a0d4641",
+      "orderId": "ord-411f4c31",
+      "provider": "demo",
+      "redirectUrl": null,
+      "providerState": "captured",
+      "createdAt": "2026-04-24T03:31:34.616Z",
+      "completedAt": "2026-04-24T03:31:34.627Z"
+    },
+    {
+      "id": "pay-ord-db0a5163",
+      "orderId": "ord-db0a5163",
+      "provider": "portone_v2",
+      "providerPaymentId": "ord-db0a5163",
+      "providerState": "captured",
+      "redirectUrl": null,
+      "checkoutHints": {
+        "sdk": "portone_v2",
+        "requestMode": "promise",
+        "webhookConfigured": true
+      },
+      "paymentRequest": {
+        "storeId": "store-1",
+        "channelKey": "channel-1",
+        "paymentId": "ord-db0a5163",
+        "orderName": "Veridion Basic 플랜",
+        "totalAmount": 49000,
+        "currency": "CURRENCY_KRW",
+        "payMethod": "CARD",
+        "customer": {
+          "id": "customer-ord-db0a5163",
+          "fullName": "이벤트",
+          "email": "event@example.com"
+        },
+        "customData": {
+          "orderId": "ord-db0a5163",
+          "siteId": "",
+          "domain": "",
+          "plan": "Basic",
+          "amount": 49000
+        },
+        "noticeUrls": [
+          "http://127.0.0.1:3216/api/public/payment/portone/webhook"
+        ]
+      },
+      "createdAt": "2026-04-24T03:31:30.843Z",
+      "lastVerificationSource": "webhook",
+      "lastSyncedAt": "2026-04-24T03:31:30.937Z",
+      "lastProviderSnapshot": {
+        "id": "ord-db0a5163",
+        "status": "PAID",
+        "amountTotal": 49000,
+        "paidAt": "2026-04-24T03:31:30.936Z"
+      },
+      "lastVerificationError": null
+    },
+    {
+      "id": "pay-ord-c814389f",
+      "orderId": "ord-c814389f",
+      "provider": "portone_v2",
+      "providerPaymentId": "ord-c814389f",
+      "providerState": "ready_for_payment",
+      "redirectUrl": "http://127.0.0.1:3215/checkout",
+      "checkoutHints": {
+        "sdk": "portone_v2",
+        "requestMode": "redirect",
+        "webhookConfigured": true
+      },
+      "paymentRequest": {
+        "storeId": "store-1",
+        "channelKey": "channel-1",
+        "paymentId": "ord-c814389f",
+        "orderName": "Veridion Basic 플랜",
+        "totalAmount": 49000,
+        "currency": "CURRENCY_KRW",
+        "payMethod": "CARD",
+        "customer": {
+          "id": "customer-ord-c814389f",
+          "fullName": "포트원",
+          "email": "portone@example.com"
+        },
+        "customData": {
+          "orderId": "ord-c814389f",
+          "siteId": "",
+          "domain": "",
+          "plan": "Basic",
+          "amount": 49000
+        },
+        "redirectUrl": "http://127.0.0.1:3215/checkout",
+        "forceRedirect": true,
+        "noticeUrls": [
+          "http://127.0.0.1:3215/api/public/payment/portone/webhook"
+        ]
+      },
+      "createdAt": "2026-04-24T03:31:28.526Z",
+      "lastVerificationSource": "webhook",
+      "lastSyncedAt": "2026-04-24T03:31:28.613Z",
+      "lastProviderSnapshot": {
+        "id": "ord-c814389f",
+        "status": "READY",
+        "amountTotal": 49000,
+        "paidAt": null
+      },
+      "lastVerificationError": null
+    },
+    {
+      "id": "ext-pay-ord-4cfd9606",
+      "orderId": "ord-4cfd9606",
+      "provider": "external_http",
+      "redirectUrl": "https://pay.example.test/session/ord-4cfd9606",
+      "providerState": "created",
+      "createdAt": "2026-04-24T03:31:19.773Z"
+    }
+  ],
+  "paymentEvents": [
+    {
+      "id": "pevt-5f3f0796",
+      "at": "2026-04-24T03:31:34.627Z",
+      "provider": "demo",
+      "eventType": "payment.completed",
+      "orderId": "ord-411f4c31",
+      "paymentSessionId": "pay-8a0d4641",
+      "paymentId": "ord-411f4c31",
+      "providerStatus": "captured",
+      "orderStatus": "paid",
+      "source": "demo_complete",
+      "payload": {
+        "provider": "demo"
+      }
+    },
+    {
+      "id": "pevt-c591b52b",
+      "at": "2026-04-24T03:31:34.617Z",
+      "provider": "demo",
+      "eventType": "checkout_session.created",
+      "orderId": "ord-411f4c31",
+      "paymentSessionId": "pay-8a0d4641",
+      "paymentId": "ord-411f4c31",
+      "providerStatus": "ready_for_demo_capture",
+      "orderStatus": "pending",
+      "source": "checkout_session",
+      "payload": {
+        "amount": 149000,
+        "plan": "Auto",
+        "provider": "demo"
+      }
+    },
+    {
+      "id": "pevt-1366024d",
+      "at": "2026-04-24T03:31:30.937Z",
+      "provider": "portone_v2",
+      "eventType": "payment.provider.confirmed",
+      "orderId": "ord-db0a5163",
+      "paymentSessionId": "pay-ord-db0a5163",
+      "paymentId": "ord-db0a5163",
+      "providerStatus": "captured",
+      "orderStatus": "paid",
+      "source": "webhook",
+      "payload": {
+        "providerStatusRaw": "PAID",
+        "paidAt": "2026-04-24T03:31:30.936Z"
+      }
+    },
+    {
+      "id": "pevt-c9c3133d",
+      "at": "2026-04-24T03:31:30.924Z",
+      "provider": "portone_v2",
+      "eventType": "payment.provider.confirmed",
+      "orderId": "ord-db0a5163",
+      "paymentSessionId": "pay-ord-db0a5163",
+      "paymentId": "ord-db0a5163",
+      "providerStatus": "captured",
+      "orderStatus": "paid",
+      "source": "client_complete",
+      "payload": {
+        "providerStatusRaw": "PAID",
+        "paidAt": "2026-04-24T03:31:30.923Z"
+      }
+    },
+    {
+      "id": "pevt-55860780",
+      "at": "2026-04-24T03:31:30.913Z",
+      "provider": "portone_v2",
+      "eventType": "checkout_session.created",
+      "orderId": "ord-db0a5163",
+      "paymentSessionId": "pay-ord-db0a5163",
+      "paymentId": "ord-db0a5163",
+      "providerStatus": "ready_for_payment",
+      "orderStatus": "pending",
+      "source": "checkout_session",
+      "payload": {
+        "amount": 49000,
+        "plan": "Basic",
+        "provider": "portone_v2"
+      }
+    },
+    {
+      "id": "pevt-489e982c",
+      "at": "2026-04-24T03:31:28.613Z",
+      "provider": "portone_v2",
+      "eventType": "payment.provider.pending",
+      "orderId": "ord-c814389f",
+      "paymentSessionId": "pay-ord-c814389f",
+      "paymentId": "ord-c814389f",
+      "providerStatus": "ready_for_payment",
+      "orderStatus": "pending",
+      "source": "webhook",
+      "payload": {
+        "providerStatusRaw": "READY"
+      }
+    },
+    {
+      "id": "pevt-012cb766",
+      "at": "2026-04-24T03:31:28.604Z",
+      "provider": "portone_v2",
+      "eventType": "payment.provider.pending",
+      "orderId": "ord-c814389f",
+      "paymentSessionId": "pay-ord-c814389f",
+      "paymentId": "ord-c814389f",
+      "providerStatus": "ready_for_payment",
+      "orderStatus": "pending",
+      "source": "client_complete",
+      "payload": {
+        "providerStatusRaw": "READY"
+      }
+    },
+    {
+      "id": "pevt-c9fa9e28",
+      "at": "2026-04-24T03:31:28.545Z",
+      "provider": "portone_v2",
+      "eventType": "checkout_session.created",
+      "orderId": "ord-c814389f",
+      "paymentSessionId": "pay-ord-c814389f",
+      "paymentId": "ord-c814389f",
+      "providerStatus": "ready_for_payment",
+      "orderStatus": "pending",
+      "source": "checkout_session",
+      "payload": {
+        "amount": 49000,
+        "plan": "Basic",
+        "provider": "portone_v2"
+      }
+    },
+    {
+      "id": "pevt-b3b1da61",
+      "at": "2026-04-24T03:31:19.773Z",
+      "provider": "external_http",
+      "eventType": "checkout_session.created",
+      "orderId": "ord-4cfd9606",
+      "paymentSessionId": "ext-pay-ord-4cfd9606",
+      "paymentId": "ord-4cfd9606",
+      "providerStatus": "created",
+      "orderStatus": "pending",
+      "source": "checkout_session",
+      "payload": {
+        "amount": 89000,
+        "plan": "Pro",
+        "provider": "external_http"
+      }
+    }
+  ],
+  "webhookInbox": [
+    {
+      "id": "wh-14bbdbfa",
+      "provider": "portone_v2",
+      "eventType": "Transaction.Paid",
+      "receivedAt": "2026-04-24T03:31:31.009Z",
+      "paymentId": "ord-db0a5163",
+      "signaturePresent": true,
+      "verified": false,
+      "verificationMode": "standard_webhooks_v1",
+      "status": "rejected",
+      "rawSha256": "daa58fd63af327e710ba755e35073848fb8a4d93694486b885a4c652d24904f1",
+      "orderId": null,
+      "reason": "webhook_signature_invalid",
+      "payload": {
+        "data": {
+          "paymentId": "ord-db0a5163"
+        },
+        "type": "Transaction.Paid"
+      }
+    },
+    {
+      "id": "wh-0c1549cd",
+      "provider": "portone_v2",
+      "eventType": "Transaction.Paid",
+      "receivedAt": "2026-04-24T03:31:30.935Z",
+      "paymentId": "ord-db0a5163",
+      "signaturePresent": true,
+      "verified": true,
+      "verificationMode": "standard_webhooks_v1",
+      "status": "processed",
+      "rawSha256": "daa58fd63af327e710ba755e35073848fb8a4d93694486b885a4c652d24904f1",
+      "orderId": "ord-db0a5163",
+      "reason": null,
+      "payload": {
+        "data": {
+          "paymentId": "ord-db0a5163"
+        },
+        "type": "Transaction.Paid"
+      }
+    },
+    {
+      "id": "wh-0882aab6",
+      "provider": "portone_v2",
+      "eventType": "payment.webhook",
+      "receivedAt": "2026-04-24T03:31:28.611Z",
+      "paymentId": "ord-c814389f",
+      "signaturePresent": false,
+      "verified": false,
+      "verificationMode": "provider_refetch",
+      "status": "processed",
+      "rawSha256": "97caf25ab9d5a62cf8b90e43c50fcb6e133e8871a2df02b4c0f812d9438b1a48",
+      "orderId": "ord-c814389f",
+      "reason": "webhook_secret_missing",
+      "payload": {
+        "data": {
+          "paymentId": "ord-c814389f"
+        }
+      }
+    }
+  ],
+  "adminUsers": [],
+  "adminRoleBindings": [],
+  "adminSessions": [],
+  "auditLogs": [
+    {
+      "id": "audit-45f81126",
+      "at": "2026-04-24T03:31:35.039Z",
+      "event": "admin.ops_report.created",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/ops-report/run",
+      "meta": {
+        "filePath": "/mnt/data/veridion_audit/runtime/reports/ops-report-2026-04-24T03-31-35-034Z.json"
+      }
+    },
+    {
+      "id": "audit-de21cada",
+      "at": "2026-04-24T03:31:35.016Z",
+      "event": "admin.settings.updated",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/settings",
+      "meta": {
+        "keys": [
+          "ctaAutopublishEnabled",
+          "legalWatchEnabled",
+          "autoFixMode",
+          "defaultJurisdiction",
+          "defaultAlertChannel",
+          "supportEmail"
+        ]
+      }
+    },
+    {
+      "id": "audit-80c852a3",
+      "at": "2026-04-24T03:31:35.011Z",
+      "event": "admin.library.uploaded",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/library/upload",
+      "meta": {
+        "id": "upload-bdd65933",
+        "filename": "1777001495011-hello.txt"
+      }
+    },
+    {
+      "id": "audit-af518427",
+      "at": "2026-04-24T03:31:35.003Z",
+      "event": "admin.library.posted",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/library/post",
+      "meta": {
+        "id": "lib-e6febdcc",
+        "title": "자료실 테스트"
+      }
+    },
+    {
+      "id": "audit-11e4d3e6",
+      "at": "2026-04-24T03:31:34.940Z",
+      "event": "admin.subscription.upserted",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/subscriptions/upsert",
+      "meta": {
+        "id": "sub-e577c333",
+        "plan": "Pro",
+        "status": "active"
+      }
+    },
+    {
+      "id": "audit-888419ff",
+      "at": "2026-04-24T03:31:34.928Z",
+      "event": "admin.order.advanced",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/orders/advance",
+      "meta": {
+        "id": "ord-411f4c31",
+        "stage": "completed"
+      }
+    },
+    {
+      "id": "audit-3a8215c5",
+      "at": "2026-04-24T03:31:34.922Z",
+      "event": "admin.order.status_updated",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/orders/status",
+      "meta": {
+        "id": "ord-411f4c31",
+        "status": "paid"
+      }
+    },
+    {
+      "id": "audit-de28f86d",
+      "at": "2026-04-24T03:31:34.915Z",
+      "event": "admin.publication.cta_generated",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/publications/cta-generate",
+      "meta": {
+        "id": "pub-49b6f0dc",
+        "requestId": "scan-14eb08e3"
+      }
+    },
+    {
+      "id": "audit-34a3617d",
+      "at": "2026-04-24T03:31:34.909Z",
+      "event": "admin.system_item.created",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/system-items",
+      "meta": {
+        "id": "board-4e235e5a",
+        "type": "board"
+      }
+    },
+    {
+      "id": "audit-e812ecbc",
+      "at": "2026-04-24T03:31:34.847Z",
+      "event": "admin.publication.publish_now",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/publications/publish-now",
+      "meta": {
+        "id": "pub-896b63a5",
+        "title": "테스트 발행"
+      }
+    },
+    {
+      "id": "audit-1c2dcfa0",
+      "at": "2026-04-24T03:31:34.833Z",
+      "event": "admin.auto_fix.rolled_back",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/auto-fix-jobs/rollback",
+      "meta": {
+        "id": "fix-f43ccff5",
+        "rollbackToken": "rollback-ecc56394"
+      }
+    },
+    {
+      "id": "audit-5982fa9f",
+      "at": "2026-04-24T03:31:34.828Z",
+      "event": "admin.auto_fix.approved",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/auto-fix-jobs/approve",
+      "meta": {
+        "id": "fix-f43ccff5",
+        "rollbackToken": "rollback-ecc56394"
+      }
+    },
+    {
+      "id": "audit-c3adfbab",
+      "at": "2026-04-24T03:31:34.816Z",
+      "event": "admin.rule.upserted",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/rules",
+      "meta": {
+        "code": "CONTACT-CHANNEL"
+      }
+    },
+    {
+      "id": "audit-77d6e6b7",
+      "at": "2026-04-24T03:31:34.720Z",
+      "event": "admin.auth.succeeded",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/session",
+      "meta": {
+        "mode": "shared_key"
+      }
+    },
+    {
+      "id": "audit-4c089069",
+      "at": "2026-04-24T03:31:34.627Z",
+      "event": "public.payment.completed",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/public/payment/complete",
+      "meta": {
+        "orderId": "ord-411f4c31",
+        "provider": "demo"
+      }
+    },
+    {
+      "id": "audit-11b79b2d",
+      "at": "2026-04-24T03:31:34.617Z",
+      "event": "public.checkout.created",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/public/checkout-session",
+      "meta": {
+        "orderId": "ord-411f4c31",
+        "provider": "demo",
+        "siteId": "site-64eb760c",
+        "plan": "Auto"
+      }
+    },
+    {
+      "id": "audit-d9e4022a",
+      "at": "2026-04-24T03:31:34.537Z",
+      "event": "public.scan.created",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/public/scan",
+      "meta": {
+        "requestId": "scan-51e5cee5",
+        "target": "https://example.com",
+        "siteId": "site-64eb760c",
+        "provider": "builtin"
+      }
+    },
+    {
+      "id": "audit-5c075be1",
+      "at": "2026-04-24T03:31:34.518Z",
+      "event": "public.scan.created",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/public/scan",
+      "meta": {
+        "requestId": "scan-14eb08e3",
+        "target": "https://example.com",
+        "siteId": "site-64eb760c",
+        "provider": "builtin"
+      }
+    },
+    {
+      "id": "audit-e16f30c1",
+      "at": "2026-04-24T03:31:31.025Z",
+      "event": "admin.auth.succeeded",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/session",
+      "meta": {
+        "mode": "shared_key"
+      }
+    },
+    {
+      "id": "audit-88f70bd8",
+      "at": "2026-04-24T03:31:31.009Z",
+      "event": "public.payment.portone.webhook_rejected",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/public/payment/portone/webhook",
+      "meta": {
+        "paymentId": "ord-db0a5163",
+        "reason": "webhook_signature_invalid",
+        "verificationMode": "standard_webhooks_v1"
+      }
+    },
+    {
+      "id": "audit-d19a2932",
+      "at": "2026-04-24T03:31:30.938Z",
+      "event": "public.payment.portone.webhook_synced",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/public/payment/portone/webhook",
+      "meta": {
+        "orderId": "ord-db0a5163",
+        "paymentId": "ord-db0a5163",
+        "reason": null,
+        "verificationMode": "standard_webhooks_v1"
+      }
+    },
+    {
+      "id": "audit-2884a9b5",
+      "at": "2026-04-24T03:31:30.924Z",
+      "event": "public.payment.portone.completed",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/public/payment/complete",
+      "meta": {
+        "orderId": "ord-db0a5163",
+        "paymentId": "ord-db0a5163",
+        "reason": null
+      }
+    },
+    {
+      "id": "audit-2703405f",
+      "at": "2026-04-24T03:31:30.913Z",
+      "event": "public.checkout.created",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/public/checkout-session",
+      "meta": {
+        "orderId": "ord-db0a5163",
+        "provider": "portone_v2",
+        "siteId": null,
+        "plan": "Basic"
+      }
+    },
+    {
+      "id": "audit-b3e5655f",
+      "at": "2026-04-24T03:31:28.613Z",
+      "event": "public.payment.portone.webhook_synced",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/public/payment/portone/webhook",
+      "meta": {
+        "orderId": "ord-c814389f",
+        "paymentId": "ord-c814389f",
+        "reason": "webhook_secret_missing",
+        "verificationMode": "provider_refetch"
+      }
+    },
+    {
+      "id": "audit-9cb39645",
+      "at": "2026-04-24T03:31:28.604Z",
+      "event": "public.payment.portone.completed",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/public/payment/complete",
+      "meta": {
+        "orderId": "ord-c814389f",
+        "paymentId": "ord-c814389f",
+        "reason": null
+      }
+    },
+    {
+      "id": "audit-ca608e55",
+      "at": "2026-04-24T03:31:28.545Z",
+      "event": "public.checkout.created",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/public/checkout-session",
+      "meta": {
+        "orderId": "ord-c814389f",
+        "provider": "portone_v2",
+        "siteId": null,
+        "plan": "Basic"
+      }
+    },
+    {
+      "id": "audit-b4f68da3",
+      "at": "2026-04-24T03:31:27.871Z",
+      "event": "admin.publication.publish_now",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/publications/publish-now",
+      "meta": {
+        "id": "pub-313caaa2",
+        "title": "보안상태 테스트"
+      }
+    },
+    {
+      "id": "audit-bcc019c8",
+      "at": "2026-04-24T03:31:27.865Z",
+      "event": "admin.ops.report",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/ops",
+      "meta": {
+        "filePath": "/mnt/data/veridion_audit/runtime/reports/ops-report-2026-04-24T03-31-27-861Z.json"
+      }
+    },
+    {
+      "id": "audit-de2f5131",
+      "at": "2026-04-24T03:31:27.845Z",
+      "event": "admin.auth.succeeded",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/session",
+      "meta": {
+        "mode": "shared_key"
+      }
+    },
+    {
+      "id": "audit-b5d4406b",
+      "at": "2026-04-24T03:31:27.253Z",
+      "event": "admin.auth.succeeded",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/session",
+      "meta": {
+        "mode": "shared_key"
+      }
+    },
+    {
+      "id": "audit-2dd11ab0",
+      "at": "2026-04-24T03:31:27.229Z",
+      "event": "public.scan.created",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/public/scan",
+      "meta": {
+        "requestId": "scan-1ce7dcd3",
+        "target": "https://example.com",
+        "siteId": "site-64eb760c",
+        "provider": "builtin"
+      }
+    },
+    {
+      "id": "audit-d0b7b948",
+      "at": "2026-04-24T03:31:27.222Z",
+      "event": "public.scan.created",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/public/scan",
+      "meta": {
+        "requestId": "scan-617cb56e",
+        "target": "https://example.com",
+        "siteId": "site-64eb760c",
+        "provider": "builtin"
+      }
+    },
+    {
+      "id": "audit-709ce0b0",
+      "at": "2026-04-24T03:31:27.216Z",
+      "event": "public.scan.created",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/public/scan",
+      "meta": {
+        "requestId": "scan-b7c1966e",
+        "target": "https://example.com",
+        "siteId": "site-64eb760c",
+        "provider": "builtin"
+      }
+    },
+    {
+      "id": "audit-c7ecfe0c",
+      "at": "2026-04-24T03:31:27.203Z",
+      "event": "public.scan.created",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/public/scan",
+      "meta": {
+        "requestId": "scan-c578ebc4",
+        "target": "https://example.com",
+        "siteId": "site-64eb760c",
+        "provider": "builtin"
+      }
+    },
+    {
+      "id": "audit-b910270b",
+      "at": "2026-04-24T03:31:24.631Z",
+      "event": "admin.auth.succeeded",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/session",
+      "meta": {
+        "mode": "shared_key"
+      }
+    },
+    {
+      "id": "audit-80ba3968",
+      "at": "2026-04-24T03:31:23.343Z",
+      "event": "admin.backup.restored",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/backups/restore",
+      "meta": {
+        "name": "db-2026-04-24T03-31-22-756Z.json",
+        "restoredFrom": "/mnt/data/veridion_audit/runtime/backups/db-2026-04-24T03-31-22-756Z.json"
+      }
+    },
+    {
+      "id": "audit-f58a372c",
+      "at": "2026-04-24T03:31:22.745Z",
+      "event": "admin.auth.succeeded",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/session",
+      "meta": {
+        "mode": "shared_key"
+      }
+    },
+    {
+      "id": "audit-e677fec3",
+      "at": "2026-04-24T03:31:20.426Z",
+      "event": "admin.auth.succeeded",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/session",
+      "meta": {
+        "mode": "shared_key"
+      }
+    },
+    {
+      "id": "audit-b3d0748a",
+      "at": "2026-04-24T03:31:19.773Z",
+      "event": "public.checkout.created",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/public/checkout-session",
+      "meta": {
+        "orderId": "ord-4cfd9606",
+        "provider": "external_http",
+        "siteId": "site-faab53ac",
+        "plan": "Pro"
+      }
+    },
+    {
+      "id": "audit-de6aa635",
+      "at": "2026-04-24T03:31:19.762Z",
+      "event": "public.scan.created",
+      "ip": "::ffff:127.0.0.1",
+      "method": "POST",
+      "path": "/api/public/scan",
+      "meta": {
+        "requestId": "scan-external-001",
+        "target": "https://ext-shop.example",
+        "siteId": "site-faab53ac",
+        "provider": "external_http"
+      }
+    }
+  ]
+}
