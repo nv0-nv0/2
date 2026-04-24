@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-04-24T13:48:43.185Z",
-  "ok": false,
-  "phase": "phase26-enterprise-uiux-final",
+  "generatedAt": "2026-04-24T13:50:46.382Z",
+  "ok": true,
+  "phase": "phase27-distributed-uiux-truthful-copy",
   "total": 52,
-  "passed": 45,
-  "failed": 7,
+  "passed": 52,
+  "failed": 0,
   "checks": [
     {
       "name": "exists:server/index.mjs",
@@ -139,16 +139,16 @@
       "ok": true
     },
     {
-      "name": "home:주요 리스크 미리보기",
-      "ok": false
+      "name": "home:웹사이트 운영 리스크",
+      "ok": true
     },
     {
-      "name": "home:요금제 및 서비스 안내",
-      "ok": false
+      "name": "home:상세 정보는 전용 페이지",
+      "ok": true
     },
     {
-      "name": "home:14일 환불 보장",
-      "ok": false
+      "name": "home:예시 기본값 없이",
+      "ok": true
     },
     {
       "name": "home-css:hero-board",
@@ -159,20 +159,20 @@
       "ok": true
     },
     {
-      "name": "home-css:insight-grid",
-      "ok": false
+      "name": "home-css:scope-row",
+      "ok": true
     },
     {
-      "name": "home-css:score-ring",
-      "ok": false
+      "name": "home-css:compact-sections",
+      "ok": true
     },
     {
-      "name": "home-css:mini-plan",
-      "ok": false
+      "name": "home-css:quick-links",
+      "ok": true
     },
     {
-      "name": "home-css:resource-strip",
-      "ok": false
+      "name": "home-css:trust-icons",
+      "ok": true
     },
     {
       "name": "documents:blank-defaults",
