@@ -19,3 +19,4 @@ function walk(dir){
 for (const rel of dirs) walk(path.join(ROOT, rel));
 console.log(JSON.stringify({ ok: failures.length === 0, checkedCount, failures }, null, 2));
 process.exit(failures.length ? 1 : 0);
+process.exit(0);

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-24T04:34:44.827Z",
+  "generatedAt": "2026-04-24T11:50:20.469Z",
   "ok": true,
   "gate": "commercial-launch-ci-strict",
   "results": [
@@ -14,8 +14,8 @@
       "ok": true,
       "code": 0,
       "signal": null,
-      "durationMs": 773,
-      "stdout": "> nv0-veridion-cleanroom@0.1.0 check:syntax\n> node scripts/check-source-syntax.mjs\n\n{\n  \"ok\": true,\n  \"checkedCount\": 72,\n  \"failures\": []\n}",
+      "durationMs": 879,
+      "stdout": "> nv0-veridion-cleanroom@0.1.0 check:syntax\n> node scripts/check-source-syntax.mjs\n\n{\n  \"ok\": true,\n  \"checkedCount\": 75,\n  \"failures\": []\n}",
       "stderr": ""
     },
     {
@@ -29,8 +29,8 @@
       "ok": true,
       "code": 0,
       "signal": null,
-      "durationMs": 1208,
-      "stdout": "> nv0-veridion-cleanroom@0.1.0 validate:commercial\n> node scripts/validate-commercial-release.mjs\n\n{\n  \"ok\": true,\n  \"checkedAt\": \"2026-04-24T04:34:15.732Z\",\n  \"commercialReleaseGuards\": 10,\n  \"legalPages\": 4,\n  \"businessProfile\": true\n}",
+      "durationMs": 306,
+      "stdout": "> nv0-veridion-cleanroom@0.1.0 validate:commercial\n> node scripts/validate-commercial-release.mjs\n\n{\n  \"ok\": true,\n  \"checkedAt\": \"2026-04-24T11:50:19.467Z\",\n  \"commercialReleaseGuards\": 10,\n  \"legalPages\": 4,\n  \"businessProfile\": true\n}",
       "stderr": ""
     },
     {
@@ -44,8 +44,8 @@
       "ok": true,
       "code": 0,
       "signal": null,
-      "durationMs": 1704,
-      "stdout": "> nv0-veridion-cleanroom@0.1.0 validate:pipeline\n> node scripts/validate-pipeline.mjs\n\n{\n  \"ok\": true,\n  \"checkedAt\": \"2026-04-24T04:34:17.428Z\",\n  \"requiredFiles\": 10\n}",
+      "durationMs": 296,
+      "stdout": "> nv0-veridion-cleanroom@0.1.0 validate:pipeline\n> node scripts/validate-pipeline.mjs\n\n{\n  \"ok\": true,\n  \"checkedAt\": \"2026-04-24T11:50:19.762Z\",\n  \"requiredFiles\": 10\n}",
       "stderr": ""
     },
     {
@@ -59,8 +59,8 @@
       "ok": true,
       "code": 0,
       "signal": null,
-      "durationMs": 1085,
-      "stdout": "> nv0-veridion-cleanroom@0.1.0 validate:commercial-runtime\n> node scripts/validate-commercial-runtime.mjs\n\n{\n  \"ok\": true,\n  \"checkedAt\": \"2026-04-24T04:34:18.432Z\",\n  \"platformTarget\": \"commercial\",\n  \"controls\": {\n    \"auth\": \"account_rbac\",\n    \"persistence\": \"postgres_primary\",\n    \"session\": \"redis\",\n    \"rateLimit\": \"redis\",\n    \"lock\": \"redis\",\n    \"storage\": \"s3\",\n    \"scan\": \"external_http\",\n    \"payment\": \"portone_v2\"\n  }\n}",
+      "durationMs": 324,
+      "stdout": "> nv0-veridion-cleanroom@0.1.0 validate:commercial-runtime\n> node scripts/validate-commercial-runtime.mjs\n\n{\n  \"ok\": true,\n  \"checkedAt\": \"2026-04-24T11:50:20.090Z\",\n  \"platformTarget\": \"commercial\",\n  \"controls\": {\n    \"auth\": \"account_rbac\",\n    \"persistence\": \"postgres_primary\",\n    \"session\": \"redis\",\n    \"rateLimit\": \"redis\",\n    \"lock\": \"redis\",\n    \"storage\": \"s3\",\n    \"scan\": \"external_http\",\n    \"payment\": \"portone_v2\"\n  }\n}",
       "stderr": ""
     },
     {
@@ -74,8 +74,8 @@
       "ok": true,
       "code": 0,
       "signal": null,
-      "durationMs": 26223,
-      "stdout": "> nv0-veridion-cleanroom@0.1.0 test:all\n> node scripts/test-all.mjs\n\nPASS check:syntax 1120ms\nPASS check:data 776ms\nPASS check:pages 1505ms\nPASS check:links 1812ms\nPASS check:env-examples 1199ms\nPASS check:handoff-docs 1210ms\nPASS check:no-debug-client 439ms\nPASS check:render-safety 384ms\nPASS test:providers 709ms\nPASS test:session 2395ms\nPASS test:runtime 1267ms\nPASS test:routes 2117ms\nPASS test:contracts 1601ms\nPASS test:security-stateful 2087ms\nPASS test:portone 1187ms\nPASS test:portone-events 806ms\nPASS validate:commercial 990ms\nPASS validate:pipeline 1020ms\nPASS smoke 995ms\nPASS test:e2e 1071ms\n{\n  \"ok\": true,\n  \"passed\": 20,\n  \"failed\": 0,\n  \"report\": \"/mnt/data/debug_phase14/docs/PHASE10_FULL_TEST_SUMMARY_20260424.json\"\n}",
+      "durationMs": 358,
+      "stdout": "> nv0-veridion-cleanroom@0.1.0 test:all\n> node scripts/test-all.mjs\n\nPASS check:syntax\nPASS check:data\nPASS check:pages\nPASS check:links\nPASS check:no-debug-client\nPASS check:render-safety\nPASS check:commercial-offers\nPASS validate:deploy\nPASS validate:commercial-runtime\n{\n  \"ok\": true,\n  \"passed\": 9,\n  \"failed\": 0,\n  \"report\": \"docs/PHASE20_FULL_TEST_SUMMARY_20260424.json\"\n}",
       "stderr": ""
     }
   ]

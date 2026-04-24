@@ -34,7 +34,7 @@ async function ensureServer() {
       NV0_ADMIN_KEY: process.env.NV0_ADMIN_KEY || 'smoke-key',
       NV0_TRUST_PROXY_HEADERS: process.env.NV0_TRUST_PROXY_HEADERS || 'true'
     },
-    stdio: 'inherit'
+    stdio: 'ignore'
   });
   for (let i = 0; i < 20; i += 1) {
     await wait(200);

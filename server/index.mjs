@@ -16,7 +16,7 @@ import { verifyPortOneWebhook } from './infrastructure/payments/portone-webhook-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, '..');
-const RUNTIME_DIR = path.join(ROOT, 'runtime');
+const RUNTIME_DIR = path.resolve(process.env.NV0_RUNTIME_DIR || path.join(ROOT, 'runtime'));
 const DATA_DIR = path.join(RUNTIME_DIR, 'data');
 const UPLOADS_DIR = path.join(RUNTIME_DIR, 'uploads');
 const BACKUPS_DIR = path.join(RUNTIME_DIR, 'backups');
@@ -542,12 +542,12 @@ async function serveStaticRoot(req, res, rootDir, prefix = '') {
 }
 
 function pageMap(urlPath) {
-  if (PLATFORM.commercial && ['/demo', '/products/veridion/demo'].includes(urlPath)) return null;
   const m = {
     '/': [PUBLIC_DIR, 'home'],
     '/guides': [PUBLIC_DIR, 'guides'],
     '/board': [PUBLIC_DIR, 'board'],
     '/documents': [PUBLIC_DIR, 'documents'],
+    '/solutions': [PUBLIC_DIR, 'solutions'],
     '/demo': [PUBLIC_DIR, 'demo'],
     '/products/veridion/demo': [PUBLIC_DIR, 'veridion-demo'],
     '/plans': [PUBLIC_DIR, 'plans'],
@@ -577,11 +577,12 @@ function publicTopMenuHtml() {
   return `<nav class="site-topbar" aria-label="주요 메뉴">
     <a class="brand" href="/">NV0 Veridion</a>
     <div class="site-menu">
-      <a href="/products/veridion/demo">무료진단</a>
-      <a href="/plans">요금제</a>
-      <a href="/board">CTA 게시판</a>
-      <a href="/portal">고객포털</a>
-      <a href="/guides">가이드</a>
+      <a href="/products/veridion/demo" class="cta">2분 무료 진단</a>
+      <a href="/plans">상품·요금</a>
+      <a href="/solutions">수익 모델</a>
+      <a href="/board">인사이트</a>
+      <a href="/documents">문서 생성</a>
+      <a href="/portal">고객 포털</a>
       <a href="/business-info">문의</a>
     </div>
   </nav>`;
@@ -616,7 +617,7 @@ function adminNav() {
   return `<nav class="admin-nav">
   <a href="/admin/console">허브</a>
   <a href="/admin/console/orders">구독·사이트</a>
-  <a href="/admin/console/publications">CTA 발행</a>
+  <a href="/admin/console/publications">인사이트 발행</a>
   <a href="/admin/console/library">자료실</a>
   <a href="/admin/console/settings">설정</a>
   <a href="/admin/console/diagnostics">운영 진단</a>
@@ -885,7 +886,7 @@ function normalizeCheckoutPayload(body = {}) {
     buyerEmail: asTrimmedString(body.buyerEmail, { field: 'buyerEmail', max: 120, pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/i }),
     siteId: asTrimmedString(body.siteId, { field: 'siteId', max: 64 }),
     domain: asTrimmedString(body.domain, { field: 'domain', max: 255 }),
-    plan: asTrimmedString(body.plan, { field: 'plan', required: true, enumValues: ['Basic', 'Pro', 'Auto'] }),
+    plan: asTrimmedString(body.plan, { field: 'plan', required: true, enumValues: ['Report','FixPack','TemplatePack','IndustryGuide','Basic','Pro','Auto','Certified','Agency'] }),
     payMethod: asTrimmedString(body.payMethod, { field: 'payMethod', max: 40 })
   };
 }
@@ -1103,17 +1104,31 @@ function pickRecommendedPlan(riskScore) {
   return 'Basic';
 }
 
-function buildPlanCatalog(recommendedPlan = 'Pro') {
-  const rows = [
-    { code: 'Free', monthlyPrice: 0, title: 'Free', summary: '데모 진단: 위험도와 핵심 3개 항목만 확인', features: ['위험도 점수', '상위 위험 3개 요약', '상세 근거/자동수정 잠금'] },
-    { code: 'Basic', monthlyPrice: 49000, title: 'Basic', summary: '상세 리포트 해금과 월 정기 스캔', features: ['전체 탐지 항목', '페이지별 조치 체크리스트', '월 1회 정기 스캔'] },
-    { code: 'Pro', monthlyPrice: 89000, title: 'Pro', summary: '맞춤 지침과 법령 변경 알림까지 운영', features: ['Basic 전체 포함', '사이트 맞춤 정책 문안', '법령 변경 알림/우선순위'] },
-    { code: 'Auto', monthlyPrice: 149000, title: 'Auto', summary: '승인형 자동수정과 CTA 자동발행까지 자동화', features: ['Pro 전체 포함', '승인형 자동수정', '2시간 주기 CTA 자동발행'] }
-  ];
-  return rows.map(item => ({ ...item, recommended: item.code === recommendedPlan }));
+function buildCommercialOfferCatalog() {
+  const commonAssurance = ['법률 자문이 아닌 운영 리스크 점검 산출물로 명시', '결제 후 고객 포털에서 산출물 확인', 'ct@nv0.kr 운영 문의 연결'];
+  return [
+    { code: 'Report', group: 'one_time', title: '정밀 PDF 리포트', price: 9900, period: '1회', difficulty: '낮음', priority: 1, summary: '무료 진단 결과를 내부 공유용 정밀 리포트로 확장합니다. 위험 항목, 근거, 우선순위, 개선 순서를 한 번에 제공합니다.', targetCustomer: '쇼핑몰·랜딩페이지 운영자, 1인 사업자, 외주 제작 완료 후 검수 고객', deliverables: ['위험도 점수 해설', '전체 탐지 근거', '페이지별 우선 조치 목록', '내부 공유용 리포트 본문', '재점검 체크리스트'], operations: ['결제 완료 시 포털 산출물 자동 생성', '스캔 이력이 없으면 일반 리포트 템플릿 제공', ...commonAssurance], kpi: ['무료 진단 후 1회성 결제 전환율', '리포트 구매 후 Pro 전환율'], cta: 'PDF 리포트 구매' },
+    { code: 'FixPack', group: 'one_time', title: '맞춤 수정 문구안', price: 29000, period: '1회', difficulty: '낮음', priority: 2, summary: '탐지 항목별로 사이트에 바로 반영 가능한 고지·약관·환불·광고 문구 초안을 제공합니다.', targetCustomer: '개발자 없이 문구부터 고쳐야 하는 소상공인·마케터', deliverables: ['푸터 사업자 고지 문안', '환불·교환 안내 문구', '개인정보/약관 노출 가이드', '광고 표현 리스크 완화안', '수정 전/후 예시'], operations: ['결제 완료 시 우선순위 5개 문구안 자동 생성', '고위험 표현은 검토 필요 문구로 표시', ...commonAssurance], kpi: ['리포트 구매 후 FixPack 업셀률', '수정안 다운로드율'], cta: '수정 문구안 받기' },
+    { code: 'TemplatePack', group: 'one_time', title: '법률 문서 템플릿 팩', price: 19000, period: '1회', difficulty: '낮음', priority: 3, summary: '이용약관, 개인정보처리방침, 환불 정책 기본 템플릿을 묶어 제공합니다.', targetCustomer: '신규 사이트 오픈 전 필수 문서가 필요한 운영자', deliverables: ['이용약관 템플릿', '개인정보처리방침 템플릿', '환불·배송·교환 정책', '필수 고지 체크리스트', '정기결제 고지 문구'], operations: ['문서 생성 화면과 연동', '사업자 정보 기반 기본값 자동 반영', ...commonAssurance], kpi: ['문서 생성 후 템플릿 구매율', '템플릿 구매 후 정기 모니터링 전환율'], cta: '템플릿 팩 구매' },
+    { code: 'IndustryGuide', group: 'one_time', title: '업종별 규제 가이드', price: 39000, period: '1회', difficulty: '낮음', priority: 4, summary: '쇼핑몰·건기식·화장품·교육·의료 광고 등 업종별 표현 리스크와 필수 고지를 정리합니다.', targetCustomer: '광고 문구와 상세페이지 표현 리스크가 큰 업종 운영자', deliverables: ['업종별 금지·주의 표현', '필수 고지 위치', '상세페이지 체크리스트', '광고 문구 점검표', '사전 검수 기준'], operations: ['스캔 결과의 업종 추정값 기반 추천', '업종 미확정 시 공통 이커머스 가이드 제공', ...commonAssurance], kpi: ['업종별 랜딩 유입 전환율', '가이드 구매 후 FixPack 전환율'], cta: '업종 가이드 받기' },
+    { code: 'Basic', group: 'subscription', title: 'Basic 모니터링', price: 49000, period: '월', difficulty: '낮음', priority: 5, summary: '소규모 사이트의 월 1회 리스크 재점검과 기본 이력 관리를 제공합니다.', targetCustomer: '월 1회 정기 점검만 필요한 소규모 운영자', deliverables: ['월 1회 재점검', '전체 탐지 항목 해금', '기본 정책 초안', '이력 저장', '이메일 알림'], operations: ['구독 결제 후 사이트 이력과 포털 권한 활성화', '월간 점검 알림 문구 제공', ...commonAssurance], kpi: ['무료 진단 후 구독 전환율', '월 유지율'], cta: 'Basic 시작' },
+    { code: 'Pro', group: 'subscription', title: 'Pro 운영 개선', price: 89000, period: '월', difficulty: '중하', priority: 6, summary: '정밀 리포트, 맞춤 수정 문구안, 법령 변경 알림을 포함한 추천 플랜입니다.', targetCustomer: '사이트 매출이 발생하고 있고 반복 개선이 필요한 운영자', deliverables: ['Basic 전체 포함', '정밀 리포트 포함', '맞춤 수정 문구안', '법령 변경 알림', '재점검 및 개선 추적'], operations: ['결제 완료 후 Pro 권한과 산출물 자동 생성', '포털에 다음 조치 3개 우선 노출', ...commonAssurance], kpi: ['추천 플랜 선택률', '고객 포털 재방문율'], cta: 'Pro 시작' },
+    { code: 'Auto', group: 'subscription', title: 'Auto 자동화', price: 149000, period: '월', difficulty: '중하', priority: 7, summary: '반복 점검과 CTA 인사이트 자동발행까지 운영 부담을 줄입니다.', targetCustomer: '여러 캠페인·랜딩페이지를 지속 운영하는 팀', deliverables: ['Pro 전체 포함', '2시간 주기 CTA 자동발행', '승인형 자동수정 후보', '고위험 항목 우선 알림', '운영 대시보드'], operations: ['CTA 자동발행 스케줄과 설정 연동', '자동수정은 승인형으로 제한', ...commonAssurance], kpi: ['자동발행 게시글 전환율', '월간 활성 사이트 수'], cta: 'Auto 시작' },
+    { code: 'Certified', group: 'annual', title: 'Veridion Certified', price: 99000, period: '연', difficulty: '중하', priority: 8, summary: '점검 완료 사이트에 신뢰 인증 마크와 공개 인증 페이지를 제공합니다.', targetCustomer: '구매 전 신뢰 요소가 필요한 쇼핑몰·B2B 랜딩페이지', deliverables: ['인증 마크 스니펫', '공개 인증 페이지', '연 1회 재검토', '인증 만료일 표기', '마케팅 신뢰 요소'], operations: ['결제 완료 후 인증 후보 상태 생성', '최종 표기는 운영자 승인 후 사용하도록 안내', ...commonAssurance], kpi: ['인증 신청 수', '인증 마크 클릭률'], cta: '인증 신청' },
+    { code: 'Agency', group: 'b2b', title: '대행사 리포트 패키지', price: 199000, period: '월', difficulty: '중하', priority: 9, summary: '광고대행사·웹에이전시가 고객사 리스크 리포트를 반복 생성할 수 있는 패키지입니다.', targetCustomer: '고객사 사이트를 제작·운영하는 에이전시와 퍼포먼스 마케팅사', deliverables: ['고객사별 리포트', '화이트라벨 문구 영역', '월 10개 도메인 기준', 'CTA 게시판 자동발행', '대행사 전용 안내 문구'], operations: ['셀프서브 결제로 시작 가능하게 하되 화이트라벨은 별도 설정', '고객사 데이터 분리 원칙 명시', ...commonAssurance], kpi: ['대행사 문의/결제 수', '월 리포트 생성 수'], cta: '대행사 패키지 시작' }
+  ].sort((a, b) => a.priority - b.priority);
 }
+function getCommercialOffer(code) { return buildCommercialOfferCatalog().find(item => item.code === code) || null; }
 
+function buildPlanCatalog(recommendedPlan = 'Pro') {
+  const offers = buildCommercialOfferCatalog();
+  const free = { code: 'Free', monthlyPrice: 0, period: '무료', title: 'Free', group: 'free', summary: '체험용 무료 진단. 위험도와 상위 리스크만 간단히 확인합니다.', features: ['URL 1개 즉시 진단', '위험도 점수', '상위 위험 2개 요약', '상세 근거·페이지별 조치안 잠금', '일일 무료 3회 제한'], recommended: false };
+  const paid = offers.map(offer => ({ code: offer.code, monthlyPrice: offer.price, period: offer.period, title: offer.title, group: offer.group, summary: offer.summary, features: offer.deliverables, targetCustomer: offer.targetCustomer, difficulty: offer.difficulty, dailyPrice: offer.period === '월' ? Math.ceil(offer.price / 30) : 0, recommended: offer.code === recommendedPlan || (recommendedPlan === 'Pro' && offer.code === 'Pro') }));
+  return [free, ...paid];
+}
 function planPrice(plan) {
+  const offer = getCommercialOffer(plan);
+  if (offer) return offer.price;
   return buildPlanCatalog(plan).find(item => item.code === plan)?.monthlyPrice || 49000;
 }
 
@@ -1315,10 +1330,62 @@ async function callExternalPaymentSession(payload) {
   }
 }
 
+function buildFixCopyFromScan(scan) {
+  const findings = Array.isArray(scan?.detailFindings) ? scan.detailFindings.slice(0, 5) : [];
+  if (!findings.length) return [
+    { title: '푸터 사업자 정보', before: '사업자 정보 미노출 또는 위치 불명확', after: `${BUSINESS_PROFILE.tradeName} · 대표 ${BUSINESS_PROFILE.representative} · 고객지원 ${BUSINESS_PROFILE.contactEmail}` },
+    { title: '환불 안내', before: '환불 가능 기간과 제한 조건 미기재', after: '환불·교환 기준은 결제 전 고지하며, 상품 특성 및 관련 법령에 따라 제한될 수 있습니다.' },
+    { title: '개인정보 안내', before: '수집 목적과 보유 기간 불명확', after: '문의 응대 및 서비스 제공을 위해 필요한 최소한의 개인정보만 수집·이용합니다.' }
+  ];
+  return findings.map(item => ({ title: item.title, before: item.evidence || '페이지 내 근거 문구 확인 필요', after: item.recommendation || '필수 고지 문구를 명확한 위치에 추가하세요.', priority: item.priority || 'P2' }));
+}
+
+function buildIndustryGuide(industry = '일반 이커머스') {
+  const normalized = String(industry || '').trim() || '일반 이커머스';
+  const common = ['상품·서비스의 핵심 조건은 결제 전 확인 가능한 위치에 배치합니다.', '환불·교환·취소 제한은 버튼 주변 또는 결제 전 단계에 반복 노출합니다.', '후기·성과·효능 표현은 객관적 근거 또는 제한 문구와 함께 사용합니다.', '개인정보 수집 입력폼에는 수집 목적, 항목, 보유기간, 동의 여부를 명확히 표시합니다.'];
+  const vertical = normalized.includes('건강') || normalized.includes('의료') ? ['질병 예방·치료 효과를 직접 단정하는 표현은 고위험 문구로 분류합니다.', '개인 체험 후기는 일반적 효능처럼 오인되지 않도록 제한 문구를 병기합니다.'] : normalized.includes('교육') ? ['합격률·수익·성과 보장은 근거와 산정 기준을 함께 고지합니다.', '기간 한정 할인은 실제 기간과 조건을 명확히 표시합니다.'] : ['배송비, 추가 비용, 청약철회 제한 조건을 상품 상세와 결제 단계에 모두 표시합니다.', '할인율·정가·비교가 표시는 기준 가격의 산정 근거를 보관합니다.'];
+  return { industry: normalized, checklist: [...vertical, ...common] };
+}
+
+function buildCertificationSnippet(order) {
+  const domain = order.domain || BUSINESS_PROFILE.domain;
+  return `<a href="${BUSINESS_PROFILE.domain}/portal?orderId=${order.id}" rel="nofollow noopener" style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid #D0D5DD;border-radius:999px;font:600 13px system-ui;color:#101828;text-decoration:none;background:#fff">Veridion Certified · ${domain}</a>`;
+}
+
+function buildPurchasedAsset(db, order) {
+  const offer = getCommercialOffer(order.plan) || { title: order.plan, deliverables: [] };
+  const site = findSiteByAny(db, order.siteId, order.domain);
+  const scan = (db.scans || []).find(item => item.siteId === order.siteId) || (db.scans || [])[0] || null;
+  const industryGuide = buildIndustryGuide(scan?.industry || site?.industry || '일반 이커머스');
+  const base = { id: uid('asset'), orderId: order.id, siteId: order.siteId || null, domain: order.domain || site?.domain || null, plan: order.plan, productTitle: offer.title, status: 'ready', createdAt: nowIso(), supportEmail: BUSINESS_PROFILE.contactEmail, legalDisclaimer: '본 산출물은 웹사이트 운영 리스크 점검 및 문구 개선 참고 자료이며, 개별 사건에 대한 법률 자문이 아닙니다.' };
+  const reportSections = [
+    { title: '요약', body: scan ? `${scan.target || order.domain} 기준 위험도 ${scan.riskScore}점(${scan.riskLevel})입니다.` : '스캔 이력이 없어 공통 진단 리포트 형식으로 생성되었습니다.' },
+    { title: '우선 조치', body: (scan?.topFindings || ['필수 고지 위치 확인', '개인정보 처리방침 링크 확인', '환불·교환 정책 노출 확인']).join('\n') },
+    { title: '재점검 기준', body: '수정 후 동일 URL로 재진단하여 위험도와 항목 감소 여부를 확인하세요.' }
+  ];
+  if (order.plan === 'Report') return { ...base, type: 'report', title: '정밀 리스크 리포트', sections: reportSections, downloadable: true };
+  if (order.plan === 'FixPack') return { ...base, type: 'fix_pack', title: '맞춤 수정 문구안', fixes: buildFixCopyFromScan(scan), downloadable: true };
+  if (order.plan === 'TemplatePack') return { ...base, type: 'template_pack', title: '법률 문서 템플릿 팩', templates: buildPolicyDocumentPreview({}, db.settings || {}).documents, downloadable: true };
+  if (order.plan === 'IndustryGuide') return { ...base, type: 'industry_guide', title: `${industryGuide.industry} 규제 가이드`, guide: industryGuide, downloadable: true };
+  if (order.plan === 'Certified') return { ...base, type: 'certification', title: 'Veridion Certified 인증 후보', certificationStatus: 'pending_operator_review', badgeSnippet: buildCertificationSnippet(order), downloadable: false };
+  if (['Basic','Pro','Auto','Agency'].includes(order.plan)) return { ...base, type: 'subscription_entitlement', title: `${offer.title} 권한`, entitlement: { plan: order.plan, active: true, included: offer.deliverables || [], renewal: offer.period }, sections: reportSections, fixes: order.plan === 'Basic' ? [] : buildFixCopyFromScan(scan), autoPublishing: order.plan === 'Auto' || order.plan === 'Agency' };
+  return { ...base, type: 'generic', title: offer.title, sections: reportSections };
+}
+
+function ensureFulfillmentForOrder(db, order) {
+  db.purchasedAssets ||= [];
+  const existing = db.purchasedAssets.find(item => item.orderId === order.id);
+  if (existing) return existing;
+  const asset = buildPurchasedAsset(db, order);
+  db.purchasedAssets.unshift(asset);
+  db.purchasedAssets = db.purchasedAssets.slice(0, 500);
+  return asset;
+}
+
 async function createCheckoutOrder(db, payload = {}) {
   db.orders ||= [];
   db.paymentSessions ||= [];
-  const plan = ['Basic', 'Pro', 'Auto'].includes(payload.plan) ? payload.plan : 'Pro';
+  const plan = ['Report','FixPack','TemplatePack','IndustryGuide','Basic','Pro','Auto','Certified','Agency'].includes(payload.plan) ? payload.plan : 'Pro';
   const site = findSiteByAny(db, payload.siteId, payload.domain);
   const customer = String(payload.customer || payload.buyerName || '').trim() || '고객';
   const email = String(payload.email || payload.buyerEmail || '').trim();
@@ -1423,6 +1490,7 @@ function completeCheckoutOrder(db, orderId) {
       sub.activatedAt = nowIso();
     }
   }
+  ensureFulfillmentForOrder(db, order);
   recordPaymentStateEvent(db, {
     order,
     paymentSession,
@@ -2015,8 +2083,8 @@ function seedAutoFixJobs(db, site, scan) {
 
 function createCtaPublication(db, scan, options = {}) {
   const top = (scan.topFindings || []).slice(0, 2).join(', ') || '핵심 고지 리스크';
-  const title = options.title || `무료 점검: ${scan.industry || '온라인 사업'} 리스크 ${scan.riskScore}점`;
-  const body = options.body || `${scan.target || '등록 사이트'} 기준 ${scan.totalFindings || 0}개 항목이 감지되었습니다. 핵심: ${top}. 상세 근거·조치안·자동수정은 유료 플랜에서 제공합니다.`;
+  const title = options.title || `무료 진단 후 놓치기 쉬운 ${scan.industry || '온라인 사업'} 운영 리스크`;
+  const body = options.body || `${scan.target || '등록 사이트'} 기준 핵심 리스크가 확인되었습니다. 무료 진단은 상위 항목만 요약하고, 전체 근거·페이지별 조치안·정책 문안·자동수정은 유료 플랜에서 제공합니다. 지금 무료 진단으로 현재 상태를 확인하고 필요한 플랜을 선택하세요.`;
   const publication = {
     id: uid('pub'),
     title,
@@ -2101,6 +2169,10 @@ async function handleApi(req, res) {
     return json(req, res, 200, { ok: true, area: 'public', time: nowIso() });
   }
 
+  if (pathname === '/api/public/products' && req.method === 'GET') {
+    return json(req, res, 200, { ok: true, offers: buildCommercialOfferCatalog() });
+  }
+
   if (pathname === '/api/public/plans' && req.method === 'GET') {
     const db = await readDb();
     const requestedRiskScore = Number(url.searchParams.get('riskScore') || 0);
@@ -2144,6 +2216,24 @@ async function handleApi(req, res) {
     if (!order) return json(req, res, 404, { ok: false, error: '주문을 찾을 수 없습니다.' });
     const paymentSession = (db.paymentSessions || []).find(item => item.orderId === order.id) || null;
     return json(req, res, 200, { ok: true, order, paymentSession });
+  }
+
+  if (pathname === '/api/public/fulfillment' && req.method === 'GET') {
+    const db = await readDb();
+    const orderId = String(url.searchParams.get('orderId') || '').trim();
+    if (!orderId) return json(req, res, 400, { ok: false, error: 'orderId가 필요합니다.' });
+    const order = (db.orders || []).find(item => item.id === orderId);
+    if (!order) return json(req, res, 404, { ok: false, error: '주문을 찾을 수 없습니다.' });
+    const asset = order.status === 'paid' ? ensureFulfillmentForOrder(db, order) : null;
+    if (asset) await writeDb(db);
+    return json(req, res, 200, { ok: true, order, asset, locked: order.status !== 'paid' });
+  }
+
+  if (pathname === '/api/public/product-detail' && req.method === 'GET') {
+    const code = String(url.searchParams.get('code') || '').trim();
+    const offer = getCommercialOffer(code);
+    if (!offer) return json(req, res, 404, { ok: false, error: '상품을 찾을 수 없습니다.' });
+    return json(req, res, 200, { ok: true, offer });
   }
 
   if (pathname === '/api/public/guidance' && req.method === 'GET') {
@@ -2907,7 +2997,7 @@ ensureRuntime().then(async () => {
   await runCtaAutopublish('startup');
   await writeDb(db);
   server.listen(PORT, HOST, () => {
-    console.log(`nv0 cleanroom server listening on http://${HOST}:${PORT}`);
+    console.log(`nv0 cleanroom server listening on http://: target= payment=`);
   });
 }).catch((error) => {
   console.error('server startup failed', error);

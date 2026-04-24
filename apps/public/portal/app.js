@@ -8,6 +8,17 @@ function getSavedScan() {
   try { return JSON.parse(localStorage.getItem('veridion:lastScan') || 'null'); } catch { return null; }
 }
 
+function renderAsset(asset) {
+  if (!asset) return '';
+  const sections = renderList(asset.sections || [], '', item => `<div class="result-card"><strong>${escapeHtml(item.title)}</strong><pre class="pre-wrap">${escapeHtml(item.body || '')}</pre></div>`);
+  const fixes = renderList(asset.fixes || [], '', item => `<div class="result-card"><strong>${escapeHtml(item.title)}</strong><div class="muted">Before</div><p>${escapeHtml(item.before || '')}</p><div class="muted">After</div><p>${escapeHtml(item.after || '')}</p></div>`);
+  const templates = renderList(asset.templates || [], '', item => `<div class="result-card"><strong>${escapeHtml(item.title)}</strong><pre class="pre-wrap">${escapeHtml(item.content || '')}</pre></div>`);
+  const guide = asset.guide ? `<div class="result-card"><strong>${escapeHtml(asset.guide.industry)} 체크리스트</strong><ul class="result-list">${renderList(asset.guide.checklist || [], '', item => `<li>${escapeHtml(item)}</li>`)}</ul></div>` : '';
+  const badge = asset.badgeSnippet ? `<div class="result-card"><strong>인증 마크 스니펫</strong><pre class="pre-wrap">${escapeHtml(asset.badgeSnippet)}</pre></div>` : '';
+  const entitlement = asset.entitlement ? `<div class="result-card"><strong>활성 권한</strong><ul class="result-list">${renderList(asset.entitlement.included || [], '', item => `<li>${escapeHtml(item)}</li>`)}</ul></div>` : '';
+  return `<div class="card stack"><div class="meta-row"><strong>${escapeHtml(asset.title || asset.productTitle || '구매 산출물')}</strong><span class="pill green">${escapeHtml(asset.status || 'ready')}</span></div><div class="notice muted">${escapeHtml(asset.legalDisclaimer || '')}</div>${sections}${fixes}${templates}${guide}${badge}${entitlement}</div>`;
+}
+
 (async()=>{
   try {
     const url = new URL(location.href);
@@ -16,9 +27,17 @@ function getSavedScan() {
     const res = await fetch(`/api/public/portal-summary?${url.searchParams.toString()}`);
     const data = await res.json();
     const summary = data.summary;
+    let fulfillment = null;
+    const orderId = url.searchParams.get('orderId') || summary.order?.id || '';
+    if (orderId) {
+      const fulfillRes = await fetch(`/api/public/fulfillment?orderId=${encodeURIComponent(orderId)}`);
+      if (fulfillRes.ok) fulfillment = await fulfillRes.json();
+    }
     state.textContent = summary.site ? `${summary.site.domain} · 최근 위험도 ${summary.site.latestRiskScore}점` : `공지 ${summary.boards.length}건 · 법령 업데이트 ${summary.legalUpdates.length}건`;
     primary.innerHTML = `
       ${summary.order ? `<div class="card stack"><strong>최근 주문</strong><div>${escapeHtml(summary.order.id)}</div><div class="muted">${escapeHtml(summary.order.plan)} · ${escapeHtml(summary.order.status)}</div></div>` : ''}
+      ${fulfillment?.locked ? `<div class="card stack"><strong>산출물 잠금</strong><p class="muted">결제 완료 후 리포트·수정안·템플릿 등 구매 산출물이 표시됩니다.</p></div>` : ''}
+      ${renderAsset(fulfillment?.asset)}
       ${summary.site ? `<div class="card stack"><strong>등록 사이트</strong><div>${escapeHtml(summary.site.domain)}</div><div class="muted">${escapeHtml(summary.site.latestRiskLevel)} · 예상 최대 ${formatWon(summary.site.latestEstimatedMaxPenalty || 0)}원</div></div>` : ''}
       ${summary.subscription ? `<div class="card stack"><strong>구독 상태</strong><div>${escapeHtml(summary.subscription.plan)}</div><div class="muted">${escapeHtml(summary.subscription.status)} · 월 ${formatWon(summary.subscription.monthlyPrice)}원</div></div>` : ''}
       ${summary.latestScan ? `<div class="card stack"><strong>최근 스캔</strong><div>${escapeHtml(summary.latestScan.totalFindings ?? 0)}개 항목 · ${escapeHtml(summary.latestScan.riskScore ?? '-')}점</div><div class="muted">${escapeHtml(summary.latestScan.siteProfile?.industry || summary.latestScan.industry)} · ${escapeHtml(summary.latestScan.siteProfile?.siteType || '-')} · ${escapeHtml((summary.latestScan.topFindings || []).join(' / '))}</div></div>` : ''}

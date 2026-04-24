@@ -1,47 +1,40 @@
 import { mountTurnstile } from '/shared/turnstile.js';
 import { escapeHtml, formatWon, renderList } from '/shared/html.js';
-
 const state = document.getElementById('demoState');
 const result = document.getElementById('demoResult');
+const badge = document.getElementById('freeUsageBadge');
 const guard = await mountTurnstile({ containerId: 'turnstileBox', tokenInputId: 'turnstileToken', noticeId: 'turnstileState' });
-
+const usageKey = `veridion:freeUsage:${new Date().toISOString().slice(0,10)}`;
+function getUsage(){ return Number(localStorage.getItem(usageKey) || '0'); }
+function setUsage(n){ localStorage.setItem(usageKey, String(n)); updateBadge(); }
+function updateBadge(){ const left=Math.max(0,3-getUsage()); if(badge) badge.textContent=`오늘 남은 무료 진단 ${left}회`; }
 function saveScan(scan) { localStorage.setItem('veridion:lastScan', JSON.stringify(scan)); }
-function setNextLinks(scan) {
-  document.querySelectorAll('a[href="/plans"]').forEach(a => a.href = `/plans?siteId=${encodeURIComponent(scan.siteId)}&riskScore=${encodeURIComponent(scan.riskScore)}`);
-  document.querySelectorAll('a[href="/checkout"]').forEach(a => a.href = `/checkout?siteId=${encodeURIComponent(scan.siteId)}&plan=${encodeURIComponent(scan.recommendedPlan)}`);
-  document.querySelectorAll('a[href="/portal"]').forEach(a => a.href = `/portal?siteId=${encodeURIComponent(scan.siteId)}`);
+function validEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+function renderPaywall(scan){
+  const hidden = (scan.detailFindings || scan.topFindings || []).slice(2, 7);
+  return `<div class="result-locked"><div class="locked-content"><ul class="result-list">${renderList(hidden, '<li>상세 근거 항목</li>', item => `<li>${escapeHtml(item.title || item)}</li>`)}</ul><p>페이지별 근거, 법령 기준, 조치 문안, 자동수정 후보가 이어집니다.</p></div><div class="lock-box"><div class="lock-card"><div class="pill">PRO에서 해금</div><h3>전체 진단 결과는 유료 플랜에서 확인하세요.</h3><p class="muted">무료는 상위 2개 요약만 제공합니다. 전체 근거와 실행 문안은 Pro 이상에서 제공됩니다.</p><div class="topnav"><a class="primary" href="/plans?riskScore=${encodeURIComponent(scan.riskScore || '')}&siteId=${encodeURIComponent(scan.siteId || '')}">전체 결과 보기</a><a class="secondary" href="/checkout?plan=${encodeURIComponent(scan.recommendedPlan || 'Pro')}&siteId=${encodeURIComponent(scan.siteId || '')}">PRO로 업그레이드</a></div></div></div></div>`;
 }
 function renderResult(scan) {
-  const topFindings = (scan.topFindings || []).slice(0, 3);
-  result.innerHTML = `
-    <div class="result-card stack">
-      <div class="meta-row"><strong>${escapeHtml(scan.target || '')}</strong><span class="pill">${escapeHtml(scan.riskLevel || '-')}</span></div>
-      <div class="grid cols-2">
-        <div><div class="muted">위험도</div><div class="kpi">${escapeHtml(scan.riskScore ?? '-')}</div></div>
-        <div><div class="muted">예상 최대 과태료</div><div class="kpi">${formatWon(scan.estimatedMaxPenalty)}</div></div>
-      </div>
-      <div class="notice">무료 데모는 핵심 요약만 제공합니다. 전체 근거, 페이지별 조치안, 자동수정은 유료 플랜에서 해금됩니다.</div>
-      <strong>상위 위험 3개</strong>
-      <ul class="result-list">${renderList(topFindings, '<li>상위 위험 항목 없음</li>', item => `<li>${escapeHtml(item)}</li>`)}</ul>
-      <p>추천 플랜: <strong>${escapeHtml(scan.recommendedPlan || '-')}</strong></p>
-    </div>`;
+  const topFindings = (scan.topFindings || []).slice(0, 2);
+  result.innerHTML = `<div class="result-card stack compact-result"><div class="meta-row"><strong>${escapeHtml(scan.target || '')}</strong><span class="pill gold">${escapeHtml(scan.riskLevel || '-')}</span></div><div class="grid cols-2"><div><div class="muted">위험도</div><div class="kpi">${escapeHtml(scan.riskScore ?? '-')}</div></div><div><div class="muted">예상 최대 과태료</div><div class="kpi">${formatWon(scan.estimatedMaxPenalty)}</div></div></div><div class="notice">무료 진단은 핵심 요약만 제공합니다. 전체 근거, 페이지별 조치안, 정책 문안, 자동수정은 유료 플랜에서 제공됩니다.</div><strong>상위 위험 2개</strong><ul class="result-list">${renderList(topFindings, '<li>상위 위험 항목 없음</li>', item => `<li>${escapeHtml(item)}</li>`)}</ul><div class="upgrade-box"><strong>추천 플랜: ${escapeHtml(scan.recommendedPlan || 'Pro')}</strong><p class="muted">상세 리포트와 실행 문안이 필요하면 유료 플랜으로 이어서 진행하세요.</p><a class="btn primary" href="/plans?riskScore=${encodeURIComponent(scan.riskScore || '')}&siteId=${encodeURIComponent(scan.siteId || '')}">무료·유료 차이 보기</a></div></div>${renderPaywall(scan)}`;
 }
 async function runScan() {
+  const email = document.getElementById('leadEmail').value.trim();
   const target = document.getElementById('targetUrl').value.trim();
-  if (!/^https?:\/\//.test(target)) { state.textContent = '유효한 URL을 입력하세요.'; return; }
-  state.textContent = '스캔 요청 중...';
-  result.textContent = '로딩 중';
+  if (!validEmail(email)) { state.textContent = '결과 안내를 받을 이메일을 먼저 입력하세요.'; return; }
+  if (!/^https?:\/\//.test(target)) { state.textContent = 'https://로 시작하는 유효한 URL을 입력하세요.'; return; }
+  if (getUsage() >= 3) { state.innerHTML = '오늘 무료 이용 횟수를 모두 사용했습니다. <a href="/plans">PRO 플랜으로 계속 이용하세요.</a>'; result.innerHTML = '<div class="upgrade-box"><strong>무료 이용 한도 초과</strong><p class="muted">상세 진단과 반복 점검은 유료 플랜에서 이용할 수 있습니다.</p><a class="btn primary" href="/plans">플랜 보기</a></div>'; return; }
+  state.textContent = '진단을 실행하고 있습니다.';
+  result.innerHTML = '<div class="loading-steps"><div>사이트 접근성을 확인합니다.</div><div>필수 고지와 정책 요소를 점검합니다.</div><div>요약 결과를 정리합니다.</div></div>';
   try {
-    const res = await fetch('/api/public/scan', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ target, turnstileToken: guard.getToken() }) });
+    const res = await fetch('/api/public/scan', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ target, email, turnstileToken: guard.getToken() }) });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'scan failed');
-    saveScan(data.result || {}); setNextLinks(data.result || {});
-    state.textContent = `스캔 완료 · ${data.result?.totalFindings || 0}개 항목 감지`;
+    setUsage(getUsage()+1); saveScan(data.result || {});
+    state.textContent = '스캔 완료 · 무료 요약 결과가 준비되었습니다.';
     renderResult(data.result || {});
-  } catch (err) {
-    state.textContent = '실패: ' + err.message;
-    result.textContent = '재시도 가능'; guard.reset?.();
-  }
+  } catch (err) { state.textContent = '실패: ' + err.message; result.textContent = '재시도 가능'; guard.reset?.(); }
 }
+updateBadge();
 document.getElementById('scanBtn')?.addEventListener('click', runScan);
 document.getElementById('retryBtn')?.addEventListener('click', runScan);

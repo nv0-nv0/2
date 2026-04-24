@@ -17,7 +17,7 @@ const child = spawn(process.execPath, ['server/index.mjs'], {
     NODE_ENV: 'production',
     NV0_TARGET_FETCH_ENABLED: 'false'
   },
-  stdio: 'inherit'
+  stdio: 'ignore'
 });
 const wait = ms => new Promise(r => setTimeout(r, ms));
 async function waitForServer() {
@@ -268,11 +268,11 @@ try {
 
   x = await j('/api/admin/ops-report/run', { method:'POST', headers:{ 'content-type':'application/json', cookie, 'x-nv0-csrf': csrf }, body: JSON.stringify({}) });
   assert.equal(x.data.ok, true);
-  assert.ok(x.data.snapshot.filePath.includes('/runtime/reports/'));
+  assert.ok(x.data.snapshot.filePath.includes('/reports/'));
 
   x = await j('/api/admin/backups/run', { method:'POST', headers:{ 'content-type':'application/json', cookie, 'x-nv0-csrf': csrf }, body: JSON.stringify({}) });
   assert.equal(x.data.ok, true);
-  assert.ok(x.data.backup.dbTarget.includes('/runtime/backups/'));
+  assert.ok(x.data.backup.dbTarget.includes('/backups/'));
 
   let ops = await j('/api/admin/ops', { method:'POST', headers:{ 'content-type':'application/json', cookie, 'x-nv0-csrf': csrf }, body: JSON.stringify({ action:'backup' }) });
   assert.equal(ops.data.ok, true);
@@ -298,7 +298,8 @@ try {
   assert.equal(r.headers.get('location'), '/admin');
   process.stdout.write('E2E passed\n');
 } finally {
-  child.kill('SIGTERM');
+  child.kill('SIGKILL');
+  if (typeof child.unref === 'function') child.unref();
 }
 await new Promise(resolve => setTimeout(resolve, 100));
 process.exit(0);

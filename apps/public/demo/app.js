@@ -35,8 +35,8 @@ async function runScan() {
     state.textContent = '유효한 URL을 입력하세요.';
     return;
   }
-  state.textContent = '스캔 요청 중...';
-  result.textContent = '로딩 중';
+  state.textContent = '진단을 실행하고 있습니다.';
+  result.textContent = '결과를 정리하고 있습니다.';
   try {
     const res = await fetch('/api/public/scan', {
       method: 'POST',

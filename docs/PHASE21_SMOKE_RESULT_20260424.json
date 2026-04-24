@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "generatedAt": "2026-04-24T12:07:28+00:00",
+  "checks": {
+    "syntax": true,
+    "dataIntegrity": true,
+    "pageIntegrity": true,
+    "links": true,
+    "commercialOffers": true,
+    "runtimeClean": true,
+    "deployBundle": true,
+    "commercialRuntime": true,
+    "serverReadyz": true,
+    "productsApi": true,
+    "scanApi": true,
+    "checkoutSession": true,
+    "paymentComplete": true,
+    "fulfillment": true
+  }
+}

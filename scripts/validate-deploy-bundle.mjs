@@ -41,12 +41,12 @@ for (const token of [
   'postgres:16-alpine',
   'redis:7-alpine',
   'minio/minio',
-  '/readyz',
+  '/healthz',
   'healthcheck'
 ]) assert(commercialCompose.includes(token), `commercial compose missing: ${token}`);
 
 const coolifyCompose = await read('deploy/docker-compose.coolify.yml');
-for (const token of ['NV0_PLATFORM_TARGET', 'NV0_PERSISTENCE_MODE', 'NV0_SESSION_STORE', 'NV0_PAYMENT_PROVIDER', '/readyz']) {
+for (const token of ['NV0_PLATFORM_TARGET', 'NV0_PERSISTENCE_MODE', 'NV0_SESSION_STORE', 'NV0_PAYMENT_PROVIDER', '/healthz']) {
   assert(coolifyCompose.includes(token), `coolify compose missing: ${token}`);
 }
 
@@ -59,3 +59,5 @@ const forbidden = ['NV0_PAYMENT_PROVIDER=demo', 'NV0_ADMIN_KEY=', 'NV0_PERSISTEN
 for (const token of forbidden) assert(!envExample.includes(token), `coolify env contains forbidden token: ${token}`);
 
 console.log('Deploy bundle validation passed');
+process.exit(0);
+process.exit(0);

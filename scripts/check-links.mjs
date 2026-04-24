@@ -47,3 +47,4 @@ for (const m of adminNavMatch[1].matchAll(/href="([^"]+)"/g)) {
 }
 console.log(JSON.stringify({ ok: errors.length === 0, checkedCount: checked.length, checked, errors }, null, 2));
 if (errors.length) process.exit(1);
+process.exit(0);

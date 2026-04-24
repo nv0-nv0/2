@@ -1,6 +1,6 @@
 {
   "name": "nv0-veridion-cleanroom",
-  "version": "0.1.0",
+  "version": "0.1.1-phase24",
   "private": true,
   "type": "module",
   "scripts": {
@@ -42,6 +42,11 @@
     "test:all": "node scripts/test-all.mjs",
     "ci:strict": "node scripts/ci-strict.mjs",
     "validate:commercial-runtime": "node scripts/validate-commercial-runtime.mjs",
-    "validate:pipeline": "node scripts/validate-pipeline.mjs"
+    "validate:pipeline": "node scripts/validate-pipeline.mjs",
+    "check:commercial-offers": "node scripts/check-commercial-offers.mjs",
+    "check:runtime-clean": "node scripts/check-runtime-clean.mjs",
+    "check:full-flow": "node scripts/check-full-commercial-flow.mjs",
+    "pipeline:release": "node scripts/pipeline-release-gate.mjs",
+    "pipeline:final": "node scripts/final-commercial-gate.mjs"
   }
 }

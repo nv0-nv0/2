@@ -1,0 +1,1 @@
+const timer=document.getElementById('promoTimer');let left=2*60*60;function tick(){if(!timer)return;left=Math.max(0,left-1);const h=String(Math.floor(left/3600)).padStart(2,'0');const m=String(Math.floor((left%3600)/60)).padStart(2,'0');const s=String(left%60).padStart(2,'0');timer.textContent=`${h}:${m}:${s} 남음`;}tick();setInterval(tick,1000);

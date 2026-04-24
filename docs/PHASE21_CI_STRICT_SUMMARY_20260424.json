@@ -1,0 +1,34 @@
+{
+  "generatedAt": "2026-04-24T12:35:02.587Z",
+  "ok": true,
+  "gate": "phase21-ci-strict-no-error-masking",
+  "results": [
+    {
+      "name": "full-test-suite",
+      "ok": true,
+      "code": 0,
+      "signal": null,
+      "durationMs": 11922,
+      "stdout": "PASS check:syntax\nPASS check:data\nPASS check:pages\nPASS check:links\nPASS check:no-debug-client\nPASS check:render-safety\nPASS check:commercial-offers\nPASS check:runtime-clean\nPASS validate:deploy\nPASS validate:commercial-runtime\nPASS test:routes\nPASS test:e2e\nPASS test:contracts\nPASS test:security-stateful\nPASS check:full-commercial-flow\n{\n  \"ok\": true,\n  \"passed\": 15,\n  \"failed\": 0,\n  \"report\": \"docs/PHASE23_FULL_TEST_SUMMARY_20260424.json\",\n  \"isolatedRuntimeCleaned\": true\n}\n",
+      "stderr": ""
+    },
+    {
+      "name": "commercial-release-contract",
+      "ok": true,
+      "code": 0,
+      "signal": null,
+      "durationMs": 186,
+      "stdout": "{\n  \"ok\": true,\n  \"checkedAt\": \"2026-04-24T12:35:02.492Z\",\n  \"commercialReleaseGuards\": 10,\n  \"legalPages\": 4,\n  \"businessProfile\": true\n}\n",
+      "stderr": ""
+    },
+    {
+      "name": "pipeline-contract",
+      "ok": true,
+      "code": 0,
+      "signal": null,
+      "durationMs": 85,
+      "stdout": "{\n  \"ok\": true,\n  \"checkedAt\": \"2026-04-24T12:35:02.577Z\",\n  \"requiredFiles\": 11\n}\n",
+      "stderr": ""
+    }
+  ]
+}

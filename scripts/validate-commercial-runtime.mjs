@@ -36,3 +36,4 @@ console.log(JSON.stringify({
   }
 }, null, 2));
 process.exit(0);
+process.exit(0);

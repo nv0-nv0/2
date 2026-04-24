@@ -37,3 +37,4 @@ for (const abs of files) {
 const result = { ok: failures.length === 0, checkedCount: checked.length, checked, failures };
 console.log(JSON.stringify(result, null, 2));
 if (failures.length) process.exit(1);
+process.exit(0);

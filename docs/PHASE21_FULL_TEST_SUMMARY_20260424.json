@@ -1,0 +1,129 @@
+{
+  "generatedAt": "2026-04-24T12:31:20.680Z",
+  "ok": false,
+  "taskCount": 15,
+  "passed": 11,
+  "failed": 1,
+  "results": [
+    {
+      "name": "check:syntax",
+      "ok": true,
+      "code": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 515,
+      "stdout": "{\n  \"ok\": true,\n  \"checkedCount\": 77,\n  \"failures\": []\n}\n",
+      "stderr": ""
+    },
+    {
+      "name": "check:data",
+      "ok": true,
+      "code": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 411,
+      "stdout": "{\n  \"ok\": true,\n  \"checked\": [\n    {\n      \"file\": \"package.json\",\n      \"ok\": true\n    },\n    {\n      \"file\": \"runtime/data/db.json\",\n      \"ok\": true\n    },\n    {\n      \"file\": \"runtime/data/sessions.json\",\n      \"ok\": true\n    },\n    {\n      \"file\": \"docs/LOCAL_ACCEPTANCE_SUMMARY_20260423.json\",\n      \"ok\": true\n    },\n    {\n      \"file\": \"docs/RELEASE_MANIFEST_20260423.json\",\n      \"ok\": true\n    },\n    {\n      \"file\": \"docs/REMAINING_WORK_INVENTORY_20260423.json\",\n      \"ok\": true\n    },\n    {\n      \"file\": \"apps/public\",\n      \"ok\": true,\n      \"type\": \"dir\"\n    },\n    {\n      \"file\": \"apps/admin\",\n      \"ok\": true,\n      \"type\": \"dir\"\n    },\n    {\n      \"file\": \"server\",\n      \"ok\": true,\n      \"type\": \"dir\"\n    },\n    {\n      \"file\": \"shared\",\n      \"ok\": true,\n      \"type\": \"dir\"\n    },\n    {\n      \"file\": \"scripts\",\n      \"ok\": true,\n      \"type\": \"dir\"\n    },\n    {\n      \"file\": \"tests\",\n      \"ok\": true,\n      \"type\": \"dir\"\n    }\n  ],\n  \"errors\": []\n}\n",
+      "stderr": ""
+    },
+    {
+      "name": "check:pages",
+      "ok": true,
+      "code": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 618,
+      "stdout": "{\n  \"ok\": true,\n  \"mappedRouteCount\": 26,\n  \"checked\": [\n    {\n      \"route\": \"/\",\n      \"area\": \"public\",\n      \"slug\": \"home\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/guides\",\n      \"area\": \"public\",\n      \"slug\": \"guides\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/board\",\n      \"area\": \"public\",\n      \"slug\": \"board\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/documents\",\n      \"area\": \"public\",\n      \"slug\": \"documents\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/solutions\",\n      \"area\": \"public\",\n      \"slug\": \"solutions\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/demo\",\n      \"area\": \"public\",\n      \"slug\": \"demo\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/products/veridion/demo\",\n      \"area\": \"public\",\n      \"slug\": \"veridion-demo\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/plans\",\n      \"area\": \"public\",\n      \"slug\": \"plans\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/checkout\",\n      \"area\": \"public\",\n      \"slug\": \"checkout\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/portal\",\n      \"area\": \"public\",\n      \"slug\": \"portal\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/terms\",\n      \"area\": \"public\",\n      \"slug\": \"terms\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/privacy\",\n      \"area\": \"public\",\n      \"slug\": \"privacy\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/refund\",\n      \"area\": \"public\",\n      \"slug\": \"refund\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/business-info\",\n      \"area\": \"public\",\n      \"slug\": \"business-info\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/admin\",\n      \"area\": \"admin\",\n      \"slug\": \"gate\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/admin/console\",\n      \"area\": \"admin\",\n      \"slug\": \"console\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/admin/orders\",\n      \"area\": \"admin\",\n      \"slug\": \"orders\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/admin/publications\",\n      \"area\": \"admin\",\n      \"slug\": \"publications\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/admin/library\",\n      \"area\": \"admin\",\n      \"slug\": \"library\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/admin/settings\",\n      \"area\": \"admin\",\n      \"slug\": \"settings\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/admin/diagnostics\",\n      \"area\": \"admin\",\n      \"slug\": \"diagnostics\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/admin/console/orders\",\n      \"area\": \"admin\",\n      \"slug\": \"orders\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/admin/console/publications\",\n      \"area\": \"admin\",\n      \"slug\": \"publications\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/admin/console/library\",\n      \"area\": \"admin\",\n      \"slug\": \"library\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/admin/console/settings\",\n      \"area\": \"admin\",\n      \"slug\": \"settings\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/admin/console/diagnostics\",\n      \"area\": \"admin\",\n      \"slug\": \"diagnostics\",\n      \"ok\": true\n    }\n  ],\n  \"errors\": []\n}\n",
+      "stderr": ""
+    },
+    {
+      "name": "check:links",
+      "ok": true,
+      "code": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 372,
+      "stdout": "{\n  \"ok\": true,\n  \"checkedCount\": 85,\n  \"checked\": [\n    {\n      \"file\": \"apps/public/board/index.html\",\n      \"ref\": \"/shared/base.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/public/board/index.html\",\n      \"ref\": \"/apps/public/board/app.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/public/board/index.html\",\n      \"ref\": \"/products/veridion/demo\",\n      \"type\": \"route\"\n    },\n    {\n      \"file\": \"apps/public/board/index.html\",\n      \"ref\": \"/apps/public/board/app.js\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/public/business-info/index.html\",\n      \"ref\": \"/shared/base.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/public/business-info/index.html\",\n      \"ref\": \"/apps/public/business-info/app.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/public/business-info/index.html\",\n      \"ref\": \"/apps/public/business-info/app.js\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/public/checkout/index.html\",\n      \"ref\": \"/shared/base.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/public/checkout/index.html\",\n      \"ref\": \"/apps/public/checkout/app.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/public/checkout/index.html\",\n      \"ref\": \"/plans\",\n      \"type\": \"route\"\n    },\n    {\n      \"file\": \"apps/public/checkout/index.html\",\n      \"ref\": \"/portal\",\n      \"type\": \"route\"\n    },\n    {\n      \"file\": \"apps/public/checkout/index.html\",\n      \"ref\": \"/apps/public/checkout/app.js\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/public/demo/index.html\",\n      \"ref\": \"/shared/base.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/public/demo/index.html\",\n      \"ref\": \"/apps/public/demo/app.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/public/demo/index.html\",\n      \"ref\": \"/plans\",\n      \"type\": \"route\"\n    },\n    {\n      \"file\": \"apps/public/demo/index.html\",\n      \"ref\": \"/checkout\",\n      \"type\": \"route\"\n    },\n    {\n      \"file\": \"apps/public/demo/index.html\",\n      \"ref\": \"/apps/public/demo/app.js\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/public/documents/index.html\",\n      \"ref\": \"/shared/base.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/public/documents/index.html\",\n      \"ref\": \"/apps/public/documents/app.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/public/documents/index.html\",\n      \"ref\": \"/checkout?plan=TemplatePack\",\n      \"type\": \"route\"\n    },\n    {\n      \"file\": \"apps/public/documents/index.html\",\n      \"ref\": \"/checkout?plan=IndustryGuide\",\n      \"type\": \"route\"\n    },\n    {\n      \"file\": \"apps/public/documents/index.html\",\n      \"ref\": \"/apps/public/documents/app.js\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/public/guides/index.html\",\n      \"ref\": \"/shared/base.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/public/guides/index.html\",\n      \"ref\": \"/apps/public/guides/app.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/public/guides/index.html\",\n      \"ref\": \"/apps/public/guides/app.js\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/public/home/index.html\",\n      \"ref\": \"/shared/base.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/public/home/index.html\",\n      \"ref\": \"/apps/public/home/app.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/public/home/index.html\",\n      \"ref\": \"/products/veridion/demo\",\n      \"type\": \"route\"\n    },\n    {\n      \"file\": \"apps/public/home/index.html\",\n      \"ref\": \"/plans\",\n      \"type\": \"route\"\n    },\n    {\n      \"file\": \"apps/public/home/index.html\",\n      \"ref\": \"/board\",\n      \"type\": \"route\"\n    },\n    {\n      \"file\": \"apps/public/home/index.html\",\n      \"ref\": \"/products/veridion/demo\",\n      \"type\": \"route\"\n    },\n    {\n      \"file\": \"apps/public/home/index.html\",\n      \"ref\": \"/apps/public/home/app.js\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/public/plans/index.html\",\n      \"ref\": \"/shared/base.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/public/plans/index.html\",\n      \"ref\": \"/apps/public/plans/app.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/public/plans/index.html\",\n      \"ref\": \"/products/veridion/demo\",\n      \"type\": \"route\"\n    },\n    {\n      \"file\": \"apps/public/plans/index.html\",\n      \"ref\": \"/apps/public/plans/app.js\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/public/portal/index.html\",\n      \"ref\": \"/shared/base.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/public/portal/index.html\",\n      \"ref\": \"/apps/public/portal/app.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/public/portal/index.html\",\n      \"ref\": \"/apps/public/portal/app.js\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/public/privacy/index.html\",\n      \"ref\": \"/shared/base.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/public/privacy/index.html\",\n      \"ref\": \"/apps/public/privacy/app.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/public/privacy/index.html\",\n      \"ref\": \"/apps/public/privacy/app.js\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/public/refund/index.html\",\n      \"ref\": \"/shared/base.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/public/refund/index.html\",\n      \"ref\": \"/apps/public/refund/app.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/public/refund/index.html\",\n      \"ref\": \"/apps/public/refund/app.js\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/public/solutions/index.html\",\n      \"ref\": \"/shared/base.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/public/solutions/index.html\",\n      \"ref\": \"/apps/public/solutions/app.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/public/solutions/index.html\",\n      \"ref\": \"/products/veridion/demo\",\n      \"type\": \"route\"\n    },\n    {\n      \"file\": \"apps/public/solutions/index.html\",\n      \"ref\": \"/apps/public/solutions/app.js\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/public/terms/index.html\",\n      \"ref\": \"/shared/base.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/public/terms/index.html\",\n      \"ref\": \"/apps/public/terms/app.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/public/terms/index.html\",\n      \"ref\": \"/apps/public/terms/app.js\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/public/veridion-demo/index.html\",\n      \"ref\": \"/shared/base.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/public/veridion-demo/index.html\",\n      \"ref\": \"/apps/public/veridion-demo/app.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/public/veridion-demo/index.html\",\n      \"ref\": \"/plans\",\n      \"type\": \"route\"\n    },\n    {\n      \"file\": \"apps/public/veridion-demo/index.html\",\n      \"ref\": \"/checkout\",\n      \"type\": \"route\"\n    },\n    {\n      \"file\": \"apps/public/veridion-demo/index.html\",\n      \"ref\": \"/plans\",\n      \"type\": \"route\"\n    },\n    {\n      \"file\": \"apps/public/veridion-demo/index.html\",\n      \"ref\": \"/apps/public/veridion-demo/app.js\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/admin/console/index.html\",\n      \"ref\": \"/shared/base.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/admin/console/index.html\",\n      \"ref\": \"/apps/admin/console/app.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/admin/console/index.html\",\n      \"ref\": \"/apps/admin/console/app.js\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/admin/diagnostics/index.html\",\n      \"ref\": \"/shared/base.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/admin/diagnostics/index.html\",\n      \"ref\": \"/apps/admin/diagnostics/app.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/admin/diagnostics/index.html\",\n      \"ref\": \"/apps/admin/diagnostics/app.js\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/admin/gate/index.html\",\n      \"ref\": \"/shared/base.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/admin/gate/index.html\",\n      \"ref\": \"/apps/admin/gate/app.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/admin/gate/index.html\",\n      \"ref\": \"/apps/admin/gate/app.js\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/admin/library/index.html\",\n      \"ref\": \"/shared/base.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/admin/library/index.html\",\n      \"ref\": \"/apps/admin/library/app.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/admin/library/index.html\",\n      \"ref\": \"/apps/admin/library/app.js\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/admin/orders/index.html\",\n      \"ref\": \"/shared/base.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/admin/orders/index.html\",\n      \"ref\": \"/apps/admin/orders/app.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/admin/orders/index.html\",\n      \"ref\": \"/apps/admin/orders/app.js\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/admin/publications/index.html\",\n      \"ref\": \"/shared/base.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/admin/publications/index.html\",\n      \"ref\": \"/apps/admin/publications/app.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/admin/publications/index.html\",\n      \"ref\": \"/apps/admin/publications/app.js\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/admin/settings/index.html\",\n      \"ref\": \"/shared/base.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/admin/settings/index.html\",\n      \"ref\": \"/apps/admin/settings/app.css\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"apps/admin/settings/index.html\",\n      \"ref\": \"/apps/admin/settings/app.js\",\n      \"type\": \"asset\"\n    },\n    {\n      \"file\": \"server/index.mjs#adminNav\",\n      \"ref\": \"/admin/console\",\n      \"type\": \"route\"\n    },\n    {\n      \"file\": \"server/index.mjs#adminNav\",\n      \"ref\": \"/admin/console/orders\",\n      \"type\": \"route\"\n    },\n    {\n      \"file\": \"server/index.mjs#adminNav\",\n      \"ref\": \"/admin/console/publications\",\n      \"type\": \"route\"\n    },\n    {\n      \"file\": \"server/index.mjs#adminNav\",\n      \"ref\": \"/admin/console/library\",\n      \"type\": \"route\"\n    },\n    {\n      \"file\": \"server/index.mjs#adminNav\",\n      \"ref\": \"/admin/console/settings\",\n      \"type\": \"route\"\n    },\n    {\n      \"file\": \"server/index.mjs#adminNav\",\n      \"ref\": \"/admin/console/diagnostics\",\n      \"type\": \"route\"\n    }\n  ],\n  \"errors\": []\n}\n",
+      "stderr": ""
+    },
+    {
+      "name": "check:no-debug-client",
+      "ok": true,
+      "code": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 305,
+      "stdout": "{\n  \"ok\": true,\n  \"checkedCount\": 21,\n  \"checked\": [\n    \"apps/public/board/app.js\",\n    \"apps/public/business-info/app.js\",\n    \"apps/public/checkout/app.js\",\n    \"apps/public/demo/app.js\",\n    \"apps/public/documents/app.js\",\n    \"apps/public/guides/app.js\",\n    \"apps/public/home/app.js\",\n    \"apps/public/plans/app.js\",\n    \"apps/public/portal/app.js\",\n    \"apps/public/privacy/app.js\",\n    \"apps/public/refund/app.js\",\n    \"apps/public/solutions/app.js\",\n    \"apps/public/terms/app.js\",\n    \"apps/public/veridion-demo/app.js\",\n    \"apps/admin/console/app.js\",\n    \"apps/admin/diagnostics/app.js\",\n    \"apps/admin/gate/app.js\",\n    \"apps/admin/library/app.js\",\n    \"apps/admin/orders/app.js\",\n    \"apps/admin/publications/app.js\",\n    \"apps/admin/settings/app.js\"\n  ],\n  \"failures\": []\n}\n",
+      "stderr": ""
+    },
+    {
+      "name": "check:render-safety",
+      "ok": true,
+      "code": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 232,
+      "stdout": "{\n  \"ok\": true,\n  \"checkedCount\": 21,\n  \"checked\": [\n    {\n      \"file\": \"apps/admin/console/app.js\",\n      \"hasUnsafeSink\": true,\n      \"hasEscaper\": true,\n      \"hasLiteralOnHandler\": false\n    },\n    {\n      \"file\": \"apps/admin/diagnostics/app.js\",\n      \"hasUnsafeSink\": false,\n      \"hasEscaper\": false,\n      \"hasLiteralOnHandler\": false\n    },\n    {\n      \"file\": \"apps/admin/gate/app.js\",\n      \"hasUnsafeSink\": false,\n      \"hasEscaper\": false,\n      \"hasLiteralOnHandler\": false\n    },\n    {\n      \"file\": \"apps/admin/library/app.js\",\n      \"hasUnsafeSink\": true,\n      \"hasEscaper\": true,\n      \"hasLiteralOnHandler\": false\n    },\n    {\n      \"file\": \"apps/admin/orders/app.js\",\n      \"hasUnsafeSink\": true,\n      \"hasEscaper\": true,\n      \"hasLiteralOnHandler\": false\n    },\n    {\n      \"file\": \"apps/admin/publications/app.js\",\n      \"hasUnsafeSink\": true,\n      \"hasEscaper\": true,\n      \"hasLiteralOnHandler\": false\n    },\n    {\n      \"file\": \"apps/admin/settings/app.js\",\n      \"hasUnsafeSink\": false,\n      \"hasEscaper\": false,\n      \"hasLiteralOnHandler\": false\n    },\n    {\n      \"file\": \"apps/public/board/app.js\",\n      \"hasUnsafeSink\": true,\n      \"hasEscaper\": true,\n      \"hasLiteralOnHandler\": false\n    },\n    {\n      \"file\": \"apps/public/business-info/app.js\",\n      \"hasUnsafeSink\": false,\n      \"hasEscaper\": false,\n      \"hasLiteralOnHandler\": false\n    },\n    {\n      \"file\": \"apps/public/checkout/app.js\",\n      \"hasUnsafeSink\": true,\n      \"hasEscaper\": true,\n      \"hasLiteralOnHandler\": false\n    },\n    {\n      \"file\": \"apps/public/demo/app.js\",\n      \"hasUnsafeSink\": true,\n      \"hasEscaper\": true,\n      \"hasLiteralOnHandler\": false\n    },\n    {\n      \"file\": \"apps/public/documents/app.js\",\n      \"hasUnsafeSink\": true,\n      \"hasEscaper\": true,\n      \"hasLiteralOnHandler\": false\n    },\n    {\n      \"file\": \"apps/public/guides/app.js\",\n      \"hasUnsafeSink\": true,\n      \"hasEscaper\": true,\n      \"hasLiteralOnHandler\": false\n    },\n    {\n      \"file\": \"apps/public/home/app.js\",\n      \"hasUnsafeSink\": false,\n      \"hasEscaper\": false,\n      \"hasLiteralOnHandler\": false\n    },\n    {\n      \"file\": \"apps/public/plans/app.js\",\n      \"hasUnsafeSink\": true,\n      \"hasEscaper\": true,\n      \"hasLiteralOnHandler\": false\n    },\n    {\n      \"file\": \"apps/public/portal/app.js\",\n      \"hasUnsafeSink\": true,\n      \"hasEscaper\": true,\n      \"hasLiteralOnHandler\": false\n    },\n    {\n      \"file\": \"apps/public/privacy/app.js\",\n      \"hasUnsafeSink\": false,\n      \"hasEscaper\": false,\n      \"hasLiteralOnHandler\": false\n    },\n    {\n      \"file\": \"apps/public/refund/app.js\",\n      \"hasUnsafeSink\": false,\n      \"hasEscaper\": false,\n      \"hasLiteralOnHandler\": false\n    },\n    {\n      \"file\": \"apps/public/solutions/app.js\",\n      \"hasUnsafeSink\": true,\n      \"hasEscaper\": true,\n      \"hasLiteralOnHandler\": false\n    },\n    {\n      \"file\": \"apps/public/terms/app.js\",\n      \"hasUnsafeSink\": false,\n      \"hasEscaper\": false,\n      \"hasLiteralOnHandler\": false\n    },\n    {\n      \"file\": \"apps/public/veridion-demo/app.js\",\n      \"hasUnsafeSink\": true,\n      \"hasEscaper\": true,\n      \"hasLiteralOnHandler\": false\n    }\n  ],\n  \"failures\": []\n}\n",
+      "stderr": ""
+    },
+    {
+      "name": "check:commercial-offers",
+      "ok": true,
+      "code": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 189,
+      "stdout": "{\n  \"ok\": true,\n  \"checkedOffers\": 9,\n  \"required\": [\n    \"Report\",\n    \"FixPack\",\n    \"TemplatePack\",\n    \"IndustryGuide\",\n    \"Basic\",\n    \"Pro\",\n    \"Auto\",\n    \"Certified\",\n    \"Agency\"\n  ],\n  \"failures\": [],\n  \"generatedAt\": \"2026-04-24T12:31:13.784Z\"\n}\n",
+      "stderr": ""
+    },
+    {
+      "name": "check:runtime-clean",
+      "ok": true,
+      "code": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 175,
+      "stdout": "{\n  \"ok\": true,\n  \"checked\": \"runtime-clean-release\"\n}\n",
+      "stderr": ""
+    },
+    {
+      "name": "validate:deploy",
+      "ok": true,
+      "code": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 159,
+      "stdout": "Deploy bundle validation passed\n",
+      "stderr": ""
+    },
+    {
+      "name": "validate:commercial-runtime",
+      "ok": true,
+      "code": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 155,
+      "stdout": "{\n  \"ok\": true,\n  \"checkedAt\": \"2026-04-24T12:31:14.273Z\",\n  \"platformTarget\": \"commercial\",\n  \"controls\": {\n    \"auth\": \"account_rbac\",\n    \"persistence\": \"postgres_primary\",\n    \"session\": \"redis\",\n    \"rateLimit\": \"redis\",\n    \"lock\": \"redis\",\n    \"storage\": \"s3\",\n    \"scan\": \"external_http\",\n    \"payment\": \"portone_v2\"\n  }\n}\n",
+      "stderr": ""
+    },
+    {
+      "name": "test:routes",
+      "ok": true,
+      "code": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 1901,
+      "stdout": "{\n  \"ok\": true,\n  \"checked\": 22\n}\n",
+      "stderr": ""
+    },
+    {
+      "name": "test:e2e",
+      "ok": false,
+      "code": 1,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 4492,
+      "stdout": "",
+      "stderr": "node:internal/modules/run_main:123\n    triggerUncaughtException(\n    ^\n\nAssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert.ok(x.data.snapshot.filePath.includes('/runtime/reports/'))\n\n    at \u001b[90mfile:///mnt/data/phase23/\u001b[39mtests/e2e.mjs:271:10\n\u001b[90m    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\u001b[39m {\n  generatedMessage: \u001b[33mtrue\u001b[39m,\n  code: \u001b[32m'ERR_ASSERTION'\u001b[39m,\n  actual: \u001b[33mfalse\u001b[39m,\n  expected: \u001b[33mtrue\u001b[39m,\n  operator: \u001b[32m'=='\u001b[39m\n}\n\nNode.js v22.16.0\n"
+    }
+  ]
+}

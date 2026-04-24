@@ -18,7 +18,7 @@ async function ensureServer() {
   child = spawn(process.execPath, ['server/index.mjs'], {
     cwd: process.cwd(),
     env: { ...process.env, PORT: String(port), NODE_ENV: 'production', NV0_ADMIN_KEY: 'stateful-test-key', NV0_TRUST_PROXY_HEADERS: 'true' },
-    stdio: 'inherit'
+    stdio: 'ignore'
   });
   for (let i = 0; i < 30; i += 1) {
     await wait(200);
@@ -80,5 +80,5 @@ main().catch(error => {
   console.error(JSON.stringify({ ok: false, error: error.message }, null, 2));
   process.exitCode = 1;
 }).finally(() => {
-  if (child) child.kill('SIGTERM');
+  if (child) child.kill('SIGKILL');
 });

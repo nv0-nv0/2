@@ -1,0 +1,106 @@
+{
+  "generatedAt": "2026-04-24T12:40:00+09:00",
+  "internalCodePackage": {
+    "totalBlockingItems": 0,
+    "status": "all internal release gates passed",
+    "passedReleaseGates": 9
+  },
+  "externalDeploymentCutover": {
+    "totalOperatorItems": 12,
+    "items": [
+      {
+        "id": 1,
+        "stage": "GitHub push",
+        "item": "phase23 package pushed to main branch",
+        "owner": "operator"
+      },
+      {
+        "id": 2,
+        "stage": "Coolify build settings",
+        "item": "Build Pack Dockerfile, Dockerfile path Dockerfile, build context .",
+        "owner": "operator"
+      },
+      {
+        "id": 3,
+        "stage": "Coolify env",
+        "item": "production env values copied from deploy/env.production.nv0.kr.example and secrets filled",
+        "owner": "operator"
+      },
+      {
+        "id": 4,
+        "stage": "Coolify storage",
+        "item": "runtime persistence volume or external Postgres/Redis/S3 configured according to selected mode",
+        "owner": "operator"
+      },
+      {
+        "id": 5,
+        "stage": "Coolify deployment",
+        "item": "No Cache Redeploy succeeds and healthcheck stays healthy",
+        "owner": "operator"
+      },
+      {
+        "id": 6,
+        "stage": "Domain",
+        "item": "nv0.kr/www.nv0.kr route to Coolify app",
+        "owner": "operator"
+      },
+      {
+        "id": 7,
+        "stage": "Cloudflare cache",
+        "item": "Purge Everything after deploy",
+        "owner": "operator"
+      },
+      {
+        "id": 8,
+        "stage": "SSL",
+        "item": "HTTPS certificate and Cloudflare SSL mode verified",
+        "owner": "operator"
+      },
+      {
+        "id": 9,
+        "stage": "Payment",
+        "item": "PortOne production keys and webhook URL verified if real payments are enabled",
+        "owner": "operator"
+      },
+      {
+        "id": 10,
+        "stage": "Admin",
+        "item": "bootstrap admin account login verified and shared key not used in commercial mode",
+        "owner": "operator"
+      },
+      {
+        "id": 11,
+        "stage": "Smoke",
+        "item": "public scan, checkout, portal, board, admin dashboard checked on live domain",
+        "owner": "operator"
+      },
+      {
+        "id": 12,
+        "stage": "Rollback",
+        "item": "previous working deployment or image tag retained",
+        "owner": "operator"
+      }
+    ]
+  },
+  "pipelineEnhancements": {
+    "added": [
+      "NV0_RUNTIME_DIR isolated test runtime support",
+      "pipeline:release script",
+      "commercial-release GitHub Actions pipeline gate",
+      "runtime clean before/after gate",
+      "contract fuzz test timeout and target-fetch isolation",
+      "test-all isolated runtime cleanup"
+    ],
+    "gates": [
+      "runtime-clean-before",
+      "env-examples",
+      "deploy-bundle",
+      "commercial-runtime",
+      "commercial-release",
+      "pipeline-contract",
+      "full-test-suite",
+      "ci-strict",
+      "runtime-clean-after"
+    ]
+  }
+}

@@ -70,3 +70,4 @@ if (duplicateRoutes.length) {
 
 console.log(JSON.stringify({ ok: errors.length === 0, mappedRouteCount: mappedRoutes.length, checked, errors }, null, 2));
 if (errors.length) process.exit(1);
+process.exit(0);

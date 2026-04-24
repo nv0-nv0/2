@@ -17,3 +17,4 @@ for (const area of ['apps/public', 'apps/admin']) {
 }
 console.log(JSON.stringify({ ok: failures.length === 0, checkedCount: checked.length, checked, failures }, null, 2));
 if (failures.length) process.exit(1);
+process.exit(0);

@@ -1,0 +1,351 @@
+{
+  "generatedAt": "2026-04-24T12:48:23.303Z",
+  "ok": true,
+  "phase": "phase24-final-commercial-delivery",
+  "total": 85,
+  "passed": 85,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "required:Dockerfile",
+      "ok": true
+    },
+    {
+      "name": "required:package.json",
+      "ok": true
+    },
+    {
+      "name": "required:.env.example",
+      "ok": true
+    },
+    {
+      "name": "required:deploy/coolify.env.example",
+      "ok": true
+    },
+    {
+      "name": "required:deploy/entrypoint.sh",
+      "ok": true
+    },
+    {
+      "name": "required:server/index.mjs",
+      "ok": true
+    },
+    {
+      "name": "required:runtime/data/db.json",
+      "ok": true
+    },
+    {
+      "name": "required:runtime/data/sessions.json",
+      "ok": true
+    },
+    {
+      "name": "required:apps/public/home/index.html",
+      "ok": true
+    },
+    {
+      "name": "required:apps/public/plans/index.html",
+      "ok": true
+    },
+    {
+      "name": "required:apps/public/checkout/index.html",
+      "ok": true
+    },
+    {
+      "name": "required:apps/public/solutions/index.html",
+      "ok": true
+    },
+    {
+      "name": "required:apps/public/documents/index.html",
+      "ok": true
+    },
+    {
+      "name": "required:apps/public/portal/index.html",
+      "ok": true
+    },
+    {
+      "name": "required:apps/public/board/index.html",
+      "ok": true
+    },
+    {
+      "name": "required:apps/admin/gate/index.html",
+      "ok": true
+    },
+    {
+      "name": "required:apps/admin/console/index.html",
+      "ok": true
+    },
+    {
+      "name": "required:shared/base.css",
+      "ok": true
+    },
+    {
+      "name": "script:start",
+      "ok": true
+    },
+    {
+      "name": "script:test:all",
+      "ok": true
+    },
+    {
+      "name": "script:ci:strict",
+      "ok": true
+    },
+    {
+      "name": "script:validate:deploy",
+      "ok": true
+    },
+    {
+      "name": "script:validate:commercial-runtime",
+      "ok": true
+    },
+    {
+      "name": "script:check:commercial-offers",
+      "ok": true
+    },
+    {
+      "name": "script:check:runtime-clean",
+      "ok": true
+    },
+    {
+      "name": "script:pipeline:release",
+      "ok": true
+    },
+    {
+      "name": "script:pipeline:final",
+      "ok": true
+    },
+    {
+      "name": "docker:host-0.0.0.0",
+      "ok": true
+    },
+    {
+      "name": "docker:curl-installed",
+      "ok": true
+    },
+    {
+      "name": "docker:healthz",
+      "ok": true
+    },
+    {
+      "name": "docker:entrypoint",
+      "ok": true
+    },
+    {
+      "name": "env:.env.example:NODE_ENV",
+      "ok": true
+    },
+    {
+      "name": "env:.env.example:HOST",
+      "ok": true
+    },
+    {
+      "name": "env:.env.example:NV0_SUPPORT_EMAIL",
+      "ok": true
+    },
+    {
+      "name": "env:.env.example:NV0_PAYMENT_PROVIDER",
+      "ok": true
+    },
+    {
+      "name": "env:.env.example:NV0_PERSISTENCE_MODE",
+      "ok": true
+    },
+    {
+      "name": "env:.env.example:NV0_SESSION_STORE",
+      "ok": true
+    },
+    {
+      "name": "env:.env.example:NV0_STORAGE_MODE",
+      "ok": true
+    },
+    {
+      "name": "env:deploy/coolify.env.example:NODE_ENV",
+      "ok": true
+    },
+    {
+      "name": "env:deploy/coolify.env.example:HOST",
+      "ok": true
+    },
+    {
+      "name": "env:deploy/coolify.env.example:NV0_SUPPORT_EMAIL",
+      "ok": true
+    },
+    {
+      "name": "env:deploy/coolify.env.example:NV0_PAYMENT_PROVIDER",
+      "ok": true
+    },
+    {
+      "name": "env:deploy/coolify.env.example:NV0_PERSISTENCE_MODE",
+      "ok": true
+    },
+    {
+      "name": "env:deploy/coolify.env.example:NV0_SESSION_STORE",
+      "ok": true
+    },
+    {
+      "name": "env:deploy/coolify.env.example:NV0_STORAGE_MODE",
+      "ok": true
+    },
+    {
+      "name": "env:deploy/env.production.template:NODE_ENV",
+      "ok": true
+    },
+    {
+      "name": "env:deploy/env.production.template:HOST",
+      "ok": true
+    },
+    {
+      "name": "env:deploy/env.production.template:NV0_SUPPORT_EMAIL",
+      "ok": true
+    },
+    {
+      "name": "env:deploy/env.production.template:NV0_PAYMENT_PROVIDER",
+      "ok": true
+    },
+    {
+      "name": "env:deploy/env.production.template:NV0_PERSISTENCE_MODE",
+      "ok": true
+    },
+    {
+      "name": "env:deploy/env.production.template:NV0_SESSION_STORE",
+      "ok": true
+    },
+    {
+      "name": "env:deploy/env.production.template:NV0_STORAGE_MODE",
+      "ok": true
+    },
+    {
+      "name": "env:deploy/env.production.nv0.kr.example:NODE_ENV",
+      "ok": true
+    },
+    {
+      "name": "env:deploy/env.production.nv0.kr.example:HOST",
+      "ok": true
+    },
+    {
+      "name": "env:deploy/env.production.nv0.kr.example:NV0_SUPPORT_EMAIL",
+      "ok": true
+    },
+    {
+      "name": "env:deploy/env.production.nv0.kr.example:NV0_PAYMENT_PROVIDER",
+      "ok": true
+    },
+    {
+      "name": "env:deploy/env.production.nv0.kr.example:NV0_PERSISTENCE_MODE",
+      "ok": true
+    },
+    {
+      "name": "env:deploy/env.production.nv0.kr.example:NV0_SESSION_STORE",
+      "ok": true
+    },
+    {
+      "name": "env:deploy/env.production.nv0.kr.example:NV0_STORAGE_MODE",
+      "ok": true
+    },
+    {
+      "name": "env:deploy/env.commercial.template:NODE_ENV",
+      "ok": true
+    },
+    {
+      "name": "env:deploy/env.commercial.template:HOST",
+      "ok": true
+    },
+    {
+      "name": "env:deploy/env.commercial.template:NV0_SUPPORT_EMAIL",
+      "ok": true
+    },
+    {
+      "name": "env:deploy/env.commercial.template:NV0_PAYMENT_PROVIDER",
+      "ok": true
+    },
+    {
+      "name": "env:deploy/env.commercial.template:NV0_PERSISTENCE_MODE",
+      "ok": true
+    },
+    {
+      "name": "env:deploy/env.commercial.template:NV0_SESSION_STORE",
+      "ok": true
+    },
+    {
+      "name": "env:deploy/env.commercial.template:NV0_STORAGE_MODE",
+      "ok": true
+    },
+    {
+      "name": "route:/healthz",
+      "ok": true
+    },
+    {
+      "name": "route:/readyz",
+      "ok": true
+    },
+    {
+      "name": "route:/api/public/products",
+      "ok": true
+    },
+    {
+      "name": "route:/api/public/checkout-session",
+      "ok": true
+    },
+    {
+      "name": "route:/api/public/payment/complete",
+      "ok": true
+    },
+    {
+      "name": "route:/api/public/portal-summary",
+      "ok": true
+    },
+    {
+      "name": "route:/api/public/board",
+      "ok": true
+    },
+    {
+      "name": "route:/api/public/document-preview",
+      "ok": true
+    },
+    {
+      "name": "commercial-token:PDF 리포트",
+      "ok": true
+    },
+    {
+      "name": "commercial-token:수정안",
+      "ok": true
+    },
+    {
+      "name": "commercial-token:템플릿",
+      "ok": true
+    },
+    {
+      "name": "commercial-token:업종별 가이드",
+      "ok": true
+    },
+    {
+      "name": "commercial-token:Certified",
+      "ok": true
+    },
+    {
+      "name": "commercial-token:정기 모니터링",
+      "ok": true
+    },
+    {
+      "name": "commercial-token:화이트라벨",
+      "ok": true
+    },
+    {
+      "name": "commercial-token:Agency",
+      "ok": true
+    },
+    {
+      "name": "commercial-token:ct@nv0.kr",
+      "ok": true
+    },
+    {
+      "name": "runtime:sessions-empty-array",
+      "ok": true
+    },
+    {
+      "name": "runtime:no-generated-artifacts",
+      "ok": true,
+      "runtimeDirty": []
+    }
+  ]
+}

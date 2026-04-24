@@ -18,7 +18,7 @@ const env = {
 
 const wait = ms => new Promise(r => setTimeout(r, ms));
 function startServer() {
-  return spawn(process.execPath, ['server/index.mjs'], { cwd: root, env, stdio: 'inherit' });
+  return spawn(process.execPath, ['server/index.mjs'], { cwd: root, env, stdio: 'ignore' });
 }
 async function waitUntilReady() {
   for (let i = 0; i < 40; i += 1) {
@@ -31,8 +31,10 @@ async function waitUntilReady() {
   throw new Error('server not ready');
 }
 async function stopServer(child) {
-  child.kill('SIGTERM');
-  await new Promise(resolve => child.once('exit', resolve));
+  if (!child) return;
+  child.kill('SIGKILL');
+  if (typeof child.unref === 'function') child.unref();
+  await new Promise(resolve => setTimeout(resolve, 50));
 }
 async function j(url, options={}) {
   const res = await fetch(`http://127.0.0.1:${port}${url}`, options);

@@ -9,6 +9,7 @@ const requiredFiles = [
   'scripts/test-all.mjs',
   'scripts/validate-commercial-release.mjs',
   'scripts/validate-commercial-runtime.mjs',
+  'scripts/pipeline-release-gate.mjs',
   'deploy/docker-compose.commercial.yml',
   'deploy/env.commercial.template',
   'deploy/postgres/schema.sql',
@@ -21,7 +22,7 @@ for (const rel of requiredFiles) {
 }
 
 const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
-for (const script of ['ci:strict', 'test:all', 'validate:commercial', 'validate:commercial-runtime']) {
+for (const script of ['ci:strict', 'test:all', 'validate:commercial', 'validate:commercial-runtime', 'pipeline:release']) {
   if (!pkg.scripts?.[script]) failures.push(`package.json missing script ${script}`);
 }
 
@@ -31,7 +32,7 @@ for (const token of ['npm run ci:strict', 'node-version: 22', 'timeout-minutes']
 }
 
 const release = fs.existsSync(path.join(root, '.github/workflows/commercial-release.yml')) ? fs.readFileSync(path.join(root, '.github/workflows/commercial-release.yml'), 'utf8') : '';
-for (const token of ['npm run validate:commercial', 'npm run ci:strict', 'docker build']) {
+for (const token of ['npm run validate:commercial', 'npm run ci:strict', 'npm run pipeline:release', 'docker build']) {
   if (!release.includes(token)) failures.push(`commercial-release.yml missing ${token}`);
 }
 
@@ -46,3 +47,4 @@ if (failures.length) {
 }
 console.log(JSON.stringify({ ok: true, checkedAt: new Date().toISOString(), requiredFiles: requiredFiles.length }, null, 2));
 process.exit(failures.length ? 1 : 0);
+process.exit(0);

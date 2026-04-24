@@ -1,15 +1,1 @@
-[
-  {
-    "sid": "1c168aa0fe697acb4c4fdf40e3f25535f7b6bd566359ab9d",
-    "createdAt": 1777009197324,
-    "lastSeenAt": 1777009197324,
-    "expiresAt": 1777012797324,
-    "csrfToken": "5e18cf59d6992438d520eee342a956df",
-    "roles": [
-      "super_admin"
-    ],
-    "permissions": [
-      "*"
-    ]
-  }
-]
+[]

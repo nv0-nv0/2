@@ -59,3 +59,4 @@ for (const rel of dirsToCheck) {
 
 console.log(JSON.stringify({ ok: errors.length === 0, checked: results, errors }, null, 2));
 if (errors.length) process.exit(1);
+process.exit(0);

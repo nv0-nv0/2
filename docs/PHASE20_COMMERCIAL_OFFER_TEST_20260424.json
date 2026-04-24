@@ -1,0 +1,17 @@
+{
+  "ok": true,
+  "checkedOffers": 9,
+  "required": [
+    "Report",
+    "FixPack",
+    "TemplatePack",
+    "IndustryGuide",
+    "Basic",
+    "Pro",
+    "Auto",
+    "Certified",
+    "Agency"
+  ],
+  "failures": [],
+  "generatedAt": "2026-04-24T12:47:25.580Z"
+}

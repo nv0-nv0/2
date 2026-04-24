@@ -69,7 +69,7 @@ const child = spawn(process.execPath, ['server/index.mjs'], {
     NV0_PAYMENT_PROVIDER: 'external_http',
     NV0_PAYMENT_PROVIDER_URL: `http://127.0.0.1:${payPort}`
   },
-  stdio: 'inherit'
+  stdio: 'ignore'
 });
 
 async function waitUntilReady() {
@@ -105,7 +105,8 @@ try {
   console.log('provider adapters ok');
 } finally {
   child.kill('SIGTERM');
-  await new Promise(resolve => child.once('exit', resolve));
+  setTimeout(() => child.kill('SIGKILL'), 250).unref?.();
+  if (typeof child.unref === 'function') child.unref();
   await new Promise(resolve => scanServer.close(resolve));
   await new Promise(resolve => paymentServer.close(resolve));
 }
