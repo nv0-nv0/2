@@ -31,7 +31,7 @@ const BUSINESS_PROFILE = Object.freeze({
   registrationNumber: '584-77-00586',
   address: '경기도 남양주시 와부읍 덕소로97번길 34, 105동 402호',
   businessTypes: ['정보통신업', '소프트웨어 개발 및 공급업', '전자상거래업', '데이터베이스 및 온라인 정보 제공업', '광고 대행업'],
-  contactEmail: process.env.NV0_SUPPORT_EMAIL || 'support@nv0.kr',
+  contactEmail: process.env.NV0_SUPPORT_EMAIL || 'ct@nv0.kr',
   domain: process.env.NV0_PUBLIC_BASE_URL || 'https://nv0.kr'
 });
 
@@ -71,6 +71,7 @@ const PORTONE_WEBHOOK_SECRET = process.env.NV0_PORTONE_WEBHOOK_SECRET || '';
 const PORTONE_WEBHOOK_VERIFY_MODE = process.env.NV0_PORTONE_WEBHOOK_VERIFY_MODE || (PLATFORM.target === 'commercial' || NODE_ENV === 'production' ? 'strict' : 'optional');
 const RULES_VERSION = process.env.NV0_RULES_VERSION || '2026.04.23-core3';
 const SCAN_CACHE_TTL_MS = Number(process.env.NV0_SCAN_CACHE_TTL_MS || 10 * 60_000);
+const CTA_AUTOPUBLISH_INTERVAL_MS = Number(process.env.NV0_CTA_AUTOPUBLISH_INTERVAL_MS || 2 * 60 * 60_000);
 
 function assertFiniteConfigNumber(name, value, { min = 0, max = Number.MAX_SAFE_INTEGER } = {}) {
   if (!Number.isFinite(value) || value < min || value > max) {
@@ -174,6 +175,7 @@ function validateConfig() {
   assertFiniteConfigNumber('NV0_BACKUP_RETENTION_COUNT', BACKUP_RETENTION_COUNT, { min: 1, max: 500 });
   assertFiniteConfigNumber('NV0_AUDIT_LOG_RETENTION_COUNT', AUDIT_LOG_RETENTION_COUNT, { min: 1, max: 10000 });
   assertFiniteConfigNumber('NV0_SCAN_CACHE_TTL_MS', SCAN_CACHE_TTL_MS, { min: 0, max: 86_400_000 });
+  assertFiniteConfigNumber('NV0_CTA_AUTOPUBLISH_INTERVAL_MS', CTA_AUTOPUBLISH_INTERVAL_MS, { min: 60_000, max: 86_400_000 });
   if (PLATFORM.commercial && ADMIN_AUTH_MODE === 'shared_key') {
     throw new Error('NV0_ADMIN_AUTH_MODE=shared_key is not allowed in production. Use account_rbac.');
   }
@@ -544,6 +546,7 @@ function pageMap(urlPath) {
   const m = {
     '/': [PUBLIC_DIR, 'home'],
     '/guides': [PUBLIC_DIR, 'guides'],
+    '/board': [PUBLIC_DIR, 'board'],
     '/documents': [PUBLIC_DIR, 'documents'],
     '/demo': [PUBLIC_DIR, 'demo'],
     '/products/veridion/demo': [PUBLIC_DIR, 'veridion-demo'],
@@ -568,6 +571,26 @@ function pageMap(urlPath) {
     '/admin/console/diagnostics': [ADMIN_DIR, 'diagnostics']
   };
   return m[urlPath] || null;
+}
+
+function publicTopMenuHtml() {
+  return `<nav class="site-topbar" aria-label="주요 메뉴">
+    <a class="brand" href="/">NV0 Veridion</a>
+    <div class="site-menu">
+      <a href="/products/veridion/demo">무료진단</a>
+      <a href="/plans">요금제</a>
+      <a href="/board">CTA 게시판</a>
+      <a href="/portal">고객포털</a>
+      <a href="/guides">가이드</a>
+      <a href="/business-info">문의</a>
+    </div>
+  </nav>`;
+}
+
+function injectPublicTopMenu(body, urlPath) {
+  if (urlPath.startsWith('/admin')) return body;
+  if (body.includes('site-topbar')) return body;
+  return body.replace('<body>', `<body>${publicTopMenuHtml()}`);
 }
 
 function businessFooterHtml() {
@@ -611,6 +634,7 @@ async function renderPage(urlPath, req, res) {
   const htmlPath = path.join(baseDir, slug, 'index.html');
   let body = await fs.readFile(htmlPath, 'utf8');
   if (urlPath.startsWith('/admin/console')) body = body.replace('<!--ADMIN_NAV-->', adminNav());
+  body = injectPublicTopMenu(body, urlPath);
   body = injectBusinessFooter(body, urlPath);
   const category = urlPath.startsWith('/admin') ? 'dynamic' : 'public-page';
   html(req, res, 200, body, {}, category);
@@ -976,7 +1000,7 @@ function buildPolicyDocumentPreview(payload = {}, settings = {}) {
   const businessName = String(payload.businessName || payload.siteName || payload.companyName || '상호 미입력').trim();
   const representative = String(payload.representative || payload.ownerName || '대표자 미입력').trim();
   const domain = String(payload.domain || payload.target || '').trim() || 'example.com';
-  const contactEmail = String(payload.contactEmail || payload.email || settings.supportEmail || 'contact@example.com').trim();
+  const contactEmail = String(payload.contactEmail || payload.email || settings.supportEmail || 'ct@nv0.kr').trim();
   const phone = String(payload.phone || payload.contactPhone || '고객센터 미입력').trim();
   const address = String(payload.address || '사업장 주소 미입력').trim();
   const refundWindowDays = Number(payload.refundWindowDays || 7);
@@ -1081,9 +1105,10 @@ function pickRecommendedPlan(riskScore) {
 
 function buildPlanCatalog(recommendedPlan = 'Pro') {
   const rows = [
-    { code: 'Basic', monthlyPrice: 49000, title: 'Basic', summary: '월 정기 스캔과 상세 결과 해금', features: ['월 정기 스캔', '상세 결과', '위험도 변화 추적'] },
-    { code: 'Pro', monthlyPrice: 89000, title: 'Pro', summary: '상세 결과 + 맞춤 지침 + 법령 변경 알림', features: ['상세 결과 전체 공개', '사이트 맞춤 지침', '법령 변경 알림'] },
-    { code: 'Auto', monthlyPrice: 149000, title: 'Auto', summary: 'Pro + 승인형 자동수정 + 자동 발행', features: ['승인형 자동수정', 'CTA 자동발행', '운영 진단/복구 보조'] }
+    { code: 'Free', monthlyPrice: 0, title: 'Free', summary: '데모 진단: 위험도와 핵심 3개 항목만 확인', features: ['위험도 점수', '상위 위험 3개 요약', '상세 근거/자동수정 잠금'] },
+    { code: 'Basic', monthlyPrice: 49000, title: 'Basic', summary: '상세 리포트 해금과 월 정기 스캔', features: ['전체 탐지 항목', '페이지별 조치 체크리스트', '월 1회 정기 스캔'] },
+    { code: 'Pro', monthlyPrice: 89000, title: 'Pro', summary: '맞춤 지침과 법령 변경 알림까지 운영', features: ['Basic 전체 포함', '사이트 맞춤 정책 문안', '법령 변경 알림/우선순위'] },
+    { code: 'Auto', monthlyPrice: 149000, title: 'Auto', summary: '승인형 자동수정과 CTA 자동발행까지 자동화', features: ['Pro 전체 포함', '승인형 자동수정', '2시간 주기 CTA 자동발행'] }
   ];
   return rows.map(item => ({ ...item, recommended: item.code === recommendedPlan }));
 }
@@ -1988,28 +2013,56 @@ function seedAutoFixJobs(db, site, scan) {
   return jobs;
 }
 
-function createCtaPublication(db, scan) {
-  const title = `${scan.industry} 사이트 법률 리스크 진단: ${scan.totalFindings}개 항목 점검`;
+function createCtaPublication(db, scan, options = {}) {
+  const top = (scan.topFindings || []).slice(0, 2).join(', ') || '핵심 고지 리스크';
+  const title = options.title || `무료 점검: ${scan.industry || '온라인 사업'} 리스크 ${scan.riskScore}점`;
+  const body = options.body || `${scan.target || '등록 사이트'} 기준 ${scan.totalFindings || 0}개 항목이 감지되었습니다. 핵심: ${top}. 상세 근거·조치안·자동수정은 유료 플랜에서 제공합니다.`;
   const publication = {
     id: uid('pub'),
     title,
     status: 'published',
     type: 'cta',
-    ctaType: 'free_scan',
-    relatedRequestId: scan.requestId,
-    body: `${scan.target} 스캔 결과 위험도 ${scan.riskScore}점. 상위 이슈는 ${scan.topFindings.join(', ')} 입니다. 무료 진단 후 상세 리포트와 자동수정까지 연결하세요.`,
-    createdAt: nowIso()
+    ctaType: 'free_scan_to_paid',
+    relatedRequestId: scan.requestId || null,
+    body,
+    createdAt: nowIso(),
+    autoPublished: options.autoPublished === true
   };
   db.publications.unshift(publication);
   db.boards.unshift({
     id: uid('board'),
-    boardType: 'legal-update',
+    boardType: 'cta',
     title,
-    body: publication.body,
+    body,
     createdAt: nowIso(),
-    visibility: 'public'
+    visibility: 'public',
+    autoPublished: options.autoPublished === true
   });
+  db.publications = (db.publications || []).slice(0, 200);
+  db.boards = (db.boards || []).slice(0, 200);
   return publication;
+}
+
+async function runCtaAutopublish(reason = 'interval') {
+  const db = await readDb();
+  const settings = db.settings || {};
+  if (settings.ctaAutopublishEnabled === false) return { ok: true, skipped: 'disabled' };
+  const last = (db.publications || []).find(item => item.type === 'cta' && item.autoPublished);
+  if (last && Date.now() - Date.parse(last.createdAt || 0) < CTA_AUTOPUBLISH_INTERVAL_MS) {
+    return { ok: true, skipped: 'interval' };
+  }
+  const scan = (db.scans || [])[0] || {
+    requestId: uid('scan'),
+    target: BUSINESS_PROFILE.domain,
+    industry: '온라인 사업',
+    riskScore: 55,
+    totalFindings: 3,
+    topFindings: ['고객지원 고지', '환불 정책 표시', '개인정보 처리방침 위치']
+  };
+  const item = createCtaPublication(db, scan, { autoPublished: true });
+  appendAudit(db, { headers: {}, socket: {} }, 'system.cta.autopublished', { id: item.id, reason });
+  await writeDb(db);
+  return { ok: true, publication: item };
 }
 
 async function handleApi(req, res) {
@@ -2827,8 +2880,14 @@ const cleanupInterval = setInterval(() => {
 }, 60_000);
 cleanupInterval.unref();
 
+const ctaAutopublishInterval = setInterval(() => {
+  runCtaAutopublish('interval').catch(error => console.error('cta autopublish failed', error));
+}, CTA_AUTOPUBLISH_INTERVAL_MS);
+ctaAutopublishInterval.unref();
+
 async function shutdown() {
   clearInterval(cleanupInterval);
+  clearInterval(ctaAutopublishInterval);
   if (sessionsDirty) await writeSessionsToDisk();
   const forceExit = setTimeout(() => process.exit(0), 1500);
   forceExit.unref();
@@ -2845,6 +2904,7 @@ ensureRuntime().then(async () => {
   await hydrateSessions();
   const db = await readDb();
   await ensureBootstrapAdmin(db, process.env, uid, nowIso);
+  await runCtaAutopublish('startup');
   await writeDb(db);
   server.listen(PORT, HOST, () => {
     console.log(`nv0 cleanroom server listening on http://${HOST}:${PORT}`);
