@@ -11790,45 +11790,6 @@
   "adminSessions": [],
   "auditLogs": [
     {
-      "id": "audit-ff1f48ad",
-      "at": "2026-04-24T04:34:44.653Z",
-      "event": "admin.logout",
-      "ip": "127.0.0.1",
-      "method": "POST",
-      "path": "/api/admin/logout",
-      "meta": {}
-    },
-    {
-      "id": "audit-9d85cf54",
-      "at": "2026-04-24T04:34:44.642Z",
-      "event": "admin.maintenance.pruned",
-      "ip": "127.0.0.1",
-      "method": "POST",
-      "path": "/api/admin/maintenance/prune",
-      "meta": {
-        "keep": 20,
-        "removed": [
-          "db-2026-04-24T03-35-58-843Z.json",
-          "db-2026-04-24T03-35-58-833Z.json",
-          "db-2026-04-24T03-35-42-612Z.json",
-          "db-2026-04-24T03-35-11-732Z.json",
-          "db-2026-04-24T03-34-17-299Z.json"
-        ]
-      }
-    },
-    {
-      "id": "audit-62c59b56",
-      "at": "2026-04-24T04:34:44.626Z",
-      "event": "admin.backup.restored",
-      "ip": "127.0.0.1",
-      "method": "POST",
-      "path": "/api/admin/backups/restore",
-      "meta": {
-        "name": "db-2026-04-24T04-34-44-601Z.json",
-        "restoredFrom": "/mnt/data/debug_phase14/runtime/backups/db-2026-04-24T04-34-44-601Z.json"
-      }
-    },
-    {
       "id": "audit-251b6130",
       "at": "2026-04-24T04:34:44.589Z",
       "event": "admin.backup.created",

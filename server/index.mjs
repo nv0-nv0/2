@@ -324,11 +324,10 @@ function baseHeaders(req, category = 'dynamic') {
     "form-action 'self'",
     "img-src 'self' data: blob:",
     "object-src 'none'",
-    `script-src 'self'${ENABLE_TURNSTILE ? ' https://challenges.cloudflare.com' : ''}`,
+    `script-src 'self' https://cdn.portone.io${ENABLE_TURNSTILE ? ' https://challenges.cloudflare.com' : ''}`,
     "style-src 'self'",
-    `connect-src 'self'${ENABLE_TURNSTILE ? ' https://challenges.cloudflare.com' : ''}`,
-    ENABLE_TURNSTILE ? 'frame-src https://challenges.cloudflare.com' : "frame-src 'none'",
-    "require-trusted-types-for 'script'"
+    `connect-src 'self' https://cdn.portone.io https://api.portone.io${ENABLE_TURNSTILE ? ' https://challenges.cloudflare.com' : ''}`,
+    ENABLE_TURNSTILE ? 'frame-src https://challenges.cloudflare.com' : "frame-src 'none'"
   ];
   const headers = {
     'x-content-type-options': 'nosniff',
@@ -344,7 +343,9 @@ function baseHeaders(req, category = 'dynamic') {
   }
   if (category === 'dynamic') headers['cache-control'] = 'no-store';
   if (category === 'public-page') headers['cache-control'] = 'public, max-age=60, stale-while-revalidate=300';
-  if (category === 'static') headers['cache-control'] = 'public, max-age=31536000, immutable';
+  // Static assets are intentionally not immutable because this cleanroom bundle does not hash filenames.
+  // Immutable caching caused stale client JS/CSS after Coolify redeploys and left pages stuck on loading states.
+  if (category === 'static') headers['cache-control'] = 'no-cache, max-age=0, must-revalidate';
   if (category === 'upload') headers['cache-control'] = 'private, max-age=300';
   return headers;
 }
