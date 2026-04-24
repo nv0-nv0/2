@@ -37,4 +37,4 @@ const ok = checks.every(c => c.ok);
 const report = { generatedAt: new Date().toISOString(), ok, phase:'phase24-final-commercial-delivery', total: checks.length, passed: checks.filter(c=>c.ok).length, failed: checks.filter(c=>!c.ok).length, checks };
 fs.writeFileSync(path.join(docsDir,'PHASE24_FINAL_COMMERCIAL_GATE_20260424.json'), JSON.stringify(report,null,2));
 console.log(JSON.stringify({ ok, passed: report.passed, failed: report.failed, report:'docs/PHASE24_FINAL_COMMERCIAL_GATE_20260424.json' }, null, 2));
-process.exit(ok ? 0 : 1);
+process.reallyExit ? process.reallyExit(ok ? 0 : 1) : process.exit(ok ? 0 : 1);

@@ -95,10 +95,12 @@ try {
   const invalidOps = await request('/api/admin/ops', { method:'POST', headers:{ 'content-type':'application/json', cookie, 'x-nv0-csrf': csrf }, body: JSON.stringify({ action:'destroy' }) });
   assert.equal(invalidOps.res.status, 400);
 
+  try { child.kill('SIGKILL'); } catch {}
   console.log(JSON.stringify({ ok: true, checked: 14 }, null, 2));
+  process.reallyExit ? process.reallyExit(0) : process.exit(0);
 } finally {
   child.kill('SIGKILL');
   if (typeof child.unref === 'function') child.unref();
 }
 
-process.exit(0);
+process.reallyExit ? process.reallyExit(0) : process.exit(0);

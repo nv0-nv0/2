@@ -575,15 +575,15 @@ function pageMap(urlPath) {
 
 function publicTopMenuHtml() {
   return `<nav class="site-topbar" aria-label="주요 메뉴">
-    <a class="brand" href="/">NV0 Veridion</a>
+    <a class="brand" href="/"><span class="brand-mark">◇</span><span>VERIDION<small>웹사이트 법적 리스크 관리 솔루션</small></span></a>
     <div class="site-menu">
-      <a href="/products/veridion/demo" class="cta">2분 무료 진단</a>
-      <a href="/plans">상품·요금</a>
-      <a href="/solutions">수익 모델</a>
-      <a href="/board">인사이트</a>
-      <a href="/documents">문서 생성</a>
-      <a href="/portal">고객 포털</a>
-      <a href="/business-info">문의</a>
+      <a href="/products/veridion/demo">서비스</a>
+      <a href="/documents">기능</a>
+      <a href="/plans">요금제</a>
+      <a href="/board">리소스</a>
+      <a href="/business-info">고객지원</a>
+      <a href="/portal" class="login-link">로그인</a>
+      <a href="/products/veridion/demo" class="cta">회원가입</a>
     </div>
   </nav>`;
 }

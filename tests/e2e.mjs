@@ -302,4 +302,4 @@ try {
   if (typeof child.unref === 'function') child.unref();
 }
 await new Promise(resolve => setTimeout(resolve, 100));
-process.exit(0);
+process.reallyExit ? process.reallyExit(0) : process.exit(0);

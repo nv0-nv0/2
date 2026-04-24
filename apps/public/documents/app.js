@@ -6,9 +6,9 @@ const preview = document.getElementById('docPreview');
 
 function renderDocuments(documents = []) {
   preview.innerHTML = documents.map(doc => `
-    <article class="card stack">
+    <article class="document-preview stack">
       <h3>${escapeHtml(doc.title)}</h3>
-      <pre>${escapeHtml(doc.content)}</pre>
+      <div class="preview-toolbar"><span class="pill gray">초안 미리보기</span><span class="muted">검토 후 운영 환경에 맞게 보완하세요.</span></div><pre>${escapeHtml(doc.content)}</pre>
     </article>
   `).join('');
 }
@@ -28,13 +28,25 @@ form?.addEventListener('submit', async (event) => {
     const data = await res.json();
     if (!data.ok) {
       state.textContent = data.error || '문서 생성에 실패했습니다.';
-      preview.innerHTML = '<div class="card muted">입력값을 확인한 뒤 다시 시도하세요.</div>';
+      preview.innerHTML = '<div class="empty-preview">입력값을 확인한 뒤 다시 시도하세요.</div>';
       return;
     }
     state.textContent = `${data.preview.businessName} 문서 초안이 생성되었습니다.`;
     renderDocuments(data.preview.documents || []);
   } catch (error) {
     state.textContent = `문서 생성 중 오류가 발생했습니다: ${error.message}`;
-    preview.innerHTML = '<div class="card muted">문서 생성 중 오류가 발생했습니다.</div>';
+    preview.innerHTML = '<div class="empty-preview">문서 생성 중 오류가 발생했습니다.</div>';
   }
 });
+
+try {
+  const saved = sessionStorage.getItem('veridion:documentPreview');
+  if (saved) {
+    const previewData = JSON.parse(saved);
+    if (previewData?.documents?.length) {
+      state.textContent = `${previewData.businessName || '입력 정보'} 문서 초안이 준비되었습니다.`;
+      renderDocuments(previewData.documents);
+      sessionStorage.removeItem('veridion:documentPreview');
+    }
+  }
+} catch {}

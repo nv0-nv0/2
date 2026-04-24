@@ -24,4 +24,4 @@ const report = { generatedAt: new Date().toISOString(), ok, gate: 'phase21-ci-st
 const out = path.join(docsDir, 'PHASE21_CI_STRICT_SUMMARY_20260424.json');
 fs.writeFileSync(out, JSON.stringify(report, null, 2));
 console.log(JSON.stringify({ ok, report: 'docs/PHASE21_CI_STRICT_SUMMARY_20260424.json' }, null, 2));
-if (!ok) process.exit(1);
+process.reallyExit ? process.reallyExit(ok ? 0 : 1) : process.exit(ok ? 0 : 1);
