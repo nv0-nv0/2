@@ -2,29 +2,23 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const root = process.cwd();
+const runtimeDir = path.join(root, 'runtime');
 const targets = [
-  path.join(root, 'runtime', 'backups'),
-  path.join(root, 'runtime', 'reports'),
-  path.join(root, 'runtime', 'uploads')
+  path.join(runtimeDir, 'backups'),
+  path.join(runtimeDir, 'reports'),
+  path.join(runtimeDir, 'uploads')
 ];
 
-function ensureDir(dir) {
+function cleanDir(dir) {
   fs.mkdirSync(dir, { recursive: true });
-  const gitkeep = path.join(dir, '.gitkeep');
-  if (!fs.existsSync(gitkeep)) fs.writeFileSync(gitkeep, '');
-}
-
-for (const dir of targets) {
-  if (fs.existsSync(dir)) {
-    for (const entry of fs.readdirSync(dir)) {
-      if (entry === '.gitkeep') continue;
-      fs.rmSync(path.join(dir, entry), { recursive: true, force: true });
-    }
+  for (const entry of fs.readdirSync(dir)) {
+    fs.rmSync(path.join(dir, entry), { recursive: true, force: true });
   }
-  ensureDir(dir);
 }
 
-const runtimeDataDir = path.join(root, 'runtime', 'data');
+for (const dir of targets) cleanDir(dir);
+
+const runtimeDataDir = path.join(runtimeDir, 'data');
 const seedPath = path.join(runtimeDataDir, 'db.seed.json');
 const dbPath = path.join(runtimeDataDir, 'db.json');
 const sessionsPath = path.join(runtimeDataDir, 'sessions.json');
@@ -38,7 +32,8 @@ fs.writeFileSync(sessionsPath, '[]\n');
 
 console.log(JSON.stringify({
   ok: true,
-  cleaned: targets,
-  restoredDbFromSeed: fs.existsSync(seedPath) ? seedPath : null,
-  resetSessions: sessionsPath
+  cleaned: targets.map(p => path.relative(root, p)),
+  restoredDbFromSeed: fs.existsSync(seedPath) ? path.relative(root, seedPath) : null,
+  resetSessions: path.relative(root, sessionsPath),
+  note: 'runtime/uploads, runtime/backups, runtime/reports are intentionally empty; production data must live in the nv0_runtime Docker volume.'
 }, null, 2));
