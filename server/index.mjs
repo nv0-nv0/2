@@ -76,7 +76,7 @@ const PORTONE_WEBHOOK_SECRET = process.env.NV0_PORTONE_WEBHOOK_SECRET || '';
 const PORTONE_WEBHOOK_VERIFY_MODE = process.env.NV0_PORTONE_WEBHOOK_VERIFY_MODE || (PLATFORM.target === 'commercial' || NODE_ENV === 'production' ? 'strict' : 'optional');
 const RULES_VERSION = process.env.NV0_RULES_VERSION || '2026.04.23-core3';
 const SCAN_CACHE_TTL_MS = Number(process.env.NV0_SCAN_CACHE_TTL_MS || 10 * 60_000);
-const CTA_AUTOPUBLISH_INTERVAL_MS = Number(process.env.NV0_CTA_AUTOPUBLISH_INTERVAL_MS || 2 * 60 * 60_000);
+const CTA_AUTOPUBLISH_INTERVAL_MS = Number(process.env.NV0_CTA_AUTOPUBLISH_INTERVAL_MS || 30 * 60_000);
 const RELEASE_PHASE = 'phase57-flow-recheck-smooth-commerce';
 const DATA_RETENTION_DAYS = Number(process.env.NV0_DATA_RETENTION_DAYS || 1095);
 const REFUND_REQUEST_WINDOW_DAYS = Number(process.env.NV0_REFUND_REQUEST_WINDOW_DAYS || 7);
@@ -2674,35 +2674,31 @@ function seedAutoFixJobs(db, site, scan) {
 }
 
 function createCtaPublication(db, scan, options = {}) {
-  const top = (scan.topFindings || []).slice(0, 2).join(', ') || '핵심 안내 리스크';
-  const title = options.title || `무료 진단 후 먼저 확인할 ${scan.industry || '온라인 사업'} 안내 리스크`;
-  const body = options.body || `${scan.target || '등록 사이트'} 기준으로 ${scan.totalFindings || 0}개 점검 항목이 확인되었습니다. 우선 확인할 항목은 ${top}입니다. 게시글 하단의 무료 진단 버튼으로 같은 기준을 바로 확인하고, 전체 근거, 페이지별 조치안, 바로 붙여넣을 수정 문구는 유료 리포트에서 이어서 받을 수 있습니다.`;
-  const publication = {
-    id: uid('pub'),
-    title,
-    status: 'published',
-    type: 'cta',
-    ctaType: 'free_scan_to_paid',
-    relatedRequestId: scan.requestId || null,
-    body,
-    createdAt: nowIso(),
-    autoPublished: options.autoPublished === true
-  };
+  const topItems = (scan.topFindings || []).slice(0, 3);
+  const top = topItems.join(', ') || '핵심 안내 리스크';
+  const target = scan.target || '등록 사이트';
+  const industry = scan.industry || '온라인 사업';
+  const risk = scan.riskScore ?? scan.score ?? 0;
+  const count = scan.totalFindings || topItems.length || 3;
+  const variants = [
+    { boardType: 'cta', ctaType: 'free_scan_to_paid', title: `${industry} 사이트, 결제 전 먼저 볼 신뢰 공백`, body: `${target} 기준으로 ${count}개 점검 항목이 확인되었습니다. 지금 우선 볼 항목은 ${top}입니다. 무료 진단으로 같은 기준을 확인하고, 필요한 경우 상세 리포트와 수정 문구안으로 이어가세요.` },
+    { boardType: 'notice', ctaType: 'checklist', title: '광고 집행 전 확인할 필수 고지 체크리스트', body: '광고를 시작하기 전에는 사업자 정보, 환불 기준, 개인정보 안내, 이용약관, 광고 표현을 한 번에 확인해야 합니다. 누락된 안내는 결제 직전 이탈과 문의로 이어질 수 있습니다.' },
+    { boardType: 'case', ctaType: 'case_study', title: `위험도 ${risk}점 사이트가 먼저 고쳐야 할 것`, body: `위험도가 높게 나온 사이트는 모든 문구를 한 번에 고치기보다 고객이 결제 직전에 확인하는 항목부터 정리해야 합니다. 먼저 ${top}을 확인하고, 이후 약관과 광고 문구까지 순서대로 정비하세요.` },
+    { boardType: 'cta', ctaType: 'plan_compare', title: '무료 진단 후 Pro·Fix·Auto 중 무엇을 고를까', body: '요약 결과만 필요하면 무료 진단으로 충분합니다. 근거와 우선순위가 필요하면 Pro, 바로 붙여넣을 수정 문구가 필요하면 Fix, 반복 점검과 게시글 발행이 필요하면 Auto가 적합합니다.' },
+    { boardType: 'notice', ctaType: 'operation_tip', title: '문의가 늘기 전 환불 안내부터 정리하세요', body: '환불 안내는 고객이 가장 예민하게 확인하는 영역입니다. 제공 전후 기준, 예외 조건, 처리 기간을 명확히 적어두면 불필요한 문의와 민원을 줄일 수 있습니다.' },
+    { boardType: 'cta', ctaType: 'rescan', title: '사이트 수정 후에는 다시 진단해야 합니다', body: '문구를 고친 뒤에도 푸터, 결제 화면, 회원가입 화면에 같은 기준이 반영됐는지 확인해야 합니다. 내 사이트에 저장하면 재진단과 산출물 확인을 이어서 관리할 수 있습니다.' }
+  ];
+  const sequence = (db.publications || []).filter(item => item.autoPublished).length;
+  const variant = variants[sequence % variants.length];
+  const title = options.title || variant.title;
+  const body = options.body || variant.body;
+  const publication = { id: uid('pub'), title, status: 'published', type: 'cta', ctaType: variant.ctaType, relatedRequestId: scan.requestId || null, body, createdAt: nowIso(), autoPublished: options.autoPublished === true };
   db.publications.unshift(publication);
-  db.boards.unshift({
-    id: uid('board'),
-    boardType: 'cta',
-    title,
-    body,
-    createdAt: nowIso(),
-    visibility: 'public',
-    autoPublished: options.autoPublished === true
-  });
+  db.boards.unshift({ id: uid('board'), boardType: variant.boardType, title, body, createdAt: nowIso(), visibility: 'public', autoPublished: options.autoPublished === true });
   db.publications = (db.publications || []).slice(0, 200);
   db.boards = (db.boards || []).slice(0, 200);
   return publication;
 }
-
 async function runCtaAutopublish(reason = 'interval') {
   const db = await readDb();
   const settings = db.settings || {};
