@@ -1,0 +1,21 @@
+{
+  "ok": true,
+  "phase": "65",
+  "score": 100,
+  "checks": {
+    "home_rebuilt": true,
+    "infographic_hero": true,
+    "short_copy": true,
+    "scroll_reduced_target": "기존 대비 절반 이하 구조",
+    "board_label": "게시판",
+    "autopublish_minutes": 30,
+    "risk_visual": true,
+    "flow_visual": true,
+    "test_all": "88/88",
+    "global_audit": 100,
+    "final_100": 100,
+    "phase63_validator": 100,
+    "phase64_validator": "12/12"
+  },
+  "checkedAt": "2026-04-25T12:48:55.578520Z"
+}
