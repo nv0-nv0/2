@@ -1,9 +1,68 @@
 {
-  "settings": {"autoPublicationEnabled": true, "publicationChannel": "internal-board", "supportEmail": "ct@nv0.kr", "defaultJurisdiction": "KR", "defaultAlertChannel": "email", "autoFixMode": "approval_required", "operatorMode": "solo", "adminAuthMode": "shared_key", "ctaAutopublishEnabled": true, "legalWatchEnabled": true, "maxAutoFixPerRun": 5, "scanProviderMode": "builtin", "paymentProviderMode": "demo", "storageMode": "local_fs"},
+  "settings": {
+    "autoPublicationEnabled": true,
+    "publicationChannel": "internal-board",
+    "supportEmail": "ct@nv0.kr",
+    "defaultJurisdiction": "KR",
+    "businessProfile": {
+      "tradeName": "엔브이제로(NV0)",
+      "representative": "나금상",
+      "registrationNumber": "584-77-00586",
+      "address": "경기도 남양주시 와부읍 덕소로97번길 34, 105동 402호",
+      "businessTypes": [
+        "정보통신업",
+        "소프트웨어 개발 및 공급업",
+        "전자상거래업",
+        "데이터베이스 및 온라인 정보 제공업",
+        "광고 대행업"
+      ],
+      "contactEmail": "ct@nv0.kr",
+      "domain": "https://nv0.kr",
+      "mailOrderRegistrationNumber": "",
+      "hostingProvider": "자체 서버 또는 계약 호스팅 사업자",
+      "customerServicePhone": "",
+      "privacyOfficerEmail": "ct@nv0.kr"
+    },
+    "defaultAlertChannel": "email",
+    "autoFixMode": "approval_required",
+    "operatorMode": "solo",
+    "adminAuthMode": "shared_key",
+    "ctaAutopublishEnabled": true,
+    "legalWatchEnabled": true,
+    "maxAutoFixPerRun": 5,
+    "scanProviderMode": "builtin",
+    "paymentProviderMode": "demo",
+    "storageMode": "local_fs",
+    "releasePhase": "phase47-live-site-repair",
+    "dataRetentionDays": 1095,
+    "refundRequestWindowDays": 7,
+    "operatorAlertEmail": "ct@nv0.kr"
+  },
   "orders": [],
   "subscriptions": [],
-  "publications": [{"id":"pub-seed-cta","title":"무료 진단 후 확인해야 할 온라인 사업 안내 리스크","status":"published","type":"insight","ctaType":"free_scan_to_paid","body":"무료 진단은 핵심 항목을 먼저 요약합니다. 상세 근거, 페이지별 조치안, 정책 문서 초안은 선택한 서비스에서 이어서 확인할 수 있습니다.","createdAt":"2026-04-24T00:00:00.000Z","autoPublished":false}],
-  "boards": [{"id":"board-seed-cta","boardType":"insight","title":"무료 진단 후 확인해야 할 온라인 사업 안내 리스크","body":"무료 진단은 핵심 항목을 먼저 요약합니다. 상세 근거, 페이지별 조치안, 정책 문서 초안은 선택한 서비스에서 이어서 확인할 수 있습니다.","createdAt":"2026-04-24T00:00:00.000Z","visibility":"public","autoPublished":false}],
+  "publications": [
+    {
+      "id": "pub-seed-cta",
+      "title": "무료 진단 후 확인해야 할 온라인 사업 안내 리스크",
+      "status": "published",
+      "type": "insight",
+      "ctaType": "free_scan_to_paid",
+      "body": "무료 진단은 핵심 항목을 먼저 요약합니다. 상세 근거, 페이지별 조치안, 정책 문서 초안은 선택한 서비스에서 이어서 확인할 수 있습니다.",
+      "createdAt": "2026-04-24T00:00:00.000Z",
+      "autoPublished": false
+    }
+  ],
+  "boards": [
+    {
+      "id": "board-seed-cta",
+      "boardType": "insight",
+      "title": "무료 진단 후 확인해야 할 온라인 사업 안내 리스크",
+      "body": "무료 진단은 핵심 항목을 먼저 요약합니다. 상세 근거, 페이지별 조치안, 정책 문서 초안은 선택한 서비스에서 이어서 확인할 수 있습니다.",
+      "createdAt": "2026-04-24T00:00:00.000Z",
+      "visibility": "public",
+      "autoPublished": false
+    }
+  ],
   "library": [],
   "scans": [],
   "sites": [],
@@ -18,5 +77,13 @@
   "adminUsers": [],
   "adminRoleBindings": [],
   "adminSessions": [],
-  "auditLogs": []
+  "auditLogs": [],
+  "customers": [],
+  "customerSessions": [],
+  "passwordResetTokens": [],
+  "emailOutbox": [],
+  "purchasedAssets": [],
+  "refundRequests": [],
+  "operationalEvents": [],
+  "idempotencyKeys": []
 }

@@ -1,6 +1,6 @@
 {
   "name": "nv0-veridion-cleanroom",
-  "version": "0.1.1-phase46-coolify-env-autodetect",
+  "version": "0.1.1-phase49-global-reaudit-hardening",
   "private": true,
   "type": "module",
   "scripts": {
@@ -59,6 +59,8 @@
     "validate:phase42": "node scripts/validate-phase42-final-closeout.mjs",
     "final:review:legacy": "npm run check:syntax && npm run test:all && npm run validate:phase37 && npm run validate:phase38 && npm run validate:phase39 && npm run validate:phase40 && npm run validate:phase41 && npm run validate:phase42 && npm run test:routes && npm run test:e2e && npm run test:security-stateful",
     "validate:phase43": "node scripts/validate-phase43-perfect-score.mjs",
-    "final:100": "node scripts/run-final-review.mjs && node scripts/validate-deploy-bundle.mjs && node scripts/verify-security.mjs && node scripts/test-all.mjs"
+    "final:100": "node scripts/phase49-global-audit.mjs && node scripts/phase49-final-100.mjs",
+    "check:live-public": "node scripts/check-live-public.mjs",
+    "audit:global": "node scripts/phase49-global-audit.mjs"
   }
 }

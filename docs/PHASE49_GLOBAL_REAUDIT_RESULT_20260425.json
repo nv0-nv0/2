@@ -1,0 +1,100 @@
+{
+  "ok": true,
+  "phase": "phase49",
+  "score": 100,
+  "totalFindings": 15,
+  "fixedOrVerified": 15,
+  "failed": 0,
+  "findings": [
+    {
+      "id": "route-alias:/products",
+      "ok": true,
+      "severity": "P0",
+      "fix": "검색 노출/기존 링크 유입용 공개 라우트 별칭 보강"
+    },
+    {
+      "id": "route-alias:/resources",
+      "ok": true,
+      "severity": "P1",
+      "fix": "검색 노출/기존 링크 유입용 공개 라우트 별칭 보강"
+    },
+    {
+      "id": "route-alias:/service",
+      "ok": true,
+      "severity": "P1",
+      "fix": "검색 노출/기존 링크 유입용 공개 라우트 별칭 보강"
+    },
+    {
+      "id": "route-alias:/cases",
+      "ok": true,
+      "severity": "P1",
+      "fix": "검색 노출/기존 링크 유입용 공개 라우트 별칭 보강"
+    },
+    {
+      "id": "route-alias:/docs/veridion",
+      "ok": true,
+      "severity": "P1",
+      "fix": "검색 노출/기존 링크 유입용 공개 라우트 별칭 보강"
+    },
+    {
+      "id": "route-alias:/board/post",
+      "ok": true,
+      "severity": "P1",
+      "fix": "검색 노출/기존 링크 유입용 공개 라우트 별칭 보강"
+    },
+    {
+      "id": "release-phase-current",
+      "ok": true,
+      "severity": "P0",
+      "fix": "런타임/패키지 버전 마커 일치"
+    },
+    {
+      "id": "trailing-slash-redirect",
+      "ok": true,
+      "severity": "P1",
+      "fix": "중복 URL과 404 방지용 trailing slash 정규화"
+    },
+    {
+      "id": "listen-log-accurate",
+      "ok": true,
+      "severity": "P2",
+      "fix": "Coolify 로그에서 포트/타깃/결제 모드 확인 가능"
+    },
+    {
+      "id": "sitemap-all-public-routes",
+      "ok": true,
+      "severity": "P1",
+      "fix": "사이트맵 누락 공개 경로 보강"
+    },
+    {
+      "id": "admin-console-aliases",
+      "ok": true,
+      "severity": "P1",
+      "fix": "관리 콘솔 하위 경로 유지"
+    },
+    {
+      "id": "live-public-script-present",
+      "ok": true,
+      "severity": "P1",
+      "fix": "라이브 공개 페이지 검수 스크립트 유지"
+    },
+    {
+      "id": "coolify-compose-present",
+      "ok": true,
+      "severity": "P0",
+      "fix": "Coolify 루트 compose/env 벌크 파일 유지"
+    },
+    {
+      "id": "readyz-runtime-probe",
+      "ok": true,
+      "severity": "P0",
+      "fix": "런타임 쓰기 가능성 readyz에서 검증"
+    },
+    {
+      "id": "trusted-types-not-enforced",
+      "ok": true,
+      "severity": "P0",
+      "fix": "Trusted Types 렌더링 차단 방지"
+    }
+  ]
+}

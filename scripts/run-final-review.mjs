@@ -11,7 +11,7 @@ const routes = read('tests/routes-smoke.mjs');
 const links = read('scripts/check-links.mjs');
 const checks = [];
 const add = (name, ok) => checks.push({ name, ok: Boolean(ok) });
-add('phase43 version', pkg.version.includes('phase43-100-score-complete'));
+add('commercial repair version', /phase(4[3-9]|[5-9][0-9]).*/.test(pkg.version));
 add('syntax validator exists', exists('scripts/check-source-syntax.mjs'));
 add('test-all exists', exists('scripts/test-all.mjs'));
 add('phase37-43 validators exist', [37,38,39,40,41,42,43].every(n => exists(`scripts/validate-phase${n}-${n===37?'legal-risk':n===38?'operational':n===39?'launch-gate':n===40?'final-recheck':n===41?'commercial-final':n===42?'final-closeout':'perfect-score'}.mjs`)));
@@ -27,7 +27,7 @@ add('commercial gates', ['/api/public/commercial-final-gate','/api/admin/commerc
 add('security gates', ['NV0_ADMIN_IP_ALLOWLIST','PORTONE_WEBHOOK_VERIFY_MODE','content-security-policy','noindex,nofollow'].every(k => server.includes(k)));
 add('runtime reports cleanable', exists('runtime/data/db.seed.json') && exists('runtime/data/sessions.json'));
 const failed = checks.filter(c => !c.ok);
-const report = { ok: failed.length === 0, phase: 'phase43-100-score-complete', total: checks.length, passed: checks.length - failed.length, failed: failed.length, failures: failed, checkedAt: new Date().toISOString() };
+const report = { ok: failed.length === 0, phase: pkg.version, total: checks.length, passed: checks.length - failed.length, failed: failed.length, failures: failed, checkedAt: new Date().toISOString() };
 fs.writeFileSync(path.join(root, 'docs/PHASE43_FINAL_REVIEW_SUMMARY_20260425.json'), JSON.stringify(report, null, 2));
 console.log(JSON.stringify(report, null, 2));
 assert.equal(report.ok, true);

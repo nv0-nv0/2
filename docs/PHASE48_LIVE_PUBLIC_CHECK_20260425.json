@@ -1,0 +1,229 @@
+{
+  "generatedAt": "2026-04-25T07:06:07.874Z",
+  "ok": true,
+  "total": 52,
+  "passed": 52,
+  "failed": 0,
+  "failures": [],
+  "checks": [
+    {
+      "name": "page:/:file",
+      "ok": true,
+      "file": "apps/public/home/index.html"
+    },
+    {
+      "name": "page:/:brand",
+      "ok": true
+    },
+    {
+      "name": "page:/:script-or-static",
+      "ok": true
+    },
+    {
+      "name": "page:/:no-stuck-loading-copy",
+      "ok": true
+    },
+    {
+      "name": "page:/products/veridion/demo:file",
+      "ok": true,
+      "file": "apps/public/veridion-demo/index.html"
+    },
+    {
+      "name": "page:/products/veridion/demo:brand",
+      "ok": true
+    },
+    {
+      "name": "page:/products/veridion/demo:script-or-static",
+      "ok": true
+    },
+    {
+      "name": "page:/products/veridion/demo:no-stuck-loading-copy",
+      "ok": true
+    },
+    {
+      "name": "page:/plans:file",
+      "ok": true,
+      "file": "apps/public/plans/index.html"
+    },
+    {
+      "name": "page:/plans:brand",
+      "ok": true
+    },
+    {
+      "name": "page:/plans:script-or-static",
+      "ok": true
+    },
+    {
+      "name": "page:/plans:no-stuck-loading-copy",
+      "ok": true
+    },
+    {
+      "name": "page:/documents:file",
+      "ok": true,
+      "file": "apps/public/documents/index.html"
+    },
+    {
+      "name": "page:/documents:brand",
+      "ok": true
+    },
+    {
+      "name": "page:/documents:script-or-static",
+      "ok": true
+    },
+    {
+      "name": "page:/documents:no-stuck-loading-copy",
+      "ok": true
+    },
+    {
+      "name": "page:/checkout:file",
+      "ok": true,
+      "file": "apps/public/checkout/index.html"
+    },
+    {
+      "name": "page:/checkout:brand",
+      "ok": true
+    },
+    {
+      "name": "page:/checkout:script-or-static",
+      "ok": true
+    },
+    {
+      "name": "page:/checkout:no-stuck-loading-copy",
+      "ok": true
+    },
+    {
+      "name": "page:/portal:file",
+      "ok": true,
+      "file": "apps/public/portal/index.html"
+    },
+    {
+      "name": "page:/portal:brand",
+      "ok": true
+    },
+    {
+      "name": "page:/portal:script-or-static",
+      "ok": true
+    },
+    {
+      "name": "page:/portal:no-stuck-loading-copy",
+      "ok": true
+    },
+    {
+      "name": "page:/board:file",
+      "ok": true,
+      "file": "apps/public/board/index.html"
+    },
+    {
+      "name": "page:/board:brand",
+      "ok": true
+    },
+    {
+      "name": "page:/board:script-or-static",
+      "ok": true
+    },
+    {
+      "name": "page:/board:no-stuck-loading-copy",
+      "ok": true
+    },
+    {
+      "name": "page:/business-info:file",
+      "ok": true,
+      "file": "apps/public/business-info/index.html"
+    },
+    {
+      "name": "page:/business-info:brand",
+      "ok": true
+    },
+    {
+      "name": "page:/business-info:script-or-static",
+      "ok": true
+    },
+    {
+      "name": "page:/business-info:no-stuck-loading-copy",
+      "ok": true
+    },
+    {
+      "name": "page:/privacy:file",
+      "ok": true,
+      "file": "apps/public/privacy/index.html"
+    },
+    {
+      "name": "page:/privacy:brand",
+      "ok": true
+    },
+    {
+      "name": "page:/privacy:script-or-static",
+      "ok": true
+    },
+    {
+      "name": "page:/privacy:no-stuck-loading-copy",
+      "ok": true
+    },
+    {
+      "name": "page:/terms:file",
+      "ok": true,
+      "file": "apps/public/terms/index.html"
+    },
+    {
+      "name": "page:/terms:brand",
+      "ok": true
+    },
+    {
+      "name": "page:/terms:script-or-static",
+      "ok": true
+    },
+    {
+      "name": "page:/terms:no-stuck-loading-copy",
+      "ok": true
+    },
+    {
+      "name": "page:/refund:file",
+      "ok": true,
+      "file": "apps/public/refund/index.html"
+    },
+    {
+      "name": "page:/refund:brand",
+      "ok": true
+    },
+    {
+      "name": "page:/refund:script-or-static",
+      "ok": true
+    },
+    {
+      "name": "page:/refund:no-stuck-loading-copy",
+      "ok": true
+    },
+    {
+      "name": "api:/api/public/products:mapped",
+      "ok": true
+    },
+    {
+      "name": "api:/api/public/plans:mapped",
+      "ok": true
+    },
+    {
+      "name": "api:/healthz:mapped",
+      "ok": true
+    },
+    {
+      "name": "api:/readyz:mapped",
+      "ok": true
+    },
+    {
+      "name": "api:/api/public/checkout-session:mapped",
+      "ok": true
+    },
+    {
+      "name": "api:/api/public/payment/complete:mapped",
+      "ok": true
+    },
+    {
+      "name": "asset:base-css-shell",
+      "ok": true
+    },
+    {
+      "name": "asset:base-css-responsive",
+      "ok": true
+    }
+  ]
+}

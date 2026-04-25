@@ -77,7 +77,7 @@ const PORTONE_WEBHOOK_VERIFY_MODE = process.env.NV0_PORTONE_WEBHOOK_VERIFY_MODE 
 const RULES_VERSION = process.env.NV0_RULES_VERSION || '2026.04.23-core3';
 const SCAN_CACHE_TTL_MS = Number(process.env.NV0_SCAN_CACHE_TTL_MS || 10 * 60_000);
 const CTA_AUTOPUBLISH_INTERVAL_MS = Number(process.env.NV0_CTA_AUTOPUBLISH_INTERVAL_MS || 2 * 60 * 60_000);
-const RELEASE_PHASE = 'phase42-final-closeout-complete';
+const RELEASE_PHASE = 'phase49-global-reaudit-hardening';
 const DATA_RETENTION_DAYS = Number(process.env.NV0_DATA_RETENTION_DAYS || 1095);
 const REFUND_REQUEST_WINDOW_DAYS = Number(process.env.NV0_REFUND_REQUEST_WINDOW_DAYS || 7);
 const OPERATOR_ALERT_EMAIL = process.env.NV0_OPERATOR_ALERT_EMAIL || BUSINESS_PROFILE.contactEmail;
@@ -369,8 +369,7 @@ function baseHeaders(req, category = 'dynamic') {
     `script-src 'self' https://cdn.portone.io${ENABLE_TURNSTILE ? ' https://challenges.cloudflare.com' : ''}`,
     "style-src 'self'",
     `connect-src 'self' https://cdn.portone.io https://api.portone.io${ENABLE_TURNSTILE ? ' https://challenges.cloudflare.com' : ''}`,
-    ENABLE_TURNSTILE ? 'frame-src https://challenges.cloudflare.com' : "frame-src 'none'",
-    "require-trusted-types-for 'script'"
+    ENABLE_TURNSTILE ? 'frame-src https://challenges.cloudflare.com' : "frame-src 'none'"
   ];
   const headers = {
     'x-content-type-options': 'nosniff',
@@ -381,7 +380,8 @@ function baseHeaders(req, category = 'dynamic') {
     'cross-origin-resource-policy': 'same-origin',
     'origin-agent-cluster': '?1',
     'x-permitted-cross-domain-policies': 'none',
-    'content-security-policy': cspParts.join('; ')
+    'content-security-policy': cspParts.join('; '),
+    'content-security-policy-report-only': ["trusted-types nv0-default", "require-trusted-types-for 'script'"].join('; ')
   };
   if (isSecureRequest(req)) {
     headers['strict-transport-security'] = 'max-age=31536000; includeSubDomains; preload';
@@ -723,7 +723,7 @@ function buildRobotsTxt() {
 
 function buildSitemapXml() {
   const base = BUSINESS_PROFILE.domain.replace(/\/$/, '');
-  const paths = ['/', '/products/veridion/demo', '/documents', '/solutions', '/plans', '/board', '/guides', '/terms', '/privacy', '/refund', '/business-info'];
+  const paths = ['/', '/products', '/products/veridion/demo', '/documents', '/docs/veridion', '/solutions', '/service', '/plans', '/board', '/board/post', '/guides', '/resources', '/cases', '/terms', '/privacy', '/refund', '/business-info', '/auth'];
   const urls = paths.map(item => `<url><loc>${base}${item}</loc><changefreq>weekly</changefreq><priority>${item === '/' ? '1.0' : '0.7'}</priority></url>`).join('');
   return `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}</urlset>`;
 }
@@ -781,9 +781,15 @@ function pageMap(urlPath) {
   const m = {
     '/': [PUBLIC_DIR, 'home'],
     '/guides': [PUBLIC_DIR, 'guides'],
+    '/resources': [PUBLIC_DIR, 'guides'],
     '/board': [PUBLIC_DIR, 'board'],
+    '/board/post': [PUBLIC_DIR, 'board'],
+    '/cases': [PUBLIC_DIR, 'board'],
     '/documents': [PUBLIC_DIR, 'documents'],
+    '/docs/veridion': [PUBLIC_DIR, 'documents'],
     '/solutions': [PUBLIC_DIR, 'solutions'],
+    '/service': [PUBLIC_DIR, 'solutions'],
+    '/products': [PUBLIC_DIR, 'solutions'],
     '/demo': [PUBLIC_DIR, 'demo'],
     '/products/veridion/demo': [PUBLIC_DIR, 'veridion-demo'],
     '/plans': [PUBLIC_DIR, 'plans'],
@@ -837,7 +843,7 @@ function businessFooterHtml() {
     + `<strong>${BUSINESS_PROFILE.tradeName}</strong>`
     + `<span>대표자: ${BUSINESS_PROFILE.representative}</span>`
     + `<span>사업자등록번호: ${BUSINESS_PROFILE.registrationNumber}</span>`
-    + `<span>통신판매업 신고번호: ${BUSINESS_PROFILE.mailOrderRegistrationNumber || '상용 결제 전 입력 필요'}</span>`
+    + `<span>통신판매업 신고번호: ${BUSINESS_PROFILE.mailOrderRegistrationNumber || '통신판매업 신고 완료 후 표시 예정'}</span>`
     + `<span>주소: ${BUSINESS_PROFILE.address}</span>`
     + `<span>업태·종목: ${types}</span>`
     + `<span>고객지원: ${BUSINESS_PROFILE.contactEmail}${BUSINESS_PROFILE.customerServicePhone ? ' · ' + BUSINESS_PROFILE.customerServicePhone : ''}</span>`
@@ -3706,7 +3712,12 @@ const server = http.createServer(async (req, res) => {
   const requestId = uid('req');
   res.setHeader('x-request-id', requestId);
   try {
-    const pathname = new URL(req.url, `http://${req.headers.host}`).pathname;
+    const requestUrl = new URL(req.url, `http://${req.headers.host}`);
+    const pathname = requestUrl.pathname;
+    if (pathname.length > 1 && pathname.endsWith('/')) {
+      requestUrl.pathname = pathname.replace(/\/+$/, '');
+      return redirect(req, res, 308, requestUrl.pathname + requestUrl.search);
+    }
     if (pathname.startsWith('/shared/')) return serveStaticRoot(req, res, ROOT, '/');
     if (pathname.startsWith('/apps/public/')) return serveStaticRoot(req, res, ROOT, '/');
     if (pathname.startsWith('/apps/admin/gate/')) return serveStaticRoot(req, res, ROOT, '/');
@@ -3771,7 +3782,7 @@ ensureRuntime().then(async () => {
   await runCtaAutopublish('startup');
   await writeDb(db);
   server.listen(PORT, HOST, () => {
-    console.log(`nv0 cleanroom server listening on http://: target= payment=`);
+    console.log(`nv0 cleanroom server listening on http://${HOST}:${PORT} target=${PLATFORM.target} payment=${PAYMENT_PROVIDER}`);
   });
 }).catch((error) => {
   console.error('server startup failed', error);
