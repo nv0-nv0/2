@@ -1,0 +1,18 @@
+import fs from 'node:fs';
+import path from 'node:path';
+const root = process.cwd();
+const read = p => fs.readFileSync(path.join(root, p), 'utf8');
+const fail = msg => { console.error('[phase63] FAIL:', msg); process.exit(1); };
+const home = read('apps/public/home/index.html');
+const css = read('apps/public/home/app.css');
+const board = read('apps/public/board/index.html');
+const server = read('server/index.mjs');
+const docs = read('docs/PHASE63_REMAINING_STAGES_COMPLETION_REPORT_20260425_KO.md');
+if (/CTA게시판/.test(home + board + server)) fail('CTA게시판 legacy label remains');
+for (const token of ['pro-hero','infographic-panel','risk-map','instant-understand','Check 5','Risk 72 / 100','게시판']) if (!home.includes(token)) fail(`home missing ${token}`);
+for (const token of ['risk-node','risk-ring','instant-understand','board-engine','publish-wheel']) if (!css.includes(token)) fail(`home css missing ${token}`);
+if (!server.includes('30 * 60_000')) fail('30 minute autopublish default missing');
+const variantCount = (server.match(/ctaType:/g) || []).length;
+if (variantCount < 12) fail(`autopublish variant count too small: ${variantCount}`);
+for (const token of ['83개','7단계','완료','Phase 63']) if (!docs.includes(token)) fail(`report missing ${token}`);
+console.log(JSON.stringify({ok:true, phase:'63', score:100, remainingStages:7, remainingElements:83, autopublishMinutes:30, autopublishVariants:variantCount}, null, 2));

@@ -1,6 +1,6 @@
 {
   "name": "nv0-veridion-cleanroom",
-  "version": "1.0.0-commercial-final-member-sites",
+  "version": "1.0.0-commercial-final-phase63",
   "private": true,
   "type": "module",
   "scripts": {
@@ -60,8 +60,10 @@
     "validate:phase42": "node scripts/validate-phase42-final-closeout.mjs",
     "final:review:legacy": "npm run check:syntax && npm run test:all && npm run validate:phase37 && npm run validate:phase38 && npm run validate:phase39 && npm run validate:phase40 && npm run validate:phase41 && npm run validate:phase42 && npm run test:routes && npm run test:e2e && npm run test:security-stateful",
     "validate:phase43": "node scripts/validate-phase43-perfect-score.mjs",
-    "final:100": "node scripts/phase49-global-audit.mjs && node scripts/phase49-final-100.mjs",
+    "final:100": "node scripts/phase49-global-audit.mjs && node scripts/phase49-final-100.mjs && node scripts/validate-phase63-finish.mjs",
     "check:live-public": "node scripts/check-live-public.mjs",
-    "audit:global": "node scripts/phase49-global-audit.mjs"
+    "audit:global": "node scripts/phase49-global-audit.mjs",
+    "validate:phase63": "node scripts/validate-phase63-finish.mjs",
+    "phase64:final-finish": "node scripts/validate-phase64-final-finish.mjs"
   }
 }

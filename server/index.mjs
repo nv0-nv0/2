@@ -77,7 +77,7 @@ const PORTONE_WEBHOOK_VERIFY_MODE = process.env.NV0_PORTONE_WEBHOOK_VERIFY_MODE 
 const RULES_VERSION = process.env.NV0_RULES_VERSION || '2026.04.23-core3';
 const SCAN_CACHE_TTL_MS = Number(process.env.NV0_SCAN_CACHE_TTL_MS || 10 * 60_000);
 const CTA_AUTOPUBLISH_INTERVAL_MS = Number(process.env.NV0_CTA_AUTOPUBLISH_INTERVAL_MS || 30 * 60_000);
-const RELEASE_PHASE = 'phase57-flow-recheck-smooth-commerce';
+const RELEASE_PHASE = 'phase64-final-finish-delivery';
 const DATA_RETENTION_DAYS = Number(process.env.NV0_DATA_RETENTION_DAYS || 1095);
 const REFUND_REQUEST_WINDOW_DAYS = Number(process.env.NV0_REFUND_REQUEST_WINDOW_DAYS || 7);
 const OPERATOR_ALERT_EMAIL = process.env.NV0_OPERATOR_ALERT_EMAIL || BUSINESS_PROFILE.contactEmail;
@@ -981,7 +981,7 @@ function publicTopMenuHtml(urlPath = '/') {
     <div class="site-menu">
       <a href="/products/veridion/demo"${navAttrs(urlPath, '/products/veridion/demo')}>무료 진단</a>
       <a href="/portal"${navAttrs(urlPath, '/portal')}>내 사이트</a>
-      <a href="/board"${navAttrs(urlPath, '/board')}>CTA 게시판</a>
+      <a href="/board"${navAttrs(urlPath, '/board')}>게시판</a>
       <a href="/plans"${navAttrs(urlPath, '/plans')}>상품·요금</a>
       <a href="/solutions"${navAttrs(urlPath, '/solutions')}>서비스 구조</a>
       <a href="/auth"${navAttrs(urlPath, '/auth', 'login-link')}>로그인</a>
@@ -2681,20 +2681,26 @@ function createCtaPublication(db, scan, options = {}) {
   const risk = scan.riskScore ?? scan.score ?? 0;
   const count = scan.totalFindings || topItems.length || 3;
   const variants = [
-    { boardType: 'cta', ctaType: 'free_scan_to_paid', title: `${industry} 사이트, 결제 전 먼저 볼 신뢰 공백`, body: `${target} 기준으로 ${count}개 점검 항목이 확인되었습니다. 지금 우선 볼 항목은 ${top}입니다. 무료 진단으로 같은 기준을 확인하고, 필요한 경우 상세 리포트와 수정 문구안으로 이어가세요.` },
-    { boardType: 'notice', ctaType: 'checklist', title: '광고 집행 전 확인할 필수 고지 체크리스트', body: '광고를 시작하기 전에는 사업자 정보, 환불 기준, 개인정보 안내, 이용약관, 광고 표현을 한 번에 확인해야 합니다. 누락된 안내는 결제 직전 이탈과 문의로 이어질 수 있습니다.' },
-    { boardType: 'case', ctaType: 'case_study', title: `위험도 ${risk}점 사이트가 먼저 고쳐야 할 것`, body: `위험도가 높게 나온 사이트는 모든 문구를 한 번에 고치기보다 고객이 결제 직전에 확인하는 항목부터 정리해야 합니다. 먼저 ${top}을 확인하고, 이후 약관과 광고 문구까지 순서대로 정비하세요.` },
-    { boardType: 'cta', ctaType: 'plan_compare', title: '무료 진단 후 Pro·Fix·Auto 중 무엇을 고를까', body: '요약 결과만 필요하면 무료 진단으로 충분합니다. 근거와 우선순위가 필요하면 Pro, 바로 붙여넣을 수정 문구가 필요하면 Fix, 반복 점검과 게시글 발행이 필요하면 Auto가 적합합니다.' },
-    { boardType: 'notice', ctaType: 'operation_tip', title: '문의가 늘기 전 환불 안내부터 정리하세요', body: '환불 안내는 고객이 가장 예민하게 확인하는 영역입니다. 제공 전후 기준, 예외 조건, 처리 기간을 명확히 적어두면 불필요한 문의와 민원을 줄일 수 있습니다.' },
-    { boardType: 'cta', ctaType: 'rescan', title: '사이트 수정 후에는 다시 진단해야 합니다', body: '문구를 고친 뒤에도 푸터, 결제 화면, 회원가입 화면에 같은 기준이 반영됐는지 확인해야 합니다. 내 사이트에 저장하면 재진단과 산출물 확인을 이어서 관리할 수 있습니다.' }
+    { boardType: 'cta', ctaType: 'diagnosis_summary', title: `${industry} 사이트 신뢰 공백 요약`, body: `${target} 기준으로 ${count}개 점검 항목이 확인되었습니다. 지금 우선 볼 항목은 ${top}입니다. 무료 진단으로 같은 기준을 확인하고 필요한 경우 상세 리포트와 수정 문구안으로 이어가세요.` },
+    { boardType: 'notice', ctaType: 'risk_alert', title: `위험도 ${risk}점, 결제 전 안내를 먼저 확인하세요`, body: `위험도가 높게 나온 사이트는 모든 화면을 한 번에 고치기보다 고객이 결제 직전에 확인하는 안내부터 정리해야 합니다. 먼저 ${top}을 확인하세요.` },
+    { boardType: 'notice', ctaType: 'checklist', title: '광고 집행 전 5가지 고지 체크리스트', body: '광고를 시작하기 전에는 사업자 정보, 환불 기준, 개인정보 안내, 이용약관, 광고 표현을 한 번에 확인해야 합니다. 누락된 안내는 결제 직전 이탈과 문의로 이어질 수 있습니다.' },
+    { boardType: 'case', ctaType: 'before_after', title: '수정 전/후로 보는 환불 안내 개선 포인트', body: '환불 안내는 고객이 가장 예민하게 확인하는 영역입니다. 제공 전후 기준, 예외 조건, 처리 기간을 분리하면 불필요한 문의와 민원을 줄일 수 있습니다.' },
+    { boardType: 'case', ctaType: 'case_study', title: `${industry} 운영자가 먼저 고칠 항목`, body: `현재 우선순위는 ${top}입니다. 핵심 고지를 정리한 뒤 약관, 광고 문구, 결제 화면 안내까지 순서대로 정비하는 흐름이 안전합니다.` },
+    { boardType: 'cta', ctaType: 'plan_compare', title: '무료 진단 후 Pro·Fix·Auto 선택 기준', body: '요약 결과만 필요하면 무료 진단으로 충분합니다. 근거와 우선순위가 필요하면 Pro, 바로 붙여넣을 수정 문구가 필요하면 Fix, 반복 점검과 게시글 발행이 필요하면 Auto가 적합합니다.' },
+    { boardType: 'notice', ctaType: 'privacy_tip', title: '개인정보 안내는 입력창 가까이에 있어야 합니다', body: '회원가입, 문의, 결제 화면에서 개인정보를 받는다면 처리방침 링크와 수집 목적을 가까운 위치에 노출하는 것이 좋습니다. 고객은 정보를 입력하기 직전에 확인합니다.' },
+    { boardType: 'notice', ctaType: 'terms_tip', title: '이용약관은 푸터만으로 부족할 수 있습니다', body: '약관 링크는 푸터뿐 아니라 회원가입, 결제, 서비스 신청 흐름에도 연결되어야 합니다. 중요한 제한 조건은 고객 행동 직전에 다시 보여주는 편이 안전합니다.' },
+    { boardType: 'case', ctaType: 'ad_copy_review', title: '광고 문구의 확정형 표현을 완화하세요', body: '무조건, 100%, 보장, 완치처럼 단정적인 표현은 분쟁 위험을 키울 수 있습니다. 조건, 범위, 예외를 함께 적는 표현으로 바꾸는 것이 좋습니다.' },
+    { boardType: 'cta', ctaType: 'rescan', title: '수정 후에는 반드시 다시 진단하세요', body: '문구를 고친 뒤에도 푸터, 결제 화면, 회원가입 화면에 같은 기준이 반영됐는지 확인해야 합니다. 내 사이트에 저장하면 재진단과 산출물 확인을 이어서 관리할 수 있습니다.' },
+    { boardType: 'cta', ctaType: 'saved_site', title: '매번 주소를 입력하지 말고 내 사이트에 저장하세요', body: '한 번 저장한 사이트는 재진단, 주문, 산출물 확인을 같은 기준으로 이어갈 수 있습니다. 반복 관리는 저장된 사이트에서 시작하는 편이 빠릅니다.' },
+    { boardType: 'notice', ctaType: 'weekly_ops', title: '운영자는 결제 화면을 주기적으로 다시 봐야 합니다', body: '상품, 정책, 프로모션 문구가 바뀌면 기존 고지와 충돌할 수 있습니다. 정기 점검은 변경 누락을 줄이고 문의 대응 시간을 줄이는 데 도움이 됩니다.' }
   ];
-  const sequence = (db.publications || []).filter(item => item.autoPublished).length;
+  const sequence = ((db.publications || []).filter(item => item.autoPublished).length + (db.boards || []).filter(item => item.autoPublished).length) % variants.length;
   const variant = variants[sequence % variants.length];
   const title = options.title || variant.title;
   const body = options.body || variant.body;
   const publication = { id: uid('pub'), title, status: 'published', type: 'cta', ctaType: variant.ctaType, relatedRequestId: scan.requestId || null, body, createdAt: nowIso(), autoPublished: options.autoPublished === true };
   db.publications.unshift(publication);
-  db.boards.unshift({ id: uid('board'), boardType: variant.boardType, title, body, createdAt: nowIso(), visibility: 'public', autoPublished: options.autoPublished === true });
+  db.boards.unshift({ id: uid('board'), boardType: variant.boardType, ctaType: variant.ctaType, title, body, createdAt: nowIso(), visibility: 'public', autoPublished: options.autoPublished === true, publishIntervalMs: CTA_AUTOPUBLISH_INTERVAL_MS });
   db.publications = (db.publications || []).slice(0, 200);
   db.boards = (db.boards || []).slice(0, 200);
   return publication;
@@ -2805,7 +2811,7 @@ async function handleApi(req, res) {
 
   if (pathname === '/api/public/board' && req.method === 'GET') {
     const db = await readDb();
-    return json(req, res, 200, { ok: true, posts: db.boards.slice(0, 20) });
+    return json(req, res, 200, { ok: true, publishIntervalMs: CTA_AUTOPUBLISH_INTERVAL_MS, publishIntervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000), variantCount: 12, posts: db.boards.slice(0, 20) });
   }
 
   if (pathname === '/api/public/content' && req.method === 'GET') {
