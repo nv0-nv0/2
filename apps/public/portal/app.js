@@ -5,7 +5,7 @@ const primary = document.getElementById('portalPrimary');
 const feed = document.getElementById('portalFeed');
 
 function getSavedScan() {
-  try { return JSON.parse(localStorage.getItem('veridion:lastScan') || 'null'); } catch { return null; }
+  try { return JSON.parse(localStorage.getItem('nv0:lastScan') || 'null'); } catch { return null; }
 }
 
 function renderAsset(asset, order, accessToken) {

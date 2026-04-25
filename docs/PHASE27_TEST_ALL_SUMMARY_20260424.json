@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-04-25T07:05:50.849Z",
-  "ok": true,
+  "generatedAt": "2026-04-25T09:10:34.003Z",
+  "ok": false,
   "phase": "phase27-distributed-uiux-truthful-copy",
   "total": 52,
-  "passed": 52,
-  "failed": 0,
+  "passed": 41,
+  "failed": 11,
   "checks": [
     {
       "name": "exists:server/index.mjs",
@@ -132,23 +132,23 @@
     },
     {
       "name": "home:VERIDION",
-      "ok": true
+      "ok": false
     },
     {
       "name": "home:문서 초안은 전용 페이지",
-      "ok": true
+      "ok": false
     },
     {
       "name": "home:사이트의 부족한 안내",
-      "ok": true
+      "ok": false
     },
     {
       "name": "home:필요한 작업을 메뉴",
-      "ok": true
+      "ok": false
     },
     {
       "name": "home:문서 초안 생성 기능은 메뉴 진입 후",
-      "ok": true
+      "ok": false
     },
     {
       "name": "home-css:hero-board",
@@ -156,23 +156,23 @@
     },
     {
       "name": "home-css:document-panel",
-      "ok": true
+      "ok": false
     },
     {
       "name": "home-css:scope-row",
-      "ok": true
+      "ok": false
     },
     {
       "name": "home-css:compact-sections",
-      "ok": true
+      "ok": false
     },
     {
       "name": "home-css:quick-links",
-      "ok": true
+      "ok": false
     },
     {
       "name": "home-css:trust-icons",
-      "ok": true
+      "ok": false
     },
     {
       "name": "documents:blank-defaults",
@@ -184,7 +184,7 @@
     },
     {
       "name": "nav:brand-polish",
-      "ok": true
+      "ok": false
     },
     {
       "name": "client:no-console-log",

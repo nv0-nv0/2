@@ -8,7 +8,7 @@ let currentOrder = null;
 let currentPaymentSession = null;
 
 function getSavedScan() {
-  try { return JSON.parse(localStorage.getItem('veridion:lastScan') || 'null'); } catch { return null; }
+  try { return JSON.parse(localStorage.getItem('nv0:lastScan') || 'null'); } catch { return null; }
 }
 
 function getPrefill() {

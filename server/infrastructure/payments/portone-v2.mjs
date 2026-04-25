@@ -102,7 +102,7 @@ export function createPortOneV2Client(env) {
         storeId,
         channelKey,
         paymentId,
-        orderName: `Veridion ${order.plan} 플랜`,
+        orderName: `NV0 ${order.plan} 플랜`,
         totalAmount: order.amount,
         currency: 'CURRENCY_KRW',
         payMethod,

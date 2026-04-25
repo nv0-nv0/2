@@ -77,7 +77,7 @@ const PORTONE_WEBHOOK_VERIFY_MODE = process.env.NV0_PORTONE_WEBHOOK_VERIFY_MODE 
 const RULES_VERSION = process.env.NV0_RULES_VERSION || '2026.04.23-core3';
 const SCAN_CACHE_TTL_MS = Number(process.env.NV0_SCAN_CACHE_TTL_MS || 10 * 60_000);
 const CTA_AUTOPUBLISH_INTERVAL_MS = Number(process.env.NV0_CTA_AUTOPUBLISH_INTERVAL_MS || 2 * 60 * 60_000);
-const RELEASE_PHASE = 'phase52-true-100-conversion-hardening';
+const RELEASE_PHASE = 'commercial-final';
 const DATA_RETENTION_DAYS = Number(process.env.NV0_DATA_RETENTION_DAYS || 1095);
 const REFUND_REQUEST_WINDOW_DAYS = Number(process.env.NV0_REFUND_REQUEST_WINDOW_DAYS || 7);
 const OPERATOR_ALERT_EMAIL = process.env.NV0_OPERATOR_ALERT_EMAIL || BUSINESS_PROFILE.contactEmail;
@@ -138,7 +138,7 @@ let defaultDb = {
     { id: 'pub-1001', title: '전자상거래 사이트 필수 고지 7가지', status: 'published', type: 'cta', createdAt: nowIso(), ctaType: 'free_scan' }
   ],
   boards: [
-    { id: 'board-1001', boardType: 'notice', title: 'Veridion 서비스 공지', body: '서비스 안내 게시판입니다.', createdAt: nowIso(), visibility: 'public' }
+    { id: 'board-1001', boardType: 'notice', title: 'NV0 서비스 공지', body: '서비스 안내 게시판입니다.', createdAt: nowIso(), visibility: 'public' }
   ],
   library: [],
   scans: [],
@@ -831,7 +831,7 @@ function pageMap(urlPath) {
     '/docs/veridion': [PUBLIC_DIR, 'documents'],
     '/solutions': [PUBLIC_DIR, 'solutions'],
     '/service': [PUBLIC_DIR, 'solutions'],
-    '/products': [PUBLIC_DIR, 'solutions'],
+    '/products': [PUBLIC_DIR, 'plans'],
     '/demo': [PUBLIC_DIR, 'demo'],
     '/products/veridion/demo': [PUBLIC_DIR, 'veridion-demo'],
     '/plans': [PUBLIC_DIR, 'plans'],
@@ -865,12 +865,12 @@ function escapeHtml(value = '') {
 function routeMeta(urlPath) {
   const base = BUSINESS_PROFILE.domain.replace(/\/$/, '');
   const metas = {
-    '/': ['웹사이트 법적 리스크 무료 진단 | NV0 Veridion', '전자상거래 사이트의 필수 고지, 개인정보, 환불 안내, 광고 문구 리스크를 빠르게 점검합니다.'],
-    '/products/veridion/demo': ['Veridion 무료 진단 | NV0', '2분 무료 진단으로 웹사이트 안내 문구와 정책 고지 리스크를 먼저 확인하세요.'],
-    '/plans': ['요금제 | NV0 Veridion', '무료 진단 이후 상세 리포트, 수정안, 정책 템플릿, 구독 점검 상품을 비교하세요.'],
-    '/documents': ['정책 문서 생성 | NV0 Veridion', '개인정보처리방침, 이용약관, 환불 정책 문서 초안을 빠르게 정리합니다.'],
-    '/solutions': ['솔루션 | NV0 Veridion', '웹사이트 안내 고지, 정책 문서, 결제 전환 흐름을 점검하는 솔루션입니다.'],
-    '/board': ['인사이트 게시판 | NV0 Veridion', '전자상거래 사이트 운영자가 참고할 수 있는 필수 고지와 정책 점검 사례를 제공합니다.'],
+    '/': ['웹사이트 필수 고지 무료 진단 | NV0', '쇼핑몰과 랜딩페이지의 필수 고지, 개인정보, 환불 안내, 광고 문구를 빠르게 점검하고 개선 순서를 제안합니다.'],
+    '/products/veridion/demo': ['NV0 무료 진단 | NV0', '2분 무료 진단으로 웹사이트 안내 문구와 정책 고지 리스크를 먼저 확인하세요.'],
+    '/plans': ['상품·요금 | NV0', '무료 진단 이후 상세 리포트, 수정안, 정책 템플릿, 구독 점검 상품을 비교하세요.'],
+    '/documents': ['정책 문서 생성 | NV0', '개인정보처리방침, 이용약관, 환불 정책 문서 초안을 빠르게 정리합니다.'],
+    '/solutions': ['솔루션 | NV0', '웹사이트 안내 고지, 정책 문서, 결제 전환 흐름을 점검하는 솔루션입니다.'],
+    '/board': ['인사이트 게시판 | NV0', '전자상거래 사이트 운영자가 참고할 수 있는 필수 고지와 정책 점검 사례를 제공합니다.'],
     '/business-info': ['사업자 정보 | NV0', 'NV0 서비스 운영자의 사업자 고지와 고객지원 정보를 확인하세요.'],
     '/terms': ['이용약관 | NV0', 'NV0 서비스 이용약관입니다.'],
     '/privacy': ['개인정보처리방침 | NV0', 'NV0 서비스 개인정보 처리 기준입니다.'],
@@ -904,7 +904,7 @@ function buildStructuredData(urlPath) {
   const data = {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
-    name: 'NV0 Veridion',
+    name: 'NV0',
     applicationCategory: 'BusinessApplication',
     operatingSystem: 'Web',
     url: `${base}${urlPath === '/' ? '/' : urlPath}`,
@@ -929,15 +929,15 @@ function navAttrs(urlPath, href, className = '') {
 
 function publicTopMenuHtml(urlPath = '/') {
   return `<a class="skip-link" href="#main">본문 바로가기</a><nav class="site-topbar" aria-label="주요 메뉴">
-    <a class="brand" href="/"><span class="brand-mark">◇</span><span>VERIDION<small>웹사이트 법적 리스크 관리 솔루션</small></span></a>
+    <a class="brand" href="/"><span class="brand-mark">N</span><span>NV0<small>웹사이트 필수 고지·정책 점검</small></span></a>
     <div class="site-menu">
-      <a href="/products/veridion/demo"${navAttrs(urlPath, '/products/veridion/demo')}>서비스</a>
-      <a href="/documents"${navAttrs(urlPath, '/documents')}>기능</a>
-      <a href="/plans"${navAttrs(urlPath, '/plans')}>요금제</a>
+      <a href="/products/veridion/demo"${navAttrs(urlPath, '/products/veridion/demo')}>무료 진단</a>
+      <a href="/solutions"${navAttrs(urlPath, '/solutions')}>서비스</a>
+      <a href="/plans"${navAttrs(urlPath, '/plans')}>상품·요금</a>
       <a href="/board"${navAttrs(urlPath, '/board')}>리소스</a>
-      <a href="/business-info"${navAttrs(urlPath, '/business-info')}>고객지원</a>
+      <a href="/business-info"${navAttrs(urlPath, '/business-info')}>사업자 정보</a>
       <a href="/auth"${navAttrs(urlPath, '/auth', 'login-link')}>로그인</a>
-      <a href="/auth?mode=register" class="cta">회원가입</a>
+      <a href="/products/veridion/demo" class="cta">2분 무료 진단</a>
     </div>
   </nav>`;
 }
@@ -1521,7 +1521,7 @@ function buildCommercialOfferCatalog() {
     { code: 'Basic', group: 'subscription', title: 'Basic 모니터링', price: 49000, period: '월', priority: 5, summary: '소규모 사이트의 월 1회 리스크 재점검과 기본 이력 확인을 제공합니다.', targetCustomer: '월 1회 정기 점검만 필요한 소규모 사이트 고객', deliverables: ['월 1회 재점검', '전체 탐지 항목 해금', '기본 정책 초안', '이력 저장', '이메일 알림'], operations: ['신청 후 사이트 이력 확인 가능', '월간 점검 알림 제공', ...commonAssurance], benefits: ['월 1회 정기 점검으로 변경 사항 확인', '이력 저장으로 이전 결과와 비교 가능'], cta: 'Basic 시작' },
     { code: 'Pro', group: 'subscription', title: 'Pro 정기 개선', price: 89000, period: '월', priority: 6, summary: '정밀 리포트, 맞춤 수정 문구안, 법령 변경 알림을 포함한 추천 플랜입니다.', targetCustomer: '사이트 주문·문의가 발생하고 반복 점검이 필요한 고객', deliverables: ['Basic 전체 포함', '정밀 리포트 포함', '맞춤 수정 문구안', '법령 변경 알림', '재점검 및 개선 추적'], operations: ['결제 확인 후 Pro 결과 제공', '다음 조치 항목을 우선순위로 표시', ...commonAssurance], benefits: ['정밀 리포트와 수정 문구안을 함께 확인', '다음 조치 항목을 우선순위로 정리'], cta: 'Pro 시작' },
     { code: 'Auto', group: 'subscription', title: 'Auto 정기 케어', price: 149000, period: '월', priority: 7, summary: '반복 점검과 고객 안내 인사이트로 사이트 신뢰 관리를 돕습니다.', targetCustomer: '여러 캠페인·랜딩페이지를 꾸준히 점검해야 하는 팀', deliverables: ['Pro 전체 포함', '정기 고객 안내 인사이트', '승인 후 반영할 수 있는 수정 후보', '고위험 항목 우선 알림', '고객 포털 대시보드'], operations: ['정기 점검 결과 제공', '수정 후보는 확인 후 사용할 수 있도록 제공', ...commonAssurance], benefits: ['반복 점검 부담 완화', '여러 랜딩페이지의 고위험 항목을 우선 확인'], cta: 'Auto 시작' },
-    { code: 'Certified', group: 'annual', title: 'Veridion Certified', price: 99000, period: '연', priority: 8, summary: '점검 완료 사이트에 신뢰 인증 마크와 공개 인증 페이지를 제공합니다.', targetCustomer: '구매 전 신뢰 표시가 필요한 쇼핑몰·B2B 랜딩페이지', deliverables: ['인증 마크 스니펫', '공개 인증 페이지', '연 1회 재검토', '인증 만료일 표기', '고객 신뢰 요소'], operations: ['인증 검토 진행 상태 제공', '검토 완료 후 사용할 수 있는 표시 제공', ...commonAssurance], benefits: ['구매 전 신뢰 요소로 활용', '점검 완료 여부를 외부에 명확히 표시'], cta: '인증 신청' },
+    { code: 'Certified', group: 'annual', title: 'NV0 Certified', price: 99000, period: '연', priority: 8, summary: '점검 완료 사이트에 신뢰 인증 마크와 공개 인증 페이지를 제공합니다.', targetCustomer: '구매 전 신뢰 표시가 필요한 쇼핑몰·B2B 랜딩페이지', deliverables: ['인증 마크 스니펫', '공개 인증 페이지', '연 1회 재검토', '인증 만료일 표기', '고객 신뢰 요소'], operations: ['인증 검토 진행 상태 제공', '검토 완료 후 사용할 수 있는 표시 제공', ...commonAssurance], benefits: ['구매 전 신뢰 요소로 활용', '점검 완료 여부를 외부에 명확히 표시'], cta: '인증 신청' },
     { code: 'Agency', group: 'b2b', title: '대행사 리포트 패키지', price: 199000, period: '월', priority: 9, summary: '광고대행사·웹에이전시가 고객사 리스크 리포트를 반복 생성할 수 있는 패키지입니다.', targetCustomer: '고객사 사이트를 제작·지원하는 에이전시와 퍼포먼스 마케팅사', deliverables: ['고객사별 리포트', '고객사 제출용 문구 영역', '월 10개 도메인 기준', '고객 안내 인사이트 제공', '대행사 맞춤 안내 문구'], operations: ['서비스 신청 후 고객사별 리포트 구성 지원', '고객사별 결과를 구분해 확인 가능', ...commonAssurance], benefits: ['고객사별 리포트 제공에 활용', '여러 도메인의 점검 결과를 구분해 관리'], cta: '대행사 패키지 시작' }
   ].sort((a, b) => a.priority - b.priority);
 }
@@ -1756,7 +1756,7 @@ function buildIndustryGuide(industry = '일반 이커머스') {
 
 function buildCertificationSnippet(order) {
   const domain = order.domain || BUSINESS_PROFILE.domain;
-  return `<a href="${BUSINESS_PROFILE.domain}/portal?orderId=${order.id}" rel="nofollow noopener" style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid #D0D5DD;border-radius:999px;font:600 13px system-ui;color:#101828;text-decoration:none;background:#fff">Veridion Certified · ${domain}</a>`;
+  return `<a href="${BUSINESS_PROFILE.domain}/portal?orderId=${order.id}" rel="nofollow noopener" style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid #D0D5DD;border-radius:999px;font:600 13px system-ui;color:#101828;text-decoration:none;background:#fff">NV0 Certified · ${domain}</a>`;
 }
 
 function buildPurchasedAsset(db, order) {
@@ -1774,7 +1774,7 @@ function buildPurchasedAsset(db, order) {
   if (order.plan === 'FixPack') return { ...base, type: 'fix_pack', title: '맞춤 수정 문구안', fixes: buildFixCopyFromScan(scan), downloadable: true };
   if (order.plan === 'TemplatePack') return { ...base, type: 'template_pack', title: '법률 문서 템플릿 팩', templates: buildPolicyDocumentPreview({}, db.settings || {}).documents, downloadable: true };
   if (order.plan === 'IndustryGuide') return { ...base, type: 'industry_guide', title: `${industryGuide.industry} 규제 가이드`, guide: industryGuide, downloadable: true };
-  if (order.plan === 'Certified') return { ...base, type: 'certification', title: 'Veridion Certified 인증 후보', certificationStatus: 'pending_operator_review', badgeSnippet: buildCertificationSnippet(order), downloadable: false };
+  if (order.plan === 'Certified') return { ...base, type: 'certification', title: 'NV0 Certified 인증 후보', certificationStatus: 'pending_operator_review', badgeSnippet: buildCertificationSnippet(order), downloadable: false };
   if (['Basic','Pro','Auto','Agency'].includes(order.plan)) return { ...base, type: 'subscription_entitlement', title: `${offer.title} 권한`, entitlement: { plan: order.plan, active: true, included: offer.deliverables || [], renewal: offer.period }, sections: reportSections, fixes: order.plan === 'Basic' ? [] : buildFixCopyFromScan(scan), autoPublishing: order.plan === 'Auto' || order.plan === 'Agency' };
   return { ...base, type: 'generic', title: offer.title, sections: reportSections };
 }
@@ -1782,7 +1782,7 @@ function buildPurchasedAsset(db, order) {
 
 function pdfEscape(value) { return String(value || '').replace(/[\\()]/g, '\\$&').replace(/[\r\n]+/g, ' '); }
 function buildAssetPdfBuffer(asset, order) {
-  const lines = [asset.title || asset.productTitle || 'Veridion 산출물', `주문번호: ${order.id}`, `상품: ${order.plan}`, asset.legalDisclaimer || '본 문서는 참고 자료이며 법률 자문이 아닙니다.'];
+  const lines = [asset.title || asset.productTitle || 'NV0 산출물', `주문번호: ${order.id}`, `상품: ${order.plan}`, asset.legalDisclaimer || '본 문서는 참고 자료이며 법률 자문이 아닙니다.'];
   for (const sec of asset.sections || []) lines.push(`${sec.title}: ${sec.body}`);
   for (const fix of asset.fixes || []) lines.push(`${fix.title}: ${fix.after || fix.before || ''}`);
   for (const tpl of asset.templates || []) lines.push(`${tpl.title}: ${String(tpl.content || '').slice(0, 500)}`);
@@ -2084,7 +2084,7 @@ async function fetchTargetHtml(target) {
       redirect: 'follow',
       signal: controller.signal,
       headers: {
-        'user-agent': 'Mozilla/5.0 (compatible; NV0-Veridion/0.1; +https://nv0.local)'
+        'user-agent': 'Mozilla/5.0 (compatible; NV0/0.1; +https://nv0.local)'
       }
     });
     const contentType = String(res.headers.get('content-type') || '');
@@ -3124,7 +3124,7 @@ async function handleApi(req, res) {
       try {
         assertCommercialRouteAllowed(PLATFORM, 'demo_payment_complete');
       } catch (error) {
-        return json(req, res, 403, { ok: false, error: '상용 타깃에서는 데모 결제 완료 라우트를 사용할 수 없습니다.' });
+        return json(req, res, 403, { ok: false, error: '상용 타깃에서는 테스트 결제 완료 라우트를 사용할 수 없습니다.' });
       }
       if (PAYMENT_PROVIDER === 'external_http') return json(req, res, 400, { ok: false, error: '외부 결제 방식에서는 결제 확인 절차가 필요합니다.' });
       const completed = completeCheckoutOrder(db, orderId);

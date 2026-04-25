@@ -4,7 +4,7 @@ const oneTimeCards = document.getElementById('oneTimeCards');
 const subscriptionCards = document.getElementById('subscriptionCards');
 const certCards = document.getElementById('certCards');
 const comparisonRows = document.getElementById('comparisonRows');
-function getSavedScan(){try{return JSON.parse(localStorage.getItem('veridion:lastScan')||'null');}catch{return null;}}
+function getSavedScan(){try{return JSON.parse(localStorage.getItem('nv0:lastScan')||'null');}catch{return null;}}
 function priceLabel(offer){return `${formatWon(offer.price)}원${offer.period?` / ${escapeHtml(offer.period)}`:''}`;}
 function groupLabel(offer){if(offer.group==='one_time')return '1회 이용';if(offer.group==='subscription')return '정기 점검';if(offer.group==='annual')return '연간 인증';return '기업·대행사';}
 function roleLabel(offer){if(offer.group==='one_time')return '필요한 결과물만 바로 확인';if(offer.group==='subscription')return '정기 점검과 결과 이력 확인';if(offer.group==='annual')return '인증 표시와 공개 인증 페이지 제공';return '여러 고객사 사이트 점검 지원';}

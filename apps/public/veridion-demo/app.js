@@ -4,11 +4,14 @@ const state = document.getElementById('demoState');
 const result = document.getElementById('demoResult');
 const badge = document.getElementById('freeUsageBadge');
 const guard = await mountTurnstile({ containerId: 'turnstileBox', tokenInputId: 'turnstileToken', noticeId: 'turnstileState' });
+const params = new URLSearchParams(location.search);
+const targetInput = document.getElementById('targetUrl');
+if (params.get('target') && targetInput) targetInput.value = params.get('target');
 const usageKey = `veridion:freeUsage:${new Date().toISOString().slice(0,10)}`;
 function getUsage(){ return Number(localStorage.getItem(usageKey) || '0'); }
 function setUsage(n){ localStorage.setItem(usageKey, String(n)); updateBadge(); }
 function updateBadge(){ const left=Math.max(0,3-getUsage()); if(badge) badge.textContent=`오늘 남은 무료 진단 ${left}회`; }
-function saveScan(scan) { localStorage.setItem('veridion:lastScan', JSON.stringify(scan)); }
+function saveScan(scan) { localStorage.setItem('nv0:lastScan', JSON.stringify(scan)); }
 function validEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
 function renderPaywall(scan){
   const hidden = (scan.detailFindings || scan.topFindings || []).slice(2, 7);
@@ -22,12 +25,14 @@ async function runScan() {
   const email = document.getElementById('leadEmail').value.trim();
   const target = document.getElementById('targetUrl').value.trim();
   if (!validEmail(email)) { state.textContent = '결과 안내를 받을 이메일을 먼저 입력하세요.'; return; }
-  if (!/^https?:\/\//.test(target)) { state.textContent = 'https://로 시작하는 유효한 URL을 입력하세요.'; return; }
+  let normalizedTarget = target;
+  if (target && !/^https?:\/\//.test(target)) normalizedTarget = `https://${target}`;
+  if (!/^https?:\/\/[^\s.]+\.[^\s]+/.test(normalizedTarget)) { state.textContent = '유효한 사이트 주소를 입력하세요. 예: https://your-store.kr'; return; }
   if (getUsage() >= 3) { state.innerHTML = '오늘 무료 이용 횟수를 모두 사용했습니다. <a href="/plans">PRO 플랜으로 계속 이용하세요.</a>'; result.innerHTML = '<div class="upgrade-box"><strong>무료 이용 한도 초과</strong><p class="muted">상세 진단과 반복 점검은 유료 상품에서 이용할 수 있습니다.</p><a class="btn primary" href="/plans">상품 보기</a></div>'; return; }
   state.textContent = '진단을 실행하고 있습니다.';
   result.innerHTML = '<div class="loading-steps"><div>사이트 접근성을 확인합니다.</div><div>필수 고지와 정책 요소를 점검합니다.</div><div>요약 결과를 정리합니다.</div></div>';
   try {
-    const res = await fetch('/api/public/scan', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ target, email, turnstileToken: guard.getToken() }) });
+    const res = await fetch('/api/public/scan', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ target: normalizedTarget, email, turnstileToken: guard.getToken() }) });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'scan failed');
     setUsage(getUsage()+1); saveScan(data.result || {});

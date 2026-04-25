@@ -1,0 +1,362 @@
+{
+  "generatedAt": "2026-04-25T09:26:33.655Z",
+  "ok": true,
+  "phase": "commercial-final",
+  "total": 88,
+  "passed": 88,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "exists:server/index.mjs",
+      "ok": true
+    },
+    {
+      "name": "exists:shared/base.css",
+      "ok": true
+    },
+    {
+      "name": "exists:apps/public/home/index.html",
+      "ok": true
+    },
+    {
+      "name": "exists:apps/public/home/app.css",
+      "ok": true
+    },
+    {
+      "name": "exists:apps/public/veridion-demo/index.html",
+      "ok": true
+    },
+    {
+      "name": "exists:apps/public/veridion-demo/app.js",
+      "ok": true
+    },
+    {
+      "name": "exists:apps/public/plans/index.html",
+      "ok": true
+    },
+    {
+      "name": "exists:apps/public/plans/app.js",
+      "ok": true
+    },
+    {
+      "name": "exists:apps/public/documents/index.html",
+      "ok": true
+    },
+    {
+      "name": "exists:Dockerfile",
+      "ok": true
+    },
+    {
+      "name": "exists:package.json",
+      "ok": true
+    },
+    {
+      "name": "version:commercial-final",
+      "ok": true
+    },
+    {
+      "name": "route:/",
+      "ok": true
+    },
+    {
+      "name": "route:/plans",
+      "ok": true
+    },
+    {
+      "name": "route:/documents",
+      "ok": true
+    },
+    {
+      "name": "route:/products/veridion/demo",
+      "ok": true
+    },
+    {
+      "name": "route:/checkout",
+      "ok": true
+    },
+    {
+      "name": "route:/portal",
+      "ok": true
+    },
+    {
+      "name": "route:/board",
+      "ok": true
+    },
+    {
+      "name": "route:/business-info",
+      "ok": true
+    },
+    {
+      "name": "route:/privacy",
+      "ok": true
+    },
+    {
+      "name": "route:/terms",
+      "ok": true
+    },
+    {
+      "name": "route:/refund",
+      "ok": true
+    },
+    {
+      "name": "api:/api/public/products",
+      "ok": true
+    },
+    {
+      "name": "api:/api/public/plans",
+      "ok": true
+    },
+    {
+      "name": "api:/api/public/scan",
+      "ok": true
+    },
+    {
+      "name": "api:/api/public/document-preview",
+      "ok": true
+    },
+    {
+      "name": "api:/api/public/checkout-session",
+      "ok": true
+    },
+    {
+      "name": "api:/api/public/payment/complete",
+      "ok": true
+    },
+    {
+      "name": "api:/api/public/fulfillment",
+      "ok": true
+    },
+    {
+      "name": "api:/healthz",
+      "ok": true
+    },
+    {
+      "name": "api:/readyz",
+      "ok": true
+    },
+    {
+      "name": "offer:Report",
+      "ok": true
+    },
+    {
+      "name": "offer:FixPack",
+      "ok": true
+    },
+    {
+      "name": "offer:TemplatePack",
+      "ok": true
+    },
+    {
+      "name": "offer:IndustryGuide",
+      "ok": true
+    },
+    {
+      "name": "offer:Basic",
+      "ok": true
+    },
+    {
+      "name": "offer:Pro",
+      "ok": true
+    },
+    {
+      "name": "offer:Auto",
+      "ok": true
+    },
+    {
+      "name": "offer:Certified",
+      "ok": true
+    },
+    {
+      "name": "offer:Agency",
+      "ok": true
+    },
+    {
+      "name": "home:NV0",
+      "ok": true
+    },
+    {
+      "name": "home:무료 진단 시작",
+      "ok": true
+    },
+    {
+      "name": "home:광고비 쓰기 전에",
+      "ok": true
+    },
+    {
+      "name": "home:결제 전 신뢰",
+      "ok": true
+    },
+    {
+      "name": "home:Risk 72 / 100",
+      "ok": true
+    },
+    {
+      "name": "home:추천 구매 순서",
+      "ok": true
+    },
+    {
+      "name": "home:Pro 리포트",
+      "ok": true
+    },
+    {
+      "name": "home:법률 자문 서비스인가요?",
+      "ok": true
+    },
+    {
+      "name": "home:single-primary-funnel",
+      "ok": true
+    },
+    {
+      "name": "home:no-broken-doctype",
+      "ok": true
+    },
+    {
+      "name": "home:no-internal-phase-copy",
+      "ok": true
+    },
+    {
+      "name": "home-css:hero-board",
+      "ok": true
+    },
+    {
+      "name": "home-css:hero-lead",
+      "ok": true
+    },
+    {
+      "name": "home-css:diagnosis-card",
+      "ok": true
+    },
+    {
+      "name": "home-css:problem-strip",
+      "ok": true
+    },
+    {
+      "name": "home-css:offer-board",
+      "ok": true
+    },
+    {
+      "name": "home-css:floating-cta",
+      "ok": true
+    },
+    {
+      "name": "home-css:@media",
+      "ok": true
+    },
+    {
+      "name": "demo:무료 요약 진단 3회",
+      "ok": true
+    },
+    {
+      "name": "demo:사이트 주소 하나로",
+      "ok": true
+    },
+    {
+      "name": "demo:결제 전 신뢰 리스크",
+      "ok": true
+    },
+    {
+      "name": "demo:무료·유료 비교",
+      "ok": true
+    },
+    {
+      "name": "demo:Pro 리포트 신청",
+      "ok": true
+    },
+    {
+      "name": "demo-js:normalizedTarget",
+      "ok": true
+    },
+    {
+      "name": "demo-js:nv0:lastScan",
+      "ok": true
+    },
+    {
+      "name": "demo-js:renderPaywall",
+      "ok": true
+    },
+    {
+      "name": "demo-js:recommendedPlan",
+      "ok": true
+    },
+    {
+      "name": "demo-js:freeUsage",
+      "ok": true
+    },
+    {
+      "name": "plans:상품·요금",
+      "ok": true
+    },
+    {
+      "name": "plans:Pro 리포트",
+      "ok": true
+    },
+    {
+      "name": "plans:정기 점검",
+      "ok": true
+    },
+    {
+      "name": "plans:전체 상품 비교",
+      "ok": true
+    },
+    {
+      "name": "plans:무료 진단 시작",
+      "ok": true
+    },
+    {
+      "name": "plans:not-stuck-loading",
+      "ok": true
+    },
+    {
+      "name": "plans:static-fallback-cards",
+      "ok": true
+    },
+    {
+      "name": "documents:minimal-fields",
+      "ok": true
+    },
+    {
+      "name": "documents:template-pack",
+      "ok": true
+    },
+    {
+      "name": "base-css:site-topbar",
+      "ok": true
+    },
+    {
+      "name": "base-css:business-footer",
+      "ok": true
+    },
+    {
+      "name": "base-css:cta-band",
+      "ok": true
+    },
+    {
+      "name": "base-css:promo-banner",
+      "ok": true
+    },
+    {
+      "name": "base-css:@media",
+      "ok": true
+    },
+    {
+      "name": "client:no-console-log",
+      "ok": true
+    },
+    {
+      "name": "client:no-inline-handler",
+      "ok": true
+    },
+    {
+      "name": "runtime:runtime/uploads:empty",
+      "ok": true
+    },
+    {
+      "name": "runtime:runtime/backups:empty",
+      "ok": true
+    },
+    {
+      "name": "runtime:runtime/reports:empty",
+      "ok": true
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-# NV0 / Veridion Commercial Launch Build
+# NV0 Commercial Launch Build
 
 이 패키지는 공개 런칭 기준을 기본값으로 정리한 상용화 보강본입니다. 운영 모드는 `NV0_PLATFORM_TARGET=commercial`이며, shared admin key, demo payment, JSON primary persistence, builtin scan, local filesystem storage는 상용 런칭 경로에서 차단됩니다.
 
@@ -13,7 +13,7 @@ npm run ci:strict
 
 실서버에서는 PortOne 운영키, PostgreSQL, Redis, S3-compatible storage, 외부 scan provider를 연결한 뒤 `/readyz`가 200을 반환해야 공개 전환합니다.
 
-# NV0 / Veridion Cleanroom Rebuild Starter
+# NV0 Cleanroom Rebuild Starter
 
 이 패키지는 기존 `site.js`, `site.css`, `site-data.js` 같은 공용 거대 프런트 의존을 끊고,
 공개 앱 / 관리자 앱 / API 앱을 분리하는 클린룸 스타터입니다.
@@ -178,11 +178,11 @@ npm run acceptance
 ```
 이 명령은 상용 런칭 기준의 핵심 검증을 순차 실행하고 `docs/PHASE10_FULL_TEST_SUMMARY_20260424.json`에 결과를 남깁니다.
 
-## 데모 상태 초기화
+## 테스트 상태 초기화
 ```bash
 npm run reset:demo
 ```
-패키징 전 데모용 시드 데이터로 `runtime/data/db.json`을 되돌립니다.
+패키징 전 테스트용 시드 데이터로 `runtime/data/db.json`을 되돌립니다.
 
 ## 추가 검증 스위트
 ```bash
@@ -202,8 +202,7 @@ npm run validate:commercial
 node --check server/index.mjs
 ```
 
-## Phase35 Production Completion
-- 개인정보 최소수집: 회원가입/결제에서 이름·회사명·전화번호·주소 기본 미수집
+## - 개인정보 최소수집: 회원가입/결제에서 이름·회사명·전화번호·주소 기본 미수집
 - 릴리즈 준비상태 API: `/api/public/release-readiness`, `/api/admin/release-readiness`
 - 환불 요청/관리자 처리 API 추가
 - 결제 재시도 API 추가
@@ -212,8 +211,7 @@ node --check server/index.mjs
 - 검증: `node scripts/validate-phase35-production.mjs`
 
 
-## Phase42 최종 검수
-
+## 
 상용 배포 직전에는 아래 명령을 실행합니다. 각 단계는 timeout이 적용되어 중간 멈춤 없이 실패 지점이 기록됩니다.
 
 ```bash

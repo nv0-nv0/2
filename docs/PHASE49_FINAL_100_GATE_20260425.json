@@ -1,17 +1,27 @@
 {
-  "generatedAt": "2026-04-25T08:30:22.996Z",
-  "ok": true,
-  "score": 100,
+  "generatedAt": "2026-04-25T09:11:16.071Z",
+  "ok": false,
+  "score": 94,
   "phase": "phase52-true-100-conversion-hardening",
   "total": 64,
-  "passed": 64,
-  "failed": 0,
-  "failures": [],
+  "passed": 62,
+  "failed": 2,
+  "failures": [
+    {
+      "name": "version:phase52",
+      "ok": false,
+      "version": "0.1.3-phase54-global-completion"
+    },
+    {
+      "name": "page:plans:not-stuck-loading",
+      "ok": false
+    }
+  ],
   "checks": [
     {
       "name": "version:phase52",
-      "ok": true,
-      "version": "0.1.2-phase52-true-100-conversion-hardening"
+      "ok": false,
+      "version": "0.1.3-phase54-global-completion"
     },
     {
       "name": "exists:Dockerfile",
@@ -155,7 +165,7 @@
     },
     {
       "name": "page:plans:not-stuck-loading",
-      "ok": true
+      "ok": false
     },
     {
       "name": "page:plans:no-admin-link",

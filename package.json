@@ -1,10 +1,10 @@
 {
   "name": "nv0-veridion-cleanroom",
-  "version": "0.1.2-phase52-true-100-conversion-hardening",
+  "version": "1.0.0-commercial-final",
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "npm run test:all",
+    "test": "node scripts/test-all.mjs",
     "start": "node server/index.mjs",
     "test:e2e": "node tests/e2e.mjs",
     "test:session": "node tests/session-persistence.mjs",

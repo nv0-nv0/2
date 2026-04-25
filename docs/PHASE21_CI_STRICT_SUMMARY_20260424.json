@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-25T06:32:05.468Z",
+  "generatedAt": "2026-04-25T08:39:12.884Z",
   "ok": true,
   "gate": "phase21-ci-strict-no-error-masking",
   "results": [
@@ -8,7 +8,7 @@
       "ok": true,
       "code": 0,
       "signal": null,
-      "durationMs": 290,
+      "durationMs": 115,
       "stdout": "{\n  \"ok\": true,\n  \"passed\": 52,\n  \"failed\": 0,\n  \"report\": \"docs/PHASE27_TEST_ALL_SUMMARY_20260424.json\"\n}\n",
       "stderr": ""
     },
@@ -17,8 +17,8 @@
       "ok": true,
       "code": 0,
       "signal": null,
-      "durationMs": 207,
-      "stdout": "{\n  \"ok\": true,\n  \"checkedAt\": \"2026-04-25T06:32:05.252Z\",\n  \"commercialReleaseGuards\": 10,\n  \"legalPages\": 4,\n  \"businessProfile\": true\n}\n",
+      "durationMs": 103,
+      "stdout": "{\n  \"ok\": true,\n  \"checkedAt\": \"2026-04-25T08:39:12.774Z\",\n  \"commercialReleaseGuards\": 10,\n  \"legalPages\": 4,\n  \"businessProfile\": true\n}\n",
       "stderr": ""
     },
     {
@@ -26,8 +26,8 @@
       "ok": true,
       "code": 0,
       "signal": null,
-      "durationMs": 202,
-      "stdout": "{\n  \"ok\": true,\n  \"checkedAt\": \"2026-04-25T06:32:05.455Z\",\n  \"requiredFiles\": 11\n}\n",
+      "durationMs": 97,
+      "stdout": "{\n  \"ok\": true,\n  \"checkedAt\": \"2026-04-25T08:39:12.872Z\",\n  \"requiredFiles\": 11\n}\n",
       "stderr": ""
     }
   ]
