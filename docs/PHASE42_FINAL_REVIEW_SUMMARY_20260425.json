@@ -1,0 +1,80 @@
+{
+  "ok": false,
+  "phase": "phase43-100-score-complete",
+  "total": 13,
+  "passed": 6,
+  "failed": 1,
+  "results": [
+    {
+      "name": "check-source-syntax",
+      "ok": true,
+      "code": 0,
+      "killedByTimeout": false,
+      "durationMs": 227,
+      "timeoutMs": 45000,
+      "stdoutTail": "{\n  \"ok\": true,\n  \"checkedCount\": 90,\n  \"failures\": []\n}\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "test-all",
+      "ok": true,
+      "code": 0,
+      "killedByTimeout": false,
+      "durationMs": 163,
+      "timeoutMs": 45000,
+      "stdoutTail": "{\n  \"ok\": true,\n  \"passed\": 52,\n  \"failed\": 0,\n  \"report\": \"docs/PHASE27_TEST_ALL_SUMMARY_20260424.json\"\n}\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "validate-phase37",
+      "ok": true,
+      "code": 0,
+      "killedByTimeout": false,
+      "durationMs": 130,
+      "timeoutMs": 20000,
+      "stdoutTail": "{\n  \"ok\": true,\n  \"passed\": 28,\n  \"failed\": 0,\n  \"report\": \"docs/PHASE37_LEGAL_RISK_VALIDATION_20260425.json\"\n}\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "validate-phase38",
+      "ok": true,
+      "code": 0,
+      "killedByTimeout": false,
+      "durationMs": 181,
+      "timeoutMs": 20000,
+      "stdoutTail": "{\n  \"ok\": true,\n  \"passed\": 13,\n  \"total\": 13,\n  \"failed\": []\n}\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "validate-phase39",
+      "ok": true,
+      "code": 0,
+      "killedByTimeout": false,
+      "durationMs": 203,
+      "timeoutMs": 20000,
+      "stdoutTail": "{\n  \"ok\": true,\n  \"passed\": 13,\n  \"total\": 13,\n  \"failed\": []\n}\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "validate-phase40",
+      "ok": true,
+      "code": 0,
+      "killedByTimeout": false,
+      "durationMs": 121,
+      "timeoutMs": 20000,
+      "stdoutTail": "{\n  \"ok\": true,\n  \"passed\": 24,\n  \"total\": 24,\n  \"failed\": [],\n  \"checkedAt\": \"2026-04-25T06:05:40.601Z\"\n}\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "validate-phase41",
+      "ok": false,
+      "code": 1,
+      "killedByTimeout": false,
+      "durationMs": 657,
+      "timeoutMs": 20000,
+      "stdoutTail": "",
+      "stderrTail": "{\n  \"ok\": false,\n  \"phase\": \"phase41-commercial-final-complete\",\n  \"total\": 15,\n  \"passed\": 14,\n  \"failed\": 1,\n  \"failures\": [\n    {\n      \"name\": \"phase41 version marker\",\n      \"ok\": false,\n      \"detail\": \"\"\n    }\n  ],\n  \"checkedAt\": \"2026-04-25T06:05:41.164Z\"\n}\n"
+    }
+  ],
+  "checkedAt": "2026-04-25T06:05:41.270Z"
+}

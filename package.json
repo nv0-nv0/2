@@ -1,6 +1,6 @@
 {
   "name": "nv0-veridion-cleanroom",
-  "version": "0.1.1-phase27-distributed-uiux-truthful-copy",
+  "version": "0.1.1-phase46-coolify-env-autodetect",
   "private": true,
   "type": "module",
   "scripts": {
@@ -32,7 +32,7 @@
     "pipeline:strict": "npm run acceptance",
     "test:contracts": "node tests/contracts-fuzz.mjs",
     "check:render-safety": "node scripts/check-client-render-safety.mjs",
-    "check:links": "node scripts/check-links.mjs",
+    "check:links": "node scripts/check-links.mjs --summary",
     "check:handoff-docs": "node scripts/check-handoff-docs.mjs",
     "check:no-debug-client": "node scripts/check-no-debug-client.mjs",
     "test:security-stateful": "node tests/security-stateful.mjs",
@@ -47,6 +47,18 @@
     "check:runtime-clean": "node scripts/check-runtime-clean.mjs",
     "check:full-flow": "node scripts/check-full-commercial-flow.mjs",
     "pipeline:release": "node scripts/pipeline-release-gate.mjs",
-    "pipeline:final": "node scripts/final-commercial-gate.mjs"
+    "pipeline:final": "node scripts/final-commercial-gate.mjs",
+    "validate:phase35": "node scripts/validate-phase35-production.mjs",
+    "validate:phase36": "node scripts/validate-phase36-test-review.mjs",
+    "validate:phase37": "node scripts/validate-phase37-legal-risk.mjs",
+    "validate:phase38": "node scripts/validate-phase38-operational.mjs",
+    "validate:phase39": "node scripts/validate-phase39-launch-gate.mjs",
+    "validate:phase40": "node scripts/validate-phase40-final-recheck.mjs",
+    "final:review": "node scripts/run-final-review.mjs",
+    "validate:phase41": "node scripts/validate-phase41-commercial-final.mjs",
+    "validate:phase42": "node scripts/validate-phase42-final-closeout.mjs",
+    "final:review:legacy": "npm run check:syntax && npm run test:all && npm run validate:phase37 && npm run validate:phase38 && npm run validate:phase39 && npm run validate:phase40 && npm run validate:phase41 && npm run validate:phase42 && npm run test:routes && npm run test:e2e && npm run test:security-stateful",
+    "validate:phase43": "node scripts/validate-phase43-perfect-score.mjs",
+    "final:100": "node scripts/run-final-review.mjs && node scripts/validate-deploy-bundle.mjs && node scripts/verify-security.mjs && node scripts/test-all.mjs"
   }
 }

@@ -1,0 +1,126 @@
+{
+  "generatedAt": "2026-04-25T03:14:14.274Z",
+  "phase": "phase36-test-review-and-production-hardening",
+  "ok": true,
+  "total": 29,
+  "passed": 29,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "api:/api/public/release-readiness",
+      "ok": true
+    },
+    {
+      "name": "api:/api/admin/release-readiness",
+      "ok": true
+    },
+    {
+      "name": "api:/api/public/refund-request",
+      "ok": true
+    },
+    {
+      "name": "api:/api/admin/refund-requests",
+      "ok": true
+    },
+    {
+      "name": "api:/api/public/payment/retry",
+      "ok": true
+    },
+    {
+      "name": "api:/api/public/account/marketing-consent",
+      "ok": true
+    },
+    {
+      "name": "server-marker:maskSensitive(meta)",
+      "ok": true
+    },
+    {
+      "name": "server-marker:minimum_required_only",
+      "ok": true
+    },
+    {
+      "name": "server-marker:consent:",
+      "ok": true
+    },
+    {
+      "name": "server-marker:refundRequests",
+      "ok": true
+    },
+    {
+      "name": "server-marker:emailOutbox",
+      "ok": true
+    },
+    {
+      "name": "privacy:no-registerName",
+      "ok": true
+    },
+    {
+      "name": "privacy:no-registerCompany",
+      "ok": true
+    },
+    {
+      "name": "privacy:no-buyerName",
+      "ok": true
+    },
+    {
+      "name": "privacy:no-buyerPhone",
+      "ok": true
+    },
+    {
+      "name": "privacy:no-buyerAddress",
+      "ok": true
+    },
+    {
+      "name": "checkout:email-only-required",
+      "ok": true
+    },
+    {
+      "name": "privacy-copy:이름, 전화번호, 주소는 기본적으로 요구하지 않습니다",
+      "ok": true
+    },
+    {
+      "name": "privacy-copy:최소수집",
+      "ok": true
+    },
+    {
+      "name": "privacy-copy:개인정보 처리방침",
+      "ok": true
+    },
+    {
+      "name": "refund-copy:환불",
+      "ok": true
+    },
+    {
+      "name": "refund-copy:디지털 산출물",
+      "ok": true
+    },
+    {
+      "name": "refund-copy:청약철회",
+      "ok": true
+    },
+    {
+      "name": "package:phase36-script",
+      "ok": true
+    },
+    {
+      "name": "runtime:sessions-empty",
+      "ok": true
+    },
+    {
+      "name": "runtime:seed-match",
+      "ok": true
+    },
+    {
+      "name": "runtime:runtime/uploads:empty",
+      "ok": true
+    },
+    {
+      "name": "runtime:runtime/backups:empty",
+      "ok": true
+    },
+    {
+      "name": "runtime:runtime/reports:empty",
+      "ok": true
+    }
+  ]
+}

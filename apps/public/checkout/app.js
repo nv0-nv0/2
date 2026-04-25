@@ -53,12 +53,19 @@ async function launchPaymentWindow(paymentSession) {
 
 async function createSession() {
   const payload = {
-    buyerName: document.getElementById('buyerName').value.trim(),
-    buyerEmail: document.getElementById('buyerEmail').value.trim(),
+    buyerEmail: document.getElementById('buyerEmail')?.value.trim() || '',
     siteId: prefill.siteId,
     domain: prefill.domain,
-    plan: planInput.value
+    plan: planInput.value,
+    privacyConsent: !!document.getElementById('privacyConsent')?.checked,
+    termsConsent: !!document.getElementById('termsConsent')?.checked,
+    refundConsent: !!document.getElementById('refundConsent')?.checked,
+    deliveryConsent: !!document.getElementById('deliveryConsent')?.checked
   };
+  if (!payload.privacyConsent || !payload.termsConsent || !payload.refundConsent || !payload.deliveryConsent) {
+    state.textContent = '결제와 산출물 제공에 필요한 필수 약관 및 디지털 산출물 제공 고지에 동의해 주세요.';
+    return;
+  }
   state.textContent = '신청 정보를 확인하는 중...';
   const res = await fetch('/api/public/checkout-session', {
     method: 'POST',
@@ -106,7 +113,7 @@ async function completePayment() {
   renderOrder(data.order, data.paymentSession);
   state.textContent = '결제가 완료되었습니다.';
   const anchor = document.createElement('a');
-  anchor.href = `/portal?orderId=${encodeURIComponent(data.order.id)}`;
+  anchor.href = `/portal?orderId=${encodeURIComponent(data.order.id)}${data.order.accessToken ? `&accessToken=${encodeURIComponent(data.order.accessToken)}` : ''}`;
   anchor.textContent = '고객 포털로 이동';
   state.appendChild(document.createTextNode(' '));
   state.appendChild(anchor);

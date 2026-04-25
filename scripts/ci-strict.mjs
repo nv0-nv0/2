@@ -13,7 +13,7 @@ const tasks = [
 const results = [];
 for (const task of tasks) {
   const started = Date.now();
-  const r = spawnSync(task.cmd, task.args, { cwd: root, env: { ...process.env, NODE_ENV: process.env.NODE_ENV || 'production', NV0_TARGET_FETCH_ENABLED: 'false', NV0_ENABLE_TURNSTILE: 'false' }, timeout: task.timeoutMs, encoding: 'utf8', maxBuffer: 1024 * 1024 * 8 });
+  const r = spawnSync(task.cmd, task.args, { cwd: root, shell: false, env: { ...process.env, NODE_ENV: process.env.NODE_ENV || 'production', NV0_TARGET_FETCH_ENABLED: 'false', NV0_ENABLE_TURNSTILE: 'false' }, timeout: task.timeoutMs, encoding: 'utf8', maxBuffer: 1024 * 1024 * 8 });
   const result = { name: task.name, ok: r.status === 0 && !r.error, code: r.status, signal: r.signal, durationMs: Date.now() - started, stdout: (r.stdout || '').slice(-24000), stderr: (r.stderr || String(r.error?.message || '')).slice(-24000) };
   results.push(result);
   console.log(`${result.ok ? 'PASS' : 'FAIL'} ${task.name}`);
@@ -24,4 +24,4 @@ const report = { generatedAt: new Date().toISOString(), ok, gate: 'phase21-ci-st
 const out = path.join(docsDir, 'PHASE21_CI_STRICT_SUMMARY_20260424.json');
 fs.writeFileSync(out, JSON.stringify(report, null, 2));
 console.log(JSON.stringify({ ok, report: 'docs/PHASE21_CI_STRICT_SUMMARY_20260424.json' }, null, 2));
-process.reallyExit ? process.reallyExit(ok ? 0 : 1) : process.exit(ok ? 0 : 1);
+process.exit(ok ? 0 : 1);

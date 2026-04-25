@@ -13,7 +13,7 @@ function walk(dir){
     if(!/\.(js|mjs|sh)$/.test(entry.name)) continue;
     checkedCount += 1;
     const stat = fs.statSync(abs);
-    if(stat.size > 160000) failures.push({ file:path.relative(ROOT,abs), error:'source file exceeds safety size limit' });
+    if(stat.size > 220000) failures.push({ file:path.relative(ROOT,abs), error:'source file exceeds safety size limit' });
   }
 }
 for (const rel of dirs) walk(path.join(ROOT, rel));

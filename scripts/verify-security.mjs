@@ -28,8 +28,10 @@ async function ensureServer() {
       NV0_TRUST_PROXY_HEADERS: process.env.NV0_TRUST_PROXY_HEADERS || 'true',
       NODE_ENV: 'production'
     },
-    stdio: 'inherit'
+    stdio: ['ignore', 'pipe', 'pipe']
   });
+  child.stdout?.on('data', chunk => { if (process.env.NV0_VERBOSE_SECURITY === 'true') process.stdout.write(chunk); });
+  child.stderr?.on('data', chunk => { if (process.env.NV0_VERBOSE_SECURITY === 'true') process.stderr.write(chunk); });
   for (let i = 0; i < 25; i += 1) {
     await wait(200);
     if (await canReach(`${base}/healthz`)) return;
@@ -139,6 +141,13 @@ async function main() {
 main().catch(error => {
   console.error(JSON.stringify({ ok: false, baseUrl: base, error: error.message }, null, 2));
   process.exitCode = 1;
-}).finally(() => {
-  if (child) child.kill('SIGTERM');
+}).finally(async () => {
+  if (child && !child.killed) {
+    child.kill('SIGTERM');
+    await Promise.race([
+      new Promise(resolve => child.once('exit', resolve)),
+      wait(1000).then(() => { try { child.kill('SIGKILL'); } catch {} })
+    ]);
+  }
+  process.exit(process.exitCode || 0);
 });

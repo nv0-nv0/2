@@ -83,7 +83,7 @@ async function j(url, options = {}) {
 }
 
 try {
-  let x = await j('/api/public/checkout-session', { method:'POST', headers:{ 'content-type':'application/json' }, body: JSON.stringify({ plan:'Basic', buyerName:'포트원', buyerEmail:'portone@example.com' }) });
+  let x = await j('/api/public/checkout-session', { method:'POST', headers:{ 'content-type':'application/json' }, body: JSON.stringify({ plan:'Basic', buyerEmail:'portone@example.com', privacyConsent:true, termsConsent:true, refundConsent:true, deliveryConsent:true }) });
   assert.equal(x.res.status, 200);
   assert.equal(x.data.paymentSession.provider, 'portone_v2');
   assert.equal(x.data.paymentSession.providerPaymentId, x.data.order.id);

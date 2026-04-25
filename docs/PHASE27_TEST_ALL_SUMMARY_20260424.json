@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-24T13:50:46.382Z",
+  "generatedAt": "2026-04-25T06:32:05.039Z",
   "ok": true,
   "phase": "phase27-distributed-uiux-truthful-copy",
   "total": 52,
@@ -135,19 +135,19 @@
       "ok": true
     },
     {
-      "name": "home:무료 문서 초안 생성",
+      "name": "home:문서 초안은 전용 페이지",
       "ok": true
     },
     {
-      "name": "home:웹사이트 운영 리스크",
+      "name": "home:사이트의 부족한 안내",
       "ok": true
     },
     {
-      "name": "home:상세 정보는 전용 페이지",
+      "name": "home:필요한 작업을 메뉴",
       "ok": true
     },
     {
-      "name": "home:예시 기본값 없이",
+      "name": "home:문서 초안 생성 기능은 메뉴 진입 후",
       "ok": true
     },
     {

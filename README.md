@@ -201,3 +201,23 @@ npm run test:providers
 npm run validate:commercial
 node --check server/index.mjs
 ```
+
+## Phase35 Production Completion
+- 개인정보 최소수집: 회원가입/결제에서 이름·회사명·전화번호·주소 기본 미수집
+- 릴리즈 준비상태 API: `/api/public/release-readiness`, `/api/admin/release-readiness`
+- 환불 요청/관리자 처리 API 추가
+- 결제 재시도 API 추가
+- 이메일 대기열 상태관리 API 추가
+- 감사로그 민감정보 마스킹 적용
+- 검증: `node scripts/validate-phase35-production.mjs`
+
+
+## Phase42 최종 검수
+
+상용 배포 직전에는 아래 명령을 실행합니다. 각 단계는 timeout이 적용되어 중간 멈춤 없이 실패 지점이 기록됩니다.
+
+```bash
+npm run final:review
+```
+
+결과 파일: `docs/PHASE42_FINAL_REVIEW_SUMMARY_20260425.json`

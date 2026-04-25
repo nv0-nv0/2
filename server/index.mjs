@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { assertCommercialRouteAllowed, createPlatformProfile } from './core/platform.mjs';
 import { PAYMENT_SESSION_TRANSITIONS, ORDER_STATUS_TRANSITIONS, canTransition } from './core/payment-state-machine.mjs';
 import { authenticateAdminAccount, ensureAdminCollections, ensureBootstrapAdmin, getAdminPermissions, getAdminRoles } from './core/admin-auth.mjs';
+import { hashPassword, verifyPassword } from './core/passwords.mjs';
 import { createPersistenceManager } from './infrastructure/persistence/persistence.mjs';
 import { createSessionStore } from './infrastructure/session/session-store.mjs';
 import { createRateLimitStore } from './infrastructure/ratelimit/rate-limit-store.mjs';
@@ -32,7 +33,11 @@ const BUSINESS_PROFILE = Object.freeze({
   address: '경기도 남양주시 와부읍 덕소로97번길 34, 105동 402호',
   businessTypes: ['정보통신업', '소프트웨어 개발 및 공급업', '전자상거래업', '데이터베이스 및 온라인 정보 제공업', '광고 대행업'],
   contactEmail: process.env.NV0_SUPPORT_EMAIL || 'ct@nv0.kr',
-  domain: process.env.NV0_PUBLIC_BASE_URL || 'https://nv0.kr'
+  domain: process.env.NV0_PUBLIC_BASE_URL || 'https://nv0.kr',
+  mailOrderRegistrationNumber: process.env.NV0_MAIL_ORDER_REGISTRATION_NUMBER || '',
+  hostingProvider: process.env.NV0_HOSTING_PROVIDER || '자체 서버 또는 계약 호스팅 사업자',
+  customerServicePhone: process.env.NV0_CUSTOMER_SERVICE_PHONE || '',
+  privacyOfficerEmail: process.env.NV0_PRIVACY_OFFICER_EMAIL || process.env.NV0_SUPPORT_EMAIL || 'ct@nv0.kr'
 });
 
 const PORT = Number(process.env.PORT || 3210);
@@ -72,6 +77,15 @@ const PORTONE_WEBHOOK_VERIFY_MODE = process.env.NV0_PORTONE_WEBHOOK_VERIFY_MODE 
 const RULES_VERSION = process.env.NV0_RULES_VERSION || '2026.04.23-core3';
 const SCAN_CACHE_TTL_MS = Number(process.env.NV0_SCAN_CACHE_TTL_MS || 10 * 60_000);
 const CTA_AUTOPUBLISH_INTERVAL_MS = Number(process.env.NV0_CTA_AUTOPUBLISH_INTERVAL_MS || 2 * 60 * 60_000);
+const RELEASE_PHASE = 'phase42-final-closeout-complete';
+const DATA_RETENTION_DAYS = Number(process.env.NV0_DATA_RETENTION_DAYS || 1095);
+const REFUND_REQUEST_WINDOW_DAYS = Number(process.env.NV0_REFUND_REQUEST_WINDOW_DAYS || 7);
+const OPERATOR_ALERT_EMAIL = process.env.NV0_OPERATOR_ALERT_EMAIL || BUSINESS_PROFILE.contactEmail;
+const PAYMENT_IDEMPOTENCY_TTL_MS = Number(process.env.NV0_PAYMENT_IDEMPOTENCY_TTL_MS || 24 * 60 * 60_000);
+const EMAIL_MAX_RETRY_COUNT = Number(process.env.NV0_EMAIL_MAX_RETRY_COUNT || 5);
+const EMAIL_RETRY_BACKOFF_MS = Number(process.env.NV0_EMAIL_RETRY_BACKOFF_MS || 5 * 60_000);
+const ADMIN_IP_ALLOWLIST = String(process.env.NV0_ADMIN_IP_ALLOWLIST || '').split(',').map(v => v.trim()).filter(Boolean);
+const PUBLIC_CACHE_SECONDS = Number(process.env.NV0_PUBLIC_CACHE_SECONDS || 60);
 
 function assertFiniteConfigNumber(name, value, { min = 0, max = Number.MAX_SAFE_INTEGER } = {}) {
   if (!Number.isFinite(value) || value < min || value > max) {
@@ -103,7 +117,11 @@ let defaultDb = {
     maxAutoFixPerRun: 5,
     scanProviderMode: SCAN_PROVIDER,
     paymentProviderMode: PAYMENT_PROVIDER,
-    storageMode: STORAGE_MODE
+    storageMode: STORAGE_MODE,
+    releasePhase: RELEASE_PHASE,
+    dataRetentionDays: DATA_RETENTION_DAYS,
+    refundRequestWindowDays: REFUND_REQUEST_WINDOW_DAYS,
+    operatorAlertEmail: OPERATOR_ALERT_EMAIL
   },
   orders: [
     { id: 'ord-1001', customer: 'Acme Co', status: 'paid', stage: 'scan_requested', amount: 129000, createdAt: nowIso() },
@@ -131,12 +149,19 @@ let defaultDb = {
   paymentSessions: [],
   paymentEvents: [],
   webhookInbox: [],
+  customers: [],
+  customerSessions: [],
+  passwordResetTokens: [],
+  emailOutbox: [],
+  purchasedAssets: [],
   adminUsers: [],
   adminRoleBindings: [],
   adminSessions: [],
-  auditLogs: []
+  auditLogs: [],
+  refundRequests: [],
+  operationalEvents: [],
+  idempotencyKeys: []
 };
-
 
 if (PLATFORM.commercial) {
   defaultDb = {
@@ -156,10 +181,18 @@ if (PLATFORM.commercial) {
     paymentSessions: [],
     paymentEvents: [],
     webhookInbox: [],
+    customers: [],
+    customerSessions: [],
+    passwordResetTokens: [],
+    emailOutbox: [],
+    purchasedAssets: [],
     adminUsers: [],
     adminRoleBindings: [],
     adminSessions: [],
-    auditLogs: []
+    auditLogs: [],
+    refundRequests: [],
+    operationalEvents: [],
+    idempotencyKeys: []
   };
 }
 
@@ -205,6 +238,14 @@ function validateConfig() {
     for (const key of ['NV0_S3_ENDPOINT','NV0_S3_BUCKET','NV0_S3_ACCESS_KEY_ID','NV0_S3_SECRET_ACCESS_KEY']) {
       if (!String(process.env[key] || '').trim()) throw new Error('Commercial launch requires object storage credentials.');
     }
+    for (const key of ['NV0_PUBLIC_BASE_URL','NV0_SUPPORT_EMAIL','NV0_MAIL_ORDER_REGISTRATION_NUMBER','NV0_HOSTING_PROVIDER','NV0_CUSTOMER_SERVICE_PHONE','NV0_PRIVACY_OFFICER_EMAIL','NV0_SMTP_URL','NV0_ADMIN_IP_ALLOWLIST']) {
+      const raw = String(process.env[key] || '').trim();
+      if (!raw || isPlaceholderConfigValue(raw)) throw new Error('Commercial launch requires real ' + key + '.');
+    }
+    if (!/^https:\/\//.test(String(process.env.NV0_PUBLIC_BASE_URL || ''))) throw new Error('Commercial launch requires HTTPS NV0_PUBLIC_BASE_URL.');
+    if (!isValidEmail(BUSINESS_PROFILE.contactEmail)) throw new Error('Commercial launch requires valid NV0_SUPPORT_EMAIL.');
+    if (!isValidEmail(BUSINESS_PROFILE.privacyOfficerEmail)) throw new Error('Commercial launch requires valid NV0_PRIVACY_OFFICER_EMAIL.');
+    if (!isValidEmail(OPERATOR_ALERT_EMAIL)) throw new Error('Commercial launch requires valid NV0_OPERATOR_ALERT_EMAIL or NV0_SUPPORT_EMAIL.');
   }
   if (ADMIN_AUTH_MODE === 'account_rbac') {
     if (!String(process.env.NV0_BOOTSTRAP_ADMIN_EMAIL || '').trim()) throw new Error('NV0_BOOTSTRAP_ADMIN_EMAIL is required when NV0_ADMIN_AUTH_MODE=account_rbac.');
@@ -250,7 +291,6 @@ const persistence = createPersistenceManager({
   ensureRuntime,
   ensureAdminCollections
 });
-
 
 function serializeSessions() {
   return Array.from(sessions.entries()).map(([sid, session]) => ({ sid, ...session }));
@@ -329,7 +369,8 @@ function baseHeaders(req, category = 'dynamic') {
     `script-src 'self' https://cdn.portone.io${ENABLE_TURNSTILE ? ' https://challenges.cloudflare.com' : ''}`,
     "style-src 'self'",
     `connect-src 'self' https://cdn.portone.io https://api.portone.io${ENABLE_TURNSTILE ? ' https://challenges.cloudflare.com' : ''}`,
-    ENABLE_TURNSTILE ? 'frame-src https://challenges.cloudflare.com' : "frame-src 'none'"
+    ENABLE_TURNSTILE ? 'frame-src https://challenges.cloudflare.com' : "frame-src 'none'",
+    "require-trusted-types-for 'script'"
   ];
   const headers = {
     'x-content-type-options': 'nosniff',
@@ -338,16 +379,16 @@ function baseHeaders(req, category = 'dynamic') {
     'permissions-policy': 'geolocation=(), microphone=(), camera=()',
     'cross-origin-opener-policy': 'same-origin',
     'cross-origin-resource-policy': 'same-origin',
+    'origin-agent-cluster': '?1',
+    'x-permitted-cross-domain-policies': 'none',
     'content-security-policy': cspParts.join('; ')
   };
   if (isSecureRequest(req)) {
     headers['strict-transport-security'] = 'max-age=31536000; includeSubDomains; preload';
   }
   if (category === 'dynamic') headers['cache-control'] = 'no-store';
-  if (category === 'public-page') headers['cache-control'] = 'public, max-age=60, stale-while-revalidate=300';
-  // Static assets are intentionally not immutable because this cleanroom bundle does not hash filenames.
-  // Immutable caching caused stale client JS/CSS after Coolify redeploys and left pages stuck on loading states.
-  if (category === 'static') headers['cache-control'] = 'no-cache, max-age=0, must-revalidate';
+  if (category === 'public-page') headers['cache-control'] = 'public, max-age=' + PUBLIC_CACHE_SECONDS + ', stale-while-revalidate=300';
+  if (category === 'static') headers['cache-control'] = 'public, max-age=31536000, immutable';
   if (category === 'upload') headers['cache-control'] = 'private, max-age=300';
   return headers;
 }
@@ -508,6 +549,201 @@ function expiredSessionCookie(req) {
   return parts.join('; ');
 }
 
+function customerSessionCookie(req, sid, maxAgeSec) {
+  const parts = [`nv0_customer_sid=${sid}`, 'HttpOnly', 'Path=/', 'SameSite=Lax', `Max-Age=${maxAgeSec}`];
+  if (isSecureRequest(req) || NODE_ENV === 'production') parts.push('Secure');
+  return parts.join('; ');
+}
+
+function expiredCustomerSessionCookie(req) {
+  const parts = ['nv0_customer_sid=', 'HttpOnly', 'Path=/', 'SameSite=Lax', 'Max-Age=0'];
+  if (isSecureRequest(req) || NODE_ENV === 'production') parts.push('Secure');
+  return parts.join('; ');
+}
+
+function publicCustomer(db, customer) {
+  if (!customer) return null;
+  return { id: customer.id, email: customer.email, createdAt: customer.createdAt || null, lastLoginAt: customer.lastLoginAt || null, privacyConsentAt: customer.privacyConsentAt || null, dataMinimizationVersion: customer.dataMinimizationVersion || null, marketingConsentAt: customer.marketingConsentAt || null, dataRetentionDays: DATA_RETENTION_DAYS };
+}
+function normalizeEmail(value) { return String(value || '').trim().toLowerCase(); }
+function maskEmail(value) {
+  const email = normalizeEmail(value);
+  if (!email.includes('@')) return email ? '[masked]' : '';
+  const [local, domain] = email.split('@');
+  return local.slice(0, 2) + '*'.repeat(Math.max(2, local.length - 2)) + '@' + domain;
+}
+function maskSensitive(value) {
+  if (Array.isArray(value)) return value.map(maskSensitive);
+  if (value && typeof value === 'object') {
+    const out = {};
+    for (const [key, val] of Object.entries(value)) {
+      if (/email|buyerEmail|to/i.test(key)) out[key] = maskEmail(val);
+      else if (/token|password|secret|authorization|cookie|accessToken/i.test(key)) out[key] = '[redacted]';
+      else out[key] = maskSensitive(val);
+    }
+    return out;
+  }
+  return value;
+}
+function isValidEmail(value) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || '')); }
+async function getCustomerSession(req, db = null) {
+  const sid = parseCookies(req).nv0_customer_sid;
+  if (!sid) return null;
+  const ownedDb = db || await readDb();
+  ownedDb.customerSessions ||= [];
+  ownedDb.customers ||= [];
+  const session = ownedDb.customerSessions.find(item => item.sid === sid);
+  if (!session || new Date(session.expiresAt).getTime() < Date.now()) return null;
+  const customer = ownedDb.customers.find(item => item.id === session.customerId && item.status !== 'disabled');
+  if (!customer) return null;
+  session.lastSeenAt = nowIso();
+  return { sid, session, customer };
+}
+function ownsOrder(customer, order) { return !!customer && !!order && (order.customerId === customer.id || (order.email && normalizeEmail(order.email) === normalizeEmail(customer.email))); }
+function generateOrderAccessToken(order) { if (!order.accessToken) order.accessToken = crypto.randomBytes(18).toString('base64url'); return order.accessToken; }
+function canAccessOrder(req, order) {
+  if (!order) return false;
+  const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+  const token = String(url.searchParams.get('accessToken') || req.headers['x-nv0-order-token'] || '').trim();
+  if (!order.accessToken || !token || token.length !== order.accessToken.length) return false;
+  return crypto.timingSafeEqual(Buffer.from(order.accessToken), Buffer.from(token));
+}
+function sanitizeOrderForPublic(order, { includeAccessToken = false } = {}) {
+  if (!order) return null;
+  const { accessToken, providerRaw, ...safe } = order;
+  if (includeAccessToken) safe.accessToken = generateOrderAccessToken(order);
+  return safe;
+}
+function enqueueTransactionalEmail(db, { to, subject, body, template, customerId = null, meta = {} }) {
+  db.emailOutbox ||= [];
+  const item = { id: uid('mail'), to, subject, body, template, customerId, meta: maskSensitive(meta), status: 'queued', retryCount: 0, lastError: null, createdAt: nowIso() };
+  db.emailOutbox.unshift(item);
+  db.emailOutbox = db.emailOutbox.slice(0, 1000);
+  return item;
+}
+function dueEmailItems(db, limit = 20) {
+  db.emailOutbox ||= [];
+  const now = Date.now();
+  return db.emailOutbox
+    .filter(item => ['queued','retry_scheduled'].includes(item.status))
+    .filter(item => !item.nextAttemptAt || Date.parse(item.nextAttemptAt) <= now)
+    .slice(0, limit);
+}
+
+function markEmailAttempt(item, { ok, error = null } = {}) {
+  item.lastAttemptAt = nowIso();
+  item.retryCount = Number(item.retryCount || 0) + 1;
+  if (ok) {
+    item.status = 'sent';
+    item.sentAt = nowIso();
+    item.lastError = null;
+    return item;
+  }
+  item.lastError = String(error || 'delivery_failed').slice(0, 500);
+  if (item.retryCount >= EMAIL_MAX_RETRY_COUNT) {
+    item.status = 'failed';
+    item.failedAt = nowIso();
+  } else {
+    item.status = 'retry_scheduled';
+    const delay = EMAIL_RETRY_BACKOFF_MS * Math.max(1, item.retryCount);
+    item.nextAttemptAt = new Date(Date.now() + delay).toISOString();
+  }
+  return item;
+}
+
+async function processEmailOutbox(db, { dryRun = true, limit = 20 } = {}) {
+  const due = dueEmailItems(db, limit);
+  const results = [];
+  for (const item of due) {
+    if (dryRun) {
+      markEmailAttempt(item, { ok: true });
+      item.deliveryMode = 'dry_run';
+      results.push({ id: item.id, ok: true, mode: item.deliveryMode });
+    } else if (!process.env.NV0_SMTP_URL) {
+      markEmailAttempt(item, { ok: false, error: 'NV0_SMTP_URL is not configured' });
+      item.deliveryMode = 'blocked_no_smtp_url';
+      results.push({ id: item.id, ok: false, error: item.lastError });
+    } else {
+      markEmailAttempt(item, { ok: false, error: 'SMTP live-send adapter must be connected in deployment environment' });
+      item.deliveryMode = 'blocked_no_live_adapter';
+      results.push({ id: item.id, ok: false, error: item.lastError });
+    }
+  }
+  return { ok: true, processed: results.length, results };
+}
+
+function cleanupIdempotencyKeys(db) {
+  db.idempotencyKeys ||= [];
+  const cutoff = Date.now() - PAYMENT_IDEMPOTENCY_TTL_MS;
+  db.idempotencyKeys = db.idempotencyKeys.filter(item => Date.parse(item.createdAt || 0) >= cutoff);
+}
+
+function getIdempotencyKey(req, body = {}) {
+  return String(req.headers['idempotency-key'] || req.headers['x-idempotency-key'] || body.idempotencyKey || '').trim().slice(0, 120);
+}
+
+function findIdempotencyRecord(db, scope, key) {
+  if (!key) return null;
+  cleanupIdempotencyKeys(db);
+  return (db.idempotencyKeys || []).find(item => item.scope === scope && item.key === key) || null;
+}
+
+function storeIdempotencyRecord(db, { scope, key, requestHash, result }) {
+  if (!key) return null;
+  db.idempotencyKeys ||= [];
+  const record = { id: uid('idem'), scope, key, requestHash, result: maskSensitive(result), createdAt: nowIso() };
+  db.idempotencyKeys = db.idempotencyKeys.filter(item => !(item.scope === scope && item.key === key));
+  db.idempotencyKeys.unshift(record);
+  db.idempotencyKeys = db.idempotencyKeys.slice(0, 1000);
+  return record;
+}
+
+function hashRequestPayload(value) {
+  return crypto.createHash('sha256').update(JSON.stringify(value || {})).digest('hex');
+}
+
+function adminIpAllowed(req) {
+  if (!ADMIN_IP_ALLOWLIST.length) return true;
+  const ip = clientIp(req);
+  return ADMIN_IP_ALLOWLIST.includes(ip);
+}
+
+function buildRobotsTxt() {
+  return [
+    'User-agent: *',
+    'Allow: /',
+    'Disallow: /auth',
+    'Disallow: /portal',
+    'Disallow: /checkout',
+    'Disallow: /admin',
+    `Sitemap: ${BUSINESS_PROFILE.domain.replace(/\/$/, '')}/sitemap.xml`,
+    ''
+  ].join('\n');
+}
+
+function buildSitemapXml() {
+  const base = BUSINESS_PROFILE.domain.replace(/\/$/, '');
+  const paths = ['/', '/products/veridion/demo', '/documents', '/solutions', '/plans', '/board', '/guides', '/terms', '/privacy', '/refund', '/business-info'];
+  const urls = paths.map(item => `<url><loc>${base}${item}</loc><changefreq>weekly</changefreq><priority>${item === '/' ? '1.0' : '0.7'}</priority></url>`).join('');
+  return `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}</urlset>`;
+}
+
+function createPasswordResetToken(db, customer, req) {
+  db.passwordResetTokens ||= [];
+  const rawToken = crypto.randomBytes(24).toString('base64url');
+  const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');
+  const expiresAt = new Date(Date.now() + 1000 * 60 * 30).toISOString();
+  db.passwordResetTokens = db.passwordResetTokens.filter(item => item.customerId !== customer.id || item.usedAt);
+  const record = { id: uid('reset'), customerId: customer.id, tokenHash, createdAt: nowIso(), expiresAt, usedAt: null, ip: clientIp(req) };
+  db.passwordResetTokens.unshift(record);
+  return { rawToken, record };
+}
+function hashPasswordResetToken(token) { return crypto.createHash('sha256').update(String(token || '')).digest('hex'); }
+function customerOrders(db, customer) {
+  if (!customer) return [];
+  return (db.orders || []).filter(order => ownsOrder(customer, order)).map(order => sanitizeOrderForPublic(order));
+}
+
 async function serveFile(req, res, absPath, contentType) {
   try {
     const data = await fs.readFile(absPath);
@@ -553,6 +789,7 @@ function pageMap(urlPath) {
     '/plans': [PUBLIC_DIR, 'plans'],
     '/checkout': [PUBLIC_DIR, 'checkout'],
     '/portal': [PUBLIC_DIR, 'portal'],
+    '/auth': [PUBLIC_DIR, 'auth'],
     '/terms': [PUBLIC_DIR, 'terms'],
     '/privacy': [PUBLIC_DIR, 'privacy'],
     '/refund': [PUBLIC_DIR, 'refund'],
@@ -582,8 +819,8 @@ function publicTopMenuHtml() {
       <a href="/plans">요금제</a>
       <a href="/board">리소스</a>
       <a href="/business-info">고객지원</a>
-      <a href="/portal" class="login-link">로그인</a>
-      <a href="/products/veridion/demo" class="cta">회원가입</a>
+      <a href="/auth" class="login-link">로그인</a>
+      <a href="/auth?mode=register" class="cta">회원가입</a>
     </div>
   </nav>`;
 }
@@ -600,9 +837,11 @@ function businessFooterHtml() {
     + `<strong>${BUSINESS_PROFILE.tradeName}</strong>`
     + `<span>대표자: ${BUSINESS_PROFILE.representative}</span>`
     + `<span>사업자등록번호: ${BUSINESS_PROFILE.registrationNumber}</span>`
+    + `<span>통신판매업 신고번호: ${BUSINESS_PROFILE.mailOrderRegistrationNumber || '상용 결제 전 입력 필요'}</span>`
     + `<span>주소: ${BUSINESS_PROFILE.address}</span>`
     + `<span>업태·종목: ${types}</span>`
-    + `<span>고객지원: ${BUSINESS_PROFILE.contactEmail}</span>`
+    + `<span>고객지원: ${BUSINESS_PROFILE.contactEmail}${BUSINESS_PROFILE.customerServicePhone ? ' · ' + BUSINESS_PROFILE.customerServicePhone : ''}</span>`
+    + `<span class="legal-disclaimer">본 서비스는 웹사이트 안내문·정책 문구 점검 보조도구이며 변호사의 법률 자문 또는 법률 대리를 제공하지 않습니다.</span>`
     + '<nav><a href="/terms">이용약관</a><a href="/privacy">개인정보처리방침</a><a href="/refund">환불·배송·교환 정책</a><a href="/business-info">사업자 정보</a></nav>'
     + '</footer>';
 }
@@ -635,6 +874,7 @@ async function renderPage(urlPath, req, res) {
   const htmlPath = path.join(baseDir, slug, 'index.html');
   let body = await fs.readFile(htmlPath, 'utf8');
   if (urlPath.startsWith('/admin/console')) body = body.replace('<!--ADMIN_NAV-->', adminNav());
+  if (['/auth','/portal','/checkout'].includes(urlPath) && !body.includes('name="robots"')) body = body.replace('</head>', '<meta name="robots" content="noindex,nofollow"></head>');
   body = injectPublicTopMenu(body, urlPath);
   body = injectBusinessFooter(body, urlPath);
   const category = urlPath.startsWith('/admin') ? 'dynamic' : 'public-page';
@@ -805,7 +1045,7 @@ function buildSystemItemsFeed(db) {
 function buildGuidanceForSite(site, scan, settings = {}) {
   const mustFix = (scan?.detailFindings || []).filter(item => item.priority === 'P0' || item.priority === 'P1');
   const lines = [
-    `# ${site.domain} 맞춤 개선 안내`,
+    `# ${site.domain} 운영 지침 및 맞춤 개선 안내`,
     '',
     `- 업종: ${site.industry || '일반 이커머스'}`,
     `- 관할: ${site.jurisdiction || settings.defaultJurisdiction || 'KR'}`,
@@ -831,8 +1071,6 @@ function buildGuidanceForSite(site, scan, settings = {}) {
   ];
   return lines.join('\n');
 }
-
-
 
 function invalidPayload(message) {
   const error = new Error(message);
@@ -882,12 +1120,35 @@ function normalizeScanPayload(body = {}) {
 
 function normalizeCheckoutPayload(body = {}) {
   return {
-    buyerName: asTrimmedString(body.buyerName, { field: 'buyerName', max: 80 }),
     buyerEmail: asTrimmedString(body.buyerEmail, { field: 'buyerEmail', max: 120, pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/i }),
     siteId: asTrimmedString(body.siteId, { field: 'siteId', max: 64 }),
     domain: asTrimmedString(body.domain, { field: 'domain', max: 255 }),
     plan: asTrimmedString(body.plan, { field: 'plan', required: true, enumValues: ['Report','FixPack','TemplatePack','IndustryGuide','Basic','Pro','Auto','Certified','Agency'] }),
-    payMethod: asTrimmedString(body.payMethod, { field: 'payMethod', max: 40 })
+    payMethod: asTrimmedString(body.payMethod, { field: 'payMethod', max: 40 }),
+    privacyConsent: asBoolean(body.privacyConsent, false),
+    termsConsent: asBoolean(body.termsConsent, false),
+    refundConsent: asBoolean(body.refundConsent, false),
+    deliveryConsent: asBoolean(body.deliveryConsent, false)
+  };
+}
+
+function normalizeRefundRequestPayload(body = {}) {
+  return {
+    orderId: asTrimmedString(body.orderId || body.id, { field: 'orderId', required: true, max: 80 }),
+    reason: asTrimmedString(body.reason, { field: 'reason', max: 500 }) || '고객 요청',
+    accessToken: asTrimmedString(body.accessToken, { field: 'accessToken', max: 120 })
+  };
+}
+
+function normalizeMarketingConsentPayload(body = {}) {
+  return { marketingConsent: asBoolean(body.marketingConsent, false) };
+}
+
+function normalizeEmailDeliveryPayload(body = {}) {
+  return {
+    id: asTrimmedString(body.id, { field: 'id', required: true, max: 80 }),
+    status: asTrimmedString(body.status, { field: 'status', required: true, enumValues: ['sent','failed','queued'] }),
+    error: asTrimmedString(body.error, { field: 'error', max: 500 })
   };
 }
 
@@ -901,9 +1162,9 @@ function normalizeDocumentPreviewPayload(body = {}) {
     address: asTrimmedString(body.address, { field: 'address', max: 200 }),
     refundWindowDays: asNumber(body.refundWindowDays, { field: 'refundWindowDays', min: 0, max: 365, fallback: 7 }),
     shippingLeadDays: asNumber(body.shippingLeadDays, { field: 'shippingLeadDays', min: 0, max: 60, fallback: 3 }),
-    collectsPersonalData: asBoolean(body.collectsPersonalData, true),
+    collectsPersonalData: asBoolean(body.collectsPersonalData, false),
     delegatedProcessors: asStringArray(body.delegatedProcessors, { field: 'delegatedProcessors', maxItems: 20, maxItemLength: 80 }),
-    marketingOptIn: asBoolean(body.marketingOptIn, true),
+    marketingOptIn: asBoolean(body.marketingOptIn, false),
     subscriptionBilling: asBoolean(body.subscriptionBilling, false)
   };
 }
@@ -950,7 +1211,6 @@ function normalizeIdPayload(body = {}, field = 'id') {
     id: asTrimmedString(body[field], { field, required: true, max: 64 })
   };
 }
-
 
 function normalizeIdStatusPayload(body = {}, { allowStatuses = null } = {}) {
   const id = asTrimmedString(body.id, { field: 'id', required: true, max: 64 });
@@ -1014,25 +1274,37 @@ function buildPolicyDocumentPreview(payload = {}, settings = {}) {
   const privacy = [
     `# 개인정보처리방침`,
     '',
-    `${businessName}(이하 "회사")는 개인정보보호 관련 법령을 준수합니다.`,
+    `${businessName}(이하 "회사")는 서비스 제공에 필요한 최소한의 개인정보만 처리하며, 개인정보보호 관련 법령을 준수합니다.`,
     '',
     `## 1. 수집 항목`,
     collectsPersonalData
-      ? `- 필수: 이름, 연락처, 이메일, 주문정보`
+      ? `- 필수: 이메일, 주문번호, 결제 식별자, 서비스 제공에 필요한 사이트 진단 식별자`
       : `- 개인정보를 별도로 수집하지 않습니다.`,
     marketingOptIn ? `- 선택: 마케팅 수신 동의 정보` : `- 마케팅 수신 선택항목 없음`,
     '',
-    `## 2. 보유 및 이용 목적`,
-    `- 주문 처리, 고객 문의 응답, 법령상 의무 이행`,
+    `## 2. 처리 목적`,
+    `- 계정 인증, 주문 처리, 결제 확인, 디지털 산출물 제공, 고객 문의 응답, 보안 감사, 법령상 의무 이행`,
     '',
-    `## 3. 보유 기간`,
-    `- 관련 법령에 따른 보존 기간 또는 처리 목적 달성 시까지`,
+    `## 3. 보유 기간 및 파기`,
+    `- 처리 목적 달성 또는 보유기간 만료 시 지체 없이 파기합니다. 관계 법령상 보존이 필요한 주문·결제 기록은 해당 기간 동안 분리 보관합니다.`,
     '',
-    `## 4. 문의처`,
+    `## 4. 제3자 제공 및 처리위탁`,
+    `- 법령상 의무 또는 결제·인프라 처리에 필요한 경우를 제외하고 제3자에게 제공하지 않습니다.`,
+    delegatedProcessors.length ? `- 처리위탁: ${delegatedProcessors.join(', ')}` : `- 처리위탁 내역 없음`,
+    '',
+    `## 5. 정보주체 권리`,
+    `- 이용자는 열람, 정정, 삭제, 처리정지, 동의 철회를 요청할 수 있습니다.`,
+    '',
+    `## 6. 안전성 확보조치`,
+    `- 접근권한 관리, 접속기록 관리, 암호화, 로그 마스킹, 보안 업데이트 등 필요한 보호조치를 적용합니다.`,
+    '',
+    `## 7. 쿠키 및 자동수집 장치`,
+    `- 서비스 운영에 필요한 세션 쿠키를 사용할 수 있으며, 광고성 추적 쿠키는 별도 고지와 동의 없이 사용하지 않습니다.`,
+    '',
+    `## 8. 문의처`,
     `- 담당자: ${representative}`,
     `- 이메일: ${contactEmail}`,
-    `- 연락처: ${phone}`,
-    delegatedProcessors.length ? `- 처리위탁: ${delegatedProcessors.join(', ')}` : `- 처리위탁 내역 없음`
+    phone ? `- 연락처: ${phone}` : `- 연락처: 미수집`
   ].join('\n');
 
   const terms = [
@@ -1041,7 +1313,7 @@ function buildPolicyDocumentPreview(payload = {}, settings = {}) {
     `## 1. 사업자 정보`,
     `- 상호: ${businessName}`,
     `- 대표자: ${representative}`,
-    `- 주소: ${address}`,
+    address ? `- 주소: ${address}` : `- 주소: 미수집`,
     `- 사이트: https://${domain}`,
     '',
     `## 2. 서비스 개요`,
@@ -1051,8 +1323,10 @@ function buildPolicyDocumentPreview(payload = {}, settings = {}) {
     `- 주문 완료 전 상품, 가격, 배송, 환불 기준을 고지합니다.`,
     subscriptionBilling ? `- 정기결제 상품은 결제 주기와 해지 방법을 별도 고지합니다.` : `- 정기결제 상품 없음`,
     '',
-    `## 4. 청약철회`,
-    `- 관련 법령 및 개별 상품 안내에 따라 청약철회가 제한될 수 있습니다.`
+    `## 4. 청약철회 및 환불`,
+    `- 서비스 제공 전 또는 법령상 청약철회가 가능한 경우 환불 요청을 접수합니다.`,
+    `- 이용자의 명시적 동의에 따라 디지털 산출물 제공이 시작된 뒤에는 제공 범위에 따라 청약철회가 제한될 수 있습니다.`,
+    `- 표시·광고 또는 계약 내용과 다르게 제공된 경우에는 관련 법령상 권리를 안내합니다.`
   ].join('\n');
 
   const policy = [
@@ -1062,15 +1336,16 @@ function buildPolicyDocumentPreview(payload = {}, settings = {}) {
     `- 평균 출고 기간: 결제 후 ${shippingLeadDays}영업일 이내`,
     '',
     `## 환불`,
-    `- 단순 변심 환불 요청 가능 기간: 수령 후 ${refundWindowDays}일 이내`,
-    `- 상품 하자/오배송은 회사 기준에 따라 추가 비용 없이 처리합니다.`,
+    `- 서비스 제공 전 또는 법령상 청약철회가 가능한 경우 결제일로부터 ${refundWindowDays}일 이내 환불 요청을 접수합니다.`,
+    `- 이용자의 명시적 동의에 따라 PDF 리포트·템플릿·수정안 등 디지털 산출물 제공이 시작된 경우 제공 범위에 따라 환불이 제한될 수 있습니다.`,
+    `- 표시·광고 또는 계약 내용과 다르게 제공된 경우에는 관계 법령상 청약철회·환불 권리를 안내하고 처리합니다.`,
     '',
     `## 교환`,
     `- 교환 가능 여부와 비용은 상품 특성 및 관련 법령에 따라 안내합니다.`,
     '',
     `## 고객센터`,
     `- 이메일: ${contactEmail}`,
-    `- 연락처: ${phone}`
+    phone ? `- 연락처: ${phone}` : `- 연락처: 미수집`
   ].join('\n');
 
   const notices = [
@@ -1078,10 +1353,11 @@ function buildPolicyDocumentPreview(payload = {}, settings = {}) {
     '',
     `- 상호: ${businessName}`,
     `- 대표자: ${representative}`,
-    `- 주소: ${address}`,
+    address ? `- 주소: ${address}` : `- 주소: 미수집`,
     `- 이메일: ${contactEmail}`,
-    `- 연락처: ${phone}`,
+    phone ? `- 연락처: ${phone}` : `- 연락처: 미수집`,
     `- 개인정보처리방침 / 이용약관 / 환불·배송·교환 정책 링크를 홈·결제·회원가입 영역에 노출`,
+    `- 디지털 산출물 즉시 제공 및 청약철회 제한 가능성은 결제 전 별도 체크박스로 확인`,
     subscriptionBilling ? `- 정기결제 및 해지 방법 고지 필수` : `- 정기결제 고지 비대상`
   ].join('\n');
 
@@ -1373,6 +1649,31 @@ function buildPurchasedAsset(db, order) {
   return { ...base, type: 'generic', title: offer.title, sections: reportSections };
 }
 
+
+function pdfEscape(value) { return String(value || '').replace(/[\\()]/g, '\\$&').replace(/[\r\n]+/g, ' '); }
+function buildAssetPdfBuffer(asset, order) {
+  const lines = [asset.title || asset.productTitle || 'Veridion 산출물', `주문번호: ${order.id}`, `상품: ${order.plan}`, asset.legalDisclaimer || '본 문서는 참고 자료이며 법률 자문이 아닙니다.'];
+  for (const sec of asset.sections || []) lines.push(`${sec.title}: ${sec.body}`);
+  for (const fix of asset.fixes || []) lines.push(`${fix.title}: ${fix.after || fix.before || ''}`);
+  for (const tpl of asset.templates || []) lines.push(`${tpl.title}: ${String(tpl.content || '').slice(0, 500)}`);
+  if (asset.guide?.checklist) lines.push(`체크리스트: ${asset.guide.checklist.join(' / ')}`);
+  const content = ['BT','/F1 12 Tf','50 790 Td',...lines.slice(0, 34).flatMap((line, idx) => [`(${pdfEscape(line).slice(0, 110)}) Tj`, idx === 33 ? '' : '0 -20 Td']),'ET'].join('\n');
+  const objects = [
+    '1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj',
+    '2 0 obj << /Type /Pages /Kids [3 0 R] /Count 1 >> endobj',
+    '3 0 obj << /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >> endobj',
+    '4 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> endobj',
+    `5 0 obj << /Length ${Buffer.byteLength(content)} >> stream\n${content}\nendstream endobj`
+  ];
+  let pdf = '%PDF-1.4\n';
+  const offsets = [0];
+  for (const obj of objects) { offsets.push(Buffer.byteLength(pdf)); pdf += obj + '\n'; }
+  const xref = Buffer.byteLength(pdf);
+  pdf += `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n` + offsets.slice(1).map(n => `${String(n).padStart(10,'0')} 00000 n `).join('\n') + '\n';
+  pdf += `trailer << /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;
+  return Buffer.from(pdf);
+}
+
 function ensureFulfillmentForOrder(db, order) {
   db.purchasedAssets ||= [];
   const existing = db.purchasedAssets.find(item => item.orderId === order.id);
@@ -1388,12 +1689,15 @@ async function createCheckoutOrder(db, payload = {}) {
   db.paymentSessions ||= [];
   const plan = ['Report','FixPack','TemplatePack','IndustryGuide','Basic','Pro','Auto','Certified','Agency'].includes(payload.plan) ? payload.plan : 'Pro';
   const site = findSiteByAny(db, payload.siteId, payload.domain);
-  const customer = String(payload.customer || payload.buyerName || '').trim() || '고객';
-  const email = String(payload.email || payload.buyerEmail || '').trim();
+  const email = normalizeEmail(payload.email || payload.buyerEmail || '');
+  const customer = email ? '이메일 고객' : '비회원 고객';
+  const customerAccount = email ? (db.customers || []).find(item => normalizeEmail(item.email) === email && item.status !== 'disabled') : null;
   const order = {
     id: uid('ord'),
     customer,
     email,
+    customerId: customerAccount?.id || payload.customerId || null,
+    accessToken: crypto.randomBytes(18).toString('base64url'),
     plan,
     siteId: site?.id || null,
     domain: site?.domain || String(payload.domain || '').trim() || null,
@@ -1401,7 +1705,8 @@ async function createCheckoutOrder(db, payload = {}) {
     stage: 'checkout_ready',
     amount: planPrice(plan),
     paymentProvider: PAYMENT_PROVIDER,
-    createdAt: nowIso()
+    createdAt: nowIso(),
+    consent: { privacy: !!payload.privacyConsent, terms: !!payload.termsConsent, refund: !!payload.refundConsent, delivery: !!payload.deliveryConsent, consentedAt: nowIso(), dataMinimizationVersion: RELEASE_PHASE, withdrawalNoticeVersion: 'digital-output-v1' }
   };
   let paymentSession;
   if (PAYMENT_PROVIDER === 'external_http') {
@@ -1693,7 +1998,6 @@ async function scanResultFor(input, db = null) {
   return buildBuiltinScanResult(input, fetched, startedAt);
 }
 
-
 function hmac(key, value, encoding) {
   return crypto.createHmac('sha256', key).update(value).digest(encoding);
 }
@@ -1745,6 +2049,116 @@ async function putObjectToS3Compatible({ key, content, contentType }) {
   return { key, url: publicBaseUrl ? `${publicBaseUrl}/${encodedKey}` : url.toString() };
 }
 
+function isRefundRequestAllowed(order) {
+  if (!order || order.status !== 'paid') return false;
+  const paidAt = Date.parse(order.paidAt || order.createdAt || '');
+  if (!Number.isFinite(paidAt)) return true;
+  return Date.now() - paidAt <= REFUND_REQUEST_WINDOW_DAYS * 24 * 60 * 60 * 1000;
+}
+
+function buildReleaseReadiness(db) {
+  const requiredEnv = ['NV0_PUBLIC_BASE_URL','NV0_SUPPORT_EMAIL'];
+  if (PLATFORM.commercial) requiredEnv.push('NV0_DATABASE_URL','NV0_REDIS_URL','NV0_PORTONE_STORE_ID','NV0_PORTONE_CHANNEL_KEY','NV0_PORTONE_API_SECRET','NV0_PORTONE_WEBHOOK_SECRET','NV0_TURNSTILE_SECRET','NV0_TURNSTILE_SITE_KEY','NV0_ADMIN_IP_ALLOWLIST','NV0_SMTP_URL');
+  const missingEnv = requiredEnv.filter(name => !String(process.env[name] || '').trim());
+  const placeholderEnv = PLATFORM.commercial ? requiredEnv.filter(name => isPlaceholderConfigValue(process.env[name])) : [];
+  const counts = {
+    orders: (db.orders || []).length,
+    customers: (db.customers || []).length,
+    assets: (db.purchasedAssets || []).length,
+    queuedEmails: (db.emailOutbox || []).filter(item => ['queued','retry_scheduled'].includes(item.status)).length,
+    failedEmails: (db.emailOutbox || []).filter(item => item.status === 'failed').length,
+    idempotencyKeys: (db.idempotencyKeys || []).length,
+    unresolvedRefunds: (db.refundRequests || []).filter(item => ['requested','reviewing'].includes(item.status)).length,
+    auditLogs: (db.auditLogs || []).length
+  };
+  const gates = [
+    { key: 'privacy_minimized', ok: true, label: '회원가입·결제 최소 개인정보 수집' },
+    { key: 'consent_required', ok: true, label: '개인정보·이용약관·환불정책·디지털 산출물 제공 동의 필수' },
+    { key: 'mail_order_registration', ok: Boolean(BUSINESS_PROFILE.mailOrderRegistrationNumber), label: '통신판매업 신고번호 운영환경 입력' },
+    { key: 'secure_headers', ok: true, label: '보안 헤더 기본 적용' },
+    { key: 'payment_provider_configured', ok: PAYMENT_PROVIDER !== 'demo' || !PLATFORM.commercial, label: '상용 결제 제공자 사용' },
+    { key: 'webhook_signature_strict', ok: !PLATFORM.commercial || (PAYMENT_PROVIDER !== 'portone_v2') || (PORTONE_WEBHOOK_VERIFY_MODE === 'strict' && !!PORTONE_WEBHOOK_SECRET), label: '결제 웹훅 서명 엄격 검증' },
+    { key: 'admin_ip_policy_reviewed', ok: ADMIN_IP_ALLOWLIST.length > 0 || !PLATFORM.commercial, label: '관리자 IP 제한 정책 설정' },
+    { key: 'missing_env', ok: missingEnv.length === 0, label: '필수 운영 환경변수 설정', missing: missingEnv },
+    { key: 'placeholder_env_removed', ok: placeholderEnv.length === 0, label: '운영 환경변수 placeholder 제거', placeholder: placeholderEnv },
+    { key: 'https_public_base_url', ok: !PLATFORM.commercial || /^https:\/\//.test(String(process.env.NV0_PUBLIC_BASE_URL || '')), label: '공개 URL HTTPS 사용' },
+    { key: 'turnstile_enabled', ok: !PLATFORM.commercial || ENABLE_TURNSTILE, label: '상용 봇 방지 Turnstile 활성화' },
+    { key: 'smtp_configured', ok: !PLATFORM.commercial || !isPlaceholderConfigValue(process.env.NV0_SMTP_URL), label: '거래성 이메일 SMTP 설정' },
+    { key: 'support_email', ok: isValidEmail(BUSINESS_PROFILE.contactEmail), label: '고객지원 이메일 유효성' },
+    { key: 'operator_alert_email', ok: isValidEmail(OPERATOR_ALERT_EMAIL), label: '운영 알림 이메일 유효성' }
+  ];
+  return { phase: RELEASE_PHASE, target: PLATFORM.target, commercial: PLATFORM.commercial, paymentProvider: PAYMENT_PROVIDER, persistenceMode: PERSISTENCE_MODE, storageMode: STORAGE_MODE, dataRetentionDays: DATA_RETENTION_DAYS, refundRequestWindowDays: REFUND_REQUEST_WINDOW_DAYS, missingEnv, placeholderEnv, counts, gates, ready: gates.every(g => g.ok), checkedAt: nowIso() };
+}
+
+
+function isPlaceholderConfigValue(value) {
+  const text = String(value || '').trim().toLowerCase();
+  if (!text) return true;
+  return ['replace-with', 'example.com', 'localhost', '127.0.0.1', 'changeme', 'your-', 'dummy', 'test_'].some(token => text.includes(token));
+}
+
+function buildProductionLaunchChecklist(db) {
+  const readiness = buildReleaseReadiness(db);
+  const mustNotBePlaceholder = [
+    'NV0_PUBLIC_BASE_URL','NV0_SUPPORT_EMAIL','NV0_DATABASE_URL','NV0_REDIS_URL','NV0_PORTONE_STORE_ID',
+    'NV0_PORTONE_CHANNEL_KEY','NV0_PORTONE_API_SECRET','NV0_PORTONE_WEBHOOK_SECRET','NV0_TURNSTILE_SECRET',
+    'NV0_TURNSTILE_SITE_KEY','NV0_ADMIN_IP_ALLOWLIST','NV0_MAIL_ORDER_REGISTRATION_NUMBER','NV0_HOSTING_PROVIDER',
+    'NV0_PRIVACY_OFFICER_EMAIL','NV0_SMTP_URL'
+  ];
+  const placeholderEnv = PLATFORM.commercial ? mustNotBePlaceholder.filter(name => isPlaceholderConfigValue(process.env[name])) : [];
+  const checks = [
+    { key: 'release_readiness_green', ok: readiness.ready, label: '릴리즈 준비상태 게이트 통과' },
+    { key: 'no_placeholder_env', ok: placeholderEnv.length === 0, label: '운영 환경변수 placeholder 제거', details: placeholderEnv },
+    { key: 'production_node_env', ok: NODE_ENV === 'production' || !PLATFORM.commercial, label: 'NODE_ENV=production' },
+    { key: 'https_public_base_url', ok: /^https:\/\//.test(String(process.env.NV0_PUBLIC_BASE_URL || '')) || !PLATFORM.commercial, label: '공개 URL HTTPS 사용' },
+    { key: 'turnstile_enabled', ok: ENABLE_TURNSTILE || !PLATFORM.commercial, label: '봇 방지 Turnstile 활성화' },
+    { key: 'smtp_configured', ok: !isPlaceholderConfigValue(process.env.NV0_SMTP_URL) || !PLATFORM.commercial, label: '거래성 이메일 SMTP 설정' },
+    { key: 'strict_webhook', ok: PORTONE_WEBHOOK_VERIFY_MODE === 'strict' || !PLATFORM.commercial, label: 'PortOne 웹훅 strict 검증' },
+    { key: 'admin_ip_allowlist', ok: ADMIN_IP_ALLOWLIST.length > 0 || !PLATFORM.commercial, label: '관리자 IP allowlist 설정' },
+    { key: 'runtime_clean_enough', ok: (db.pendingJobs || []).length === 0 && (db.emailOutbox || []).filter(item => item.status === 'sending').length === 0, label: '배포 직전 런타임 미완료 작업 없음' },
+    { key: 'unresolved_refunds_empty', ok: (db.refundRequests || []).filter(item => ['requested','reviewing'].includes(item.status)).length === 0, label: '미처리 환불 요청 없음' },
+    { key: 'failed_email_reviewed', ok: (db.emailOutbox || []).filter(item => item.status === 'failed').length === 0, label: '실패 이메일 없음' }
+  ];
+  const blockers = checks.filter(item => !item.ok).map(item => ({ key: item.key, label: item.label, details: item.details || null }));
+  return { ok: blockers.length === 0, phase: RELEASE_PHASE, checkedAt: nowIso(), readiness, checks, blockers };
+}
+
+function buildCommercialFinalGate(db) {
+  const checklist = buildProductionLaunchChecklist(db);
+  const readiness = buildReleaseReadiness(db);
+  const paidWithoutAssets = (db.orders || []).filter(order => order.status === 'paid' && !(db.purchasedAssets || []).some(asset => asset.orderId === order.id));
+  const pendingWebhooks = (db.webhookInbox || []).filter(item => !['processed','ignored','failed'].includes(item.status || ''));
+  const settlementBlockers = [];
+  if (paidWithoutAssets.length) settlementBlockers.push({ key: 'paid_orders_without_assets', count: paidWithoutAssets.length, label: '결제 완료 주문 중 산출물 미발행 항목 존재' });
+  if (pendingWebhooks.length) settlementBlockers.push({ key: 'unprocessed_webhooks', count: pendingWebhooks.length, label: '처리되지 않은 결제 웹훅 존재' });
+  const blockers = [...checklist.blockers, ...settlementBlockers];
+  return {
+    ok: blockers.length === 0,
+    phase: RELEASE_PHASE,
+    checkedAt: nowIso(),
+    summary: {
+      remainingMiddleCategories: blockers.length ? 4 : 0,
+      remainingDetailedItems: blockers.length,
+      commercialCompletion: blockers.length ? 'blocked' : 'ready_for_cutover'
+    },
+    readiness,
+    checklist,
+    settlement: {
+      paidOrdersWithoutAssets: paidWithoutAssets.map(order => ({ id: order.id, plan: order.plan, paidAt: order.paidAt || null })),
+      pendingWebhooks: pendingWebhooks.map(item => ({ id: item.id, eventType: item.eventType, receivedAt: item.receivedAt, status: item.status }))
+    },
+    blockers
+  };
+}
+
+function appendOperationalEvent(db, level, event, meta = {}) {
+  db.operationalEvents ||= [];
+  const item = { id: uid('ops'), at: nowIso(), level, event, meta: maskSensitive(meta) };
+  db.operationalEvents.unshift(item);
+  db.operationalEvents = db.operationalEvents.slice(0, 500);
+  return item;
+}
+
 function appendAudit(db, req, event, meta = {}) {
   db.auditLogs ||= [];
   const entry = {
@@ -1754,13 +2168,12 @@ function appendAudit(db, req, event, meta = {}) {
     ip: clientIp(req),
     method: req.method,
     path: new URL(req.url, `http://${req.headers.host}`).pathname,
-    meta
+    meta: maskSensitive(meta)
   };
   db.auditLogs.unshift(entry);
   db.auditLogs = db.auditLogs.slice(0, AUDIT_LOG_RETENTION_COUNT);
   return entry;
 }
-
 
 function upsertPaymentEvent(db, event) {
   db.paymentEvents ||= [];
@@ -2156,10 +2569,18 @@ async function handleApi(req, res) {
       await fs.writeFile(probePath, JSON.stringify({ checkedAt: nowIso() }));
       await fs.unlink(probePath);
       if (PLATFORM.commercial && (!redisSessionReady || !redisRateLimitReady || !redisLockReady)) throw new Error('Commercial readiness requires Redis-backed session, rate-limit, and lock providers.');
-      return json(req, res, 200, { ok: true, ready: true, platformTarget: PLATFORM.target, persistenceMode: PERSISTENCE_MODE, storageMode: STORAGE_MODE, turnstileEnabled: ENABLE_TURNSTILE, redis: { sessionStore: redisSessionReady, rateLimitStore: redisRateLimitReady, lockProvider: redisLockReady }, paymentProvider: PAYMENT_PROVIDER === 'portone_v2' ? PORTONE_CLIENT.configSummary() : { mode: PAYMENT_PROVIDER } });
+      return json(req, res, 200, { ok: true, ready: true, runtimeWritable: true, platformTarget: PLATFORM.target, persistenceMode: PERSISTENCE_MODE, storageMode: STORAGE_MODE, turnstileEnabled: ENABLE_TURNSTILE, redis: { sessionStore: redisSessionReady, rateLimitStore: redisRateLimitReady, lockProvider: redisLockReady }, paymentProvider: PAYMENT_PROVIDER === 'portone_v2' ? PORTONE_CLIENT.configSummary() : { mode: PAYMENT_PROVIDER } });
     } catch (error) {
       return json(req, res, 503, { ok: false, ready: false, runtimeWritable: false, error: error.message });
     }
+  }
+
+  if (pathname === '/robots.txt' && req.method === 'GET') {
+    return text(req, res, 200, buildRobotsTxt(), { 'cache-control': 'public, max-age=3600' });
+  }
+
+  if (pathname === '/sitemap.xml' && req.method === 'GET') {
+    return text(req, res, 200, buildSitemapXml(), { 'content-type': 'application/xml; charset=utf-8', 'cache-control': 'public, max-age=3600' });
   }
 
   if (pathname === '/api/public/config' && req.method === 'GET') {
@@ -2167,7 +2588,24 @@ async function handleApi(req, res) {
   }
 
   if (pathname === '/api/public/health' && req.method === 'GET') {
-    return json(req, res, 200, { ok: true, area: 'public', time: nowIso() });
+    return json(req, res, 200, { ok: true, area: 'public', time: nowIso(), phase: RELEASE_PHASE, privacy: 'minimum_required_only' });
+  }
+
+  if (pathname === '/api/public/release-readiness' && req.method === 'GET') {
+    const db = await readDb();
+    return json(req, res, 200, { ok: true, readiness: buildReleaseReadiness(db) });
+  }
+
+  if (pathname === '/api/public/launch-checklist' && req.method === 'GET') {
+    const db = await readDb();
+    const checklist = buildProductionLaunchChecklist(db);
+    return json(req, res, checklist.ok ? 200 : 503, { ok: checklist.ok, checklist: { phase: checklist.phase, checkedAt: checklist.checkedAt, blockers: checklist.blockers, checks: checklist.checks.map(item => ({ key: item.key, ok: item.ok, label: item.label })) } });
+  }
+
+  if (pathname === '/api/public/commercial-final-gate' && req.method === 'GET') {
+    const db = await readDb();
+    const gate = buildCommercialFinalGate(db);
+    return json(req, res, gate.ok ? 200 : 503, { ok: gate.ok, phase: gate.phase, checkedAt: gate.checkedAt, summary: gate.summary, blockers: gate.blockers.map(item => ({ key: item.key, label: item.label, count: item.count || undefined })) });
   }
 
   if (pathname === '/api/public/products' && req.method === 'GET') {
@@ -2204,9 +2642,193 @@ async function handleApi(req, res) {
     return json(req, res, 200, { ok: true, items: items.slice(0, 50) });
   }
 
+  if (pathname === '/api/public/auth/session' && req.method === 'GET') {
+    const db = await readDb();
+    const session = await getCustomerSession(req, db);
+    return json(req, res, 200, { ok: true, authenticated: !!session, customer: publicCustomer(db, session?.customer) });
+  }
+
+  if (pathname === '/api/public/auth/register' && req.method === 'POST') {
+    const rate = await hitRateLimit('customer-register', clientIp(req), { windowMs: PUBLIC_SCAN_WINDOW_MS, limit: 10 });
+    if (rate.blocked) return json(req, res, 429, { ok: false, error: '요청이 너무 많습니다.' });
+    const body = await bodyJson(req, MAX_JSON_BODY_BYTES) || {};
+    const email = normalizeEmail(body.email);
+    const password = String(body.password || '');
+    const consent = body.privacyConsent === true || body.privacyConsent === 'true';
+    if (!isValidEmail(email)) return json(req, res, 400, { ok: false, error: '유효한 이메일이 필요합니다.' });
+    if (password.length < 12) return json(req, res, 400, { ok: false, error: '비밀번호는 12자 이상이어야 합니다.' });
+    if (!consent) return json(req, res, 400, { ok: false, error: '개인정보 처리방침 동의가 필요합니다.' });
+    const db = await readDb();
+    db.customers ||= [];
+    db.customerSessions ||= [];
+    if (db.customers.some(item => normalizeEmail(item.email) === email)) return json(req, res, 409, { ok: false, error: '이미 가입된 이메일입니다.' });
+    const customer = { id: uid('cus'), email, status: 'active', passwordHash: await hashPassword(password), privacyConsentAt: nowIso(), dataMinimizationVersion: RELEASE_PHASE, createdAt: nowIso(), updatedAt: nowIso() };
+    const sid = uid('csess') + crypto.randomBytes(16).toString('hex');
+    const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 14).toISOString();
+    db.customers.unshift(customer);
+    db.customerSessions.unshift({ sid, customerId: customer.id, createdAt: nowIso(), lastSeenAt: nowIso(), expiresAt, ip: clientIp(req) });
+    for (const order of db.orders || []) {
+      if (!order.customerId && normalizeEmail(order.email) === email) { order.customerId = customer.id; generateOrderAccessToken(order); }
+    }
+    appendAudit(db, req, 'public.customer.registered', { customerId: customer.id, email });
+    await writeDb(db);
+    return json(req, res, 200, { ok: true, customer: publicCustomer(db, customer) }, { 'set-cookie': customerSessionCookie(req, sid, 60 * 60 * 24 * 14) });
+  }
+
+  if (pathname === '/api/public/auth/login' && req.method === 'POST') {
+    const rate = await hitRateLimit('customer-login', clientIp(req), { windowMs: ADMIN_AUTH_WINDOW_MS, limit: 12 });
+    if (rate.blocked) return json(req, res, 429, { ok: false, error: '요청이 너무 많습니다.' });
+    const body = await bodyJson(req, MAX_JSON_BODY_BYTES) || {};
+    const email = normalizeEmail(body.email);
+    const password = String(body.password || '');
+    const db = await readDb();
+    db.customers ||= [];
+    db.customerSessions ||= [];
+    const customer = db.customers.find(item => normalizeEmail(item.email) === email && item.status !== 'disabled');
+    if (!customer || !await verifyPassword(password, customer.passwordHash)) {
+      appendAudit(db, req, 'public.customer.login_failed', { email });
+      await writeDb(db);
+      return json(req, res, 401, { ok: false, error: '로그인 정보가 올바르지 않습니다.' });
+    }
+    customer.lastLoginAt = nowIso();
+    customer.updatedAt = nowIso();
+    const sid = uid('csess') + crypto.randomBytes(16).toString('hex');
+    const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 14).toISOString();
+    db.customerSessions.unshift({ sid, customerId: customer.id, createdAt: nowIso(), lastSeenAt: nowIso(), expiresAt, ip: clientIp(req) });
+    db.customerSessions = db.customerSessions.slice(0, 2000);
+    appendAudit(db, req, 'public.customer.login_succeeded', { customerId: customer.id, email });
+    await writeDb(db);
+    return json(req, res, 200, { ok: true, customer: publicCustomer(db, customer) }, { 'set-cookie': customerSessionCookie(req, sid, 60 * 60 * 24 * 14) });
+  }
+
+  if (pathname === '/api/public/auth/logout' && req.method === 'POST') {
+    const sid = parseCookies(req).nv0_customer_sid;
+    const db = await readDb();
+    db.customerSessions ||= [];
+    db.customerSessions = db.customerSessions.filter(item => item.sid !== sid);
+    appendAudit(db, req, 'public.customer.logout');
+    await writeDb(db);
+    return json(req, res, 200, { ok: true }, { 'set-cookie': expiredCustomerSessionCookie(req) });
+  }
+
+  if (pathname === '/api/public/auth/request-password-reset' && req.method === 'POST') {
+    const body = await bodyJson(req, MAX_JSON_BODY_BYTES) || {};
+    const email = normalizeEmail(body.email);
+    if (!isValidEmail(email)) return json(req, res, 400, { ok: false, error: '유효한 이메일이 필요합니다.' });
+    const db = await readDb();
+    const customer = (db.customers || []).find(item => normalizeEmail(item.email) === email && item.status !== 'disabled');
+    if (customer) {
+      const { rawToken, record } = createPasswordResetToken(db, customer, req);
+      const resetUrl = `${BUSINESS_PROFILE.domain.replace(/\/$/, '')}/auth?resetToken=${encodeURIComponent(rawToken)}&email=${encodeURIComponent(email)}`;
+      enqueueTransactionalEmail(db, { to: email, customerId: customer.id, template: 'password_reset', subject: '[NV0] 비밀번호 재설정 안내', body: `30분 안에 아래 링크에서 비밀번호를 재설정하세요.\n${resetUrl}`, meta: { resetTokenId: record.id, resetUrl } });
+      appendAudit(db, req, 'public.customer.password_reset_requested', { customerId: customer.id, email });
+    } else {
+      appendAudit(db, req, 'public.customer.password_reset_requested_unknown', { email });
+    }
+    await writeDb(db);
+    return json(req, res, 200, { ok: true, message: '가입된 이메일이면 재설정 안내가 발송됩니다.' });
+  }
+
+  if (pathname === '/api/public/auth/reset-password' && req.method === 'POST') {
+    const body = await bodyJson(req, MAX_JSON_BODY_BYTES) || {};
+    const email = normalizeEmail(body.email);
+    const token = String(body.token || '').trim();
+    const password = String(body.password || '');
+    if (!isValidEmail(email) || !token) return json(req, res, 400, { ok: false, error: '이메일과 재설정 토큰이 필요합니다.' });
+    if (password.length < 12) return json(req, res, 400, { ok: false, error: '비밀번호는 12자 이상이어야 합니다.' });
+    const db = await readDb();
+    const customer = (db.customers || []).find(item => normalizeEmail(item.email) === email && item.status !== 'disabled');
+    const record = (db.passwordResetTokens || []).find(item => item.tokenHash === hashPasswordResetToken(token) && !item.usedAt);
+    if (!customer || !record || record.customerId !== customer.id || Date.parse(record.expiresAt) < Date.now()) {
+      appendAudit(db, req, 'public.customer.password_reset_failed', { email });
+      await writeDb(db);
+      return json(req, res, 400, { ok: false, error: '재설정 링크가 올바르지 않거나 만료되었습니다.' });
+    }
+    customer.passwordHash = await hashPassword(password);
+    customer.updatedAt = nowIso();
+    record.usedAt = nowIso();
+    db.customerSessions = (db.customerSessions || []).filter(item => item.customerId !== customer.id);
+    enqueueTransactionalEmail(db, { to: email, customerId: customer.id, template: 'password_changed', subject: '[NV0] 비밀번호가 변경되었습니다', body: '계정 비밀번호가 변경되었습니다. 본인이 요청하지 않았다면 즉시 고객센터로 문의하세요.' });
+    appendAudit(db, req, 'public.customer.password_reset_completed', { customerId: customer.id, email });
+    await writeDb(db);
+    return json(req, res, 200, { ok: true, message: '비밀번호가 변경되었습니다. 다시 로그인하세요.' }, { 'set-cookie': expiredCustomerSessionCookie(req) });
+  }
+
+  if (pathname === '/api/public/account' && req.method === 'GET') {
+    const db = await readDb();
+    const session = await getCustomerSession(req, db);
+    if (!session) return json(req, res, 401, { ok: false, error: '로그인이 필요합니다.' });
+    const orders = customerOrders(db, session.customer);
+    const assets = (db.purchasedAssets || []).filter(asset => orders.some(order => order.id === asset.orderId));
+    return json(req, res, 200, { ok: true, customer: publicCustomer(db, session.customer), orders, assets });
+  }
+
+  if (pathname === '/api/public/account/export' && req.method === 'GET') {
+    const db = await readDb();
+    const session = await getCustomerSession(req, db);
+    if (!session) return json(req, res, 401, { ok: false, error: '로그인이 필요합니다.' });
+    const orders = customerOrders(db, session.customer).map(sanitizeOrderForPublic);
+    const assets = (db.purchasedAssets || []).filter(asset => orders.some(order => order.id === asset.orderId));
+    return json(req, res, 200, { ok: true, export: { customer: publicCustomer(db, session.customer), orders, assets, exportedAt: nowIso() } });
+  }
+
+  if (pathname === '/api/public/account/deactivate' && req.method === 'POST') {
+    const db = await readDb();
+    const session = await getCustomerSession(req, db);
+    if (!session) return json(req, res, 401, { ok: false, error: '로그인이 필요합니다.' });
+    session.customer.status = 'disabled';
+    session.customer.disabledAt = nowIso();
+    session.customer.updatedAt = nowIso();
+    db.customerSessions = (db.customerSessions || []).filter(item => item.customerId !== session.customer.id);
+    appendAudit(db, req, 'public.customer.deactivated', { customerId: session.customer.id });
+    await writeDb(db);
+    return json(req, res, 200, { ok: true, message: '계정이 비활성화되었습니다.' }, { 'set-cookie': expiredCustomerSessionCookie(req) });
+  }
+
+  if (pathname === '/api/public/account/marketing-consent' && req.method === 'POST') {
+    const db = await readDb();
+    const session = await getCustomerSession(req, db);
+    if (!session) return json(req, res, 401, { ok: false, error: '로그인이 필요합니다.' });
+    const body = normalizeMarketingConsentPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
+    session.customer.marketingConsentAt = body.marketingConsent ? nowIso() : null;
+    session.customer.marketingConsentRevokedAt = body.marketingConsent ? null : nowIso();
+    session.customer.updatedAt = nowIso();
+    appendAudit(db, req, 'public.customer.marketing_consent_changed', { customerId: session.customer.id, marketingConsent: body.marketingConsent });
+    await writeDb(db);
+    return json(req, res, 200, { ok: true, customer: publicCustomer(db, session.customer) });
+  }
+
+  if (pathname === '/api/public/refund-request' && req.method === 'POST') {
+    const body = normalizeRefundRequestPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
+    const db = await readDb();
+    db.refundRequests ||= [];
+    const order = (db.orders || []).find(item => item.id === body.orderId);
+    if (!order) return json(req, res, 404, { ok: false, error: '주문을 찾을 수 없습니다.' });
+    const customerSession = await getCustomerSession(req, db);
+    const tokenAllowed = body.accessToken && order.accessToken && body.accessToken.length === order.accessToken.length && crypto.timingSafeEqual(Buffer.from(String(body.accessToken)), Buffer.from(String(order.accessToken)));
+    if (!tokenAllowed && !ownsOrder(customerSession?.customer, order)) return json(req, res, 403, { ok: false, error: '환불 요청 권한이 없습니다.' });
+    if (!isRefundRequestAllowed(order)) return json(req, res, 400, { ok: false, error: '환불 요청 가능 기간이 지났거나 결제 완료 주문이 아닙니다.' });
+    const existing = db.refundRequests.find(item => item.orderId === order.id && ['requested','reviewing'].includes(item.status));
+    if (existing) return json(req, res, 200, { ok: true, refundRequest: existing, duplicate: true });
+    const refundRequest = { id: uid('refund'), orderId: order.id, customerId: order.customerId || null, email: order.email || null, reason: body.reason, status: 'requested', requestedAt: nowIso(), amount: order.amount, plan: order.plan };
+    db.refundRequests.unshift(refundRequest);
+    enqueueTransactionalEmail(db, { to: BUSINESS_PROFILE.contactEmail, template: 'refund_request_operator', subject: '[NV0] 환불 요청 접수', body: '환불 요청이 접수되었습니다.', meta: { refundRequestId: refundRequest.id, orderId: order.id } });
+    appendAudit(db, req, 'public.refund.requested', { orderId: order.id, refundRequestId: refundRequest.id });
+    await writeDb(db);
+    return json(req, res, 200, { ok: true, refundRequest });
+  }
+
   if (pathname === '/api/public/portal-summary' && req.method === 'GET') {
     const db = await readDb();
-    const summary = buildPortalSummary(db, { orderId: url.searchParams.get('orderId'), siteId: url.searchParams.get('siteId') });
+    const orderId = String(url.searchParams.get('orderId') || '');
+    if (orderId) {
+      const order = (db.orders || []).find(item => item.id === orderId);
+      const customerSession = await getCustomerSession(req, db);
+      if (!order) return json(req, res, 404, { ok: false, error: '주문을 찾을 수 없습니다.' });
+      if (order.customerId && !canAccessOrder(req, order) && !ownsOrder(customerSession?.customer, order)) return json(req, res, 403, { ok: false, error: '포털 접근 권한이 없습니다.' });
+    }
+    const summary = buildPortalSummary(db, { orderId, siteId: url.searchParams.get('siteId') });
+    summary.order = sanitizeOrderForPublic(summary.order, { includeAccessToken: !!summary.order && canAccessOrder(req, summary.order) });
     return json(req, res, 200, { ok: true, summary });
   }
 
@@ -2215,8 +2837,10 @@ async function handleApi(req, res) {
     const orderId = String(url.searchParams.get('orderId') || '');
     const order = (db.orders || []).find(item => item.id === orderId);
     if (!order) return json(req, res, 404, { ok: false, error: '주문을 찾을 수 없습니다.' });
+    const customerSession = await getCustomerSession(req, db);
+    if (order.customerId && !canAccessOrder(req, order) && !ownsOrder(customerSession?.customer, order)) return json(req, res, 403, { ok: false, error: '주문 접근 권한이 없습니다.' });
     const paymentSession = (db.paymentSessions || []).find(item => item.orderId === order.id) || null;
-    return json(req, res, 200, { ok: true, order, paymentSession });
+    return json(req, res, 200, { ok: true, order: sanitizeOrderForPublic(order, { includeAccessToken: canAccessOrder(req, order) || ownsOrder(customerSession?.customer, order) }), paymentSession });
   }
 
   if (pathname === '/api/public/fulfillment' && req.method === 'GET') {
@@ -2225,9 +2849,28 @@ async function handleApi(req, res) {
     if (!orderId) return json(req, res, 400, { ok: false, error: 'orderId가 필요합니다.' });
     const order = (db.orders || []).find(item => item.id === orderId);
     if (!order) return json(req, res, 404, { ok: false, error: '주문을 찾을 수 없습니다.' });
+    const customerSession = await getCustomerSession(req, db);
+    if ((order.customerId || order.status === 'paid') && !canAccessOrder(req, order) && !ownsOrder(customerSession?.customer, order)) return json(req, res, 403, { ok: false, error: '산출물 접근 권한이 없습니다.' });
     const asset = order.status === 'paid' ? ensureFulfillmentForOrder(db, order) : null;
-    if (asset) await writeDb(db);
-    return json(req, res, 200, { ok: true, order, asset, locked: order.status !== 'paid' });
+    if (asset || !order.accessToken) await writeDb(db);
+    return json(req, res, 200, { ok: true, order: { ...order, accessToken: generateOrderAccessToken(order) }, asset, locked: order.status !== 'paid' });
+  }
+
+
+  if (pathname === '/api/public/fulfillment-download' && req.method === 'GET') {
+    const db = await readDb();
+    const orderId = String(url.searchParams.get('orderId') || '').trim();
+    const order = (db.orders || []).find(item => item.id === orderId);
+    if (!order) return json(req, res, 404, { ok: false, error: '주문을 찾을 수 없습니다.' });
+    const customerSession = await getCustomerSession(req, db);
+    if ((order.customerId || order.status === 'paid') && !canAccessOrder(req, order) && !ownsOrder(customerSession?.customer, order)) return json(req, res, 403, { ok: false, error: '산출물 접근 권한이 없습니다.' });
+    if (order.status !== 'paid') return json(req, res, 402, { ok: false, error: '결제 완료 후 다운로드할 수 있습니다.' });
+    const asset = ensureFulfillmentForOrder(db, order);
+    await writeDb(db);
+    const pdf = buildAssetPdfBuffer(asset, order);
+    res.writeHead(200, { 'content-type': 'application/pdf', 'content-disposition': `attachment; filename="nv0-${order.id}.pdf"`, ...baseHeaders(req, 'dynamic') });
+    res.end(pdf);
+    return;
   }
 
   if (pathname === '/api/public/product-detail' && req.method === 'GET') {
@@ -2273,8 +2916,24 @@ async function handleApi(req, res) {
       return json(req, res, 429, { ok: false, error: '결제 세션 생성 요청이 너무 많습니다. 잠시 후 다시 시도하세요.' }, { 'retry-after': String(Math.ceil((rate.resetAt - Date.now()) / 1000)) });
     }
     const body = normalizeCheckoutPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
+    const idempotencyKey = getIdempotencyKey(req, body);
+    const requestHash = hashRequestPayload({ plan: body.plan, email: normalizeEmail(body.email || body.buyerEmail || ''), domain: body.domain, siteId: body.siteId });
     const db = await readDb();
-    const lockKey = `checkout:${body.siteId || body.domain || clientIp(req)}`;
+    const replay = findIdempotencyRecord(db, 'checkout', idempotencyKey);
+    if (replay) {
+      if (replay.requestHash !== requestHash) return json(req, res, 409, { ok: false, error: '동일 idempotency key로 다른 결제 요청을 재사용할 수 없습니다.' });
+      return json(req, res, 200, { ok: true, replay: true, ...replay.result });
+    }
+    const customerSession = await getCustomerSession(req, db);
+    if (customerSession?.customer) {
+      body.customerId = customerSession.customer.id;
+      body.buyerEmail ||= customerSession.customer.email;
+    }
+    if (!isValidEmail(body.buyerEmail || '')) return json(req, res, 400, { ok: false, error: '산출물 수신 이메일이 필요합니다.' });
+    if (!body.privacyConsent || !body.termsConsent || !body.refundConsent || !body.deliveryConsent) {
+      return json(req, res, 400, { ok: false, error: '개인정보처리방침, 이용약관, 환불정책, 디지털 산출물 제공 및 청약철회 제한 고지 확인이 필요합니다.' });
+    }
+    const lockKey = `checkout:${body.siteId || body.domain || body.buyerEmail || clientIp(req)}`;
     if (!await distributedLock.acquire(lockKey, 10)) {
       return json(req, res, 409, { ok: false, error: '동일 대상의 결제 세션 생성이 이미 진행 중입니다.' });
     }
@@ -2284,9 +2943,28 @@ async function handleApi(req, res) {
     } finally {
       await distributedLock.release(lockKey);
     }
-    appendAudit(db, req, 'public.checkout.created', { orderId: created.order.id, provider: PAYMENT_PROVIDER, siteId: created.order.siteId || null, plan: created.order.plan });
+    const checkoutResult = { order: { ...created.order, accessToken: generateOrderAccessToken(created.order) }, paymentSession: created.paymentSession, providerMode: PAYMENT_PROVIDER };
+    storeIdempotencyRecord(db, { scope: 'checkout', key: idempotencyKey, requestHash, result: checkoutResult });
+    appendAudit(db, req, 'public.checkout.created', { orderId: created.order.id, provider: PAYMENT_PROVIDER, siteId: created.order.siteId || null, plan: created.order.plan, idempotency: !!idempotencyKey });
     await writeDb(db);
-    return json(req, res, 200, { ok: true, order: created.order, paymentSession: created.paymentSession, providerMode: PAYMENT_PROVIDER });
+    return json(req, res, 200, { ok: true, ...checkoutResult });
+  }
+
+  if (pathname === '/api/public/payment/retry' && req.method === 'POST') {
+    const body = await bodyJson(req, MAX_JSON_BODY_BYTES) || {};
+    const orderId = String(body.orderId || body.id || '').trim();
+    const db = await readDb();
+    const order = (db.orders || []).find(item => item.id === orderId);
+    if (!order) return json(req, res, 404, { ok: false, error: '주문을 찾을 수 없습니다.' });
+    const customerSession = await getCustomerSession(req, db);
+    if (!canAccessOrder(req, order) && !ownsOrder(customerSession?.customer, order)) return json(req, res, 403, { ok: false, error: '결제 재시도 권한이 없습니다.' });
+    if (order.status === 'paid') return json(req, res, 409, { ok: false, error: '이미 결제 완료된 주문입니다.' });
+    order.status = 'pending'; order.stage = 'checkout_retry'; order.retryCount = Number(order.retryCount || 0) + 1; order.updatedAt = nowIso();
+    const paymentSession = { id: uid('pay'), orderId: order.id, provider: PAYMENT_PROVIDER, redirectUrl: null, providerState: PAYMENT_PROVIDER === 'demo' ? 'ready_for_demo_capture' : 'retry_requested', createdAt: nowIso(), retry: true };
+    db.paymentSessions ||= []; db.paymentSessions.unshift(paymentSession); order.paymentSessionId = paymentSession.id;
+    appendAudit(db, req, 'public.payment.retry_requested', { orderId: order.id, retryCount: order.retryCount });
+    await writeDb(db);
+    return json(req, res, 200, { ok: true, order: { ...sanitizeOrderForPublic(order), accessToken: generateOrderAccessToken(order) }, paymentSession });
   }
 
   if (pathname === '/api/public/payment/complete' && req.method === 'POST') {
@@ -2311,7 +2989,7 @@ async function handleApi(req, res) {
         if (!synced.ok && synced.reason !== 'payment_not_completed') {
           return json(req, res, 400, { ok: false, error: `결제 검증에 실패했습니다: ${synced.reason}`, order: synced.order, paymentSession: synced.paymentSession });
         }
-        return json(req, res, 200, { ok: true, order: synced.order, paymentSession: synced.paymentSession, payment: synced.payment || null, pendingSettlement: !!synced.pendingSettlement });
+        return json(req, res, 200, { ok: true, order: { ...synced.order, accessToken: generateOrderAccessToken(synced.order) }, paymentSession: synced.paymentSession, payment: synced.payment || null, pendingSettlement: !!synced.pendingSettlement });
       }
       try {
         assertCommercialRouteAllowed(PLATFORM, 'demo_payment_complete');
@@ -2323,7 +3001,7 @@ async function handleApi(req, res) {
       if (!completed) return json(req, res, 404, { ok: false, error: '주문을 찾을 수 없습니다.' });
       appendAudit(db, req, 'public.payment.completed', { orderId: completed.order.id, provider: PAYMENT_PROVIDER });
       await writeDb(db);
-      return json(req, res, 200, { ok: true, order: completed.order, paymentSession: completed.paymentSession });
+      return json(req, res, 200, { ok: true, order: { ...completed.order, accessToken: generateOrderAccessToken(completed.order) }, paymentSession: completed.paymentSession });
     } finally {
       await distributedLock.release(lockKey);
     }
@@ -2435,7 +3113,7 @@ async function handleApi(req, res) {
       if (!auth) {
         appendAudit(db, req, 'admin.auth.failed', { mode: 'account_rbac', email });
         await writeDb(db);
-        return json(req, res, 401, { ok: false, error: '이메일 또는 비밀번호가 올바르지 않습니다.' });
+        return json(req, res, 401, { ok: false, error: '로그인 정보가 올바르지 않습니다.' });
       }
       const sid = crypto.randomBytes(24).toString('hex');
       const csrfToken = crypto.randomBytes(16).toString('hex');
@@ -2481,7 +3159,6 @@ async function handleApi(req, res) {
     return json(req, res, 200, { ok: true, csrfToken, adminUser: { id: null, email: null, displayName: 'Shared Key Admin', roles: ['super_admin'], permissions: ['*'] } }, { 'set-cookie': sessionCookie(req, sid, Math.floor(SESSION_TTL_MS / 1000)) });
   }
 
-
   if (pathname === '/api/admin/logout' && req.method === 'POST') {
     const session = await getSession(req);
     if (session && !requireAdminCsrf(req, res, session)) return;
@@ -2498,6 +3175,7 @@ async function handleApi(req, res) {
   }
 
   if (!pathname.startsWith('/api/admin/')) return false;
+  if (!adminIpAllowed(req)) return json(req, res, 403, { ok: false, error: '관리자 접근 IP가 허용 목록에 없습니다.' });
   const session = await getSession(req);
   if (!session) return json(req, res, 401, { ok: false, error: '관리자 세션이 필요합니다.' });
   if (!['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
@@ -2894,6 +3572,99 @@ async function handleApi(req, res) {
     return json(req, res, 200, { ok: true, item: created, type });
   }
 
+  if (pathname === '/api/admin/customers' && req.method === 'GET') {
+    return json(req, res, 200, { ok: true, customers: (db.customers || []).map(customer => ({ ...publicCustomer(db, customer), status: customer.status || 'active', orders: (db.orders || []).filter(order => ownsOrder(customer, order)).length })) });
+  }
+
+  if (pathname === '/api/admin/customers/status' && req.method === 'POST') {
+    const body = normalizeIdStatusPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {}, { allowStatuses: ['active', 'disabled'] });
+    const customer = (db.customers || []).find(item => item.id === body.id);
+    if (!customer) return json(req, res, 404, { ok: false, error: '고객을 찾을 수 없습니다.' });
+    customer.status = body.status;
+    customer.updatedAt = nowIso();
+    if (body.status === 'disabled') db.customerSessions = (db.customerSessions || []).filter(item => item.customerId !== customer.id);
+    appendAudit(db, req, 'admin.customer.status_changed', { customerId: customer.id, status: body.status });
+    await writeDb(db);
+    return json(req, res, 200, { ok: true, customer: publicCustomer(db, customer) });
+  }
+
+  if (pathname === '/api/admin/orders/fulfillment' && req.method === 'POST') {
+    const body = normalizeIdPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
+    const order = (db.orders || []).find(item => item.id === body.id);
+    if (!order) return json(req, res, 404, { ok: false, error: '주문을 찾을 수 없습니다.' });
+    if (order.status !== 'paid') return json(req, res, 400, { ok: false, error: '결제 완료 주문만 산출물을 생성할 수 있습니다.' });
+    const asset = ensureFulfillmentForOrder(db, order);
+    appendAudit(db, req, 'admin.order.fulfillment_generated', { orderId: order.id, assetId: asset.id });
+    await writeDb(db);
+    return json(req, res, 200, { ok: true, order: sanitizeOrderForPublic(order), asset });
+  }
+
+  if (pathname === '/api/admin/email-outbox' && req.method === 'GET') {
+    return json(req, res, 200, { ok: true, emails: (db.emailOutbox || []).slice(0, 200).map(item => ({ ...item, body: String(item.body || '').slice(0, 500) })) });
+  }
+
+  if (pathname === '/api/admin/email-outbox/status' && req.method === 'POST') {
+    const body = normalizeEmailDeliveryPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
+    const email = (db.emailOutbox || []).find(item => item.id === body.id);
+    if (!email) return json(req, res, 404, { ok: false, error: '이메일 대기열 항목을 찾을 수 없습니다.' });
+    email.status = body.status; email.updatedAt = nowIso();
+    if (body.status === 'sent') email.sentAt = nowIso();
+    if (body.status === 'failed') { email.lastError = body.error || 'delivery failed'; email.retryCount = Number(email.retryCount || 0) + 1; }
+    appendAudit(db, req, 'admin.email.status_changed', { id: email.id, status: email.status });
+    await writeDb(db);
+    return json(req, res, 200, { ok: true, email: { ...email, body: String(email.body || '').slice(0, 500) } });
+  }
+
+  if (pathname === '/api/admin/refund-requests' && req.method === 'GET') return json(req, res, 200, { ok: true, refundRequests: (db.refundRequests || []).slice(0, 200) });
+
+  if (pathname === '/api/admin/refund-requests/status' && req.method === 'POST') {
+    const body = normalizeIdStatusPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {}, { allowStatuses: ['requested','reviewing','approved','rejected','completed'] });
+    const request = (db.refundRequests || []).find(item => item.id === body.id);
+    if (!request) return json(req, res, 404, { ok: false, error: '환불 요청을 찾을 수 없습니다.' });
+    request.status = body.status; request.updatedAt = nowIso();
+    const order = (db.orders || []).find(item => item.id === request.orderId);
+    if (order && ['approved','completed'].includes(body.status)) { order.refundStatus = body.status; order.updatedAt = nowIso(); }
+    appendAudit(db, req, 'admin.refund.status_changed', { refundRequestId: request.id, orderId: request.orderId, status: body.status });
+    await writeDb(db);
+    return json(req, res, 200, { ok: true, refundRequest: request, order: order ? sanitizeOrderForPublic(order) : null });
+  }
+
+  if (pathname === '/api/admin/release-readiness' && req.method === 'GET') return json(req, res, 200, { ok: true, readiness: buildReleaseReadiness(db), operationalEvents: (db.operationalEvents || []).slice(0, 100) });
+
+  if (pathname === '/api/admin/launch-checklist' && req.method === 'GET') {
+    const checklist = buildProductionLaunchChecklist(db);
+    appendAudit(db, req, 'admin.launch_checklist.viewed', { ok: checklist.ok, blockers: checklist.blockers.map(item => item.key) });
+    await writeDb(db);
+    return json(req, res, checklist.ok ? 200 : 503, { ok: checklist.ok, checklist });
+  }
+
+  if (pathname === '/api/admin/commercial-final-gate' && req.method === 'GET') {
+    const gate = buildCommercialFinalGate(db);
+    appendAudit(db, req, 'admin.commercial_final_gate.viewed', { ok: gate.ok, blockers: gate.blockers.map(item => item.key) });
+    await writeDb(db);
+    return json(req, res, gate.ok ? 200 : 503, { ok: gate.ok, gate });
+  }
+
+  if (pathname === '/api/admin/email-outbox' && req.method === 'GET') {
+    return json(req, res, 200, { ok: true, outbox: (db.emailOutbox || []).map(item => ({ ...item, to: maskEmail(item.to) })).slice(0, 200) });
+  }
+
+  if (pathname === '/api/admin/email-outbox/process' && req.method === 'POST') {
+    const body = await bodyJson(req, MAX_JSON_BODY_BYTES) || {};
+    const result = await processEmailOutbox(db, { dryRun: body.dryRun !== false, limit: Math.min(Number(body.limit || 20), 100) });
+    appendAudit(db, req, 'admin.email_outbox.processed', { processed: result.processed, dryRun: body.dryRun !== false });
+    await writeDb(db);
+    return json(req, res, 200, result);
+  }
+
+  if (pathname === '/api/admin/ops/self-test' && req.method === 'POST') {
+    const readiness = buildReleaseReadiness(db);
+    const emailProbe = enqueueTransactionalEmail(db, { to: OPERATOR_ALERT_EMAIL, template: 'ops_self_test', subject: '[NV0] 운영 자가검수', body: '운영 자가검수 이메일 큐 테스트입니다.' });
+    appendAudit(db, req, 'admin.ops.self_test', { ready: readiness.ready, emailProbeId: emailProbe.id });
+    await writeDb(db);
+    return json(req, res, 200, { ok: true, readiness, probes: { emailOutboxId: emailProbe.id, dbWritable: true, runtime: 'ok' } });
+  }
+
   if (pathname === '/api/admin/ops' && req.method === 'POST') {
     const body = normalizeOpsPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
     const action = body.action;
@@ -2989,6 +3760,8 @@ async function shutdown() {
 
 process.on('SIGTERM', () => { shutdown().catch(() => process.exit(1)); });
 process.on('SIGINT', () => { shutdown().catch(() => process.exit(1)); });
+process.on('unhandledRejection', (error) => { console.error('unhandled rejection', error); });
+process.on('uncaughtException', (error) => { console.error('uncaught exception', error); shutdown().catch(() => process.exit(1)); });
 
 validateConfig();
 ensureRuntime().then(async () => {

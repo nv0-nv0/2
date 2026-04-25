@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const root = process.cwd();
+const summaryOnly = process.argv.includes('--summary') || process.env.NV0_LINK_CHECK_SUMMARY === '1';
 const serverSource = fs.readFileSync(path.join(root, 'server/index.mjs'), 'utf8');
 const pageMapMatch = serverSource.match(/function pageMap\(urlPath\) \{[\s\S]*?const m = \{([\s\S]*?)\n\s+\};/);
 if (!pageMapMatch) throw new Error('pageMap function block not found in server/index.mjs');
@@ -45,6 +46,7 @@ for (const m of adminNavMatch[1].matchAll(/href="([^"]+)"/g)) {
   if (knownRoutes.has(normalized)) checked.push({ file: 'server/index.mjs#adminNav', ref: href, type: 'route' });
   else errors.push({ file: 'server/index.mjs#adminNav', ref: href, type: 'route' });
 }
-console.log(JSON.stringify({ ok: errors.length === 0, checkedCount: checked.length, checked, errors }, null, 2));
+const payload = summaryOnly ? { ok: errors.length === 0, checkedCount: checked.length, errorCount: errors.length, errors } : { ok: errors.length === 0, checkedCount: checked.length, checked, errors };
+console.log(JSON.stringify(payload, null, 2));
 if (errors.length) process.exit(1);
 process.exit(0);

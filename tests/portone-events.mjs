@@ -35,7 +35,7 @@ async function waitUntilReady() { for (let i=0;i<50;i+=1) { try { const res = aw
 await waitUntilReady();
 async function j(url, options={}) { const res=await fetch(`http://127.0.0.1:${appPort}${url}`, options); const data=await res.json(); return {res,data}; }
 try {
-  const created = await j('/api/public/checkout-session', { method:'POST', headers:{ 'content-type':'application/json' }, body: JSON.stringify({ plan:'Basic', buyerName:'이벤트', buyerEmail:'event@example.com' }) });
+  const created = await j('/api/public/checkout-session', { method:'POST', headers:{ 'content-type':'application/json' }, body: JSON.stringify({ plan:'Basic', buyerEmail:'event@example.com', privacyConsent:true, termsConsent:true, refundConsent:true, deliveryConsent:true }) });
   assert.equal(created.res.status, 200);
   const orderId = created.data.order.id;
   const completed = await j('/api/public/payment/complete', { method:'POST', headers:{ 'content-type':'application/json' }, body: JSON.stringify({ orderId, paymentId: orderId }) });

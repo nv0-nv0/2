@@ -73,14 +73,21 @@ async function main() {
   assert.equal(r.res.status, 200);
   assert.equal(r.data?.ok, true);
 
-  try { child.kill('SIGKILL'); } catch {}
   console.log(JSON.stringify({ ok: true, checked: protectedPosts.length + 2 }, null, 2));
+  if (child) { try { child.kill('SIGKILL'); } catch {} }
   process.reallyExit ? process.reallyExit(0) : process.exit(0);
 }
 
 main().catch(error => {
   console.error(JSON.stringify({ ok: false, error: error.message }, null, 2));
   process.exitCode = 1;
-}).finally(() => {
-  if (child) child.kill('SIGKILL');
+}).finally(async () => {
+  if (child) {
+    try { child.kill('SIGKILL'); } catch {}
+    await Promise.race([
+      new Promise(resolve => child.once('exit', resolve)),
+      wait(250)
+    ]);
+  }
+  process.exit(process.exitCode || 0);
 });
