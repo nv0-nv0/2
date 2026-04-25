@@ -3,3 +3,11 @@
 .offer-card,.offer-head,.offer-detail,.section-title{min-width:0}.offer-card h3,.offer-summary,.offer-detail li,.comparison-table th,.comparison-table td{word-break:keep-all;overflow-wrap:anywhere}.offer-head{flex-wrap:wrap}.offer-price{line-height:1.08}.segment-tabs a{text-align:center;line-height:1.25;white-space:normal}.recommended-ribbon{white-space:nowrap}
 @media(max-width:900px){.segment-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.segment-tabs a{justify-content:center}.offer-price{font-size:27px}.comparison-table{font-size:14px}.table-wrap table{min-width:680px}}
 @media(max-width:520px){.segment-tabs{grid-template-columns:1fr}.offer-actions{display:grid;grid-template-columns:1fr}.offer-actions .btn{min-width:0}.recommended-ribbon{right:-42px}.table-wrap table{min-width:620px}}
+
+
+/* phase67 plan page compression */
+.section-block{margin-top:18px}.offer-card{min-height:100%;display:grid}.offer-summary{min-height:auto}.comparison-table th,.comparison-table td{text-align:left}.segment-tabs{box-shadow:0 8px 24px rgba(16,24,40,.055)}
+
+
+/* phase67 plan page compression */
+.section-block{margin-top:18px}.offer-card{min-height:100%;display:grid}.offer-summary{min-height:auto}.comparison-table th,.comparison-table td{text-align:left}.segment-tabs{box-shadow:0 8px 24px rgba(16,24,40,.055)}

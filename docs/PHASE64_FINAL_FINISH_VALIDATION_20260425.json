@@ -1,8 +1,14 @@
 {
-  "ok": true,
-  "score": 100,
+  "ok": false,
+  "score": 60,
   "total": 12,
-  "passed": 12,
-  "failed": [],
-  "checkedAt": "2026-04-25T12:49:07.531Z"
+  "passed": 7,
+  "failed": [
+    "home infographic shell",
+    "short hero headline",
+    "risk preview visible",
+    "5 check cards",
+    "phase64 release marker"
+  ],
+  "checkedAt": "2026-04-25T13:09:34.087Z"
 }

@@ -19,7 +19,10 @@ function renderPaywall(scan){
 }
 function renderResult(scan) {
   const topFindings = (scan.topFindings || []).slice(0, 2);
-  result.innerHTML = `<div class="result-card stack compact-result"><div class="meta-row"><strong>${escapeHtml(scan.target || '')}</strong><span class="pill gold">${escapeHtml(scan.riskLevel || '-')}</span></div><div class="grid cols-2"><div><div class="muted">위험도</div><div class="kpi">${escapeHtml(scan.riskScore ?? '-')}</div></div><div><div class="muted">예상 최대 과태료</div><div class="kpi">${formatWon(scan.estimatedMaxPenalty)}</div></div></div><div class="notice">무료 진단은 핵심 요약만 제공합니다. 전체 근거, 페이지별 조치안, 정책 문안, 수정 후보는 유료 상품에서 제공됩니다.</div><strong>상위 위험 2개</strong><ul class="result-list">${renderList(topFindings, '<li>상위 위험 항목 없음</li>', item => `<li>${escapeHtml(item)}</li>`)}</ul><div class="upgrade-box"><strong>추천 상품: ${escapeHtml(scan.recommendedPlan || 'Pro')}</strong><p class="muted">상세 리포트와 실행 문안이 필요하면 알맞은 상품으로 이어서 진행하세요.</p><div class="topnav"><a class="btn primary" href="/plans?riskScore=${encodeURIComponent(scan.riskScore || '')}&siteId=${encodeURIComponent(scan.siteId || '')}">무료 결과와 상품 비교</a><a class="btn secondary" href="/portal?siteId=${encodeURIComponent(scan.siteId || '')}">내 사이트 관리</a></div></div></div>${renderPaywall(scan)}`;
+  const diagnosis = scan.diagnosis || {};
+  const pages = (diagnosis.scannedPages || []).slice(0, 4);
+  const checks = (diagnosis.mainChecks || []).slice(0, 5);
+  result.innerHTML = `<div class="result-card stack compact-result"><div class="meta-row"><strong>${escapeHtml(scan.target || '')}</strong><span class="pill gold">${escapeHtml(scan.riskLevel || '-')}</span></div><div class="grid cols-2"><div><div class="muted">위험도</div><div class="kpi">${escapeHtml(scan.riskScore ?? '-')}</div></div><div><div class="muted">예상 최대 과태료</div><div class="kpi">${formatWon(scan.estimatedMaxPenalty)}</div></div></div><div class="notice">무료 진단은 핵심 요약만 제공합니다. 전체 근거, 페이지별 조치안, 정책 문안, 수정 후보는 유료 상품에서 제공됩니다.</div><strong>상위 위험 2개</strong><ul class="result-list">${renderList(topFindings, '<li>상위 위험 항목 없음</li>', item => `<li>${escapeHtml(item)}</li>`)}</ul><div class="diagnosis-grid">${renderList(checks, '', item => `<span class=\"diag-chip ${item.status === 'attention' ? 'warn' : 'ok'}\"><b>${escapeHtml(item.label)}</b><small>${escapeHtml(item.priority)}</small></span>`)}</div><div class="notice muted">스캔 페이지: ${pages.length ? pages.map(p => escapeHtml(p.finalUrl || p.url)).join(' · ') : '기본 URL 중심 분석'}</div><div class="upgrade-box"><strong>추천 상품: ${escapeHtml(scan.recommendedPlan || 'Pro')}</strong><p class="muted">상세 리포트와 실행 문안이 필요하면 알맞은 상품으로 이어서 진행하세요.</p><div class="topnav"><a class="btn primary" href="/plans?riskScore=${encodeURIComponent(scan.riskScore || '')}&siteId=${encodeURIComponent(scan.siteId || '')}">무료 결과와 상품 비교</a><a class="btn secondary" href="/portal?siteId=${encodeURIComponent(scan.siteId || '')}">내 사이트 관리</a></div></div></div>${renderPaywall(scan)}`;
 }
 async function runScan() {
   const email = document.getElementById('leadEmail').value.trim();
@@ -32,7 +35,7 @@ async function runScan() {
   state.textContent = '진단을 실행하고 있습니다.';
   result.innerHTML = '<div class="loading-steps"><div>사이트 접근성을 확인합니다.</div><div>필수 고지와 정책 요소를 점검합니다.</div><div>요약 결과를 정리합니다.</div></div>';
   try {
-    const res = await fetch('/api/public/scan', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ target: normalizedTarget, email, turnstileToken: guard.getToken() }) });
+    const res = await fetch('/api/public/diagnose', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ target: normalizedTarget, email, turnstileToken: guard.getToken() }) });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'scan failed');
     setUsage(getUsage()+1); saveScan(data.result || {});

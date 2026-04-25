@@ -2,3 +2,11 @@
 .save-site-form{display:grid;grid-template-columns:1.2fr 1fr 1fr auto;gap:12px;align-items:end}
 .site-actions{display:flex;gap:8px;flex-wrap:wrap}.site-kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.site-kpi div{border:1px solid #eaecf0;border-radius:14px;padding:12px;background:#fff}.site-kpi b{display:block;color:#101828;font-size:20px}.site-kpi span{color:#667085;font-size:13px}.site-card{border-left:4px solid #155eef}.portal-empty{padding:18px;border:1px dashed #d0d5dd;border-radius:16px;color:#667085;background:#fff}
 @media(max-width:900px){.save-site-form{grid-template-columns:1fr}.site-kpi{grid-template-columns:1fr}}
+
+
+/* phase67 portal clarity */
+.save-site-card{border-color:#D0D5DD;background:#fff}.save-site-form input{background:#fff}.site-card{border-left:4px solid #2563EB}.portal-empty{background:#F8FAFC}.site-actions .btn{flex:1;min-width:140px}
+
+
+/* phase67 portal clarity */
+.save-site-card{border-color:#D0D5DD;background:#fff}.save-site-form input{background:#fff}.site-card{border-left:4px solid #2563EB}.portal-empty{background:#F8FAFC}.site-actions .btn{flex:1;min-width:140px}

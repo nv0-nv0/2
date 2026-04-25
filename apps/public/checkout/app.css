@@ -1,2 +1,10 @@
 .page-head h1{margin:.4rem 0 0}.card h3{margin-top:0}
 .consent-box{display:grid;gap:8px;padding:12px;border:1px solid #e4eaf3;border-radius:14px;background:#f9fbff}.checkline{display:flex;align-items:center;gap:8px}.checkbox-inline{width:auto;min-height:auto}
+
+
+/* phase67 checkout trust */
+.consent-box{border:1px solid #E4E7EC;border-radius:18px;background:#F8FAFC;padding:14px}.checkline{display:flex!important;align-items:flex-start;gap:8px}.checkline input{margin-top:3px}.nv67-table th{width:132px}
+
+
+/* phase67 checkout trust */
+.consent-box{border:1px solid #E4E7EC;border-radius:18px;background:#F8FAFC;padding:14px}.checkline{display:flex!important;align-items:flex-start;gap:8px}.checkline input{margin-top:3px}.nv67-table th{width:132px}
