@@ -9,9 +9,9 @@
   <link rel="stylesheet" href="/apps/public/veridion-demo/app.css">
 </head>
 <body>
-<div class="promo-banner"><span><strong>무료 요약 진단 3회</strong> 상위 리스크를 먼저 보고, 전체 근거는 필요한 경우에만 구매하세요.</span><span id="freeUsageBadge">오늘 남은 무료 진단 확인 중</span></div>
+<div class="promo-banner"><span><strong>무료 요약 진단 3회</strong> 결과 확인 후 로그인하면 사이트 저장과 재진단 흐름으로 이어집니다.</span><span id="freeUsageBadge">오늘 남은 무료 진단 확인 중</span></div>
 <main class="app-shell demo-shell">
-  <header class="page-head demo-head"><div><div class="pill">Free Assessment</div><h1>사이트 주소 하나로 결제 전 신뢰 리스크를 확인하세요.</h1><p>무료 진단은 위험도, 상위 리스크, 다음 조치 방향을 먼저 보여줍니다. 전체 탐지 근거와 붙여넣기 문구는 Pro 이상에서 제공합니다.</p></div></header>
+  <header class="page-head demo-head"><div><div class="pill">Free Assessment</div><h1>사이트 주소 하나로 결제 전 신뢰 리스크를 확인하세요.</h1><p>무료 진단은 위험도, 상위 리스크, 다음 조치 방향을 먼저 보여줍니다. 로그인 회원은 진단한 사이트를 자동 연결하고, 비회원은 결과 후 포털에서 저장할 수 있습니다.</p></div><a class="btn secondary" href="/portal">내 사이트 관리</a></header>
   <section class="grid cols-2 demo-grid">
     <div class="card stack scan-card">
       <h2>무료 진단 시작</h2>
@@ -21,11 +21,11 @@
       <div id="demoState" class="notice muted">이메일과 URL만 사용합니다. 이름, 전화번호, 주소는 받지 않습니다.</div>
     </div>
     <div class="card stack result-panel">
-      <div id="demoResult"><div class="empty-result"><span class="pill gray">Preview</span><h2>진단 후 바로 확인되는 내용</h2><div class="loading-steps"><div>① 위험도 점수와 리스크 등급</div><div>② 상위 위험 2개와 누락 고지</div><div>③ 유료 전환 시 받을 전체 결과물</div></div></div></div>
-      <div class="topnav"><a class="primary" href="/plans">무료·유료 비교</a><a class="secondary" href="/checkout?plan=Pro">Pro 리포트 신청</a></div>
+      <div id="demoResult"><div class="empty-result"><span class="pill gray">Preview</span><h2>진단 후 바로 이어지는 흐름</h2><div class="loading-steps"><div>① 위험도 점수와 상위 위험 확인</div><div>② 로그인 회원은 내 사이트에 자동 연결</div><div>③ Pro 리포트·수정안·CTA 게시판으로 이동</div></div></div></div>
+      <div class="topnav"><a class="primary" href="/plans">무료·유료 비교</a><a class="secondary" href="/portal">내 사이트 관리</a><a class="secondary" href="/checkout?plan=Pro">Pro 리포트 신청</a></div>
     </div>
   </section>
-  <section class="cta-band demo-band"><div><h3>무료 결과가 애매하면 결제하지 마세요.</h3><p>상위 리스크를 보고 실제 수정 필요성이 보일 때만 상세 리포트, 수정 문구안, 정기 점검을 선택하면 됩니다.</p></div><a class="btn primary" href="/plans">상품별 결과물 비교</a></section>
+  <section class="cta-band demo-band"><div><h3>무료 결과를 본 뒤 필요한 행동을 선택하세요.</h3><p>저장해두고 나중에 재진단하거나, 바로 Pro 리포트·수정 문구안·정기 점검으로 넘어갈 수 있습니다.</p></div><a class="btn primary" href="/plans">상품별 결과물 비교</a></section>
 </main>
 <script type="module" src="/apps/public/veridion-demo/app.js"></script>
 </body>

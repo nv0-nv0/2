@@ -77,7 +77,7 @@ const PORTONE_WEBHOOK_VERIFY_MODE = process.env.NV0_PORTONE_WEBHOOK_VERIFY_MODE 
 const RULES_VERSION = process.env.NV0_RULES_VERSION || '2026.04.23-core3';
 const SCAN_CACHE_TTL_MS = Number(process.env.NV0_SCAN_CACHE_TTL_MS || 10 * 60_000);
 const CTA_AUTOPUBLISH_INTERVAL_MS = Number(process.env.NV0_CTA_AUTOPUBLISH_INTERVAL_MS || 2 * 60 * 60_000);
-const RELEASE_PHASE = 'commercial-final';
+const RELEASE_PHASE = 'phase57-flow-recheck-smooth-commerce';
 const DATA_RETENTION_DAYS = Number(process.env.NV0_DATA_RETENTION_DAYS || 1095);
 const REFUND_REQUEST_WINDOW_DAYS = Number(process.env.NV0_REFUND_REQUEST_WINDOW_DAYS || 7);
 const OPERATOR_ALERT_EMAIL = process.env.NV0_OPERATOR_ALERT_EMAIL || BUSINESS_PROFILE.contactEmail;
@@ -155,6 +155,7 @@ let defaultDb = {
   webhookInbox: [],
   customers: [],
   customerSessions: [],
+  customerSiteLinks: [],
   passwordResetTokens: [],
   emailOutbox: [],
   purchasedAssets: [],
@@ -187,6 +188,7 @@ if (PLATFORM.commercial) {
     webhookInbox: [],
     customers: [],
     customerSessions: [],
+    customerSiteLinks: [],
     passwordResetTokens: [],
     emailOutbox: [],
     purchasedAssets: [],
@@ -772,6 +774,52 @@ function customerOrders(db, customer) {
   return (db.orders || []).filter(order => ownsOrder(customer, order)).map(order => sanitizeOrderForPublic(order));
 }
 
+function normalizeDomainInput(value) {
+  const raw = String(value || '').trim();
+  if (!raw) return '';
+  try {
+    const url = new URL(/^https?:\/\//i.test(raw) ? raw : `https://${raw}`);
+    return url.origin.replace(/\/$/, '');
+  } catch {
+    return raw.replace(/\/$/, '');
+  }
+}
+function normalizeSavedSitePayload(body = {}) {
+  return {
+    domain: normalizeDomainInput(body.domain || body.target || body.url),
+    label: asTrimmedString(body.label || body.name || '', { field: 'label', max: 80 }),
+    industry: asTrimmedString(body.industry || '', { field: 'industry', max: 80 }),
+    memo: asTrimmedString(body.memo || '', { field: 'memo', max: 500 }),
+    siteId: asTrimmedString(body.siteId || '', { field: 'siteId', max: 80 })
+  };
+}
+function linkCustomerToSite(db, customerId, site, extra = {}) {
+  if (!customerId || !site) return null;
+  db.customerSiteLinks ||= [];
+  const existing = db.customerSiteLinks.find(item => item.customerId === customerId && item.siteId === site.id);
+  if (existing) {
+    existing.label = extra.label || existing.label || site.domain;
+    existing.industry = extra.industry || existing.industry || site.industry || '';
+    existing.memo = extra.memo ?? existing.memo ?? '';
+    existing.updatedAt = nowIso();
+    return existing;
+  }
+  const link = { id: uid('csite'), customerId, siteId: site.id, label: extra.label || site.domain, industry: extra.industry || site.industry || '', memo: extra.memo || '', createdAt: nowIso(), updatedAt: nowIso(), pinned: !!extra.pinned };
+  db.customerSiteLinks.unshift(link);
+  return link;
+}
+function customerSavedSites(db, customer) {
+  if (!customer) return [];
+  db.customerSiteLinks ||= [];
+  return db.customerSiteLinks
+    .filter(link => link.customerId === customer.id)
+    .map(link => {
+      const site = findSiteByAny(db, link.siteId) || {};
+      const latestScan = (db.scans || []).find(item => item.siteId === link.siteId || normalizeDomainInput(item.target) === normalizeDomainInput(site.domain || link.domain));
+      return { ...link, siteId: link.siteId, domain: site.domain || link.domain || '', status: site.status || 'active', latestRiskScore: site.latestRiskScore ?? latestScan?.riskScore ?? null, latestRiskLevel: site.latestRiskLevel || latestScan?.riskLevel || null, lastScanAt: site.lastScanAt || latestScan?.generatedAt || null, latestFindings: latestScan?.totalFindings ?? null, recommendedPlan: latestScan?.recommendedPlan || null };
+    });
+}
+
 async function serveFile(req, res, absPath, contentType) {
   try {
     const stat = await fs.stat(absPath);
@@ -932,10 +980,10 @@ function publicTopMenuHtml(urlPath = '/') {
     <a class="brand" href="/"><span class="brand-mark">N</span><span>NV0<small>웹사이트 필수 고지·정책 점검</small></span></a>
     <div class="site-menu">
       <a href="/products/veridion/demo"${navAttrs(urlPath, '/products/veridion/demo')}>무료 진단</a>
-      <a href="/solutions"${navAttrs(urlPath, '/solutions')}>서비스</a>
+      <a href="/portal"${navAttrs(urlPath, '/portal')}>내 사이트</a>
+      <a href="/board"${navAttrs(urlPath, '/board')}>CTA 게시판</a>
       <a href="/plans"${navAttrs(urlPath, '/plans')}>상품·요금</a>
-      <a href="/board"${navAttrs(urlPath, '/board')}>리소스</a>
-      <a href="/business-info"${navAttrs(urlPath, '/business-info')}>사업자 정보</a>
+      <a href="/solutions"${navAttrs(urlPath, '/solutions')}>서비스 구조</a>
       <a href="/auth"${navAttrs(urlPath, '/auth', 'login-link')}>로그인</a>
       <a href="/products/veridion/demo" class="cta">2분 무료 진단</a>
     </div>
@@ -2628,7 +2676,7 @@ function seedAutoFixJobs(db, site, scan) {
 function createCtaPublication(db, scan, options = {}) {
   const top = (scan.topFindings || []).slice(0, 2).join(', ') || '핵심 고지 리스크';
   const title = options.title || `무료 진단 후 확인해야 할 ${scan.industry || '온라인 사업'} 안내 리스크`;
-  const body = options.body || `${scan.target || '등록 사이트'} 기준 핵심 리스크가 확인되었습니다. 무료 진단은 핵심 항목을 먼저 요약합니다. 상세 근거, 페이지별 조치안, 정책 문서 초안은 선택한 서비스에서 이어서 확인할 수 있습니다.`;
+  const body = options.body || `${scan.target || '등록 사이트'} 기준으로 ${scan.totalFindings || 0}개 점검 항목이 확인되었습니다. 우선 확인할 항목은 ${top}입니다. 게시글 하단의 무료 진단 버튼으로 같은 기준을 바로 확인하고, 전체 근거·페이지별 조치안·붙여넣기 수정 문구는 유료 리포트에서 이어서 받을 수 있습니다.`;
   const publication = {
     id: uid('pub'),
     title,
@@ -2890,7 +2938,7 @@ async function handleApi(req, res) {
     if (!session) return json(req, res, 401, { ok: false, error: '로그인이 필요합니다.' });
     const orders = customerOrders(db, session.customer);
     const assets = (db.purchasedAssets || []).filter(asset => orders.some(order => order.id === asset.orderId));
-    return json(req, res, 200, { ok: true, customer: publicCustomer(db, session.customer), orders, assets });
+    return json(req, res, 200, { ok: true, customer: publicCustomer(db, session.customer), orders, assets, savedSites: customerSavedSites(db, session.customer) });
   }
 
   if (pathname === '/api/public/account/export' && req.method === 'GET') {
@@ -2899,7 +2947,7 @@ async function handleApi(req, res) {
     if (!session) return json(req, res, 401, { ok: false, error: '로그인이 필요합니다.' });
     const orders = customerOrders(db, session.customer).map(sanitizeOrderForPublic);
     const assets = (db.purchasedAssets || []).filter(asset => orders.some(order => order.id === asset.orderId));
-    return json(req, res, 200, { ok: true, export: { customer: publicCustomer(db, session.customer), orders, assets, exportedAt: nowIso() } });
+    return json(req, res, 200, { ok: true, export: { customer: publicCustomer(db, session.customer), orders, assets, savedSites: customerSavedSites(db, session.customer), exportedAt: nowIso() } });
   }
 
   if (pathname === '/api/public/account/deactivate' && req.method === 'POST') {
@@ -2926,6 +2974,44 @@ async function handleApi(req, res) {
     appendAudit(db, req, 'public.customer.marketing_consent_changed', { customerId: session.customer.id, marketingConsent: body.marketingConsent });
     await writeDb(db);
     return json(req, res, 200, { ok: true, customer: publicCustomer(db, session.customer) });
+  }
+
+  if (pathname === '/api/public/account/sites' && req.method === 'GET') {
+    const db = await readDb();
+    const session = await getCustomerSession(req, db);
+    if (!session) return json(req, res, 401, { ok: false, error: '로그인이 필요합니다.' });
+    return json(req, res, 200, { ok: true, sites: customerSavedSites(db, session.customer) });
+  }
+
+  if (pathname === '/api/public/account/sites' && req.method === 'POST') {
+    const body = normalizeSavedSitePayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
+    if (!body.domain && !body.siteId) return json(req, res, 400, { ok: false, error: '저장할 사이트 주소가 필요합니다.' });
+    const db = await readDb();
+    const session = await getCustomerSession(req, db);
+    if (!session) return json(req, res, 401, { ok: false, error: '로그인이 필요합니다.' });
+    db.sites ||= [];
+    let site = body.siteId ? findSiteByAny(db, body.siteId) : null;
+    if (!site) site = findSiteByAny(db, '', body.domain);
+    if (!site) {
+      site = { id: uid('site'), domain: body.domain, industry: body.industry || '일반 이커머스', jurisdiction: db.settings?.defaultJurisdiction || 'KR', latestRiskScore: null, latestRiskLevel: null, latestEstimatedMaxPenalty: 0, lastScanAt: null, createdAt: nowIso(), status: 'saved' };
+      db.sites.unshift(site);
+    }
+    const link = linkCustomerToSite(db, session.customer.id, site, { label: body.label, industry: body.industry, memo: body.memo });
+    appendAudit(db, req, 'public.customer.site_saved', { customerId: session.customer.id, siteId: site.id, domain: site.domain });
+    await writeDb(db);
+    return json(req, res, 200, { ok: true, site: customerSavedSites(db, session.customer).find(item => item.siteId === site.id) || { ...link, domain: site.domain } });
+  }
+
+  if (pathname.startsWith('/api/public/account/sites/') && req.method === 'DELETE') {
+    const siteId = decodeURIComponent(pathname.split('/').pop() || '');
+    const db = await readDb();
+    const session = await getCustomerSession(req, db);
+    if (!session) return json(req, res, 401, { ok: false, error: '로그인이 필요합니다.' });
+    const before = (db.customerSiteLinks || []).length;
+    db.customerSiteLinks = (db.customerSiteLinks || []).filter(item => !(item.customerId === session.customer.id && item.siteId === siteId));
+    appendAudit(db, req, 'public.customer.site_removed', { customerId: session.customer.id, siteId, removed: before !== db.customerSiteLinks.length });
+    await writeDb(db);
+    return json(req, res, 200, { ok: true, removed: before !== db.customerSiteLinks.length });
   }
 
   if (pathname === '/api/public/refund-request' && req.method === 'POST') {
@@ -3029,15 +3115,18 @@ async function handleApi(req, res) {
     const db = await readDb();
     const result = await scanResultFor(body.target, db);
     const site = ensureSiteRecord(db, result);
+    const customerSession = await getCustomerSession(req, db);
+    if (customerSession?.customer) linkCustomerToSite(db, customerSession.customer.id, site, { label: site.domain, industry: site.industry });
     const subscription = ensureSubscriptionForSite(db, site, result.recommendedPlan);
     const guidance = createGuidanceDocument(db, site, result);
     const autoFixJobs = seedAutoFixJobs(db, site, result);
-    if (db.settings.ctaAutopublishEnabled) createCtaPublication(db, result);
-    db.scans.unshift({ siteId: site.id, subscriptionId: subscription.id, createdAt: nowIso(), ...result });
+    let ctaPublication = null;
+    if (db.settings.ctaAutopublishEnabled) ctaPublication = createCtaPublication(db, result, { autoPublished: true });
+    db.scans.unshift({ siteId: site.id, subscriptionId: subscription.id, customerId: customerSession?.customer?.id || null, createdAt: nowIso(), ...result });
     db.scans = db.scans.slice(0, 100);
-    appendAudit(db, req, 'public.scan.created', { requestId: result.requestId, target: result.target, siteId: site.id, provider: result.provider || SCAN_PROVIDER });
+    appendAudit(db, req, 'public.scan.created', { requestId: result.requestId, target: result.target, siteId: site.id, provider: result.provider || SCAN_PROVIDER, linkedCustomer: !!customerSession?.customer, ctaPublicationId: ctaPublication?.id || null });
     await writeDb(db);
-    return json(req, res, 200, { ok: true, result: { ...result, siteId: site.id, guidanceId: guidance.id, autoFixJobsCount: autoFixJobs.length } });
+    return json(req, res, 200, { ok: true, result: { ...result, siteId: site.id, guidanceId: guidance.id, autoFixJobsCount: autoFixJobs.length, savedToAccount: !!customerSession?.customer, ctaPublicationId: ctaPublication?.id || null } });
   }
 
   if (pathname === '/api/public/checkout-session' && req.method === 'POST') {

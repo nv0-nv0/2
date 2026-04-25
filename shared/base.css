@@ -122,3 +122,15 @@ a,button,.btn{touch-action:manipulation}.btn.primary,.site-menu a.cta{box-shadow
 .offer-card .recommended-ribbon{position:absolute;top:14px;right:14px;background:#155EEF;color:#fff;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:900}.offer-card{position:relative}
 .offer-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.offer-price{font-size:30px;line-height:1.1;font-weight:950;letter-spacing:-.045em;color:#101828}.offer-meta{color:#667085;font-weight:800;margin-top:4px}.offer-summary{min-height:52px}.offer-actions{display:flex;gap:10px;flex-wrap:wrap}.offer-actions .btn{flex:1 1 150px}
 @media(max-width:720px){.page-head{align-items:stretch}.page-head>.btn{width:100%}.offer-head{display:block}.offer-summary{min-height:0}.offer-actions{display:grid;grid-template-columns:1fr}.site-topbar .brand small{font-size:10px}.site-menu{margin-top:8px}}
+
+/* PHASE57 flow polish */
+.site-menu a[href="/portal"]{border-color:#D0D5DD;background:#fff;color:#101828}
+.site-menu a[href="/board"]{border-color:#E9D7FE;background:#F9F5FF;color:#6941C6}
+.flow-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.flow-grid article{min-height:150px}
+.save-site-card{border-color:#B2CCFF;background:linear-gradient(180deg,#fff,#F5F8FF)}
+.portal-empty{border:1px dashed #B2CCFF;background:#F5F8FF;color:#344054}
+.site-actions .btn{flex:1 1 120px}
+.board-post.cta{border-color:#B2CCFF;background:linear-gradient(180deg,#fff,#F5F8FF)}
+.post-cta .btn{flex:1 1 130px}
+@media(max-width:900px){.flow-grid{grid-template-columns:1fr}.site-actions,.post-cta{display:grid;grid-template-columns:1fr;width:100%}}

@@ -1,1 +1,47 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>고객 포털 | NV0</title><link rel="stylesheet" href="/shared/base.css"><link rel="stylesheet" href="/apps/public/portal/app.css"></head><body><main class="app-shell"><header class="page-head"><div><div class="pill">Client Portal</div><h1>고객 포털</h1><p>주문, 사이트 리스크, 구독 상태, 맞춤 지침과 공지 사항을 한 화면에서 확인합니다.</p></div></header><section class="stack"><div id="portalState" class="notice muted">주문번호 또는 접근 토큰이 있을 때 주문, 산출물, 구독 상태를 확인할 수 있습니다. 로그인 후 이용하세요.</div><div class="grid cols-2"><div id="portalPrimary" class="stack"></div><div id="portalFeed" class="stack"></div></div></section></main><script type="module" src="/apps/public/portal/app.js"></script></body></html>
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>내 사이트 관리 | NV0</title>
+  <link rel="stylesheet" href="/shared/base.css">
+  <link rel="stylesheet" href="/apps/public/portal/app.css">
+</head>
+<body>
+<main class="app-shell">
+  <header class="page-head">
+    <div>
+      <div class="pill">My Sites</div>
+      <h1>내 사이트 관리</h1>
+      <p>로그인한 회원은 사이트 주소를 저장하고, 같은 사이트 기준으로 재진단·상품 비교·주문·산출물 확인을 이어서 사용할 수 있습니다.</p>
+    </div>
+    <a class="btn primary" href="/products/veridion/demo">새 진단 실행</a>
+  </header>
+  <section class="hero stack" aria-label="포털 이용 흐름">
+    <div class="grid cols-3">
+      <div class="result-card"><strong>1. 사이트 저장</strong><p class="muted">자주 점검할 사이트를 이름과 메모로 구분합니다.</p></div>
+      <div class="result-card"><strong>2. 재진단</strong><p class="muted">저장된 주소로 무료 진단을 다시 실행합니다.</p></div>
+      <div class="result-card"><strong>3. 결제·산출물</strong><p class="muted">주문 이력과 리포트·수정안·템플릿을 한곳에서 확인합니다.</p></div>
+    </div>
+  </section>
+  <section class="card stack save-site-card" aria-label="사이트 저장">
+    <div class="section-title"><div><h2>사이트 저장</h2><p class="muted">한 번 저장하면 다음 진단·결제·리포트 확인 때 주소를 다시 찾지 않아도 됩니다.</p></div><a class="btn secondary" href="/auth?next=/portal">로그인·회원가입</a></div>
+    <form id="saveSiteForm" class="save-site-form">
+      <label>사이트 주소<input id="saveDomain" type="url" placeholder="https://your-store.kr" autocomplete="url" required></label>
+      <label>표시 이름<input id="saveLabel" placeholder="자사몰 / 캠페인 랜딩 / 스마트스토어" autocomplete="off"></label>
+      <label>메모<input id="saveMemo" placeholder="수정 담당자, 오픈일, 광고 집행 여부 등" autocomplete="off"></label>
+      <button class="btn primary" type="submit">내 사이트에 저장</button>
+    </form>
+    <div id="saveSiteState" class="notice muted">로그인 후 저장할 수 있습니다. 비회원 진단 결과도 로그인하면 저장해 둘 수 있습니다.</div>
+  </section>
+  <section class="stack">
+    <div id="portalState" class="notice muted">계정 정보를 확인하는 중입니다.</div>
+    <div class="grid cols-2">
+      <div id="portalPrimary" class="stack"></div>
+      <div id="portalFeed" class="stack"></div>
+    </div>
+  </section>
+</main>
+<script type="module" src="/apps/public/portal/app.js"></script>
+</body>
+</html>
