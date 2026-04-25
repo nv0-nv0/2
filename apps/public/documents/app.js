@@ -40,13 +40,13 @@ form?.addEventListener('submit', async (event) => {
 });
 
 try {
-  const saved = sessionStorage.getItem('veridion:documentPreview');
+  const saved = sessionStorage.getItem('veridion:document결과 예시');
   if (saved) {
     const previewData = JSON.parse(saved);
     if (previewData?.documents?.length) {
       state.textContent = `${previewData.businessName || '입력 정보'} 문서 초안이 준비되었습니다.`;
       renderDocuments(previewData.documents);
-      sessionStorage.removeItem('veridion:documentPreview');
+      sessionStorage.removeItem('veridion:document결과 예시');
     }
   }
 } catch {}

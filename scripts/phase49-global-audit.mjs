@@ -12,7 +12,7 @@ check('readyz-runtime-probe', server.includes('/readyz') && server.includes('run
 check('trusted-types-not-enforced', server.includes('trusted-types') && server.includes('report-only'), 'Trusted Types 렌더링 차단 방지','P0');
 for (const f of files) check(`file:${f}`, fs.existsSync(f), '필수 공개/배포 파일 존재','P0');
 const home=fs.readFileSync('apps/public/home/index.html','utf8');
-check('conversion-funnel-home', home.includes('광고비 쓰기 전에') && home.includes('Pro 리포트') && home.includes('/products/veridion/demo'), '메인 전환 구조 재설계 검증','P0');
+check('conversion-funnel-home', home.includes('광고비를 쓰기 전에') && home.includes('Pro 리포트') && home.includes('/products/veridion/demo'), '메인 전환 구조 재설계 검증','P0');
 check('legal-disclaimer-public', home.includes('법률 자문') && fs.readFileSync('apps/public/terms/index.html','utf8').includes('법률 자문'), '법률 자문 아님 고지 유지','P0');
 const fixedOrVerified=findings.filter(f=>f.ok).length; const failed=findings.length-fixedOrVerified; const score=Math.round((fixedOrVerified/findings.length)*100);
 const report={ok:failed===0,phase:'commercial-final',score,totalFindings:findings.length,fixedOrVerified,failed,findings};

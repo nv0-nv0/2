@@ -913,8 +913,8 @@ function escapeHtml(value = '') {
 function routeMeta(urlPath) {
   const base = BUSINESS_PROFILE.domain.replace(/\/$/, '');
   const metas = {
-    '/': ['웹사이트 필수 고지 무료 진단 | NV0', '쇼핑몰과 랜딩페이지의 필수 고지, 개인정보, 환불 안내, 광고 문구를 빠르게 점검하고 개선 순서를 제안합니다.'],
-    '/products/veridion/demo': ['NV0 무료 진단 | NV0', '2분 무료 진단으로 웹사이트 안내 문구와 정책 고지 리스크를 먼저 확인하세요.'],
+    '/': ['웹사이트 필수 안내 무료 진단 | NV0', '쇼핑몰과 랜딩페이지의 필수 고지, 개인정보, 환불 안내, 광고 문구를 빠르게 점검하고 개선 순서를 제안합니다.'],
+    '/products/veridion/demo': ['NV0 무료 진단 | NV0', '무료 진단으로 웹사이트 안내 문구와 정책 고지 위험을 먼저 확인하세요.'],
     '/plans': ['상품·요금 | NV0', '무료 진단 이후 상세 리포트, 수정안, 정책 템플릿, 구독 점검 상품을 비교하세요.'],
     '/documents': ['정책 문서 생성 | NV0', '개인정보처리방침, 이용약관, 환불 정책 문서 초안을 빠르게 정리합니다.'],
     '/solutions': ['솔루션 | NV0', '웹사이트 안내 고지, 정책 문서, 결제 전환 흐름을 점검하는 솔루션입니다.'],
@@ -977,7 +977,7 @@ function navAttrs(urlPath, href, className = '') {
 
 function publicTopMenuHtml(urlPath = '/') {
   return `<a class="skip-link" href="#main">본문 바로가기</a><nav class="site-topbar" aria-label="주요 메뉴">
-    <a class="brand" href="/"><span class="brand-mark">N</span><span>NV0<small>웹사이트 필수 고지·정책 점검</small></span></a>
+    <a class="brand" href="/"><span class="brand-mark">N</span><span>NV0<small>웹사이트 안내·정책 점검</small></span></a>
     <div class="site-menu">
       <a href="/products/veridion/demo"${navAttrs(urlPath, '/products/veridion/demo')}>무료 진단</a>
       <a href="/portal"${navAttrs(urlPath, '/portal')}>내 사이트</a>
@@ -985,7 +985,7 @@ function publicTopMenuHtml(urlPath = '/') {
       <a href="/plans"${navAttrs(urlPath, '/plans')}>상품·요금</a>
       <a href="/solutions"${navAttrs(urlPath, '/solutions')}>서비스 구조</a>
       <a href="/auth"${navAttrs(urlPath, '/auth', 'login-link')}>로그인</a>
-      <a href="/products/veridion/demo" class="cta">2분 무료 진단</a>
+      <a href="/products/veridion/demo" class="cta">무료 진단</a>
     </div>
   </nav>`;
 }
@@ -1560,15 +1560,15 @@ function pickRecommendedPlan(riskScore) {
 
 function buildCommercialOfferCatalog() {
   const kpiPublicUiRemoved = true; // kpi field intentionally hidden from public pages.
-  const commonAssurance = ['법률 자문이 아닌 참고용 점검 결과입니다.', '결제 확인 후 고객 포털에서 결과 확인', 'ct@nv0.kr 고객 문의 연결'];
+  const commonAssurance = ['법률 자문이 아닌 운영 참고용 점검 결과입니다.', '결제 확인 후 내 사이트 관리에서 결과 확인', 'ct@nv0.kr 고객 문의 연결'];
   return [
-    { code: 'Report', group: 'one_time', title: '정밀 PDF 리포트', price: 9900, period: '1회', priority: 1, summary: '무료 진단 결과를 더 자세한 리포트로 확장합니다. 위험 항목, 근거, 우선순위, 개선 순서를 한 번에 확인할 수 있습니다.', targetCustomer: '쇼핑몰·랜딩페이지 담당자, 1인 사업자, 외주 제작 완료 후 점검이 필요한 고객', deliverables: ['위험도 점수 해설', '전체 탐지 근거', '페이지별 우선 조치 목록', '공유용 리포트 본문', '재점검 체크리스트'], operations: ['결제 확인 후 고객 포털에서 결과 확인', '진단 이력이 없을 경우 기본 점검 양식으로 제공', ...commonAssurance], benefits: ['위험 항목의 근거와 우선순위를 더 명확하게 확인', '개선 순서를 정리해 바로 조치 가능'], cta: 'PDF 리포트 구매' },
-    { code: 'FixPack', group: 'one_time', title: '맞춤 수정 문구안', price: 29000, period: '1회', priority: 2, summary: '탐지 항목별로 사이트에 바로 반영 가능한 고지·약관·환불·광고 문구 초안을 제공합니다.', targetCustomer: '사이트 안내 문구를 먼저 정리해야 하는 소상공인·마케터', deliverables: ['푸터 사업자 고지 문안', '환불·교환 안내 문구', '개인정보/약관 노출 가이드', '광고 표현 리스크 완화안', '수정 전/후 예시'], operations: ['우선순위가 높은 문구안부터 제공', '주의가 필요한 표현은 별도 표시', ...commonAssurance], benefits: ['사이트에 반영하기 쉬운 문구 예시 제공', '고객 오해 가능성이 있는 표현을 완화'], cta: '수정 문구안 받기' },
+    { code: 'Report', group: 'one_time', title: '상세 리포트', price: 9900, period: '1회', priority: 1, summary: '무료 진단 결과를 더 자세한 리포트로 확장합니다. 위험 항목, 근거, 우선순위, 개선 순서를 한 번에 확인할 수 있습니다.', targetCustomer: '쇼핑몰·랜딩페이지 담당자, 1인 사업자, 외주 제작 완료 후 점검이 필요한 고객', deliverables: ['위험도 점수 해설', '전체 탐지 근거', '페이지별 우선 조치 목록', '공유용 리포트 본문', '재점검 체크리스트'], operations: ['결제 확인 후 내 사이트 관리에서 결과 확인', '진단 이력이 없을 경우 기본 점검 양식으로 제공', ...commonAssurance], benefits: ['위험 항목의 근거와 우선순위를 더 명확하게 확인', '개선 순서를 정리해 바로 조치 가능'], cta: '상세 리포트 신청' },
+    { code: 'FixPack', group: 'one_time', title: '수정 문구안', price: 29000, period: '1회', priority: 2, summary: '탐지 항목별로 사이트에 바로 반영 가능한 고지·약관·환불·광고 문구 초안을 제공합니다.', targetCustomer: '사이트 안내 문구를 먼저 정리해야 하는 소상공인·마케터', deliverables: ['푸터 사업자 고지 문안', '환불·교환 안내 문구', '개인정보/약관 노출 가이드', '광고 표현 리스크 완화안', '수정 전/후 예시'], operations: ['우선순위가 높은 문구안부터 제공', '주의가 필요한 표현은 별도 표시', ...commonAssurance], benefits: ['사이트에 반영하기 쉬운 문구 예시 제공', '고객 오해 가능성이 있는 표현을 완화'], cta: '수정 문구안 받기' },
     { code: 'TemplatePack', group: 'one_time', title: '법률 문서 템플릿 팩', price: 19000, period: '1회', priority: 3, summary: '이용약관, 개인정보처리방침, 환불 정책 기본 템플릿을 묶어 제공합니다.', targetCustomer: '신규 사이트 오픈 전 필수 문서가 필요한 고객', deliverables: ['이용약관 템플릿', '개인정보처리방침 템플릿', '환불·배송·교환 정책', '필수 고지 체크리스트', '정기결제 고지 문구'], operations: ['문서 생성 화면에서 입력한 정보 활용', '입력한 사업자 정보 기준으로 기본 문안 제공', ...commonAssurance], benefits: ['필수 문서를 빠르게 준비', '신규 사이트 오픈 전 기본 안내 정리'], cta: '템플릿 팩 구매' },
     { code: 'IndustryGuide', group: 'one_time', title: '업종별 규제 가이드', price: 39000, period: '1회', priority: 4, summary: '쇼핑몰·건기식·화장품·교육·의료 광고 등 업종별 표현 리스크와 필수 고지를 정리합니다.', targetCustomer: '광고 문구와 상세페이지 표현 리스크가 큰 업종 고객', deliverables: ['업종별 금지·주의 표현', '필수 고지 위치', '상세페이지 체크리스트', '광고 문구 점검표', '사전 검수 기준'], operations: ['업종 정보에 맞춰 주요 항목 제공', '업종이 정해지지 않은 경우 공통 가이드 제공', ...commonAssurance], benefits: ['업종별 주의 표현을 사전에 확인', '상세페이지와 광고 문구 점검에 활용'], cta: '업종 가이드 받기' },
     { code: 'Basic', group: 'subscription', title: 'Basic 모니터링', price: 49000, period: '월', priority: 5, summary: '소규모 사이트의 월 1회 리스크 재점검과 기본 이력 확인을 제공합니다.', targetCustomer: '월 1회 정기 점검만 필요한 소규모 사이트 고객', deliverables: ['월 1회 재점검', '전체 탐지 항목 해금', '기본 정책 초안', '이력 저장', '이메일 알림'], operations: ['신청 후 사이트 이력 확인 가능', '월간 점검 알림 제공', ...commonAssurance], benefits: ['월 1회 정기 점검으로 변경 사항 확인', '이력 저장으로 이전 결과와 비교 가능'], cta: 'Basic 시작' },
-    { code: 'Pro', group: 'subscription', title: 'Pro 정기 개선', price: 89000, period: '월', priority: 6, summary: '정밀 리포트, 맞춤 수정 문구안, 법령 변경 알림을 포함한 추천 플랜입니다.', targetCustomer: '사이트 주문·문의가 발생하고 반복 점검이 필요한 고객', deliverables: ['Basic 전체 포함', '정밀 리포트 포함', '맞춤 수정 문구안', '법령 변경 알림', '재점검 및 개선 추적'], operations: ['결제 확인 후 Pro 결과 제공', '다음 조치 항목을 우선순위로 표시', ...commonAssurance], benefits: ['정밀 리포트와 수정 문구안을 함께 확인', '다음 조치 항목을 우선순위로 정리'], cta: 'Pro 시작' },
-    { code: 'Auto', group: 'subscription', title: 'Auto 정기 케어', price: 149000, period: '월', priority: 7, summary: '반복 점검과 고객 안내 인사이트로 사이트 신뢰 관리를 돕습니다.', targetCustomer: '여러 캠페인·랜딩페이지를 꾸준히 점검해야 하는 팀', deliverables: ['Pro 전체 포함', '정기 고객 안내 인사이트', '승인 후 반영할 수 있는 수정 후보', '고위험 항목 우선 알림', '고객 포털 대시보드'], operations: ['정기 점검 결과 제공', '수정 후보는 확인 후 사용할 수 있도록 제공', ...commonAssurance], benefits: ['반복 점검 부담 완화', '여러 랜딩페이지의 고위험 항목을 우선 확인'], cta: 'Auto 시작' },
+    { code: 'Pro', group: 'subscription', title: 'Pro 정기 개선', price: 89000, period: '월', priority: 6, summary: '정밀 리포트, 수정 문구안, 법령 변경 알림을 포함한 추천 플랜입니다.', targetCustomer: '사이트 주문·문의가 발생하고 반복 점검이 필요한 고객', deliverables: ['Basic 전체 포함', '정밀 리포트 포함', '수정 문구안', '법령 변경 알림', '재점검 및 개선 추적'], operations: ['결제 확인 후 Pro 결과 제공', '다음 조치 항목을 우선순위로 표시', ...commonAssurance], benefits: ['정밀 리포트와 수정 문구안을 함께 확인', '다음 조치 항목을 우선순위로 정리'], cta: 'Pro 시작' },
+    { code: 'Auto', group: 'subscription', title: 'Auto 정기 케어', price: 149000, period: '월', priority: 7, summary: '반복 점검과 고객 안내 인사이트로 사이트 신뢰 관리를 돕습니다.', targetCustomer: '여러 캠페인·랜딩페이지를 꾸준히 점검해야 하는 팀', deliverables: ['Pro 전체 포함', '정기 고객 안내 인사이트', '승인 후 반영할 수 있는 수정 후보', '고위험 항목 우선 알림', '내 사이트 관리 대시보드'], operations: ['정기 점검 결과 제공', '수정 후보는 확인 후 사용할 수 있도록 제공', ...commonAssurance], benefits: ['반복 점검 부담 완화', '여러 랜딩페이지의 고위험 항목을 우선 확인'], cta: 'Auto 시작' },
     { code: 'Certified', group: 'annual', title: 'NV0 Certified', price: 99000, period: '연', priority: 8, summary: '점검 완료 사이트에 신뢰 인증 마크와 공개 인증 페이지를 제공합니다.', targetCustomer: '구매 전 신뢰 표시가 필요한 쇼핑몰·B2B 랜딩페이지', deliverables: ['인증 마크 스니펫', '공개 인증 페이지', '연 1회 재검토', '인증 만료일 표기', '고객 신뢰 요소'], operations: ['인증 검토 진행 상태 제공', '검토 완료 후 사용할 수 있는 표시 제공', ...commonAssurance], benefits: ['구매 전 신뢰 요소로 활용', '점검 완료 여부를 외부에 명확히 표시'], cta: '인증 신청' },
     { code: 'Agency', group: 'b2b', title: '대행사 리포트 패키지', price: 199000, period: '월', priority: 9, summary: '광고대행사·웹에이전시가 고객사 리스크 리포트를 반복 생성할 수 있는 패키지입니다.', targetCustomer: '고객사 사이트를 제작·지원하는 에이전시와 퍼포먼스 마케팅사', deliverables: ['고객사별 리포트', '고객사 제출용 문구 영역', '월 10개 도메인 기준', '고객 안내 인사이트 제공', '대행사 맞춤 안내 문구'], operations: ['서비스 신청 후 고객사별 리포트 구성 지원', '고객사별 결과를 구분해 확인 가능', ...commonAssurance], benefits: ['고객사별 리포트 제공에 활용', '여러 도메인의 점검 결과를 구분해 관리'], cta: '대행사 패키지 시작' }
   ].sort((a, b) => a.priority - b.priority);
@@ -1577,7 +1577,7 @@ function getCommercialOffer(code) { return buildCommercialOfferCatalog().find(it
 
 function buildPlanCatalog(recommendedPlan = 'Pro') {
   const offers = buildCommercialOfferCatalog();
-  const free = { code: 'Free', monthlyPrice: 0, period: '무료', title: 'Free', group: 'free', summary: '체험용 무료 진단. 위험도와 상위 리스크만 간단히 확인합니다.', features: ['URL 1개 즉시 진단', '위험도 점수', '상위 위험 2개 요약', '상세 근거·페이지별 조치안 잠금', '일일 무료 3회 제한'], recommended: false };
+  const free = { code: 'Free', monthlyPrice: 0, period: '무료', title: 'Free', group: 'free', summary: '체험용 무료 진단. 위험도와 주요 리스크만 간단히 확인합니다.', features: ['URL 1개 즉시 진단', '위험도 점수', '상위 위험 2개 요약', '상세 근거·페이지별 조치안 잠금', '일일 무료 3회 제한'], recommended: false };
   const paid = offers.map(offer => ({ code: offer.code, monthlyPrice: offer.price, period: offer.period, title: offer.title, group: offer.group, summary: offer.summary, features: offer.deliverables, targetCustomer: offer.targetCustomer, dailyPrice: offer.period === '월' ? Math.ceil(offer.price / 30) : 0, recommended: offer.code === recommendedPlan || (recommendedPlan === 'Pro' && offer.code === 'Pro') }));
   return [free, ...paid];
 }
@@ -1819,7 +1819,7 @@ function buildPurchasedAsset(db, order) {
     { title: '재점검 기준', body: '수정 후 동일 URL로 재진단하여 위험도와 항목 감소 여부를 확인하세요.' }
   ];
   if (order.plan === 'Report') return { ...base, type: 'report', title: '정밀 리스크 리포트', sections: reportSections, downloadable: true };
-  if (order.plan === 'FixPack') return { ...base, type: 'fix_pack', title: '맞춤 수정 문구안', fixes: buildFixCopyFromScan(scan), downloadable: true };
+  if (order.plan === 'FixPack') return { ...base, type: 'fix_pack', title: '수정 문구안', fixes: buildFixCopyFromScan(scan), downloadable: true };
   if (order.plan === 'TemplatePack') return { ...base, type: 'template_pack', title: '법률 문서 템플릿 팩', templates: buildPolicyDocumentPreview({}, db.settings || {}).documents, downloadable: true };
   if (order.plan === 'IndustryGuide') return { ...base, type: 'industry_guide', title: `${industryGuide.industry} 규제 가이드`, guide: industryGuide, downloadable: true };
   if (order.plan === 'Certified') return { ...base, type: 'certification', title: 'NV0 Certified 인증 후보', certificationStatus: 'pending_operator_review', badgeSnippet: buildCertificationSnippet(order), downloadable: false };
@@ -2674,9 +2674,9 @@ function seedAutoFixJobs(db, site, scan) {
 }
 
 function createCtaPublication(db, scan, options = {}) {
-  const top = (scan.topFindings || []).slice(0, 2).join(', ') || '핵심 고지 리스크';
-  const title = options.title || `무료 진단 후 확인해야 할 ${scan.industry || '온라인 사업'} 안내 리스크`;
-  const body = options.body || `${scan.target || '등록 사이트'} 기준으로 ${scan.totalFindings || 0}개 점검 항목이 확인되었습니다. 우선 확인할 항목은 ${top}입니다. 게시글 하단의 무료 진단 버튼으로 같은 기준을 바로 확인하고, 전체 근거·페이지별 조치안·붙여넣기 수정 문구는 유료 리포트에서 이어서 받을 수 있습니다.`;
+  const top = (scan.topFindings || []).slice(0, 2).join(', ') || '핵심 안내 리스크';
+  const title = options.title || `무료 진단 후 먼저 확인할 ${scan.industry || '온라인 사업'} 안내 리스크`;
+  const body = options.body || `${scan.target || '등록 사이트'} 기준으로 ${scan.totalFindings || 0}개 점검 항목이 확인되었습니다. 우선 확인할 항목은 ${top}입니다. 게시글 하단의 무료 진단 버튼으로 같은 기준을 바로 확인하고, 전체 근거, 페이지별 조치안, 바로 붙여넣을 수정 문구는 유료 리포트에서 이어서 받을 수 있습니다.`;
   const publication = {
     id: uid('pub'),
     title,
@@ -3041,7 +3041,7 @@ async function handleApi(req, res) {
       const order = (db.orders || []).find(item => item.id === orderId);
       const customerSession = await getCustomerSession(req, db);
       if (!order) return json(req, res, 404, { ok: false, error: '주문을 찾을 수 없습니다.' });
-      if (order.customerId && !canAccessOrder(req, order) && !ownsOrder(customerSession?.customer, order)) return json(req, res, 403, { ok: false, error: '포털 접근 권한이 없습니다.' });
+      if (order.customerId && !canAccessOrder(req, order) && !ownsOrder(customerSession?.customer, order)) return json(req, res, 403, { ok: false, error: '내 사이트 관리 접근 권한이 없습니다.' });
     }
     const summary = buildPortalSummary(db, { orderId, siteId: url.searchParams.get('siteId') });
     summary.order = sanitizeOrderForPublic(summary.order, { includeAccessToken: !!summary.order && canAccessOrder(req, summary.order) });

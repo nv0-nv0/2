@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-25T09:56:06.927Z",
+  "generatedAt": "2026-04-25T10:36:48.328Z",
   "ok": true,
   "score": 100,
   "phase": "commercial-final",
@@ -241,7 +241,7 @@
       "ok": true
     },
     {
-      "name": "home-conversion:결제 전 신뢰",
+      "name": "home-conversion:결제 전 신뢰 점검",
       "ok": true
     },
     {
@@ -249,11 +249,11 @@
       "ok": true
     },
     {
-      "name": "home-conversion:Risk 72 / 100",
+      "name": "home-conversion:위험도 72 / 100",
       "ok": true
     },
     {
-      "name": "home-conversion:추천 구매 순서",
+      "name": "home-conversion:추천 이용 순서",
       "ok": true
     },
     {
@@ -269,7 +269,7 @@
       "ok": true
     },
     {
-      "name": "demo-conversion:Pro 리포트 신청",
+      "name": "demo-conversion:상세 리포트 신청",
       "ok": true
     },
     {

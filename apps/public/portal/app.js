@@ -33,7 +33,7 @@ function renderSavedSites(sites = []) {
     <div class="muted">${escapeHtml(site.domain || '-')} · ${escapeHtml(site.industry || '업종 미지정')}</div>
     <div class="site-kpi"><div><b>${site.latestRiskScore ?? '-'}</b><span>최근 위험도</span></div><div><b>${escapeHtml(site.latestRiskLevel || '-')}</b><span>위험 등급</span></div><div><b>${site.latestFindings ?? '-'}</b><span>최근 항목 수</span></div></div>
     ${site.memo ? `<p>${escapeHtml(site.memo)}</p>` : ''}
-    <div class="site-actions"><a class="btn primary" href="/products/veridion/demo?target=${encodeURIComponent(site.domain)}">재진단</a><a class="btn secondary" href="/plans?siteId=${encodeURIComponent(site.siteId)}">상품 비교</a><a class="btn secondary" href="/checkout?plan=Pro&siteId=${encodeURIComponent(site.siteId)}">Pro 신청</a><button class="btn secondary" data-remove-site="${escapeHtml(site.siteId)}" type="button">저장 해제</button></div>
+    <div class="site-actions"><a class="btn primary" href="/products/veridion/demo?target=${encodeURIComponent(site.domain)}">재진단</a><a class="btn secondary" href="/plans?siteId=${encodeURIComponent(site.siteId)}">상품 비교</a><a class="btn secondary" href="/checkout?plan=Pro&siteId=${encodeURIComponent(site.siteId)}">상세 리포트 신청</a><button class="btn secondary" data-remove-site="${escapeHtml(site.siteId)}" type="button">저장 해제</button></div>
   </article>`).join('');
 }
 async function loadPortal() {
@@ -68,7 +68,7 @@ async function loadPortal() {
     ${summary?.latestScan ? `<div class="card stack"><strong>최근 스캔</strong><div>${escapeHtml(summary.latestScan.totalFindings ?? 0)}개 항목 · ${escapeHtml(summary.latestScan.riskScore ?? '-')}점</div><div class="muted">${escapeHtml(summary.latestScan.siteProfile?.industry || summary.latestScan.industry)} · ${escapeHtml(summary.latestScan.siteProfile?.siteType || '-')} · ${escapeHtml((summary.latestScan.topFindings || []).join(' / '))}</div></div>` : ''}
     ${summary?.guidance ? `<div class="card stack"><strong>맞춤 지침</strong><pre class="pre-wrap">${escapeHtml(summary.guidance.content)}</pre></div>` : ''}`;
   feed.innerHTML = `
-    <div class="card stack"><div class="meta-row"><strong>CTA 자동발행 게시글</strong><a class="btn secondary" href="/board">게시판 보기</a></div>${renderList((summary?.boards || []).filter(item => item.boardType === 'cta'), '<div class="muted">자동발행 게시글 없음</div>', item => `<div class="result-card"><div>${escapeHtml(item.title)}</div><div class="muted">${escapeHtml(item.createdAt || '-')}</div><p>${escapeHtml(item.body || '')}</p></div>`)}</div>
+    <div class="card stack"><div class="meta-row"><strong>CTA 자동 발행 게시글</strong><a class="btn secondary" href="/board">게시판 보기</a></div>${renderList((summary?.boards || []).filter(item => item.boardType === 'cta'), '<div class="muted">자동 발행 게시글 없음</div>', item => `<div class="result-card"><div>${escapeHtml(item.title)}</div><div class="muted">${escapeHtml(item.createdAt || '-')}</div><p>${escapeHtml(item.body || '')}</p></div>`)}</div>
     <div class="card stack"><strong>공지·인사이트</strong>${renderList(summary?.boards || [], '<div class="muted">공지 없음</div>', item => `<div class="result-card"><div>${escapeHtml(item.title)}</div><div class="muted">${escapeHtml(item.createdAt || '-')}</div></div>`)}</div>
     <div class="card stack"><strong>법령 업데이트</strong>${renderList(summary?.legalUpdates || [], '<div class="muted">법령 업데이트 없음</div>', item => `<div class="result-card"><div>${escapeHtml(item.title)}</div><div class="muted">시행 ${escapeHtml(item.effectiveDate || '-')}</div><div>${escapeHtml(item.summary || '')}</div></div>`)}</div>`;
 }
@@ -91,7 +91,7 @@ primary?.addEventListener('click', async (event) => {
 });
 
 loadPortal().catch(error => {
-  state.textContent = `포털 정보를 불러오지 못했습니다: ${error.message}`;
-  primary.innerHTML = '<div class="card muted">포털 요약을 불러오지 못했습니다.</div>';
+  state.textContent = `내 사이트 관리 정보를 불러오지 못했습니다: ${error.message}`;
+  primary.innerHTML = '<div class="card muted">내 사이트 관리 요약을 불러오지 못했습니다.</div>';
   feed.innerHTML = '<div class="card muted">잠시 후 다시 시도하세요.</div>';
 });

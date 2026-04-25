@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-25T09:56:06.689Z",
+  "generatedAt": "2026-04-25T10:36:54.213Z",
   "ok": true,
   "phase": "commercial-final",
   "total": 88,
@@ -179,23 +179,23 @@
       "ok": true
     },
     {
-      "name": "home:광고비 쓰기 전에",
+      "name": "home:광고를 시작하기 전에",
       "ok": true
     },
     {
-      "name": "home:결제 전 신뢰",
+      "name": "home:결제 전 신뢰 점검",
       "ok": true
     },
     {
-      "name": "home:Risk 72 / 100",
+      "name": "home:위험도 72 / 100",
       "ok": true
     },
     {
-      "name": "home:추천 구매 순서",
+      "name": "home:추천 이용 순서",
       "ok": true
     },
     {
-      "name": "home:Pro 리포트",
+      "name": "home:상세 리포트",
       "ok": true
     },
     {
@@ -251,15 +251,15 @@
       "ok": true
     },
     {
-      "name": "demo:결제 전 신뢰 리스크",
+      "name": "demo:결제 전 신뢰 공백",
       "ok": true
     },
     {
-      "name": "demo:무료·유료 비교",
+      "name": "demo:무료 결과와 상품 비교",
       "ok": true
     },
     {
-      "name": "demo:Pro 리포트 신청",
+      "name": "demo:상세 리포트 신청",
       "ok": true
     },
     {
@@ -287,7 +287,7 @@
       "ok": true
     },
     {
-      "name": "plans:Pro 리포트",
+      "name": "plans:상세 리포트",
       "ok": true
     },
     {

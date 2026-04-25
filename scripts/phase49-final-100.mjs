@@ -8,8 +8,8 @@ for (const r of ['/healthz','/readyz','/api/public/products','/api/public/plans'
 for (const token of ['content-security-policy','csrf','HttpOnly','SameSite','/readyz']) add(`security-ops:${token}`, server.includes(token));
 const pages={home:'apps/public/home/index.html','veridion-demo':'apps/public/veridion-demo/index.html',plans:'apps/public/plans/index.html',documents:'apps/public/documents/index.html',checkout:'apps/public/checkout/index.html',portal:'apps/public/portal/index.html',privacy:'apps/public/privacy/index.html',terms:'apps/public/terms/index.html',refund:'apps/public/refund/index.html'};
 for (const [name,file] of Object.entries(pages)) { const html=read(file); add(`page:${name}:brand`, html.includes('NV0') || html.includes('엔브이제로')); add(`page:${name}:not-stuck-loading`, !html.includes('불러오는 중입니다')); add(`page:${name}:no-admin-link`, !/\/admin\//.test(html)); add(`page:${name}:doctype`, html.trim().startsWith('<!doctype html>')); }
-const home=read(pages.home); for (const t of ['결제 전 신뢰','무료 진단 시작','Risk 72 / 100','추천 구매 순서','법률 자문']) add(`home-conversion:${t}`, home.includes(t));
-const demo=read(pages['veridion-demo']); for (const t of ['무료 요약 진단 3회','사이트 주소 하나로','Pro 리포트 신청']) add(`demo-conversion:${t}`, demo.includes(t));
+const home=read(pages.home); for (const t of ['결제 전 신뢰 점검','무료 진단 시작','위험도 72 / 100','추천 이용 순서','법률 자문']) add(`home-conversion:${t}`, home.includes(t));
+const demo=read(pages['veridion-demo']); for (const t of ['무료 요약 진단 3회','사이트 주소 하나로','상세 리포트 신청']) add(`demo-conversion:${t}`, demo.includes(t));
 const demoJs=read('apps/public/veridion-demo/app.js'); for (const t of ['normalizedTarget','renderPaywall','recommendedPlan','localStorage']) add(`demo-js:${t}`, demoJs.includes(t));
 const plans=read(pages.plans); add('plans:static-fallback', plans.includes('49,000원') && plans.includes('월 149,000원')); add('plans:comparison', plans.includes('전체 상품 비교'));
 const base=read('shared/base.css'); for (const t of ['site-topbar','business-footer','promo-banner','cta-band']) add(`base-ui:${t}`, base.includes(t));

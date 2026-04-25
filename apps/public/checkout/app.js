@@ -114,7 +114,7 @@ async function completePayment() {
   state.textContent = '결제가 완료되었습니다.';
   const anchor = document.createElement('a');
   anchor.href = `/portal?orderId=${encodeURIComponent(data.order.id)}${data.order.accessToken ? `&accessToken=${encodeURIComponent(data.order.accessToken)}` : ''}`;
-  anchor.textContent = '고객 포털로 이동';
+  anchor.textContent = '내 사이트 관리로 이동';
   state.appendChild(document.createTextNode(' '));
   state.appendChild(anchor);
 }
