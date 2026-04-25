@@ -8,7 +8,7 @@ function add(name, ok, detail = {}) { checks.push({ name, ok: !!ok, ...detail })
 function exists(rel) { return fs.existsSync(path.join(root, rel)); }
 function read(rel) { return fs.readFileSync(path.join(root, rel), 'utf8'); }
 const pkg = JSON.parse(read('package.json'));
-add('version:phase49', /phase49-global-reaudit-hardening/.test(pkg.version), { version: pkg.version });
+add('version:phase52', /phase52-true-100-conversion-hardening/.test(pkg.version), { version: pkg.version });
 for (const rel of ['Dockerfile','docker-compose.yml','deploy/coolify.env.bulk.txt','deploy/coolify.env.example','scripts/verify-security.mjs','scripts/check-live-public.mjs','scripts/test-all.mjs','server/index.mjs']) add(`exists:${rel}`, exists(rel));
 const server = read('server/index.mjs');
 for (const token of ['/healthz','/readyz','/api/public/products','/api/public/plans','/api/public/checkout-session','/api/public/payment/complete','/api/public/fulfillment']) add(`server-route:${token}`, server.includes(token));
@@ -35,7 +35,7 @@ const seed = read('runtime/data/db.seed.json');
 add('runtime:seed-matched', db === seed);
 add('runtime:sessions-empty', read('runtime/data/sessions.json').trim() === '[]');
 const failed = checks.filter(c => !c.ok);
-const report = { generatedAt: new Date().toISOString(), ok: failed.length === 0, score: failed.length === 0 ? 100 : Math.max(0, 100 - failed.length * 3), phase: 'phase49-global-reaudit-hardening', total: checks.length, passed: checks.length - failed.length, failed: failed.length, failures: failed, checks };
+const report = { generatedAt: new Date().toISOString(), ok: failed.length === 0, score: failed.length === 0 ? 100 : Math.max(0, 100 - failed.length * 3), phase: 'phase52-true-100-conversion-hardening', total: checks.length, passed: checks.length - failed.length, failed: failed.length, failures: failed, checks };
 fs.writeFileSync(path.join(docsDir, 'PHASE49_FINAL_100_GATE_20260425.json'), JSON.stringify(report, null, 2));
 console.log(JSON.stringify({ ok: report.ok, score: report.score, passed: report.passed, failed: report.failed, report: 'docs/PHASE49_FINAL_100_GATE_20260425.json' }, null, 2));
 process.exit(report.ok ? 0 : 1);

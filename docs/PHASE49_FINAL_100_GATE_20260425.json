@@ -1,17 +1,17 @@
 {
-  "generatedAt": "2026-04-25T07:05:38.158Z",
+  "generatedAt": "2026-04-25T08:30:22.996Z",
   "ok": true,
   "score": 100,
-  "phase": "phase49-global-reaudit-hardening",
+  "phase": "phase52-true-100-conversion-hardening",
   "total": 64,
   "passed": 64,
   "failed": 0,
   "failures": [],
   "checks": [
     {
-      "name": "version:phase49",
+      "name": "version:phase52",
       "ok": true,
-      "version": "0.1.1-phase49-global-reaudit-hardening"
+      "version": "0.1.2-phase52-true-100-conversion-hardening"
     },
     {
       "name": "exists:Dockerfile",

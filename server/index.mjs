@@ -77,7 +77,7 @@ const PORTONE_WEBHOOK_VERIFY_MODE = process.env.NV0_PORTONE_WEBHOOK_VERIFY_MODE 
 const RULES_VERSION = process.env.NV0_RULES_VERSION || '2026.04.23-core3';
 const SCAN_CACHE_TTL_MS = Number(process.env.NV0_SCAN_CACHE_TTL_MS || 10 * 60_000);
 const CTA_AUTOPUBLISH_INTERVAL_MS = Number(process.env.NV0_CTA_AUTOPUBLISH_INTERVAL_MS || 2 * 60 * 60_000);
-const RELEASE_PHASE = 'phase49-global-reaudit-hardening';
+const RELEASE_PHASE = 'phase52-true-100-conversion-hardening';
 const DATA_RETENTION_DAYS = Number(process.env.NV0_DATA_RETENTION_DAYS || 1095);
 const REFUND_REQUEST_WINDOW_DAYS = Number(process.env.NV0_REFUND_REQUEST_WINDOW_DAYS || 7);
 const OPERATOR_ALERT_EMAIL = process.env.NV0_OPERATOR_ALERT_EMAIL || BUSINESS_PROFILE.contactEmail;
@@ -85,7 +85,11 @@ const PAYMENT_IDEMPOTENCY_TTL_MS = Number(process.env.NV0_PAYMENT_IDEMPOTENCY_TT
 const EMAIL_MAX_RETRY_COUNT = Number(process.env.NV0_EMAIL_MAX_RETRY_COUNT || 5);
 const EMAIL_RETRY_BACKOFF_MS = Number(process.env.NV0_EMAIL_RETRY_BACKOFF_MS || 5 * 60_000);
 const ADMIN_IP_ALLOWLIST = String(process.env.NV0_ADMIN_IP_ALLOWLIST || '').split(',').map(v => v.trim()).filter(Boolean);
-const PUBLIC_CACHE_SECONDS = Number(process.env.NV0_PUBLIC_CACHE_SECONDS || 60);
+const PUBLIC_CACHE_SECONDS = Number(process.env.NV0_PUBLIC_CACHE_SECONDS || 0);
+const PUBLIC_ASSET_CACHE_SECONDS = Number(process.env.NV0_PUBLIC_ASSET_CACHE_SECONDS || 0);
+const SERVER_HEADER = 'nv0';
+const ALLOWED_HOSTS = String(process.env.NV0_ALLOWED_HOSTS || 'nv0.kr,www.nv0.kr,localhost,127.0.0.1').split(',').map(v => v.trim().toLowerCase()).filter(Boolean);
+const REQUEST_TIMEOUT_MS = Number(process.env.NV0_REQUEST_TIMEOUT_MS || 15_000);
 
 function assertFiniteConfigNumber(name, value, { min = 0, max = Number.MAX_SAFE_INTEGER } = {}) {
   if (!Number.isFinite(value) || value < min || value > max) {
@@ -209,6 +213,8 @@ function validateConfig() {
   assertFiniteConfigNumber('NV0_AUDIT_LOG_RETENTION_COUNT', AUDIT_LOG_RETENTION_COUNT, { min: 1, max: 10000 });
   assertFiniteConfigNumber('NV0_SCAN_CACHE_TTL_MS', SCAN_CACHE_TTL_MS, { min: 0, max: 86_400_000 });
   assertFiniteConfigNumber('NV0_CTA_AUTOPUBLISH_INTERVAL_MS', CTA_AUTOPUBLISH_INTERVAL_MS, { min: 60_000, max: 86_400_000 });
+  assertFiniteConfigNumber('NV0_PUBLIC_CACHE_SECONDS', PUBLIC_CACHE_SECONDS, { min: 0, max: 86_400 });
+  assertFiniteConfigNumber('NV0_REQUEST_TIMEOUT_MS', REQUEST_TIMEOUT_MS, { min: 1000, max: 120_000 });
   if (PLATFORM.commercial && ADMIN_AUTH_MODE === 'shared_key') {
     throw new Error('NV0_ADMIN_AUTH_MODE=shared_key is not allowed in production. Use account_rbac.');
   }
@@ -380,6 +386,8 @@ function baseHeaders(req, category = 'dynamic') {
     'cross-origin-resource-policy': 'same-origin',
     'origin-agent-cluster': '?1',
     'x-permitted-cross-domain-policies': 'none',
+    'x-download-options': 'noopen',
+    'server': SERVER_HEADER,
     'content-security-policy': cspParts.join('; '),
     'content-security-policy-report-only': ["trusted-types nv0-default", "require-trusted-types-for 'script'"].join('; ')
   };
@@ -387,8 +395,8 @@ function baseHeaders(req, category = 'dynamic') {
     headers['strict-transport-security'] = 'max-age=31536000; includeSubDomains; preload';
   }
   if (category === 'dynamic') headers['cache-control'] = 'no-store';
-  if (category === 'public-page') headers['cache-control'] = 'public, max-age=' + PUBLIC_CACHE_SECONDS + ', stale-while-revalidate=300';
-  if (category === 'static') headers['cache-control'] = 'public, max-age=31536000, immutable';
+  if (category === 'public-page') headers['cache-control'] = PUBLIC_CACHE_SECONDS > 0 ? 'public, max-age=' + PUBLIC_CACHE_SECONDS + ', stale-while-revalidate=300' : 'no-cache, max-age=0, must-revalidate';
+  if (category === 'static') headers['cache-control'] = PUBLIC_ASSET_CACHE_SECONDS > 0 ? 'public, max-age=' + PUBLIC_ASSET_CACHE_SECONDS + ', stale-while-revalidate=86400' : 'no-cache, max-age=0, must-revalidate';
   if (category === 'upload') headers['cache-control'] = 'private, max-age=300';
   return headers;
 }
@@ -408,8 +416,10 @@ function html(req, res, status, payload, extraHeaders = {}, category = 'public-p
   res.end(payload);
 }
 
-function redirect(req, res, location) {
-  res.writeHead(302, { location, ...baseHeaders(req) });
+function redirect(req, res, statusOrLocation, maybeLocation) {
+  const status = Number.isInteger(statusOrLocation) ? statusOrLocation : 302;
+  const location = Number.isInteger(statusOrLocation) ? maybeLocation : statusOrLocation;
+  res.writeHead(status, { location, ...baseHeaders(req) });
   res.end();
 }
 
@@ -419,7 +429,7 @@ function parseCookies(req) {
   for (const part of raw.split(';')) {
     const [key, ...rest] = part.trim().split('=');
     if (!key) continue;
-    out[key] = decodeURIComponent(rest.join('='));
+    try { out[key] = decodeURIComponent(rest.join('=')); } catch { out[key] = rest.join('='); }
   }
   return out;
 }
@@ -525,6 +535,24 @@ function clientIp(req) {
     if (value) return value;
   }
   return req.socket.remoteAddress || 'unknown';
+}
+
+function requestHost(req) {
+  return String(req.headers.host || 'localhost').split(':')[0].trim().toLowerCase();
+}
+
+function isAllowedHost(req) {
+  const host = requestHost(req);
+  if (!host) return false;
+  if (ALLOWED_HOSTS.includes(host)) return true;
+  if (NODE_ENV !== 'production' && ['localhost', '127.0.0.1'].includes(host)) return true;
+  return false;
+}
+
+function requestUrlFrom(req) {
+  const proto = isSecureRequest(req) ? 'https' : 'http';
+  const host = req.headers.host || 'localhost';
+  return new URL(req.url, (proto + '://' + host));
 }
 
 async function hitRateLimit(scope, key, { windowMs, limit }) {
@@ -746,14 +774,24 @@ function customerOrders(db, customer) {
 
 async function serveFile(req, res, absPath, contentType) {
   try {
-    const data = await fs.readFile(absPath);
+    const stat = await fs.stat(absPath);
+    if (!stat.isFile()) return text(req, res, 404, 'Not found');
     const category = absPath.includes('/runtime/uploads/') ? 'upload' : 'static';
-    res.writeHead(200, { 'content-type': contentType, ...baseHeaders(req, category) });
+    const etag = `W/\"${stat.size.toString(16)}-${Math.floor(stat.mtimeMs).toString(16)}\"`;
+    const lastModified = stat.mtime.toUTCString();
+    if (req.headers['if-none-match'] === etag || req.headers['if-modified-since'] === lastModified) {
+      res.writeHead(304, { etag, 'last-modified': lastModified, ...baseHeaders(req, category) });
+      return res.end();
+    }
+    const data = await fs.readFile(absPath);
+    res.writeHead(200, { 'content-type': contentType, etag, 'last-modified': lastModified, ...baseHeaders(req, category) });
+    if (req.method === 'HEAD') return res.end();
     res.end(data);
   } catch {
     text(req, res, 404, 'Not found');
   }
 }
+
 
 function mime(p) {
   if (p.endsWith('.css')) return 'text/css; charset=utf-8';
@@ -770,10 +808,14 @@ function mime(p) {
 }
 
 async function serveStaticRoot(req, res, rootDir, prefix = '') {
-  const clean = decodeURIComponent(req.url.split('?')[0]);
+  if (!['GET', 'HEAD'].includes(req.method)) return text(req, res, 405, 'Method Not Allowed', { allow: 'GET, HEAD' });
+  let clean;
+  try { clean = decodeURIComponent(req.url.split('?')[0]); } catch { return text(req, res, 400, 'Bad request path'); }
   const rel = prefix ? clean.slice(prefix.length) : clean;
-  const abs = path.normalize(path.join(rootDir, rel));
-  if (!abs.startsWith(rootDir)) return text(req, res, 403, 'Forbidden');
+  if (rel.includes('\0')) return text(req, res, 400, 'Bad request path');
+  const abs = path.resolve(rootDir, rel.replace(/^\/+/, ''));
+  const safeRoot = path.resolve(rootDir) + path.sep;
+  if (!(abs + path.sep).startsWith(safeRoot) && abs !== path.resolve(rootDir)) return text(req, res, 403, 'Forbidden');
   return serveFile(req, res, abs, mime(abs));
 }
 
@@ -816,25 +858,104 @@ function pageMap(urlPath) {
   return m[urlPath] || null;
 }
 
-function publicTopMenuHtml() {
-  return `<nav class="site-topbar" aria-label="주요 메뉴">
+function escapeHtml(value = '') {
+  return String(value ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+}
+
+function routeMeta(urlPath) {
+  const base = BUSINESS_PROFILE.domain.replace(/\/$/, '');
+  const metas = {
+    '/': ['웹사이트 법적 리스크 무료 진단 | NV0 Veridion', '전자상거래 사이트의 필수 고지, 개인정보, 환불 안내, 광고 문구 리스크를 빠르게 점검합니다.'],
+    '/products/veridion/demo': ['Veridion 무료 진단 | NV0', '2분 무료 진단으로 웹사이트 안내 문구와 정책 고지 리스크를 먼저 확인하세요.'],
+    '/plans': ['요금제 | NV0 Veridion', '무료 진단 이후 상세 리포트, 수정안, 정책 템플릿, 구독 점검 상품을 비교하세요.'],
+    '/documents': ['정책 문서 생성 | NV0 Veridion', '개인정보처리방침, 이용약관, 환불 정책 문서 초안을 빠르게 정리합니다.'],
+    '/solutions': ['솔루션 | NV0 Veridion', '웹사이트 안내 고지, 정책 문서, 결제 전환 흐름을 점검하는 솔루션입니다.'],
+    '/board': ['인사이트 게시판 | NV0 Veridion', '전자상거래 사이트 운영자가 참고할 수 있는 필수 고지와 정책 점검 사례를 제공합니다.'],
+    '/business-info': ['사업자 정보 | NV0', 'NV0 서비스 운영자의 사업자 고지와 고객지원 정보를 확인하세요.'],
+    '/terms': ['이용약관 | NV0', 'NV0 서비스 이용약관입니다.'],
+    '/privacy': ['개인정보처리방침 | NV0', 'NV0 서비스 개인정보 처리 기준입니다.'],
+    '/refund': ['환불·배송·교환 정책 | NV0', '디지털 산출물 제공과 환불 기준을 안내합니다.']
+  };
+  const [title, description] = metas[urlPath] || metas['/'];
+  return { title, description, canonical: `${base}${urlPath === '/' ? '/' : urlPath}` };
+}
+
+function injectSeoMeta(body, urlPath) {
+  const meta = routeMeta(urlPath);
+  const robots = urlPath.startsWith('/admin') || ['/auth','/portal','/checkout'].includes(urlPath) ? 'noindex,nofollow' : 'index,follow';
+  const tags = [
+    `<meta name="description" content="${escapeHtml(meta.description)}">`,
+    `<meta name="robots" content="${robots}">`,
+    `<link rel="canonical" href="${escapeHtml(meta.canonical)}">`,
+    `<meta property="og:type" content="website">`,
+    `<meta property="og:title" content="${escapeHtml(meta.title)}">`,
+    `<meta property="og:description" content="${escapeHtml(meta.description)}">`,
+    `<meta property="og:url" content="${escapeHtml(meta.canonical)}">`,
+    `<meta name="twitter:card" content="summary">`
+  ].join('');
+  let out = body.replace(/<title>[^<]*<\/title>/, `<title>${escapeHtml(meta.title)}</title>`);
+  if (!out.includes('name="description"')) out = out.replace('</head>', `${tags}</head>`);
+  return out;
+}
+
+function buildStructuredData(urlPath) {
+  if (urlPath.startsWith('/admin') || ['/auth','/portal','/checkout'].includes(urlPath)) return '';
+  const base = BUSINESS_PROFILE.domain.replace(/\/$/, '');
+  const data = {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'NV0 Veridion',
+    applicationCategory: 'BusinessApplication',
+    operatingSystem: 'Web',
+    url: `${base}${urlPath === '/' ? '/' : urlPath}`,
+    description: '웹사이트 필수 고지, 개인정보, 약관, 환불 정책, 광고 문구 리스크를 점검하고 개선안을 정리하는 서비스',
+    offers: { '@type': 'Offer', priceCurrency: 'KRW', price: '0', availability: 'https://schema.org/InStock' },
+    provider: { '@type': 'Organization', name: BUSINESS_PROFILE.tradeName, email: BUSINESS_PROFILE.contactEmail, url: base }
+  };
+  return `<script type="application/ld+json">${JSON.stringify(data).replace(/<\//g, '<\\/')}</script>`;
+}
+
+function injectStructuredData(body, urlPath) {
+  if (body.includes('application/ld+json')) return body;
+  const data = buildStructuredData(urlPath);
+  return data ? body.replace('</head>', `${data}</head>`) : body;
+}
+
+function navAttrs(urlPath, href, className = '') {
+  const pathOnly = href.split('?')[0];
+  const isCurrent = urlPath === pathOnly || (pathOnly !== '/' && urlPath.startsWith(pathOnly + '/'));
+  return `${className ? ` class="${className}"` : ''}${isCurrent ? ' aria-current="page"' : ''}`;
+}
+
+function publicTopMenuHtml(urlPath = '/') {
+  return `<a class="skip-link" href="#main">본문 바로가기</a><nav class="site-topbar" aria-label="주요 메뉴">
     <a class="brand" href="/"><span class="brand-mark">◇</span><span>VERIDION<small>웹사이트 법적 리스크 관리 솔루션</small></span></a>
     <div class="site-menu">
-      <a href="/products/veridion/demo">서비스</a>
-      <a href="/documents">기능</a>
-      <a href="/plans">요금제</a>
-      <a href="/board">리소스</a>
-      <a href="/business-info">고객지원</a>
-      <a href="/auth" class="login-link">로그인</a>
+      <a href="/products/veridion/demo"${navAttrs(urlPath, '/products/veridion/demo')}>서비스</a>
+      <a href="/documents"${navAttrs(urlPath, '/documents')}>기능</a>
+      <a href="/plans"${navAttrs(urlPath, '/plans')}>요금제</a>
+      <a href="/board"${navAttrs(urlPath, '/board')}>리소스</a>
+      <a href="/business-info"${navAttrs(urlPath, '/business-info')}>고객지원</a>
+      <a href="/auth"${navAttrs(urlPath, '/auth', 'login-link')}>로그인</a>
       <a href="/auth?mode=register" class="cta">회원가입</a>
     </div>
   </nav>`;
 }
 
+function ensureMainId(body) {
+  if (body.includes('<main id="main"')) return body;
+  return body.replace('<main ', '<main id="main" tabindex="-1" ');
+}
+
+function injectNoScriptNotice(body, urlPath) {
+  if (urlPath.startsWith('/admin') || body.includes('<noscript>')) return body;
+  return body.replace('<body>', '<body><noscript><div class="noscript-banner">이 서비스는 진단 실행과 결제 흐름에 JavaScript가 필요합니다. 브라우저 설정에서 JavaScript를 허용해 주세요.</div></noscript>');
+}
+
 function injectPublicTopMenu(body, urlPath) {
   if (urlPath.startsWith('/admin')) return body;
   if (body.includes('site-topbar')) return body;
-  return body.replace('<body>', `<body>${publicTopMenuHtml()}`);
+  return body.replace('<body>', `<body>${publicTopMenuHtml(urlPath)}`);
 }
 
 function businessFooterHtml() {
@@ -880,7 +1001,10 @@ async function renderPage(urlPath, req, res) {
   const htmlPath = path.join(baseDir, slug, 'index.html');
   let body = await fs.readFile(htmlPath, 'utf8');
   if (urlPath.startsWith('/admin/console')) body = body.replace('<!--ADMIN_NAV-->', adminNav());
-  if (['/auth','/portal','/checkout'].includes(urlPath) && !body.includes('name="robots"')) body = body.replace('</head>', '<meta name="robots" content="noindex,nofollow"></head>');
+  body = injectSeoMeta(body, urlPath);
+  body = injectStructuredData(body, urlPath);
+  body = ensureMainId(body);
+  body = injectNoScriptNotice(body, urlPath);
   body = injectPublicTopMenu(body, urlPath);
   body = injectBusinessFooter(body, urlPath);
   const category = urlPath.startsWith('/admin') ? 'dynamic' : 'public-page';
@@ -3708,12 +3832,15 @@ async function handleApi(req, res) {
 }
 
 const server = http.createServer(async (req, res) => {
+  req.setTimeout(REQUEST_TIMEOUT_MS, () => req.destroy(new Error('REQUEST_TIMEOUT')));
   const startedAt = Date.now();
   const requestId = uid('req');
   res.setHeader('x-request-id', requestId);
   try {
-    const requestUrl = new URL(req.url, `http://${req.headers.host}`);
+    if (!isAllowedHost(req)) return text(req, res, 421, 'Misdirected Request');
+    const requestUrl = requestUrlFrom(req);
     const pathname = requestUrl.pathname;
+    if (req.method === 'OPTIONS') { res.writeHead(204, { allow: 'GET, HEAD, POST, OPTIONS', ...baseHeaders(req) }); return res.end(); }
     if (pathname.length > 1 && pathname.endsWith('/')) {
       requestUrl.pathname = pathname.replace(/\/+$/, '');
       return redirect(req, res, 308, requestUrl.pathname + requestUrl.search);
@@ -3735,7 +3862,7 @@ const server = http.createServer(async (req, res) => {
     const status = error?.code === 'PAYLOAD_TOO_LARGE' ? 413 : ['INVALID_JSON', 'INVALID_PAYLOAD'].includes(error?.code) ? 400 : 500;
     json(req, res, status, { ok: false, error: status === 413 ? '요청 크기가 너무 큽니다.' : status === 400 ? (error.message || '잘못된 요청입니다.') : '서버 오류가 발생했습니다.', requestId });
   } finally {
-    const pathname = new URL(req.url, `http://${req.headers.host}`).pathname;
+    const pathname = (() => { try { return requestUrlFrom(req).pathname; } catch { return 'invalid-url'; } })();
     console.log(JSON.stringify({
       level: 'info',
       requestId,

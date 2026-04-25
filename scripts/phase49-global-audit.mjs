@@ -7,7 +7,7 @@ const findings = [];
 function check(id, ok, fix, severity='P1') { findings.push({ id, ok, severity, fix }); }
 const routeAliases = ['/products','/resources','/service','/cases','/docs/veridion','/board/post'];
 for (const route of routeAliases) check(`route-alias:${route}`, server.includes(`'${route}'`), '검색 노출/기존 링크 유입용 공개 라우트 별칭 보강', route === '/products' ? 'P0' : 'P1');
-check('release-phase-current', server.includes('phase49-global-reaudit-hardening') && pkg.version.includes('phase49'), '런타임/패키지 버전 마커 일치', 'P0');
+check('release-phase-current', server.includes('phase52-true-100-conversion-hardening') && pkg.version.includes('phase52'), '런타임/패키지 버전 마커 일치', 'P0');
 check('trailing-slash-redirect', /endsWith\('\/'\)/.test(server) && /redirect\(req, res, 308/.test(server), '중복 URL과 404 방지용 trailing slash 정규화', 'P1');
 check('listen-log-accurate', server.includes('HOST}:${PORT}') && server.includes('PLATFORM.target'), 'Coolify 로그에서 포트/타깃/결제 모드 확인 가능', 'P2');
 check('sitemap-all-public-routes', routeAliases.every(route => server.includes(`'${route}'`)), '사이트맵 누락 공개 경로 보강', 'P1');
