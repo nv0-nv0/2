@@ -17,7 +17,7 @@ const plansHtml = fs.readFileSync(path.join(root, 'apps/public', 'plans', 'index
 assert.ok(plansHtml.includes('상품·요금'), 'plans page title missing');
 assert.ok(plansHtml.includes('전체 비교'), 'comparison block missing');
 const homeHtml = fs.readFileSync(path.join(root, 'apps/public', 'home', 'index.html'), 'utf8');
-assert.ok(homeHtml.includes('무료 문서 초안 생성'), 'home document panel missing');
+assert.ok(homeHtml.includes('문서 초안은 전용 페이지'), 'home document menu entry missing');
 assert.ok(homeHtml.includes('요금제 및 서비스 안내'), 'home pricing preview missing');
 const report = { ok: true, mode: 'static-commercial-contract-gate', checkedPages: pages.length, checkedOffers: offers.length, checkedApis: 7, generatedAt: new Date().toISOString() };
 const out = path.join(root, 'docs', 'PHASE26_FULL_COMMERCIAL_FLOW_CONTRACT_20260424.json');

@@ -23,31 +23,31 @@ function getPrefill() {
 
 const prefill = getPrefill();
 if (prefill.plan) planInput.value = prefill.plan;
-targetBox.textContent = prefill.domain ? `대상 사이트: ${prefill.domain}` : '스캔 이력이 없으면 일반 주문으로 생성됩니다.';
+targetBox.textContent = prefill.domain ? `대상 사이트: ${prefill.domain}` : '진단 이력이 없으면 일반 신청으로 진행됩니다.';
 
 function renderOrder(order, paymentSession) {
   currentOrder = order;
   currentPaymentSession = paymentSession;
   const redirectUrl = safeUrl(paymentSession?.redirectUrl || '');
   const provider = paymentSession?.provider || 'demo';
-  const portoneHint = provider === 'portone_v2' ? '<div class="notice muted">포트원 브라우저 SDK로 결제가 진행됩니다.</div>' : '';
+  const portoneHint = provider === 'portone_v2' ? '<div class="notice muted">안전한 결제창으로 결제가 진행됩니다.</div>' : '';
   summary.innerHTML = `
     <div class="result-card stack">
-      <strong>주문 ${escapeHtml(order.id)}</strong>
+      <strong>신청번호 ${escapeHtml(order.id)}</strong>
       <div class="muted">${escapeHtml(order.plan)} · ${formatWon(order.amount)}원 · ${escapeHtml(order.status)}</div>
       <div>사이트: ${escapeHtml(order.domain || order.siteId || '미연결')}</div>
-      <div>결제 수단 모드: ${escapeHtml(provider)}</div>
+      <div>결제 방식: ${escapeHtml(provider)}</div>
       ${portoneHint}
-      ${redirectUrl ? `<a href="${escapeAttr(redirectUrl)}" target="_blank" rel="noreferrer">리디렉트 완료 URL</a>` : ''}
+      ${redirectUrl ? `<a href="${escapeAttr(redirectUrl)}" target="_blank" rel="noreferrer">결제 완료 후 이동 페이지</a>` : ''}
     </div>`;
   const completeBtn = document.getElementById('completeBtn');
-  if (completeBtn) completeBtn.textContent = provider === 'portone_v2' ? '포트원 결제 완료 확인' : '가상 결제 완료';
+  if (completeBtn) completeBtn.textContent = provider === 'portone_v2' ? '결제 완료 확인' : '결제 확인';
 }
 
-async function launchPortOneCheckout(paymentSession) {
-  if (!window.PortOne?.requestPayment) throw new Error('포트원 브라우저 SDK를 불러오지 못했습니다.');
+async function launchPaymentWindow(paymentSession) {
+  if (!window.PortOne?.requestPayment) throw new Error('결제창을 불러오지 못했습니다.');
   const response = await window.PortOne.requestPayment(paymentSession.paymentRequest);
-  if (response?.code !== undefined) throw new Error(response.message || '포트원 결제 요청이 실패했습니다.');
+  if (response?.code !== undefined) throw new Error(response.message || '결제 요청이 실패했습니다.');
   return response;
 }
 
@@ -59,7 +59,7 @@ async function createSession() {
     domain: prefill.domain,
     plan: planInput.value
   };
-  state.textContent = '주문 생성 중...';
+  state.textContent = '신청 정보를 확인하는 중...';
   const res = await fetch('/api/public/checkout-session', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
@@ -67,31 +67,31 @@ async function createSession() {
   });
   const data = await res.json();
   if (!res.ok) {
-    state.textContent = data.error || '주문 생성 실패';
+    state.textContent = data.error || '신청 정보를 확인하지 못했습니다.';
     return;
   }
   renderOrder(data.order, data.paymentSession);
   if (data.providerMode === 'portone_v2') {
-    state.textContent = '주문이 생성되었습니다. 포트원 결제를 시작합니다.';
+    state.textContent = '신청 정보가 확인되었습니다. 결제를 시작합니다.';
     try {
-      const paymentResponse = await launchPortOneCheckout(data.paymentSession);
+      const paymentResponse = await launchPaymentWindow(data.paymentSession);
       if (paymentResponse?.paymentId || data.paymentSession?.redirectUrl) {
-        state.textContent = '포트원 결제창이 열렸습니다. 완료 후 결과를 확인하세요.';
+        state.textContent = '결제창이 열렸습니다. 완료 후 결과를 확인하세요.';
       }
     } catch (error) {
-      state.textContent = error.message || '포트원 결제를 시작하지 못했습니다.';
+      state.textContent = error.message || '결제를 시작하지 못했습니다.';
     }
     return;
   }
-  state.textContent = data.providerMode === 'demo' ? '주문이 생성되었습니다. 가상 결제 완료를 누르세요.' : '주문이 생성되었습니다. 외부 결제 링크를 진행하세요.';
+  state.textContent = data.providerMode === 'demo' ? '신청 정보가 확인되었습니다. 결제 확인을 눌러주세요.' : '신청 정보가 확인되었습니다. 결제 안내에 따라 진행하세요.';
 }
 
 async function completePayment() {
   if (!currentOrder?.id) {
-    state.textContent = '먼저 주문을 생성하세요.';
+    state.textContent = '먼저 서비스 신청을 진행하세요.';
     return;
   }
-  state.textContent = '결제 완료 처리 중...';
+  state.textContent = '결제 완료 여부를 확인하는 중...';
   const payload = { orderId: currentOrder.id, paymentId: currentPaymentSession?.providerPaymentId || currentOrder.id };
   const res = await fetch('/api/public/payment/complete', {
     method: 'POST',
@@ -123,7 +123,7 @@ async function maybeFinalizeRedirectResult() {
   const message = url.searchParams.get('message');
   if (!paymentId) return;
   if (code) {
-    state.textContent = message || '포트원 결제가 완료되지 않았습니다.';
+    state.textContent = message || '결제가 완료되지 않았습니다.';
     return;
   }
   currentOrder = { id: paymentId, amount: 0, plan: prefill.plan || 'Pro', status: 'pending', domain: prefill.domain || '', siteId: prefill.siteId || '' };

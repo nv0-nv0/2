@@ -18,3 +18,84 @@ button.primary,.btn.primary,#scanBtn,#checkoutBtn,#loginBtn,.site-menu a.cta,.to
 @media(max-width:900px){.conversion-grid,.form-row{grid-template-columns:1fr}.promo-banner,.cta-band{margin-left:18px;margin-right:18px;flex-direction:column;align-items:flex-start}.site-topbar{padding:12px 18px}.site-menu a{min-height:40px}.site-menu a.cta{width:100%}}
 /* Phase26 enterprise navigation polish */
 .site-topbar .brand{gap:10px;font-size:18px;line-height:1.05}.site-topbar .brand:before{display:none}.site-topbar .brand-mark{display:inline-grid;place-items:center;width:30px;height:30px;border:2px solid #0b1220;border-radius:9px;color:#155eef;font-size:16px;font-weight:950}.site-topbar .brand small{display:block;color:#667085;font-size:11px;font-weight:750;letter-spacing:-.03em;margin-top:3px}.site-menu a.login-link{border:1px solid #d0d5dd;background:#fff;color:#0b1220;border-radius:10px}.site-menu a.cta{border-radius:10px;background:#0b1220;color:#fff}.site-menu a:last-child:not(.cta){background:transparent;color:#475467;border-color:transparent}
+
+/* Phase28 device readability and text rendering optimization */
+html{
+  -webkit-text-size-adjust:100%;
+  text-size-adjust:100%;
+  overflow-wrap:break-word;
+}
+body{
+  word-break:keep-all;
+  overflow-wrap:anywhere;
+  line-height:1.58;
+  text-rendering:optimizeLegibility;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4,p,li,summary,span,small,b,strong,a,button,label,input,textarea,select,td,th,.notice,.pill,.muted{
+  max-width:100%;
+  word-break:keep-all;
+  overflow-wrap:anywhere;
+}
+h1,h2,h3,h4,.page-head h1,.hero-copy h1{
+  text-wrap:balance;
+}
+p,li,.notice,.muted,.card p,.panel p,.hero-copy p,.panel-copy,.offer-summary,.testimonial{
+  text-wrap:pretty;
+}
+img,video,canvas,svg{max-width:100%;height:auto}
+pre,code,.pre-wrap,.document-preview pre{
+  white-space:pre-wrap;
+  word-break:break-word;
+  overflow-wrap:anywhere;
+  max-width:100%;
+}
+button,.btn,.topnav a,.admin-nav a,.admin-nav button,.site-menu a{
+  white-space:normal;
+  text-align:center;
+  line-height:1.25;
+}
+input,textarea,select,button{font-size:16px}
+.card,.panel,.hero,.result-card,.document-panel,.quick-links a,.offer-card{
+  min-width:0;
+}
+.grid,.conversion-grid,.product-flow,.compact-sections,.hero-board,.quick-links,.trust-icons,.scope-row{
+  min-width:0;
+}
+.table-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.table-wrap table{white-space:normal}
+th,td{vertical-align:top;line-height:1.55;word-break:keep-all;overflow-wrap:anywhere}
+
+@media(max-width:900px){
+  body{font-size:15.5px;letter-spacing:-.012em}
+  .app-shell{padding:24px 16px 36px}
+  .page-head h1{font-size:clamp(28px,8vw,40px);line-height:1.14;letter-spacing:-.052em}
+  .page-head p{font-size:16px;line-height:1.68}
+  .hero,.card,.panel{padding:18px;border-radius:18px}
+  .site-topbar{gap:12px}
+  .site-menu{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%;gap:8px}
+  .site-menu a{width:100%;min-height:42px;padding:8px 10px;font-size:14px}
+  .topnav,.admin-nav{display:grid;grid-template-columns:1fr;gap:8px;width:100%}
+  .topnav a,.topnav button,.admin-nav a,.admin-nav button,.btn,button{width:100%;min-height:46px;padding:10px 14px}
+  .business-footer{padding-left:16px;padding-right:16px}
+}
+@media(max-width:680px){
+  body{font-size:15px;line-height:1.62}
+  .page-head h1{font-size:clamp(26px,8.5vw,34px);line-height:1.16;letter-spacing:-.045em}
+  .page-head p{font-size:15.5px}
+  .card h2,.panel h2{font-size:clamp(22px,6.2vw,28px);line-height:1.24}
+  .card h3,.panel h3{font-size:clamp(18px,5.2vw,23px);line-height:1.3}
+  .pill{font-size:12.5px;line-height:1.25;text-align:center}
+  th,td{padding:10px;font-size:14px}
+  .kpi{font-size:clamp(28px,10vw,38px)}
+}
+@media(max-width:420px){
+  .app-shell{padding-left:14px;padding-right:14px}
+  .site-topbar{padding-left:14px;padding-right:14px}
+  .site-menu{grid-template-columns:1fr}
+  .hero,.card,.panel{padding:16px}
+  input,textarea,select{padding:11px 12px}
+}
+
+/* Phase30 commercial micro-tuning: public readability, wrapping, touch targets */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overflow-x:hidden;word-break:keep-all;overflow-wrap:anywhere}.app-shell{width:min(100%,var(--container));}.page-head h1,.hero-copy h1,h1,h2,h3{word-break:keep-all;overflow-wrap:break-word}.page-head p,.card p,.panel p,.muted,.notice,li,td,th{word-break:keep-all;overflow-wrap:anywhere}.btn,button,.topnav a,.site-menu a{white-space:normal;text-align:center;line-height:1.2}.business-footer span,.business-footer a,.trust-icons span,.quick-links span{overflow-wrap:anywhere}.table-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}.result-card,.card,.panel,.hero,.offer-card{min-width:0}.notice{font-size:clamp(14px,2.6vw,15px)}input,textarea,select{font-size:16px}.privacy-note,.price-note{font-size:13px;line-height:1.55}.service-steps span,.scope-row small{line-height:1.35}.site-menu a[aria-current="page"]{background:#EEF4FF;color:#004EEB;border-color:#C7D7FE}.legal-mini-links{display:flex;gap:10px;flex-wrap:wrap;font-size:13px}.legal-mini-links a{font-weight:800;color:#475467}@media(max-width:720px){.app-shell{padding:22px 16px 34px}.page-head h1{font-size:clamp(28px,8vw,38px);line-height:1.12}.page-head p{font-size:16px;line-height:1.58}.card,.panel,.hero{border-radius:18px;padding:18px}.topnav,.hero-actions,.offer-actions{display:grid;grid-template-columns:1fr;width:100%}.topnav a,.topnav button,.hero-actions .btn,.offer-actions .btn{width:100%;min-width:0}.site-topbar{padding:12px 16px}.site-menu{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%;gap:8px}.site-menu a{border-color:#EAECF0;background:#fff;padding:8px 10px;min-height:40px}.business-footer{padding:20px 16px 28px}.promo-banner{margin:14px 16px -4px;align-items:flex-start;flex-direction:column}.comparison-table th,.comparison-table td{padding:10px 9px}}@media(max-width:420px){.page-head h1{font-size:27px}.card,.panel,.hero{padding:16px;border-radius:16px}.pill{max-width:100%;white-space:normal;text-align:center}.site-menu{grid-template-columns:1fr}.business-footer{font-size:12px}}

@@ -12,7 +12,7 @@ for (const route of ['/', '/plans', '/documents', '/products/veridion/demo', '/c
 for (const api of ['/api/public/products','/api/public/document-preview','/api/public/checkout-session','/api/public/payment/complete','/api/public/fulfillment','/healthz']) add(`api:${api}`, server.includes(api));
 for (const offer of ['Report','FixPack','TemplatePack','IndustryGuide','Basic','Pro','Auto','Certified','Agency']) add(`offer:${offer}`, server.includes(`'${offer}'`) || server.includes(`code: '${offer}'`));
 const home=read('apps/public/home/index.html');
-for (const token of ['VERIDION','무료 문서 초안 생성','웹사이트 운영 리스크','상세 정보는 전용 페이지','예시 기본값 없이']) add(`home:${token}`, home.includes(token));
+for (const token of ['VERIDION','문서 초안은 전용 페이지','사이트의 부족한 안내','필요한 작업을 메뉴','문서 초안 생성 기능은 메뉴 진입 후']) add(`home:${token}`, home.includes(token));
 const homeCss=read('apps/public/home/app.css');
 for (const token of ['hero-board','document-panel','scope-row','compact-sections','quick-links','trust-icons']) add(`home-css:${token}`, homeCss.includes(token));
 const docs=read('apps/public/documents/index.html');

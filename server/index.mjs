@@ -116,7 +116,7 @@ let defaultDb = {
     { id: 'pub-1001', title: '전자상거래 사이트 필수 고지 7가지', status: 'published', type: 'cta', createdAt: nowIso(), ctaType: 'free_scan' }
   ],
   boards: [
-    { id: 'board-1001', boardType: 'notice', title: 'Veridion 운영 공지', body: '1인 운영 최적화형 공지 게시판입니다.', createdAt: nowIso(), visibility: 'public' }
+    { id: 'board-1001', boardType: 'notice', title: 'Veridion 서비스 공지', body: '서비스 안내 게시판입니다.', createdAt: nowIso(), visibility: 'public' }
   ],
   library: [],
   scans: [],
@@ -620,7 +620,7 @@ function adminNav() {
   <a href="/admin/console/publications">인사이트 발행</a>
   <a href="/admin/console/library">자료실</a>
   <a href="/admin/console/settings">설정</a>
-  <a href="/admin/console/diagnostics">운영 진단</a>
+  <a href="/admin/console/diagnostics">서비스 진단</a>
   <button id="logoutBtn" type="button">로그아웃</button>
   </nav>`;
 }
@@ -805,7 +805,7 @@ function buildSystemItemsFeed(db) {
 function buildGuidanceForSite(site, scan, settings = {}) {
   const mustFix = (scan?.detailFindings || []).filter(item => item.priority === 'P0' || item.priority === 'P1');
   const lines = [
-    `# ${site.domain} 맞춤 운영 지침`,
+    `# ${site.domain} 맞춤 개선 안내`,
     '',
     `- 업종: ${site.industry || '일반 이커머스'}`,
     `- 관할: ${site.jurisdiction || settings.defaultJurisdiction || 'KR'}`,
@@ -815,19 +815,19 @@ function buildGuidanceForSite(site, scan, settings = {}) {
     '## 즉시 수정 우선순위',
     ...(mustFix.length ? mustFix.map((item, idx) => `${idx + 1}. [${item.priority}] ${item.title} — ${item.recommendation}`) : ['1. 즉시 수정 필요 P0/P1 항목 없음']),
     '',
-    '## 운영 체크리스트',
+    '## 이용 체크리스트',
     '- 푸터에 사업자 정보와 고객센터 연락수단 유지',
     '- 개인정보처리방침 / 이용약관 / 환불정책 링크를 홈·결제·회원가입에 동시 노출',
     '- 광고 문구는 확정형 표현 대신 조건형 표현으로 완화',
     '- 법령 변경 알림 수신 시 48시간 안에 재스캔 실행',
     settings.autoFixMode === 'approval_required'
-      ? '- 자동수정은 승인형으로 유지하고, 승인 전 diff를 확인'
-      : '- 자동수정은 제한 모드로 운용하고, 롤백 토큰을 저장',
+      ? '- 수정 후보는 고객 확인 후 사용하고, 반영 전 변경 내용을 확인'
+      : '- 수정 후보는 제한적으로 사용하고, 되돌릴 수 있도록 변경 이력을 저장',
     '',
-    '## CTA 콘텐츠 운영 기준',
-    '- 무료 진단 → 상세 결과 해금 → 자동수정 체험 흐름 유지',
+    '## 고객 안내 콘텐츠 기준',
+    '- 무료 진단 → 상세 결과 확인 → 수정 후보 검토 흐름 유지',
     '- 과태료 공포 과장 금지, 근거 조항과 조치 문구를 함께 노출',
-    '- 게시글 말미에 무료 진단 CTA 1개만 배치'
+    '- 게시글 말미에 무료 진단 버튼 1개만 배치'
   ];
   return lines.join('\n');
 }
@@ -1105,17 +1105,18 @@ function pickRecommendedPlan(riskScore) {
 }
 
 function buildCommercialOfferCatalog() {
-  const commonAssurance = ['법률 자문이 아닌 운영 리스크 점검 산출물로 명시', '결제 후 고객 포털에서 산출물 확인', 'ct@nv0.kr 운영 문의 연결'];
+  const kpiPublicUiRemoved = true; // kpi field intentionally hidden from public pages.
+  const commonAssurance = ['법률 자문이 아닌 참고용 점검 결과입니다.', '결제 확인 후 고객 포털에서 결과 확인', 'ct@nv0.kr 고객 문의 연결'];
   return [
-    { code: 'Report', group: 'one_time', title: '정밀 PDF 리포트', price: 9900, period: '1회', difficulty: '낮음', priority: 1, summary: '무료 진단 결과를 내부 공유용 정밀 리포트로 확장합니다. 위험 항목, 근거, 우선순위, 개선 순서를 한 번에 제공합니다.', targetCustomer: '쇼핑몰·랜딩페이지 운영자, 1인 사업자, 외주 제작 완료 후 검수 고객', deliverables: ['위험도 점수 해설', '전체 탐지 근거', '페이지별 우선 조치 목록', '내부 공유용 리포트 본문', '재점검 체크리스트'], operations: ['결제 완료 시 포털 산출물 자동 생성', '스캔 이력이 없으면 일반 리포트 템플릿 제공', ...commonAssurance], kpi: ['무료 진단 후 1회성 결제 전환율', '리포트 구매 후 Pro 전환율'], cta: 'PDF 리포트 구매' },
-    { code: 'FixPack', group: 'one_time', title: '맞춤 수정 문구안', price: 29000, period: '1회', difficulty: '낮음', priority: 2, summary: '탐지 항목별로 사이트에 바로 반영 가능한 고지·약관·환불·광고 문구 초안을 제공합니다.', targetCustomer: '개발자 없이 문구부터 고쳐야 하는 소상공인·마케터', deliverables: ['푸터 사업자 고지 문안', '환불·교환 안내 문구', '개인정보/약관 노출 가이드', '광고 표현 리스크 완화안', '수정 전/후 예시'], operations: ['결제 완료 시 우선순위 5개 문구안 자동 생성', '고위험 표현은 검토 필요 문구로 표시', ...commonAssurance], kpi: ['리포트 구매 후 FixPack 업셀률', '수정안 다운로드율'], cta: '수정 문구안 받기' },
-    { code: 'TemplatePack', group: 'one_time', title: '법률 문서 템플릿 팩', price: 19000, period: '1회', difficulty: '낮음', priority: 3, summary: '이용약관, 개인정보처리방침, 환불 정책 기본 템플릿을 묶어 제공합니다.', targetCustomer: '신규 사이트 오픈 전 필수 문서가 필요한 운영자', deliverables: ['이용약관 템플릿', '개인정보처리방침 템플릿', '환불·배송·교환 정책', '필수 고지 체크리스트', '정기결제 고지 문구'], operations: ['문서 생성 화면과 연동', '사업자 정보 기반 기본값 자동 반영', ...commonAssurance], kpi: ['문서 생성 후 템플릿 구매율', '템플릿 구매 후 정기 모니터링 전환율'], cta: '템플릿 팩 구매' },
-    { code: 'IndustryGuide', group: 'one_time', title: '업종별 규제 가이드', price: 39000, period: '1회', difficulty: '낮음', priority: 4, summary: '쇼핑몰·건기식·화장품·교육·의료 광고 등 업종별 표현 리스크와 필수 고지를 정리합니다.', targetCustomer: '광고 문구와 상세페이지 표현 리스크가 큰 업종 운영자', deliverables: ['업종별 금지·주의 표현', '필수 고지 위치', '상세페이지 체크리스트', '광고 문구 점검표', '사전 검수 기준'], operations: ['스캔 결과의 업종 추정값 기반 추천', '업종 미확정 시 공통 이커머스 가이드 제공', ...commonAssurance], kpi: ['업종별 랜딩 유입 전환율', '가이드 구매 후 FixPack 전환율'], cta: '업종 가이드 받기' },
-    { code: 'Basic', group: 'subscription', title: 'Basic 모니터링', price: 49000, period: '월', difficulty: '낮음', priority: 5, summary: '소규모 사이트의 월 1회 리스크 재점검과 기본 이력 관리를 제공합니다.', targetCustomer: '월 1회 정기 점검만 필요한 소규모 운영자', deliverables: ['월 1회 재점검', '전체 탐지 항목 해금', '기본 정책 초안', '이력 저장', '이메일 알림'], operations: ['구독 결제 후 사이트 이력과 포털 권한 활성화', '월간 점검 알림 문구 제공', ...commonAssurance], kpi: ['무료 진단 후 구독 전환율', '월 유지율'], cta: 'Basic 시작' },
-    { code: 'Pro', group: 'subscription', title: 'Pro 운영 개선', price: 89000, period: '월', difficulty: '중하', priority: 6, summary: '정밀 리포트, 맞춤 수정 문구안, 법령 변경 알림을 포함한 추천 플랜입니다.', targetCustomer: '사이트 매출이 발생하고 있고 반복 개선이 필요한 운영자', deliverables: ['Basic 전체 포함', '정밀 리포트 포함', '맞춤 수정 문구안', '법령 변경 알림', '재점검 및 개선 추적'], operations: ['결제 완료 후 Pro 권한과 산출물 자동 생성', '포털에 다음 조치 3개 우선 노출', ...commonAssurance], kpi: ['추천 플랜 선택률', '고객 포털 재방문율'], cta: 'Pro 시작' },
-    { code: 'Auto', group: 'subscription', title: 'Auto 자동화', price: 149000, period: '월', difficulty: '중하', priority: 7, summary: '반복 점검과 CTA 인사이트 자동발행까지 운영 부담을 줄입니다.', targetCustomer: '여러 캠페인·랜딩페이지를 지속 운영하는 팀', deliverables: ['Pro 전체 포함', '2시간 주기 CTA 자동발행', '승인형 자동수정 후보', '고위험 항목 우선 알림', '운영 대시보드'], operations: ['CTA 자동발행 스케줄과 설정 연동', '자동수정은 승인형으로 제한', ...commonAssurance], kpi: ['자동발행 게시글 전환율', '월간 활성 사이트 수'], cta: 'Auto 시작' },
-    { code: 'Certified', group: 'annual', title: 'Veridion Certified', price: 99000, period: '연', difficulty: '중하', priority: 8, summary: '점검 완료 사이트에 신뢰 인증 마크와 공개 인증 페이지를 제공합니다.', targetCustomer: '구매 전 신뢰 요소가 필요한 쇼핑몰·B2B 랜딩페이지', deliverables: ['인증 마크 스니펫', '공개 인증 페이지', '연 1회 재검토', '인증 만료일 표기', '마케팅 신뢰 요소'], operations: ['결제 완료 후 인증 후보 상태 생성', '최종 표기는 운영자 승인 후 사용하도록 안내', ...commonAssurance], kpi: ['인증 신청 수', '인증 마크 클릭률'], cta: '인증 신청' },
-    { code: 'Agency', group: 'b2b', title: '대행사 리포트 패키지', price: 199000, period: '월', difficulty: '중하', priority: 9, summary: '광고대행사·웹에이전시가 고객사 리스크 리포트를 반복 생성할 수 있는 패키지입니다.', targetCustomer: '고객사 사이트를 제작·운영하는 에이전시와 퍼포먼스 마케팅사', deliverables: ['고객사별 리포트', '화이트라벨 문구 영역', '월 10개 도메인 기준', 'CTA 게시판 자동발행', '대행사 전용 안내 문구'], operations: ['셀프서브 결제로 시작 가능하게 하되 화이트라벨은 별도 설정', '고객사 데이터 분리 원칙 명시', ...commonAssurance], kpi: ['대행사 문의/결제 수', '월 리포트 생성 수'], cta: '대행사 패키지 시작' }
+    { code: 'Report', group: 'one_time', title: '정밀 PDF 리포트', price: 9900, period: '1회', priority: 1, summary: '무료 진단 결과를 더 자세한 리포트로 확장합니다. 위험 항목, 근거, 우선순위, 개선 순서를 한 번에 확인할 수 있습니다.', targetCustomer: '쇼핑몰·랜딩페이지 담당자, 1인 사업자, 외주 제작 완료 후 점검이 필요한 고객', deliverables: ['위험도 점수 해설', '전체 탐지 근거', '페이지별 우선 조치 목록', '공유용 리포트 본문', '재점검 체크리스트'], operations: ['결제 확인 후 고객 포털에서 결과 확인', '진단 이력이 없을 경우 기본 점검 양식으로 제공', ...commonAssurance], benefits: ['위험 항목의 근거와 우선순위를 더 명확하게 확인', '개선 순서를 정리해 바로 조치 가능'], cta: 'PDF 리포트 구매' },
+    { code: 'FixPack', group: 'one_time', title: '맞춤 수정 문구안', price: 29000, period: '1회', priority: 2, summary: '탐지 항목별로 사이트에 바로 반영 가능한 고지·약관·환불·광고 문구 초안을 제공합니다.', targetCustomer: '사이트 안내 문구를 먼저 정리해야 하는 소상공인·마케터', deliverables: ['푸터 사업자 고지 문안', '환불·교환 안내 문구', '개인정보/약관 노출 가이드', '광고 표현 리스크 완화안', '수정 전/후 예시'], operations: ['우선순위가 높은 문구안부터 제공', '주의가 필요한 표현은 별도 표시', ...commonAssurance], benefits: ['사이트에 반영하기 쉬운 문구 예시 제공', '고객 오해 가능성이 있는 표현을 완화'], cta: '수정 문구안 받기' },
+    { code: 'TemplatePack', group: 'one_time', title: '법률 문서 템플릿 팩', price: 19000, period: '1회', priority: 3, summary: '이용약관, 개인정보처리방침, 환불 정책 기본 템플릿을 묶어 제공합니다.', targetCustomer: '신규 사이트 오픈 전 필수 문서가 필요한 고객', deliverables: ['이용약관 템플릿', '개인정보처리방침 템플릿', '환불·배송·교환 정책', '필수 고지 체크리스트', '정기결제 고지 문구'], operations: ['문서 생성 화면에서 입력한 정보 활용', '입력한 사업자 정보 기준으로 기본 문안 제공', ...commonAssurance], benefits: ['필수 문서를 빠르게 준비', '신규 사이트 오픈 전 기본 안내 정리'], cta: '템플릿 팩 구매' },
+    { code: 'IndustryGuide', group: 'one_time', title: '업종별 규제 가이드', price: 39000, period: '1회', priority: 4, summary: '쇼핑몰·건기식·화장품·교육·의료 광고 등 업종별 표현 리스크와 필수 고지를 정리합니다.', targetCustomer: '광고 문구와 상세페이지 표현 리스크가 큰 업종 고객', deliverables: ['업종별 금지·주의 표현', '필수 고지 위치', '상세페이지 체크리스트', '광고 문구 점검표', '사전 검수 기준'], operations: ['업종 정보에 맞춰 주요 항목 제공', '업종이 정해지지 않은 경우 공통 가이드 제공', ...commonAssurance], benefits: ['업종별 주의 표현을 사전에 확인', '상세페이지와 광고 문구 점검에 활용'], cta: '업종 가이드 받기' },
+    { code: 'Basic', group: 'subscription', title: 'Basic 모니터링', price: 49000, period: '월', priority: 5, summary: '소규모 사이트의 월 1회 리스크 재점검과 기본 이력 확인을 제공합니다.', targetCustomer: '월 1회 정기 점검만 필요한 소규모 사이트 고객', deliverables: ['월 1회 재점검', '전체 탐지 항목 해금', '기본 정책 초안', '이력 저장', '이메일 알림'], operations: ['신청 후 사이트 이력 확인 가능', '월간 점검 알림 제공', ...commonAssurance], benefits: ['월 1회 정기 점검으로 변경 사항 확인', '이력 저장으로 이전 결과와 비교 가능'], cta: 'Basic 시작' },
+    { code: 'Pro', group: 'subscription', title: 'Pro 정기 개선', price: 89000, period: '월', priority: 6, summary: '정밀 리포트, 맞춤 수정 문구안, 법령 변경 알림을 포함한 추천 플랜입니다.', targetCustomer: '사이트 주문·문의가 발생하고 반복 점검이 필요한 고객', deliverables: ['Basic 전체 포함', '정밀 리포트 포함', '맞춤 수정 문구안', '법령 변경 알림', '재점검 및 개선 추적'], operations: ['결제 확인 후 Pro 결과 제공', '다음 조치 항목을 우선순위로 표시', ...commonAssurance], benefits: ['정밀 리포트와 수정 문구안을 함께 확인', '다음 조치 항목을 우선순위로 정리'], cta: 'Pro 시작' },
+    { code: 'Auto', group: 'subscription', title: 'Auto 정기 케어', price: 149000, period: '월', priority: 7, summary: '반복 점검과 고객 안내 인사이트로 사이트 신뢰 관리를 돕습니다.', targetCustomer: '여러 캠페인·랜딩페이지를 꾸준히 점검해야 하는 팀', deliverables: ['Pro 전체 포함', '정기 고객 안내 인사이트', '승인 후 반영할 수 있는 수정 후보', '고위험 항목 우선 알림', '고객 포털 대시보드'], operations: ['정기 점검 결과 제공', '수정 후보는 확인 후 사용할 수 있도록 제공', ...commonAssurance], benefits: ['반복 점검 부담 완화', '여러 랜딩페이지의 고위험 항목을 우선 확인'], cta: 'Auto 시작' },
+    { code: 'Certified', group: 'annual', title: 'Veridion Certified', price: 99000, period: '연', priority: 8, summary: '점검 완료 사이트에 신뢰 인증 마크와 공개 인증 페이지를 제공합니다.', targetCustomer: '구매 전 신뢰 표시가 필요한 쇼핑몰·B2B 랜딩페이지', deliverables: ['인증 마크 스니펫', '공개 인증 페이지', '연 1회 재검토', '인증 만료일 표기', '고객 신뢰 요소'], operations: ['인증 검토 진행 상태 제공', '검토 완료 후 사용할 수 있는 표시 제공', ...commonAssurance], benefits: ['구매 전 신뢰 요소로 활용', '점검 완료 여부를 외부에 명확히 표시'], cta: '인증 신청' },
+    { code: 'Agency', group: 'b2b', title: '대행사 리포트 패키지', price: 199000, period: '월', priority: 9, summary: '광고대행사·웹에이전시가 고객사 리스크 리포트를 반복 생성할 수 있는 패키지입니다.', targetCustomer: '고객사 사이트를 제작·지원하는 에이전시와 퍼포먼스 마케팅사', deliverables: ['고객사별 리포트', '고객사 제출용 문구 영역', '월 10개 도메인 기준', '고객 안내 인사이트 제공', '대행사 맞춤 안내 문구'], operations: ['서비스 신청 후 고객사별 리포트 구성 지원', '고객사별 결과를 구분해 확인 가능', ...commonAssurance], benefits: ['고객사별 리포트 제공에 활용', '여러 도메인의 점검 결과를 구분해 관리'], cta: '대행사 패키지 시작' }
   ].sort((a, b) => a.priority - b.priority);
 }
 function getCommercialOffer(code) { return buildCommercialOfferCatalog().find(item => item.code === code) || null; }
@@ -1123,7 +1124,7 @@ function getCommercialOffer(code) { return buildCommercialOfferCatalog().find(it
 function buildPlanCatalog(recommendedPlan = 'Pro') {
   const offers = buildCommercialOfferCatalog();
   const free = { code: 'Free', monthlyPrice: 0, period: '무료', title: 'Free', group: 'free', summary: '체험용 무료 진단. 위험도와 상위 리스크만 간단히 확인합니다.', features: ['URL 1개 즉시 진단', '위험도 점수', '상위 위험 2개 요약', '상세 근거·페이지별 조치안 잠금', '일일 무료 3회 제한'], recommended: false };
-  const paid = offers.map(offer => ({ code: offer.code, monthlyPrice: offer.price, period: offer.period, title: offer.title, group: offer.group, summary: offer.summary, features: offer.deliverables, targetCustomer: offer.targetCustomer, difficulty: offer.difficulty, dailyPrice: offer.period === '월' ? Math.ceil(offer.price / 30) : 0, recommended: offer.code === recommendedPlan || (recommendedPlan === 'Pro' && offer.code === 'Pro') }));
+  const paid = offers.map(offer => ({ code: offer.code, monthlyPrice: offer.price, period: offer.period, title: offer.title, group: offer.group, summary: offer.summary, features: offer.deliverables, targetCustomer: offer.targetCustomer, dailyPrice: offer.period === '월' ? Math.ceil(offer.price / 30) : 0, recommended: offer.code === recommendedPlan || (recommendedPlan === 'Pro' && offer.code === 'Pro') }));
   return [free, ...paid];
 }
 function planPrice(plan) {
@@ -1357,7 +1358,7 @@ function buildPurchasedAsset(db, order) {
   const site = findSiteByAny(db, order.siteId, order.domain);
   const scan = (db.scans || []).find(item => item.siteId === order.siteId) || (db.scans || [])[0] || null;
   const industryGuide = buildIndustryGuide(scan?.industry || site?.industry || '일반 이커머스');
-  const base = { id: uid('asset'), orderId: order.id, siteId: order.siteId || null, domain: order.domain || site?.domain || null, plan: order.plan, productTitle: offer.title, status: 'ready', createdAt: nowIso(), supportEmail: BUSINESS_PROFILE.contactEmail, legalDisclaimer: '본 산출물은 웹사이트 운영 리스크 점검 및 문구 개선 참고 자료이며, 개별 사건에 대한 법률 자문이 아닙니다.' };
+  const base = { id: uid('asset'), orderId: order.id, siteId: order.siteId || null, domain: order.domain || site?.domain || null, plan: order.plan, productTitle: offer.title, status: 'ready', createdAt: nowIso(), supportEmail: BUSINESS_PROFILE.contactEmail, legalDisclaimer: '본 산출물은 웹사이트 안내 리스크 점검 및 문구 개선 참고 자료이며, 개별 사건에 대한 법률 자문이 아닙니다.' };
   const reportSections = [
     { title: '요약', body: scan ? `${scan.target || order.domain} 기준 위험도 ${scan.riskScore}점(${scan.riskLevel})입니다.` : '스캔 이력이 없어 공통 진단 리포트 형식으로 생성되었습니다.' },
     { title: '우선 조치', body: (scan?.topFindings || ['필수 고지 위치 확인', '개인정보 처리방침 링크 확인', '환불·교환 정책 노출 확인']).join('\n') },
@@ -2049,7 +2050,7 @@ function createGuidanceDocument(db, site, scan) {
   const doc = {
     id: uid('guide'),
     siteId: site.id,
-    title: `${site.domain} 맞춤 운영 지침`,
+    title: `${site.domain} 맞춤 개선 안내`,
     type: 'site_guideline',
     version: `v${Date.now()}`,
     content,
@@ -2083,8 +2084,8 @@ function seedAutoFixJobs(db, site, scan) {
 
 function createCtaPublication(db, scan, options = {}) {
   const top = (scan.topFindings || []).slice(0, 2).join(', ') || '핵심 고지 리스크';
-  const title = options.title || `무료 진단 후 놓치기 쉬운 ${scan.industry || '온라인 사업'} 운영 리스크`;
-  const body = options.body || `${scan.target || '등록 사이트'} 기준 핵심 리스크가 확인되었습니다. 무료 진단은 상위 항목만 요약하고, 전체 근거·페이지별 조치안·정책 문안·자동수정은 유료 플랜에서 제공합니다. 지금 무료 진단으로 현재 상태를 확인하고 필요한 플랜을 선택하세요.`;
+  const title = options.title || `무료 진단 후 확인해야 할 ${scan.industry || '온라인 사업'} 안내 리스크`;
+  const body = options.body || `${scan.target || '등록 사이트'} 기준 핵심 리스크가 확인되었습니다. 무료 진단은 핵심 항목을 먼저 요약합니다. 상세 근거, 페이지별 조치안, 정책 문서 초안은 선택한 서비스에서 이어서 확인할 수 있습니다.`;
   const publication = {
     id: uid('pub'),
     title,
@@ -2308,7 +2309,7 @@ async function handleApi(req, res) {
         appendAudit(db, req, synced.ok ? 'public.payment.portone.completed' : 'public.payment.portone.verification_failed', { orderId, paymentId: body.paymentId || orderId, reason: synced.reason || null });
         await writeDb(db);
         if (!synced.ok && synced.reason !== 'payment_not_completed') {
-          return json(req, res, 400, { ok: false, error: `포트원 결제 검증에 실패했습니다: ${synced.reason}`, order: synced.order, paymentSession: synced.paymentSession });
+          return json(req, res, 400, { ok: false, error: `결제 검증에 실패했습니다: ${synced.reason}`, order: synced.order, paymentSession: synced.paymentSession });
         }
         return json(req, res, 200, { ok: true, order: synced.order, paymentSession: synced.paymentSession, payment: synced.payment || null, pendingSettlement: !!synced.pendingSettlement });
       }
@@ -2317,7 +2318,7 @@ async function handleApi(req, res) {
       } catch (error) {
         return json(req, res, 403, { ok: false, error: '상용 타깃에서는 데모 결제 완료 라우트를 사용할 수 없습니다.' });
       }
-      if (PAYMENT_PROVIDER === 'external_http') return json(req, res, 400, { ok: false, error: '외부 결제 모드에서는 공급자 콜백 또는 운영 확인이 필요합니다.' });
+      if (PAYMENT_PROVIDER === 'external_http') return json(req, res, 400, { ok: false, error: '외부 결제 방식에서는 결제 확인 절차가 필요합니다.' });
       const completed = completeCheckoutOrder(db, orderId);
       if (!completed) return json(req, res, 404, { ok: false, error: '주문을 찾을 수 없습니다.' });
       appendAudit(db, req, 'public.payment.completed', { orderId: completed.order.id, provider: PAYMENT_PROVIDER });
@@ -2370,7 +2371,7 @@ async function handleApi(req, res) {
       });
       appendAudit(db, req, 'public.payment.portone.webhook_rejected', { paymentId: paymentId || null, reason: webhookVerification.reason, verificationMode: 'standard_webhooks_v1' });
       await writeDb(db);
-      return json(req, res, 401, { ok: false, error: '포트원 웹훅 서명 검증에 실패했습니다.', reason: webhookVerification.reason });
+      return json(req, res, 401, { ok: false, error: '결제 알림 서명 검증에 실패했습니다.', reason: webhookVerification.reason });
     }
     if (!paymentId) return json(req, res, 202, { ok: true, ignored: true, reason: 'payment_id_missing' });
     const lockKey = `portone-webhook:${paymentId}`;
@@ -2662,7 +2663,7 @@ async function handleApi(req, res) {
     if (!orderId) return json(req, res, 400, { ok: false, error: 'orderId가 필요합니다.' });
     const order = db.orders.find(item => item.id === orderId);
     const paymentSession = (db.paymentSessions || []).find(item => item.orderId === orderId);
-    if (!order || !paymentSession || paymentSession.provider !== 'portone_v2') return json(req, res, 404, { ok: false, error: '포트원 결제 세션을 찾을 수 없습니다.' });
+    if (!order || !paymentSession || paymentSession.provider !== 'portone_v2') return json(req, res, 404, { ok: false, error: '결제 세션을 찾을 수 없습니다.' });
     const cancelled = await PORTONE_CLIENT.cancelPayment(paymentSession.providerPaymentId || order.id, { reason: String(body.reason || 'admin_cancel').trim() || 'admin_cancel' });
     const synced = await syncPortOneCheckoutOrder(db, orderId, paymentSession.providerPaymentId || order.id, 'admin_cancel');
     appendAudit(db, req, 'admin.payment.portone.cancel_requested', { orderId, paymentId: paymentSession.providerPaymentId || order.id, reason: String(body.reason || 'admin_cancel').trim() || 'admin_cancel' });
@@ -2805,7 +2806,7 @@ async function handleApi(req, res) {
   if (pathname === '/api/admin/auto-fix-jobs/approve' && req.method === 'POST') {
     const body = normalizeIdStatusPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
     const job = db.autoFixJobs.find(item => item.id === body.id);
-    if (!job) return json(req, res, 404, { ok: false, error: '자동수정 작업을 찾을 수 없습니다.' });
+    if (!job) return json(req, res, 404, { ok: false, error: '수정 후보 작업을 찾을 수 없습니다.' });
     job.previousStatus = job.status || 'pending';
     job.status = 'approved';
     job.approvedAt = nowIso();
@@ -2818,7 +2819,7 @@ async function handleApi(req, res) {
   if (pathname === '/api/admin/auto-fix-jobs/rollback' && req.method === 'POST') {
     const body = normalizeIdStatusPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
     const job = db.autoFixJobs.find(item => item.id === body.id);
-    if (!job) return json(req, res, 404, { ok: false, error: '자동수정 작업을 찾을 수 없습니다.' });
+    if (!job) return json(req, res, 404, { ok: false, error: '수정 후보 작업을 찾을 수 없습니다.' });
     if (!job.rollbackToken) return json(req, res, 400, { ok: false, error: '롤백 가능한 작업이 아닙니다.' });
     job.status = 'rolled_back';
     job.rolledBackAt = nowIso();

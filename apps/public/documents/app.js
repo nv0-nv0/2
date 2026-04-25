@@ -8,7 +8,7 @@ function renderDocuments(documents = []) {
   preview.innerHTML = documents.map(doc => `
     <article class="document-preview stack">
       <h3>${escapeHtml(doc.title)}</h3>
-      <div class="preview-toolbar"><span class="pill gray">초안 미리보기</span><span class="muted">검토 후 운영 환경에 맞게 보완하세요.</span></div><pre>${escapeHtml(doc.content)}</pre>
+      <div class="preview-toolbar"><span class="pill gray">초안 미리보기</span><span class="muted">검토 후 실제 사이트 정보에 맞게 보완하세요.</span></div><pre>${escapeHtml(doc.content)}</pre>
     </article>
   `).join('');
 }
