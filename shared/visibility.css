@@ -1,0 +1,57 @@
+/* PHASE77: Professional visibility-first color system
+   Goal: one readable, clean, production-safe UI layer across public/admin screens. */
+:root{
+  --nv77-bg:#0B0F14;
+  --nv77-bg-elevated:#0F172A;
+  --nv77-surface:#111827;
+  --nv77-surface-2:#172033;
+  --nv77-surface-3:#1E293B;
+  --nv77-line:#334155;
+  --nv77-line-strong:#475569;
+  --nv77-text:#F8FAFC;
+  --nv77-text-2:#E2E8F0;
+  --nv77-muted:#CBD5E1;
+  --nv77-muted-2:#A8B3C7;
+  --nv77-primary:#2563EB;
+  --nv77-primary-strong:#1D4ED8;
+  --nv77-primary-soft:#60A5FA;
+  --nv77-success:#22C55E;
+  --nv77-warning:#FBBF24;
+  --nv77-danger:#F87171;
+  --nv77-info:#38BDF8;
+  --nv77-radius:18px;
+  --nv77-focus:0 0 0 4px rgba(96,165,250,.28);
+  --nv77-shadow:0 22px 60px rgba(0,0,0,.34);
+  --nv77-shadow-sm:0 12px 34px rgba(0,0,0,.24);
+}
+html,body{background:var(--nv77-bg)!important;color:var(--nv77-text)!important;color-scheme:dark;}
+body{background:radial-gradient(circle at 10% -10%,rgba(37,99,235,.22),transparent 34%),linear-gradient(180deg,var(--nv77-bg) 0%,#0B1220 52%,var(--nv77-bg) 100%)!important;}
+body *{text-shadow:none!important;}
+.app-shell,.home-shell,.demo-shell,.checkout-shell,.auth-shell{color:var(--nv77-text)!important;background:transparent!important;}
+.site-topbar{background:rgba(11,15,20,.95)!important;border-bottom:1px solid var(--nv77-line)!important;box-shadow:0 10px 32px rgba(0,0,0,.22)!important;}
+.site-topbar .brand,.brand,.brand span,.site-topbar small{color:var(--nv77-text)!important;}
+.site-topbar .brand:before{background:var(--nv77-primary-soft)!important;box-shadow:0 0 0 5px rgba(96,165,250,.16)!important;}
+.site-menu a,.topnav a,.admin-nav a,.admin-nav button{color:var(--nv77-text-2)!important;background:transparent!important;border-color:transparent!important;}
+.site-menu a:hover,.site-menu a[aria-current="page"],.topnav a:hover,.admin-nav a:hover,.admin-nav button:hover{background:var(--nv77-surface-3)!important;color:#fff!important;border-color:var(--nv77-line-strong)!important;}
+.site-menu a:last-child,.site-menu a.cta,.topnav a.primary,.admin-nav a.primary,.btn.primary,button.primary,#scanBtn,#checkoutBtn,#loginBtn{background:linear-gradient(135deg,var(--nv77-primary),var(--nv77-primary-strong))!important;color:#fff!important;border-color:var(--nv77-primary)!important;box-shadow:0 14px 32px rgba(37,99,235,.26)!important;}
+button,.btn,.topnav a,.admin-nav a,.admin-nav button{min-height:44px!important;border-radius:12px!important;font-weight:850!important;letter-spacing:-.015em!important;color:#fff!important;border:1px solid var(--nv77-line)!important;background:var(--nv77-surface-3)!important;box-shadow:var(--nv77-shadow-sm)!important;}
+.secondary,.btn.secondary,button.secondary,#retryBtn,#completeBtn,.topnav a.secondary{background:var(--nv77-surface)!important;color:var(--nv77-text-2)!important;border-color:var(--nv77-line-strong)!important;box-shadow:none!important;}
+button:focus-visible,.btn:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:none!important;box-shadow:var(--nv77-focus)!important;border-color:var(--nv77-primary-soft)!important;}
+.page-head,.hero,.card,.panel,.result-card,.offer-card,.cta-band,.notice,.document-preview,.empty-preview,.result-locked,.upgrade-box,.consent-box,.save-site-card,.portal-empty,.score-box,.locked-content,.lock-card,.board-hero,.segment-tabs,.order-card,.site-card,.table-wrap,.admin-card,.admin-panel,.console-card,.library-card,.publication-card,.settings-card,.diagnostics-card,.p66-score-mini,.empty-result,.loading-steps div,.p66-visual-row article,.diagnosis-grid .diag-chip,.diag-chip,.result-panel,.scan-card,.mini-card,.info-card,.guide-card,.policy-card,.legal-card,.section-card,.feature-card,.flow-card,.metric-card,.sample-card,.preview-card,.faq-card,.nv67-panel,.nv67-alert,.nv67-checks article,.nv67-flow article,.nv67-main-bottom article,.nv67-final,.nv75-content-fill{background:linear-gradient(180deg,var(--nv77-surface),var(--nv77-bg-elevated))!important;border:1px solid var(--nv77-line)!important;color:var(--nv77-text)!important;box-shadow:var(--nv77-shadow-sm)!important;}
+.hero,.page-head,.board-hero,.cta-band,.nv67-hero,.nv67-panel,.nv67-final{background:linear-gradient(135deg,var(--nv77-surface),var(--nv77-surface-2))!important;}
+h1,h2,h3,h4,h5,h6,b,strong,.kpi,.plan-price,.offer-price,.site-kpi b,.score-box strong,.p66-score-mini strong,.p66-score-mini b,.loading-steps b,.p66-visual-row b,.diag-chip b,.result-panel b,.scan-card b,.card b,.panel b,.notice b,.nv67-bold,.nv67-score strong,.nv67-checks b,.nv67-flow b{color:#fff!important;}
+p,li,dd,td,small,.muted,.page-head p,.hero p,.card p,.panel p,.notice,.empty-preview,.empty-result,.loading-steps div,.p66-score-mini small,.p66-visual-row small,.diag-chip small,.offer-summary,.offer-meta,.price-note,.post-meta,.site-kpi span,.nv67-lead,.nv67-proof span,.nv67-flow small,.nv67-main-bottom p,.nv67-final p{color:var(--nv77-muted)!important;}
+.card p strong,.panel p strong,.notice strong,li strong,td strong{color:var(--nv77-text)!important;}
+a{color:var(--nv77-primary-soft)!important;text-decoration:none!important;}a:hover{color:#BFDBFE!important;}
+.pill,.trust-item,.badge,.tag,.chip,.nv67-chip-row span,.board-flow b,.recommended-badge,.recommended-ribbon{background:var(--nv77-surface-3)!important;border:1px solid var(--nv77-line-strong)!important;color:#BFDBFE!important;}
+.pill.gray,.badge.gray,.tag.gray{color:var(--nv77-text-2)!important;background:var(--nv77-surface)!important;}.pill.green,.badge.green,.tag.green,.success,.success-text,.comparison-table .yes{color:#86EFAC!important;}.pill.gold,.badge.gold,.tag.gold,.warning,.warning-text{color:var(--nv77-warning)!important;}.danger,.danger-text,.p66-danger,.nv67-danger,.error,.error-text{color:var(--nv77-danger)!important;}
+input,textarea,select,.auth-shell input,.save-site-form input,.card label input{background:#0B1220!important;color:#fff!important;border:1px solid var(--nv77-line-strong)!important;border-radius:12px!important;}
+input::placeholder,textarea::placeholder{color:#A8B3C7!important;opacity:1!important;}label{color:var(--nv77-text-2)!important;}
+table,.table-wrap table{background:var(--nv77-bg-elevated)!important;color:var(--nv77-text)!important;border-color:var(--nv77-line)!important;}th{background:var(--nv77-surface)!important;color:#fff!important;border-bottom-color:var(--nv77-line-strong)!important;}td{background:transparent!important;color:var(--nv77-text-2)!important;border-bottom-color:var(--nv77-line)!important;}.comparison-table .no{color:#94A3B8!important;}.comparison-table .price-cell{color:#fff!important;}
+pre,code,.document-preview pre,#consoleState{background:#0B1220!important;color:var(--nv77-text-2)!important;border:1px solid var(--nv77-line)!important;border-radius:14px!important;}
+.business-footer{background:transparent!important;border-top-color:var(--nv77-line)!important;color:var(--nv77-muted)!important;}.business-footer strong{color:#fff!important;}.business-footer a{color:var(--nv77-primary-soft)!important;}
+.promo-banner{background:linear-gradient(135deg,var(--nv77-surface),var(--nv77-surface-2))!important;border-color:rgba(96,165,250,.34)!important;color:#DBEAFE!important;}.promo-banner strong{color:#fff!important;}
+.risk-bar{background:var(--nv77-surface-3)!important;}.result-locked .lock-box{background:linear-gradient(180deg,rgba(11,15,20,.58),rgba(11,15,20,.94))!important;}
+.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important;}
+.nv67-urlbox input{min-width:0!important;}.nv67-score .bar{stroke:var(--nv77-primary-soft)!important;}.nv67-score .track{stroke:var(--nv77-line)!important;}.nv67-alert{border-color:rgba(248,113,113,.38)!important;}.nv67-kicker{color:#BFDBFE!important;font-weight:900!important;}.nv67-hero h1 em{color:#BFDBFE!important;font-style:normal!important;}.nv67-proof b{color:#fff!important;}
+@media(max-width:900px){.site-topbar{position:static!important;}.site-menu a,.topnav a,.admin-nav a,.admin-nav button,.btn,button{min-height:46px!important;}.page-head,.hero,.card,.panel{padding:20px!important;}}
