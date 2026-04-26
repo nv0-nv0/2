@@ -431,9 +431,19 @@ sessions.set(sid, session);
 await sessionStore.set(sid, session, Math.floor(SESSION_TTL_MS / 1000));
 return { sid, ...session };
 }
+function normalizeHostValue(value = '') {
+const raw=String(value||'').trim().toLowerCase();
+if (!raw) return '';
+try {
+const candidate = raw.includes('://') ? raw : `https://${raw}`;
+return new URL(candidate).host.toLowerCase();
+} catch {
+return raw.split('/')[0].toLowerCase();
+}
+}
 function sameOriginAllowed(req) {
-const host = String(req.headers.host || '').trim().toLowerCase();
-const acceptedHosts = new Set([host, ...ALLOWED_ADMIN_ORIGINS.map(v => v.toLowerCase())]);
+const host=normalizeHostValue(req.headers.host||'');
+const acceptedHosts=new Set([host,...ALLOWED_ADMIN_ORIGINS.map(normalizeHostValue)].filter(Boolean));
 const origin = String(req.headers.origin || '').trim();
 const referer = String(req.headers.referer || '').trim();
 const values = [origin, referer].filter(Boolean);
@@ -816,7 +826,7 @@ const m = {
 '/board/post': [PUBLIC_DIR, 'board'],
 '/cases': [PUBLIC_DIR, 'board'],
 '/documents': [PUBLIC_DIR, 'documents'],
-'/guides': [PUBLIC_DIR, 'documents'],
+'/policy-documents': [PUBLIC_DIR, 'documents'],
 '/solutions': [PUBLIC_DIR, 'solutions'],
 '/service': [PUBLIC_DIR, 'solutions'],
 '/products': [PUBLIC_DIR, 'plans'],
@@ -855,6 +865,9 @@ const metas = {
 '/products/veridion/demo': ['NV0 무료 진단 | NV0', '무료 진단으로 웹사이트 안내 문구와 정책 고지 위험을 먼저 확인하세요.'],
 '/plans': ['상품·요금 | NV0', '무료 진단 이후 상세 리포트, 수정안, 정책 템플릿, 구독 점검 상품을 비교하세요.'],
 '/documents': ['정책 문서 생성 | NV0', '개인정보처리방침, 이용약관, 환불 정책 문서 초안을 빠르게 정리합니다.'],
+'/policy-documents': ['정책 문서 생성 | NV0', '개인정보처리방침, 이용약관, 환불 정책 문서 초안을 빠르게 정리합니다.'],
+'/guides': ['운영 가이드 | NV0', '쇼핑몰 신뢰도, 환불 정책, 구매 CTA, 게시판 자동 발행 활용법을 정리한 운영 가이드입니다.'],
+'/resources': ['운영 가이드 | NV0', '쇼핑몰 신뢰도, 환불 정책, 구매 CTA, 게시판 자동 발행 활용법을 정리한 운영 가이드입니다.'],
 '/solutions': ['솔루션 | NV0', '웹사이트 안내 고지, 정책 문서, 결제 전환 흐름을 점검하는 솔루션입니다.'],
 '/board': ['게시판 | NV0', '전자상거래 사이트 운영자가 참고할 수 있는 필수 고지와 정책 점검 사례를 제공합니다.'],
 '/business-info': ['사업자 정보 | NV0', 'NV0 서비스 운영자의 사업자 고지와 고객지원 정보를 확인하세요.'],
@@ -2463,10 +2476,36 @@ result.fields[name] = body;
 }
 return result;
 }
+const UPLOAD_MIME_BY_EXT=Object.freeze({
+'.txt': new Set(['text/plain', 'application/octet-stream']),
+'.md': new Set(['text/markdown', 'text/plain', 'application/octet-stream']),
+'.csv': new Set(['text/csv', 'application/vnd.ms-excel', 'text/plain', 'application/octet-stream']),
+'.json': new Set(['application/json', 'text/plain', 'application/octet-stream']),
+'.pdf': new Set(['application/pdf', 'application/octet-stream']),
+'.png': new Set(['image/png']),
+'.jpg': new Set(['image/jpeg']),
+'.jpeg': new Set(['image/jpeg']),
+'.webp': new Set(['image/webp'])
+});
+function sanitizeUploadFilename(filename=''){
+const base = path.basename(String(filename || 'upload').replace(/[\/]+/g, '_'));
+const cleaned = base.replace(/[^a-zA-Z0-9._-]/g, '_').replace(/_+/g, '_').slice(0, 120);
+return cleaned&&cleaned!=='.'&&cleaned!=='..'?cleaned:'upload.bin';
+}
 function isAllowedUpload(file) {
-const ext = path.extname(file.filename || '').toLowerCase();
-const allowedExt = new Set(['.txt', '.pdf', '.png', '.jpg', '.jpeg', '.webp', '.json', '.csv', '.md']);
-return allowedExt.has(ext) && file.content.length <= MAX_MULTIPART_BODY_BYTES;
+if (!file || !Buffer.isBuffer(file.content)) return false;
+if (file.content.length <= 0 || file.content.length > MAX_MULTIPART_BODY_BYTES) return false;
+const filename=sanitizeUploadFilename(file.filename);
+const ext = path.extname(filename).toLowerCase();
+const allowedMime=UPLOAD_MIME_BY_EXT[ext];
+if(!allowedMime)return false;
+const contentType=String(file.contentType||'').split(';')[0].trim().toLowerCase();
+if(contentType&&!allowedMime.has(contentType))return false;
+if (ext === '.pdf' && !file.content.subarray(0, 5).equals(Buffer.from('%PDF-'))) return false;
+if (ext === '.png' && !file.content.subarray(0, 8).equals(Buffer.from([0x89,0x50,0x4e,0x47,0x0d,0x0a,0x1a,0x0a]))) return false;
+if ((ext === '.jpg' || ext === '.jpeg') && !(file.content[0] === 0xff && file.content[1] === 0xd8 && file.content[2] === 0xff)) return false;
+if (ext === '.webp' && !(file.content.subarray(0, 4).toString('ascii') === 'RIFF' && file.content.subarray(8, 12).toString('ascii') === 'WEBP')) return false;
+return true;
 }
 async function verifyTurnstile(req, token) {
 if (!ENABLE_TURNSTILE) return { ok: true, skipped: true };
@@ -3544,14 +3583,14 @@ return json(req, res, 200, { ok: true, item });
 }
 if (pathname === '/api/admin/library/upload' && req.method === 'POST') {
 const ct = req.headers['content-type'] || '';
-const match = /boundary=(.+)$/.exec(ct);
+const match = /boundary=(?:"([^"]+)"|([^;]+))/i.exec(ct);
 if (!match) return json(req, res, 400, { ok: false, error: 'multipart/form-data 가 필요합니다.' });
 const raw = await bodyBuffer(req, MAX_MULTIPART_BODY_BYTES);
-const parsed = parseMultipart(raw, match[1]);
+const parsed = parseMultipart(raw, match[1] || match[2]);
 const file = parsed.files[0];
 if (!file) return json(req, res, 400, { ok: false, error: '파일이 없습니다.' });
 if (!isAllowedUpload(file)) return json(req, res, 400, { ok: false, error: '허용되지 않은 파일 형식이거나 파일이 너무 큽니다.' });
-const safeName = `${Date.now()}-${path.basename(file.filename).replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+const safeName = `${Date.now()}-${crypto.randomBytes(6).toString('hex')}-${sanitizeUploadFilename(file.filename)}`;
 let objectUrl = null;
 if (STORAGE_MODE === 'local_fs') {
 await fs.writeFile(path.join(UPLOADS_DIR, safeName), file.content);
@@ -3729,7 +3768,11 @@ if (pathname.startsWith('/apps/admin/')) {
 if (!await getSession(req)) return text(req, res, 403, 'Forbidden');
 return serveStaticRoot(req, res, ROOT, '/');
 }
-if (pathname.startsWith('/runtime/uploads/')) return serveStaticRoot(req, res, ROOT, '/');
+if (pathname.startsWith('/runtime/uploads/')) {
+const uploadSession = await getSession(req);
+if (!uploadSession) return text(req, res, 403, 'Forbidden');
+return serveStaticRoot(req, res, ROOT, '/');
+}
 const apiHandled = await handleApi(req, res);
 if (apiHandled !== false) return;
 const rendered = await renderPage(pathname, req, res);

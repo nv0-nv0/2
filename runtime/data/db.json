@@ -1,0 +1,123 @@
+{
+  "settings": {
+    "autoPublicationEnabled": true,
+    "publicationChannel": "internal-board",
+    "supportEmail": "ct@nv0.kr",
+    "defaultJurisdiction": "KR",
+    "businessProfile": {
+      "tradeName": "엔브이제로(NV0)",
+      "representative": "나금상",
+      "registrationNumber": "584-77-00586",
+      "address": "경기도 남양주시 와부읍 덕소로97번길 34, 105동 402호",
+      "businessTypes": [
+        "정보통신업",
+        "소프트웨어 개발 및 공급업",
+        "전자상거래업",
+        "데이터베이스 및 온라인 정보 제공업",
+        "광고 대행업"
+      ],
+      "contactEmail": "ct@nv0.kr",
+      "domain": "https://nv0.kr",
+      "mailOrderRegistrationNumber": "",
+      "hostingProvider": "자체 서버 또는 계약 호스팅 사업자",
+      "customerServicePhone": "",
+      "privacyOfficerEmail": "ct@nv0.kr"
+    },
+    "defaultAlertChannel": "email",
+    "autoFixMode": "approval_required",
+    "operatorMode": "solo",
+    "adminAuthMode": "shared_key",
+    "ctaAutopublishEnabled": true,
+    "legalWatchEnabled": true,
+    "maxAutoFixPerRun": 5,
+    "scanProviderMode": "builtin",
+    "paymentProviderMode": "demo",
+    "storageMode": "local_fs",
+    "releasePhase": "phase68-server-api-auto-diagnosis-delivery",
+    "dataRetentionDays": 1095,
+    "refundRequestWindowDays": 7,
+    "operatorAlertEmail": "ct@nv0.kr"
+  },
+  "orders": [
+    {
+      "id": "ord-1001",
+      "customer": "Acme Co",
+      "status": "paid",
+      "stage": "scan_requested",
+      "amount": 129000,
+      "createdAt": "2026-04-26T02:33:02.683Z"
+    },
+    {
+      "id": "ord-1002",
+      "customer": "Beta Labs",
+      "status": "pending",
+      "stage": "draft",
+      "amount": 59000,
+      "createdAt": "2026-04-26T02:33:02.684Z"
+    }
+  ],
+  "subscriptions": [
+    {
+      "id": "sub-1001",
+      "siteId": "site-seed-001",
+      "plan": "Auto",
+      "status": "active",
+      "monthlyPrice": 149000,
+      "createdAt": "2026-04-26T02:33:02.684Z"
+    }
+  ],
+  "publications": [
+    {
+      "id": "pub-1001",
+      "title": "전자상거래 사이트 필수 고지 7가지",
+      "status": "published",
+      "type": "cta",
+      "createdAt": "2026-04-26T02:33:02.684Z",
+      "ctaType": "free_scan"
+    }
+  ],
+  "boards": [
+    {
+      "id": "board-1001",
+      "boardType": "notice",
+      "title": "NV0 서비스 공지",
+      "body": "서비스 안내 게시판입니다.",
+      "createdAt": "2026-04-26T02:33:02.684Z",
+      "visibility": "public"
+    }
+  ],
+  "library": [],
+  "scans": [],
+  "sites": [],
+  "legalUpdates": [
+    {
+      "id": "law-1001",
+      "source": "공정위",
+      "title": "전자상거래 고지 점검 기준 업데이트",
+      "summary": "필수 고지 위치와 환불 고지 가독성 점검 항목을 재정리합니다.",
+      "effectiveDate": "2026-04-01",
+      "severity": "medium",
+      "createdAt": "2026-04-26T02:33:02.684Z"
+    }
+  ],
+  "systemItems": [],
+  "rules": [],
+  "autoFixJobs": [],
+  "guidanceDocuments": [],
+  "paymentSessions": [],
+  "paymentEvents": [],
+  "webhookInbox": [],
+  "customers": [],
+  "customerSessions": [],
+  "customerSiteLinks": [],
+  "passwordResetTokens": [],
+  "emailOutbox": [],
+  "purchasedAssets": [],
+  "adminUsers": [],
+  "adminRoleBindings": [],
+  "adminSessions": [],
+  "auditLogs": [],
+  "refundRequests": [],
+  "operationalEvents": [],
+  "idempotencyKeys": []
+}

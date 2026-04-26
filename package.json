@@ -1,6 +1,6 @@
 {
   "name": "nv0-veridion-cleanroom",
-  "version": "1.0.0-commercial-final-100-score-phase75",
+  "version": "1.0.0-commercial-final-100-score-phase76",
   "private": true,
   "type": "module",
   "scripts": {
@@ -80,6 +80,8 @@
     "validate:phase73": "node scripts/validate-phase73-visibility.mjs",
     "phase73:final": "npm run check:syntax && npm run test:all && npm run validate:phase72 && npm run validate:phase73",
     "validate:phase74": "node scripts/validate-phase74-dashboard-ui.mjs",
-    "phase74:final": "npm run check:syntax && npm run validate:phase72 && npm run validate:phase73 && npm run validate:phase74"
+    "phase74:final": "npm run check:syntax && npm run validate:phase72 && npm run validate:phase73 && npm run validate:phase74",
+    "validate:phase76": "node scripts/validate-phase76-security-routing.mjs",
+    "phase76:final": "npm run check:syntax && npm run test:all && npm run validate:phase76"
   }
 }

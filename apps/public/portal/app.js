@@ -1,4 +1,4 @@
-import { escapeHtml, formatWon, renderList } from '/shared/html.js';
+import { escapeAttr, escapeHtml, formatWon, renderList } from '/shared/html.js';
 
 const state = document.getElementById('portalState');
 const primary = document.getElementById('portalPrimary');
@@ -24,7 +24,7 @@ function renderAsset(asset, order, accessToken) {
   const guide = asset.guide ? `<div class="result-card"><strong>${escapeHtml(asset.guide.industry)} 체크리스트</strong><ul class="result-list">${renderList(asset.guide.checklist || [], '', item => `<li>${escapeHtml(item)}</li>`)}</ul></div>` : '';
   const badge = asset.badgeSnippet ? `<div class="result-card"><strong>인증 마크 스니펫</strong><pre class="pre-wrap">${escapeHtml(asset.badgeSnippet)}</pre></div>` : '';
   const entitlement = asset.entitlement ? `<div class="result-card"><strong>활성 권한</strong><ul class="result-list">${renderList(asset.entitlement.included || [], '', item => `<li>${escapeHtml(item)}</li>`)}</ul></div>` : '';
-  return `<div class="card stack"><div class="meta-row"><strong>${escapeHtml(asset.title || asset.productTitle || '구매 산출물')}</strong><span class="pill green">${escapeHtml(asset.status || 'ready')}</span></div><div class="notice muted">${escapeHtml(asset.legalDisclaimer || '')}</div>${downloadUrl ? `<a class="btn secondary" href="${downloadUrl}">PDF 다운로드</a>` : ''}${sections}${fixes}${templates}${guide}${badge}${entitlement}</div>`;
+  return `<div class="card stack"><div class="meta-row"><strong>${escapeHtml(asset.title || asset.productTitle || '구매 산출물')}</strong><span class="pill green">${escapeHtml(asset.status || 'ready')}</span></div><div class="notice muted">${escapeHtml(asset.legalDisclaimer || '')}</div>${downloadUrl ? `<a class="btn secondary" href="${escapeAttr(downloadUrl)}">PDF 다운로드</a>` : ''}${sections}${fixes}${templates}${guide}${badge}${entitlement}</div>`;
 }
 function renderSavedSites(sites = []) {
   const fallback = [{ siteId: 'demo', label: 'nv0 demo site', domain: 'https://nv0demo.com', latestRiskScore: 72, latestRiskLevel: '보통', latestFindings: 15, status: '정상 운영', industry: '메인', createdAt: '2026.04.25' }];
@@ -33,7 +33,7 @@ function renderSavedSites(sites = []) {
     <td><span class="nv74-mini-score">${escapeHtml(site.latestRiskScore ?? '72')}</span> <b class="nv74-status-warning">${escapeHtml(site.latestRiskLevel || '보통')}</b></td>
     <td>${escapeHtml(site.updatedAt || site.createdAt || '2026.04.25')}<br><small>13:51</small></td>
     <td><span class="nv74-chip">${escapeHtml(site.status || '정상 운영')}</span></td>
-    <td><div class="nv74-actions"><a class="btn secondary" href="/products/veridion/demo?target=${encodeURIComponent(site.domain || '')}">상세 보기</a><a class="btn secondary" href="/plans?siteId=${encodeURIComponent(site.siteId || '')}">리포트</a>${site.siteId && site.siteId !== 'demo' ? `<button class="btn secondary" data-remove-site="${escapeHtml(site.siteId)}" type="button">…</button>` : ''}</div></td>
+    <td><div class="nv74-actions"><a class="btn secondary" href="/products/veridion/demo?target=${escapeAttr(encodeURIComponent(site.domain || ''))}">상세 보기</a><a class="btn secondary" href="/plans?siteId=${escapeAttr(encodeURIComponent(site.siteId || ''))}">리포트</a>${site.siteId && site.siteId !== 'demo' ? `<button class="btn secondary" data-remove-site="${escapeAttr(site.siteId)}" type="button">…</button>` : ''}</div></td>
   </tr>`).join('');
   return `<table class="nv74-site-table"><thead><tr><th>사이트</th><th>최근 점수</th><th>진단일</th><th>상태</th><th>관리</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
