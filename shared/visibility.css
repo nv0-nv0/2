@@ -44,7 +44,7 @@ p,li,dd,td,small,.muted,.page-head p,.hero p,.card p,.panel p,.notice,.empty-pre
 .card p strong,.panel p strong,.notice strong,li strong,td strong{color:var(--nv77-text)!important;}
 a{color:var(--nv77-primary-soft)!important;text-decoration:none!important;}a:hover{color:#BFDBFE!important;}
 .pill,.trust-item,.badge,.tag,.chip,.nv67-chip-row span,.board-flow b,.recommended-badge,.recommended-ribbon{background:var(--nv77-surface-3)!important;border:1px solid var(--nv77-line-strong)!important;color:#BFDBFE!important;}
-.pill.gray,.badge.gray,.tag.gray{color:var(--nv77-text-2)!important;background:var(--nv77-surface)!important;}.pill.green,.badge.green,.tag.green,.success,.success-text,.comparison-table .yes{color:#86EFAC!important;}.pill.gold,.badge.gold,.tag.gold,.warning,.warning-text{color:var(--nv77-warning)!important;}.danger,.danger-text,.p66-danger,.nv67-danger,.error,.error-text{color:var(--nv77-danger)!important;}
+.pill.gray,.badge.gray,.tag.gray{color:var(--nv77-text-2)!important;background:var(--nv77-surface)!important;}.pill.green,.badge.green,.tag.green,.success,.success-text,.comparison-table .yes{color:#BBF7D0!important;}.pill.gold,.badge.gold,.tag.gold,.warning,.warning-text{color:var(--nv77-warning)!important;}.danger,.danger-text,.p66-danger,.nv67-danger,.error,.error-text{color:var(--nv77-danger)!important;}
 input,textarea,select,.auth-shell input,.save-site-form input,.card label input{background:#0B1220!important;color:#fff!important;border:1px solid var(--nv77-line-strong)!important;border-radius:12px!important;}
 input::placeholder,textarea::placeholder{color:#A8B3C7!important;opacity:1!important;}label{color:var(--nv77-text-2)!important;}
 table,.table-wrap table{background:var(--nv77-bg-elevated)!important;color:var(--nv77-text)!important;border-color:var(--nv77-line)!important;}th{background:var(--nv77-surface)!important;color:#fff!important;border-bottom-color:var(--nv77-line-strong)!important;}td{background:transparent!important;color:var(--nv77-text-2)!important;border-bottom-color:var(--nv77-line)!important;}.comparison-table .no{color:#94A3B8!important;}.comparison-table .price-cell{color:#fff!important;}
@@ -55,3 +55,67 @@ pre,code,.document-preview pre,#consoleState{background:#0B1220!important;color:
 .sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important;}
 .nv67-urlbox input{min-width:0!important;}.nv67-score .bar{stroke:var(--nv77-primary-soft)!important;}.nv67-score .track{stroke:var(--nv77-line)!important;}.nv67-alert{border-color:rgba(248,113,113,.38)!important;}.nv67-kicker{color:#BFDBFE!important;font-weight:900!important;}.nv67-hero h1 em{color:#BFDBFE!important;font-style:normal!important;}.nv67-proof b{color:#fff!important;}
 @media(max-width:900px){.site-topbar{position:static!important;}.site-menu a,.topnav a,.admin-nav a,.admin-nav button,.btn,button{min-height:46px!important;}.page-head,.hero,.card,.panel{padding:20px!important;}}
+
+/* PHASE78: visibility and brand-unification repair
+   Removes low-contrast mint/green badge treatments from all customer-facing UI.
+   Success is reserved for semantic results only; navigation/marketing labels use the blue brand system. */
+:root{
+  --nv78-badge-bg:rgba(37,99,235,.18);
+  --nv78-badge-border:rgba(147,197,253,.42);
+  --nv78-badge-text:#DBEAFE;
+  --nv78-badge-bg-strong:linear-gradient(135deg,rgba(37,99,235,.34),rgba(29,78,216,.22));
+}
+.pill,.badge,.tag,.chip,.trust-item,.nv67-kicker,.nv67-chip-row span,.recommended-badge,.board-flow b{
+  background:var(--nv78-badge-bg)!important;
+  border:1px solid var(--nv78-badge-border)!important;
+  color:var(--nv78-badge-text)!important;
+  font-weight:900!important;
+  text-shadow:none!important;
+}
+.pill.green,.badge.green,.tag.green,.chip.green,
+.pill.success,.badge.success,.tag.success,.chip.success,
+[class*="green"]:is(.pill,.badge,.tag,.chip),
+[class*="success"]:is(.pill,.badge,.tag,.chip){
+  background:var(--nv78-badge-bg-strong)!important;
+  border-color:var(--nv78-badge-border)!important;
+  color:#FFFFFF!important;
+}
+.pill.gray,.badge.gray,.tag.gray,.chip.gray{
+  background:rgba(30,41,59,.72)!important;
+  border-color:var(--nv77-line-strong)!important;
+  color:var(--nv77-text-2)!important;
+}
+.pill.gold,.badge.gold,.tag.gold,.chip.gold{
+  background:rgba(37,99,235,.18)!important;
+  border-color:rgba(147,197,253,.42)!important;
+  color:#DBEAFE!important;
+}
+/* Keep true success signals readable but stop them looking like pale mint marketing chips. */
+.success,.success-text,.comparison-table .yes{
+  color:#BBF7D0!important;
+}
+.status-success,.alert-success,.notice-success{
+  background:rgba(21,128,61,.22)!important;
+  border-color:rgba(74,222,128,.42)!important;
+  color:#DCFCE7!important;
+}
+.board-hero .pill.green,
+.board-hero .badge.green,
+.board-hero [class*="green"]:is(.pill,.badge,.tag,.chip){
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:8px!important;
+  padding:9px 13px!important;
+  border-radius:999px!important;
+  background:linear-gradient(135deg,rgba(37,99,235,.32),rgba(96,165,250,.14))!important;
+  color:#FFFFFF!important;
+  border-color:rgba(147,197,253,.50)!important;
+  box-shadow:0 10px 26px rgba(37,99,235,.18)!important;
+}
+/* PHASE100: final customer-visible brand/accessibility lock */
+:root{--nv100-blue:#2563EB;--nv100-blue-2:#1D4ED8;--nv100-blue-soft:#60A5FA;--nv100-blue-pale:#DBEAFE;--nv100-border-strong:rgba(147,197,253,.42);}
+.pill,.badge,.tag,.chip,.trust-item,.nv67-kicker,.nv67-chip-row span,.board-flow b,.recommended-badge,.recommended-ribbon,.nv74-chip,.status.ok,.diag-chip.ok,.diag-chip.brand{background:linear-gradient(135deg,rgba(37,99,235,.22),rgba(29,78,216,.14))!important;border:1px solid var(--nv100-border-strong)!important;color:var(--nv100-blue-pale)!important;font-weight:900!important;text-shadow:none!important;box-shadow:0 10px 28px rgba(37,99,235,.14)!important;}
+.pill.green,.badge.green,.tag.green,.chip.green,.pill.brand,.badge.brand,.tag.brand,.chip.brand,[class*="green"]:is(.pill,.badge,.tag,.chip){background:linear-gradient(135deg,rgba(37,99,235,.26),rgba(29,78,216,.18))!important;border-color:var(--nv100-border-strong)!important;color:#fff!important;}
+.green,.success,.success-text,.comparison-table .yes,.nv74-score-card p b{color:var(--nv100-blue-pale)!important;}.green:is(i,.blue,.purple,.orange),.nv74-metrics i.green,.nv74-task i.green,.nv74-quick-item.green,.nv74-quick-item.blue{background:linear-gradient(135deg,var(--nv100-blue),var(--nv100-blue-2))!important;color:#fff!important;}.status.ok,.notice-success,.alert-success,.status-success{background:rgba(37,99,235,.20)!important;border-color:var(--nv100-border-strong)!important;color:#fff!important;}
+.board-hero{position:relative;overflow:hidden!important;background:linear-gradient(135deg,#0F1B33,#101827 58%,#0B1220)!important;border:1px solid rgba(147,197,253,.32)!important;}.board-hero:before{content:"";position:absolute;inset:-40% -20% auto auto;width:420px;height:420px;background:radial-gradient(circle,rgba(96,165,250,.22),transparent 64%);pointer-events:none;}.board-hero .pill,.board-hero .pill.brand{min-height:36px;padding:8px 14px;border-radius:999px;font-size:13px;letter-spacing:-.01em;background:linear-gradient(135deg,rgba(37,99,235,.34),rgba(29,78,216,.20))!important;color:#fff!important;}.board-hero h2{font-size:clamp(30px,5vw,58px)!important;line-height:1.05!important;letter-spacing:-.07em!important;color:#fff!important;margin-top:20px!important;}.board-hero p{font-size:clamp(15px,1.5vw,18px)!important;color:#CBD5E1!important;max-width:760px!important;}
+.btn.primary,button.primary,#scanBtn,#checkoutBtn,#loginBtn,.topnav a.primary,.site-menu a.cta{background:linear-gradient(135deg,var(--nv100-blue),var(--nv100-blue-2))!important;color:#fff!important;border-color:var(--nv100-blue-soft)!important;box-shadow:0 18px 38px rgba(37,99,235,.26)!important;}@media(max-width:760px){.board-hero h2{font-size:34px!important}.board-hero .pill{font-size:12px!important}.nv74-quick-grid{grid-template-columns:1fr!important}}
