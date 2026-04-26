@@ -19,5 +19,5 @@ jobs:
           cache: npm
       - name: Install dependencies
         run: npm ci --ignore-scripts
-      - name: Run strict commercial CI
-        run: npm run ci:strict
+      - name: Run Phase106 final commercial CI
+        run: npm run ci:strict && npm run phase106:final

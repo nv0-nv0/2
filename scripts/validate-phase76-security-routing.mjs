@@ -49,3 +49,5 @@ const result = {
 };
 fs.writeFileSync('docs/PHASE76_SECURITY_ROUTING_VALIDATION_20260426.json', JSON.stringify(result, null, 2));
 console.log(JSON.stringify(result, null, 2));
+
+process.exit(0);

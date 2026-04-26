@@ -1,0 +1,35 @@
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-100-score-phase76-phase77-phase100 check:env-examples
+> node scripts/check-env-examples.mjs
+
+{
+  "ok": true,
+  "checked": [
+    {
+      "file": ".env.example",
+      "keyCount": 59,
+      "ok": true
+    },
+    {
+      "file": "deploy/coolify.env.example",
+      "keyCount": 46,
+      "ok": true
+    },
+    {
+      "file": "deploy/env.production.template",
+      "keyCount": 46,
+      "ok": true
+    },
+    {
+      "file": "deploy/env.production.nv0.kr.example",
+      "keyCount": 46,
+      "ok": true
+    },
+    {
+      "file": "deploy/env.commercial.template",
+      "keyCount": 46,
+      "ok": true
+    }
+  ],
+  "errors": []
+}

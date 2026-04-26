@@ -28,8 +28,14 @@ export async function mountTurnstile({ containerId, tokenInputId, noticeId, conf
   const notice = noticeId ? document.getElementById(noticeId) : null;
   if (!container || !tokenInput) return { enabled: false, getToken: () => '' };
 
-  const configRes = await fetch(configUrl, { credentials: 'same-origin' });
-  const config = await configRes.json();
+  let config;
+  try {
+    const configRes = await fetch(configUrl, { credentials: 'same-origin' });
+    config = await configRes.json();
+  } catch (error) {
+    if (notice) notice.textContent = `Turnstile 설정을 확인하지 못했습니다: ${error.message}`;
+    return { enabled: false, getToken: () => '' };
+  }
   if (!config.turnstileEnabled) {
     container.classList.add('hidden');
     tokenInput.value = '';

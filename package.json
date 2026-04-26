@@ -1,6 +1,6 @@
 {
   "name": "nv0-veridion-cleanroom",
-  "version": "1.0.0-commercial-final-100-score-phase100",
+  "version": "1.0.0-commercial-final-100-score-phase76-phase77-phase100-phase107-complete-pipeline-connected",
   "private": true,
   "type": "module",
   "scripts": {
@@ -86,6 +86,17 @@
     "validate:phase77": "node scripts/validate-phase77-visibility-unification.mjs",
     "phase77:final": "npm run check:syntax && npm run test:all && npm run validate:phase76 && npm run validate:phase77",
     "validate:phase100": "node scripts/validate-phase100-visual-accessibility.mjs",
-    "phase100:final": "npm run check:syntax && npm run test:all && npm run validate:phase76 && npm run validate:phase77 && npm run validate:phase100"
+    "phase100:final": "npm run check:syntax && npm run test:all && npm run validate:phase76 && npm run validate:phase77 && npm run validate:phase100",
+    "check:content-completeness": "node scripts/check-content-completeness.mjs",
+    "phase104:final": "npm run check:syntax && npm run test:all && npm run check:content-completeness && npm run validate:phase76 && npm run validate:phase77 && npm run validate:phase100 && npm run ci:strict",
+    "check:whole-package-completion": "node scripts/check-phase105-whole-package-completion.mjs",
+    "phase105:final": "npm run check:syntax && npm run test:all && npm run check:content-completeness && npm run check:whole-package-completion && npm run validate:phase76 && npm run validate:phase77 && npm run validate:phase100 && npm run ci:strict",
+    "check:ast-placeholder": "node scripts/check-ast-placeholder-guard.mjs",
+    "review:local-ai": "node scripts/local-ai-code-review.mjs",
+    "monitor:rollback-gate": "node scripts/monitoring-rollback-gate.mjs",
+    "phase106:final": "node scripts/run-phase106-final.mjs",
+    "check:phase107-complete-pipeline": "node scripts/validate-phase107-complete-pipeline.mjs",
+    "pipeline:connected": "npm run phase107:final",
+    "phase107:final": "node scripts/run-phase107-final.mjs"
   }
 }

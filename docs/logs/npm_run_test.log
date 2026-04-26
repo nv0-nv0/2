@@ -1,0 +1,10 @@
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-100-score-phase76-phase77-phase100 test
+> node scripts/test-all.mjs
+
+{
+  "ok": true,
+  "passed": 88,
+  "failed": 0,
+  "report": "docs/PHASE55_TEST_ALL_SUMMARY_20260425.json"
+}

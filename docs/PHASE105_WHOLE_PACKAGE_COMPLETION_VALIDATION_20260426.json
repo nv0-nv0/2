@@ -1,0 +1,14 @@
+{
+  "generatedAt": "2026-04-26T13:37:48.207Z",
+  "ok": true,
+  "checkedRuntimeFiles": 67,
+  "errors": [],
+  "warnings": [],
+  "rules": [
+    "all runtime-visible files must contain meaningful content",
+    "raw loading/ready/waiting placeholders are blocked",
+    "static JavaScript stub comments are blocked",
+    "runtime report directory must remain empty in the delivery bundle and be documented in Phase105 report",
+    "business-info unresolved statutory fields must be launch-blocking, not silent blanks"
+  ]
+}

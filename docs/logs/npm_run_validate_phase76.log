@@ -1,0 +1,17 @@
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-100-score-phase76-phase77-phase100 validate:phase76
+> node scripts/validate-phase76-security-routing.mjs
+
+{
+  "ok": true,
+  "phase": "76",
+  "score": 100,
+  "focus": [
+    "route-conflict-fix",
+    "admin-origin-normalization",
+    "upload-mime-signature-validation",
+    "runtime-upload-access-control",
+    "portal-attribute-escaping"
+  ],
+  "checkedAt": "2026-04-26T08:53:21.232Z"
+}

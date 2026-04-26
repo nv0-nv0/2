@@ -67,14 +67,20 @@ async function createSession() {
     return;
   }
   state.textContent = '신청 정보를 확인하는 중...';
-  const res = await fetch('/api/public/checkout-session', {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify(payload)
-  });
-  const data = await res.json();
-  if (!res.ok) {
-    state.textContent = data.error || '신청 정보를 확인하지 못했습니다.';
+  let data;
+  try {
+    const res = await fetch('/api/public/checkout-session', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      state.textContent = data.error || '신청 정보를 확인하지 못했습니다.';
+      return;
+    }
+  } catch (error) {
+    state.textContent = `신청 정보를 확인하지 못했습니다: ${error.message}`;
     return;
   }
   renderOrder(data.order, data.paymentSession);
@@ -100,14 +106,20 @@ async function completePayment() {
   }
   state.textContent = '결제 완료 여부를 확인하는 중...';
   const payload = { orderId: currentOrder.id, paymentId: currentPaymentSession?.providerPaymentId || currentOrder.id };
-  const res = await fetch('/api/public/payment/complete', {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify(payload)
-  });
-  const data = await res.json();
-  if (!res.ok) {
-    state.textContent = data.error || '결제 완료 실패';
+  let data;
+  try {
+    const res = await fetch('/api/public/payment/complete', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      state.textContent = data.error || '결제 완료 실패';
+      return;
+    }
+  } catch (error) {
+    state.textContent = `결제 완료 여부를 확인하지 못했습니다: ${error.message}`;
     return;
   }
   renderOrder(data.order, data.paymentSession);

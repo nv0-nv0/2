@@ -9,7 +9,7 @@ const SERVER_FILE = path.join(ROOT, 'server', 'index.mjs');
 const APPS_DIR = path.join(ROOT, 'apps');
 
 const serverSource = await fs.readFile(SERVER_FILE, 'utf8');
-const pageMapMatch = serverSource.match(/function pageMap\(urlPath\) \{[\s\S]*?const m = \{([\s\S]*?)\n  \};\n  return m\[urlPath\] \|\| null;\n\}/);
+const pageMapMatch = serverSource.match(/function pageMap\(urlPath\) \{[\s\S]*?const m = \{([\s\S]*?)\n\s*\};\n\s*return m\[urlPath\] \|\| null;\n\}/);
 if (!pageMapMatch) throw new Error('pageMap block not found in server/index.mjs');
 
 const routeRegex = /'([^']+)'\s*:\s*\[(PUBLIC_DIR|ADMIN_DIR),\s*'([^']+)'\]/g;

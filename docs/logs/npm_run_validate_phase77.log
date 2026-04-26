@@ -1,0 +1,5 @@
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-100-score-phase76-phase77-phase100 validate:phase77
+> node scripts/validate-phase77-visibility-unification.mjs
+
+[PHASE77] visibility validation passed: 100/100

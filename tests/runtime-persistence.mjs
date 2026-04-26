@@ -32,9 +32,9 @@ async function waitUntilReady() {
 }
 async function stopServer(child) {
   if (!child) return;
-  child.kill('SIGKILL');
-  if (typeof child.unref === 'function') child.unref();
-  await new Promise(resolve => setTimeout(resolve, 50));
+  try { child.removeAllListeners(); } catch {}
+  try { child.kill('SIGKILL'); } catch {}
+  try { child.unref(); } catch {}
 }
 async function j(url, options={}) {
   const res = await fetch(`http://127.0.0.1:${port}${url}`, options);
@@ -66,7 +66,7 @@ try {
   assert.equal(uploadData.ok, true);
   const uploadPath = `/runtime/uploads/${uploadData.item.filename}`;
 
-  let fileRes = await fetch(`http://127.0.0.1:${port}${uploadPath}`);
+  let fileRes = await fetch(`http://127.0.0.1:${port}${uploadPath}`, { headers: { cookie } });
   assert.equal(fileRes.status, 200);
   assert.equal(await fileRes.text(), 'hello runtime persistence');
 
@@ -74,7 +74,7 @@ try {
   child = startServer();
   await waitUntilReady();
 
-  fileRes = await fetch(`http://127.0.0.1:${port}${uploadPath}`);
+  fileRes = await fetch(`http://127.0.0.1:${port}${uploadPath}`, { headers: { cookie } });
   assert.equal(fileRes.status, 200);
   assert.equal(await fileRes.text(), 'hello runtime persistence');
 
@@ -104,3 +104,4 @@ try {
 } finally {
   await stopServer(child);
 }
+process.exit(0);

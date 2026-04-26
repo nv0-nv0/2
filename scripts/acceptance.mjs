@@ -1,4 +1,4 @@
-import { spawn } from 'node:child_process';
+import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -21,53 +21,62 @@ const baseEnv = {
   NV0_ADMIN_SESSION_TTL_MS: process.env.NV0_ADMIN_SESSION_TTL_MS || '3600000'
 };
 
+const node = process.execPath;
 const tasks = [
-  { name: 'npm run check:syntax', cmd: 'npm', args: ['run', 'check:syntax'] },
-  { name: 'npm run check:data', cmd: 'npm', args: ['run', 'check:data'] },
-  { name: 'npm run check:pages', cmd: 'npm', args: ['run', 'check:pages'] },
-  { name: 'npm run check:links', cmd: 'npm', args: ['run', 'check:links'] },
-  { name: 'npm run check:env-examples', cmd: 'npm', args: ['run', 'check:env-examples'] },
-  { name: 'npm run check:handoff-docs', cmd: 'npm', args: ['run', 'check:handoff-docs'] },
-  { name: 'npm run check:no-debug-client', cmd: 'npm', args: ['run', 'check:no-debug-client'] },
-  { name: 'npm run check:render-safety', cmd: 'npm', args: ['run', 'check:render-safety'] },
-  { name: 'node --check server/index.mjs', cmd: process.execPath, args: ['--check', 'server/index.mjs'] },
-  { name: 'npm run reset:demo', cmd: 'npm', args: ['run', 'reset:demo'] },
-  { name: 'npm run validate:env -- ./deploy/env.production.nv0.kr.example', cmd: 'npm', args: ['run', 'validate:env', '--', './deploy/env.production.nv0.kr.example'] },
-  { name: 'npm run validate:deploy', cmd: 'npm', args: ['run', 'validate:deploy'] },
-  { name: 'npm run test:e2e', cmd: 'npm', args: ['run', 'test:e2e'] },
-  { name: 'npm run test:routes', cmd: 'npm', args: ['run', 'test:routes'] },
-  { name: 'npm run test:contracts', cmd: 'npm', args: ['run', 'test:contracts'] },
-  { name: 'npm run test:session', cmd: 'npm', args: ['run', 'test:session'] },
-  { name: 'npm run test:runtime', cmd: 'npm', args: ['run', 'test:runtime'] },
-  { name: 'npm run test:providers', cmd: 'npm', args: ['run', 'test:providers'] },
-  { name: 'npm run test:security-stateful', cmd: 'npm', args: ['run', 'test:security-stateful'] },
-  { name: 'npm run smoke', cmd: 'npm', args: ['run', 'smoke'] },
-  { name: 'npm run verify:security', cmd: 'npm', args: ['run', 'verify:security'] },
-  { name: 'npm run preflight', cmd: 'npm', args: ['run', 'preflight'] },
-  { name: 'npm run ops:report', cmd: 'npm', args: ['run', 'ops:report'], env: { NV0_OPS_REPORT_PORT: '3223' } },
-  { name: 'npm run audit:inventory', cmd: 'npm', args: ['run', 'audit:inventory'] },
-  { name: 'npm run release:manifest', cmd: 'npm', args: ['run', 'release:manifest'] },
-  { name: 'NV0_BASE_URL=http://127.0.0.1:3224 PORT=3224 npm run verify:prod', cmd: 'npm', args: ['run', 'verify:prod'], env: { NV0_BASE_URL: 'http://127.0.0.1:3224', PORT: '3224' } },
-  { name: 'npm run package:prep', cmd: 'npm', args: ['run', 'package:prep'] }
+  ['check:syntax', ['scripts/check-source-syntax.mjs']],
+  ['check:data', ['scripts/check-data-integrity.mjs']],
+  ['check:pages', ['scripts/check-page-integrity.mjs']],
+  ['check:links', ['scripts/check-links.mjs', '--summary']],
+  ['check:env-examples', ['scripts/check-env-examples.mjs']],
+  ['check:handoff-docs', ['scripts/check-handoff-docs.mjs']],
+  ['check:no-debug-client', ['scripts/check-no-debug-client.mjs']],
+  ['check:render-safety', ['scripts/check-client-render-safety.mjs']],
+  ['server syntax', ['--check', 'server/index.mjs']],
+  ['reset:demo', ['scripts/reset-demo-state.mjs']],
+  ['validate:env', ['scripts/validate-prod-env.mjs', './deploy/env.production.nv0.kr.example']],
+  ['validate:deploy', ['scripts/validate-deploy-bundle.mjs']],
+  ['test:e2e', ['tests/e2e.mjs']],
+  ['test:routes', ['tests/routes-smoke.mjs']],
+  ['test:contracts', ['tests/contracts-fuzz.mjs']],
+  ['test:session', ['tests/session-persistence.mjs']],
+  ['test:runtime', ['tests/runtime-persistence.mjs']],
+  ['test:providers', ['tests/provider-adapters.mjs']],
+  ['test:security-stateful', ['tests/security-stateful.mjs']],
+  ['smoke', ['scripts/smoke.mjs']],
+  ['verify:security', ['scripts/verify-security.mjs']],
+  ['preflight', ['scripts/preflight.mjs']],
+  ['ops:report', ['scripts/ops-report.mjs'], { NV0_OPS_REPORT_PORT: '3223' }],
+  ['audit:inventory', ['scripts/audit-inventory.mjs']],
+  ['release:manifest', ['scripts/release-manifest.mjs']],
+  ['verify:prod', ['scripts/verify-prod.mjs'], { NV0_BASE_URL: 'http://127.0.0.1:3224', PORT: '3224' }],
+  ['package:prep', ['scripts/package-prep.mjs']]
 ];
 
-function runTask(task) {
-  return new Promise((resolve) => {
-    const child = spawn(task.cmd, task.args, {
-      cwd: root,
-      env: { ...baseEnv, ...(task.env || {}) },
-      stdio: 'inherit',
-      shell: process.platform === 'win32'
-    });
-    child.on('exit', (code) => resolve({ name: task.name, code: code ?? 1, ok: code === 0 }));
-  });
-}
-
 const results = [];
-for (const task of tasks) {
+for (const [name, args, env = {}] of tasks) {
   const startedAt = new Date().toISOString();
-  const result = await runTask(task);
-  results.push({ ...result, startedAt, finishedAt: new Date().toISOString() });
+  const r = spawnSync(node, args, {
+    cwd: root,
+    env: { ...baseEnv, ...env },
+    encoding: 'utf8',
+    timeout: 90000,
+    maxBuffer: 1024 * 1024 * 12
+  });
+  if (r.stdout) process.stdout.write(r.stdout);
+  if (r.stderr) process.stderr.write(r.stderr);
+  const result = {
+    name,
+    code: r.status,
+    signal: r.signal,
+    ok: r.status === 0 && !r.error,
+    timedOut: Boolean(r.error && r.error.code === 'ETIMEDOUT'),
+    startedAt,
+    finishedAt: new Date().toISOString(),
+    stdout: (r.stdout || '').slice(-12000),
+    stderr: (r.stderr || String(r.error?.message || '')).slice(-12000)
+  };
+  results.push(result);
+  console.log(`${result.ok ? 'PASS' : 'FAIL'} ${name}`);
   if (!result.ok) break;
 }
 
@@ -75,12 +84,11 @@ const ok = results.length === tasks.length && results.every(item => item.ok);
 const summary = {
   generatedAt: new Date().toISOString(),
   ok,
-  status: ok ? '로컬 MVP 완성 선언 가능' : '완성 선언 보류',
+  status: ok ? '로컬 인수 검증 통과' : '완성 선언 보류',
   results
 };
 
-const outPath = path.join(docsDir, 'LOCAL_ACCEPTANCE_SUMMARY_20260423.json');
+const outPath = path.join(docsDir, 'PHASE102_ACCEPTANCE_SUMMARY_20260426.json');
 fs.writeFileSync(outPath, JSON.stringify(summary, null, 2));
-
-console.log(JSON.stringify(summary, null, 2));
-if (!ok) process.exit(1);
+console.log(JSON.stringify({ ok, report: 'docs/PHASE102_ACCEPTANCE_SUMMARY_20260426.json', passed: results.filter(r => r.ok).length, total: tasks.length }, null, 2));
+process.exit(ok ? 0 : 1);

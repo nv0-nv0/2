@@ -1,0 +1,5 @@
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-100-score-phase76-phase77-phase100 test:e2e
+> node tests/e2e.mjs
+
+E2E passed

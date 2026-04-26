@@ -31,12 +31,12 @@ async function load(){
         ${button('상태 paid', `data-action="status" data-id="${escapeHtml(order.id)}" data-status="paid"`)}
         ${button('단계 진행', `data-action="advance" data-id="${escapeHtml(order.id)}"`)}
       </div>
-    </div>`).join('') || '<div class="muted">주문 없음</div>';
+    </div>`).join('') || '<div class="muted">최근 주문이 없습니다. 결제 세션 생성 여부와 결제 공급자 설정을 확인하세요.</div>';
   const siteCards = (data.sites||[]).map(site => {
     const sub = subMap.get(site.id);
     return `<div class="result-card stack"><strong>${escapeHtml(site.domain)}</strong><div class="muted">${escapeHtml(site.latestRiskScore)}점 · ${escapeHtml(site.latestRiskLevel)}</div><div>플랜: ${escapeHtml(sub?.plan || '-')} / 상태: ${escapeHtml(sub?.status || '-')}</div></div>`;
-  }).join('') || '<div class="muted">등록 사이트 없음</div>';
-  const fixCards = (fixData.autoFixJobs || []).slice(0, 8).map(job => `<div class="result-card stack"><strong>${escapeHtml(job.title)}</strong><div class="muted">${escapeHtml(job.status)}</div><div>${escapeHtml(job.patchSummary)}</div><div class="topnav">${job.status === 'pending' ? button('승인', `data-action="approve-fix" data-id="${escapeHtml(job.id)}"`) : ''}${job.rollbackToken && job.status !== 'rolled_back' ? button('롤백', `data-action="rollback-fix" data-id="${escapeHtml(job.id)}"`) : ''}</div></div>`).join('') || '<div class="muted">자동수정 대기 없음</div>';
+  }).join('') || '<div class="muted">등록 사이트가 없습니다. 무료 진단 저장 또는 관리자 재스캔으로 사이트를 추가하세요.</div>';
+  const fixCards = (fixData.autoFixJobs || []).slice(0, 8).map(job => `<div class="result-card stack"><strong>${escapeHtml(job.title)}</strong><div class="muted">${escapeHtml(job.status)}</div><div>${escapeHtml(job.patchSummary)}</div><div class="topnav">${job.status === 'pending' ? button('승인', `data-action="approve-fix" data-id="${escapeHtml(job.id)}"`) : ''}${job.rollbackToken && job.status !== 'rolled_back' ? button('롤백', `data-action="rollback-fix" data-id="${escapeHtml(job.id)}"`) : ''}</div></div>`).join('') || '<div class="muted">자동수정 대기 작업이 없습니다. Fix/Auto 주문 또는 진단 결과 기반 수정 요청을 확인하세요.</div>';
   table.innerHTML = `
     <div class="stack">
       <h3>최근 주문</h3>

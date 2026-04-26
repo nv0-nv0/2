@@ -1,0 +1,143 @@
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-100-score-phase76-phase77-phase100 check:render-safety
+> node scripts/check-client-render-safety.mjs
+
+{
+  "ok": true,
+  "checkedCount": 22,
+  "checked": [
+    {
+      "file": "apps/admin/console/app.js",
+      "hasUnsafeSink": true,
+      "hasEscaper": true,
+      "hasLiteralOnHandler": false
+    },
+    {
+      "file": "apps/admin/diagnostics/app.js",
+      "hasUnsafeSink": false,
+      "hasEscaper": false,
+      "hasLiteralOnHandler": false
+    },
+    {
+      "file": "apps/admin/gate/app.js",
+      "hasUnsafeSink": false,
+      "hasEscaper": false,
+      "hasLiteralOnHandler": false
+    },
+    {
+      "file": "apps/admin/library/app.js",
+      "hasUnsafeSink": true,
+      "hasEscaper": true,
+      "hasLiteralOnHandler": false
+    },
+    {
+      "file": "apps/admin/orders/app.js",
+      "hasUnsafeSink": true,
+      "hasEscaper": true,
+      "hasLiteralOnHandler": false
+    },
+    {
+      "file": "apps/admin/publications/app.js",
+      "hasUnsafeSink": true,
+      "hasEscaper": true,
+      "hasLiteralOnHandler": false
+    },
+    {
+      "file": "apps/admin/settings/app.js",
+      "hasUnsafeSink": false,
+      "hasEscaper": false,
+      "hasLiteralOnHandler": false
+    },
+    {
+      "file": "apps/public/auth/app.js",
+      "hasUnsafeSink": false,
+      "hasEscaper": false,
+      "hasLiteralOnHandler": false
+    },
+    {
+      "file": "apps/public/board/app.js",
+      "hasUnsafeSink": true,
+      "hasEscaper": true,
+      "hasLiteralOnHandler": false
+    },
+    {
+      "file": "apps/public/business-info/app.js",
+      "hasUnsafeSink": false,
+      "hasEscaper": false,
+      "hasLiteralOnHandler": false
+    },
+    {
+      "file": "apps/public/checkout/app.js",
+      "hasUnsafeSink": true,
+      "hasEscaper": true,
+      "hasLiteralOnHandler": false
+    },
+    {
+      "file": "apps/public/demo/app.js",
+      "hasUnsafeSink": false,
+      "hasEscaper": false,
+      "hasLiteralOnHandler": false
+    },
+    {
+      "file": "apps/public/documents/app.js",
+      "hasUnsafeSink": true,
+      "hasEscaper": true,
+      "hasLiteralOnHandler": false
+    },
+    {
+      "file": "apps/public/guides/app.js",
+      "hasUnsafeSink": true,
+      "hasEscaper": true,
+      "hasLiteralOnHandler": false
+    },
+    {
+      "file": "apps/public/home/app.js",
+      "hasUnsafeSink": false,
+      "hasEscaper": false,
+      "hasLiteralOnHandler": false
+    },
+    {
+      "file": "apps/public/plans/app.js",
+      "hasUnsafeSink": true,
+      "hasEscaper": true,
+      "hasLiteralOnHandler": false
+    },
+    {
+      "file": "apps/public/portal/app.js",
+      "hasUnsafeSink": true,
+      "hasEscaper": true,
+      "hasLiteralOnHandler": false
+    },
+    {
+      "file": "apps/public/privacy/app.js",
+      "hasUnsafeSink": false,
+      "hasEscaper": false,
+      "hasLiteralOnHandler": false
+    },
+    {
+      "file": "apps/public/refund/app.js",
+      "hasUnsafeSink": false,
+      "hasEscaper": false,
+      "hasLiteralOnHandler": false
+    },
+    {
+      "file": "apps/public/solutions/app.js",
+      "hasUnsafeSink": false,
+      "hasEscaper": false,
+      "hasLiteralOnHandler": false
+    },
+    {
+      "file": "apps/public/terms/app.js",
+      "hasUnsafeSink": false,
+      "hasEscaper": false,
+      "hasLiteralOnHandler": false
+    },
+    {
+      "file": "apps/public/veridion-demo/app.js",
+      "hasUnsafeSink": true,
+      "hasEscaper": true,
+      "hasLiteralOnHandler": false
+    }
+  ],
+  "failures": []
+}

@@ -1,0 +1,89 @@
+{
+  "generatedAt": "2026-04-26T13:38:08.730Z",
+  "ok": true,
+  "phase": 107,
+  "name": "complete-content-and-connected-pipeline-final-gate",
+  "results": [
+    {
+      "name": "syntax",
+      "ok": true,
+      "durationMs": 62,
+      "mode": "live"
+    },
+    {
+      "name": "test-all",
+      "ok": true,
+      "durationMs": 63,
+      "mode": "live"
+    },
+    {
+      "name": "phase107-complete-pipeline",
+      "ok": true,
+      "durationMs": 97,
+      "mode": "live"
+    },
+    {
+      "name": "content-completeness-report",
+      "ok": true,
+      "durationMs": 1,
+      "mode": "report",
+      "report": "docs/PHASE104_CONTENT_COMPLETENESS_VALIDATION_20260426.json"
+    },
+    {
+      "name": "whole-package-completion-report",
+      "ok": true,
+      "durationMs": 0,
+      "mode": "report",
+      "report": "docs/PHASE105_WHOLE_PACKAGE_COMPLETION_VALIDATION_20260426.json"
+    },
+    {
+      "name": "ast-placeholder-guard-report",
+      "ok": true,
+      "durationMs": 0,
+      "mode": "report",
+      "report": "docs/PHASE106_AST_PLACEHOLDER_VALIDATION_20260426.json"
+    },
+    {
+      "name": "local-ai-review-report",
+      "ok": true,
+      "durationMs": 0,
+      "mode": "report",
+      "report": "docs/PHASE106_LOCAL_AI_REVIEW_20260426.json"
+    },
+    {
+      "name": "monitoring-rollback-report",
+      "ok": true,
+      "durationMs": 1,
+      "mode": "report",
+      "report": "docs/PHASE106_MONITORING_ROLLBACK_VALIDATION_20260426.json"
+    },
+    {
+      "name": "phase76-security-routing-report",
+      "ok": true,
+      "durationMs": 0,
+      "mode": "report",
+      "report": "docs/PHASE76_SECURITY_ROUTING_VALIDATION_20260426.json"
+    },
+    {
+      "name": "phase77-visibility-report",
+      "ok": true,
+      "durationMs": 0,
+      "mode": "report",
+      "report": "docs/PHASE77_VISIBILITY_UNIFICATION_VALIDATION_20260426.json"
+    },
+    {
+      "name": "phase100-accessibility-report",
+      "ok": true,
+      "durationMs": 0,
+      "mode": "report",
+      "report": "docs/PHASE100_VISUAL_ACCESSIBILITY_VALIDATION_20260426.json"
+    },
+    {
+      "name": "phase107-pipeline-report",
+      "ok": true,
+      "durationMs": 3,
+      "mode": "report",
+      "report": "docs/PHASE107_PIPELINE_VALIDATION_20260426.json"
+    }
+  ]
+}

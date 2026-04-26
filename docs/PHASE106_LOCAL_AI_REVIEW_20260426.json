@@ -1,0 +1,52 @@
+{
+  "generatedAt": "2026-04-26T13:35:58.962Z",
+  "ok": true,
+  "reviewer": "local-rule-based-senior-fullstack-qa-review",
+  "checks": [
+    {
+      "name": "public/admin html files exist",
+      "ok": true,
+      "details": "22 html files"
+    },
+    {
+      "name": "no obvious blank body",
+      "ok": true,
+      "details": "all HTML bodies contain content"
+    },
+    {
+      "name": "primary CTA coverage",
+      "ok": true,
+      "details": "most pages expose a next action"
+    },
+    {
+      "name": "accessibility label coverage",
+      "ok": true,
+      "details": "input fields have labels or aria-label"
+    },
+    {
+      "name": "client fetch guarded",
+      "ok": true,
+      "details": "fetch usage includes try/catch or catch"
+    },
+    {
+      "name": "no exposed secret literals",
+      "ok": true,
+      "details": "no hardcoded secret signature detected"
+    },
+    {
+      "name": "empty/error copy exists",
+      "ok": true,
+      "details": "fallback user copy is present"
+    },
+    {
+      "name": "release docs present",
+      "ok": true,
+      "details": "previous completion report exists"
+    }
+  ],
+  "recommendations": [
+    "실제 운영 전에는 외부 결제·메일·Turnstile 키를 운영 환경에서만 주입한다.",
+    "장애 감지 기준은 5xx 비율, 응답 지연, 핵심 플로우 실패율로 분리한다.",
+    "콘텐츠 완성도 게이트는 커밋·CI·배포 전 단계에서 모두 실행한다."
+  ]
+}

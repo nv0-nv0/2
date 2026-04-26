@@ -1,0 +1,26 @@
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-100-score-phase76-phase77-phase100 check:handoff-docs
+> node scripts/check-handoff-docs.mjs
+
+{
+  "ok": true,
+  "referencedCount": 15,
+  "checked": [
+    "docs/FINAL_REAUDIT_AND_HARDENING_REPORT_20260423_KO.md",
+    "docs/FINAL_OPTIMAL_WORK_ORDER_20260423_KO.md",
+    "docs/ONE_PAGE_EXTERNAL_17_STEP_EXECUTION_CARD_20260423_KO.md",
+    "docs/BUSINESS_OPTIMIZATION_PLAYBOOK_20260423_KO.md",
+    "docs/LOCAL_COMPLETENESS_RESCORE_20260423_KO.md",
+    "docs/VERSION_DIFF_HARDENED_TO_FINAL_20260423_KO.md",
+    "docs/ACCEPTANCE_CHECKLIST.md",
+    "docs/CLOUDFLARE_COOLIFY_CONTABO_RUNBOOK_20260423_KO.md",
+    "server/index.mjs",
+    "scripts/acceptance.mjs",
+    "scripts/verify-security.mjs",
+    "scripts/check-client-render-safety.mjs",
+    "tests/e2e.mjs",
+    "tests/contracts-fuzz.mjs",
+    "docs/INTERNAL_REAUDIT_DELTA_20260423_KO.md"
+  ],
+  "errors": []
+}

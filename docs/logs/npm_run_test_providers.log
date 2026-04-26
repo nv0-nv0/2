@@ -1,0 +1,4 @@
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-100-score-phase76-phase77-phase100 test:providers
+> node tests/provider-adapters.mjs
+

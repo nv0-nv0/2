@@ -15,3 +15,8 @@ const result={phase:100,ok:missing.length===0&&remainingPublicGreenPills.length=
 fs.writeFileSync(path.join(root,'docs/PHASE100_VISUAL_ACCESSIBILITY_VALIDATION_20260426.json'),JSON.stringify(result,null,2));
 if(!result.ok){console.error(JSON.stringify(result,null,2));process.exit(1)}
 console.log(JSON.stringify(result,null,2));
+
+process.exit(0);
+
+// PHASE107_FORCE_EXIT_validate_phase100_visual_accessibility_mjs
+process.exit(0);

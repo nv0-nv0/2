@@ -1,0 +1,64 @@
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-100-score-phase76-phase77-phase100 check:data
+> node scripts/check-data-integrity.mjs
+
+{
+  "ok": true,
+  "checked": [
+    {
+      "file": "package.json",
+      "ok": true
+    },
+    {
+      "file": "runtime/data/db.json",
+      "ok": true
+    },
+    {
+      "file": "runtime/data/sessions.json",
+      "ok": true
+    },
+    {
+      "file": "docs/LOCAL_ACCEPTANCE_SUMMARY_20260423.json",
+      "ok": true
+    },
+    {
+      "file": "docs/RELEASE_MANIFEST_20260423.json",
+      "ok": true
+    },
+    {
+      "file": "docs/REMAINING_WORK_INVENTORY_20260423.json",
+      "ok": true
+    },
+    {
+      "file": "apps/public",
+      "ok": true,
+      "type": "dir"
+    },
+    {
+      "file": "apps/admin",
+      "ok": true,
+      "type": "dir"
+    },
+    {
+      "file": "server",
+      "ok": true,
+      "type": "dir"
+    },
+    {
+      "file": "shared",
+      "ok": true,
+      "type": "dir"
+    },
+    {
+      "file": "scripts",
+      "ok": true,
+      "type": "dir"
+    },
+    {
+      "file": "tests",
+      "ok": true,
+      "type": "dir"
+    }
+  ],
+  "errors": []
+}

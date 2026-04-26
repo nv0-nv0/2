@@ -1,0 +1,4198 @@
+{
+  "generatedAt": "2026-04-26T13:38:08.709Z",
+  "phase": 107,
+  "ok": true,
+  "summary": {
+    "total": 837,
+    "passed": 837,
+    "failed": 0
+  },
+  "failed": [],
+  "checks": [
+    {
+      "name": "app:apps/public/auth:index",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/auth:script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/auth:style",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/auth:title-filled",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/auth:has-app-shell",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/auth:has-entry-script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/auth:js-has-error-path",
+      "ok": true,
+      "detail": "client module must expose error handling or contain complete static rendering logic"
+    },
+    {
+      "name": "app:apps/public/auth:css-nontrivial",
+      "ok": true,
+      "detail": "style file must not be empty or cosmetic stub"
+    },
+    {
+      "name": "app:apps/public/board:index",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/board:script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/board:style",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/board:title-filled",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/board:has-app-shell",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/board:has-entry-script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/board:js-has-error-path",
+      "ok": true,
+      "detail": "client module must expose error handling or contain complete static rendering logic"
+    },
+    {
+      "name": "app:apps/public/board:css-nontrivial",
+      "ok": true,
+      "detail": "style file must not be empty or cosmetic stub"
+    },
+    {
+      "name": "app:apps/public/business-info:index",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/business-info:script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/business-info:style",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/business-info:title-filled",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/business-info:has-app-shell",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/business-info:has-entry-script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/business-info:js-has-error-path",
+      "ok": true,
+      "detail": "client module must expose error handling or contain complete static rendering logic"
+    },
+    {
+      "name": "app:apps/public/business-info:css-nontrivial",
+      "ok": true,
+      "detail": "style file must not be empty or cosmetic stub"
+    },
+    {
+      "name": "app:apps/public/checkout:index",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/checkout:script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/checkout:style",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/checkout:title-filled",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/checkout:has-app-shell",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/checkout:has-entry-script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/checkout:js-has-error-path",
+      "ok": true,
+      "detail": "client module must expose error handling or contain complete static rendering logic"
+    },
+    {
+      "name": "app:apps/public/checkout:css-nontrivial",
+      "ok": true,
+      "detail": "style file must not be empty or cosmetic stub"
+    },
+    {
+      "name": "app:apps/public/demo:index",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/demo:script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/demo:style",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/demo:title-filled",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/demo:has-app-shell",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/demo:has-entry-script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/demo:js-has-error-path",
+      "ok": true,
+      "detail": "client module must expose error handling or contain complete static rendering logic"
+    },
+    {
+      "name": "app:apps/public/demo:css-nontrivial",
+      "ok": true,
+      "detail": "style file must not be empty or cosmetic stub"
+    },
+    {
+      "name": "app:apps/public/documents:index",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/documents:script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/documents:style",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/documents:title-filled",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/documents:has-app-shell",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/documents:has-entry-script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/documents:js-has-error-path",
+      "ok": true,
+      "detail": "client module must expose error handling or contain complete static rendering logic"
+    },
+    {
+      "name": "app:apps/public/documents:css-nontrivial",
+      "ok": true,
+      "detail": "style file must not be empty or cosmetic stub"
+    },
+    {
+      "name": "app:apps/public/guides:index",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/guides:script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/guides:style",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/guides:title-filled",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/guides:has-app-shell",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/guides:has-entry-script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/guides:js-has-error-path",
+      "ok": true,
+      "detail": "client module must expose error handling or contain complete static rendering logic"
+    },
+    {
+      "name": "app:apps/public/guides:css-nontrivial",
+      "ok": true,
+      "detail": "style file must not be empty or cosmetic stub"
+    },
+    {
+      "name": "app:apps/public/home:index",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/home:script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/home:style",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/home:title-filled",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/home:has-app-shell",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/home:has-entry-script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/home:js-has-error-path",
+      "ok": true,
+      "detail": "client module must expose error handling or contain complete static rendering logic"
+    },
+    {
+      "name": "app:apps/public/home:css-nontrivial",
+      "ok": true,
+      "detail": "style file must not be empty or cosmetic stub"
+    },
+    {
+      "name": "app:apps/public/plans:index",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/plans:script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/plans:style",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/plans:title-filled",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/plans:has-app-shell",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/plans:has-entry-script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/plans:js-has-error-path",
+      "ok": true,
+      "detail": "client module must expose error handling or contain complete static rendering logic"
+    },
+    {
+      "name": "app:apps/public/plans:css-nontrivial",
+      "ok": true,
+      "detail": "style file must not be empty or cosmetic stub"
+    },
+    {
+      "name": "app:apps/public/portal:index",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/portal:script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/portal:style",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/portal:title-filled",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/portal:has-app-shell",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/portal:has-entry-script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/portal:js-has-error-path",
+      "ok": true,
+      "detail": "client module must expose error handling or contain complete static rendering logic"
+    },
+    {
+      "name": "app:apps/public/portal:css-nontrivial",
+      "ok": true,
+      "detail": "style file must not be empty or cosmetic stub"
+    },
+    {
+      "name": "app:apps/public/privacy:index",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/privacy:script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/privacy:style",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/privacy:title-filled",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/privacy:has-app-shell",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/privacy:has-entry-script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/privacy:js-has-error-path",
+      "ok": true,
+      "detail": "client module must expose error handling or contain complete static rendering logic"
+    },
+    {
+      "name": "app:apps/public/privacy:css-nontrivial",
+      "ok": true,
+      "detail": "style file must not be empty or cosmetic stub"
+    },
+    {
+      "name": "app:apps/public/refund:index",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/refund:script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/refund:style",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/refund:title-filled",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/refund:has-app-shell",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/refund:has-entry-script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/refund:js-has-error-path",
+      "ok": true,
+      "detail": "client module must expose error handling or contain complete static rendering logic"
+    },
+    {
+      "name": "app:apps/public/refund:css-nontrivial",
+      "ok": true,
+      "detail": "style file must not be empty or cosmetic stub"
+    },
+    {
+      "name": "app:apps/public/solutions:index",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/solutions:script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/solutions:style",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/solutions:title-filled",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/solutions:has-app-shell",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/solutions:has-entry-script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/solutions:js-has-error-path",
+      "ok": true,
+      "detail": "client module must expose error handling or contain complete static rendering logic"
+    },
+    {
+      "name": "app:apps/public/solutions:css-nontrivial",
+      "ok": true,
+      "detail": "style file must not be empty or cosmetic stub"
+    },
+    {
+      "name": "app:apps/public/terms:index",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/terms:script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/terms:style",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/terms:title-filled",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/terms:has-app-shell",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/terms:has-entry-script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/terms:js-has-error-path",
+      "ok": true,
+      "detail": "client module must expose error handling or contain complete static rendering logic"
+    },
+    {
+      "name": "app:apps/public/terms:css-nontrivial",
+      "ok": true,
+      "detail": "style file must not be empty or cosmetic stub"
+    },
+    {
+      "name": "app:apps/public/veridion-demo:index",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/veridion-demo:script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/veridion-demo:style",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/veridion-demo:title-filled",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/veridion-demo:has-app-shell",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/veridion-demo:has-entry-script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/public/veridion-demo:js-has-error-path",
+      "ok": true,
+      "detail": "client module must expose error handling or contain complete static rendering logic"
+    },
+    {
+      "name": "app:apps/public/veridion-demo:css-nontrivial",
+      "ok": true,
+      "detail": "style file must not be empty or cosmetic stub"
+    },
+    {
+      "name": "app:apps/admin/console:index",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/console:script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/console:style",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/console:title-filled",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/console:has-app-shell",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/console:has-entry-script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/console:js-has-error-path",
+      "ok": true,
+      "detail": "client module must expose error handling or contain complete static rendering logic"
+    },
+    {
+      "name": "app:apps/admin/console:css-nontrivial",
+      "ok": true,
+      "detail": "style file must not be empty or cosmetic stub"
+    },
+    {
+      "name": "app:apps/admin/diagnostics:index",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/diagnostics:script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/diagnostics:style",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/diagnostics:title-filled",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/diagnostics:has-app-shell",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/diagnostics:has-entry-script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/diagnostics:js-has-error-path",
+      "ok": true,
+      "detail": "client module must expose error handling or contain complete static rendering logic"
+    },
+    {
+      "name": "app:apps/admin/diagnostics:css-nontrivial",
+      "ok": true,
+      "detail": "style file must not be empty or cosmetic stub"
+    },
+    {
+      "name": "app:apps/admin/gate:index",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/gate:script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/gate:style",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/gate:title-filled",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/gate:has-app-shell",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/gate:has-entry-script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/gate:js-has-error-path",
+      "ok": true,
+      "detail": "client module must expose error handling or contain complete static rendering logic"
+    },
+    {
+      "name": "app:apps/admin/gate:css-nontrivial",
+      "ok": true,
+      "detail": "style file must not be empty or cosmetic stub"
+    },
+    {
+      "name": "app:apps/admin/library:index",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/library:script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/library:style",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/library:title-filled",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/library:has-app-shell",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/library:has-entry-script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/library:js-has-error-path",
+      "ok": true,
+      "detail": "client module must expose error handling or contain complete static rendering logic"
+    },
+    {
+      "name": "app:apps/admin/library:css-nontrivial",
+      "ok": true,
+      "detail": "style file must not be empty or cosmetic stub"
+    },
+    {
+      "name": "app:apps/admin/orders:index",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/orders:script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/orders:style",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/orders:title-filled",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/orders:has-app-shell",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/orders:has-entry-script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/orders:js-has-error-path",
+      "ok": true,
+      "detail": "client module must expose error handling or contain complete static rendering logic"
+    },
+    {
+      "name": "app:apps/admin/orders:css-nontrivial",
+      "ok": true,
+      "detail": "style file must not be empty or cosmetic stub"
+    },
+    {
+      "name": "app:apps/admin/publications:index",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/publications:script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/publications:style",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/publications:title-filled",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/publications:has-app-shell",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/publications:has-entry-script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/publications:js-has-error-path",
+      "ok": true,
+      "detail": "client module must expose error handling or contain complete static rendering logic"
+    },
+    {
+      "name": "app:apps/admin/publications:css-nontrivial",
+      "ok": true,
+      "detail": "style file must not be empty or cosmetic stub"
+    },
+    {
+      "name": "app:apps/admin/settings:index",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/settings:script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/settings:style",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/settings:title-filled",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/settings:has-app-shell",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/settings:has-entry-script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "app:apps/admin/settings:js-has-error-path",
+      "ok": true,
+      "detail": "client module must expose error handling or contain complete static rendering logic"
+    },
+    {
+      "name": "app:apps/admin/settings:css-nontrivial",
+      "ok": true,
+      "detail": "style file must not be empty or cosmetic stub"
+    },
+    {
+      "name": "runtime:runtime/data/db.json:exists",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "runtime:runtime/data/db.json:json-valid",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "runtime:runtime/data/db.seed.json:exists",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "runtime:runtime/data/db.seed.json:json-valid",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "runtime:runtime/data/sessions.json:exists",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "runtime:runtime/data/sessions.json:json-valid",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "critical-copy:apps/public/home/index.html:무료 진단 시작",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "critical-copy:apps/public/home/index.html:상세 리포트",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "critical-copy:apps/public/home/index.html:추천 이용 순서",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "critical-copy:apps/public/veridion-demo/index.html:사이트 주소 하나로",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "critical-copy:apps/public/veridion-demo/index.html:무료 결과와 상품 비교",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "critical-copy:apps/public/veridion-demo/index.html:상세 리포트 신청",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "critical-copy:apps/public/plans/index.html:상품·요금",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "critical-copy:apps/public/plans/index.html:전체 상품 비교",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "critical-copy:apps/public/plans/index.html:무료 진단 시작",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "critical-copy:apps/public/checkout/index.html:결제",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "critical-copy:apps/public/checkout/index.html:주문",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "critical-copy:apps/public/checkout/index.html:동의",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "critical-copy:apps/public/portal/index.html:내 사이트",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "critical-copy:apps/public/portal/index.html:산출물",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "critical-copy:apps/public/portal/index.html:주문",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "critical-copy:apps/public/documents/index.html:문서",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "critical-copy:apps/public/documents/index.html:템플릿",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "critical-copy:apps/public/documents/index.html:미리보기",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:route:/",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:route:/plans",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:route:/documents",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:route:/checkout",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:route:/portal",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:route:/board",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:route:/business-info",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:route:/privacy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:route:/terms",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:route:/refund",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:route:/healthz",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:route:/readyz",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:api:/api/public/products",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:api:/api/public/plans",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:api:/api/public/scan",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:api:/api/public/checkout-session",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:api:/api/public/payment/complete",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:api:/api/public/fulfillment",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:guard:buildProductionLaunchChecklist",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:guard:isPlaceholderConfigValue",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:guard:runtimeWritable",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:guard:csrf",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:guard:HttpOnly",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:guard:SameSite",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "package-script:check:phase107-complete-pipeline",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "package-script:pipeline:connected",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "package-script:phase107:final",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "package-script:phase106:final",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "package-script:ci:strict",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "pipeline:workflow-exists",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "pipeline:workflow-token:phase107:final",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "pipeline:workflow-token:check:phase107-complete-pipeline",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "pipeline:workflow-token:npm ci",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "pipeline:workflow-token:actions/setup-node@v4",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "docs:docs/PHASE107_COMPLETE_PIPELINE_DELIVERY_20260426_KO.md",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/veridion-demo/app.css:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/veridion-demo/app.css:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/veridion-demo/app.css:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/veridion-demo/app.css:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/veridion-demo/app.css:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/veridion-demo/app.css:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/veridion-demo/app.css:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/veridion-demo/app.js:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/veridion-demo/app.js:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/veridion-demo/app.js:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/veridion-demo/app.js:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/veridion-demo/app.js:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/veridion-demo/app.js:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/veridion-demo/app.js:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/veridion-demo/index.html:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/veridion-demo/index.html:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/veridion-demo/index.html:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/veridion-demo/index.html:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/veridion-demo/index.html:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/veridion-demo/index.html:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/veridion-demo/index.html:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/terms/app.css:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/terms/app.css:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/terms/app.css:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/terms/app.css:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/terms/app.css:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/terms/app.css:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/terms/app.css:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/terms/app.js:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/terms/app.js:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/terms/app.js:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/terms/app.js:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/terms/app.js:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/terms/app.js:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/terms/app.js:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/terms/index.html:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/terms/index.html:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/terms/index.html:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/terms/index.html:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/terms/index.html:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/terms/index.html:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/terms/index.html:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/solutions/app.css:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/solutions/app.css:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/solutions/app.css:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/solutions/app.css:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/solutions/app.css:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/solutions/app.css:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/solutions/app.css:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/solutions/app.js:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/solutions/app.js:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/solutions/app.js:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/solutions/app.js:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/solutions/app.js:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/solutions/app.js:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/solutions/app.js:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/solutions/index.html:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/solutions/index.html:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/solutions/index.html:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/solutions/index.html:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/solutions/index.html:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/solutions/index.html:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/solutions/index.html:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/refund/app.css:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/refund/app.css:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/refund/app.css:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/refund/app.css:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/refund/app.css:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/refund/app.css:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/refund/app.css:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/refund/app.js:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/refund/app.js:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/refund/app.js:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/refund/app.js:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/refund/app.js:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/refund/app.js:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/refund/app.js:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/refund/index.html:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/refund/index.html:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/refund/index.html:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/refund/index.html:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/refund/index.html:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/refund/index.html:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/refund/index.html:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/privacy/app.css:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/privacy/app.css:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/privacy/app.css:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/privacy/app.css:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/privacy/app.css:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/privacy/app.css:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/privacy/app.css:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/privacy/app.js:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/privacy/app.js:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/privacy/app.js:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/privacy/app.js:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/privacy/app.js:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/privacy/app.js:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/privacy/app.js:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/privacy/index.html:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/privacy/index.html:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/privacy/index.html:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/privacy/index.html:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/privacy/index.html:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/privacy/index.html:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/privacy/index.html:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/portal/app.css:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/portal/app.css:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/portal/app.css:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/portal/app.css:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/portal/app.css:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/portal/app.css:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/portal/app.css:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/portal/app.js:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/portal/app.js:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/portal/app.js:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/portal/app.js:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/portal/app.js:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/portal/app.js:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/portal/app.js:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/portal/index.html:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/portal/index.html:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/portal/index.html:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/portal/index.html:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/portal/index.html:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/portal/index.html:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/portal/index.html:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/plans/app.css:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/plans/app.css:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/plans/app.css:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/plans/app.css:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/plans/app.css:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/plans/app.css:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/plans/app.css:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/plans/app.js:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/plans/app.js:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/plans/app.js:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/plans/app.js:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/plans/app.js:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/plans/app.js:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/plans/app.js:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/plans/index.html:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/plans/index.html:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/plans/index.html:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/plans/index.html:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/plans/index.html:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/plans/index.html:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/plans/index.html:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/home/app.css:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/home/app.css:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/home/app.css:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/home/app.css:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/home/app.css:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/home/app.css:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/home/app.css:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/home/app.js:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/home/app.js:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/home/app.js:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/home/app.js:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/home/app.js:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/home/app.js:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/home/app.js:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/home/index.html:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/home/index.html:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/home/index.html:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/home/index.html:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/home/index.html:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/home/index.html:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/home/index.html:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/home/test.txt:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/home/test.txt:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/home/test.txt:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/home/test.txt:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/home/test.txt:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/home/test.txt:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/home/test.txt:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/guides/app.css:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/guides/app.css:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/guides/app.css:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/guides/app.css:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/guides/app.css:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/guides/app.css:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/guides/app.css:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/guides/app.js:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/guides/app.js:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/guides/app.js:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/guides/app.js:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/guides/app.js:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/guides/app.js:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/guides/app.js:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/guides/index.html:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/guides/index.html:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/guides/index.html:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/guides/index.html:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/guides/index.html:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/guides/index.html:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/guides/index.html:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/documents/app.css:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/documents/app.css:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/documents/app.css:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/documents/app.css:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/documents/app.css:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/documents/app.css:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/documents/app.css:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/documents/app.js:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/documents/app.js:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/documents/app.js:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/documents/app.js:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/documents/app.js:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/documents/app.js:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/documents/app.js:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/documents/index.html:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/documents/index.html:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/documents/index.html:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/documents/index.html:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/documents/index.html:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/documents/index.html:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/documents/index.html:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/demo/app.css:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/demo/app.css:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/demo/app.css:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/demo/app.css:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/demo/app.css:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/demo/app.css:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/demo/app.css:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/demo/app.js:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/demo/app.js:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/demo/app.js:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/demo/app.js:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/demo/app.js:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/demo/app.js:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/demo/app.js:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/demo/index.html:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/demo/index.html:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/demo/index.html:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/demo/index.html:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/demo/index.html:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/demo/index.html:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/demo/index.html:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/checkout/app.css:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/checkout/app.css:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/checkout/app.css:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/checkout/app.css:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/checkout/app.css:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/checkout/app.css:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/checkout/app.css:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/checkout/app.js:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/checkout/app.js:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/checkout/app.js:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/checkout/app.js:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/checkout/app.js:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/checkout/app.js:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/checkout/app.js:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/checkout/index.html:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/checkout/index.html:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/checkout/index.html:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/checkout/index.html:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/checkout/index.html:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/checkout/index.html:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/checkout/index.html:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/business-info/app.css:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/business-info/app.css:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/business-info/app.css:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/business-info/app.css:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/business-info/app.css:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/business-info/app.css:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/business-info/app.css:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/business-info/app.js:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/business-info/app.js:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/business-info/app.js:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/business-info/app.js:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/business-info/app.js:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/business-info/app.js:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/business-info/app.js:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/business-info/index.html:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/business-info/index.html:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/business-info/index.html:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/business-info/index.html:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/business-info/index.html:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/business-info/index.html:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/business-info/index.html:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/board/app.css:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/board/app.css:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/board/app.css:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/board/app.css:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/board/app.css:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/board/app.css:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/board/app.css:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/board/app.js:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/board/app.js:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/board/app.js:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/board/app.js:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/board/app.js:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/board/app.js:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/board/app.js:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/board/index.html:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/board/index.html:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/board/index.html:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/board/index.html:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/board/index.html:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/board/index.html:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/board/index.html:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/auth/app.css:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/auth/app.css:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/auth/app.css:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/auth/app.css:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/auth/app.css:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/auth/app.css:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/auth/app.css:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/auth/app.js:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/auth/app.js:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/auth/app.js:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/auth/app.js:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/auth/app.js:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/auth/app.js:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/auth/app.js:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/auth/index.html:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/auth/index.html:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/auth/index.html:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/auth/index.html:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/auth/index.html:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/auth/index.html:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/public/auth/index.html:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/settings/app.css:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/settings/app.css:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/settings/app.css:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/settings/app.css:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/settings/app.css:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/settings/app.css:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/settings/app.css:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/settings/app.js:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/settings/app.js:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/settings/app.js:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/settings/app.js:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/settings/app.js:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/settings/app.js:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/settings/app.js:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/settings/index.html:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/settings/index.html:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/settings/index.html:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/settings/index.html:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/settings/index.html:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/settings/index.html:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/settings/index.html:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/publications/app.css:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/publications/app.css:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/publications/app.css:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/publications/app.css:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/publications/app.css:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/publications/app.css:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/publications/app.css:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/publications/app.js:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/publications/app.js:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/publications/app.js:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/publications/app.js:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/publications/app.js:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/publications/app.js:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/publications/app.js:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/publications/index.html:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/publications/index.html:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/publications/index.html:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/publications/index.html:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/publications/index.html:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/publications/index.html:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/publications/index.html:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/orders/app.css:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/orders/app.css:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/orders/app.css:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/orders/app.css:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/orders/app.css:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/orders/app.css:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/orders/app.css:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/orders/app.js:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/orders/app.js:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/orders/app.js:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/orders/app.js:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/orders/app.js:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/orders/app.js:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/orders/app.js:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/orders/index.html:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/orders/index.html:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/orders/index.html:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/orders/index.html:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/orders/index.html:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/orders/index.html:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/orders/index.html:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/library/app.css:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/library/app.css:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/library/app.css:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/library/app.css:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/library/app.css:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/library/app.css:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/library/app.css:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/library/app.js:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/library/app.js:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/library/app.js:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/library/app.js:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/library/app.js:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/library/app.js:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/library/app.js:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/library/index.html:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/library/index.html:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/library/index.html:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/library/index.html:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/library/index.html:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/library/index.html:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/library/index.html:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/gate/app.css:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/gate/app.css:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/gate/app.css:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/gate/app.css:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/gate/app.css:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/gate/app.css:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/gate/app.css:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/gate/app.js:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/gate/app.js:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/gate/app.js:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/gate/app.js:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/gate/app.js:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/gate/app.js:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/gate/app.js:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/gate/index.html:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/gate/index.html:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/gate/index.html:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/gate/index.html:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/gate/index.html:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/gate/index.html:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/gate/index.html:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/diagnostics/app.css:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/diagnostics/app.css:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/diagnostics/app.css:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/diagnostics/app.css:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/diagnostics/app.css:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/diagnostics/app.css:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/diagnostics/app.css:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/diagnostics/app.js:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/diagnostics/app.js:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/diagnostics/app.js:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/diagnostics/app.js:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/diagnostics/app.js:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/diagnostics/app.js:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/diagnostics/app.js:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/diagnostics/index.html:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/diagnostics/index.html:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/diagnostics/index.html:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/diagnostics/index.html:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/diagnostics/index.html:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/diagnostics/index.html:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/diagnostics/index.html:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/console/app.css:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/console/app.css:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/console/app.css:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/console/app.css:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/console/app.css:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/console/app.css:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/console/app.css:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/console/app.js:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/console/app.js:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/console/app.js:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/console/app.js:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/console/app.js:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/console/app.js:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/console/app.js:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/console/index.html:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/console/index.html:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/console/index.html:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/console/index.html:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/console/index.html:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/console/index.html:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:apps/admin/console/index.html:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/index.mjs:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/index.mjs:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/index.mjs:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/index.mjs:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/index.mjs:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/index.mjs:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/index.mjs:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/session/session-store.mjs:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/session/session-store.mjs:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/session/session-store.mjs:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/session/session-store.mjs:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/session/session-store.mjs:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/session/session-store.mjs:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/session/session-store.mjs:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/redis/redis-client.mjs:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/redis/redis-client.mjs:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/redis/redis-client.mjs:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/redis/redis-client.mjs:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/redis/redis-client.mjs:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/redis/redis-client.mjs:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/redis/redis-client.mjs:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/ratelimit/rate-limit-store.mjs:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/ratelimit/rate-limit-store.mjs:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/ratelimit/rate-limit-store.mjs:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/ratelimit/rate-limit-store.mjs:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/ratelimit/rate-limit-store.mjs:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/ratelimit/rate-limit-store.mjs:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/ratelimit/rate-limit-store.mjs:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/persistence/persistence.mjs:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/persistence/persistence.mjs:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/persistence/persistence.mjs:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/persistence/persistence.mjs:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/persistence/persistence.mjs:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/persistence/persistence.mjs:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/persistence/persistence.mjs:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/persistence/postgres-bridge.mjs:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/persistence/postgres-bridge.mjs:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/persistence/postgres-bridge.mjs:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/persistence/postgres-bridge.mjs:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/persistence/postgres-bridge.mjs:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/persistence/postgres-bridge.mjs:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/persistence/postgres-bridge.mjs:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/payments/portone-v2.mjs:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/payments/portone-v2.mjs:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/payments/portone-v2.mjs:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/payments/portone-v2.mjs:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/payments/portone-v2.mjs:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/payments/portone-v2.mjs:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/payments/portone-v2.mjs:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/payments/portone-webhook-verify.mjs:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/payments/portone-webhook-verify.mjs:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/payments/portone-webhook-verify.mjs:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/payments/portone-webhook-verify.mjs:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/payments/portone-webhook-verify.mjs:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/payments/portone-webhook-verify.mjs:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/payments/portone-webhook-verify.mjs:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/lock/distributed-lock.mjs:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/lock/distributed-lock.mjs:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/lock/distributed-lock.mjs:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/lock/distributed-lock.mjs:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/lock/distributed-lock.mjs:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/lock/distributed-lock.mjs:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/infrastructure/lock/distributed-lock.mjs:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/core/admin-auth.mjs:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/core/admin-auth.mjs:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/core/admin-auth.mjs:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/core/admin-auth.mjs:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/core/admin-auth.mjs:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/core/admin-auth.mjs:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/core/admin-auth.mjs:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/core/passwords.mjs:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/core/passwords.mjs:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/core/passwords.mjs:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/core/passwords.mjs:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/core/passwords.mjs:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/core/passwords.mjs:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/core/passwords.mjs:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/core/payment-state-machine.mjs:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/core/payment-state-machine.mjs:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/core/payment-state-machine.mjs:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/core/payment-state-machine.mjs:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/core/payment-state-machine.mjs:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/core/payment-state-machine.mjs:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/core/payment-state-machine.mjs:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/core/platform.mjs:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/core/platform.mjs:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/core/platform.mjs:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/core/platform.mjs:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/core/platform.mjs:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/core/platform.mjs:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/core/platform.mjs:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/contracts/commercial-target-interfaces.md:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/contracts/commercial-target-interfaces.md:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/contracts/commercial-target-interfaces.md:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/contracts/commercial-target-interfaces.md:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/contracts/commercial-target-interfaces.md:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/contracts/commercial-target-interfaces.md:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/contracts/commercial-target-interfaces.md:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:shared/admin-client.js:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:shared/admin-client.js:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:shared/admin-client.js:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:shared/admin-client.js:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:shared/admin-client.js:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:shared/admin-client.js:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:shared/admin-client.js:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:shared/base.css:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:shared/base.css:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:shared/base.css:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:shared/base.css:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:shared/base.css:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:shared/base.css:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:shared/base.css:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:shared/html.js:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:shared/html.js:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:shared/html.js:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:shared/html.js:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:shared/html.js:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:shared/html.js:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:shared/html.js:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:shared/turnstile.js:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:shared/turnstile.js:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:shared/turnstile.js:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:shared/turnstile.js:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:shared/turnstile.js:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:shared/turnstile.js:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:shared/turnstile.js:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:shared/visibility.css:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:shared/visibility.css:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:shared/visibility.css:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:shared/visibility.css:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:shared/visibility.css:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:shared/visibility.css:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:shared/visibility.css:no-미구현",
+      "ok": true,
+      "detail": ""
+    }
+  ]
+}
