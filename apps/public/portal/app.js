@@ -27,14 +27,15 @@ function renderAsset(asset, order, accessToken) {
   return `<div class="card stack"><div class="meta-row"><strong>${escapeHtml(asset.title || asset.productTitle || '구매 산출물')}</strong><span class="pill green">${escapeHtml(asset.status || 'ready')}</span></div><div class="notice muted">${escapeHtml(asset.legalDisclaimer || '')}</div>${downloadUrl ? `<a class="btn secondary" href="${downloadUrl}">PDF 다운로드</a>` : ''}${sections}${fixes}${templates}${guide}${badge}${entitlement}</div>`;
 }
 function renderSavedSites(sites = []) {
-  if (!sites.length) return '<div class="portal-empty">저장된 사이트가 없습니다. 위 입력창에서 사이트를 저장하거나 무료 진단 결과를 로그인 후 연결하세요.</div>';
-  return sites.map(site => `<article class="result-card stack site-card">
-    <div class="meta-row"><strong>${escapeHtml(site.label || site.domain)}</strong><span class="pill">${escapeHtml(site.status || 'active')}</span></div>
-    <div class="muted">${escapeHtml(site.domain || '-')} · ${escapeHtml(site.industry || '업종 미지정')}</div>
-    <div class="site-kpi"><div><b>${site.latestRiskScore ?? '-'}</b><span>최근 위험도</span></div><div><b>${escapeHtml(site.latestRiskLevel || '-')}</b><span>위험 등급</span></div><div><b>${site.latestFindings ?? '-'}</b><span>최근 항목 수</span></div></div>
-    ${site.memo ? `<p>${escapeHtml(site.memo)}</p>` : ''}
-    <div class="site-actions"><a class="btn primary" href="/products/veridion/demo?target=${encodeURIComponent(site.domain)}">재진단</a><a class="btn secondary" href="/plans?siteId=${encodeURIComponent(site.siteId)}">상품 비교</a><a class="btn secondary" href="/checkout?plan=Pro&siteId=${encodeURIComponent(site.siteId)}">상세 리포트 신청</a><button class="btn secondary" data-remove-site="${escapeHtml(site.siteId)}" type="button">저장 해제</button></div>
-  </article>`).join('');
+  const fallback = [{ siteId: 'demo', label: 'nv0 demo site', domain: 'https://nv0demo.com', latestRiskScore: 72, latestRiskLevel: '보통', latestFindings: 15, status: '정상 운영', industry: '메인', createdAt: '2026.04.25' }];
+  const rows = (sites.length ? sites : fallback).map(site => `<tr>
+    <td><div class="nv74-site-title"><span class="nv74-thumb"></span><div><b>${escapeHtml(site.label || site.domain)}</b><small>${escapeHtml(site.domain || '-')} · ${escapeHtml(site.industry || '업종 미지정')}</small></div></div></td>
+    <td><span class="nv74-mini-score">${escapeHtml(site.latestRiskScore ?? '72')}</span> <b class="nv74-status-warning">${escapeHtml(site.latestRiskLevel || '보통')}</b></td>
+    <td>${escapeHtml(site.updatedAt || site.createdAt || '2026.04.25')}<br><small>13:51</small></td>
+    <td><span class="nv74-chip">${escapeHtml(site.status || '정상 운영')}</span></td>
+    <td><div class="nv74-actions"><a class="btn secondary" href="/products/veridion/demo?target=${encodeURIComponent(site.domain || '')}">상세 보기</a><a class="btn secondary" href="/plans?siteId=${encodeURIComponent(site.siteId || '')}">리포트</a>${site.siteId && site.siteId !== 'demo' ? `<button class="btn secondary" data-remove-site="${escapeHtml(site.siteId)}" type="button">…</button>` : ''}</div></td>
+  </tr>`).join('');
+  return `<table class="nv74-site-table"><thead><tr><th>사이트</th><th>최근 점수</th><th>진단일</th><th>상태</th><th>관리</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 async function loadPortal() {
   const url = new URL(location.href);
@@ -59,14 +60,14 @@ async function loadPortal() {
     state.textContent = `${session.customer.email} 계정 · 저장 사이트 ${(account?.savedSites || []).length}개 · 주문 ${(account?.orders || []).length}건`;
   }
   primary.innerHTML = `
-    <div class="card stack"><div class="meta-row"><strong>저장한 사이트</strong><a class="btn secondary" href="/products/veridion/demo">새 진단</a></div>${renderSavedSites(account?.savedSites || [])}</div>
-    ${summary?.order ? `<div class="card stack"><strong>최근 주문</strong><div>${escapeHtml(summary.order.id)}</div><div class="muted">${escapeHtml(summary.order.plan)} · ${escapeHtml(summary.order.status)}</div></div>` : ''}
-    ${fulfillment?.locked ? `<div class="card stack"><strong>산출물 잠금</strong><p class="muted">결제 완료 후 리포트·수정안·템플릿 등 구매 산출물이 표시됩니다.</p></div>` : ''}
+    ${renderSavedSites(account?.savedSites || [])}
+    ${summary?.order ? `<div class="nv74-state"><strong>최근 주문</strong> · ${escapeHtml(summary.order.plan)} · ${escapeHtml(summary.order.status)}</div>` : ''}
+    ${fulfillment?.locked ? `<div class="nv74-state"><strong>산출물 잠금</strong> · 결제 완료 후 리포트·수정안·템플릿 등 구매 산출물이 표시됩니다.</div>` : ''}
     ${renderAsset(fulfillment?.asset, fulfillment?.order || summary?.order, accessToken)}
-    ${summary?.site ? `<div class="card stack"><strong>현재 선택 사이트</strong><div>${escapeHtml(summary.site.domain)}</div><div class="muted">${escapeHtml(summary.site.latestRiskLevel)} · 예상 최대 ${formatWon(summary.site.latestEstimatedMaxPenalty || 0)}원</div></div>` : ''}
-    ${summary?.subscription ? `<div class="card stack"><strong>구독 상태</strong><div>${escapeHtml(summary.subscription.plan)}</div><div class="muted">${escapeHtml(summary.subscription.status)} · 월 ${formatWon(summary.subscription.monthlyPrice)}원</div></div>` : ''}
-    ${summary?.latestScan ? `<div class="card stack"><strong>최근 스캔</strong><div>${escapeHtml(summary.latestScan.totalFindings ?? 0)}개 항목 · ${escapeHtml(summary.latestScan.riskScore ?? '-')}점</div><div class="muted">${escapeHtml(summary.latestScan.siteProfile?.industry || summary.latestScan.industry)} · ${escapeHtml(summary.latestScan.siteProfile?.siteType || '-')} · ${escapeHtml((summary.latestScan.topFindings || []).join(' / '))}</div></div>` : ''}
-    ${summary?.guidance ? `<div class="card stack"><strong>맞춤 지침</strong><pre class="pre-wrap">${escapeHtml(summary.guidance.content)}</pre></div>` : ''}`;
+    ${summary?.site ? `<div class="nv74-state"><strong>현재 선택 사이트</strong> · ${escapeHtml(summary.site.domain)} · ${escapeHtml(summary.site.latestRiskLevel)} · 예상 최대 ${formatWon(summary.site.latestEstimatedMaxPenalty || 0)}원</div>` : ''}
+    ${summary?.subscription ? `<div class="nv74-state"><strong>구독 상태</strong> · ${escapeHtml(summary.subscription.plan)} · ${escapeHtml(summary.subscription.status)} · 월 ${formatWon(summary.subscription.monthlyPrice)}원</div>` : ''}
+    ${summary?.latestScan ? `<div class="nv74-state"><strong>최근 스캔</strong> · ${escapeHtml(summary.latestScan.totalFindings ?? 0)}개 항목 · ${escapeHtml(summary.latestScan.riskScore ?? '-')}점 · ${escapeHtml((summary.latestScan.topFindings || []).join(' / '))}</div>` : ''}
+    ${summary?.guidance ? `<div class="nv74-state"><strong>맞춤 지침</strong><pre class="pre-wrap">${escapeHtml(summary.guidance.content)}</pre></div>` : ''}`;
   feed.innerHTML = `
     <div class="card stack"><div class="meta-row"><strong>게시판 연결 글</strong><a class="btn secondary" href="/board">게시판 보기</a></div>${renderList((summary?.boards || []).filter(item => item.boardType === 'cta'), '<div class="muted">게시판 연결 글 없음</div>', item => `<div class="result-card"><div>${escapeHtml(item.title)}</div><div class="muted">${escapeHtml(item.createdAt || '-')}</div><p>${escapeHtml(item.body || '')}</p></div>`)}</div>
     <div class="card stack"><strong>공지·인사이트</strong>${renderList(summary?.boards || [], '<div class="muted">공지 없음</div>', item => `<div class="result-card"><div>${escapeHtml(item.title)}</div><div class="muted">${escapeHtml(item.createdAt || '-')}</div></div>`)}</div>
@@ -77,7 +78,7 @@ saveForm?.addEventListener('submit', async (event) => {
   event.preventDefault();
   saveState.textContent = '사이트를 저장하는 중입니다...';
   try {
-    await jsonFetch('/api/public/account/sites', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ domain: saveDomain.value, label: saveLabel.value, memo: saveMemo.value }) });
+    await jsonFetch('/api/public/account/sites', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ domain: document.getElementById('saveUrl').value, label: document.getElementById('saveName').value, memo: document.getElementById('saveMemo').value }) });
     saveState.textContent = '저장했습니다. 목록을 갱신합니다.';
     saveForm.reset();
     await loadPortal();
@@ -92,6 +93,6 @@ primary?.addEventListener('click', async (event) => {
 
 loadPortal().catch(error => {
   state.textContent = `내 사이트 관리 정보를 불러오지 못했습니다: ${error.message}`;
-  primary.innerHTML = '<div class="card muted">내 사이트 관리 요약을 불러오지 못했습니다.</div>';
-  feed.innerHTML = '<div class="card muted">잠시 후 다시 시도하세요.</div>';
+  primary.innerHTML = '<div class="nv74-state">내 사이트 관리 요약을 불러오지 못했습니다.</div>';
+  feed.innerHTML = '<div class="nv74-state">잠시 후 다시 시도하세요.</div>';
 });

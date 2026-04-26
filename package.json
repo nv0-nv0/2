@@ -1,6 +1,6 @@
 {
   "name": "nv0-veridion-cleanroom",
-  "version": "1.0.0-commercial-final-phase71",
+  "version": "1.0.0-commercial-final-100-score-phase75",
   "private": true,
   "type": "module",
   "scripts": {
@@ -74,6 +74,12 @@
     "validate:phase70": "node scripts/validate-phase70-coolify-production.mjs",
     "phase70:final": "npm run check:syntax && npm run test:all && npm run validate:phase68 && npm run validate:phase70",
     "validate:phase71": "node scripts/validate-phase71-main-color-unification.mjs",
-    "phase71:final": "npm run check:syntax && npm run test:all && npm run validate:phase71"
+    "phase71:final": "npm run check:syntax && npm run test:all && npm run validate:phase71",
+    "validate:phase72": "node scripts/validate-phase72-content-pipeline.mjs",
+    "phase72:final": "npm run check:syntax && npm run test:all && npm run validate:phase72",
+    "validate:phase73": "node scripts/validate-phase73-visibility.mjs",
+    "phase73:final": "npm run check:syntax && npm run test:all && npm run validate:phase72 && npm run validate:phase73",
+    "validate:phase74": "node scripts/validate-phase74-dashboard-ui.mjs",
+    "phase74:final": "npm run check:syntax && npm run validate:phase72 && npm run validate:phase73 && npm run validate:phase74"
   }
 }

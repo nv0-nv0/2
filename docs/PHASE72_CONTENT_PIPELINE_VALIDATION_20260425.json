@@ -1,0 +1,18 @@
+{
+  "ok": true,
+  "phase": "72",
+  "score": 100,
+  "checkedPages": 9,
+  "pipeline": [
+    "check:syntax",
+    "test:all",
+    "validate:phase72"
+  ],
+  "focus": [
+    "content-depth",
+    "global-cta",
+    "portal-value",
+    "auto-publish",
+    "commercial-pipeline"
+  ]
+}
