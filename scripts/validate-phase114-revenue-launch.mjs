@@ -1,0 +1,24 @@
+import fs from 'node:fs';
+const read = p => fs.readFileSync(p, 'utf8');
+const checks = [];
+function add(name, ok) { checks.push({ name, ok: Boolean(ok) }); }
+const home = read('apps/public/home/index.html');
+const demo = read('apps/public/veridion-demo/index.html');
+const plans = read('apps/public/plans/index.html');
+const checkoutHtml = read('apps/public/checkout/index.html');
+const checkoutJs = read('apps/public/checkout/app.js');
+const server = read('server/index.mjs');
+const biz = read('apps/public/business-info/index.html');
+const privacy = read('apps/public/privacy/index.html');
+add('home:single-primary-free-diagnosis', home.includes('무료 진단 시작하기') && home.includes('이메일 입력 없음'));
+add('demo:member-value-cta', demo.includes('전체 결과 열기') && demo.includes('지난 검사 내역'));
+add('plans:decision-table', plans.includes('선택을 줄인 추천 기준') && plans.includes('FixPack') && plans.includes('Auto'));
+add('checkout:disabled-until-consent', checkoutHtml.includes('id="checkoutBtn" disabled') && checkoutJs.includes('updateCheckoutButtonState'));
+add('checkout:email-validation', checkoutJs.includes('isValidEmail') && checkoutJs.includes('결제·산출물 수신 이메일을 정확히 입력'));
+add('checkout:duplicate-guard', checkoutJs.includes('isCreatingSession') && checkoutJs.includes('isCompletingPayment'));
+add('footer:no-internal-hosting-default', server.includes("hostingProvider: process.env.NV0_HOSTING_PROVIDER || ''") && !server.includes("'Contabo/Coolify'"));
+add('public:no-coolify-copy', !/Coolify|상용 결제 전|확인 필요|입력 필요/.test(home + demo + plans + checkoutHtml + biz + privacy));
+add('docs:phase114-report', fs.existsSync('docs/PHASE114_REVENUE_LAUNCH_COMPLETION_20260427_KO.md'));
+const failed = checks.filter(c => !c.ok);
+console.log(JSON.stringify({ ok: failed.length === 0, total: checks.length, failed }, null, 2));
+if (failed.length) process.exit(1);

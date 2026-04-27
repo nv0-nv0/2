@@ -6,9 +6,29 @@ const summary = document.getElementById('orderSummary');
 const planInput = document.getElementById('plan');
 let currentOrder = null;
 let currentPaymentSession = null;
+let isCreatingSession = false;
+let isCompletingPayment = false;
 
 function getSavedScan() {
   try { return JSON.parse(localStorage.getItem('nv0:lastScan') || 'null'); } catch { return null; }
+}
+
+function isValidEmail(value) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || '').trim());
+}
+
+function requiredConsentReady() {
+  return ['privacyConsent', 'termsConsent', 'refundConsent', 'deliveryConsent'].every(id => !!document.getElementById(id)?.checked);
+}
+
+function updateCheckoutButtonState() {
+  const btn = document.getElementById('checkoutBtn');
+  if (!btn) return;
+  const email = document.getElementById('buyerEmail')?.value.trim() || '';
+  const ready = requiredConsentReady() && isValidEmail(email);
+  btn.disabled = !ready || isCreatingSession;
+  btn.setAttribute('aria-disabled', String(btn.disabled));
+  btn.textContent = ready ? '결제하기' : '필수 동의 후 결제하기';
 }
 
 function getPrefill() {
@@ -52,6 +72,7 @@ async function launchPaymentWindow(paymentSession) {
 }
 
 async function createSession() {
+  if (isCreatingSession) return;
   const payload = {
     buyerEmail: document.getElementById('buyerEmail')?.value.trim() || '',
     siteId: prefill.siteId,
@@ -62,10 +83,18 @@ async function createSession() {
     refundConsent: !!document.getElementById('refundConsent')?.checked,
     deliveryConsent: !!document.getElementById('deliveryConsent')?.checked
   };
-  if (!payload.privacyConsent || !payload.termsConsent || !payload.refundConsent || !payload.deliveryConsent) {
-    state.textContent = '결제와 산출물 제공에 필요한 필수 약관 및 디지털 산출물 제공 고지에 동의해 주세요.';
+  if (!isValidEmail(payload.buyerEmail)) {
+    state.textContent = '결제·산출물 수신 이메일을 정확히 입력해 주세요.';
+    updateCheckoutButtonState();
     return;
   }
+  if (!payload.privacyConsent || !payload.termsConsent || !payload.refundConsent || !payload.deliveryConsent) {
+    state.textContent = '결제와 산출물 제공에 필요한 필수 약관 및 디지털 산출물 제공 고지에 동의해 주세요.';
+    updateCheckoutButtonState();
+    return;
+  }
+  isCreatingSession = true;
+  updateCheckoutButtonState();
   state.textContent = '신청 정보를 확인하는 중...';
   let data;
   try {
@@ -77,13 +106,19 @@ async function createSession() {
     data = await res.json().catch(() => ({}));
     if (!res.ok) {
       state.textContent = data.error || '신청 정보를 확인하지 못했습니다.';
+      isCreatingSession = false;
+      updateCheckoutButtonState();
       return;
     }
   } catch (error) {
     state.textContent = `신청 정보를 확인하지 못했습니다: ${error.message}`;
+    isCreatingSession = false;
+    updateCheckoutButtonState();
     return;
   }
   renderOrder(data.order, data.paymentSession);
+  isCreatingSession = false;
+  updateCheckoutButtonState();
   if (data.providerMode === 'portone_v2') {
     state.textContent = '신청 정보가 확인되었습니다. 결제를 시작합니다.';
     try {
@@ -100,10 +135,13 @@ async function createSession() {
 }
 
 async function completePayment() {
+  if (isCompletingPayment) return;
   if (!currentOrder?.id) {
     state.textContent = '먼저 서비스 신청을 진행하세요.';
     return;
   }
+  isCompletingPayment = true;
+  document.getElementById('completeBtn')?.setAttribute('disabled', 'true');
   state.textContent = '결제 완료 여부를 확인하는 중...';
   const payload = { orderId: currentOrder.id, paymentId: currentPaymentSession?.providerPaymentId || currentOrder.id };
   let data;
@@ -116,13 +154,19 @@ async function completePayment() {
     data = await res.json().catch(() => ({}));
     if (!res.ok) {
       state.textContent = data.error || '결제 완료 실패';
+      isCompletingPayment = false;
+      document.getElementById('completeBtn')?.removeAttribute('disabled');
       return;
     }
   } catch (error) {
     state.textContent = `결제 완료 여부를 확인하지 못했습니다: ${error.message}`;
+    isCompletingPayment = false;
+    document.getElementById('completeBtn')?.removeAttribute('disabled');
     return;
   }
   renderOrder(data.order, data.paymentSession);
+  isCompletingPayment = false;
+  document.getElementById('completeBtn')?.removeAttribute('disabled');
   state.textContent = '결제가 완료되었습니다.';
   const anchor = document.createElement('a');
   anchor.href = `/portal?orderId=${encodeURIComponent(data.order.id)}${data.order.accessToken ? `&accessToken=${encodeURIComponent(data.order.accessToken)}` : ''}`;
@@ -131,6 +175,9 @@ async function completePayment() {
   state.appendChild(anchor);
 }
 
+document.getElementById('buyerEmail')?.addEventListener('input', updateCheckoutButtonState);
+['privacyConsent', 'termsConsent', 'refundConsent', 'deliveryConsent'].forEach(id => document.getElementById(id)?.addEventListener('change', updateCheckoutButtonState));
+updateCheckoutButtonState();
 document.getElementById('checkoutBtn')?.addEventListener('click', createSession);
 document.getElementById('completeBtn')?.addEventListener('click', completePayment);
 

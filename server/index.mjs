@@ -34,7 +34,7 @@ businessTypes: ['정보통신업', '소프트웨어 개발 및 공급업', '전�
 contactEmail: process.env.NV0_SUPPORT_EMAIL || 'ct@nv0.kr',
 domain: process.env.NV0_PUBLIC_BASE_URL || 'https://nv0.kr',
 mailOrderRegistrationNumber: process.env.NV0_MAIL_ORDER_REGISTRATION_NUMBER || '',
-hostingProvider: process.env.NV0_HOSTING_PROVIDER || 'Contabo/Coolify',
+hostingProvider: process.env.NV0_HOSTING_PROVIDER || '',
 customerServicePhone: process.env.NV0_CUSTOMER_SERVICE_PHONE || '',
 privacyOfficerEmail: process.env.NV0_PRIVACY_OFFICER_EMAIL || process.env.NV0_SUPPORT_EMAIL || 'ct@nv0.kr'
 });
@@ -75,7 +75,7 @@ const PORTONE_WEBHOOK_VERIFY_MODE = process.env.NV0_PORTONE_WEBHOOK_VERIFY_MODE 
 const RULES_VERSION = process.env.NV0_RULES_VERSION || '2026.04.25-phase68-auto-diagnosis';
 const SCAN_CACHE_TTL_MS = Number(process.env.NV0_SCAN_CACHE_TTL_MS || 10 * 60_000);
 const CTA_AUTOPUBLISH_INTERVAL_MS = Number(process.env.NV0_CTA_AUTOPUBLISH_INTERVAL_MS || 30 * 60_000);
-const RELEASE_PHASE = 'phase68-server-api-auto-diagnosis-delivery';
+const RELEASE_PHASE = 'phase114-revenue-launch-finalization';
 const DATA_RETENTION_DAYS = Number(process.env.NV0_DATA_RETENTION_DAYS || 1095);
 const REFUND_REQUEST_WINDOW_DAYS = Number(process.env.NV0_REFUND_REQUEST_WINDOW_DAYS || 7);
 const OPERATOR_ALERT_EMAIL = process.env.NV0_OPERATOR_ALERT_EMAIL || BUSINESS_PROFILE.contactEmail;
@@ -928,9 +928,9 @@ return `<a class="skip-link" href="#main">본문 바로가기</a><nav class="sit
 <div class="site-menu">
 <a href="/products/veridion/demo"${navAttrs(urlPath, '/products/veridion/demo')}>무료 진단</a>
 <a href="/portal"${navAttrs(urlPath, '/portal')}>내 사이트</a>
-<a href="/board"${navAttrs(urlPath, '/board')}>CTA 게시판</a>
-<a href="/plans"${navAttrs(urlPath, '/plans')}>요금제</a>
-<a href="/documents"${navAttrs(urlPath, '/documents')}>문서 생성</a>
+<a href="/board"${navAttrs(urlPath, '/board')}>게시판</a>
+<a href="/plans"${navAttrs(urlPath, '/plans')}>상품·요금</a>
+<a href="/documents"${navAttrs(urlPath, '/documents')}>문서 초안</a>
 <a href="/business-info"${navAttrs(urlPath, '/business-info')}>고객지원</a>
 <a href="/auth"${navAttrs(urlPath, '/auth', 'login-link')}>로그인</a>
 <a href="/products/veridion/demo" class="cta">무료 진단</a>
@@ -956,10 +956,11 @@ return '<footer class="business-footer" aria-label="사업자 정보">'
 + `<strong>${BUSINESS_PROFILE.tradeName}</strong>`
 + `<span>대표자: ${BUSINESS_PROFILE.representative}</span>`
 + `<span>사업자등록번호: ${BUSINESS_PROFILE.registrationNumber}</span>`
-+ (BUSINESS_PROFILE.mailOrderRegistrationNumber ? `<span>통신판매업 신고번호: ${BUSINESS_PROFILE.mailOrderRegistrationNumber}</span>` : '')
++ (BUSINESS_PROFILE.mailOrderRegistrationNumber && !/예정|확인|상용|입력|TODO|TBD/i.test(BUSINESS_PROFILE.mailOrderRegistrationNumber) ? `<span>통신판매업 신고번호: ${BUSINESS_PROFILE.mailOrderRegistrationNumber}</span>` : '')
 + `<span>주소: ${BUSINESS_PROFILE.address}</span>`
 + `<span>업태·종목: ${types}</span>`
 + `<span>고객지원: ${BUSINESS_PROFILE.contactEmail}${BUSINESS_PROFILE.customerServicePhone ? ' · ' + BUSINESS_PROFILE.customerServicePhone : ' · 이메일 전용 고객지원'}</span>`
++ (BUSINESS_PROFILE.hostingProvider && !/예정|확인|상용|입력|TODO|TBD|Coolify/i.test(BUSINESS_PROFILE.hostingProvider) ? `<span>호스팅 제공자: ${BUSINESS_PROFILE.hostingProvider}</span>` : '')
 + `<span class="legal-disclaimer">본 서비스는 운영 점검 보조도구이며 법률 자문을 제공하지 않습니다.</span>`
 + '<nav><a href="/terms">이용약관</a><a href="/privacy">개인정보처리방침</a><a href="/refund">환불·배송·교환 정책</a><a href="/business-info">사업자 정보</a></nav>'
 + '</footer>';
@@ -2884,6 +2885,18 @@ const db = await readDb();
 const session = await getCustomerSession(req, db);
 if (!session) return json(req, res, 401, { ok: false, error: '로그인이 필요합니다.' });
 return json(req, res, 200, { ok: true, sites: customerSavedSites(db, session.customer), recentScans: customerRecentScans(db, session.customer, 5) });
+}
+if (pathname === '/api/public/account/scan-detail' && req.method === 'GET') {
+const db = await readDb();
+const session = await getCustomerSession(req, db);
+if (!session) return json(req, res, 401, { ok: false, error: '로그인이 필요합니다.' });
+const requestId = String(url.searchParams.get('requestId') || '').trim();
+const siteId = String(url.searchParams.get('siteId') || '').trim();
+const scan = (db.scans || []).find(item => (requestId && item.requestId === requestId) || (siteId && item.siteId === siteId));
+if (!scan) return json(req, res, 404, { ok: false, error: '검사 결과를 찾을 수 없습니다.' });
+const ownsLinkedSite = (db.customerSiteLinks || []).some(item => item.customerId === session.customer.id && item.siteId === scan.siteId);
+if (scan.customerId !== session.customer.id && !ownsLinkedSite) return json(req, res, 403, { ok: false, error: '검사 결과 접근 권한이 없습니다.' });
+return json(req, res, 200, { ok: true, result: { ...scan, diagnosis: buildPublicDiagnosisPackage(scan), savedToAccount: true } });
 }
 if (pathname === '/api/public/account/sites' && req.method === 'POST') {
 const body = normalizeSavedSitePayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
