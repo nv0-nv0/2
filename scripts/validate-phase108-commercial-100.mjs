@@ -1,0 +1,40 @@
+import fs from 'node:fs';
+import path from 'node:path';
+const root = process.cwd();
+const errors = [];
+const checks = [];
+function read(rel){ return fs.readFileSync(path.join(root, rel), 'utf8'); }
+function pass(name, ok, detail='') { checks.push({ name, ok, detail }); if(!ok) errors.push({ name, detail }); }
+const runtimeFiles = [];
+function walk(dir){ if(!fs.existsSync(dir)) return; for(const entry of fs.readdirSync(dir,{withFileTypes:true})){ const abs=path.join(dir,entry.name); if(entry.isDirectory()) walk(abs); else if(/\.(html|js|css|mjs)$/i.test(entry.name)) runtimeFiles.push(abs); }}
+walk(path.join(root,'apps')); walk(path.join(root,'server')); walk(path.join(root,'shared'));
+const runtimeText = runtimeFiles.map(f => fs.readFileSync(f,'utf8')).join('\n');
+const htmlText = runtimeFiles.filter(f => /\.html$/i.test(f)).map(f => fs.readFileSync(f,'utf8')).join('\n');
+const banned = ['통신판매업 신고 완료 후 표시 예정','상용 결제 전 입력 필요','호스팅 제공자 실제 운영 인프라 확정 후 입력 필요','실제 신고 후 입력 필요','확정 후 입력 필요','support@nv0.kr'];
+for (const token of banned) pass(`banned-token:${token}`, !runtimeText.includes(token), 'runtime-visible source must not expose unfinished commercial copy');
+for (const token of ['Why it matters','Overview','Next Step','Preview']) pass(`banned-html-label:${token}`, !htmlText.includes(token), 'public HTML labels must be Korean');
+pass('support-email:ct@nv0.kr', runtimeText.includes('ct@nv0.kr'), 'confirmed support email must be visible');
+pass('business-number:584-77-00586', runtimeText.includes('584-77-00586'), 'confirmed business registration number must be visible');
+const business = read('apps/public/business-info/index.html');
+pass('business:email-only-support', business.includes('이메일 전용 고객지원'), 'customer support must be explicit when no phone number is provided');
+pass('business:hosting-visible', business.includes('Contabo') && business.includes('Coolify'), 'hosting context must be visible');
+pass('business:launch-blocking-notice', business.includes('상용 공개 차단 기준'), 'unconfirmed statutory fields must be handled with a launch-blocking rule');
+const board = read('apps/public/board/index.html');
+for (const title of ['무료 진단 후 전환율 개선 사례','이용약관 자동 생성으로 리스크 제거','FixPack 적용 후 즉시 운영 가능 상태 달성','Auto 플랜으로 유지관리 자동화','CTA 자동발행으로 방문자 증가']) pass(`board-sample:${title}`, board.includes(title), 'board must include at least 5 commercial CTA samples');
+const plans = read('apps/public/plans/index.html');
+for (const token of ['Pro / FixPack / Auto 핵심 차이','상품별 실제 제공 결과 예시','Pro 결과 예시','FixPack 결과 예시','Auto 결과 예시']) pass(`plans-conversion:${token}`, plans.includes(token), 'plans page must include conversion proof and comparison');
+const demo = read('apps/public/demo/index.html');
+pass('demo:sample-result', demo.includes('무료 진단 결과 예시') && demo.includes('예시 점수 68 / 100'), 'demo page must show sample diagnosis result');
+const checkout = read('apps/public/checkout/index.html');
+pass('checkout:refund-limit', checkout.includes('디지털 상품 특성상 결제 후 환불이 제한될 수 있으며'), 'checkout must clearly disclose refund restriction before payment');
+pass('checkout:legal-not-advice-benefit', checkout.includes('법률 자문을 대체하지 않지만') && checkout.includes('필수 문서와 고지 문구'), 'legal disclaimer must preserve benefit messaging');
+const docs = read('apps/public/documents/index.html');
+pass('documents:label-split', docs.includes('<label><span>상호</span><input') && docs.includes('<label><span>고객지원 이메일</span><input'), 'document form labels must be separated');
+const auth = read('apps/public/auth/index.html');
+pass('auth:label-split', auth.includes('<label><span>이메일</span><input') && auth.includes('<label><span>비밀번호</span><input'), 'auth form labels must be separated');
+const server = read('server/index.mjs');
+for (const nav of ['무료 진단','내 사이트','CTA 게시판','요금제','문서 생성','고객지원']) pass(`nav:${nav}`, server.includes(`>${nav}</a>`) || server.includes(nav), 'public navigation must use unified commercial labels');
+const report = { generatedAt: new Date().toISOString(), ok: errors.length === 0, total: checks.length, passed: checks.filter(c=>c.ok).length, failed: errors.length, checks, errors };
+fs.writeFileSync(path.join(root, 'docs', 'PHASE108_COMMERCIAL_100_VALIDATION_20260426.json'), JSON.stringify(report, null, 2));
+console.log(JSON.stringify(report, null, 2));
+if (!report.ok) process.exit(1);

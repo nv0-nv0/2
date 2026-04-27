@@ -5,6 +5,7 @@ import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { assertCommercialRouteAllowed, createPlatformProfile } from './core/platform.mjs';
 import { PAYMENT_SESSION_TRANSITIONS, ORDER_STATUS_TRANSITIONS, canTransition } from './core/payment-state-machine.mjs';
+import { handleAccountRescan, customerRecentScans } from './core/account-rescan.mjs';
 import { authenticateAdminAccount, ensureAdminCollections, ensureBootstrapAdmin, getAdminPermissions, getAdminRoles } from './core/admin-auth.mjs';
 import { hashPassword, verifyPassword } from './core/passwords.mjs';
 import { createPersistenceManager } from './infrastructure/persistence/persistence.mjs';
@@ -33,7 +34,7 @@ businessTypes: ['정보통신업', '소프트웨어 개발 및 공급업', '전�
 contactEmail: process.env.NV0_SUPPORT_EMAIL || 'ct@nv0.kr',
 domain: process.env.NV0_PUBLIC_BASE_URL || 'https://nv0.kr',
 mailOrderRegistrationNumber: process.env.NV0_MAIL_ORDER_REGISTRATION_NUMBER || '',
-hostingProvider: process.env.NV0_HOSTING_PROVIDER || '자체 서버 또는 계약 호스팅 사업자',
+hostingProvider: process.env.NV0_HOSTING_PROVIDER || 'Contabo/Coolify',
 customerServicePhone: process.env.NV0_CUSTOMER_SERVICE_PHONE || '',
 privacyOfficerEmail: process.env.NV0_PRIVACY_OFFICER_EMAIL || process.env.NV0_SUPPORT_EMAIL || 'ct@nv0.kr'
 });
@@ -864,13 +865,13 @@ const metas = {
 '/': ['웹사이트 필수 안내 무료 진단 | NV0', '쇼핑몰과 랜딩페이지의 필수 고지, 개인정보, 환불 안내, 광고 문구를 빠르게 점검하고 개선 순서를 제안합니다.'],
 '/products/veridion/demo': ['NV0 무료 진단 | NV0', '무료 진단으로 웹사이트 안내 문구와 정책 고지 위험을 먼저 확인하세요.'],
 '/plans': ['상품·요금 | NV0', '무료 진단 이후 상세 리포트, 수정안, 정책 템플릿, 구독 점검 상품을 비교하세요.'],
-'/documents': ['정책 문서 생성 | NV0', '개인정보처리방침, 이용약관, 환불 정책 문서 초안을 빠르게 정리합니다.'],
-'/policy-documents': ['정책 문서 생성 | NV0', '개인정보처리방침, 이용약관, 환불 정책 문서 초안을 빠르게 정리합니다.'],
+'/documents': ['정책 문서 | NV0', '개인정보처리방침, 이용약관, 환불 정책 문서 초안을 빠르게 정리합니다.'],
+'/policy-documents': ['정책 문서 | NV0', '개인정보처리방침, 이용약관, 환불 정책 문서 초안을 빠르게 정리합니다.'],
 '/guides': ['운영 가이드 | NV0', '쇼핑몰 신뢰도, 환불 정책, 구매 CTA, 게시판 자동 발행 활용법을 정리한 운영 가이드입니다.'],
 '/resources': ['운영 가이드 | NV0', '쇼핑몰 신뢰도, 환불 정책, 구매 CTA, 게시판 자동 발행 활용법을 정리한 운영 가이드입니다.'],
 '/solutions': ['솔루션 | NV0', '웹사이트 안내 고지, 정책 문서, 결제 전환 흐름을 점검하는 솔루션입니다.'],
 '/board': ['게시판 | NV0', '전자상거래 사이트 운영자가 참고할 수 있는 필수 고지와 정책 점검 사례를 제공합니다.'],
-'/business-info': ['사업자 정보 | NV0', 'NV0 서비스 운영자의 사업자 고지와 고객지원 정보를 확인하세요.'],
+'/business-info': ['사업자 정보 | NV0', 'NV0 서비스 운영자의 사업자 고지와 지원 정보를 확인하세요.'],
 '/terms': ['이용약관 | NV0', 'NV0 서비스 이용약관입니다.'],
 '/privacy': ['개인정보처리방침 | NV0', 'NV0 서비스 개인정보 처리 기준입니다.'],
 '/refund': ['환불·배송·교환 정책 | NV0', '디지털 산출물 제공과 환불 기준을 안내합니다.']
@@ -927,9 +928,10 @@ return `<a class="skip-link" href="#main">본문 바로가기</a><nav class="sit
 <div class="site-menu">
 <a href="/products/veridion/demo"${navAttrs(urlPath, '/products/veridion/demo')}>무료 진단</a>
 <a href="/portal"${navAttrs(urlPath, '/portal')}>내 사이트</a>
-<a href="/board"${navAttrs(urlPath, '/board')}>게시판</a>
-<a href="/plans"${navAttrs(urlPath, '/plans')}>상품·요금</a>
-<a href="/solutions"${navAttrs(urlPath, '/solutions')}>서비스 구조</a>
+<a href="/board"${navAttrs(urlPath, '/board')}>CTA 게시판</a>
+<a href="/plans"${navAttrs(urlPath, '/plans')}>요금제</a>
+<a href="/documents"${navAttrs(urlPath, '/documents')}>문서 생성</a>
+<a href="/business-info"${navAttrs(urlPath, '/business-info')}>고객지원</a>
 <a href="/auth"${navAttrs(urlPath, '/auth', 'login-link')}>로그인</a>
 <a href="/products/veridion/demo" class="cta">무료 진단</a>
 </div>
@@ -941,7 +943,7 @@ return body.replace('<main ', '<main id="main" tabindex="-1" ');
 }
 function injectNoScriptNotice(body, urlPath) {
 if (urlPath.startsWith('/admin') || body.includes('<noscript>')) return body;
-return body.replace('<body>', '<body><noscript><div class="noscript-banner">이 서비스는 진단 실행과 결제 흐름에 JavaScript가 필요합니다. 브라우저 설정에서 JavaScript를 허용해 주세요.</div></noscript>');
+return body.replace('<body>', '<body><noscript><div class="noscript-banner">진단·결제 흐름에 JavaScript가 필요합니다.</div></noscript>');
 }
 function injectPublicTopMenu(body, urlPath) {
 if (urlPath.startsWith('/admin')) return body;
@@ -954,11 +956,11 @@ return '<footer class="business-footer" aria-label="사업자 정보">'
 + `<strong>${BUSINESS_PROFILE.tradeName}</strong>`
 + `<span>대표자: ${BUSINESS_PROFILE.representative}</span>`
 + `<span>사업자등록번호: ${BUSINESS_PROFILE.registrationNumber}</span>`
-+ `<span>통신판매업 신고번호: ${BUSINESS_PROFILE.mailOrderRegistrationNumber || '통신판매업 신고 완료 후 표시 예정'}</span>`
++ (BUSINESS_PROFILE.mailOrderRegistrationNumber ? `<span>통신판매업 신고번호: ${BUSINESS_PROFILE.mailOrderRegistrationNumber}</span>` : '')
 + `<span>주소: ${BUSINESS_PROFILE.address}</span>`
 + `<span>업태·종목: ${types}</span>`
-+ `<span>고객지원: ${BUSINESS_PROFILE.contactEmail}${BUSINESS_PROFILE.customerServicePhone ? ' · ' + BUSINESS_PROFILE.customerServicePhone : ''}</span>`
-+ `<span class="legal-disclaimer">본 서비스는 웹사이트 안내문·정책 문구 점검 보조도구이며 변호사의 법률 자문 또는 법률 대리를 제공하지 않습니다.</span>`
++ `<span>고객지원: ${BUSINESS_PROFILE.contactEmail}${BUSINESS_PROFILE.customerServicePhone ? ' · ' + BUSINESS_PROFILE.customerServicePhone : ' · 이메일 전용 고객지원'}</span>`
++ `<span class="legal-disclaimer">본 서비스는 운영 점검 보조도구이며 법률 자문을 제공하지 않습니다.</span>`
 + '<nav><a href="/terms">이용약관</a><a href="/privacy">개인정보처리방침</a><a href="/refund">환불·배송·교환 정책</a><a href="/business-info">사업자 정보</a></nav>'
 + '</footer>';
 }
@@ -1041,7 +1043,7 @@ return [
 { code: 'PRIVACY-POLICY', category: '개인정보', title: '개인정보처리방침 링크 또는 본문', severity: 26, penaltyMax: 10000000, fixTemplate: '푸터와 회원가입 영역에 개인정보처리방침 링크를 노출합니다.', match: ({ text }) => !hasAny(text, ['개인정보처리방침','privacy']) },
 { code: 'TERMS-OF-USE', category: '전자상거래', title: '이용약관 링크 또는 본문', severity: 12, penaltyMax: 3000000, fixTemplate: '푸터와 가입/결제 구간에 이용약관 링크를 배치합니다.', match: ({ text }) => !hasAny(text, ['이용약관','terms']) },
 { code: 'REFUND-POLICY', category: '환불·청약철회', title: '환불·교환·청약철회 안내', severity: 18, penaltyMax: 5000000, fixTemplate: '상품상세·푸터·정책 페이지에 환불/교환/청약철회 기준을 분리 표기합니다.', match: ({ text }) => !hasAny(text, ['환불','교환','청약철회','취소']) },
-{ code: 'CONTACT-CHANNEL', category: '고객지원', title: '고객센터 연락수단', severity: 10, penaltyMax: 2000000, fixTemplate: '대표 이메일 또는 전화번호를 푸터와 문의영역에 추가합니다.', match: ({ text }) => !hasAny(text, ['고객센터','문의','contact','전화','이메일','@']) },
+{ code: 'CONTACT-CHANNEL', category: '지원', title: '고객센터 연락수단', severity: 10, penaltyMax: 2000000, fixTemplate: '대표 이메일 또는 전화번호를 푸터와 문의영역에 추가합니다.', match: ({ text }) => !hasAny(text, ['고객센터','문의','contact','전화','이메일','@']) },
 { code: 'MARKETING-CLAIM', category: '광고표시', title: '과장·확정형 표현', severity: 16, penaltyMax: 5000000, fixTemplate: '무조건, 100%, 완치, guaranteed 같은 확정형 표현을 완화합니다.', match: ({ text }) => hasAny(text, ['100%','완치','무조건','guaranteed','최고보장','확정수익']) },
 { code: 'HTTPS-ONLY', category: '보안', title: 'HTTPS 미사용', severity: 20, penaltyMax: 3000000, fixTemplate: 'HTTP 접근을 HTTPS로 리다이렉트하고 HSTS를 설정합니다.', match: ({ url }) => url.protocol !== 'https:' },
 { code: 'TRACKING-CONSENT', category: '개인정보', title: '쿠키/추적 고지 부족', severity: 8, penaltyMax: 2000000, fixTemplate: '분석·광고 쿠키 사용 시 배너 또는 정책 내 고지 항목을 추가합니다.', match: ({ text }) => !hasAny(text, ['쿠키','cookie','tracking','analytics']) },
@@ -1458,11 +1460,11 @@ return 'Basic';
 }
 function buildCommercialOfferCatalog() {
 const kpiPublicUiRemoved = true; // kpi field intentionally hidden from public pages.
-const commonAssurance = ['법률 자문이 아닌 운영 참고용 점검 결과입니다.', '결제 확인 후 내 사이트 관리에서 결과 확인', 'ct@nv0.kr 고객 문의 연결'];
+const commonAssurance = ['법률 자문이 아닌 운영 참고용 점검 결과입니다.', '결제 확인 후 내 사이트 관리에서 결과 확인', 'ct@nv0.kr 문의 연결'];
 return [
 { code: 'Report', group: 'one_time', title: '상세 리포트', price: 9900, period: '1회', priority: 1, summary: '무료 진단 결과를 더 자세한 리포트로 확장합니다. 위험 항목, 근거, 우선순위, 개선 순서를 한 번에 확인할 수 있습니다.', targetCustomer: '쇼핑몰·랜딩페이지 담당자, 1인 사업자, 외주 제작 완료 후 점검이 필요한 고객', deliverables: ['위험도 점수 해설', '전체 탐지 근거', '페이지별 우선 조치 목록', '공유용 리포트 본문', '재점검 체크리스트'], operations: ['결제 확인 후 내 사이트 관리에서 결과 확인', '진단 이력이 없을 경우 기본 점검 양식으로 제공', ...commonAssurance], benefits: ['위험 항목의 근거와 우선순위를 더 명확하게 확인', '개선 순서를 정리해 바로 조치 가능'], cta: '상세 리포트 신청' },
 { code: 'FixPack', group: 'one_time', title: '수정 문구안', price: 29000, period: '1회', priority: 2, summary: '탐지 항목별로 사이트에 바로 반영 가능한 고지·약관·환불·광고 문구 초안을 제공합니다.', targetCustomer: '사이트 안내 문구를 먼저 정리해야 하는 소상공인·마케터', deliverables: ['푸터 사업자 고지 문안', '환불·교환 안내 문구', '개인정보/약관 노출 가이드', '광고 표현 리스크 완화안', '수정 전/후 예시'], operations: ['우선순위가 높은 문구안부터 제공', '주의가 필요한 표현은 별도 표시', ...commonAssurance], benefits: ['사이트에 반영하기 쉬운 문구 예시 제공', '고객 오해 가능성이 있는 표현을 완화'], cta: '수정 문구안 받기' },
-{ code: 'TemplatePack', group: 'one_time', title: '법률 문서 템플릿 팩', price: 19000, period: '1회', priority: 3, summary: '이용약관, 개인정보처리방침, 환불 정책 기본 템플릿을 묶어 제공합니다.', targetCustomer: '신규 사이트 오픈 전 필수 문서가 필요한 고객', deliverables: ['이용약관 템플릿', '개인정보처리방침 템플릿', '환불·배송·교환 정책', '필수 고지 체크리스트', '정기결제 고지 문구'], operations: ['문서 생성 화면에서 입력한 정보 활용', '입력한 사업자 정보 기준으로 기본 문안 제공', ...commonAssurance], benefits: ['필수 문서를 빠르게 준비', '신규 사이트 오픈 전 기본 안내 정리'], cta: '템플릿 팩 구매' },
+{ code: 'TemplatePack', group: 'one_time', title: '법률 문서 템플릿 팩', price: 19000, period: '1회', priority: 3, summary: '이용약관, 개인정보처리방침, 환불 정책 기본 템플릿을 묶어 제공합니다.', targetCustomer: '신규 사이트 오픈 전 필수 문서가 필요한 고객', deliverables: ['이용약관 템플릿', '개인정보처리방침 템플릿', '환불·배송·교환 정책', '필수 고지 체크리스트', '정기결제 고지 문구'], operations: ['문서 화면에서 입력한 정보 활용', '입력한 사업자 정보 기준으로 기본 문안 제공', ...commonAssurance], benefits: ['필수 문서를 빠르게 준비', '신규 사이트 오픈 전 기본 안내 정리'], cta: '템플릿 팩 구매' },
 { code: 'IndustryGuide', group: 'one_time', title: '업종별 규제 가이드', price: 39000, period: '1회', priority: 4, summary: '쇼핑몰·건기식·화장품·교육·의료 광고 등 업종별 표현 리스크와 필수 고지를 정리합니다.', targetCustomer: '광고 문구와 상세페이지 표현 리스크가 큰 업종 고객', deliverables: ['업종별 금지·주의 표현', '필수 고지 위치', '상세페이지 체크리스트', '광고 문구 점검표', '사전 검수 기준'], operations: ['업종 정보에 맞춰 주요 항목 제공', '업종이 정해지지 않은 경우 공통 가이드 제공', ...commonAssurance], benefits: ['업종별 주의 표현을 사전에 확인', '상세페이지와 광고 문구 점검에 활용'], cta: '업종 가이드 받기' },
 { code: 'Basic', group: 'subscription', title: 'Basic 모니터링', price: 49000, period: '월', priority: 5, summary: '소규모 사이트의 월 1회 리스크 재점검과 기본 이력 확인을 제공합니다.', targetCustomer: '월 1회 정기 점검만 필요한 소규모 사이트 고객', deliverables: ['월 1회 재점검', '전체 탐지 항목 해금', '기본 정책 초안', '이력 저장', '이메일 알림'], operations: ['신청 후 사이트 이력 확인 가능', '월간 점검 알림 제공', ...commonAssurance], benefits: ['월 1회 정기 점검으로 변경 사항 확인', '이력 저장으로 이전 결과와 비교 가능'], cta: 'Basic 시작' },
 { code: 'Pro', group: 'subscription', title: 'Pro 정기 개선', price: 89000, period: '월', priority: 6, summary: '정밀 리포트, 수정 문구안, 법령 변경 알림을 포함한 추천 플랜입니다.', targetCustomer: '사이트 주문·문의가 발생하고 반복 점검이 필요한 고객', deliverables: ['Basic 전체 포함', '정밀 리포트 포함', '수정 문구안', '법령 변경 알림', '재점검 및 개선 추적'], operations: ['결제 확인 후 Pro 결과 제공', '다음 조치 항목을 우선순위로 표시', ...commonAssurance], benefits: ['정밀 리포트와 수정 문구안을 함께 확인', '다음 조치 항목을 우선순위로 정리'], cta: 'Pro 시작' },
@@ -1678,7 +1680,7 @@ clearTimeout(timeout);
 function buildFixCopyFromScan(scan) {
 const findings = Array.isArray(scan?.detailFindings) ? scan.detailFindings.slice(0, 5) : [];
 if (!findings.length) return [
-{ title: '푸터 사업자 정보', before: '사업자 정보 미노출 또는 위치 불명확', after: `${BUSINESS_PROFILE.tradeName} · 대표 ${BUSINESS_PROFILE.representative} · 고객지원 ${BUSINESS_PROFILE.contactEmail}` },
+{ title: '푸터 사업자 정보', before: '사업자 정보 미노출 또는 위치 불명확', after: `${BUSINESS_PROFILE.tradeName} · 대표 ${BUSINESS_PROFILE.representative} · 지원 ${BUSINESS_PROFILE.contactEmail}` },
 { title: '환불 안내', before: '환불 가능 기간과 제한 조건 미기재', after: '환불·교환 기준은 결제 전 고지하며, 상품 특성 및 관련 법령에 따라 제한될 수 있습니다.' },
 { title: '개인정보 안내', before: '수집 목적과 보유 기간 불명확', after: '문의 응대 및 서비스 제공을 위해 필요한 최소한의 개인정보만 수집·이용합니다.' }
 ];
@@ -2182,7 +2184,7 @@ const gates = [
 { key: 'https_public_base_url', ok: !PLATFORM.commercial || /^https:\/\//.test(String(process.env.NV0_PUBLIC_BASE_URL || '')), label: '공개 URL HTTPS 사용' },
 { key: 'turnstile_enabled', ok: !PLATFORM.commercial || ENABLE_TURNSTILE, label: '상용 봇 방지 Turnstile 활성화' },
 { key: 'smtp_configured', ok: !PLATFORM.commercial || !isPlaceholderConfigValue(process.env.NV0_SMTP_URL), label: '거래성 이메일 SMTP 설정' },
-{ key: 'support_email', ok: isValidEmail(BUSINESS_PROFILE.contactEmail), label: '고객지원 이메일 유효성' },
+{ key: 'support_email', ok: isValidEmail(BUSINESS_PROFILE.contactEmail), label: '지원 이메일 유효성' },
 { key: 'operator_alert_email', ok: isValidEmail(OPERATOR_ALERT_EMAIL), label: '운영 알림 이메일 유효성' }
 ];
 return { phase: RELEASE_PHASE, target: PLATFORM.target, commercial: PLATFORM.commercial, paymentProvider: PAYMENT_PROVIDER, persistenceMode: PERSISTENCE_MODE, storageMode: STORAGE_MODE, dataRetentionDays: DATA_RETENTION_DAYS, refundRequestWindowDays: REFUND_REQUEST_WINDOW_DAYS, missingEnv, placeholderEnv, counts, gates, ready: gates.every(g => g.ok), checkedAt: nowIso() };
@@ -2608,7 +2610,7 @@ const variants = [
 { boardType: 'notice', ctaType: 'checklist', title: '광고 집행 전 5가지 고지 체크리스트', body: '광고를 시작하기 전에는 사업자 정보, 환불 기준, 개인정보 안내, 이용약관, 광고 표현을 한 번에 확인해야 합니다. 누락된 안내는 결제 직전 이탈과 문의로 이어질 수 있습니다.' },
 { boardType: 'case', ctaType: 'before_after', title: '수정 전/후로 보는 환불 안내 개선 포인트', body: '환불 안내는 고객이 가장 예민하게 확인하는 영역입니다. 제공 전후 기준, 예외 조건, 처리 기간을 분리하면 불필요한 문의와 민원을 줄일 수 있습니다.' },
 { boardType: 'case', ctaType: 'case_study', title: `${industry} 운영자가 먼저 고칠 항목`, body: `현재 우선순위는 ${top}입니다. 핵심 고지를 정리한 뒤 약관, 광고 문구, 결제 화면 안내까지 순서대로 정비하는 흐름이 안전합니다.` },
-{ boardType: 'cta', ctaType: 'plan_compare', title: '무료 진단 후 Pro·Fix·Auto 선택 기준', body: '요약 결과만 필요하면 무료 진단으로 충분합니다. 근거와 우선순위가 필요하면 Pro, 바로 붙여넣을 수정 문구가 필요하면 Fix, 반복 점검과 게시글 발행이 필요하면 Auto가 적합합니다.' },
+{ boardType: 'cta', ctaType: 'plan_compare', title: 'Pro·Fix·Auto 선택 기준', body: '근거와 우선순위는 Pro, 즉시 적용 문구는 Fix, 반복 점검과 게시글 발행은 Auto가 적합합니다.' },
 { boardType: 'notice', ctaType: 'privacy_tip', title: '개인정보 안내는 입력창 가까이에 있어야 합니다', body: '회원가입, 문의, 결제 화면에서 개인정보를 받는다면 처리방침 링크와 수집 목적을 가까운 위치에 노출하는 것이 좋습니다. 고객은 정보를 입력하기 직전에 확인합니다.' },
 { boardType: 'notice', ctaType: 'terms_tip', title: '이용약관은 푸터만으로 부족할 수 있습니다', body: '약관 링크는 푸터뿐 아니라 회원가입, 결제, 서비스 신청 흐름에도 연결되어야 합니다. 중요한 제한 조건은 고객 행동 직전에 다시 보여주는 편이 안전합니다.' },
 { boardType: 'case', ctaType: 'ad_copy_review', title: '광고 문구의 확정형 표현을 완화하세요', body: '무조건, 100%, 보장, 완치처럼 단정적인 표현은 분쟁 위험을 키울 수 있습니다. 조건, 범위, 예외를 함께 적는 표현으로 바꾸는 것이 좋습니다.' },
@@ -2641,7 +2643,7 @@ target: BUSINESS_PROFILE.domain,
 industry: '온라인 사업',
 riskScore: 55,
 totalFindings: 3,
-topFindings: ['고객지원 고지', '환불 정책 표시', '개인정보 처리방침 위치']
+topFindings: ['지원 고지', '환불 정책 표시', '개인정보 처리방침 위치']
 };
 const item = createCtaPublication(db, scan, { autoPublished: true });
 appendAudit(db, { headers: {}, socket: {} }, 'system.cta.autopublished', { id: item.id, reason });
@@ -2843,7 +2845,7 @@ const session = await getCustomerSession(req, db);
 if (!session) return json(req, res, 401, { ok: false, error: '로그인이 필요합니다.' });
 const orders = customerOrders(db, session.customer);
 const assets = (db.purchasedAssets || []).filter(asset => orders.some(order => order.id === asset.orderId));
-return json(req, res, 200, { ok: true, customer: publicCustomer(db, session.customer), orders, assets, savedSites: customerSavedSites(db, session.customer) });
+return json(req, res, 200, { ok: true, customer: publicCustomer(db, session.customer), orders, assets, savedSites: customerSavedSites(db, session.customer), recentScans: customerRecentScans(db, session.customer, 5) });
 }
 if (pathname === '/api/public/account/export' && req.method === 'GET') {
 const db = await readDb();
@@ -2881,7 +2883,7 @@ if (pathname === '/api/public/account/sites' && req.method === 'GET') {
 const db = await readDb();
 const session = await getCustomerSession(req, db);
 if (!session) return json(req, res, 401, { ok: false, error: '로그인이 필요합니다.' });
-return json(req, res, 200, { ok: true, sites: customerSavedSites(db, session.customer) });
+return json(req, res, 200, { ok: true, sites: customerSavedSites(db, session.customer), recentScans: customerRecentScans(db, session.customer, 5) });
 }
 if (pathname === '/api/public/account/sites' && req.method === 'POST') {
 const body = normalizeSavedSitePayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
@@ -2912,6 +2914,7 @@ appendAudit(db, req, 'public.customer.site_removed', { customerId: session.custo
 await writeDb(db);
 return json(req, res, 200, { ok: true, removed: before !== db.customerSiteLinks.length });
 }
+if (pathname === '/api/public/account/rescan' && req.method === 'POST') return handleAccountRescan([req,res,json,readDb,writeDb,getCustomerSession,bodyJson,MAX_JSON_BODY_BYTES,asTrimmedString,normalizeDomainInput,findSiteByAny,scanResultFor,ensureSiteRecord,ensureSubscriptionForSite,createGuidanceDocument,seedAutoFixJobs,createCtaPublication,buildPublicDiagnosisPackage,customerSavedSites,appendAudit,nowIso]);
 if (pathname === '/api/public/refund-request' && req.method === 'POST') {
 const body = normalizeRefundRequestPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
 const db = await readDb();

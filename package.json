@@ -1,6 +1,6 @@
 {
   "name": "nv0-veridion-cleanroom",
-  "version": "1.0.0-commercial-final-100-score-phase76-phase77-phase100-phase107-complete-pipeline-connected",
+  "version": "1.0.0-commercial-final-100-score-phase111-reaudited",
   "private": true,
   "type": "module",
   "scripts": {
@@ -96,7 +96,12 @@
     "monitor:rollback-gate": "node scripts/monitoring-rollback-gate.mjs",
     "phase106:final": "node scripts/run-phase106-final.mjs",
     "check:phase107-complete-pipeline": "node scripts/validate-phase107-complete-pipeline.mjs",
-    "pipeline:connected": "npm run phase107:final",
-    "phase107:final": "node scripts/run-phase107-final.mjs"
+    "pipeline:connected": "npm run phase108:final",
+    "phase107:final": "node scripts/run-phase107-final.mjs",
+    "validate:phase108": "node scripts/validate-phase108-commercial-100.mjs",
+    "phase108:final": "npm run check:syntax && npm run test:all && npm run check:content-completeness && npm run check:whole-package-completion && npm run phase107:final && npm run validate:phase108",
+    "validate:phase110": "node scripts/validate-phase110-commercial-ready.mjs",
+    "phase110:final": "npm run check:syntax && npm run test:all && node scripts/check-phase105-whole-package-completion.mjs && npm run validate:phase108 && npm run validate:phase110 && npm run test:routes && npm run test:e2e && npm run ci:strict",
+    "phase111:final": "npm run check:syntax && npm run test:routes && npm run test:e2e && node scripts/test-all.mjs && node scripts/validate-phase108-commercial-100.mjs && node scripts/validate-phase110-commercial-ready.mjs && node scripts/check-content-completeness.mjs && node scripts/check-phase105-whole-package-completion.mjs && node scripts/ci-strict.mjs"
   }
 }

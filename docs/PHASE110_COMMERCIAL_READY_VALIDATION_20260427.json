@@ -1,0 +1,120 @@
+{
+  "generatedAt": "2026-04-27T01:04:19.763Z",
+  "ok": true,
+  "total": 22,
+  "passed": 22,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "runtime-banned-token:통신판매업 신고 완료 후 표시 예정",
+      "ok": true,
+      "detail": "상용 런타임에 미완성/임시 문구가 없어야 한다."
+    },
+    {
+      "name": "runtime-banned-token:상용 결제 전 입력 필요",
+      "ok": true,
+      "detail": "상용 런타임에 미완성/임시 문구가 없어야 한다."
+    },
+    {
+      "name": "runtime-banned-token:호스팅 제공자 실제 운영 인프라 확정 후 입력 필요",
+      "ok": true,
+      "detail": "상용 런타임에 미완성/임시 문구가 없어야 한다."
+    },
+    {
+      "name": "runtime-banned-token:support@nv0.kr",
+      "ok": true,
+      "detail": "상용 런타임에 미완성/임시 문구가 없어야 한다."
+    },
+    {
+      "name": "runtime-banned-token:lorem ipsum",
+      "ok": true,
+      "detail": "상용 런타임에 미완성/임시 문구가 없어야 한다."
+    },
+    {
+      "name": "runtime-banned-token:coming soon",
+      "ok": true,
+      "detail": "상용 런타임에 미완성/임시 문구가 없어야 한다."
+    },
+    {
+      "name": "runtime-banned-token:준비중",
+      "ok": true,
+      "detail": "상용 런타임에 미완성/임시 문구가 없어야 한다."
+    },
+    {
+      "name": "no-public-test-file",
+      "ok": true,
+      "detail": "공개 앱 경로에 테스트 잔여 파일을 포함하지 않는다."
+    },
+    {
+      "name": "member-api-list-sites",
+      "ok": true,
+      "detail": "회원 저장 사이트 조회 API가 있어야 한다."
+    },
+    {
+      "name": "member-api-save-site",
+      "ok": true,
+      "detail": "회원 사이트 저장 API가 있어야 한다."
+    },
+    {
+      "name": "member-api-delete-site",
+      "ok": true,
+      "detail": "회원 저장 사이트 삭제 API가 있어야 한다."
+    },
+    {
+      "name": "member-api-rescan",
+      "ok": true,
+      "detail": "저장 사이트 재검사 API가 있어야 한다."
+    },
+    {
+      "name": "member-session-required",
+      "ok": true,
+      "detail": "회원 전용 API는 세션이 없으면 거부해야 한다."
+    },
+    {
+      "name": "member-data-owner-filter",
+      "ok": true,
+      "detail": "회원별 데이터는 customerId 기준으로 분리되어야 한다."
+    },
+    {
+      "name": "recent-scan-limit-five",
+      "ok": true,
+      "detail": "최근 검사 내역은 즉시 구현 범위인 5개로 제한한다."
+    },
+    {
+      "name": "one-click-rescan-ui",
+      "ok": true,
+      "detail": "포털 UI에서 원클릭 다시 검사를 제공한다."
+    },
+    {
+      "name": "save-site-ui",
+      "ok": true,
+      "detail": "포털 UI에서 내 사이트 저장 기능을 제공한다."
+    },
+    {
+      "name": "nonmember-cta",
+      "ok": true,
+      "detail": "비회원에게 저장/재검사 가치 CTA를 제공한다."
+    },
+    {
+      "name": "auto-save-after-diagnosis",
+      "ok": true,
+      "detail": "로그인 회원 진단 결과는 계정에 자동 연결되어야 한다."
+    },
+    {
+      "name": "commercial-support-email",
+      "ok": true,
+      "detail": "확정 고객지원 이메일을 런타임에 표시한다."
+    },
+    {
+      "name": "commercial-business-number",
+      "ok": true,
+      "detail": "확정 사업자등록번호를 런타임에 표시한다."
+    },
+    {
+      "name": "qa-rollback-doc",
+      "ok": true,
+      "detail": "상용화 최종 검수/롤백 문서가 포함되어야 한다."
+    }
+  ],
+  "limitation": "외부 실결제, 운영 DNS, 실제 PG 승인, 실서버 부하, 통신판매업 신고번호는 이 로컬 패키지 검증만으로 확정할 수 없으므로 운영 배포 전 별도 확인 대상이다."
+}

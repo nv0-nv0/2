@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-04-26T13:38:08.709Z",
+  "generatedAt": "2026-04-27T00:26:30.352Z",
   "phase": 107,
   "ok": true,
   "summary": {
-    "total": 837,
-    "passed": 837,
+    "total": 844,
+    "passed": 844,
     "failed": 0
   },
   "failed": [],
@@ -3841,6 +3841,41 @@
     },
     {
       "name": "content:server/infrastructure/lock/distributed-lock.mjs:no-미구현",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/core/account-rescan.mjs:not-empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/core/account-rescan.mjs:no-TODO\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/core/account-rescan.mjs:no-FIXME\\b",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/core/account-rescan.mjs:no-lorem ipsum",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/core/account-rescan.mjs:no-coming soon",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/core/account-rescan.mjs:no-준비중",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "content:server/core/account-rescan.mjs:no-미구현",
       "ok": true,
       "detail": ""
     },

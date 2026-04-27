@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-26T13:38:08.730Z",
+  "generatedAt": "2026-04-27T00:26:20.384Z",
   "ok": true,
   "phase": 107,
   "name": "complete-content-and-connected-pipeline-final-gate",
@@ -7,19 +7,19 @@
     {
       "name": "syntax",
       "ok": true,
-      "durationMs": 62,
+      "durationMs": 218,
       "mode": "live"
     },
     {
       "name": "test-all",
       "ok": true,
-      "durationMs": 63,
+      "durationMs": 208,
       "mode": "live"
     },
     {
       "name": "phase107-complete-pipeline",
       "ok": true,
-      "durationMs": 97,
+      "durationMs": 1796,
       "mode": "live"
     },
     {
@@ -46,14 +46,14 @@
     {
       "name": "local-ai-review-report",
       "ok": true,
-      "durationMs": 0,
+      "durationMs": 1,
       "mode": "report",
       "report": "docs/PHASE106_LOCAL_AI_REVIEW_20260426.json"
     },
     {
       "name": "monitoring-rollback-report",
       "ok": true,
-      "durationMs": 1,
+      "durationMs": 0,
       "mode": "report",
       "report": "docs/PHASE106_MONITORING_ROLLBACK_VALIDATION_20260426.json"
     },
@@ -74,14 +74,14 @@
     {
       "name": "phase100-accessibility-report",
       "ok": true,
-      "durationMs": 0,
+      "durationMs": 1,
       "mode": "report",
       "report": "docs/PHASE100_VISUAL_ACCESSIBILITY_VALIDATION_20260426.json"
     },
     {
       "name": "phase107-pipeline-report",
       "ok": true,
-      "durationMs": 3,
+      "durationMs": 4,
       "mode": "report",
       "report": "docs/PHASE107_PIPELINE_VALIDATION_20260426.json"
     }

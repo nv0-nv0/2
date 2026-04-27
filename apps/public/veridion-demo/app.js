@@ -12,6 +12,13 @@ function getUsage(){ return Number(localStorage.getItem(usageKey) || '0'); }
 function setUsage(n){ localStorage.setItem(usageKey, String(n)); updateBadge(); }
 function updateBadge(){ const left=Math.max(0,3-getUsage()); if(badge) badge.textContent=`오늘 남은 무료 진단 ${left}회`; }
 function saveScan(scan) { localStorage.setItem('nv0:lastScan', JSON.stringify(scan)); }
+function getSavedScanFromStorage() { try { return JSON.parse(localStorage.getItem('nv0:lastScan') || 'null'); } catch { return null; } }
+async function saveCurrentSite(scan) {
+  const res = await fetch('/api/public/account/sites', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ siteId: scan.siteId, domain: scan.target, label: scan.target }) });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || '저장하지 못했습니다.');
+  return data;
+}
 function validEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
 function renderPaywall(scan){
   const hidden = (scan.detailFindings || scan.topFindings || []).slice(2, 7);
@@ -22,7 +29,10 @@ function renderResult(scan) {
   const diagnosis = scan.diagnosis || {};
   const pages = (diagnosis.scannedPages || []).slice(0, 4);
   const checks = (diagnosis.mainChecks || []).slice(0, 5);
-  result.innerHTML = `<div class="result-card stack compact-result"><div class="meta-row"><strong>${escapeHtml(scan.target || '')}</strong><span class="pill gold">${escapeHtml(scan.riskLevel || '-')}</span></div><div class="grid cols-2"><div><div class="muted">위험도</div><div class="kpi">${escapeHtml(scan.riskScore ?? '-')}</div></div><div><div class="muted">예상 최대 과태료</div><div class="kpi">${formatWon(scan.estimatedMaxPenalty)}</div></div></div><div class="notice">무료 진단은 핵심 요약만 제공합니다. 전체 근거, 페이지별 조치안, 정책 문안, 수정 후보는 유료 상품에서 제공됩니다.</div><strong>상위 위험 2개</strong><ul class="result-list">${renderList(topFindings, '<li>상위 위험 항목 없음</li>', item => `<li>${escapeHtml(item)}</li>`)}</ul><div class="diagnosis-grid">${renderList(checks, '', item => `<span class=\"diag-chip ${item.status === 'attention' ? 'warn' : 'ok'}\"><b>${escapeHtml(item.label)}</b><small>${escapeHtml(item.priority)}</small></span>`)}</div><div class="notice muted">스캔 페이지: ${pages.length ? pages.map(p => escapeHtml(p.finalUrl || p.url)).join(' · ') : '기본 URL 중심 분석'}</div><div class="upgrade-box"><strong>추천 상품: ${escapeHtml(scan.recommendedPlan || 'Pro')}</strong><p class="muted">상세 리포트와 실행 문안이 필요하면 알맞은 상품으로 이어서 진행하세요.</p><div class="topnav"><a class="btn primary" href="/plans?riskScore=${encodeURIComponent(scan.riskScore || '')}&siteId=${encodeURIComponent(scan.siteId || '')}">무료 결과와 상품 비교</a><a class="btn secondary" href="/portal?siteId=${encodeURIComponent(scan.siteId || '')}">내 사이트 관리</a></div></div></div>${renderPaywall(scan)}`;
+  const memberSave = scan.savedToAccount
+    ? `<div class="notice"><strong>회원 계정에 자동 저장되었습니다.</strong> 내 사이트 관리에서 다시 검사와 지난 검사 내역 확인이 가능합니다.</div>`
+    : `<div class="notice"><strong>결과를 계속 관리하려면 회원가입하세요.</strong> 가입 후 내 사이트 저장, 원클릭 재검사, 최근 검사 내역 확인을 사용할 수 있습니다.<div class="topnav"><button class="btn primary" type="button" id="saveScanBtn">내 사이트로 저장</button><a class="btn secondary" href="/auth?next=/portal">로그인·회원가입</a></div></div>`;
+  result.innerHTML = `<div class="result-card stack compact-result"><div class="meta-row"><strong>${escapeHtml(scan.target || '')}</strong><span class="pill gold">${escapeHtml(scan.riskLevel || '-')}</span></div><div class="grid cols-2"><div><div class="muted">위험도</div><div class="kpi">${escapeHtml(scan.riskScore ?? '-')}</div></div><div><div class="muted">예상 최대 과태료</div><div class="kpi">${formatWon(scan.estimatedMaxPenalty)}</div></div></div>${memberSave}<div class="notice">무료 진단은 핵심 요약만 제공합니다. 전체 근거, 페이지별 조치안, 정책 문안, 수정 후보는 유료 상품에서 제공됩니다.</div><strong>상위 위험 2개</strong><ul class="result-list">${renderList(topFindings, '<li>상위 위험 항목 없음</li>', item => `<li>${escapeHtml(item)}</li>`)}</ul><div class="diagnosis-grid">${renderList(checks, '', item => `<span class="diag-chip ${item.status === 'attention' ? 'warn' : 'ok'}"><b>${escapeHtml(item.label)}</b><small>${escapeHtml(item.priority)}</small></span>`)}</div><div class="notice muted">스캔 페이지: ${pages.length ? pages.map(p => escapeHtml(p.finalUrl || p.url)).join(' · ') : '기본 URL 중심 분석'}</div><div class="upgrade-box"><strong>추천 상품: ${escapeHtml(scan.recommendedPlan || 'Pro')}</strong><p class="muted">상세 리포트와 실행 문안이 필요하면 알맞은 상품으로 이어서 진행하세요.</p><div class="topnav"><a class="btn primary" href="/plans?riskScore=${encodeURIComponent(scan.riskScore || '')}&siteId=${encodeURIComponent(scan.siteId || '')}">무료 결과와 상품 비교</a><a class="btn secondary" href="/portal?siteId=${encodeURIComponent(scan.siteId || '')}">내 사이트 관리</a></div></div></div>${renderPaywall(scan)}`;
 }
 async function runScan() {
   const email = document.getElementById('leadEmail').value.trim();
@@ -39,10 +49,23 @@ async function runScan() {
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'scan failed');
     setUsage(getUsage()+1); saveScan(data.result || {});
-    state.textContent = '스캔 완료 · 무료 요약 결과가 준비되었습니다. 로그인 상태라면 내 사이트에 자동 연결됩니다.';
+    state.textContent = data.result?.savedToAccount ? '스캔 완료 · 회원 계정에 자동 저장되었습니다.' : '스캔 완료 · 회원가입하면 결과 저장과 원클릭 재검사를 사용할 수 있습니다.';
     renderResult(data.result || {});
   } catch (err) { state.textContent = '실패: ' + err.message; result.textContent = '재시도 가능'; guard.reset?.(); }
 }
 updateBadge();
 document.getElementById('scanBtn')?.addEventListener('click', runScan);
 document.getElementById('retryBtn')?.addEventListener('click', runScan);
+result?.addEventListener('click', async (event) => {
+  if (event.target?.id !== 'saveScanBtn') return;
+  event.preventDefault();
+  const scan = getSavedScanFromStorage();
+  if (!scan?.target && !scan?.siteId) { state.textContent = '저장할 검사 결과가 없습니다.'; return; }
+  state.textContent = '검사 결과를 내 사이트에 저장하는 중입니다.';
+  try {
+    await saveCurrentSite(scan);
+    state.textContent = '저장했습니다. 내 사이트 관리에서 다시 검사와 지난 내역을 확인하세요.';
+  } catch (error) {
+    state.innerHTML = `${escapeHtml(error.message)} <a href="/auth?next=/portal">로그인·회원가입</a>`;
+  }
+});

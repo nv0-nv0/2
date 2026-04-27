@@ -76,6 +76,14 @@
   ],
   "publications": [
     {
+      "id": "pub-4bcb7b1d",
+      "title": "보안상태 테스트",
+      "status": "published",
+      "type": "manual",
+      "body": "ok",
+      "createdAt": "2026-04-27T01:04:34.366Z"
+    },
+    {
       "id": "pub-dcc43033",
       "title": "개인정보 안내는 입력창 가까이에 있어야 합니다",
       "status": "published",
@@ -1094,20 +1102,20 @@
   "adminSessions": [],
   "auditLogs": [
     {
-      "id": "audit-3867993d",
-      "at": "2026-04-26T08:04:28.018Z",
+      "id": "audit-a00c8218",
+      "at": "2026-04-27T01:05:19.426Z",
       "event": "admin.backup.restored",
       "ip": "127.0.0.1",
       "method": "POST",
       "path": "/api/admin/backups/restore",
       "meta": {
-        "name": "db-2026-04-26T08-04-27-716Z.json",
+        "name": "db-2026-04-27T01-05-18-864Z.json",
         "restoredFrom": "[masked]"
       }
     },
     {
-      "id": "audit-d39108f9",
-      "at": "2026-04-26T08:04:27.676Z",
+      "id": "audit-6cfdd025",
+      "at": "2026-04-27T01:05:18.779Z",
       "event": "admin.auth.succeeded",
       "ip": "127.0.0.1",
       "method": "POST",
@@ -1117,20 +1125,8 @@
       }
     },
     {
-      "id": "audit-b25339db",
-      "at": "2026-04-26T08:03:07.518Z",
-      "event": "admin.backup.restored",
-      "ip": "127.0.0.1",
-      "method": "POST",
-      "path": "/api/admin/backups/restore",
-      "meta": {
-        "name": "db-2026-04-26T08-03-06-352Z.json",
-        "restoredFrom": "[masked]"
-      }
-    },
-    {
-      "id": "audit-84c14905",
-      "at": "2026-04-26T08:03:06.332Z",
+      "id": "audit-04a09988",
+      "at": "2026-04-27T01:05:12.655Z",
       "event": "admin.auth.succeeded",
       "ip": "127.0.0.1",
       "method": "POST",
@@ -1140,15 +1136,26 @@
       }
     },
     {
-      "id": "audit-72017090",
-      "at": "2026-04-26T08:01:48.639Z",
-      "event": "admin.library.uploaded",
+      "id": "audit-331cf930",
+      "at": "2026-04-27T01:04:49.465Z",
+      "event": "admin.auth.succeeded",
       "ip": "127.0.0.1",
       "method": "POST",
-      "path": "/api/admin/library/upload",
+      "path": "/api/admin/session",
       "meta": {
-        "id": "upload-ccca049b",
-        "filename": "1777190508638-4d112cccdc82-persist.txt"
+        "mode": "shared_key"
+      }
+    },
+    {
+      "id": "audit-4b7dee1d",
+      "at": "2026-04-27T01:04:34.366Z",
+      "event": "admin.publication.publish_now",
+      "ip": "127.0.0.1",
+      "method": "POST",
+      "path": "/api/admin/publications/publish-now",
+      "meta": {
+        "id": "pub-4bcb7b1d",
+        "title": "보안상태 테스트"
       }
     }
   ],

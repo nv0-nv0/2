@@ -2,7 +2,7 @@ import { escapeHtml } from '/shared/html.js';
 
 const form = document.getElementById('docForm');
 const state = document.getElementById('docState');
-const preview = document.getElementById('docPreview');
+const preview = document.getElementById('docView');
 
 function renderDocuments(documents = []) {
   preview.innerHTML = documents.map(doc => `
