@@ -2,6 +2,44 @@
 
 이 패키지는 공개 런칭 기준을 기본값으로 정리한 상용화 보강본입니다. 운영 모드는 `NV0_PLATFORM_TARGET=commercial`이며, shared admin key, demo payment, JSON primary persistence, builtin scan, local filesystem storage는 상용 런칭 경로에서 차단됩니다.
 
+## Coolify 환경변수 탭 인식 문제 해결 기준
+
+이번 패키지는 Coolify 환경변수 탭이 값을 더 잘 감지하도록 `docker-compose.yml`과 `deploy/docker-compose.coolify.yml`을 모두 `${VAR}` 명시형으로 정리했다. ZIP 안의 `.env` 파일을 Coolify가 자동으로 UI에 읽어주는 구조에 의존하지 않는다.
+
+권장 배포값:
+
+```text
+Build Pack: Docker Compose
+Base Directory: /
+Docker Compose Location: /docker-compose.yml
+```
+
+대안으로 아래 compose를 써도 된다.
+
+```text
+Docker Compose Location: /deploy/docker-compose.coolify.yml
+```
+
+환경변수 입력 순서:
+
+1. Coolify Resource > Environment Variables로 이동한다.
+2. Developer View 또는 Bulk Edit를 연다.
+3. `deploy/coolify.env.bulk.txt` 전체를 붙여넣는다.
+4. `replace-with-*` 값과 운영 비밀키를 실제값으로 교체한다.
+5. 값에 `$` 문자가 들어간 비밀번호/토큰은 Normal View에서 Literal 옵션을 켠다.
+6. 저장 후 Redeploy 한다.
+7. 배포 후 `https://nv0.kr/healthz`, `https://nv0.kr/readyz`를 확인한다.
+
+검증 명령:
+
+```bash
+npm run validate:coolify-env
+npm run validate:deploy
+```
+
+세부 보고서: `docs/PHASE115_COOLIFY_ENV_TAB_REPAIR_20260427_KO.md`
+
+
 ## Commercial quick gate
 
 ```bash

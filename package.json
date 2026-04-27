@@ -104,6 +104,7 @@
     "phase110:final": "npm run check:syntax && npm run test:all && node scripts/check-phase105-whole-package-completion.mjs && npm run validate:phase108 && npm run validate:phase110 && npm run test:routes && npm run test:e2e && npm run ci:strict",
     "phase111:final": "npm run check:syntax && npm run test:routes && npm run test:e2e && node scripts/test-all.mjs && node scripts/validate-phase108-commercial-100.mjs && node scripts/validate-phase110-commercial-ready.mjs && node scripts/check-content-completeness.mjs && node scripts/check-phase105-whole-package-completion.mjs && node scripts/ci-strict.mjs",
     "validate:phase114": "node scripts/validate-phase114-revenue-launch.mjs",
-    "phase114:final": "npm run check:syntax && npm run test:routes && npm run test:e2e && npm run validate:phase114"
+    "phase114:final": "npm run check:syntax && npm run test:routes && npm run test:e2e && npm run validate:phase114",
+    "validate:coolify-env": "node scripts/validate-coolify-env-detection.mjs"
   }
 }

@@ -18,7 +18,10 @@ const requiredFiles = [
   'scripts/preflight.mjs',
   'scripts/verify-prod.mjs',
   'scripts/validate-prod-env.mjs',
-  'scripts/ci-strict.mjs'
+  'scripts/ci-strict.mjs',
+  'scripts/validate-coolify-env-detection.mjs',
+  'deploy/coolify.env.bulk.txt',
+  'docker-compose.yml'
 ];
 
 function assert(condition, message) {
@@ -46,12 +49,23 @@ for (const token of [
 ]) assert(commercialCompose.includes(token), `commercial compose missing: ${token}`);
 
 const coolifyCompose = await read('deploy/docker-compose.coolify.yml');
-for (const token of ['NV0_PLATFORM_TARGET', 'NV0_PERSISTENCE_MODE', 'NV0_SESSION_STORE', 'NV0_PAYMENT_PROVIDER', '/healthz']) {
+for (const token of ['${NV0_PLATFORM_TARGET', '${NV0_PERSISTENCE_MODE', '${NV0_SESSION_STORE', '${NV0_PAYMENT_PROVIDER', '/readyz']) {
   assert(coolifyCompose.includes(token), `coolify compose missing: ${token}`);
 }
 
+assert(!coolifyCompose.includes('env_file:'), 'coolify compose must not rely on env_file for UI detection');
+for (const token of ['${NV0_BOOTSTRAP_ADMIN_PASSWORD:?', '${NV0_PORTONE_API_SECRET:?', '${POSTGRES_PASSWORD:?', '${NV0_SMTP_URL:?']) {
+  assert(coolifyCompose.includes(token), `coolify compose missing required env guard: ${token}`);
+}
+
+const rootCompose = await read('docker-compose.yml');
+assert(!rootCompose.includes('env_file:'), 'root compose must not rely on env_file for UI detection');
+for (const token of ['${NV0_PLATFORM_TARGET', '${NV0_PORTONE_API_SECRET', '${POSTGRES_PASSWORD', '/readyz']) {
+  assert(rootCompose.includes(token), `root compose missing Coolify autodetect token: ${token}`);
+}
+
 const envExample = await read('deploy/coolify.env.example');
-for (const token of ['NV0_PLATFORM_TARGET=commercial', 'NV0_ADMIN_AUTH_MODE=account_rbac', 'NV0_PAYMENT_PROVIDER=portone_v2', 'NV0_PORTONE_WEBHOOK_VERIFY_MODE=strict']) {
+for (const token of ['NV0_PLATFORM_TARGET=commercial', 'NV0_ADMIN_AUTH_MODE=account_rbac', 'NV0_PAYMENT_PROVIDER=portone_v2', 'NV0_PORTONE_WEBHOOK_VERIFY_MODE=strict', 'NV0_SMTP_URL=', 'POSTGRES_PASSWORD=']) {
   assert(envExample.includes(token), `coolify env example missing: ${token}`);
 }
 
@@ -59,5 +73,4 @@ const forbidden = ['NV0_PAYMENT_PROVIDER=demo', 'NV0_ADMIN_KEY=', 'NV0_PERSISTEN
 for (const token of forbidden) assert(!envExample.includes(token), `coolify env contains forbidden token: ${token}`);
 
 console.log('Deploy bundle validation passed');
-process.exit(0);
 process.exit(0);
