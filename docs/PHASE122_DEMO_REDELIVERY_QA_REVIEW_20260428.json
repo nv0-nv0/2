@@ -1,0 +1,68 @@
+{
+  "generatedAt": "2026-04-28T07:33:18.975Z",
+  "ok": true,
+  "passed": 12,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "phase122 version script is available",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "click listener remains registered synchronously",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "executive snapshot renderer exists",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "report sample renderer exists",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "quality notice renderer exists",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "executive snapshot is rendered before metric strip",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "result sample differentiates free and paid output",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "unconfirmed operational values are not asserted",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "phase122 css classes exist",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "mobile media query exists for phase122 blocks",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "demo index still links app module",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "runtime reports directory exists and is empty",
+      "ok": true,
+      "detail": ""
+    }
+  ]
+}

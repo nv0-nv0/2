@@ -14,7 +14,7 @@ const listenerIndex = app.indexOf("scanBtn?.addEventListener('click', runScan)")
 const mountIndex = app.indexOf('mountTurnstile({');
 const loadSessionIndex = app.lastIndexOf('loadSession();');
 
-add('version:phase119-demo-click-fixed', /phase119-demo-click-fixed/.test(pkg.version));
+add('version:phase119-or-later-demo-click-fixed', /phase119-demo-click-fixed|phase120-infographic-demo-result/.test(pkg.version));
 add('script:phase119-final', pkg.scripts?.['phase119:final']?.includes('validate-phase119-demo-click-fix.mjs'));
 add('demo:listener-attached-before-turnstile', listenerIndex > -1 && mountIndex > -1 && listenerIndex < mountIndex);
 add('demo:listener-attached-before-load-session', listenerIndex > -1 && loadSessionIndex > -1 && listenerIndex < loadSessionIndex);

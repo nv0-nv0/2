@@ -1,0 +1,1731 @@
+{
+  "generatedAt": "2026-04-28T06:02:55Z",
+  "phase": "phase120-infographic-demo-result",
+  "fileCount": 431,
+  "files": [
+    {
+      "path": ".dockerignore",
+      "size": 43
+    },
+    {
+      "path": ".env.coolify.example",
+      "size": 3187
+    },
+    {
+      "path": ".env.example",
+      "size": 3158
+    },
+    {
+      "path": "Dockerfile",
+      "size": 730
+    },
+    {
+      "path": "README.md",
+      "size": 8390
+    },
+    {
+      "path": "docker-compose.yml",
+      "size": 7211
+    },
+    {
+      "path": "package.json",
+      "size": 10149
+    },
+    {
+      "path": "deploy/CLOUDFLARE_FREE_RULES_REFERENCE_20260423.md",
+      "size": 1276
+    },
+    {
+      "path": "deploy/contabo-bootstrap.sh",
+      "size": 2049
+    },
+    {
+      "path": "deploy/coolify.env.bulk.txt",
+      "size": 3000
+    },
+    {
+      "path": "deploy/coolify.env.example",
+      "size": 3120
+    },
+    {
+      "path": "deploy/docker-compose.commercial.yml",
+      "size": 2327
+    },
+    {
+      "path": "deploy/docker-compose.coolify.yml",
+      "size": 7124
+    },
+    {
+      "path": "deploy/entrypoint.sh",
+      "size": 285
+    },
+    {
+      "path": "deploy/env.commercial.template",
+      "size": 3110
+    },
+    {
+      "path": "deploy/env.production.nv0.kr.example",
+      "size": 3103
+    },
+    {
+      "path": "deploy/env.production.template",
+      "size": 3103
+    },
+    {
+      "path": "docs/ACCEPTANCE_CHECKLIST.md",
+      "size": 723
+    },
+    {
+      "path": "docs/API_CONTRACT_20260423_KO.md",
+      "size": 4390
+    },
+    {
+      "path": "docs/BLANK_GAP_FILL_AND_TEST_REVIEW_20260423_KO.md",
+      "size": 2296
+    },
+    {
+      "path": "docs/BUSINESS_OPTIMIZATION_PLAYBOOK_20260423_KO.md",
+      "size": 2425
+    },
+    {
+      "path": "docs/CLOUDFLARE_COOLIFY_CONTABO_RUNBOOK_20260423_KO.md",
+      "size": 1526
+    },
+    {
+      "path": "docs/CLOUDFLARE_INPUT_MATRIX_20260423_KO.md",
+      "size": 900
+    },
+    {
+      "path": "docs/COMMERCIAL_100_HYBRID_WORK_ORDER_20260423_KO.md",
+      "size": 3176
+    },
+    {
+      "path": "docs/COMMERCIAL_FINAL_HANDOFF_20260425_KO.md",
+      "size": 1672
+    },
+    {
+      "path": "docs/COMPLETION_DELTA_20260423_KO.md",
+      "size": 1465
+    },
+    {
+      "path": "docs/CONTABO_SERVER_COMMANDS_20260423_KO.md",
+      "size": 606
+    },
+    {
+      "path": "docs/COOLIFY_DEPLOYMENT_SMOOTHNESS_20260423_KO.md",
+      "size": 980
+    },
+    {
+      "path": "docs/COOLIFY_INPUT_MATRIX_20260423_KO.md",
+      "size": 1110
+    },
+    {
+      "path": "docs/CUSTOMER_COPY_FIX_WORK_ORDER_20260425_KO.md",
+      "size": 4396
+    },
+    {
+      "path": "docs/CUTOVER_CHECKLIST_20260423_KO.md",
+      "size": 1000
+    },
+    {
+      "path": "docs/DEPLOYMENT_PRECHECK_AND_ROLLBACK_20260423_KO.md",
+      "size": 948
+    },
+    {
+      "path": "docs/DEPLOYMENT_VALUE_WORKSHEET_20260423_KO.md",
+      "size": 3052
+    },
+    {
+      "path": "docs/EXTERNAL_INTEGRATIONS_IMPLEMENTATION_PLAN_20260423_KO.md",
+      "size": 1024
+    },
+    {
+      "path": "docs/FINAL_HANDOFF_INDEX_20260423_KO.md",
+      "size": 1006
+    },
+    {
+      "path": "docs/FINAL_OPTIMAL_WORK_ORDER_20260423_KO.md",
+      "size": 3493
+    },
+    {
+      "path": "docs/FINAL_REAUDIT_AND_HARDENING_REPORT_20260423_KO.md",
+      "size": 3952
+    },
+    {
+      "path": "docs/FINAL_TEST_EXECUTION_REPORT_20260423_KO.md",
+      "size": 2803
+    },
+    {
+      "path": "docs/HARDENING_TO_100_REVIEW_20260423_KO.md",
+      "size": 2137
+    },
+    {
+      "path": "docs/IMMEDIATE_EXECUTION_PHASE1_REPORT_20260423_KO.md",
+      "size": 1741
+    },
+    {
+      "path": "docs/IMMEDIATE_EXECUTION_PHASE2_REPORT_20260423_KO.md",
+      "size": 2160
+    },
+    {
+      "path": "docs/IMMEDIATE_EXECUTION_PHASE3_REPORT_20260423_KO.md",
+      "size": 2459
+    },
+    {
+      "path": "docs/IMMEDIATE_EXECUTION_PHASE4_REPORT_20260423_KO.md",
+      "size": 1476
+    },
+    {
+      "path": "docs/IMMEDIATE_EXECUTION_PHASE5_REPORT_20260423_KO.md",
+      "size": 1412
+    },
+    {
+      "path": "docs/IMMEDIATE_EXECUTION_PHASE6_REPORT_20260423_KO.md",
+      "size": 1589
+    },
+    {
+      "path": "docs/IMMEDIATE_EXECUTION_PHASE7_FINAL_REVIEW_20260423_KO.md",
+      "size": 2484
+    },
+    {
+      "path": "docs/IMMEDIATE_EXECUTION_PHASE8_COMPLETION_REVIEW_20260424_KO.md",
+      "size": 1893
+    },
+    {
+      "path": "docs/INDEPENDENT_FULL_REVIEW_20260423_KO.md",
+      "size": 2593
+    },
+    {
+      "path": "docs/INTERNAL_REAUDIT_DELTA_20260423_KO.md",
+      "size": 2117
+    },
+    {
+      "path": "docs/LOCAL_ACCEPTANCE_SUMMARY_20260423.json",
+      "size": 655
+    },
+    {
+      "path": "docs/LOCAL_COMPLETENESS_RESCORE_20260423_KO.md",
+      "size": 1290
+    },
+    {
+      "path": "docs/MASTER_EXECUTION_BOARD_20260423_KO.md",
+      "size": 1853
+    },
+    {
+      "path": "docs/MVP_COMPLETION_DECLARATION_20260423_KO.md",
+      "size": 1654
+    },
+    {
+      "path": "docs/ONE_PAGE_EXTERNAL_17_STEP_EXECUTION_CARD_20260423_KO.md",
+      "size": 2277
+    },
+    {
+      "path": "docs/ONE_PAGE_OPERATOR_CARD_20260423_KO.md",
+      "size": 838
+    },
+    {
+      "path": "docs/P0_REAL_DEPLOYMENT_PLAYBOOK_20260423_KO.md",
+      "size": 3184
+    },
+    {
+      "path": "docs/PHASE100_TRUE_100_MODE_DELIVERY_20260426_KO.md",
+      "size": 512
+    },
+    {
+      "path": "docs/PHASE100_VISUAL_ACCESSIBILITY_VALIDATION_20260426.json",
+      "size": 358
+    },
+    {
+      "path": "docs/PHASE101_FINAL_PACKAGE_DELIVERY_20260426_KO.md",
+      "size": 3766
+    },
+    {
+      "path": "docs/PHASE102_ACCEPTANCE_SUMMARY_20260426.json",
+      "size": 2385
+    },
+    {
+      "path": "docs/PHASE102_INTERIM_DELIVERY_REPORT_20260426_KO.md",
+      "size": 3233
+    },
+    {
+      "path": "docs/PHASE103_FINAL_ACCEPTANCE_AND_WORK_ORDER_20260426_KO.md",
+      "size": 5033
+    },
+    {
+      "path": "docs/PHASE103_FINAL_ACCEPTANCE_SUMMARY_20260426.json",
+      "size": 1075
+    },
+    {
+      "path": "docs/PHASE104_CONTENT_COMPLETION_REPORT_20260426_KO.md",
+      "size": 4972
+    },
+    {
+      "path": "docs/PHASE104_FINAL_ACCEPTANCE_SUMMARY_20260426.json",
+      "size": 1903
+    },
+    {
+      "path": "docs/PHASE105_WHOLE_PACKAGE_COMPLETION_REPORT_20260426_KO.md",
+      "size": 4520
+    },
+    {
+      "path": "docs/PHASE106_AST_PLACEHOLDER_VALIDATION_20260426.json",
+      "size": 359
+    },
+    {
+      "path": "docs/PHASE106_LOCAL_AI_REVIEW_20260426.json",
+      "size": 1465
+    },
+    {
+      "path": "docs/PHASE106_MONITORING_AND_AUTO_ROLLBACK_RUNBOOK_20260426_KO.md",
+      "size": 1985
+    },
+    {
+      "path": "docs/PHASE106_MONITORING_ROLLBACK_VALIDATION_20260426.json",
+      "size": 902
+    },
+    {
+      "path": "docs/PHASE106_SELECTION_OPTIONS_COMPLETION_REPORT_20260426_KO.md",
+      "size": 2133
+    },
+    {
+      "path": "docs/PHASE106_SELECTION_OPTIONS_VALIDATION_20260426.json",
+      "size": 1159
+    },
+    {
+      "path": "docs/PHASE107_COMPLETE_PIPELINE_DELIVERY_20260426_KO.md",
+      "size": 3559
+    },
+    {
+      "path": "docs/PHASE107_FINAL_GATE_SUMMARY_20260426.json",
+      "size": 2261
+    },
+    {
+      "path": "docs/PHASE107_PIPELINE_VALIDATION_20260426.json",
+      "size": 99253
+    },
+    {
+      "path": "docs/PHASE108_COMMERCIAL_100_COMPLETION_REPORT_20260426_KO.md",
+      "size": 2617
+    },
+    {
+      "path": "docs/PHASE108_COMMERCIAL_100_VALIDATION_20260426.json",
+      "size": 5743
+    },
+    {
+      "path": "docs/PHASE109_MEMBER_VALUE_COMPLETION_REPORT_20260427_KO.md",
+      "size": 3345
+    },
+    {
+      "path": "docs/PHASE109_MEMBER_VALUE_VALIDATION_20260427.json",
+      "size": 778
+    },
+    {
+      "path": "docs/PHASE10_CI_STRICT_SUMMARY_20260424.json",
+      "size": 3043
+    },
+    {
+      "path": "docs/PHASE10_COMMERCIAL_LAUNCH_FINAL_REVIEW_20260424_KO.md",
+      "size": 3324
+    },
+    {
+      "path": "docs/PHASE10_FULL_TEST_SUMMARY_20260424.json",
+      "size": 31632
+    },
+    {
+      "path": "docs/PHASE110_COMMERCIAL_READY_FINAL_REVIEW_20260427_KO.md",
+      "size": 5840
+    },
+    {
+      "path": "docs/PHASE110_COMMERCIAL_READY_VALIDATION_20260427.json",
+      "size": 3847
+    },
+    {
+      "path": "docs/PHASE111_ACTUAL_FULL_REAUDIT_REPORT_20260427_KO.md",
+      "size": 3886
+    },
+    {
+      "path": "docs/PHASE111_ACTUAL_FULL_REAUDIT_SUMMARY_20260427.json",
+      "size": 1443
+    },
+    {
+      "path": "docs/PHASE112_INSTANT_RESULT_MEMBER_CONVERSION_COMPLETION_20260427_KO.md",
+      "size": 1824
+    },
+    {
+      "path": "docs/PHASE113_PUBLIC_CONVERSION_100_COMPLETION_20260427_KO.md",
+      "size": 1591
+    },
+    {
+      "path": "docs/PHASE114_REVENUE_LAUNCH_COMPLETION_20260427_KO.md",
+      "size": 1657
+    },
+    {
+      "path": "docs/PHASE114_REVENUE_LAUNCH_VALIDATION_20260427.json",
+      "size": 47
+    },
+    {
+      "path": "docs/PHASE115_COOLIFY_ENV_TAB_REPAIR_20260427_KO.md",
+      "size": 4652
+    },
+    {
+      "path": "docs/PHASE115_COOLIFY_ENV_TAB_REPAIR_VALIDATION_20260427.json",
+      "size": 526
+    },
+    {
+      "path": "docs/PHASE117_FILE_MANIFEST_20260428.json",
+      "size": 372
+    },
+    {
+      "path": "docs/PHASE117_PRODUCTION_100_DELIVERY_REPORT_20260428_KO.md",
+      "size": 2927
+    },
+    {
+      "path": "docs/PHASE11_100_SCORECARD_20260424.json",
+      "size": 196
+    },
+    {
+      "path": "docs/PHASE11_PUBLIC_LAUNCH_100_COMPLETION_REVIEW_20260424_KO.md",
+      "size": 1342
+    },
+    {
+      "path": "docs/PHASE12_FINAL_REAUDIT_AND_HARDENING_20260424_KO.md",
+      "size": 2332
+    },
+    {
+      "path": "docs/PHASE13_INTERNAL_OPS_FINAL_HARDENING_20260424_KO.md",
+      "size": 3230
+    },
+    {
+      "path": "docs/PHASE14_COOLIFY_HEALTHCHECK_AND_SECRET_SCAN_FIX_20260424_KO.md",
+      "size": 1636
+    },
+    {
+      "path": "docs/PHASE15_LOADING_STALL_FIX_20260424_KO.md",
+      "size": 1316
+    },
+    {
+      "path": "docs/PHASE16_UI_CTA_AUTOPUBLISH_20260424_KO.md",
+      "size": 1228
+    },
+    {
+      "path": "docs/PHASE17_ENTERPRISE_UI_UX_POLISH_20260424_KO.md",
+      "size": 819
+    },
+    {
+      "path": "docs/PHASE18_REVENUE_CONVERSION_WORK_ORDER_20260424_KO.md",
+      "size": 1375
+    },
+    {
+      "path": "docs/PHASE19_LOW_MID_DIFFICULTY_COMMERCIALIZATION_WORK_ORDER_20260424_KO.md",
+      "size": 2379
+    },
+    {
+      "path": "docs/PHASE20_CI_STRICT_SUMMARY_20260424.json",
+      "size": 1438
+    },
+    {
+      "path": "docs/PHASE20_COMMERCIAL_OFFER_TEST_20260424.json",
+      "size": 258
+    },
+    {
+      "path": "docs/PHASE20_FINAL_COMPLETION_REPORT_20260424_KO.md",
+      "size": 2046
+    },
+    {
+      "path": "docs/PHASE20_FULL_COMPLETION_WORK_ORDER_20260424_KO.md",
+      "size": 3037
+    },
+    {
+      "path": "docs/PHASE20_FULL_TEST_SUMMARY_20260424.json",
+      "size": 939
+    },
+    {
+      "path": "docs/PHASE21_100_POINT_FINAL_QA_REPORT_20260424_KO.md",
+      "size": 2389
+    },
+    {
+      "path": "docs/PHASE21_CI_STRICT_SUMMARY_20260424.json",
+      "size": 1020
+    },
+    {
+      "path": "docs/PHASE21_FULL_COMMERCIAL_FLOW_TEST_20260424.json",
+      "size": 81
+    },
+    {
+      "path": "docs/PHASE21_FULL_TEST_SUMMARY_20260424.json",
+      "size": 24896
+    },
+    {
+      "path": "docs/PHASE21_SMOKE_RESULT_20260424.json",
+      "size": 442
+    },
+    {
+      "path": "docs/PHASE22_FINAL_REAUDIT_HARDENING_REPORT_20260424_KO.md",
+      "size": 1676
+    },
+    {
+      "path": "docs/PHASE22_FINAL_SMOKE_RESULT_20260424.json",
+      "size": 573
+    },
+    {
+      "path": "docs/PHASE23_FULL_TEST_SUMMARY_20260424.json",
+      "size": 26177
+    },
+    {
+      "path": "docs/PHASE23_PIPELINE_HARDENING_AND_REMAINING_STAGES_20260424_KO.md",
+      "size": 2033
+    },
+    {
+      "path": "docs/PHASE23_PIPELINE_RELEASE_GATE_20260424.json",
+      "size": 4012
+    },
+    {
+      "path": "docs/PHASE23_REMAINING_STAGE_INVENTORY_20260424.json",
+      "size": 2982
+    },
+    {
+      "path": "docs/PHASE24_FINAL_COMMERCIAL_DELIVERY_REPORT_20260424_KO.md",
+      "size": 2461
+    },
+    {
+      "path": "docs/PHASE24_FINAL_COMMERCIAL_GATE_20260424.json",
+      "size": 7282
+    },
+    {
+      "path": "docs/PHASE25_ENTERPRISE_UIUX_AND_REVENUE_UNIFICATION_REPORT_20260424_KO.md",
+      "size": 1295
+    },
+    {
+      "path": "docs/PHASE26_ENTERPRISE_UIUX_FINAL_DELIVERY_20260424_KO.md",
+      "size": 1043
+    },
+    {
+      "path": "docs/PHASE26_TEST_ALL_SUMMARY_20260424.json",
+      "size": 3792
+    },
+    {
+      "path": "docs/PHASE27_DISTRIBUTED_UIUX_TRUTHFUL_COPY_REPORT_20260424_KO.md",
+      "size": 1800
+    },
+    {
+      "path": "docs/PHASE27_TEST_ALL_SUMMARY_20260424.json",
+      "size": 3839
+    },
+    {
+      "path": "docs/PHASE28_DEVICE_TEXT_READABILITY_WORK_ORDER_20260425_KO.md",
+      "size": 1895
+    },
+    {
+      "path": "docs/PHASE29_PUBLIC_COPY_HIDE_INTERNAL_LABELS_20260425_KO.md",
+      "size": 1872
+    },
+    {
+      "path": "docs/PHASE30_PUBLIC_COMMERCIAL_MICRO_TUNING_20260425_KO.md",
+      "size": 1635
+    },
+    {
+      "path": "docs/PHASE31_COMMERCIAL_AUTH_FULFILLMENT_COMPLETION_20260425_KO.md",
+      "size": 1293
+    },
+    {
+      "path": "docs/PHASE32_ACCOUNT_OPS_HARDENING_20260425_KO.md",
+      "size": 1796
+    },
+    {
+      "path": "docs/PHASE33_PRIVACY_MINIMIZATION_REPORT_20260425_KO.md",
+      "size": 2597
+    },
+    {
+      "path": "docs/PHASE34_PRIVACY_CONSENT_OPS_HARDENING_20260425_KO.md",
+      "size": 1773
+    },
+    {
+      "path": "docs/PHASE35_PRODUCTION_COMPLETION_REPORT_20260425_KO.md",
+      "size": 3242
+    },
+    {
+      "path": "docs/PHASE36_TEST_REVIEW_AND_COMMERCIAL_HARDENING_20260425_KO.md",
+      "size": 2217
+    },
+    {
+      "path": "docs/PHASE36_TEST_REVIEW_SUMMARY_20260425.json",
+      "size": 2426
+    },
+    {
+      "path": "docs/PHASE37_LEGAL_RISK_HARDENING_REPORT_20260425_KO.md",
+      "size": 1840
+    },
+    {
+      "path": "docs/PHASE37_LEGAL_RISK_VALIDATION_20260425.json",
+      "size": 2364
+    },
+    {
+      "path": "docs/PHASE38_OPERATIONAL_HARDENING_REPORT_20260425_KO.md",
+      "size": 2522
+    },
+    {
+      "path": "docs/PHASE39_LAUNCH_GATE_HARDENING_20260425_KO.md",
+      "size": 1473
+    },
+    {
+      "path": "docs/PHASE40_FINAL_RECHECK_COMPLETION_20260425_KO.md",
+      "size": 2060
+    },
+    {
+      "path": "docs/PHASE40_FINAL_RECHECK_VALIDATION_20260425.json",
+      "size": 106
+    },
+    {
+      "path": "docs/PHASE41_COMMERCIAL_FINAL_COMPLETION_REPORT_20260425_KO.md",
+      "size": 1034
+    },
+    {
+      "path": "docs/PHASE41_COMMERCIAL_FINAL_VALIDATION_20260425.json",
+      "size": 171
+    },
+    {
+      "path": "docs/PHASE41_COMMERCIAL_REMAINING_WORK_ORDER_20260425_KO.md",
+      "size": 1710
+    },
+    {
+      "path": "docs/PHASE42_FINAL_CLOSEOUT_COMPLETION_REPORT_20260425_KO.md",
+      "size": 1006
+    },
+    {
+      "path": "docs/PHASE42_FINAL_CLOSEOUT_VALIDATION_20260425.json",
+      "size": 169
+    },
+    {
+      "path": "docs/PHASE42_FINAL_CLOSEOUT_WORK_ORDER_20260425_KO.md",
+      "size": 1166
+    },
+    {
+      "path": "docs/PHASE42_FINAL_REVIEW_SUMMARY_20260425.json",
+      "size": 2555
+    },
+    {
+      "path": "docs/PHASE43_100_SCORE_COMPLETION_REPORT_20260425_KO.md",
+      "size": 1485
+    },
+    {
+      "path": "docs/PHASE43_FINAL_REVIEW_SUMMARY_20260425.json",
+      "size": 174
+    },
+    {
+      "path": "docs/PHASE44_COMMERCIAL_DEPLOYMENT_REAUDIT_WORK_ORDER_20260425_KO.md",
+      "size": 7509
+    },
+    {
+      "path": "docs/PHASE45_100_SCORE_COMPLETION_REPORT_20260425_KO.md",
+      "size": 1314
+    },
+    {
+      "path": "docs/PHASE46_COOLIFY_ENV_AUTODETECT_APPLIED_20260425_KO.md",
+      "size": 2661
+    },
+    {
+      "path": "docs/PHASE47_LIVE_NV0KR_PROBLEM_AUDIT_AND_REPAIR_20260425_KO.md",
+      "size": 4142
+    },
+    {
+      "path": "docs/PHASE48_FINAL_100_GATE_20260425.json",
+      "size": 5287
+    },
+    {
+      "path": "docs/PHASE48_LIVE_PUBLIC_CHECK_20260425.json",
+      "size": 4548
+    },
+    {
+      "path": "docs/PHASE48_PERFECT_100_LIVE_HARDENING_REPORT_20260425_KO.md",
+      "size": 1822
+    },
+    {
+      "path": "docs/PHASE49_FINAL_100_GATE_20260425.json",
+      "size": 5288
+    },
+    {
+      "path": "docs/PHASE49_GLOBAL_REAUDIT_AND_REPAIR_REPORT_20260425_KO.md",
+      "size": 2632
+    },
+    {
+      "path": "docs/PHASE49_GLOBAL_REAUDIT_RESULT_20260425.json",
+      "size": 2596
+    },
+    {
+      "path": "docs/PHASE52_TRUE_100_COMPLETION_REPORT_20260425_KO.md",
+      "size": 1900
+    },
+    {
+      "path": "docs/PHASE53_PUBLIC_MAIN_CONVERSION_REPAIR_20260425_KO.md",
+      "size": 1004
+    },
+    {
+      "path": "docs/PHASE54_GLOBAL_COMPLETION_REPORT_20260425_KO.md",
+      "size": 1823
+    },
+    {
+      "path": "docs/PHASE55_COMMERCIAL_100_REDESIGN_COMPLETION_REPORT_20260425_KO.md",
+      "size": 3157
+    },
+    {
+      "path": "docs/PHASE55_FINAL_100_GATE_20260425.json",
+      "size": 5803
+    },
+    {
+      "path": "docs/PHASE55_GLOBAL_REAUDIT_RESULT_20260425.json",
+      "size": 3209
+    },
+    {
+      "path": "docs/PHASE55_TEST_ALL_SUMMARY_20260425.json",
+      "size": 6343
+    },
+    {
+      "path": "docs/PHASE56_100_POINT_REDESIGN_WORK_ORDER_20260425_KO.md",
+      "size": 2575
+    },
+    {
+      "path": "docs/PHASE56_COMPLETION_REPORT_20260425_KO.md",
+      "size": 1994
+    },
+    {
+      "path": "docs/PHASE57_FLOW_RECHECK_COMPLETION_REPORT_20260425_KO.md",
+      "size": 1370
+    },
+    {
+      "path": "docs/PHASE57_FLOW_RECHECK_WORK_ORDER_20260425_KO.md",
+      "size": 1233
+    },
+    {
+      "path": "docs/PHASE57_TEST.txt",
+      "size": 622
+    },
+    {
+      "path": "docs/PHASE58_PUBLIC_COPY_AND_100_SCORE_RECHECK_20260425_KO.md",
+      "size": 4335
+    },
+    {
+      "path": "docs/PHASE59_SITE_WIDE_HUMAN_COPY_REWRITE_20260425_KO.md",
+      "size": 1498
+    },
+    {
+      "path": "docs/PHASE60_SITEWIDE_100_COPY_STRUCTURE_DELIVERY_20260425_KO.md",
+      "size": 2050
+    },
+    {
+      "path": "docs/PHASE61_MAIN_VISUAL_BOARD_30MIN_DELIVERY_20260425_KO.md",
+      "size": 1165
+    },
+    {
+      "path": "docs/PHASE62_MAIN_INFOGRAPHIC_PRO_DELIVERY_20260425_KO.md",
+      "size": 433
+    },
+    {
+      "path": "docs/PHASE63_REMAINING_STAGES_COMPLETION_REPORT_20260425_KO.md",
+      "size": 4660
+    },
+    {
+      "path": "docs/PHASE64_FINAL_FINISH_VALIDATION_20260425.json",
+      "size": 259
+    },
+    {
+      "path": "docs/PHASE65_MAIN_INFOGRAPHIC_SCROLL_HALF_DELIVERY_20260425_KO.md",
+      "size": 2220
+    },
+    {
+      "path": "docs/PHASE65_MAIN_INFOGRAPHIC_SCROLL_HALF_VALIDATION_20260425.json",
+      "size": 509
+    },
+    {
+      "path": "docs/PHASE66_FULL_SITE_PROFESSIONAL_VISUAL_DELIVERY_20260425_KO.md",
+      "size": 1575
+    },
+    {
+      "path": "docs/PHASE66_FULL_SITE_VISUAL_VALIDATION_20260425.json",
+      "size": 104
+    },
+    {
+      "path": "docs/PHASE66_TEST_WRITE.txt",
+      "size": 535
+    },
+    {
+      "path": "docs/PHASE67_FINAL_100_COMPLETION_REPORT_20260425_KO.md",
+      "size": 2413
+    },
+    {
+      "path": "docs/PHASE67_FINAL_100_VALIDATION_20260425.json",
+      "size": 2476
+    },
+    {
+      "path": "docs/PHASE68_SERVER_API_AUTO_DIAGNOSIS_DELIVERY_20260425_KO.md",
+      "size": 2126
+    },
+    {
+      "path": "docs/PHASE68_SERVER_API_AUTO_DIAGNOSIS_SUMMARY.json",
+      "size": 122
+    },
+    {
+      "path": "docs/PHASE69_COOLIFY_RUNTIME_COPY_FIX_20260425_KO.md",
+      "size": 1209
+    },
+    {
+      "path": "docs/PHASE70_COOLIFY_PRODUCTION_FINAL_DELIVERY_20260425_KO.md",
+      "size": 2610
+    },
+    {
+      "path": "docs/PHASE70_COOLIFY_PRODUCTION_FINAL_VALIDATION_20260425.json",
+      "size": 169
+    },
+    {
+      "path": "docs/PHASE71_MAIN_COLOR_UNIFICATION_20260425_KO.md",
+      "size": 614
+    },
+    {
+      "path": "docs/PHASE72_CONTENT_PIPELINE_COMPLETION_20260425_KO.md",
+      "size": 931
+    },
+    {
+      "path": "docs/PHASE72_CONTENT_PIPELINE_VALIDATION_20260425.json",
+      "size": 273
+    },
+    {
+      "path": "docs/PHASE74_DASHBOARD_UI_COMPLETION_20260426_KO.md",
+      "size": 1305
+    },
+    {
+      "path": "docs/PHASE75_FULL_RECHECK_DOWNLOAD_SAFE_DELIVERY_20260426_KO.md",
+      "size": 1288
+    },
+    {
+      "path": "docs/PHASE76_FILE_MANIFEST_20260426.txt",
+      "size": 12232
+    },
+    {
+      "path": "docs/PHASE76_SECURITY_ROUTING_COMPLETION_20260426_KO.md",
+      "size": 1590
+    },
+    {
+      "path": "docs/PHASE76_SECURITY_ROUTING_VALIDATION_20260426.json",
+      "size": 279
+    },
+    {
+      "path": "docs/PHASE77_VISIBILITY_UNIFICATION_COMPLETION_20260426_KO.md",
+      "size": 1613
+    },
+    {
+      "path": "docs/PHASE77_VISIBILITY_UNIFICATION_VALIDATION_20260426.json",
+      "size": 80
+    },
+    {
+      "path": "docs/PHASE78_VISIBILITY_BRAND_UNIFICATION_REPAIR_20260426_KO.md",
+      "size": 1298
+    },
+    {
+      "path": "docs/PHASE78_VISIBILITY_BRAND_UNIFICATION_VALIDATION_20260426.json",
+      "size": 476
+    },
+    {
+      "path": "docs/PHASE9_COMMERCIAL_LAUNCH_COMPLETION_REVIEW_20260424_KO.md",
+      "size": 2015
+    },
+    {
+      "path": "docs/PIPELINE_HARDENING_20260423_KO.md",
+      "size": 2705
+    },
+    {
+      "path": "docs/POSTGRES_CUTOVER_PLAN_20260423_KO.md",
+      "size": 1633
+    },
+    {
+      "path": "docs/PREEMPTIVE_HARDENING_REVIEW_20260423_KO.md",
+      "size": 1728
+    },
+    {
+      "path": "docs/PRODUCTION_EXTERNAL_GO_LIVE_CHECKLIST_20260425_KO.md",
+      "size": 1241
+    },
+    {
+      "path": "docs/PRODUCTION_READINESS_REPORT_20260423_KO.md",
+      "size": 2666
+    },
+    {
+      "path": "docs/RELEASE_MANIFEST_20260423.json",
+      "size": 1207
+    },
+    {
+      "path": "docs/REMAINING_WORK_INVENTORY_20260423.json",
+      "size": 4037
+    },
+    {
+      "path": "docs/REMAINING_WORK_INVENTORY_20260423_KO.md",
+      "size": 4007
+    },
+    {
+      "path": "docs/ROUTING_AND_BOUNDARIES.md",
+      "size": 843
+    },
+    {
+      "path": "docs/STRICT_REINSPECTION_DELTA_20260423_KO.md",
+      "size": 677
+    },
+    {
+      "path": "docs/VERIDION_DELIVERY_NOTES_20260423_KO.md",
+      "size": 1747
+    },
+    {
+      "path": "docs/VERSION_DIFF_HARDENED_TO_FINAL_20260423.json",
+      "size": 2572
+    },
+    {
+      "path": "docs/VERSION_DIFF_HARDENED_TO_FINAL_20260423_KO.md",
+      "size": 1628
+    },
+    {
+      "path": "docs/WORK_ORDER_CLEANROOM_EXECUTION_20260423_KO.md",
+      "size": 2336
+    },
+    {
+      "path": "docs/openapi.nv0-cleanroom.yaml",
+      "size": 3623
+    },
+    {
+      "path": "docs/PHASE118_PRODUCTION_100_DELIVERY_REPORT_20260428_KO.md",
+      "size": 4052
+    },
+    {
+      "path": "docs/PHASE118_PRODUCTION_100_GATE_20260428.json",
+      "size": 7704
+    },
+    {
+      "path": "docs/PHASE118_LOCAL_VALIDATION_SUMMARY_20260428.json",
+      "size": 12712
+    },
+    {
+      "path": "docs/PHASE118_ENV_BLOCKER_VALIDATION_20260428.json",
+      "size": 2060
+    },
+    {
+      "path": "docs/PHASE118_FILE_MANIFEST_20260428.json",
+      "size": 75004
+    },
+    {
+      "path": "docs/PHASE119_DEMO_CLICK_FIX_VALIDATION_20260428.json",
+      "size": 1490
+    },
+    {
+      "path": "docs/PHASE104_CONTENT_COMPLETENESS_VALIDATION_20260426.json",
+      "size": 590
+    },
+    {
+      "path": "docs/PHASE105_WHOLE_PACKAGE_COMPLETION_VALIDATION_20260426.json",
+      "size": 517
+    },
+    {
+      "path": "docs/PHASE120_DEMO_INFOGRAPHIC_RESULT_VALIDATION_20260428.json",
+      "size": 1581
+    },
+    {
+      "path": "docs/PHASE120_LOCAL_VALIDATION_SUMMARY_20260428.json",
+      "size": 2839
+    },
+    {
+      "path": "docs/PHASE120_LOCAL_RUNTIME_SMOKE_20260428.json",
+      "size": 24819
+    },
+    {
+      "path": "docs/PHASE120_DEMO_INFOGRAPHIC_RESULT_DELIVERY_20260428_KO.md",
+      "size": 1468
+    },
+    {
+      "path": "scripts/acceptance.mjs",
+      "size": 4072
+    },
+    {
+      "path": "scripts/audit-inventory.mjs",
+      "size": 5685
+    },
+    {
+      "path": "scripts/backup-runtime.mjs",
+      "size": 1180
+    },
+    {
+      "path": "scripts/check-ast-placeholder-guard.mjs",
+      "size": 3598
+    },
+    {
+      "path": "scripts/check-client-render-safety.mjs",
+      "size": 1676
+    },
+    {
+      "path": "scripts/check-commercial-offers.mjs",
+      "size": 1973
+    },
+    {
+      "path": "scripts/check-content-completeness.mjs",
+      "size": 2917
+    },
+    {
+      "path": "scripts/check-data-integrity.mjs",
+      "size": 2105
+    },
+    {
+      "path": "scripts/check-env-examples.mjs",
+      "size": 2713
+    },
+    {
+      "path": "scripts/check-full-commercial-flow.mjs",
+      "size": 2143
+    },
+    {
+      "path": "scripts/check-handoff-docs.mjs",
+      "size": 639
+    },
+    {
+      "path": "scripts/check-links.mjs",
+      "size": 2786
+    },
+    {
+      "path": "scripts/check-live-public.mjs",
+      "size": 2411
+    },
+    {
+      "path": "scripts/check-no-debug-client.mjs",
+      "size": 775
+    },
+    {
+      "path": "scripts/check-page-integrity.mjs",
+      "size": 3525
+    },
+    {
+      "path": "scripts/check-phase105-whole-package-completion.mjs",
+      "size": 3521
+    },
+    {
+      "path": "scripts/check-runtime-clean.mjs",
+      "size": 1538
+    },
+    {
+      "path": "scripts/check-source-syntax.mjs",
+      "size": 945
+    },
+    {
+      "path": "scripts/ci-strict.mjs",
+      "size": 1767
+    },
+    {
+      "path": "scripts/final-commercial-gate.mjs",
+      "size": 3976
+    },
+    {
+      "path": "scripts/local-ai-code-review.mjs",
+      "size": 3122
+    },
+    {
+      "path": "scripts/monitoring-rollback-gate.mjs",
+      "size": 1818
+    },
+    {
+      "path": "scripts/ops-report.mjs",
+      "size": 1628
+    },
+    {
+      "path": "scripts/package-prep.mjs",
+      "size": 1364
+    },
+    {
+      "path": "scripts/phase48-final-100.mjs",
+      "size": 3479
+    },
+    {
+      "path": "scripts/phase49-final-100.mjs",
+      "size": 3218
+    },
+    {
+      "path": "scripts/phase49-global-audit.mjs",
+      "size": 2777
+    },
+    {
+      "path": "scripts/pipeline-release-gate.mjs",
+      "size": 2432
+    },
+    {
+      "path": "scripts/preflight.mjs",
+      "size": 3048
+    },
+    {
+      "path": "scripts/prune-runtime.mjs",
+      "size": 789
+    },
+    {
+      "path": "scripts/release-manifest.mjs",
+      "size": 1417
+    },
+    {
+      "path": "scripts/reset-demo-state.mjs",
+      "size": 741
+    },
+    {
+      "path": "scripts/restore-latest-backup.mjs",
+      "size": 604
+    },
+    {
+      "path": "scripts/run-final-review.mjs",
+      "size": 2783
+    },
+    {
+      "path": "scripts/run-phase106-final.mjs",
+      "size": 2218
+    },
+    {
+      "path": "scripts/run-phase107-final.mjs",
+      "size": 3238
+    },
+    {
+      "path": "scripts/smoke.mjs",
+      "size": 2689
+    },
+    {
+      "path": "scripts/test-all.mjs",
+      "size": 4521
+    },
+    {
+      "path": "scripts/validate-commercial-release.mjs",
+      "size": 2107
+    },
+    {
+      "path": "scripts/validate-commercial-runtime.mjs",
+      "size": 1182
+    },
+    {
+      "path": "scripts/validate-coolify-env-detection.mjs",
+      "size": 3285
+    },
+    {
+      "path": "scripts/validate-deploy-bundle.mjs",
+      "size": 3221
+    },
+    {
+      "path": "scripts/validate-phase100-visual-accessibility.mjs",
+      "size": 1773
+    },
+    {
+      "path": "scripts/validate-phase107-complete-pipeline.mjs",
+      "size": 6307
+    },
+    {
+      "path": "scripts/validate-phase108-commercial-100.mjs",
+      "size": 4893
+    },
+    {
+      "path": "scripts/validate-phase110-commercial-ready.mjs",
+      "size": 5015
+    },
+    {
+      "path": "scripts/validate-phase114-revenue-launch.mjs",
+      "size": 1968
+    },
+    {
+      "path": "scripts/validate-phase35-production.mjs",
+      "size": 1736
+    },
+    {
+      "path": "scripts/validate-phase36-test-review.mjs",
+      "size": 3006
+    },
+    {
+      "path": "scripts/validate-phase37-legal-risk.mjs",
+      "size": 2747
+    },
+    {
+      "path": "scripts/validate-phase38-operational.mjs",
+      "size": 2000
+    },
+    {
+      "path": "scripts/validate-phase39-launch-gate.mjs",
+      "size": 1992
+    },
+    {
+      "path": "scripts/validate-phase40-final-recheck.mjs",
+      "size": 4705
+    },
+    {
+      "path": "scripts/validate-phase41-commercial-final.mjs",
+      "size": 3231
+    },
+    {
+      "path": "scripts/validate-phase42-final-closeout.mjs",
+      "size": 2936
+    },
+    {
+      "path": "scripts/validate-phase43-perfect-score.mjs",
+      "size": 971
+    },
+    {
+      "path": "scripts/validate-phase63-finish.mjs",
+      "size": 1458
+    },
+    {
+      "path": "scripts/validate-phase64-final-finish.mjs",
+      "size": 1955
+    },
+    {
+      "path": "scripts/validate-phase66-full-site.mjs",
+      "size": 2290
+    },
+    {
+      "path": "scripts/validate-phase67-100.mjs",
+      "size": 3233
+    },
+    {
+      "path": "scripts/validate-phase68-server-api-auto-diagnosis.mjs",
+      "size": 1785
+    },
+    {
+      "path": "scripts/validate-phase70-coolify-production.mjs",
+      "size": 2822
+    },
+    {
+      "path": "scripts/validate-phase71-main-color-unification.mjs",
+      "size": 947
+    },
+    {
+      "path": "scripts/validate-phase72-content-pipeline.mjs",
+      "size": 2524
+    },
+    {
+      "path": "scripts/validate-phase73-visibility.mjs",
+      "size": 1868
+    },
+    {
+      "path": "scripts/validate-phase74-dashboard-ui.mjs",
+      "size": 1889
+    },
+    {
+      "path": "scripts/validate-phase76-security-routing.mjs",
+      "size": 2252
+    },
+    {
+      "path": "scripts/validate-phase77-visibility-unification.mjs",
+      "size": 1623
+    },
+    {
+      "path": "scripts/validate-pipeline.mjs",
+      "size": 2353
+    },
+    {
+      "path": "scripts/validate-prod-env.mjs",
+      "size": 5597
+    },
+    {
+      "path": "scripts/verify-prod.mjs",
+      "size": 5608
+    },
+    {
+      "path": "scripts/verify-security.mjs",
+      "size": 2209
+    },
+    {
+      "path": "scripts/validate-phase118-production-100.mjs",
+      "size": 4814
+    },
+    {
+      "path": "scripts/validate-phase119-demo-click-fix.mjs",
+      "size": 3018
+    },
+    {
+      "path": "scripts/validate-phase120-demo-infographic-result.mjs",
+      "size": 3484
+    },
+    {
+      "path": "server/index.mjs",
+      "size": 221893
+    },
+    {
+      "path": "shared/admin-client.js",
+      "size": 1316
+    },
+    {
+      "path": "shared/base.css",
+      "size": 49118
+    },
+    {
+      "path": "shared/html.js",
+      "size": 981
+    },
+    {
+      "path": "shared/visibility.css",
+      "size": 13335
+    },
+    {
+      "path": "shared/turnstile.js",
+      "size": 2979
+    },
+    {
+      "path": "tests/contracts-fuzz.mjs",
+      "size": 5566
+    },
+    {
+      "path": "tests/e2e.mjs",
+      "size": 3294
+    },
+    {
+      "path": "tests/portone-events.mjs",
+      "size": 4822
+    },
+    {
+      "path": "tests/portone-provider.mjs",
+      "size": 4521
+    },
+    {
+      "path": "tests/provider-adapters.mjs",
+      "size": 4264
+    },
+    {
+      "path": "tests/routes-smoke.mjs",
+      "size": 2255
+    },
+    {
+      "path": "tests/runtime-persistence.mjs",
+      "size": 4447
+    },
+    {
+      "path": "tests/security-stateful.mjs",
+      "size": 3079
+    },
+    {
+      "path": "tests/session-persistence.mjs",
+      "size": 2377
+    },
+    {
+      "path": "server/contracts/commercial-target-interfaces.md",
+      "size": 901
+    },
+    {
+      "path": "server/core/account-rescan.mjs",
+      "size": 3388
+    },
+    {
+      "path": "server/core/admin-auth.mjs",
+      "size": 2824
+    },
+    {
+      "path": "server/core/passwords.mjs",
+      "size": 945
+    },
+    {
+      "path": "server/core/payment-state-machine.mjs",
+      "size": 845
+    },
+    {
+      "path": "server/core/platform.mjs",
+      "size": 2789
+    },
+    {
+      "path": "server/infrastructure/lock/distributed-lock.mjs",
+      "size": 1050
+    },
+    {
+      "path": "server/infrastructure/payments/portone-v2.mjs",
+      "size": 6911
+    },
+    {
+      "path": "server/infrastructure/payments/portone-webhook-verify.mjs",
+      "size": 3845
+    },
+    {
+      "path": "server/infrastructure/persistence/persistence.mjs",
+      "size": 3904
+    },
+    {
+      "path": "server/infrastructure/persistence/postgres-bridge.mjs",
+      "size": 8427
+    },
+    {
+      "path": "server/infrastructure/ratelimit/rate-limit-store.mjs",
+      "size": 1487
+    },
+    {
+      "path": "server/infrastructure/redis/redis-client.mjs",
+      "size": 5167
+    },
+    {
+      "path": "server/infrastructure/session/session-store.mjs",
+      "size": 1694
+    },
+    {
+      "path": "runtime/data/db.json",
+      "size": 56955
+    },
+    {
+      "path": "runtime/data/db.seed.json",
+      "size": 46596
+    },
+    {
+      "path": "runtime/data/sessions.json",
+      "size": 2
+    },
+    {
+      "path": "docs/logs/npm_run_check_data.log",
+      "size": 1114
+    },
+    {
+      "path": "docs/logs/npm_run_check_envexamples.log",
+      "size": 678
+    },
+    {
+      "path": "docs/logs/npm_run_check_handoffdocs.log",
+      "size": 907
+    },
+    {
+      "path": "docs/logs/npm_run_check_links.log",
+      "size": 213
+    },
+    {
+      "path": "docs/logs/npm_run_check_nodebugclient.log",
+      "size": 970
+    },
+    {
+      "path": "docs/logs/npm_run_check_pages.log",
+      "size": 3851
+    },
+    {
+      "path": "docs/logs/npm_run_check_rendersafety.log",
+      "size": 3481
+    },
+    {
+      "path": "docs/logs/npm_run_check_syntax.log",
+      "size": 195
+    },
+    {
+      "path": "docs/logs/npm_run_test.log",
+      "size": 225
+    },
+    {
+      "path": "docs/logs/npm_run_test_contracts.log",
+      "size": 166
+    },
+    {
+      "path": "docs/logs/npm_run_test_e2e.log",
+      "size": 126
+    },
+    {
+      "path": "docs/logs/npm_run_test_providers.log",
+      "size": 135
+    },
+    {
+      "path": "docs/logs/npm_run_test_routes.log",
+      "size": 161
+    },
+    {
+      "path": "docs/logs/npm_run_test_runtime.log",
+      "size": 181
+    },
+    {
+      "path": "docs/logs/npm_run_validate_deploy.log",
+      "size": 175
+    },
+    {
+      "path": "docs/logs/npm_run_validate_phase100.log",
+      "size": 520
+    },
+    {
+      "path": "docs/logs/npm_run_validate_phase76.log",
+      "size": 435
+    },
+    {
+      "path": "docs/logs/npm_run_validate_phase77.log",
+      "size": 209
+    },
+    {
+      "path": "docs/phase52/PHASE52_520_COMPLETION_TABLE.csv",
+      "size": 70991
+    },
+    {
+      "path": "docs/release/PHASE102_INTERIM_DELIVERY_MANIFEST_20260426.json",
+      "size": 733
+    },
+    {
+      "path": "deploy/postgres/schema.sql",
+      "size": 3570
+    },
+    {
+      "path": "apps/public/auth/app.css",
+      "size": 12425
+    },
+    {
+      "path": "apps/public/auth/app.js",
+      "size": 2883
+    },
+    {
+      "path": "apps/public/auth/index.html",
+      "size": 3328
+    },
+    {
+      "path": "apps/public/board/app.css",
+      "size": 13569
+    },
+    {
+      "path": "apps/public/board/app.js",
+      "size": 2586
+    },
+    {
+      "path": "apps/public/board/index.html",
+      "size": 4987
+    },
+    {
+      "path": "apps/public/business-info/app.css",
+      "size": 12130
+    },
+    {
+      "path": "apps/public/business-info/app.js",
+      "size": 936
+    },
+    {
+      "path": "apps/public/business-info/index.html",
+      "size": 2181
+    },
+    {
+      "path": "apps/public/checkout/app.css",
+      "size": 12827
+    },
+    {
+      "path": "apps/public/checkout/app.js",
+      "size": 8880
+    },
+    {
+      "path": "apps/public/checkout/index.html",
+      "size": 4632
+    },
+    {
+      "path": "apps/public/demo/app.css",
+      "size": 12130
+    },
+    {
+      "path": "apps/public/demo/app.js",
+      "size": 918
+    },
+    {
+      "path": "apps/public/demo/index.html",
+      "size": 3725
+    },
+    {
+      "path": "apps/public/documents/app.css",
+      "size": 13371
+    },
+    {
+      "path": "apps/public/documents/app.js",
+      "size": 2193
+    },
+    {
+      "path": "apps/public/documents/index.html",
+      "size": 4809
+    },
+    {
+      "path": "apps/public/guides/app.css",
+      "size": 12131
+    },
+    {
+      "path": "apps/public/guides/app.js",
+      "size": 1385
+    },
+    {
+      "path": "apps/public/guides/index.html",
+      "size": 3189
+    },
+    {
+      "path": "apps/public/home/app.css",
+      "size": 16550
+    },
+    {
+      "path": "apps/public/home/app.js",
+      "size": 936
+    },
+    {
+      "path": "apps/public/home/index.html",
+      "size": 4967
+    },
+    {
+      "path": "apps/public/plans/app.css",
+      "size": 15856
+    },
+    {
+      "path": "apps/public/plans/app.js",
+      "size": 4324
+    },
+    {
+      "path": "apps/public/plans/index.html",
+      "size": 7409
+    },
+    {
+      "path": "apps/public/portal/app.css",
+      "size": 25660
+    },
+    {
+      "path": "apps/public/portal/app.js",
+      "size": 15377
+    },
+    {
+      "path": "apps/public/portal/index.html",
+      "size": 6291
+    },
+    {
+      "path": "apps/public/privacy/app.css",
+      "size": 12130
+    },
+    {
+      "path": "apps/public/privacy/app.js",
+      "size": 936
+    },
+    {
+      "path": "apps/public/privacy/index.html",
+      "size": 3298
+    },
+    {
+      "path": "apps/public/refund/app.css",
+      "size": 12130
+    },
+    {
+      "path": "apps/public/refund/app.js",
+      "size": 936
+    },
+    {
+      "path": "apps/public/refund/index.html",
+      "size": 2182
+    },
+    {
+      "path": "apps/public/solutions/app.css",
+      "size": 12160
+    },
+    {
+      "path": "apps/public/solutions/app.js",
+      "size": 936
+    },
+    {
+      "path": "apps/public/solutions/index.html",
+      "size": 4143
+    },
+    {
+      "path": "apps/public/terms/app.css",
+      "size": 12130
+    },
+    {
+      "path": "apps/public/terms/app.js",
+      "size": 936
+    },
+    {
+      "path": "apps/public/terms/index.html",
+      "size": 2928
+    },
+    {
+      "path": "apps/public/veridion-demo/app.css",
+      "size": 21338
+    },
+    {
+      "path": "apps/public/veridion-demo/index.html",
+      "size": 4124
+    },
+    {
+      "path": "apps/public/veridion-demo/app.js",
+      "size": 21382
+    },
+    {
+      "path": "apps/admin/console/app.css",
+      "size": 12130
+    },
+    {
+      "path": "apps/admin/console/app.js",
+      "size": 1717
+    },
+    {
+      "path": "apps/admin/console/index.html",
+      "size": 1762
+    },
+    {
+      "path": "apps/admin/diagnostics/app.css",
+      "size": 12130
+    },
+    {
+      "path": "apps/admin/diagnostics/app.js",
+      "size": 1871
+    },
+    {
+      "path": "apps/admin/diagnostics/index.html",
+      "size": 1131
+    },
+    {
+      "path": "apps/admin/gate/app.css",
+      "size": 12130
+    },
+    {
+      "path": "apps/admin/gate/app.js",
+      "size": 1259
+    },
+    {
+      "path": "apps/admin/gate/index.html",
+      "size": 1186
+    },
+    {
+      "path": "apps/admin/library/app.css",
+      "size": 12130
+    },
+    {
+      "path": "apps/admin/library/app.js",
+      "size": 2462
+    },
+    {
+      "path": "apps/admin/library/index.html",
+      "size": 1550
+    },
+    {
+      "path": "apps/admin/orders/app.css",
+      "size": 12130
+    },
+    {
+      "path": "apps/admin/orders/app.js",
+      "size": 5048
+    },
+    {
+      "path": "apps/admin/orders/index.html",
+      "size": 1114
+    },
+    {
+      "path": "apps/admin/publications/app.css",
+      "size": 12130
+    },
+    {
+      "path": "apps/admin/publications/app.js",
+      "size": 2177
+    },
+    {
+      "path": "apps/admin/publications/index.html",
+      "size": 1597
+    },
+    {
+      "path": "apps/admin/settings/app.css",
+      "size": 12130
+    },
+    {
+      "path": "apps/admin/settings/app.js",
+      "size": 2108
+    },
+    {
+      "path": "apps/admin/settings/index.html",
+      "size": 1726
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "size": 507
+    },
+    {
+      "path": ".github/workflows/commercial-release.yml",
+      "size": 710
+    },
+    {
+      "path": ".github/workflows/phase107-complete-pipeline.yml",
+      "size": 653
+    },
+    {
+      "path": ".github/workflows/phase108-commercial-100.yml",
+      "size": 307
+    }
+  ]
+}
