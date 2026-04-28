@@ -1,6 +1,6 @@
 {
   "name": "nv0-veridion-cleanroom",
-  "version": "1.0.0-commercial-final-100-score-phase118-production-100-launch-gated",
+  "version": "1.0.0-commercial-final-100-score-phase119-demo-click-fixed",
   "private": true,
   "type": "module",
   "scripts": {
@@ -107,6 +107,8 @@
     "phase114:final": "npm run check:syntax && npm run test:routes && npm run test:e2e && npm run validate:phase114",
     "validate:coolify-env": "node scripts/validate-coolify-env-detection.mjs",
     "validate:phase118": "node scripts/validate-phase118-production-100.mjs",
-    "phase118:final": "node scripts/check-source-syntax.mjs && node scripts/test-all.mjs && node scripts/check-content-completeness.mjs && node scripts/check-phase105-whole-package-completion.mjs && node scripts/validate-coolify-env-detection.mjs && node scripts/validate-deploy-bundle.mjs && node scripts/validate-phase108-commercial-100.mjs && node scripts/validate-phase110-commercial-ready.mjs && node scripts/validate-phase76-security-routing.mjs && node scripts/validate-phase77-visibility-unification.mjs && node scripts/validate-phase100-visual-accessibility.mjs && node scripts/validate-phase118-production-100.mjs"
+    "phase118:final": "node scripts/check-source-syntax.mjs && node scripts/test-all.mjs && node scripts/check-content-completeness.mjs && node scripts/check-phase105-whole-package-completion.mjs && node scripts/validate-coolify-env-detection.mjs && node scripts/validate-deploy-bundle.mjs && node scripts/validate-phase108-commercial-100.mjs && node scripts/validate-phase110-commercial-ready.mjs && node scripts/validate-phase76-security-routing.mjs && node scripts/validate-phase77-visibility-unification.mjs && node scripts/validate-phase100-visual-accessibility.mjs && node scripts/validate-phase118-production-100.mjs",
+    "validate:phase119": "node scripts/validate-phase119-demo-click-fix.mjs",
+    "phase119:final": "node scripts/check-source-syntax.mjs && node scripts/test-all.mjs && node tests/e2e.mjs && node scripts/check-content-completeness.mjs && node scripts/check-phase105-whole-package-completion.mjs && node scripts/validate-phase119-demo-click-fix.mjs"
   }
 }

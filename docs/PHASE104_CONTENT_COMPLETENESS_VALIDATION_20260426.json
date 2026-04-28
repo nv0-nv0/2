@@ -1,18 +1,9 @@
 {
-  "generatedAt": "2026-04-28T01:45:29.779Z",
+  "generatedAt": "2026-04-28T02:55:07.774Z",
   "ok": true,
-  "checkedFiles": 390,
+  "checkedFiles": 165,
   "errors": [],
-  "warnings": [
-    {
-      "file": "docs/PHASE105_WHOLE_PACKAGE_COMPLETION_REPORT_20260426_KO.md",
-      "issue": "historical-confirm-needed-note-kept"
-    },
-    {
-      "file": "docs/PHASE106_SELECTION_OPTIONS_COMPLETION_REPORT_20260426_KO.md",
-      "issue": "historical-confirm-needed-note-kept"
-    }
-  ],
+  "warnings": [],
   "rules": [
     "empty files are blocked",
     "stub-only files are blocked",

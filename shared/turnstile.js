@@ -1,13 +1,21 @@
 let scriptPromise = null;
 
-function loadScript() {
+function loadScript(timeoutMs = 8000) {
   if (scriptPromise) return scriptPromise;
   scriptPromise = new Promise((resolve, reject) => {
     if (window.turnstile) return resolve(window.turnstile);
     const existing = document.querySelector('script[data-turnstile="1"]');
+    let timeoutId = null;
+    const settle = (fn, value) => {
+      if (timeoutId) clearTimeout(timeoutId);
+      fn(value);
+    };
+    timeoutId = setTimeout(() => {
+      reject(new Error('Cloudflare Turnstile 스크립트 로딩 시간이 초과되었습니다.'));
+    }, timeoutMs);
     if (existing) {
-      existing.addEventListener('load', () => resolve(window.turnstile));
-      existing.addEventListener('error', reject);
+      existing.addEventListener('load', () => settle(resolve, window.turnstile));
+      existing.addEventListener('error', () => settle(reject, new Error('Cloudflare Turnstile 스크립트를 불러오지 못했습니다.')));
       return;
     }
     const script = document.createElement('script');
@@ -15,8 +23,8 @@ function loadScript() {
     script.async = true;
     script.defer = true;
     script.dataset.turnstile = '1';
-    script.onload = () => resolve(window.turnstile);
-    script.onerror = reject;
+    script.onload = () => settle(resolve, window.turnstile);
+    script.onerror = () => settle(reject, new Error('Cloudflare Turnstile 스크립트를 불러오지 못했습니다.'));
     document.head.appendChild(script);
   });
   return scriptPromise;
