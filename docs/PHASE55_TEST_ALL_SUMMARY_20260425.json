@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-04-27T13:47:51.534Z",
-  "ok": false,
+  "generatedAt": "2026-04-28T01:45:28.885Z",
+  "ok": true,
   "phase": "commercial-final",
   "total": 88,
-  "passed": 78,
-  "failed": 10,
+  "passed": 88,
+  "failed": 0,
   "checks": [
     {
       "name": "exists:server/index.mjs",
@@ -180,19 +180,19 @@
     },
     {
       "name": "home:광고를 시작하기 전에",
-      "ok": false
+      "ok": true
     },
     {
       "name": "home:결제 전 신뢰 점검",
-      "ok": false
+      "ok": true
     },
     {
       "name": "home:위험도 72 / 100",
-      "ok": false
+      "ok": true
     },
     {
       "name": "home:추천 이용 순서",
-      "ok": false
+      "ok": true
     },
     {
       "name": "home:상세 리포트",
@@ -200,11 +200,11 @@
     },
     {
       "name": "home:법률 자문 서비스인가요?",
-      "ok": false
+      "ok": true
     },
     {
       "name": "home:single-primary-funnel",
-      "ok": false
+      "ok": true
     },
     {
       "name": "home:no-broken-doctype",
@@ -244,7 +244,7 @@
     },
     {
       "name": "demo:무료 요약 진단 3회",
-      "ok": false
+      "ok": true
     },
     {
       "name": "demo:사이트 주소 하나로",
@@ -256,7 +256,7 @@
     },
     {
       "name": "demo:무료 결과와 상품 비교",
-      "ok": false
+      "ok": true
     },
     {
       "name": "demo:상세 리포트 신청",
@@ -272,7 +272,7 @@
     },
     {
       "name": "demo-js:renderPaywall",
-      "ok": false
+      "ok": true
     },
     {
       "name": "demo-js:recommendedPlan",
@@ -296,7 +296,7 @@
     },
     {
       "name": "plans:전체 상품 비교",
-      "ok": false
+      "ok": true
     },
     {
       "name": "plans:무료 진단 시작",

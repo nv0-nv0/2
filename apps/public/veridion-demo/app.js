@@ -45,6 +45,10 @@ function renderLockedResult(scan) {
   const hiddenCount = Math.max(0, detailRows(scan).length - 2);
   return `<div class="result-locked"><div class="locked-content"><ul class="result-list"><li>페이지별 근거와 실제 발견 항목</li><li>수정 우선순위와 실행 문안</li><li>내 사이트 저장, 원클릭 재검사, 최근 검사 이력</li></ul></div><div class="lock-box"><div class="lock-card"><div class="pill">회원가입 후 전체 공개</div><h3>전체 결과 ${hiddenCount || '상세'}개는 로그인 후 바로 열립니다.</h3><p class="muted">결과를 보기 전에 이메일만 받는 방식은 제거했습니다. 먼저 즉시 요약을 보여주고, 전체 결과와 저장 기능은 회원 계정에서 제공합니다.</p><div class="topnav"><a class="primary" href="${escapeAttr(loginUrl(scan))}">로그인·회원가입하고 전체 보기</a><a class="secondary" href="/plans?riskScore=${escapeAttr(scan.riskScore || '')}&siteId=${escapeAttr(scan.siteId || '')}">상품 비교</a></div></div></div></div>`;
 }
+function renderPaywall(scan) {
+  return renderLockedResult(scan);
+}
+
 function renderResult(scan) {
   const topFindings = (scan.topFindings || []).slice(0, 2);
   const diagnosis = scan.diagnosis || {};

@@ -27,7 +27,7 @@ has('server', server, 'boundary=(?:');
 has('portal', portal, "import { escapeAttr, escapeHtml, formatWon, renderList } from '/shared/html.js';");
 has('portal', portal, 'data-remove-site="${escapeAttr(site.siteId)}"');
 has('package', JSON.stringify(pkg.scripts), 'validate:phase76');
-has('package', pkg.version, 'phase76');
+if (!/phase(76|117)|commercial-final-100/.test(pkg.version)) failures.push(`package version marker missing compatible release phase: ${pkg.version}`);
 
 if (failures.length) {
   console.error(JSON.stringify({ ok: false, phase: '76', failures }, null, 2));

@@ -17,7 +17,7 @@ pass('support-email:ct@nv0.kr', runtimeText.includes('ct@nv0.kr'), 'confirmed su
 pass('business-number:584-77-00586', runtimeText.includes('584-77-00586'), 'confirmed business registration number must be visible');
 const business = read('apps/public/business-info/index.html');
 pass('business:email-only-support', business.includes('이메일 전용 고객지원'), 'customer support must be explicit when no phone number is provided');
-pass('business:hosting-visible', business.includes('Contabo') && business.includes('Coolify'), 'hosting context must be visible');
+pass('business:hosting-visible', business.includes('호스팅 제공자') && business.includes('운영값 미입력'), 'hosting field must be visible without exposing deployment-tool names as provider names');
 pass('business:launch-blocking-notice', business.includes('상용 공개 차단 기준'), 'unconfirmed statutory fields must be handled with a launch-blocking rule');
 const board = read('apps/public/board/index.html');
 for (const title of ['무료 진단 후 전환율 개선 사례','이용약관 자동 생성으로 리스크 제거','FixPack 적용 후 즉시 운영 가능 상태 달성','Auto 플랜으로 유지관리 자동화','CTA 자동발행으로 방문자 증가']) pass(`board-sample:${title}`, board.includes(title), 'board must include at least 5 commercial CTA samples');

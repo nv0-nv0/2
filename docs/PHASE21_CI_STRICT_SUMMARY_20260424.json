@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-27T01:04:14.230Z",
+  "generatedAt": "2026-04-28T00:39:23.178Z",
   "ok": true,
   "gate": "phase21-ci-strict-no-error-masking",
   "results": [
@@ -8,8 +8,8 @@
       "ok": true,
       "code": 0,
       "signal": null,
-      "durationMs": 65,
-      "stdout": "{\n  \"ok\": true,\n  \"passed\": 86,\n  \"failed\": 0,\n  \"report\": \"docs/PHASE55_TEST_ALL_SUMMARY_20260425.json\"\n}\n",
+      "durationMs": 208,
+      "stdout": "{\n  \"ok\": true,\n  \"passed\": 88,\n  \"failed\": 0,\n  \"report\": \"docs/PHASE55_TEST_ALL_SUMMARY_20260425.json\"\n}\n",
       "stderr": ""
     },
     {
@@ -17,8 +17,8 @@
       "ok": true,
       "code": 0,
       "signal": null,
-      "durationMs": 78,
-      "stdout": "{\n  \"ok\": true,\n  \"checkedAt\": \"2026-04-27T01:04:14.169Z\",\n  \"commercialReleaseGuards\": 10,\n  \"legalPages\": 4,\n  \"businessProfile\": true\n}\n",
+      "durationMs": 191,
+      "stdout": "{\n  \"ok\": true,\n  \"checkedAt\": \"2026-04-28T00:39:22.923Z\",\n  \"commercialReleaseGuards\": 10,\n  \"legalPages\": 4,\n  \"businessProfile\": true\n}\n",
       "stderr": ""
     },
     {
@@ -26,8 +26,8 @@
       "ok": true,
       "code": 0,
       "signal": null,
-      "durationMs": 54,
-      "stdout": "{\n  \"ok\": true,\n  \"checkedAt\": \"2026-04-27T01:04:14.223Z\",\n  \"requiredFiles\": 11\n}\n",
+      "durationMs": 191,
+      "stdout": "{\n  \"ok\": true,\n  \"checkedAt\": \"2026-04-28T00:39:23.115Z\",\n  \"requiredFiles\": 11\n}\n",
       "stderr": ""
     }
   ]

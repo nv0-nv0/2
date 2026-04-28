@@ -20,6 +20,13 @@ if (envFile) loadEnvFile(envFile);
 
 const errors = [];
 const warnings = [];
+
+function isPlaceholderConfigValue(value) {
+  const text = String(value || '').trim().toLowerCase();
+  if (!text) return true;
+  return ['replace-with', 'example.com', 'localhost', '127.0.0.1', 'changeme', 'your-', 'dummy', 'test_', 'long-random', 'password@smtp', 'smtp.your-provider'].some(token => text.includes(token));
+}
+
 const required = [
   'NODE_ENV', 'PORT', 'NV0_PLATFORM_TARGET', 'NV0_PUBLIC_BASE_URL',
   'NV0_ADMIN_AUTH_MODE', 'NV0_BOOTSTRAP_ADMIN_EMAIL', 'NV0_BOOTSTRAP_ADMIN_PASSWORD',
@@ -31,6 +38,20 @@ const required = [
   'NV0_PORTONE_WEBHOOK_SECRET', 'NV0_PORTONE_WEBHOOK_VERIFY_MODE'
 ];
 for (const key of required) if (!String(process.env[key] || '').trim()) errors.push(`${key} is required`);
+
+for (const key of required) {
+  const value = String(process.env[key] || '').trim();
+  if (value && isPlaceholderConfigValue(value)) errors.push(`${key} must be a real production value, not a placeholder`);
+}
+for (const key of ['NV0_SUPPORT_EMAIL','NV0_PRIVACY_OFFICER_EMAIL','NV0_OPERATOR_ALERT_EMAIL']) {
+  const value = String(process.env[key] || '').trim();
+  if (value && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(value)) errors.push(`${key} must be a valid email address`);
+}
+for (const key of ['NV0_MAIL_ORDER_REGISTRATION_NUMBER','NV0_HOSTING_PROVIDER','NV0_CUSTOMER_SERVICE_PHONE','NV0_ADMIN_IP_ALLOWLIST','NV0_SMTP_URL']) {
+  const value = String(process.env[key] || '').trim();
+  if (!value) errors.push(`${key} is required for commercial launch`);
+  if (value && isPlaceholderConfigValue(value)) errors.push(`${key} must be finalized before commercial launch`);
+}
 
 const nodeEnv = String(process.env.NODE_ENV || '').trim();
 const port = Number(process.env.PORT || 0);

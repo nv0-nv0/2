@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-27T01:04:19.565Z",
+  "generatedAt": "2026-04-28T01:45:34.576Z",
   "ok": true,
   "total": 36,
   "passed": 36,
@@ -73,7 +73,7 @@
     {
       "name": "business:hosting-visible",
       "ok": true,
-      "detail": "hosting context must be visible"
+      "detail": "hosting field must be visible without exposing deployment-tool names as provider names"
     },
     {
       "name": "business:launch-blocking-notice",

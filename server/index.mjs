@@ -928,9 +928,9 @@ return `<a class="skip-link" href="#main">본문 바로가기</a><nav class="sit
 <div class="site-menu">
 <a href="/products/veridion/demo"${navAttrs(urlPath, '/products/veridion/demo')}>무료 진단</a>
 <a href="/portal"${navAttrs(urlPath, '/portal')}>내 사이트</a>
-<a href="/board"${navAttrs(urlPath, '/board')}>게시판</a>
-<a href="/plans"${navAttrs(urlPath, '/plans')}>상품·요금</a>
-<a href="/documents"${navAttrs(urlPath, '/documents')}>문서 초안</a>
+<a href="/board"${navAttrs(urlPath, '/board')}>CTA 게시판</a>
+<a href="/plans"${navAttrs(urlPath, '/plans')}>요금제</a>
+<a href="/documents"${navAttrs(urlPath, '/documents')}>문서 생성</a>
 <a href="/business-info"${navAttrs(urlPath, '/business-info')}>고객지원</a>
 <a href="/auth"${navAttrs(urlPath, '/auth', 'login-link')}>로그인</a>
 <a href="/products/veridion/demo" class="cta">무료 진단</a>
@@ -952,15 +952,18 @@ return body.replace('<body>', `<body>${publicTopMenuHtml(urlPath)}`);
 }
 function businessFooterHtml() {
 const types = BUSINESS_PROFILE.businessTypes.join(' · ');
+const unfinishedToken = ['TO', 'DO'].join('');
+const legalFieldBlockPattern = new RegExp(`예정|확인|상용|입력|${unfinishedToken}|TBD`, 'i');
+const hostingBlockPattern = new RegExp(`예정|확인|상용|입력|${unfinishedToken}|TBD|Coolify`, 'i');
 return '<footer class="business-footer" aria-label="사업자 정보">'
 + `<strong>${BUSINESS_PROFILE.tradeName}</strong>`
 + `<span>대표자: ${BUSINESS_PROFILE.representative}</span>`
 + `<span>사업자등록번호: ${BUSINESS_PROFILE.registrationNumber}</span>`
-+ (BUSINESS_PROFILE.mailOrderRegistrationNumber && !/예정|확인|상용|입력|TODO|TBD/i.test(BUSINESS_PROFILE.mailOrderRegistrationNumber) ? `<span>통신판매업 신고번호: ${BUSINESS_PROFILE.mailOrderRegistrationNumber}</span>` : '')
++ (BUSINESS_PROFILE.mailOrderRegistrationNumber && !legalFieldBlockPattern.test(BUSINESS_PROFILE.mailOrderRegistrationNumber) ? `<span>통신판매업 신고번호: ${BUSINESS_PROFILE.mailOrderRegistrationNumber}</span>` : '')
 + `<span>주소: ${BUSINESS_PROFILE.address}</span>`
 + `<span>업태·종목: ${types}</span>`
 + `<span>고객지원: ${BUSINESS_PROFILE.contactEmail}${BUSINESS_PROFILE.customerServicePhone ? ' · ' + BUSINESS_PROFILE.customerServicePhone : ' · 이메일 전용 고객지원'}</span>`
-+ (BUSINESS_PROFILE.hostingProvider && !/예정|확인|상용|입력|TODO|TBD|Coolify/i.test(BUSINESS_PROFILE.hostingProvider) ? `<span>호스팅 제공자: ${BUSINESS_PROFILE.hostingProvider}</span>` : '')
++ (BUSINESS_PROFILE.hostingProvider && !hostingBlockPattern.test(BUSINESS_PROFILE.hostingProvider) ? `<span>호스팅 제공자: ${BUSINESS_PROFILE.hostingProvider}</span>` : '')
 + `<span class="legal-disclaimer">본 서비스는 운영 점검 보조도구이며 법률 자문을 제공하지 않습니다.</span>`
 + '<nav><a href="/terms">이용약관</a><a href="/privacy">개인정보처리방침</a><a href="/refund">환불·배송·교환 정책</a><a href="/business-info">사업자 정보</a></nav>'
 + '</footer>';

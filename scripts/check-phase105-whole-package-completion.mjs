@@ -42,7 +42,7 @@ for (const required of [
 
 const business = fs.readFileSync(path.join(root, 'apps/public/business-info/index.html'), 'utf8');
 if (!business.includes('상용 공개 차단 기준')) errors.push({ file: 'apps/public/business-info/index.html', issue: 'business-info lacks launch blocking notice for unconfirmed statutory fields' });
-if (!business.includes('Contabo') || !business.includes('Coolify')) warnings.push({ file: 'apps/public/business-info/index.html', issue: 'hosting context not visible' });
+if (!business.includes('호스팅 제공자') || !business.includes('운영값 미입력')) warnings.push({ file: 'apps/public/business-info/index.html', issue: 'hosting field not visible' });
 const reportDir = path.join(root, 'runtime', 'reports');
 if (!fs.existsSync(reportDir)) errors.push({ file: 'runtime/reports', issue: 'runtime reports directory missing' });
 else if (fs.readdirSync(reportDir).length !== 0) errors.push({ file: 'runtime/reports', issue: 'runtime reports directory must be empty in delivery bundle' });

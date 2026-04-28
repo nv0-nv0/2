@@ -5,8 +5,20 @@ const errors = [];
 const warnings = [];
 const commercial = String(env.NV0_PLATFORM_TARGET || '').trim() === 'commercial';
 
+function placeholder(value) {
+  const text = String(value || '').trim().toLowerCase();
+  if (!text) return true;
+  return ['replace-with', 'example.com', 'localhost', '127.0.0.1', 'changeme', 'your-', 'dummy', 'test_', 'long-random', 'password@smtp', 'smtp.your-provider'].some(token => text.includes(token));
+}
+
 function required(name) {
   if (!String(env[name] || '').trim()) errors.push(`${name} is required`);
+}
+
+function finalized(name) {
+  const value = String(env[name] || '').trim();
+  if (!value) errors.push(`${name} is required`);
+  else if (placeholder(value)) errors.push(`${name} must be finalized before commercial launch`);
 }
 
 if (commercial || env.NODE_ENV === 'production') {
@@ -29,13 +41,14 @@ if (commercial || env.NODE_ENV === 'production') {
     'NV0_PORTONE_STORE_ID',
     'NV0_PORTONE_CHANNEL_KEY',
     'NV0_PORTONE_WEBHOOK_SECRET'
-  ]) required(key);
+  ]) finalized(key);
   if (env.NV0_ADMIN_KEY) errors.push('NV0_ADMIN_KEY must not be used for commercial launch');
   if (env.NV0_ADMIN_AUTH_MODE !== 'account_rbac') errors.push('NV0_ADMIN_AUTH_MODE must be account_rbac');
   if (env.NV0_PERSISTENCE_MODE !== 'postgres_primary') errors.push('NV0_PERSISTENCE_MODE must be postgres_primary');
   if (env.NV0_SESSION_STORE !== 'redis' || env.NV0_RATE_LIMIT_STORE !== 'redis' || env.NV0_LOCK_PROVIDER !== 'redis') errors.push('Redis-backed session, rate limit, and lock are required');
   if (env.NV0_PAYMENT_PROVIDER !== 'portone_v2') errors.push('NV0_PAYMENT_PROVIDER must be portone_v2');
   if (env.NV0_SCAN_PROVIDER !== 'external_http') errors.push('NV0_SCAN_PROVIDER must be external_http');
+  for (const key of ['NV0_PUBLIC_BASE_URL','NV0_SUPPORT_EMAIL','NV0_MAIL_ORDER_REGISTRATION_NUMBER','NV0_HOSTING_PROVIDER','NV0_CUSTOMER_SERVICE_PHONE','NV0_PRIVACY_OFFICER_EMAIL','NV0_SMTP_URL','NV0_ADMIN_IP_ALLOWLIST']) finalized(key);
 } else {
   warnings.push('preflight running in non-commercial mode');
 }
