@@ -7,8 +7,13 @@ const out = document.getElementById('pubState');
 const publicationList = document.getElementById('publicationList');
 const contentFeed = document.getElementById('contentFeed');
 
+function formatBody(body = '') {
+  const sections = String(body || '').split(/\n{2,}/).map(part => part.trim()).filter(Boolean);
+  if (!sections.length) return '<div class="muted">본문 없음</div>';
+  return `<div class="admin-post-body">${sections.slice(0, 8).map(section => `<p>${escapeHtml(section).replace(/\n/g, '<br>')}</p>`).join('')}</div>`;
+}
 function card(title, meta, body) {
-  return `<div class="result-card stack"><strong>${escapeHtml(title)}</strong><div class="muted">${escapeHtml(meta)}</div><div>${escapeHtml(body)}</div></div>`;
+  return `<div class="result-card stack"><strong>${escapeHtml(title)}</strong><div class="muted">${escapeHtml(meta)}</div>${formatBody(body)}</div>`;
 }
 
 async function load() {
@@ -18,7 +23,7 @@ async function load() {
   ]);
   const pubData = await pubRes.json();
   const contentData = await contentRes.json();
-  publicationList.innerHTML = (pubData.publications || []).slice(0, 10).map(item => card(item.title, `${item.type} · ${item.status} · ${item.createdAt || '-'}`, item.body || item.summary || item.ctaType || '')).join('') || '<div class="muted">발행물이 없습니다.</div>';
+  publicationList.innerHTML = (pubData.publications || []).slice(0, 10).map(item => card(item.title, `${item.type} · ${item.status} · ${item.createdAt || '-'} · ${item.qualityStandard || 'standard'}`, item.body || item.summary || item.ctaType || '')).join('') || '<div class="muted">발행물이 없습니다.</div>';
   contentFeed.innerHTML = (contentData.items || []).slice(0, 10).map(item => card(item.title, `${item.type} · ${item.createdAt || '-'}`, item.body || item.summary || '')).join('') || '<div class="muted">노출 콘텐츠가 없습니다.</div>';
 }
 

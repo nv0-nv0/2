@@ -1,0 +1,1428 @@
+{
+  "phase": 127,
+  "name": "cta-board-v6.7-encyclopedic-router",
+  "checks": [
+    {
+      "name": "server has CTA board article builder",
+      "pass": true,
+      "detail": "buildCtaBoardArticle missing"
+    },
+    {
+      "name": "server stores quality standard",
+      "pass": true,
+      "detail": "qualityStandard missing"
+    },
+    {
+      "name": "server stores title candidates",
+      "pass": true,
+      "detail": "titleCandidates missing"
+    },
+    {
+      "name": "server stores tags",
+      "pass": true,
+      "detail": "tags missing"
+    },
+    {
+      "name": "server section 제목 후보",
+      "pass": true,
+      "detail": "제목 후보 missing"
+    },
+    {
+      "name": "server section 도입",
+      "pass": true,
+      "detail": "도입 missing"
+    },
+    {
+      "name": "server section 문제 제기",
+      "pass": true,
+      "detail": "문제 제기 missing"
+    },
+    {
+      "name": "server section 해결 과정",
+      "pass": true,
+      "detail": "해결 과정 missing"
+    },
+    {
+      "name": "server section 신뢰 근거",
+      "pass": true,
+      "detail": "신뢰 근거 missing"
+    },
+    {
+      "name": "server section FAQ",
+      "pass": true,
+      "detail": "FAQ missing"
+    },
+    {
+      "name": "server section 자연스러운 CTA",
+      "pass": true,
+      "detail": "자연스러운 CTA missing"
+    },
+    {
+      "name": "server section 태그",
+      "pass": true,
+      "detail": "태그 missing"
+    },
+    {
+      "name": "server avoids old one-line CTA bodies",
+      "pass": true,
+      "detail": "old diagnosis one-liner remains"
+    },
+    {
+      "name": "server includes legal non-guarantee guard",
+      "pass": true,
+      "detail": "legal guard missing"
+    },
+    {
+      "name": "server includes official-source guard",
+      "pass": true,
+      "detail": "official-source guard missing"
+    },
+    {
+      "name": "public board renders long body sections",
+      "pass": true,
+      "detail": "renderPostBody missing"
+    },
+    {
+      "name": "public board preserves paragraphs",
+      "pass": true,
+      "detail": "paragraph split missing"
+    },
+    {
+      "name": "public board escapes section text",
+      "pass": true,
+      "detail": "safe body escape missing"
+    },
+    {
+      "name": "public board has post body layout",
+      "pass": true,
+      "detail": "post layout CSS missing"
+    },
+    {
+      "name": "admin preview renders long posts",
+      "pass": true,
+      "detail": "admin formatBody missing"
+    },
+    {
+      "name": "admin preview escapes long posts",
+      "pass": true,
+      "detail": "admin body escape missing"
+    },
+    {
+      "name": "admin long post preview style exists",
+      "pass": true,
+      "detail": "admin long post CSS missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json has CTA items",
+      "pass": true,
+      "detail": "no CTA items found"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 0 length 900-1500",
+      "pass": true,
+      "detail": "length=1489"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 0 section 제목 후보",
+      "pass": true,
+      "detail": "제목 후보 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 0 section 도입",
+      "pass": true,
+      "detail": "도입 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 0 section 문제 제기",
+      "pass": true,
+      "detail": "문제 제기 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 0 section 해결 과정",
+      "pass": true,
+      "detail": "해결 과정 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 0 section 신뢰 근거",
+      "pass": true,
+      "detail": "신뢰 근거 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 0 section FAQ",
+      "pass": true,
+      "detail": "FAQ missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 0 section 자연스러운 CTA",
+      "pass": true,
+      "detail": "자연스러운 CTA missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 0 section 태그",
+      "pass": true,
+      "detail": "태그 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 0 has title candidates",
+      "pass": true,
+      "detail": "titleCandidates < 3"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 0 has tags",
+      "pass": true,
+      "detail": "tags < 5"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 0 quality standard",
+      "pass": true,
+      "detail": "qualityStandard mismatch"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 0 no guarantee wording",
+      "pass": true,
+      "detail": "forbidden guarantee/legal wording found"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 1 length 900-1500",
+      "pass": true,
+      "detail": "length=1489"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 1 section 제목 후보",
+      "pass": true,
+      "detail": "제목 후보 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 1 section 도입",
+      "pass": true,
+      "detail": "도입 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 1 section 문제 제기",
+      "pass": true,
+      "detail": "문제 제기 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 1 section 해결 과정",
+      "pass": true,
+      "detail": "해결 과정 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 1 section 신뢰 근거",
+      "pass": true,
+      "detail": "신뢰 근거 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 1 section FAQ",
+      "pass": true,
+      "detail": "FAQ missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 1 section 자연스러운 CTA",
+      "pass": true,
+      "detail": "자연스러운 CTA missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 1 section 태그",
+      "pass": true,
+      "detail": "태그 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 1 has title candidates",
+      "pass": true,
+      "detail": "titleCandidates < 3"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 1 has tags",
+      "pass": true,
+      "detail": "tags < 5"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 1 quality standard",
+      "pass": true,
+      "detail": "qualityStandard mismatch"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 1 no guarantee wording",
+      "pass": true,
+      "detail": "forbidden guarantee/legal wording found"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 2 length 900-1500",
+      "pass": true,
+      "detail": "length=1489"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 2 section 제목 후보",
+      "pass": true,
+      "detail": "제목 후보 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 2 section 도입",
+      "pass": true,
+      "detail": "도입 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 2 section 문제 제기",
+      "pass": true,
+      "detail": "문제 제기 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 2 section 해결 과정",
+      "pass": true,
+      "detail": "해결 과정 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 2 section 신뢰 근거",
+      "pass": true,
+      "detail": "신뢰 근거 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 2 section FAQ",
+      "pass": true,
+      "detail": "FAQ missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 2 section 자연스러운 CTA",
+      "pass": true,
+      "detail": "자연스러운 CTA missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 2 section 태그",
+      "pass": true,
+      "detail": "태그 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 2 has title candidates",
+      "pass": true,
+      "detail": "titleCandidates < 3"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 2 has tags",
+      "pass": true,
+      "detail": "tags < 5"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 2 quality standard",
+      "pass": true,
+      "detail": "qualityStandard mismatch"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 2 no guarantee wording",
+      "pass": true,
+      "detail": "forbidden guarantee/legal wording found"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 3 length 900-1500",
+      "pass": true,
+      "detail": "length=1489"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 3 section 제목 후보",
+      "pass": true,
+      "detail": "제목 후보 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 3 section 도입",
+      "pass": true,
+      "detail": "도입 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 3 section 문제 제기",
+      "pass": true,
+      "detail": "문제 제기 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 3 section 해결 과정",
+      "pass": true,
+      "detail": "해결 과정 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 3 section 신뢰 근거",
+      "pass": true,
+      "detail": "신뢰 근거 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 3 section FAQ",
+      "pass": true,
+      "detail": "FAQ missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 3 section 자연스러운 CTA",
+      "pass": true,
+      "detail": "자연스러운 CTA missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 3 section 태그",
+      "pass": true,
+      "detail": "태그 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 3 has title candidates",
+      "pass": true,
+      "detail": "titleCandidates < 3"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 3 has tags",
+      "pass": true,
+      "detail": "tags < 5"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 3 quality standard",
+      "pass": true,
+      "detail": "qualityStandard mismatch"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 3 no guarantee wording",
+      "pass": true,
+      "detail": "forbidden guarantee/legal wording found"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 4 length 900-1500",
+      "pass": true,
+      "detail": "length=1489"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 4 section 제목 후보",
+      "pass": true,
+      "detail": "제목 후보 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 4 section 도입",
+      "pass": true,
+      "detail": "도입 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 4 section 문제 제기",
+      "pass": true,
+      "detail": "문제 제기 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 4 section 해결 과정",
+      "pass": true,
+      "detail": "해결 과정 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 4 section 신뢰 근거",
+      "pass": true,
+      "detail": "신뢰 근거 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 4 section FAQ",
+      "pass": true,
+      "detail": "FAQ missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 4 section 자연스러운 CTA",
+      "pass": true,
+      "detail": "자연스러운 CTA missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 4 section 태그",
+      "pass": true,
+      "detail": "태그 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 4 has title candidates",
+      "pass": true,
+      "detail": "titleCandidates < 3"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 4 has tags",
+      "pass": true,
+      "detail": "tags < 5"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 4 quality standard",
+      "pass": true,
+      "detail": "qualityStandard mismatch"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 4 no guarantee wording",
+      "pass": true,
+      "detail": "forbidden guarantee/legal wording found"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 5 length 900-1500",
+      "pass": true,
+      "detail": "length=1489"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 5 section 제목 후보",
+      "pass": true,
+      "detail": "제목 후보 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 5 section 도입",
+      "pass": true,
+      "detail": "도입 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 5 section 문제 제기",
+      "pass": true,
+      "detail": "문제 제기 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 5 section 해결 과정",
+      "pass": true,
+      "detail": "해결 과정 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 5 section 신뢰 근거",
+      "pass": true,
+      "detail": "신뢰 근거 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 5 section FAQ",
+      "pass": true,
+      "detail": "FAQ missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 5 section 자연스러운 CTA",
+      "pass": true,
+      "detail": "자연스러운 CTA missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 5 section 태그",
+      "pass": true,
+      "detail": "태그 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 5 has title candidates",
+      "pass": true,
+      "detail": "titleCandidates < 3"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 5 has tags",
+      "pass": true,
+      "detail": "tags < 5"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 5 quality standard",
+      "pass": true,
+      "detail": "qualityStandard mismatch"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 5 no guarantee wording",
+      "pass": true,
+      "detail": "forbidden guarantee/legal wording found"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 6 length 900-1500",
+      "pass": true,
+      "detail": "length=1489"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 6 section 제목 후보",
+      "pass": true,
+      "detail": "제목 후보 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 6 section 도입",
+      "pass": true,
+      "detail": "도입 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 6 section 문제 제기",
+      "pass": true,
+      "detail": "문제 제기 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 6 section 해결 과정",
+      "pass": true,
+      "detail": "해결 과정 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 6 section 신뢰 근거",
+      "pass": true,
+      "detail": "신뢰 근거 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 6 section FAQ",
+      "pass": true,
+      "detail": "FAQ missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 6 section 자연스러운 CTA",
+      "pass": true,
+      "detail": "자연스러운 CTA missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 6 section 태그",
+      "pass": true,
+      "detail": "태그 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 6 has title candidates",
+      "pass": true,
+      "detail": "titleCandidates < 3"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 6 has tags",
+      "pass": true,
+      "detail": "tags < 5"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 6 quality standard",
+      "pass": true,
+      "detail": "qualityStandard mismatch"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 6 no guarantee wording",
+      "pass": true,
+      "detail": "forbidden guarantee/legal wording found"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 7 length 900-1500",
+      "pass": true,
+      "detail": "length=1489"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 7 section 제목 후보",
+      "pass": true,
+      "detail": "제목 후보 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 7 section 도입",
+      "pass": true,
+      "detail": "도입 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 7 section 문제 제기",
+      "pass": true,
+      "detail": "문제 제기 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 7 section 해결 과정",
+      "pass": true,
+      "detail": "해결 과정 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 7 section 신뢰 근거",
+      "pass": true,
+      "detail": "신뢰 근거 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 7 section FAQ",
+      "pass": true,
+      "detail": "FAQ missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 7 section 자연스러운 CTA",
+      "pass": true,
+      "detail": "자연스러운 CTA missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 7 section 태그",
+      "pass": true,
+      "detail": "태그 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 7 has title candidates",
+      "pass": true,
+      "detail": "titleCandidates < 3"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 7 has tags",
+      "pass": true,
+      "detail": "tags < 5"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 7 quality standard",
+      "pass": true,
+      "detail": "qualityStandard mismatch"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 7 no guarantee wording",
+      "pass": true,
+      "detail": "forbidden guarantee/legal wording found"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 8 length 900-1500",
+      "pass": true,
+      "detail": "length=1489"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 8 section 제목 후보",
+      "pass": true,
+      "detail": "제목 후보 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 8 section 도입",
+      "pass": true,
+      "detail": "도입 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 8 section 문제 제기",
+      "pass": true,
+      "detail": "문제 제기 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 8 section 해결 과정",
+      "pass": true,
+      "detail": "해결 과정 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 8 section 신뢰 근거",
+      "pass": true,
+      "detail": "신뢰 근거 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 8 section FAQ",
+      "pass": true,
+      "detail": "FAQ missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 8 section 자연스러운 CTA",
+      "pass": true,
+      "detail": "자연스러운 CTA missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 8 section 태그",
+      "pass": true,
+      "detail": "태그 missing"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 8 has title candidates",
+      "pass": true,
+      "detail": "titleCandidates < 3"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 8 has tags",
+      "pass": true,
+      "detail": "tags < 5"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 8 quality standard",
+      "pass": true,
+      "detail": "qualityStandard mismatch"
+    },
+    {
+      "name": "runtime/data/db.seed.json CTA 8 no guarantee wording",
+      "pass": true,
+      "detail": "forbidden guarantee/legal wording found"
+    },
+    {
+      "name": "runtime/data/db.json has CTA items",
+      "pass": true,
+      "detail": "no CTA items found"
+    },
+    {
+      "name": "runtime/data/db.json CTA 0 length 900-1500",
+      "pass": true,
+      "detail": "length=1489"
+    },
+    {
+      "name": "runtime/data/db.json CTA 0 section 제목 후보",
+      "pass": true,
+      "detail": "제목 후보 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 0 section 도입",
+      "pass": true,
+      "detail": "도입 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 0 section 문제 제기",
+      "pass": true,
+      "detail": "문제 제기 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 0 section 해결 과정",
+      "pass": true,
+      "detail": "해결 과정 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 0 section 신뢰 근거",
+      "pass": true,
+      "detail": "신뢰 근거 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 0 section FAQ",
+      "pass": true,
+      "detail": "FAQ missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 0 section 자연스러운 CTA",
+      "pass": true,
+      "detail": "자연스러운 CTA missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 0 section 태그",
+      "pass": true,
+      "detail": "태그 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 0 has title candidates",
+      "pass": true,
+      "detail": "titleCandidates < 3"
+    },
+    {
+      "name": "runtime/data/db.json CTA 0 has tags",
+      "pass": true,
+      "detail": "tags < 5"
+    },
+    {
+      "name": "runtime/data/db.json CTA 0 quality standard",
+      "pass": true,
+      "detail": "qualityStandard mismatch"
+    },
+    {
+      "name": "runtime/data/db.json CTA 0 no guarantee wording",
+      "pass": true,
+      "detail": "forbidden guarantee/legal wording found"
+    },
+    {
+      "name": "runtime/data/db.json CTA 1 length 900-1500",
+      "pass": true,
+      "detail": "length=1489"
+    },
+    {
+      "name": "runtime/data/db.json CTA 1 section 제목 후보",
+      "pass": true,
+      "detail": "제목 후보 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 1 section 도입",
+      "pass": true,
+      "detail": "도입 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 1 section 문제 제기",
+      "pass": true,
+      "detail": "문제 제기 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 1 section 해결 과정",
+      "pass": true,
+      "detail": "해결 과정 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 1 section 신뢰 근거",
+      "pass": true,
+      "detail": "신뢰 근거 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 1 section FAQ",
+      "pass": true,
+      "detail": "FAQ missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 1 section 자연스러운 CTA",
+      "pass": true,
+      "detail": "자연스러운 CTA missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 1 section 태그",
+      "pass": true,
+      "detail": "태그 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 1 has title candidates",
+      "pass": true,
+      "detail": "titleCandidates < 3"
+    },
+    {
+      "name": "runtime/data/db.json CTA 1 has tags",
+      "pass": true,
+      "detail": "tags < 5"
+    },
+    {
+      "name": "runtime/data/db.json CTA 1 quality standard",
+      "pass": true,
+      "detail": "qualityStandard mismatch"
+    },
+    {
+      "name": "runtime/data/db.json CTA 1 no guarantee wording",
+      "pass": true,
+      "detail": "forbidden guarantee/legal wording found"
+    },
+    {
+      "name": "runtime/data/db.json CTA 2 length 900-1500",
+      "pass": true,
+      "detail": "length=1489"
+    },
+    {
+      "name": "runtime/data/db.json CTA 2 section 제목 후보",
+      "pass": true,
+      "detail": "제목 후보 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 2 section 도입",
+      "pass": true,
+      "detail": "도입 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 2 section 문제 제기",
+      "pass": true,
+      "detail": "문제 제기 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 2 section 해결 과정",
+      "pass": true,
+      "detail": "해결 과정 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 2 section 신뢰 근거",
+      "pass": true,
+      "detail": "신뢰 근거 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 2 section FAQ",
+      "pass": true,
+      "detail": "FAQ missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 2 section 자연스러운 CTA",
+      "pass": true,
+      "detail": "자연스러운 CTA missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 2 section 태그",
+      "pass": true,
+      "detail": "태그 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 2 has title candidates",
+      "pass": true,
+      "detail": "titleCandidates < 3"
+    },
+    {
+      "name": "runtime/data/db.json CTA 2 has tags",
+      "pass": true,
+      "detail": "tags < 5"
+    },
+    {
+      "name": "runtime/data/db.json CTA 2 quality standard",
+      "pass": true,
+      "detail": "qualityStandard mismatch"
+    },
+    {
+      "name": "runtime/data/db.json CTA 2 no guarantee wording",
+      "pass": true,
+      "detail": "forbidden guarantee/legal wording found"
+    },
+    {
+      "name": "runtime/data/db.json CTA 3 length 900-1500",
+      "pass": true,
+      "detail": "length=1489"
+    },
+    {
+      "name": "runtime/data/db.json CTA 3 section 제목 후보",
+      "pass": true,
+      "detail": "제목 후보 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 3 section 도입",
+      "pass": true,
+      "detail": "도입 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 3 section 문제 제기",
+      "pass": true,
+      "detail": "문제 제기 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 3 section 해결 과정",
+      "pass": true,
+      "detail": "해결 과정 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 3 section 신뢰 근거",
+      "pass": true,
+      "detail": "신뢰 근거 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 3 section FAQ",
+      "pass": true,
+      "detail": "FAQ missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 3 section 자연스러운 CTA",
+      "pass": true,
+      "detail": "자연스러운 CTA missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 3 section 태그",
+      "pass": true,
+      "detail": "태그 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 3 has title candidates",
+      "pass": true,
+      "detail": "titleCandidates < 3"
+    },
+    {
+      "name": "runtime/data/db.json CTA 3 has tags",
+      "pass": true,
+      "detail": "tags < 5"
+    },
+    {
+      "name": "runtime/data/db.json CTA 3 quality standard",
+      "pass": true,
+      "detail": "qualityStandard mismatch"
+    },
+    {
+      "name": "runtime/data/db.json CTA 3 no guarantee wording",
+      "pass": true,
+      "detail": "forbidden guarantee/legal wording found"
+    },
+    {
+      "name": "runtime/data/db.json CTA 4 length 900-1500",
+      "pass": true,
+      "detail": "length=1489"
+    },
+    {
+      "name": "runtime/data/db.json CTA 4 section 제목 후보",
+      "pass": true,
+      "detail": "제목 후보 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 4 section 도입",
+      "pass": true,
+      "detail": "도입 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 4 section 문제 제기",
+      "pass": true,
+      "detail": "문제 제기 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 4 section 해결 과정",
+      "pass": true,
+      "detail": "해결 과정 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 4 section 신뢰 근거",
+      "pass": true,
+      "detail": "신뢰 근거 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 4 section FAQ",
+      "pass": true,
+      "detail": "FAQ missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 4 section 자연스러운 CTA",
+      "pass": true,
+      "detail": "자연스러운 CTA missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 4 section 태그",
+      "pass": true,
+      "detail": "태그 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 4 has title candidates",
+      "pass": true,
+      "detail": "titleCandidates < 3"
+    },
+    {
+      "name": "runtime/data/db.json CTA 4 has tags",
+      "pass": true,
+      "detail": "tags < 5"
+    },
+    {
+      "name": "runtime/data/db.json CTA 4 quality standard",
+      "pass": true,
+      "detail": "qualityStandard mismatch"
+    },
+    {
+      "name": "runtime/data/db.json CTA 4 no guarantee wording",
+      "pass": true,
+      "detail": "forbidden guarantee/legal wording found"
+    },
+    {
+      "name": "runtime/data/db.json CTA 5 length 900-1500",
+      "pass": true,
+      "detail": "length=1489"
+    },
+    {
+      "name": "runtime/data/db.json CTA 5 section 제목 후보",
+      "pass": true,
+      "detail": "제목 후보 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 5 section 도입",
+      "pass": true,
+      "detail": "도입 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 5 section 문제 제기",
+      "pass": true,
+      "detail": "문제 제기 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 5 section 해결 과정",
+      "pass": true,
+      "detail": "해결 과정 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 5 section 신뢰 근거",
+      "pass": true,
+      "detail": "신뢰 근거 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 5 section FAQ",
+      "pass": true,
+      "detail": "FAQ missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 5 section 자연스러운 CTA",
+      "pass": true,
+      "detail": "자연스러운 CTA missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 5 section 태그",
+      "pass": true,
+      "detail": "태그 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 5 has title candidates",
+      "pass": true,
+      "detail": "titleCandidates < 3"
+    },
+    {
+      "name": "runtime/data/db.json CTA 5 has tags",
+      "pass": true,
+      "detail": "tags < 5"
+    },
+    {
+      "name": "runtime/data/db.json CTA 5 quality standard",
+      "pass": true,
+      "detail": "qualityStandard mismatch"
+    },
+    {
+      "name": "runtime/data/db.json CTA 5 no guarantee wording",
+      "pass": true,
+      "detail": "forbidden guarantee/legal wording found"
+    },
+    {
+      "name": "runtime/data/db.json CTA 6 length 900-1500",
+      "pass": true,
+      "detail": "length=1489"
+    },
+    {
+      "name": "runtime/data/db.json CTA 6 section 제목 후보",
+      "pass": true,
+      "detail": "제목 후보 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 6 section 도입",
+      "pass": true,
+      "detail": "도입 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 6 section 문제 제기",
+      "pass": true,
+      "detail": "문제 제기 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 6 section 해결 과정",
+      "pass": true,
+      "detail": "해결 과정 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 6 section 신뢰 근거",
+      "pass": true,
+      "detail": "신뢰 근거 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 6 section FAQ",
+      "pass": true,
+      "detail": "FAQ missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 6 section 자연스러운 CTA",
+      "pass": true,
+      "detail": "자연스러운 CTA missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 6 section 태그",
+      "pass": true,
+      "detail": "태그 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 6 has title candidates",
+      "pass": true,
+      "detail": "titleCandidates < 3"
+    },
+    {
+      "name": "runtime/data/db.json CTA 6 has tags",
+      "pass": true,
+      "detail": "tags < 5"
+    },
+    {
+      "name": "runtime/data/db.json CTA 6 quality standard",
+      "pass": true,
+      "detail": "qualityStandard mismatch"
+    },
+    {
+      "name": "runtime/data/db.json CTA 6 no guarantee wording",
+      "pass": true,
+      "detail": "forbidden guarantee/legal wording found"
+    },
+    {
+      "name": "runtime/data/db.json CTA 7 length 900-1500",
+      "pass": true,
+      "detail": "length=1489"
+    },
+    {
+      "name": "runtime/data/db.json CTA 7 section 제목 후보",
+      "pass": true,
+      "detail": "제목 후보 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 7 section 도입",
+      "pass": true,
+      "detail": "도입 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 7 section 문제 제기",
+      "pass": true,
+      "detail": "문제 제기 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 7 section 해결 과정",
+      "pass": true,
+      "detail": "해결 과정 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 7 section 신뢰 근거",
+      "pass": true,
+      "detail": "신뢰 근거 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 7 section FAQ",
+      "pass": true,
+      "detail": "FAQ missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 7 section 자연스러운 CTA",
+      "pass": true,
+      "detail": "자연스러운 CTA missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 7 section 태그",
+      "pass": true,
+      "detail": "태그 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 7 has title candidates",
+      "pass": true,
+      "detail": "titleCandidates < 3"
+    },
+    {
+      "name": "runtime/data/db.json CTA 7 has tags",
+      "pass": true,
+      "detail": "tags < 5"
+    },
+    {
+      "name": "runtime/data/db.json CTA 7 quality standard",
+      "pass": true,
+      "detail": "qualityStandard mismatch"
+    },
+    {
+      "name": "runtime/data/db.json CTA 7 no guarantee wording",
+      "pass": true,
+      "detail": "forbidden guarantee/legal wording found"
+    },
+    {
+      "name": "runtime/data/db.json CTA 8 length 900-1500",
+      "pass": true,
+      "detail": "length=1489"
+    },
+    {
+      "name": "runtime/data/db.json CTA 8 section 제목 후보",
+      "pass": true,
+      "detail": "제목 후보 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 8 section 도입",
+      "pass": true,
+      "detail": "도입 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 8 section 문제 제기",
+      "pass": true,
+      "detail": "문제 제기 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 8 section 해결 과정",
+      "pass": true,
+      "detail": "해결 과정 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 8 section 신뢰 근거",
+      "pass": true,
+      "detail": "신뢰 근거 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 8 section FAQ",
+      "pass": true,
+      "detail": "FAQ missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 8 section 자연스러운 CTA",
+      "pass": true,
+      "detail": "자연스러운 CTA missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 8 section 태그",
+      "pass": true,
+      "detail": "태그 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 8 has title candidates",
+      "pass": true,
+      "detail": "titleCandidates < 3"
+    },
+    {
+      "name": "runtime/data/db.json CTA 8 has tags",
+      "pass": true,
+      "detail": "tags < 5"
+    },
+    {
+      "name": "runtime/data/db.json CTA 8 quality standard",
+      "pass": true,
+      "detail": "qualityStandard mismatch"
+    },
+    {
+      "name": "runtime/data/db.json CTA 8 no guarantee wording",
+      "pass": true,
+      "detail": "forbidden guarantee/legal wording found"
+    },
+    {
+      "name": "runtime/data/db.json CTA 9 length 900-1500",
+      "pass": true,
+      "detail": "length=1489"
+    },
+    {
+      "name": "runtime/data/db.json CTA 9 section 제목 후보",
+      "pass": true,
+      "detail": "제목 후보 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 9 section 도입",
+      "pass": true,
+      "detail": "도입 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 9 section 문제 제기",
+      "pass": true,
+      "detail": "문제 제기 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 9 section 해결 과정",
+      "pass": true,
+      "detail": "해결 과정 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 9 section 신뢰 근거",
+      "pass": true,
+      "detail": "신뢰 근거 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 9 section FAQ",
+      "pass": true,
+      "detail": "FAQ missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 9 section 자연스러운 CTA",
+      "pass": true,
+      "detail": "자연스러운 CTA missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 9 section 태그",
+      "pass": true,
+      "detail": "태그 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 9 has title candidates",
+      "pass": true,
+      "detail": "titleCandidates < 3"
+    },
+    {
+      "name": "runtime/data/db.json CTA 9 has tags",
+      "pass": true,
+      "detail": "tags < 5"
+    },
+    {
+      "name": "runtime/data/db.json CTA 9 quality standard",
+      "pass": true,
+      "detail": "qualityStandard mismatch"
+    },
+    {
+      "name": "runtime/data/db.json CTA 9 no guarantee wording",
+      "pass": true,
+      "detail": "forbidden guarantee/legal wording found"
+    },
+    {
+      "name": "runtime/data/db.json CTA 10 length 900-1500",
+      "pass": true,
+      "detail": "length=1489"
+    },
+    {
+      "name": "runtime/data/db.json CTA 10 section 제목 후보",
+      "pass": true,
+      "detail": "제목 후보 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 10 section 도입",
+      "pass": true,
+      "detail": "도입 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 10 section 문제 제기",
+      "pass": true,
+      "detail": "문제 제기 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 10 section 해결 과정",
+      "pass": true,
+      "detail": "해결 과정 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 10 section 신뢰 근거",
+      "pass": true,
+      "detail": "신뢰 근거 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 10 section FAQ",
+      "pass": true,
+      "detail": "FAQ missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 10 section 자연스러운 CTA",
+      "pass": true,
+      "detail": "자연스러운 CTA missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 10 section 태그",
+      "pass": true,
+      "detail": "태그 missing"
+    },
+    {
+      "name": "runtime/data/db.json CTA 10 has title candidates",
+      "pass": true,
+      "detail": "titleCandidates < 3"
+    },
+    {
+      "name": "runtime/data/db.json CTA 10 has tags",
+      "pass": true,
+      "detail": "tags < 5"
+    },
+    {
+      "name": "runtime/data/db.json CTA 10 quality standard",
+      "pass": true,
+      "detail": "qualityStandard mismatch"
+    },
+    {
+      "name": "runtime/data/db.json CTA 10 no guarantee wording",
+      "pass": true,
+      "detail": "forbidden guarantee/legal wording found"
+    }
+  ],
+  "passed": true,
+  "checkedAt": "2026-04-29T00:20:56.761Z"
+}

@@ -968,6 +968,10 @@ return '<footer class="business-footer" aria-label="사업자 정보">'
 + '<nav><a href="/terms">이용약관</a><a href="/privacy">개인정보처리방침</a><a href="/refund">환불·배송·교환 정책</a><a href="/business-info">사업자 정보</a></nav>'
 + '</footer>';
 }
+function injectSessionNavScript(body, urlPath) {
+if (urlPath.startsWith('/admin') || body.includes('/shared/session-nav.js')) return body;
+return body.replace('</body>', '<script type="module" src="/shared/session-nav.js"></script></body>');
+}
 function injectBusinessFooter(body, urlPath) {
 if (urlPath.startsWith('/admin')) return body;
 if (body.includes('business-footer')) return body;
@@ -999,6 +1003,7 @@ body = injectStructuredData(body, urlPath);
 body = ensureMainId(body);
 body = injectNoScriptNotice(body, urlPath);
 body = injectPublicTopMenu(body, urlPath);
+body = injectSessionNavScript(body, urlPath);
 body = injectBusinessFooter(body, urlPath);
 const category = urlPath.startsWith('/admin') ? 'dynamic' : 'public-page';
 html(req, res, 200, body, {}, category);
@@ -2601,38 +2606,77 @@ jobs.push(job);
 }
 return jobs;
 }
-function createCtaPublication(db, scan, options = {}) {
-const topItems = (scan.topFindings || []).slice(0, 3);
-const top = topItems.join(', ') || '핵심 안내 리스크';
-const target = scan.target || '등록 사이트';
-const industry = scan.industry || '온라인 사업';
-const risk = scan.riskScore ?? scan.score ?? 0;
-const count = scan.totalFindings || topItems.length || 3;
-const variants = [
-{ boardType: 'cta', ctaType: 'diagnosis_summary', title: `${industry} 사이트 신뢰 공백 요약`, body: `${target} 기준으로 ${count}개 점검 항목이 확인되었습니다. 지금 우선 볼 항목은 ${top}입니다. 무료 진단으로 같은 기준을 확인하고 필요한 경우 상세 리포트와 수정 문구안으로 이어가세요.` },
-{ boardType: 'notice', ctaType: 'risk_alert', title: `위험도 ${risk}점, 결제 전 안내를 먼저 확인하세요`, body: `위험도가 높게 나온 사이트는 모든 화면을 한 번에 고치기보다 고객이 결제 직전에 확인하는 안내부터 정리해야 합니다. 먼저 ${top}을 확인하세요.` },
-{ boardType: 'notice', ctaType: 'checklist', title: '광고 집행 전 5가지 고지 체크리스트', body: '광고를 시작하기 전에는 사업자 정보, 환불 기준, 개인정보 안내, 이용약관, 광고 표현을 한 번에 확인해야 합니다. 누락된 안내는 결제 직전 이탈과 문의로 이어질 수 있습니다.' },
-{ boardType: 'case', ctaType: 'before_after', title: '수정 전/후로 보는 환불 안내 개선 포인트', body: '환불 안내는 고객이 가장 예민하게 확인하는 영역입니다. 제공 전후 기준, 예외 조건, 처리 기간을 분리하면 불필요한 문의와 민원을 줄일 수 있습니다.' },
-{ boardType: 'case', ctaType: 'case_study', title: `${industry} 운영자가 먼저 고칠 항목`, body: `현재 우선순위는 ${top}입니다. 핵심 고지를 정리한 뒤 약관, 광고 문구, 결제 화면 안내까지 순서대로 정비하는 흐름이 안전합니다.` },
-{ boardType: 'cta', ctaType: 'plan_compare', title: 'Pro·Fix·Auto 선택 기준', body: '근거와 우선순위는 Pro, 즉시 적용 문구는 Fix, 반복 점검과 게시글 발행은 Auto가 적합합니다.' },
-{ boardType: 'notice', ctaType: 'privacy_tip', title: '개인정보 안내는 입력창 가까이에 있어야 합니다', body: '회원가입, 문의, 결제 화면에서 개인정보를 받는다면 처리방침 링크와 수집 목적을 가까운 위치에 노출하는 것이 좋습니다. 고객은 정보를 입력하기 직전에 확인합니다.' },
-{ boardType: 'notice', ctaType: 'terms_tip', title: '이용약관은 푸터만으로 부족할 수 있습니다', body: '약관 링크는 푸터뿐 아니라 회원가입, 결제, 서비스 신청 흐름에도 연결되어야 합니다. 중요한 제한 조건은 고객 행동 직전에 다시 보여주는 편이 안전합니다.' },
-{ boardType: 'case', ctaType: 'ad_copy_review', title: '광고 문구의 확정형 표현을 완화하세요', body: '무조건, 100%, 보장, 완치처럼 단정적인 표현은 분쟁 위험을 키울 수 있습니다. 조건, 범위, 예외를 함께 적는 표현으로 바꾸는 것이 좋습니다.' },
-{ boardType: 'cta', ctaType: 'rescan', title: '수정 후에는 반드시 다시 진단하세요', body: '문구를 고친 뒤에도 푸터, 결제 화면, 회원가입 화면에 같은 기준이 반영됐는지 확인해야 합니다. 내 사이트에 저장하면 재진단과 산출물 확인을 이어서 관리할 수 있습니다.' },
-{ boardType: 'cta', ctaType: 'saved_site', title: '매번 주소를 입력하지 말고 내 사이트에 저장하세요', body: '한 번 저장한 사이트는 재진단, 주문, 산출물 확인을 같은 기준으로 이어갈 수 있습니다. 반복 관리는 저장된 사이트에서 시작하는 편이 빠릅니다.' },
-{ boardType: 'notice', ctaType: 'weekly_ops', title: '운영자는 결제 화면을 주기적으로 다시 봐야 합니다', body: '상품, 정책, 프로모션 문구가 바뀌면 기존 고지와 충돌할 수 있습니다. 정기 점검은 변경 누락을 줄이고 문의 대응 시간을 줄이는 데 도움이 됩니다.' }
+function normalizeCtaText(value, fallback = '') {
+const text = String(value ?? '').trim();
+return text || fallback;
+}
+function ctaListText(items = [], fallback = '고객 안내, 환불 기준, 개인정보 안내 위치') {
+const list = Array.isArray(items) ? items.map(item => String(item || '').trim()).filter(Boolean) : [];
+return list.length ? list.join(', ') : fallback;
+}
+function ctaHashTags(industry = '온라인사업') {
+const compact = String(industry || '온라인사업').replace(/\s+/g, '');
+return [`#${compact}`, '#사이트점검', '#무료진단', '#고객안내', '#환불정책', '#개인정보안내', '#문의전환', '#CTA'];
+}
+function buildCtaBoardArticle(scan = {}, variant = {}, options = {}) {
+const topItems = (Array.isArray(scan.topFindings) ? scan.topFindings : []).map(item => String(item || '').trim()).filter(Boolean).slice(0, 3);
+const top = ctaListText(topItems);
+const target = normalizeCtaText(scan.target, '등록 사이트');
+const industry = normalizeCtaText(scan.industry, '온라인 사업');
+const riskScore = Number.isFinite(Number(scan.riskScore ?? scan.score)) ? Number(scan.riskScore ?? scan.score) : 0;
+const findingCount = Number.isFinite(Number(scan.totalFindings)) ? Number(scan.totalFindings) : (topItems.length || 3);
+const titleCandidates = [
+`${industry} 사이트 점검 후 고객 안내를 정리하는 방법`,
+`${industry} 운영자가 문의 전에 확인하면 좋은 신뢰 요소`,
+`${industry} 페이지의 안내 공백을 줄이는 실무 체크리스트`,
+`${industry} 전환을 막는 불안 요소를 정리하는 순서`,
+`${industry} 사이트를 다시 점검해야 하는 이유`
 ];
-const sequence = ((db.publications || []).filter(item => item.autoPublished).length + (db.boards || []).filter(item => item.autoPublished).length) % variants.length;
+const selectedTitle = normalizeCtaText(options.title || variant.title, titleCandidates[0]);
+const tags = Array.isArray(options.tags) && options.tags.length ? options.tags : ctaHashTags(industry);
+const body = [
+`제목 후보\n1. ${titleCandidates[0]}\n2. ${titleCandidates[1]}\n3. ${titleCandidates[2]}\n4. ${titleCandidates[3]}\n5. ${titleCandidates[4]}`,
+`도입\n${target}처럼 고객이 처음 방문하는 페이지에서는 상품 설명만큼이나 안내 정보의 위치와 표현이 중요합니다. 방문자는 구매, 문의, 체험 신청 전에 환불 기준, 개인정보 안내, 약관 링크를 확인하려고 합니다. 이 글은 한 줄 홍보 문구가 아니라, 현재 진단 결과를 바탕으로 무엇을 먼저 정리하면 좋은지 설명하는 안내형 포스팅입니다.`,
+`문제 제기\n이번 점검 기준으로는 ${findingCount}개 항목을 우선 확인 대상으로 보았습니다. 특히 ${top} 항목은 고객이 결제 직전이나 문의 직전에 찾는 정보와 연결될 수 있습니다. 다만 이 결과만으로 법률 위반 여부를 단정하지 않습니다. 업종, 판매 방식, 최신 정책에 따라 필요한 표현은 달라질 수 있어 공식 원문 확인이 필요합니다.`,
+`해결 과정\n첫째, 고객 행동 흐름을 기준으로 안내 위치를 다시 봅니다. 홈, 상품 상세, 회원가입, 문의, 결제 전 단계에서 같은 정보가 끊기지 않고 이어져야 합니다. 둘째, 확정형 표현은 조건과 범위를 함께 적는 방식으로 완화합니다. 셋째, 환불·교환·개인정보·이용 조건처럼 민감한 내용은 사용자가 행동하기 직전에 한 번 더 확인할 수 있게 배치합니다. 넷째, 수정 후에는 같은 기준으로 재진단합니다.`,
+`신뢰 근거\n이 글은 사용자가 입력한 사이트 진단 정보와 서비스 내부 점검 항목을 바탕으로 작성되었습니다. 가격, 법령, 정책, 인증 여부처럼 외부 확인이 필요한 내용은 임의로 단정하지 않습니다. NV0의 자동 발행 글은 무료 진단, 상세 리포트, 수정 문구안, 정기 점검 범위 안에서만 안내하며 법률 자문이나 결과 보장을 대신하지 않습니다.`,
+`FAQ\nQ1. 이 글만 보면 모든 문제가 해결되나요?\n아닙니다. 이 글은 우선순위를 잡기 위한 안내입니다. 실제 적용 전에는 운영 중인 서비스 범위와 공식 정책을 확인해야 합니다.\n\nQ2. 무엇부터 고치는 것이 좋나요?\n고객이 행동하기 직전에 보는 정보부터 정리하는 편이 효율적입니다. 문의, 결제, 회원가입, 푸터 순서로 확인합니다.\n\nQ3. 수정 후에도 다시 점검해야 하나요?\n예. 다른 화면에 예전 표현이 남을 수 있어 재진단이 필요합니다.` ,
+`자연스러운 CTA\n내 사이트에도 같은 기준을 적용해 보고 싶다면 무료 진단으로 현재 안내 공백을 먼저 확인하세요. 결과를 저장하면 상세 리포트, 수정 문구안, Auto 정기 점검으로 이어서 관리할 수 있습니다. 과장된 보장보다 현재 상태를 정확히 보고 필요한 항목부터 정리하는 것이 핵심입니다.` ,
+`태그\n${tags.join(' ')}`
+].join('\n\n');
+return { title: selectedTitle, body, titleCandidates, tags, boardType: variant.boardType || 'cta', ctaType: variant.ctaType || 'diagnosis_summary' };
+}
+function createCtaPublication(db, scan, options = {}) {
+const variants = [
+{ boardType: 'cta', ctaType: 'diagnosis_summary', title: `${normalizeCtaText(scan?.industry, '온라인 사업')} 사이트 신뢰 안내 점검 리포트` },
+{ boardType: 'notice', ctaType: 'risk_alert', title: `진단 결과를 바탕으로 고객 안내를 정리하는 순서` },
+{ boardType: 'notice', ctaType: 'checklist', title: '광고·문의 전환 전 확인할 사이트 안내 체크리스트' },
+{ boardType: 'case', ctaType: 'before_after', title: '수정 전후로 보는 고객 안내 문구 개선 포인트' },
+{ boardType: 'case', ctaType: 'case_study', title: `${normalizeCtaText(scan?.industry, '온라인 사업')} 운영자가 먼저 확인할 안내 항목` },
+{ boardType: 'cta', ctaType: 'plan_compare', title: '무료 진단 이후 리포트·수정안·정기 점검을 고르는 기준' },
+{ boardType: 'notice', ctaType: 'privacy_tip', title: '개인정보 안내는 입력 직전에 확인되도록 배치하세요' },
+{ boardType: 'notice', ctaType: 'terms_tip', title: '약관과 주요 제한 조건을 고객 행동 흐름에 맞게 연결하는 법' },
+{ boardType: 'case', ctaType: 'ad_copy_review', title: '확정형 광고 표현을 점검할 때 보는 기준' },
+{ boardType: 'cta', ctaType: 'rescan', title: '수정 후 재진단이 필요한 이유와 확인 순서' },
+{ boardType: 'cta', ctaType: 'saved_site', title: '반복 점검을 위해 사이트를 저장해 두면 좋은 이유' },
+{ boardType: 'notice', ctaType: 'weekly_ops', title: '운영 중인 사이트는 정기적으로 안내 문구를 다시 봐야 합니다' }
+];
+db.publications ||= [];
+db.boards ||= [];
+const sequence = (db.publications.filter(item => item.autoPublished).length + db.boards.filter(item => item.autoPublished).length) % variants.length;
 const variant = variants[sequence % variants.length];
-const title = options.title || variant.title;
-const body = options.body || variant.body;
-const publication = { id: uid('pub'), title, status: 'published', type: 'cta', ctaType: variant.ctaType, relatedRequestId: scan.requestId || null, body, createdAt: nowIso(), autoPublished: options.autoPublished === true };
+const article = buildCtaBoardArticle(scan || {}, variant, options);
+const title = article.title;
+const body = article.body;
+const base = { ctaType: article.ctaType, titleCandidates: article.titleCandidates, tags: article.tags, qualityStandard: 'cta-board-v6.7-encyclopedic-router', wordRangeKo: '900-1500', sections: ['제목 후보', '도입', '문제 제기', '해결 과정', '신뢰 근거', 'FAQ', '자연스러운 CTA', '태그'] };
+const publication = { id: uid('pub'), title, status: 'published', type: 'cta', ...base, relatedRequestId: scan?.requestId || null, body, createdAt: nowIso(), autoPublished: options.autoPublished === true };
 db.publications.unshift(publication);
-db.boards.unshift({ id: uid('board'), boardType: variant.boardType, ctaType: variant.ctaType, title, body, createdAt: nowIso(), visibility: 'public', autoPublished: options.autoPublished === true, publishIntervalMs: CTA_AUTOPUBLISH_INTERVAL_MS });
-db.publications = (db.publications || []).slice(0, 200);
-db.boards = (db.boards || []).slice(0, 200);
+db.boards.unshift({ id: uid('board'), boardType: article.boardType, ...base, body, createdAt: nowIso(), visibility: 'public', autoPublished: options.autoPublished === true, publishIntervalMs: CTA_AUTOPUBLISH_INTERVAL_MS });
+db.publications = db.publications.slice(0, 200);
+db.boards = db.boards.slice(0, 200);
 return publication;
 }
+
 async function runCtaAutopublish(reason = 'interval') {
 const db = await readDb();
 const settings = db.settings || {};

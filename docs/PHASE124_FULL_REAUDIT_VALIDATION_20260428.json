@@ -1,0 +1,120 @@
+{
+  "generatedAt": "2026-04-29T00:20:25.563Z",
+  "ok": true,
+  "total": 22,
+  "passed": 22,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "package-required:package.json",
+      "ok": true,
+      "detail": "Docker/Coolify 배포와 로컬 검증에 필요한 필수 파일을 포함한다."
+    },
+    {
+      "name": "package-required:server/index.mjs",
+      "ok": true,
+      "detail": "Docker/Coolify 배포와 로컬 검증에 필요한 필수 파일을 포함한다."
+    },
+    {
+      "name": "package-required:shared/base.css",
+      "ok": true,
+      "detail": "Docker/Coolify 배포와 로컬 검증에 필요한 필수 파일을 포함한다."
+    },
+    {
+      "name": "package-required:shared/session-nav.js",
+      "ok": true,
+      "detail": "Docker/Coolify 배포와 로컬 검증에 필요한 필수 파일을 포함한다."
+    },
+    {
+      "name": "package-required:scripts/check-source-syntax.mjs",
+      "ok": true,
+      "detail": "Docker/Coolify 배포와 로컬 검증에 필요한 필수 파일을 포함한다."
+    },
+    {
+      "name": "package-required:tests/e2e.mjs",
+      "ok": true,
+      "detail": "Docker/Coolify 배포와 로컬 검증에 필요한 필수 파일을 포함한다."
+    },
+    {
+      "name": "package-required:tests/routes-smoke.mjs",
+      "ok": true,
+      "detail": "Docker/Coolify 배포와 로컬 검증에 필요한 필수 파일을 포함한다."
+    },
+    {
+      "name": "runtime-no-banned-token:통신판매업 신고 완료 후 표시 예정",
+      "ok": true,
+      "detail": "상용 런타임 파일 노출 없음"
+    },
+    {
+      "name": "runtime-no-banned-token:상용 결제 전 입력 필요",
+      "ok": true,
+      "detail": "상용 런타임 파일 노출 없음"
+    },
+    {
+      "name": "runtime-no-banned-token:호스팅 제공자 실제 운영 인프라 확정 후 입력 필요",
+      "ok": true,
+      "detail": "상용 런타임 파일 노출 없음"
+    },
+    {
+      "name": "runtime-no-banned-token:support@nv0.kr",
+      "ok": true,
+      "detail": "상용 런타임 파일 노출 없음"
+    },
+    {
+      "name": "live-root-footer-guard:mail-order-placeholder-hidden",
+      "ok": true,
+      "detail": "통신판매업 신고번호가 미확정/예정 문구일 때 푸터에서 숨긴다."
+    },
+    {
+      "name": "session-menu:login-link-present",
+      "ok": true,
+      "detail": "공용 메뉴에 세션 전환 기준점을 둔다."
+    },
+    {
+      "name": "session-menu:logout-button-active",
+      "ok": true,
+      "detail": "로그인 상태에서 로그아웃 버튼으로 교체하고 POST 로그아웃을 실행한다."
+    },
+    {
+      "name": "session-menu:no-html-injection",
+      "ok": true,
+      "detail": "세션 메뉴는 HTML 삽입 없이 textContent 기반으로 처리한다."
+    },
+    {
+      "name": "visual-polish:nav-and-brand-css",
+      "ok": true,
+      "detail": "상단 메뉴와 로그아웃 버튼 시각 스타일을 포함한다."
+    },
+    {
+      "name": "visual-polish:responsive-menu-css",
+      "ok": true,
+      "detail": "모바일 메뉴 줄바꿈과 터치 영역을 보정한다."
+    },
+    {
+      "name": "board:no-permanent-loading-copy",
+      "ok": true,
+      "detail": "게시판 초기 문구가 영구 로딩처럼 보이지 않는다."
+    },
+    {
+      "name": "board:empty-state-guides-user",
+      "ok": true,
+      "detail": "빈 상태가 다음 행동을 안내한다."
+    },
+    {
+      "name": "accessibility:board-status-live",
+      "ok": true,
+      "detail": "게시판 상태 영역은 스크린리더에 변경 사항을 알린다."
+    },
+    {
+      "name": "forms:all-buttons-have-type",
+      "ok": true,
+      "detail": "모든 HTML button에 type을 지정했다."
+    },
+    {
+      "name": "security:public-innerhtml-sanitized",
+      "ok": true,
+      "detail": "공개 JS innerHTML 사용부는 escape/render helper 기준을 통과했다."
+    }
+  ],
+  "limitation": "로컬 패키지 검증은 실제 운영 배포, Cloudflare 캐시, 실결제 승인, 로그인 후 라이브 DOM 시각 상태를 확정하지 못한다. 해당 항목은 배포 후 운영 URL에서 재확인이 필요하다."
+}

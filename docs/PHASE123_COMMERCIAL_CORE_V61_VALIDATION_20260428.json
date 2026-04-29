@@ -1,0 +1,87 @@
+{
+  "ok": true,
+  "phase": "PHASE123_COMMERCIAL_CORE_V6_1",
+  "checkedAt": "2026-04-29T00:20:07.487Z",
+  "summary": {
+    "total": 15,
+    "passed": 15,
+    "failed": 0
+  },
+  "checks": [
+    {
+      "key": "session-nav:server-injection",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "session-nav:session-check",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "session-nav:logout-action",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "session-nav:login-replaced-with-button",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "session-nav:no-html-injection",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "style:logout-button",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "style:brand-mark-polished",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "style:focus-visible",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "style:mobile-menu-grid",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "style:reduced-motion",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "portal:glyph-normalized",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "portal:table-overflow-safe",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "aria:auth-states-live",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "aria:checkout-states-live",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "aria:demo-states-live",
+      "ok": true,
+      "detail": ""
+    }
+  ]
+}

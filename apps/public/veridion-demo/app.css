@@ -83,3 +83,141 @@ pre,code,.document-preview pre,#consoleState{background:#0B1220!important;color:
 .quality-notice b{display:block;margin-bottom:8px;color:#fff;font-size:17px}
 @media(max-width:900px){.executive-snapshot,.sample-grid{grid-template-columns:1fr}}
 @media(max-width:560px){.snapshot-card,.report-sample,.quality-notice{border-radius:18px;padding:15px}.sample-grid article{border-radius:16px;padding:14px}}
+
+
+/* PHASE125: demo result full-width redistribution
+   Fix: the diagnostic result must not be trapped in a narrow right column.
+   The input card remains first; the result card uses the whole lower area and
+   distributes the infographic sections into balanced desktop/tablet/mobile grids. */
+.demo-shell{max-width:1240px!important}
+.demo-grid{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  gap:22px!important;
+  align-items:stretch!important;
+}
+.scan-card{
+  min-height:0!important;
+  overflow:visible!important;
+}
+.scan-card .topnav{align-items:center;flex-wrap:wrap}
+.result-panel{
+  grid-column:1 / -1!important;
+  width:100%!important;
+  min-height:0!important;
+  overflow:visible!important;
+  padding:clamp(18px,2.4vw,30px)!important;
+}
+.result-panel>.p66-score-mini{
+  display:grid!important;
+  grid-template-columns:auto minmax(0,1fr)!important;
+  margin-bottom:18px!important;
+}
+.demo-result-surface,
+#demoResult{
+  width:100%!important;
+  min-width:0!important;
+  display:block!important;
+}
+#demoResult .infographic-result{
+  display:grid!important;
+  grid-template-columns:repeat(12,minmax(0,1fr))!important;
+  gap:16px!important;
+  align-items:stretch!important;
+}
+#demoResult .infographic-result>*{
+  grid-column:1 / -1!important;
+  min-width:0!important;
+}
+#demoResult .infographic-hero{
+  grid-column:1 / -1!important;
+}
+#demoResult .executive-snapshot,
+#demoResult .metric-strip,
+#demoResult .risk-card-grid,
+#demoResult .category-board,
+#demoResult .impact-grid,
+#demoResult .fix-preview-grid,
+#demoResult .value-comparison{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(220px,1fr))!important;
+  gap:14px!important;
+}
+#demoResult .evidence-grid,
+#demoResult .sample-grid{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(260px,1fr))!important;
+  gap:14px!important;
+}
+#demoResult .priority-roadmap{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(220px,1fr))!important;
+  gap:14px!important;
+}
+#demoResult .priority-roadmap li{
+  grid-template-columns:54px minmax(0,1fr)!important;
+  height:100%;
+}
+#demoResult .report-sample,
+#demoResult .quality-notice,
+#demoResult .result-cta-panel,
+#demoResult .conversion-impact,
+#demoResult .fix-preview,
+#demoResult .evidence-checklist{
+  margin-top:0!important;
+}
+.result-actions,
+.result-panel>.topnav{
+  display:flex!important;
+  flex-wrap:wrap!important;
+  justify-content:flex-start!important;
+  gap:10px!important;
+  margin-top:18px!important;
+}
+.result-actions a,
+.result-panel>.topnav a{
+  flex:0 1 auto!important;
+}
+.full-result .result-grid{
+  grid-template-columns:repeat(3,minmax(220px,1fr))!important;
+}
+@media(max-width:980px){
+  #demoResult .executive-snapshot,
+  #demoResult .metric-strip,
+  #demoResult .risk-card-grid,
+  #demoResult .category-board,
+  #demoResult .impact-grid,
+  #demoResult .fix-preview-grid,
+  #demoResult .value-comparison,
+  #demoResult .priority-roadmap,
+  .full-result .result-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  #demoResult .evidence-grid,
+  #demoResult .sample-grid{
+    grid-template-columns:1fr!important;
+  }
+}
+@media(max-width:620px){
+  .result-panel{padding:16px!important}
+  .result-panel>.p66-score-mini{grid-template-columns:1fr!important}
+  #demoResult .executive-snapshot,
+  #demoResult .metric-strip,
+  #demoResult .risk-card-grid,
+  #demoResult .category-board,
+  #demoResult .impact-grid,
+  #demoResult .fix-preview-grid,
+  #demoResult .value-comparison,
+  #demoResult .priority-roadmap,
+  .full-result .result-grid{
+    grid-template-columns:1fr!important;
+  }
+  #demoResult .priority-roadmap li{
+    grid-template-columns:1fr!important;
+  }
+  .result-actions a,
+  .result-panel>.topnav a{
+    flex:1 1 100%!important;
+    justify-content:center!important;
+  }
+}
