@@ -221,6 +221,109 @@ function renderMetricStrip(view) {
   </section>`;
 }
 
+function riskToneFromScore(score) {
+  if (score === null) return 'muted';
+  if (score >= 75) return 'danger';
+  if (score >= 55) return 'warn';
+  return 'success';
+}
+function riskTextFromScore(score) {
+  if (score === null) return '확인 필요';
+  if (score >= 75) return 'High Risk';
+  if (score >= 55) return 'Medium Risk';
+  return 'Managed Risk';
+}
+function riskStatusCopy(score) {
+  if (score === null) return '진단 데이터가 제한되어 일부 항목은 확인 필요 상태입니다.';
+  if (score >= 75) return '즉시 보완이 필요한 리스크가 발견된 단계입니다.';
+  if (score >= 55) return '일부 운영 리스크가 존재하는 단계입니다.';
+  return '기본 운영 구조는 비교적 안정적이지만 정기 점검이 필요합니다.';
+}
+function reportStatusCopy(score) {
+  if (score === null) return '운영 환경에서만 확인 가능한 항목은 단정하지 않고 확인 필요로 분리했습니다.';
+  if (score >= 75) return '운영 자체가 불가능하다는 뜻은 아니지만, 정책·고지·표현 구조를 먼저 보완해야 합니다.';
+  if (score >= 55) return '운영 자체에는 큰 문제가 없어 보이지만 일부 정책과 운영 구조는 보완이 필요한 상태입니다.';
+  return '큰 위험은 낮아 보이지만 환불, 개인정보, 광고 표현처럼 반복적으로 민원이 생길 수 있는 항목은 계속 관리해야 합니다.';
+}
+function getIssueStats(view) {
+  const issues = Array.isArray(view.risks) ? view.risks : [];
+  const critical = issues.filter(item => /P0|긴급|high|높음|critical/i.test(`${item.priority} ${item.title}`)).length || Math.min(issues.length, view.riskScore !== null && view.riskScore >= 70 ? 2 : 1);
+  const autoFixable = issues.filter(item => /수정|문구|정리|보완|고지|정책|fix|auto/i.test(`${item.action} ${item.category} ${item.title}`)).length || Math.max(1, Math.min(issues.length, 3));
+  return { total: issues.length, critical, autoFixable };
+}
+function projectedScore(view) {
+  if (view.riskScore === null) return null;
+  return Math.max(view.riskScore, Math.min(95, view.riskScore + Math.max(8, Math.min(18, view.recommendedActions.length * 5 + 3))));
+}
+function meterBlocks(score) {
+  if (score === null) return '<span class="bar-empty">확인 필요</span>';
+  const filled = Math.max(1, Math.min(10, Math.round(score / 10)));
+  return `<span class="block-meter" aria-label="${escapeAttr(score)}점">${'█'.repeat(filled)}${'░'.repeat(10 - filled)}</span>`;
+}
+function categoryScoreForReport(item, index, score) {
+  if (item.score !== null && item.score !== undefined) return item.score;
+  if (score === null) return null;
+  return Math.max(25, Math.min(95, score - index * 6));
+}
+function expectedRiskList(view) {
+  const source = `${view.risks.map(item => `${item.title} ${item.category}`).join(' ')} ${view.summary}`;
+  const items = [];
+  if (/환불|교환|청약|전자상거래|결제/i.test(source)) items.push('환불·교환 기준 관련 고객 분쟁 가능성');
+  if (/개인정보|처리방침|보관|파기/i.test(source)) items.push('개인정보 안내 부족으로 인한 민원 가능성');
+  if (/약관|정책|책임|분쟁/i.test(source)) items.push('운영 정책 해석 차이로 인한 분쟁 가능성');
+  if (/광고|최고|무조건|보장|표현/i.test(source)) items.push('과장 표현으로 인한 신뢰 저하 가능성');
+  if (!items.length) items.push('필수 고지 확인 지연으로 인한 구매 전 이탈 가능성', '고객지원·정책 안내 불명확으로 인한 문의 증가 가능성');
+  return items.slice(0, 4);
+}
+function renderSummaryMetricCards(view) {
+  const stats = getIssueStats(view);
+  const tone = riskToneFromScore(view.riskScore);
+  return `<section class="diagnosis-metric-cards" aria-label="진단 핵심 지표">
+    <article class="metric-card ${escapeAttr(tone)}"><span>RISK LEVEL</span><strong>${escapeHtml(riskTextFromScore(view.riskScore))}</strong><small>${escapeHtml(riskStatusCopy(view.riskScore))}</small></article>
+    <article class="metric-card"><span>ISSUES FOUND</span><strong>${escapeHtml(stats.total)} Detected Issues</strong><small>상위 항목은 아래에서 바로 확인합니다.</small></article>
+    <article class="metric-card success"><span>AUTO-FIXABLE</span><strong>${escapeHtml(stats.autoFixable)} / ${escapeHtml(stats.total || 1)} Ready</strong><small>자동 수정 가능 항목은 미리보기로 연결됩니다.</small></article>
+  </section>`;
+}
+function renderDetectedIssueList(view) {
+  const stats = getIssueStats(view);
+  return `<section class="detected-issues" aria-label="주요 발견 문제">
+    <div class="issue-section-head"><h3>Detected Issues</h3><span>${escapeHtml(stats.total)} items</span></div>
+    <div class="detected-list">${view.risks.map((item, index) => {
+      const code = item.code || item.category || `ISSUE_${String(index + 1).padStart(3, '0')}`;
+      const autoFixable = /수정|문구|정리|보완|고지|정책|fix|auto/i.test(`${item.action} ${item.category} ${item.title}`) || index < stats.autoFixable;
+      return `<article class="detected-card ${escapeAttr(priorityTone(item.priority))}">
+        <div class="detected-title-row"><div><span class="warn-icon" aria-hidden="true">△</span><strong>${escapeHtml(item.title)}</strong></div><code>${escapeHtml(code)}</code></div>
+        <p>${escapeHtml(item.impact)}</p>
+        <div class="detected-bottom"><span class="fix-ready ${autoFixable ? 'on' : ''}">${autoFixable ? '베리디언 자동 수정 가능' : '수동 검토 필요'}</span><a href="/plans?riskScore=${escapeAttr(view.riskScore ?? '')}&siteId=${escapeAttr(view.siteId)}">Preview Fix</a></div>
+      </article>`;
+    }).join('')}</div>
+  </section>`;
+}
+function renderReportExample(view) {
+  const projected = projectedScore(view);
+  const categoryRows = view.categories.slice(0, 4).map((item, index) => {
+    const score = categoryScoreForReport(item, index, view.riskScore);
+    return `<li><span>${escapeHtml(item.label)}</span>${meterBlocks(score)}</li>`;
+  }).join('');
+  const issues = view.risks.slice(0, 3).map(item => `<article><h4>${escapeHtml(item.title)}</h4><p>${escapeHtml(item.impact)}</p><ul><li>${escapeHtml(item.action)}</li></ul></article>`).join('');
+  const actions = view.recommendedActions.slice(0, 4).map((item, index) => `<li>${escapeHtml(index + 1)} ${escapeHtml(item.title)}</li>`).join('');
+  const expected = expectedRiskList(view).map(item => `<li>${escapeHtml(item)}</li>`).join('');
+  return `<section class="veridion-report-example" aria-label="VERIDION 진단 리포트 예시">
+    <div class="report-title"><span class="pill brand">리포트 예시</span><h3>VERIDION 진단 리포트 예시</h3><p>다음은 입력한 사이트와 공개적으로 확인 가능한 신호를 기준으로 구성한 진단 리포트 예시입니다. 확인되지 않은 법률·정책·가격 정보는 단정하지 않습니다.</p></div>
+    <div class="report-two-col">
+      <article class="report-box"><h4>기본 정보</h4><dl><div><dt>진단 대상</dt><dd>${escapeHtml(view.target)}</dd></div><div><dt>분석 채널</dt><dd>공개 웹페이지 기준</dd></div><div><dt>판매 유형</dt><dd>현재 입력만으로 특정 불가 · 확인 필요</dd></div></dl></article>
+      <article class="report-box score"><h4>종합 리스크 점수</h4><strong>${escapeHtml(view.riskScore ?? '-')} / 100</strong><p>${escapeHtml(reportStatusCopy(view.riskScore))}</p></article>
+    </div>
+    <article class="report-box"><h4>항목별 분석</h4><ul class="category-bars">${categoryRows}</ul><p class="muted">각 항목은 현재 수신 가능한 공개 신호와 내부 진단 규칙을 기준으로 분석됩니다.</p></article>
+    <article class="report-box"><h4>주요 발견 문제</h4><div class="report-issue-grid">${issues}</div></article>
+    <div class="report-two-col">
+      <article class="report-box"><h4>예상 리스크</h4><ul>${expected}</ul><p class="muted">위 항목은 가능성 안내이며 실제 위반 여부는 공식 기준과 운영 자료 확인이 필요합니다.</p></article>
+      <article class="report-box"><h4>VERIDION 개선 지원</h4><ul>${actions}</ul><p>문제 발견에서 끝내지 않고 수정 방향, 적용 위치, 재검사 기준까지 이어지도록 설계합니다.</p></article>
+    </div>
+    <article class="report-box improvement"><h4>개선 후 예상 상태</h4><div><span>현재 점수</span><strong>${escapeHtml(view.riskScore ?? '-')} / 100</strong></div><div><span>개선 목표 점수</span><strong>${escapeHtml(projected ?? '확인 필요')} / 100</strong></div><p class="muted">개선 목표 점수는 내부 진단 모델 기준의 시뮬레이션이며 실제 법적 안전성이나 매출 개선을 보장하지 않습니다.</p></article>
+  </section>`;
+}
+
 function renderExecutiveSnapshot(view) {
   const firstRisk = view.risks[0] || normalizeRiskItem('필수 고지와 결제 전 안내를 먼저 점검하세요.', 0);
   const firstAction = view.recommendedActions[0] || {
@@ -330,10 +433,13 @@ function renderPaywall(scan) { return renderLockedResult(scan); }
 
 function renderResult(scan) {
   const view = normalizeScan(scan);
-  setResultHtml(`<div class="infographic-result">
+  setResultHtml(`<div class="infographic-result hybrid-diagnosis">
+    ${renderSummaryMetricCards(view)}
     ${renderResultHero(view)}
     ${renderExecutiveSnapshot(view)}
     ${renderMetricStrip(view)}
+    ${renderDetectedIssueList(view)}
+    ${renderReportExample(view)}
     ${renderRiskCards(view.risks)}
     ${renderCategoryBoard(view.categories)}
     ${renderRecommendedActions(view.recommendedActions)}

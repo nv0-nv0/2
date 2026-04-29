@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { assertCommercialRouteAllowed, createPlatformProfile } from './core/platform.mjs';
 import { PAYMENT_SESSION_TRANSITIONS, ORDER_STATUS_TRANSITIONS, canTransition } from './core/payment-state-machine.mjs';
 import { handleAccountRescan, customerRecentScans } from './core/account-rescan.mjs';
+import { buildPublicDiagnosisPackage } from './core/diagnosis-report-package.mjs';
 import { authenticateAdminAccount, ensureAdminCollections, ensureBootstrapAdmin, getAdminPermissions, getAdminRoles } from './core/admin-auth.mjs';
 import { hashPassword, verifyPassword } from './core/passwords.mjs';
 import { createPersistenceManager } from './infrastructure/persistence/persistence.mjs';
@@ -2103,14 +2104,6 @@ const fetched = (TARGET_FETCH_ENABLED && url)
 : { fetched: false, html: '', error: TARGET_FETCH_ENABLED ? 'invalid url' : 'target fetch disabled', finalUrl: input, status: 0 };
 return buildBuiltinScanResult(input, fetched, startedAt);
 }
-function buildPublicDiagnosisPackage(result = {}) {
-const detail = Array.isArray(result.detailFindings) ? result.detailFindings : [];
-const mainChecks = ['사업자 정보','개인정보','환불 기준','이용약관','광고 표현'].map((label) => {
-const matched = detail.find((item) => String(item.title || '').includes(label.slice(0, 2)) || String(item.category || '').includes(label.slice(0, 2)));
-return { label, status: matched ? 'attention' : 'ok', issue: matched?.title || '핵심 노출 상태 양호', priority: matched?.priority || 'OK' };
-});
-return { engine: 'NV0 Builtin Diagnosis Engine', version: RULES_VERSION, summary: result.summary || '자동 진단이 완료되었습니다.', score: { value: result.riskScore || 0, level: result.riskLevel || '미확인', max: 100 }, scannedPages: result.scannedPages || [], probeCount: result.probeCount || 0, mainChecks, topIssues: detail.slice(0, 5).map((item) => ({ code: item.code, title: item.title, priority: item.priority, category: item.category, recommendation: item.recommendation })), fixPlan: detail.filter((item) => item.autoFixEligible).slice(0, 5).map((item, index) => ({ step: index + 1, target: item.title, action: item.recommendation })), nextCtas: [{ label: '무료 결과 저장', href: '/portal' }, { label: 'Pro 리포트 보기', href: '/plans' }, { label: '게시판 자동 발행 확인', href: '/board' }], automation: { boardName: '게시판', enabled: true, intervalMs: CTA_AUTOPUBLISH_INTERVAL_MS, intervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000), variants: ['진단 요약형','위험 경고형','비교형','개선 전후형','체크리스트형','재진단 유도형'] } };
-}
 function hmac(key, value, encoding) {
 return crypto.createHmac('sha256', key).update(value).digest(encoding);
 }
@@ -3079,7 +3072,7 @@ db.scans.unshift({ siteId: site.id, subscriptionId: subscription.id, customerId:
 db.scans = db.scans.slice(0, 100);
 appendAudit(db, req, 'public.scan.created', { requestId: result.requestId, target: result.target, siteId: site.id, provider: result.provider || SCAN_PROVIDER, linkedCustomer: !!customerSession?.customer, ctaPublicationId: ctaPublication?.id || null });
 await writeDb(db);
-return json(req, res, 200, { ok: true, result: { ...result, siteId: site.id, guidanceId: guidance.id, autoFixJobsCount: autoFixJobs.length, savedToAccount: !!customerSession?.customer, ctaPublicationId: ctaPublication?.id || null, diagnosis: buildPublicDiagnosisPackage(result) } });
+return json(req, res, 200, { ok: true, result: { ...result, siteId: site.id, guidanceId: guidance.id, autoFixJobsCount: autoFixJobs.length, savedToAccount: !!customerSession?.customer, ctaPublicationId: ctaPublication?.id || null, diagnosis: buildPublicDiagnosisPackage(result, { rulesVersion: RULES_VERSION, ctaIntervalMs: CTA_AUTOPUBLISH_INTERVAL_MS }) } });
 }
 if (pathname === '/api/public/checkout-session' && req.method === 'POST') {
 const rate = await hitRateLimit('checkout-session', clientIp(req), { windowMs: PUBLIC_SCAN_WINDOW_MS, limit: Math.max(5, Math.floor(PUBLIC_SCAN_LIMIT / 2)) });

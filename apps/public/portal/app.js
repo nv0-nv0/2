@@ -56,10 +56,41 @@ function renderSavedSites(sites = []) {
   </tr>`).join('');
   return `<table class="nv74-site-table"><thead><tr><th>사이트</th><th>최근 점수</th><th>마지막 검사</th><th>상태</th><th>관리</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
+function reportRiskCopy(score) {
+  const n = Number(score);
+  if (!Number.isFinite(n)) return '확인 필요';
+  if (n >= 75) return '즉시 보완 필요';
+  if (n >= 55) return '일부 운영 리스크 존재';
+  return '비교적 안정적';
+}
+function reportProjectedScore(score, issueCount = 0) {
+  const n = Number(score);
+  if (!Number.isFinite(n)) return null;
+  return Math.max(n, Math.min(95, n + Math.max(8, Math.min(18, Number(issueCount || 0) * 3 + 6))));
+}
+function reportBars(score) {
+  const n = Number(score);
+  if (!Number.isFinite(n)) return '확인 필요';
+  const filled = Math.max(1, Math.min(10, Math.round(n / 10)));
+  return '█'.repeat(filled) + '░'.repeat(10 - filled);
+}
+function renderPortalDiagnosisReport(scan) {
+  if (!scan) return '';
+  const findings = Array.isArray(scan.detailFindings) ? scan.detailFindings.slice(0, 4) : [];
+  const checks = ['개인정보 관리','전자상거래 정책','운영 관리 구조','보안 관리'].map((label, index) => ({ label, score: Math.max(25, Math.min(95, Number(scan.riskScore || 0) - index * 7)) }));
+  const projected = reportProjectedScore(scan.riskScore, findings.length);
+  return `<div class="card stack portal-report-example"><div class="meta-row"><strong>VERIDION 진단 리포트 요약</strong><span class="pill brand">실제 검사 결과</span></div>
+    <div class="portal-report-summary"><article><span>총 리스크 점수</span><strong>${escapeHtml(scan.riskScore ?? '-')} / 100</strong><small>${escapeHtml(reportRiskCopy(scan.riskScore))}</small></article><article><span>개선 목표 점수</span><strong>${escapeHtml(projected ?? '확인 필요')} / 100</strong><small>내부 모델 기준 시뮬레이션</small></article></div>
+    <div class="portal-report-bars">${checks.map(item => `<p><b>${escapeHtml(item.label)}</b><span>${escapeHtml(reportBars(item.score))}</span></p>`).join('')}</div>
+    <div class="portal-report-issues"><strong>주요 발견 문제</strong>${renderList(findings, '<p class="muted">세부 발견 항목 없음</p>', item => `<p><b>${escapeHtml(item.title || item.code || '점검 항목')}</b><span>${escapeHtml(item.recommendation || item.fixTemplate || '수정 방향 확인 필요')}</span></p>`)}</div>
+    <p class="muted">점수와 개선 목표는 내부 진단 모델 기준이며 실제 법적 안전성이나 매출 개선을 보장하지 않습니다. 법률·정책 판단은 공식 원문 확인이 필요합니다.</p>
+    <div class="topnav"><a class="btn primary" href="/plans?siteId=${escapeAttr(scan.siteId || '')}">상세 리포트 보기</a><a class="btn secondary" href="/products/veridion/demo?target=${escapeAttr(encodeURIComponent(scan.target || ''))}">다시 진단</a></div></div>`;
+}
 function renderRecentScans(scans = []) {
   if (!scans.length) return '<div class="portal-empty"><strong>지난 검사 내역이 없습니다.</strong><p>검사를 완료하면 최근 5개 결과가 이곳에 저장됩니다.</p></div>';
-  return `<div class="card stack"><div class="meta-row"><strong>지난 검사 내역 5개</strong><a class="btn secondary" href="/products/veridion/demo">새 검사</a></div>${scans.map(scan => `<div class="result-card"><div class="meta-row"><strong>${escapeHtml(scan.target || '저장 사이트')}</strong><span class="pill">${escapeHtml(scan.riskLevel || '검사 완료')}</span></div><p class="muted">${escapeHtml(formatDate(scan.createdAt || scan.generatedAt))} · 점수 ${escapeHtml(scan.riskScore ?? '-')} · 발견 ${escapeHtml(scan.totalFindings ?? '-')}개</p><div class="topnav"><button class="btn primary" data-rescan-site="${escapeAttr(scan.siteId || '')}" data-rescan-domain="${escapeAttr(scan.target || '')}" type="button">다시 검사하기</button><a class="btn secondary" href="/plans?siteId=${escapeAttr(scan.siteId || '')}">상품 비교</a></div></div>`).join('')}</div>`;
+  return `${renderPortalDiagnosisReport(scans[0])}<div class="card stack"><div class="meta-row"><strong>지난 검사 내역 5개</strong><a class="btn secondary" href="/products/veridion/demo">새 검사</a></div>${scans.map(scan => `<div class="result-card"><div class="meta-row"><strong>${escapeHtml(scan.target || '저장 사이트')}</strong><span class="pill">${escapeHtml(scan.riskLevel || '검사 완료')}</span></div><p class="muted">${escapeHtml(formatDate(scan.createdAt || scan.generatedAt))} · 점수 ${escapeHtml(scan.riskScore ?? '-')} · 발견 ${escapeHtml(scan.totalFindings ?? '-')}개</p><div class="topnav"><button class="btn primary" data-rescan-site="${escapeAttr(scan.siteId || '')}" data-rescan-domain="${escapeAttr(scan.target || '')}" type="button">다시 검사하기</button><a class="btn secondary" href="/plans?siteId=${escapeAttr(scan.siteId || '')}">상품 비교</a></div></div>`).join('')}</div>`;
 }
+
 function renderMemberValueBox(session, account) {
   if (!session?.authenticated) {
     return `<div class="card stack"><strong>회원가입하면 바로 쓸 수 있는 기능</strong><ul class="result-list"><li>내 사이트 저장</li><li>클릭 한 번으로 다시 검사</li><li>지난 검사 내역 5개 확인</li><li>검사 결과 자동 저장</li></ul><a class="btn primary" href="/auth?next=/portal">무료로 검사 결과 저장하기</a></div>`;

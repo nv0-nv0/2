@@ -1,6 +1,6 @@
 {
   "name": "nv0-veridion-cleanroom",
-  "version": "1.0.0-commercial-final-100-score-core-v6.1-phase125-phase127-cta-board-v67-standard",
+  "version": "1.0.0-commercial-final-100-score-core-v6.1-phase128-hybrid-diagnosis-report",
   "private": true,
   "type": "module",
   "scripts": {
@@ -123,6 +123,8 @@
     "validate:phase125": "node scripts/validate-phase125-demo-result-fullwidth.mjs",
     "phase125:final": "npm run phase124:final && npm run validate:phase125",
     "validate:phase127": "node scripts/validate-phase127-cta-board-standard.mjs",
-    "phase127:final": "node scripts/check-source-syntax.mjs && node scripts/test-all.mjs && node tests/e2e.mjs && node scripts/validate-phase127-cta-board-standard.mjs"
+    "phase127:final": "node scripts/check-source-syntax.mjs && node scripts/test-all.mjs && node tests/e2e.mjs && node scripts/validate-phase127-cta-board-standard.mjs",
+    "validate:phase128": "node scripts/validate-phase128-hybrid-diagnosis-report.mjs",
+    "phase128:final": "node scripts/check-source-syntax.mjs && node scripts/test-all.mjs && node tests/e2e.mjs && node scripts/validate-phase127-cta-board-standard.mjs && node scripts/validate-phase128-hybrid-diagnosis-report.mjs"
   }
 }
