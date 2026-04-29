@@ -50,11 +50,11 @@ services:
       - NV0_STORAGE_MODE=${NV0_STORAGE_MODE:-s3}
       - NV0_S3_ENDPOINT=${NV0_S3_ENDPOINT:?set NV0_S3_ENDPOINT in Coolify}
       - NV0_S3_BUCKET=${NV0_S3_BUCKET:?set NV0_S3_BUCKET in Coolify}
-      - NV0_S3_REGION=${NV0_S3_REGION:-ap-northeast-2}
+      - NV0_S3_REGION=${NV0_S3_REGION:-auto}
       - NV0_S3_ACCESS_KEY_ID=${NV0_S3_ACCESS_KEY_ID:?set NV0_S3_ACCESS_KEY_ID in Coolify}
       - NV0_S3_SECRET_ACCESS_KEY=${NV0_S3_SECRET_ACCESS_KEY:?set NV0_S3_SECRET_ACCESS_KEY in Coolify}
       - NV0_S3_PUBLIC_BASE_URL=${NV0_S3_PUBLIC_BASE_URL:-}
-      - NV0_S3_FORCE_PATH_STYLE=${NV0_S3_FORCE_PATH_STYLE:-false}
+      - NV0_S3_FORCE_PATH_STYLE=${NV0_S3_FORCE_PATH_STYLE:-true}
       - NV0_SCAN_PROVIDER=${NV0_SCAN_PROVIDER:-external_http}
       - NV0_SCAN_PROVIDER_URL=${NV0_SCAN_PROVIDER_URL:?set NV0_SCAN_PROVIDER_URL in Coolify}
       - NV0_SCAN_PROVIDER_TOKEN=${NV0_SCAN_PROVIDER_TOKEN:-}
@@ -85,6 +85,8 @@ services:
       - NV0_PUBLIC_ASSET_CACHE_SECONDS=${NV0_PUBLIC_ASSET_CACHE_SECONDS:-31536000}
       - NV0_CTA_AUTOPUBLISH_INTERVAL_MS=${NV0_CTA_AUTOPUBLISH_INTERVAL_MS:-1800000}
       - NV0_RUN_PREFLIGHT=${NV0_RUN_PREFLIGHT:-true}
+    expose:
+      - "3210"
     volumes:
       - nv0_runtime:/app/runtime
     depends_on:
@@ -95,9 +97,9 @@ services:
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3210/readyz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
       interval: 30s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 90s
 
   postgres:
     image: postgres:16-alpine
@@ -112,7 +114,7 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U nv0 -d nv0"]
       interval: 10s
-      timeout: 5s
+      timeout: 10s
       retries: 10
 
   redis:
@@ -124,7 +126,7 @@ services:
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
-      timeout: 5s
+      timeout: 10s
       retries: 10
 
 volumes:

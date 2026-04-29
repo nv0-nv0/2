@@ -1,6 +1,5 @@
-# NV0 commercial compose - R2 primary production profile
-# Use this file only for manual/docker-compose deployments.
-# Coolify canonical file remains /docker-compose.yml.
+# NV0 local-contained commercial fallback - internal MinIO instead of Cloudflare R2
+# Use only when external Object Storage must be avoided. Not the default production path.
 
 services:
   app:
@@ -19,13 +18,13 @@ services:
       NV0_STORAGE_MODE: s3
       NV0_DATABASE_URL: postgres://nv0:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}@postgres:5432/nv0
       NV0_REDIS_URL: redis://redis:6379/0
-      NV0_S3_ENDPOINT: ${NV0_S3_ENDPOINT:?set NV0_S3_ENDPOINT}
-      NV0_S3_BUCKET: ${NV0_S3_BUCKET:?set NV0_S3_BUCKET}
+      NV0_S3_ENDPOINT: http://minio:9000
+      NV0_S3_BUCKET: ${NV0_S3_BUCKET:-nv0-production}
       NV0_S3_REGION: ${NV0_S3_REGION:-auto}
       NV0_S3_ACCESS_KEY_ID: ${NV0_S3_ACCESS_KEY_ID:?set NV0_S3_ACCESS_KEY_ID}
       NV0_S3_SECRET_ACCESS_KEY: ${NV0_S3_SECRET_ACCESS_KEY:?set NV0_S3_SECRET_ACCESS_KEY}
       NV0_S3_PUBLIC_BASE_URL: ${NV0_S3_PUBLIC_BASE_URL:-}
-      NV0_S3_FORCE_PATH_STYLE: ${NV0_S3_FORCE_PATH_STYLE:-true}
+      NV0_S3_FORCE_PATH_STYLE: "true"
     ports:
       - "${APP_PORT:-3210}:3210"
     depends_on:
@@ -33,6 +32,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+      minio-init:
+        condition: service_completed_successfully
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3210/readyz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
       interval: 30s
@@ -68,6 +69,41 @@ services:
       timeout: 5s
       retries: 10
 
+  minio:
+    image: minio/minio:latest
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${NV0_S3_ACCESS_KEY_ID:?set NV0_S3_ACCESS_KEY_ID}
+      MINIO_ROOT_PASSWORD: ${NV0_S3_SECRET_ACCESS_KEY:?set NV0_S3_SECRET_ACCESS_KEY}
+    volumes:
+      - minio-data:/data
+    ports:
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  minio-init:
+    image: minio/mc:latest
+    depends_on:
+      minio:
+        condition: service_healthy
+    restart: "no"
+    environment:
+      MINIO_ROOT_USER: ${NV0_S3_ACCESS_KEY_ID:?set NV0_S3_ACCESS_KEY_ID}
+      MINIO_ROOT_PASSWORD: ${NV0_S3_SECRET_ACCESS_KEY:?set NV0_S3_SECRET_ACCESS_KEY}
+      NV0_S3_BUCKET: ${NV0_S3_BUCKET:-nv0-production}
+    entrypoint: ["/bin/sh", "-c"]
+    command: >-
+      mc alias set local http://minio:9000 $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD &&
+      mc mb --ignore-existing local/$$NV0_S3_BUCKET &&
+      mc anonymous set none local/$$NV0_S3_BUCKET &&
+      echo "MinIO bucket ready: $$NV0_S3_BUCKET"
+
 volumes:
   postgres-data:
   redis-data:
+  minio-data:

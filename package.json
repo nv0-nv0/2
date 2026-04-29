@@ -142,6 +142,9 @@
     "phase135:final": "node scripts/check-source-syntax.mjs && node scripts/test-all.mjs && node tests/e2e.mjs && node tests/routes-smoke.mjs && node scripts/validate-phase134-all-output-quality.mjs && node scripts/validate-phase135-cta-diversity-final.mjs",
     "validate:phase136": "node scripts/validate-phase136-security-hardening.mjs",
     "security:phase136": "node scripts/verify-security.mjs && node scripts/validate-phase136-security-hardening.mjs",
-    "phase136:final": "node scripts/check-source-syntax.mjs && node scripts/test-all.mjs && node tests/e2e.mjs && node tests/routes-smoke.mjs && npm run security:phase136"
+    "phase136:final": "node scripts/check-source-syntax.mjs && node scripts/test-all.mjs && node tests/e2e.mjs && node tests/routes-smoke.mjs && npm run security:phase136",
+    "generate:r2-env": "node scripts/generate-r2-coolify-env.mjs",
+    "check:storage-config": "node scripts/check-storage-config.mjs",
+    "deploy:precheck": "node scripts/check-source-syntax.mjs && node scripts/validate-deploy-bundle.mjs && node scripts/check-env-examples.mjs && node scripts/check-storage-config.mjs deploy/coolify.env.bulk.txt"
   }
 }
