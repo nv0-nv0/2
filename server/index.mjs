@@ -16,6 +16,7 @@ import { createSessionStore } from './infrastructure/session/session-store.mjs';
 import { createRateLimitStore } from './infrastructure/ratelimit/rate-limit-store.mjs';
 import { createDistributedLock } from './infrastructure/lock/distributed-lock.mjs';
 import { createPortOneV2Client, verifyPortOnePaymentAgainstOrder } from './infrastructure/payments/portone-v2.mjs';
+import { sanitizeAuditPayload } from './infrastructure/security/secure-record-store.mjs';
 import { verifyPortOneWebhook } from './infrastructure/payments/portone-webhook-verify.mjs';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -2192,7 +2193,7 @@ const gates = [
 { key: 'support_email', ok: isValidEmail(BUSINESS_PROFILE.contactEmail), label: '지원 이메일 유효성' },
 { key: 'operator_alert_email', ok: isValidEmail(OPERATOR_ALERT_EMAIL), label: '운영 알림 이메일 유효성' }
 ];
-return { phase: RELEASE_PHASE, target: PLATFORM.target, commercial: PLATFORM.commercial, paymentProvider: PAYMENT_PROVIDER, persistenceMode: PERSISTENCE_MODE, storageMode: STORAGE_MODE, dataRetentionDays: DATA_RETENTION_DAYS, refundRequestWindowDays: REFUND_REQUEST_WINDOW_DAYS, missingEnv, placeholderEnv, counts, gates, ready: gates.every(g => g.ok), checkedAt: nowIso() };
+return { phase: RELEASE_PHASE, target: PLATFORM.target, commercial: PLATFORM.commercial, paymentProvider: PAYMENT_PROVIDER, persistenceMode: PERSISTENCE_MODE, storageMode: STORAGE_MODE, secureRecordStore: persistence.secureRecordStore || null, dataRetentionDays: DATA_RETENTION_DAYS, refundRequestWindowDays: REFUND_REQUEST_WINDOW_DAYS, missingEnv, placeholderEnv, counts, gates, ready: gates.every(g => g.ok), checkedAt: nowIso() };
 }
 function isPlaceholderConfigValue(value) {
 const text = String(value || '').trim().toLowerCase();
@@ -2267,7 +2268,7 @@ event,
 ip: clientIp(req),
 method: req.method,
 path: new URL(req.url, `http://${req.headers.host}`).pathname,
-meta: maskSensitive(meta)
+meta: sanitizeAuditPayload(maskSensitive(meta))
 };
 db.auditLogs.unshift(entry);
 db.auditLogs = db.auditLogs.slice(0, AUDIT_LOG_RETENTION_COUNT);
@@ -2286,7 +2287,7 @@ paymentId: event.paymentId || null,
 providerStatus: event.providerStatus || null,
 orderStatus: event.orderStatus || null,
 source: event.source || 'system',
-payload: event.payload || {}
+payload: sanitizeAuditPayload(event.payload || {})
 };
 const existingIndex = db.paymentEvents.findIndex(item => item.id === normalized.id);
 if (existingIndex >= 0) db.paymentEvents.splice(existingIndex, 1);
@@ -2309,7 +2310,7 @@ status: record.status || 'received',
 rawSha256: record.rawSha256 || null,
 orderId: record.orderId || null,
 reason: record.reason || null,
-payload: record.payload || {}
+payload: sanitizeAuditPayload(record.payload || {})
 };
 db.webhookInbox.unshift(normalized);
 db.webhookInbox = db.webhookInbox.slice(0, 1000);
@@ -2672,7 +2673,7 @@ const probePath = path.join(REPORTS_DIR, `.readyz-${process.pid}.tmp`);
 await fs.writeFile(probePath, JSON.stringify({ checkedAt: nowIso() }));
 await fs.unlink(probePath);
 if (PLATFORM.commercial && (!redisSessionReady || !redisRateLimitReady || !redisLockReady)) throw new Error('Commercial readiness requires Redis-backed session, rate-limit, and lock providers.');
-return json(req, res, 200, { ok: true, ready: true, runtimeWritable: true, platformTarget: PLATFORM.target, persistenceMode: PERSISTENCE_MODE, storageMode: STORAGE_MODE, turnstileEnabled: ENABLE_TURNSTILE, redis: { sessionStore: redisSessionReady, rateLimitStore: redisRateLimitReady, lockProvider: redisLockReady }, paymentProvider: PAYMENT_PROVIDER === 'portone_v2' ? PORTONE_CLIENT.configSummary() : { mode: PAYMENT_PROVIDER } });
+return json(req, res, 200, { ok: true, ready: true, runtimeWritable: true, platformTarget: PLATFORM.target, persistenceMode: PERSISTENCE_MODE, storageMode: STORAGE_MODE, turnstileEnabled: ENABLE_TURNSTILE, redis: { sessionStore: redisSessionReady, rateLimitStore: redisRateLimitReady, lockProvider: redisLockReady }, paymentProvider: PAYMENT_PROVIDER === 'portone_v2' ? PORTONE_CLIENT.configSummary() : { mode: PAYMENT_PROVIDER }, secureRecordStore: persistence.secureRecordStore || null });
 } catch (error) {
 return json(req, res, 503, { ok: false, ready: false, runtimeWritable: false, error: error.message });
 }

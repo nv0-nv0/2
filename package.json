@@ -1,6 +1,6 @@
 {
   "name": "nv0-veridion-cleanroom",
-  "version": "1.0.0-commercial-final-100-score-core-v6.1-phase135-cta-diversity-final",
+  "version": "1.0.0-commercial-final-100-score-core-v6.1-phase136-security-hardening",
   "private": true,
   "type": "module",
   "scripts": {
@@ -139,6 +139,9 @@
     "validate:phase134": "node scripts/validate-phase134-all-output-quality.mjs",
     "phase134:final": "node scripts/check-source-syntax.mjs && node scripts/test-all.mjs && node tests/e2e.mjs && node tests/routes-smoke.mjs && node scripts/validate-phase134-all-output-quality.mjs",
     "validate:phase135": "node scripts/validate-phase135-cta-diversity-final.mjs",
-    "phase135:final": "node scripts/check-source-syntax.mjs && node scripts/test-all.mjs && node tests/e2e.mjs && node tests/routes-smoke.mjs && node scripts/validate-phase134-all-output-quality.mjs && node scripts/validate-phase135-cta-diversity-final.mjs"
+    "phase135:final": "node scripts/check-source-syntax.mjs && node scripts/test-all.mjs && node tests/e2e.mjs && node tests/routes-smoke.mjs && node scripts/validate-phase134-all-output-quality.mjs && node scripts/validate-phase135-cta-diversity-final.mjs",
+    "validate:phase136": "node scripts/validate-phase136-security-hardening.mjs",
+    "security:phase136": "node scripts/verify-security.mjs && node scripts/validate-phase136-security-hardening.mjs",
+    "phase136:final": "node scripts/check-source-syntax.mjs && node scripts/test-all.mjs && node tests/e2e.mjs && node tests/routes-smoke.mjs && npm run security:phase136"
   }
 }

@@ -1,6 +1,7 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { createPostgresBridge } from './postgres-bridge.mjs';
+import { createSecureRecordStore } from '../security/secure-record-store.mjs';
 
 export function createPersistenceManager(options) {
   const {
@@ -14,6 +15,7 @@ export function createPersistenceManager(options) {
   } = options;
 
   const bridge = createPostgresBridge(env, logger);
+  const secureStore = createSecureRecordStore({ dataDir, defaultDb, env, logger });
   const dbPath = path.join(dataDir, 'db.json');
 
   async function readJsonDb() {
@@ -28,13 +30,17 @@ export function createPersistenceManager(options) {
       if (!Array.isArray(value) && (typeof db[key] !== 'object' || db[key] === null || Array.isArray(db[key]))) db[key] = { ...value };
     }
     db.settings = { ...defaultDb.settings, ...(db.settings || {}) };
-    ensureAdminCollections(db);
-    return db;
+    const secureCollections = await secureStore.readSecureCollections();
+    const merged = secureStore.merge(db, secureCollections);
+    ensureAdminCollections(merged);
+    return merged;
   }
 
   async function writeJsonDb(db) {
     await ensureRuntime();
-    await fs.writeFile(dbPath, JSON.stringify(db, null, 2));
+    const { publicDb, secure } = secureStore.split(db);
+    await secureStore.writeSecureCollections(secure);
+    await fs.writeFile(dbPath, JSON.stringify(publicDb, null, 2));
   }
 
   async function readDb() {
@@ -113,6 +119,7 @@ export function createPersistenceManager(options) {
     mode: bridge.mode,
     bridgeEnabled: bridge.enabled,
     compareMode: bridge.compareMode,
+    secureRecordStore: secureStore.status(),
     readDb,
     writeDb,
     readSessions,
