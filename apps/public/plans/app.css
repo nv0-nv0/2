@@ -68,3 +68,9 @@ pre,code,.document-preview pre,#consoleState{background:#0B1220!important;color:
 /* page-specific corrections observed in Phase72 demo result card */
 .p66-score-mini{display:flex;align-items:center;gap:14px;border:1px solid var(--p73-line-soft)!important;border-radius:24px!important;padding:22px!important}.p66-score-mini strong{font-size:48px;line-height:1;color:var(--p73-blue-soft)!important}.p66-score-mini small{display:block;margin-top:5px;color:var(--p73-muted)!important}.loading-steps div{min-height:54px;display:flex;align-items:center;gap:8px;border-radius:14px!important}.loading-steps div::before{content:"";width:8px;height:8px;border-radius:999px;background:var(--p73-blue-soft);box-shadow:0 0 0 4px rgba(96,165,250,.12);flex:0 0 auto}.empty-result{border:1px solid var(--p73-line-soft)!important;border-radius:18px!important;padding:16px!important}.p66-visual-row article span{color:var(--p73-blue-soft)!important;font-weight:950}.result-panel,.scan-card{border-radius:24px!important}
 @media(max-width:760px){.p66-score-mini{align-items:flex-start}.p66-score-mini strong{font-size:42px}}
+
+/* PHASE130: pricing repositioning */
+.price-positioning{border-color:rgba(96,165,250,.32)!important;background:linear-gradient(180deg,rgba(17,31,54,.96),rgba(10,18,32,.98))!important}.price-positioning p{max-width:880px}.price-positioning table td{line-height:1.6}
+
+/* PHASE132: competitive pricing value labels */
+.offer-value{margin-top:6px;color:#93C5FD!important;font-size:13px;font-weight:900;line-height:1.45}.offer-value.muted{color:#A8B3C4!important;font-weight:800}

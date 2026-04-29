@@ -37,6 +37,15 @@ export function buildPublicDiagnosisPackage(result = {}, options = {}) {
     mainChecks,
     topIssues,
     issueStats: { totalIssues, criticalIssues, autoFixableIssues },
+    deliverableBundle: {
+      standard: 'commercial-core-v6.7-100-point-output',
+      targetLengthKo: '900-1500',
+      valueStandard: '가격의 3배 구성 가치 기준이며 실제 매출·법률 안전성을 보장하지 않습니다.',
+      requiredSections: ['제목 후보', '도입', '문제 제기', '해결 과정', '신뢰 근거', 'FAQ', '자연스러운 CTA', '태그'],
+      titleCandidates: ['사이트 신뢰 공백을 줄이는 실무 점검법', '결제 전 고객이 확인하는 안내 문구 정리', '운영 리스크를 낮추는 리포트 활용법'],
+      faq: ['이 결과는 법률 자문인가요? 아니요, 운영 참고용 진단입니다.', '결제 후 무엇을 받나요? 리포트, 수정 방향, CTA 문구, 재점검 기준을 확인합니다.', '바로 적용 가능한가요? 운영 정보 확인 후 적용하는 것을 권장합니다.'],
+      tags: ['#사이트점검', '#무료진단', '#상세리포트', '#수정문구', '#CTA', '#문의전환']
+    },
     reportExample: {
       standard: 'veridion-hybrid-report-v6.8',
       basicInfo: { target: result.target || result.normalizedTarget || '', analysisChannel: '공개 웹페이지 기준', salesType: '현재 입력만으로 특정 불가 · 확인 필요' },

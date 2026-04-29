@@ -510,3 +510,171 @@ mountTurnstile({ containerId: 'turnstileBox', tokenInputId: 'turnstileToken', no
   });
 loadSession();
 window.addEventListener('pageshow', async () => { await loadSession(); if (session.authenticated) unlockSavedScan().catch(() => {}); });
+
+/* PHASE129: result information architecture + infographic cleanup
+   Goal: remove crowded / overlapping copy, reorganize the diagnosis into a
+   clear purchase-oriented structure, and surface the PortOne + Galaxia CTA. */
+function renderSummaryMetricCards(view) {
+  const stats = getIssueStats(view);
+  const tone = riskToneFromScore(view.riskScore);
+  const projected = projectedScore(view);
+  const urgent = view.recommendedActions?.[0]?.title || '상세 리포트에서 우선순위 확인';
+  return `<section class="diagnosis-command" aria-label="진단 요약 대시보드">
+    <article class="command-main ${escapeAttr(tone)}">
+      <div class="command-head"><span class="pill brand">VERIDION SUMMARY</span><span class="command-grade">${escapeHtml(riskTextFromScore(view.riskScore))}</span></div>
+      <h2>${escapeHtml(view.target)}</h2>
+      <p>${escapeHtml(riskStatusCopy(view.riskScore))}</p>
+      <div class="command-score-line"><strong>${escapeHtml(view.riskScore ?? '-')}</strong><span>/ 100</span><small>총 리스크 점수</small></div>
+      <div class="command-kpis">
+        <div><b>${escapeHtml(stats.total)}</b><span>발견 문제</span></div>
+        <div><b>${escapeHtml(stats.autoFixable)}</b><span>자동 수정 가능</span></div>
+        <div><b>${escapeHtml(projected ?? '확인 필요')}</b><span>개선 예상 점수</span></div>
+      </div>
+    </article>
+    <article class="command-side">
+      <div class="trust-kpi-grid">
+        <div class="trust-kpi"><span>결제 전 신뢰</span><b>${escapeHtml(Math.max(0, 100 - normalizePercent(view.riskScore, 52)))}%</b><small>정책·문의·고지 명확도 기준</small></div>
+        <div class="trust-kpi"><span>즉시 처리 우선도</span><b>${escapeHtml(normalizePercent(view.riskScore, 52))}%</b><small>${escapeHtml(urgent)}</small></div>
+      </div>
+      <div class="command-note">
+        <b>무료 요약에서 바로 확인하는 것</b>
+        <p>어디가 문제인지, 왜 결제 전환을 막는지, 어떤 순서로 손봐야 하는지를 한 화면으로 정리합니다.</p>
+      </div>
+    </article>
+  </section>`;
+}
+
+function renderDetectedIssueList(view) {
+  const items = view.risks.slice(0, 4);
+  return `<section class="detected-issues clean-detected" aria-label="주요 발견 문제">
+    <div class="issue-section-head"><h3>주요 발견 문제</h3><span>결제 전에 가장 먼저 보완해야 할 항목</span></div>
+    <div class="detected-list clean-detected-list">${items.map((item, index) => {
+      const code = item.code || item.category || `ISSUE_${String(index + 1).padStart(3, '0')}`;
+      const priority = item.priority || (index === 0 ? 'P0' : index === 1 ? 'P1' : 'P2');
+      const autoFixable = /수정|문구|정리|보완|고지|정책|fix|auto/i.test(`${item.action} ${item.category} ${item.title}`);
+      return `<article class="detected-card ${escapeAttr(priorityTone(priority))}">
+        <div class="detected-topline"><span class="detected-rank">0${index + 1}</span><span class="detected-priority ${escapeAttr(priorityTone(priority))}">${escapeHtml(priority)}</span><code>${escapeHtml(code)}</code></div>
+        <h4>${escapeHtml(item.title)}</h4>
+        <p>${escapeHtml(item.impact)}</p>
+        <div class="detected-meta-grid">
+          <div><span>영향</span><b>신뢰 저하 · 문의 증가 · 전환 지연 가능</b></div>
+          <div><span>권장 조치</span><b>${escapeHtml(item.action)}</b></div>
+        </div>
+        <div class="detected-bottom"><span class="fix-ready ${autoFixable ? 'on' : ''}">${autoFixable ? '자동 수정 패키지 연결 가능' : '상세 검토 후 수동 보완 필요'}</span><a href="/checkout?plan=${escapeAttr(view.recommendedPlan)}&siteId=${escapeAttr(view.siteId)}">상세 리포트로 연결</a></div>
+      </article>`;
+    }).join('')}</div>
+  </section>`;
+}
+
+function renderReportExample(view) {
+  const projected = projectedScore(view);
+  const categoryRows = view.categories.slice(0, 4).map((item, index) => {
+    const score = categoryScoreForReport(item, index, view.riskScore);
+    return `<li><span>${escapeHtml(item.label)}</span>${meterBlocks(score)}<b class="bar-score">${escapeHtml(score)}점</b></li>`;
+  }).join('');
+  const issues = view.risks.slice(0, 3).map(item => `<article><span class="pill gray">${escapeHtml(item.priority || 'P1')}</span><h4>${escapeHtml(item.title)}</h4><p>${escapeHtml(item.impact)}</p><small>${escapeHtml(item.action)}</small></article>`).join('');
+  const actions = view.recommendedActions.slice(0, 3).map((item, index) => `<li><b>STEP ${escapeHtml(index + 1)}</b><span>${escapeHtml(item.title)}</span><small>${escapeHtml(item.nextStep)}</small></li>`).join('');
+  const expected = expectedRiskList(view).slice(0, 4).map(item => `<li>${escapeHtml(item)}</li>`).join('');
+  return `<section class="veridion-report-example report-clean" aria-label="VERIDION 진단 리포트 예시">
+    <div class="report-title"><span class="pill brand">리포트 예시</span><h3>운영자가 한눈에 이해하는 정돈된 진단 리포트</h3><p>내용을 뒤섞지 않고 "현 상태 → 문제 → 영향 → 개선 방향 → 결제 후 제공 범위" 순서로 재구성했습니다.</p></div>
+    <div class="report-grid-clean">
+      <article class="report-box report-overview-card">
+        <h4>기본 정보</h4>
+        <dl>
+          <div><dt>진단 대상</dt><dd>${escapeHtml(view.target)}</dd></div>
+          <div><dt>분석 방식</dt><dd>공개 웹페이지 + VERIDION 진단 규칙</dd></div>
+          <div><dt>현재 상태</dt><dd>${escapeHtml(reportStatusCopy(view.riskScore))}</dd></div>
+        </dl>
+      </article>
+      <article class="report-box score report-score-card">
+        <h4>종합 리스크 점수</h4>
+        <strong>${escapeHtml(view.riskScore ?? '-')} / 100</strong>
+        <p>${escapeHtml(riskStatusCopy(view.riskScore))}</p>
+        <div class="report-score-foot"><span>개선 예상 점수</span><b>${escapeHtml(projected ?? '확인 필요')} / 100</b></div>
+      </article>
+      <article class="report-box report-category-card">
+        <h4>항목별 분석</h4>
+        <ul class="category-bars clean-bars">${categoryRows}</ul>
+        <p class="muted">점수가 높을수록 보완 우선도가 큽니다.</p>
+      </article>
+      <article class="report-box report-issues-card">
+        <h4>핵심 문제 3개</h4>
+        <div class="report-issue-grid clean-report-issues">${issues}</div>
+      </article>
+      <article class="report-box report-risk-card">
+        <h4>예상 리스크</h4>
+        <ul>${expected}</ul>
+        <p class="muted">실제 운영 정책을 보완하면 충분히 낮출 수 있는 위험입니다.</p>
+      </article>
+      <article class="report-box report-action-card">
+        <h4>권장 개선 순서</h4>
+        <ol class="report-action-list">${actions}</ol>
+      </article>
+    </div>
+  </section>`;
+}
+
+function renderPremiumUpgradePanel(view) {
+  return `<section class="premium-upgrade-panel" aria-label="유료 상세 리포트 전환 유도">
+    <div class="section-title"><span class="pill gold">왜 결제가 필요한가</span><h3>무료 요약은 방향 확인, 유료 리포트는 실제 수정 실행</h3></div>
+    <div class="premium-upgrade-grid">
+      <article>
+        <b>무료 요약</b>
+        <ul>
+          <li>총점과 위험도 확인</li>
+          <li>상위 문제 요약</li>
+          <li>대략적인 개선 방향</li>
+        </ul>
+      </article>
+      <article class="highlight-card">
+        <b>결제 후 상세 리포트</b>
+        <ul>
+          <li>페이지별 문제 근거</li>
+          <li>수정 문구와 적용 위치</li>
+          <li>우선순위 로드맵</li>
+          <li>재검사 기준과 후속 액션</li>
+        </ul>
+      </article>
+      <article>
+        <b>결제 방식</b>
+        <p>포트원 연동 결제창으로 가장 빠르게 진행하고, 운영 단계에서는 갤럭시아 채널로 간편하게 연결할 수 있습니다.</p>
+        <div class="payment-badges"><span>PortOne</span><span>Galaxia</span><span>1분 결제</span></div>
+      </article>
+    </div>
+  </section>`;
+}
+
+function renderValueComparison(view) {
+  return `<section class="value-comparison clean-value-comparison">
+    <article><span class="pill gray">1. 문제 파악</span><h4>운영 리스크를 즉시 확인</h4><p>현재 사이트에서 무엇이 빠졌는지, 무엇이 결제를 막는지 빠르게 진단합니다.</p></article>
+    <article class="highlight-card"><span class="pill gold">2. 결제 유도</span><h4>상세 리포트 결제로 자연스럽게 연결</h4><p>요약만으로는 수정이 어렵다는 점을 명확히 보여주고, 유료 결과물의 가치를 분명히 전달합니다.</p></article>
+    <article><span class="pill">3. 실행</span><h4>${escapeHtml(view.recommendedPlan)} 플랜으로 보완</h4><p>수정 문구, 적용 위치, 재검사 루틴까지 이어서 실제 개선으로 연결합니다.</p></article>
+  </section>`;
+}
+
+function renderQualityNotice(view) {
+  return `<section class="quality-notice clean-quality-notice" aria-label="결과 해석 기준">
+    <b>결과 해석 기준</b>
+    <p>이 결과는 입력 URL에서 확인 가능한 공개 신호와 내부 진단 규칙을 기반으로 구성됩니다. 실제 법률 판단, 신고번호 진위, 결제 운영키 상태, 외부 보안 스캔 값처럼 운영 환경에서만 확인 가능한 정보는 단정하지 않고 확인 필요로 표시합니다.</p>
+  </section>`;
+}
+
+function renderResult(scan) {
+  const view = normalizeScan(scan);
+  setResultHtml(`<div class="infographic-result hybrid-diagnosis phase129-clean">
+    ${renderSummaryMetricCards(view)}
+    ${renderExecutiveSnapshot(view)}
+    ${renderDetectedIssueList(view)}
+    ${renderReportExample(view)}
+    ${renderCategoryBoard(view.categories)}
+    ${renderRecommendedActions(view.recommendedActions)}
+    ${renderConversionImpact(view)}
+    ${renderFixPreview(view.recommendedActions)}
+    ${renderPremiumUpgradePanel(view)}
+    ${renderReportSample(view)}
+    ${renderEvidenceChecklist(view)}
+    ${renderValueComparison(view)}
+    ${renderQualityNotice(view)}
+    <section class="result-cta-panel clean-result-cta"><div><span class="pill">다음 단계</span><h3>문제만 보지 말고 바로 결제로 넘어가 수정안을 받아보세요.</h3><p>결제는 포트원 기반으로 가장 빠르게 진행하고, 갤럭시아 채널 연동 운영을 전제로 자연스럽게 연결할 수 있습니다.</p></div><div class="topnav"><a class="btn primary" href="/checkout?plan=${escapeAttr(view.recommendedPlan)}&siteId=${escapeAttr(view.siteId)}">포트원으로 상세 리포트 결제</a><a class="btn secondary" href="/plans?riskScore=${escapeAttr(view.riskScore ?? '')}&siteId=${escapeAttr(view.siteId)}">상품 비교</a></div></section>
+  </div>${session.authenticated ? renderFullResult(scan) : renderPaywall(scan)}`);
+}

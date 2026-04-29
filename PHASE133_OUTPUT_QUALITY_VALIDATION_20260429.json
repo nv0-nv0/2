@@ -1,0 +1,45 @@
+{
+  "phase": 133,
+  "title": "service deliverable and fulfillment output quality maximization",
+  "validated": true,
+  "syntaxCheckedFiles": 139,
+  "unitTests": {
+    "passed": 85,
+    "failed": 0
+  },
+  "e2e": "passed",
+  "routesSmoke": {
+    "checked": 24,
+    "ok": true
+  },
+  "assetQuality": {
+    "sectionsMin": 8,
+    "actualSampleSections": 9,
+    "faqsMin": 3,
+    "actualSampleFaqs": 4,
+    "tagsMin": 7,
+    "actualSampleTags": 9,
+    "pdfLinesMin": 12,
+    "actualSamplePdfLines": 24,
+    "requiredBlocks": [
+      "제목 후보",
+      "도입",
+      "문제 제기",
+      "해결 과정",
+      "신뢰 근거",
+      "FAQ",
+      "자연스러운 CTA",
+      "태그",
+      "수용 기준",
+      "재점검 기준"
+    ]
+  },
+  "changedFiles": [
+    "server/core/premium-asset-builder.mjs",
+    "server/index.mjs",
+    "apps/public/portal/app.js",
+    "apps/public/portal/app.css",
+    "scripts/validate-phase133-output-quality.mjs",
+    "package.json"
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "name": "nv0-veridion-cleanroom",
-  "version": "1.0.0-commercial-final-100-score-core-v6.1-phase128-hybrid-diagnosis-report",
+  "version": "1.0.0-commercial-final-100-score-core-v6.1-phase135-cta-diversity-final",
   "private": true,
   "type": "module",
   "scripts": {
@@ -125,6 +125,20 @@
     "validate:phase127": "node scripts/validate-phase127-cta-board-standard.mjs",
     "phase127:final": "node scripts/check-source-syntax.mjs && node scripts/test-all.mjs && node tests/e2e.mjs && node scripts/validate-phase127-cta-board-standard.mjs",
     "validate:phase128": "node scripts/validate-phase128-hybrid-diagnosis-report.mjs",
-    "phase128:final": "node scripts/check-source-syntax.mjs && node scripts/test-all.mjs && node tests/e2e.mjs && node scripts/validate-phase127-cta-board-standard.mjs && node scripts/validate-phase128-hybrid-diagnosis-report.mjs"
+    "phase128:final": "node scripts/check-source-syntax.mjs && node scripts/test-all.mjs && node tests/e2e.mjs && node scripts/validate-phase127-cta-board-standard.mjs && node scripts/validate-phase128-hybrid-diagnosis-report.mjs",
+    "validate:phase129": "node scripts/validate-phase129-report-cleanup-portone-galaxia.mjs",
+    "phase129:final": "node scripts/check-source-syntax.mjs && node scripts/validate-phase129-report-cleanup-portone-galaxia.mjs",
+    "validate:phase130": "node scripts/validate-phase130-market-pricing.mjs",
+    "phase130:final": "node scripts/check-source-syntax.mjs && node scripts/validate-phase129-report-cleanup-portone-galaxia.mjs && node scripts/validate-phase130-market-pricing.mjs",
+    "validate:phase131": "node scripts/validate-phase131-optimal-pricing.mjs",
+    "phase131:final": "node scripts/check-source-syntax.mjs && node scripts/test-all.mjs && node tests/e2e.mjs && node scripts/validate-phase131-optimal-pricing.mjs",
+    "validate:phase132": "node scripts/validate-phase132-competitive-3x-value.mjs",
+    "phase132:final": "node scripts/check-source-syntax.mjs && node scripts/validate-phase132-competitive-3x-value.mjs && node scripts/test-all.mjs && node tests/e2e.mjs",
+    "validate:phase133": "node scripts/validate-phase133-output-quality.mjs",
+    "phase133:final": "node scripts/check-source-syntax.mjs && node scripts/validate-phase133-output-quality.mjs",
+    "validate:phase134": "node scripts/validate-phase134-all-output-quality.mjs",
+    "phase134:final": "node scripts/check-source-syntax.mjs && node scripts/test-all.mjs && node tests/e2e.mjs && node tests/routes-smoke.mjs && node scripts/validate-phase134-all-output-quality.mjs",
+    "validate:phase135": "node scripts/validate-phase135-cta-diversity-final.mjs",
+    "phase135:final": "node scripts/check-source-syntax.mjs && node scripts/test-all.mjs && node tests/e2e.mjs && node tests/routes-smoke.mjs && node scripts/validate-phase134-all-output-quality.mjs && node scripts/validate-phase135-cta-diversity-final.mjs"
   }
 }

@@ -25,7 +25,7 @@ for (const token of ['normalizedTarget','nv0:lastScan','renderPaywall','recommen
 const plans=read('apps/public/plans/index.html');
 for (const token of ['상품·요금','상세 리포트','정기 점검','전체 상품 비교','무료 진단 시작']) add(`plans:${token}`, plans.includes(token));
 add('plans:not-stuck-loading', !plans.includes('불러오는 중입니다'));
-add('plans:static-fallback-cards', plans.includes('49,000원') && plans.includes('월 149,000원'));
+add('plans:static-fallback-cards', plans.includes('69,000원') && plans.includes('월 299,000원'));
 const docs=read('apps/public/documents/index.html');
 add('documents:minimal-fields', docs.includes('전화번호와 주소는 실제 고지에 필요한 경우에만 선택 입력'));
 add('documents:template-pack', docs.includes('템플릿 팩 구매'));

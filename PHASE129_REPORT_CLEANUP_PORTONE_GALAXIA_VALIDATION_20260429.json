@@ -1,0 +1,15 @@
+{
+  "phase": 129,
+  "title": "VERIDION report cleanup + infographic improvement + PortOne/Galaxia messaging",
+  "validated": true,
+  "checks": [
+    "apps/public/veridion-demo/app.js updated",
+    "apps/public/veridion-demo/app.css updated",
+    "apps/public/portal/app.js updated",
+    "apps/public/portal/app.css updated",
+    "apps/public/checkout/index.html updated",
+    "apps/public/checkout/app.js updated",
+    "apps/public/checkout/app.css updated",
+    "phase129 validation script added"
+  ]
+}
