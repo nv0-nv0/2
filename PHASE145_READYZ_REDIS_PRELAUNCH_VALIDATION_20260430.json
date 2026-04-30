@@ -1,0 +1,31 @@
+{
+  "phase": 145,
+  "name": "readyz redis prelaunch readiness fix",
+  "date": "2026-04-30",
+  "input_log_symptom": {
+    "server_started": true,
+    "prelaunch_validation_ok": true,
+    "readyz_status_before": 503,
+    "redis_timeout_log": "[redis-client-disabled-fallback] { message: 'Redis request timeout' }"
+  },
+  "files_changed": [
+    "server/index.mjs",
+    "PHASE145_READYZ_REDIS_PRELAUNCH_FIX_20260430_KO.md",
+    "PHASE145_READYZ_REDIS_PRELAUNCH_VALIDATION_20260430.json",
+    "README_PATCH_KO.txt"
+  ],
+  "behavior": {
+    "prelaunch_readyz_redis_mode": "prelaunch_advisory_no_ping",
+    "commercial_launch_readyz_redis_mode": "strict_ping",
+    "strict_override_env": "NV0_READYZ_REDIS_STRICT=true"
+  },
+  "preserved_fixes": [
+    "P143 PostgreSQL schema bootstrap",
+    "P144 healthz/readyz host guard exception",
+    "R2 primary storage configuration",
+    "prelaunch payment gate",
+    "Dockerfile postgresql-client",
+    "DB host postgres"
+  ],
+  "validation_note": "Static patch verification was performed in this environment. Full Docker/Coolify runtime validation must be confirmed after redeploy."
+}

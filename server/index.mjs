@@ -95,6 +95,7 @@ const PUBLIC_ASSET_CACHE_SECONDS = Number(process.env.NV0_PUBLIC_ASSET_CACHE_SEC
 const SERVER_HEADER = 'nv0';
 const ALLOWED_HOSTS = String(process.env.NV0_ALLOWED_HOSTS || 'nv0.kr,www.nv0.kr,localhost,127.0.0.1,0.0.0.0,::1').split(',').map(v => v.trim().toLowerCase()).filter(Boolean);
 const REQUEST_TIMEOUT_MS = Number(process.env.NV0_REQUEST_TIMEOUT_MS || 15_000);
+const READYZ_REDIS_STRICT = process.env.NV0_READYZ_REDIS_STRICT === 'true' || COMMERCIAL_LAUNCH_READY;
 function assertFiniteConfigNumber(name, value, { min = 0, max = Number.MAX_SAFE_INTEGER } = {}) {
 if (!Number.isFinite(value) || value < min || value > max) {
 throw new Error(`${name} must be a finite number between ${min} and ${max}.`);
@@ -2689,14 +2690,14 @@ await ensureRuntime();
 await readDb();
 if (!(PERSISTENCE_MODE === 'postgres_primary' && PLATFORM.commercial)) await fs.access(path.join(DATA_DIR, 'db.json'));
 if (!PLATFORM.commercial || STORAGE_MODE === 'local_fs') await fs.access(UPLOADS_DIR);
-const redisSessionReady = await sessionStore.ping();
-const redisRateLimitReady = await rateLimitStore.ping();
-const redisLockReady = await distributedLock.ping();
+const redisSessionReady = READYZ_REDIS_STRICT ? await sessionStore.ping() : Boolean(sessionStore.redisEnabled);
+const redisRateLimitReady = READYZ_REDIS_STRICT ? await rateLimitStore.ping() : Boolean(rateLimitStore.redisEnabled);
+const redisLockReady = READYZ_REDIS_STRICT ? await distributedLock.ping() : Boolean(distributedLock.redisEnabled);
 const probePath = path.join(REPORTS_DIR, `.readyz-${process.pid}.tmp`);
 await fs.writeFile(probePath, JSON.stringify({ checkedAt: nowIso() }));
 await fs.unlink(probePath);
-if (PLATFORM.commercial && (!redisSessionReady || !redisRateLimitReady || !redisLockReady)) throw new Error('Commercial readiness requires Redis-backed session, rate-limit, and lock providers.');
-return json(req, res, 200, { ok: true, ready: true, runtimeWritable: true, platformTarget: PLATFORM.target, deploymentStage: DEPLOYMENT_STAGE, commercialLaunchReady: COMMERCIAL_LAUNCH_READY, prelaunchMode: PRELAUNCH_MODE, persistenceMode: PERSISTENCE_MODE, storageMode: STORAGE_MODE, turnstileEnabled: ENABLE_TURNSTILE, redis: { sessionStore: redisSessionReady, rateLimitStore: redisRateLimitReady, lockProvider: redisLockReady }, paymentProvider: PAYMENT_PROVIDER === 'portone_v2' ? PORTONE_CLIENT.configSummary() : { mode: PAYMENT_PROVIDER }, secureRecordStore: persistence.secureRecordStore || null });
+if (READYZ_REDIS_STRICT && (!redisSessionReady || !redisRateLimitReady || !redisLockReady)) throw new Error("Strict readiness requires Redis-backed session, rate-limit, and lock providers.");
+return json(req, res, 200, { ok: true, ready: true, runtimeWritable: true, platformTarget: PLATFORM.target, deploymentStage: DEPLOYMENT_STAGE, commercialLaunchReady: COMMERCIAL_LAUNCH_READY, prelaunchMode: PRELAUNCH_MODE, persistenceMode: PERSISTENCE_MODE, storageMode: STORAGE_MODE, turnstileEnabled: ENABLE_TURNSTILE, redis: { readinessMode: READYZ_REDIS_STRICT ? "strict_ping" : "prelaunch_advisory_no_ping", sessionStore: redisSessionReady, rateLimitStore: redisRateLimitReady, lockProvider: redisLockReady }, paymentProvider: PAYMENT_PROVIDER === "portone_v2" ? PORTONE_CLIENT.configSummary() : { mode: PAYMENT_PROVIDER }, secureRecordStore: persistence.secureRecordStore || null });
 } catch (error) {
 return json(req, res, 503, { ok: false, ready: false, runtimeWritable: false, error: error.message });
 }
