@@ -93,7 +93,7 @@ const ADMIN_IP_ALLOWLIST = String(process.env.NV0_ADMIN_IP_ALLOWLIST || '').spli
 const PUBLIC_CACHE_SECONDS = Number(process.env.NV0_PUBLIC_CACHE_SECONDS || 0);
 const PUBLIC_ASSET_CACHE_SECONDS = Number(process.env.NV0_PUBLIC_ASSET_CACHE_SECONDS || 0);
 const SERVER_HEADER = 'nv0';
-const ALLOWED_HOSTS = String(process.env.NV0_ALLOWED_HOSTS || 'nv0.kr,www.nv0.kr,localhost,127.0.0.1').split(',').map(v => v.trim().toLowerCase()).filter(Boolean);
+const ALLOWED_HOSTS = String(process.env.NV0_ALLOWED_HOSTS || 'nv0.kr,www.nv0.kr,localhost,127.0.0.1,0.0.0.0,::1').split(',').map(v => v.trim().toLowerCase()).filter(Boolean);
 const REQUEST_TIMEOUT_MS = Number(process.env.NV0_REQUEST_TIMEOUT_MS || 15_000);
 function assertFiniteConfigNumber(name, value, { min = 0, max = Number.MAX_SAFE_INTEGER } = {}) {
 if (!Number.isFinite(value) || value < min || value > max) {
@@ -525,14 +525,28 @@ if (value) return value;
 }
 return req.socket.remoteAddress || 'unknown';
 }
+function requestPathname(req) {
+try {
+return new URL(req.url || '/', 'http://' + (req.headers.host || 'localhost')).pathname;
+} catch {
+return String(req.url || '/').split('?')[0] || '/';
+}
+}
+function isHealthcheckPath(req) {
+const pathname = requestPathname(req);
+return pathname === '/healthz' || pathname === '/readyz';
+}
 function requestHost(req) {
-return String(req.headers.host || 'localhost').split(':')[0].trim().toLowerCase();
+const rawHost = String(req.headers.host || 'localhost').trim().toLowerCase();
+if (rawHost.startsWith('[')) return rawHost.slice(1).split(']')[0];
+return rawHost.split(':')[0];
 }
 function isAllowedHost(req) {
+if (isHealthcheckPath(req)) return true;
 const host = requestHost(req);
 if (!host) return false;
 if (ALLOWED_HOSTS.includes(host)) return true;
-if (NODE_ENV !== 'production' && ['localhost', '127.0.0.1'].includes(host)) return true;
+if (NODE_ENV !== 'production' && ['localhost', '127.0.0.1', '0.0.0.0', '::1'].includes(host)) return true;
 return false;
 }
 function requestUrlFrom(req) {
