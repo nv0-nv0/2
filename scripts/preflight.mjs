@@ -4,6 +4,9 @@ const env = process.env;
 const errors = [];
 const warnings = [];
 const commercial = String(env.NV0_PLATFORM_TARGET || '').trim() === 'commercial';
+const deploymentStage = String(env.NV0_DEPLOYMENT_STAGE || (commercial ? 'prelaunch' : 'mvp')).trim().toLowerCase();
+const commercialLaunchReady = env.NV0_COMMERCIAL_LAUNCH_READY === 'true' || deploymentStage === 'commercial_launch';
+const prelaunch = commercial && !commercialLaunchReady;
 
 function placeholder(value) {
   const text = String(value || '').trim().toLowerCase();
@@ -36,19 +39,21 @@ if (commercial || env.NODE_ENV === 'production') {
     'NV0_STORAGE_MODE',
     'NV0_SCAN_PROVIDER',
     'NV0_SCAN_PROVIDER_URL',
-    'NV0_PAYMENT_PROVIDER',
-    'NV0_PORTONE_API_SECRET',
-    'NV0_PORTONE_STORE_ID',
-    'NV0_PORTONE_CHANNEL_KEY',
-    'NV0_PORTONE_WEBHOOK_SECRET'
+    'NV0_PAYMENT_PROVIDER'
   ]) finalized(key);
+  if (commercialLaunchReady) {
+    for (const key of ['NV0_PORTONE_API_SECRET','NV0_PORTONE_STORE_ID','NV0_PORTONE_CHANNEL_KEY','NV0_PORTONE_WEBHOOK_SECRET']) finalized(key);
+  }
   if (env.NV0_ADMIN_KEY) errors.push('NV0_ADMIN_KEY must not be used for commercial launch');
   if (env.NV0_ADMIN_AUTH_MODE !== 'account_rbac') errors.push('NV0_ADMIN_AUTH_MODE must be account_rbac');
   if (env.NV0_PERSISTENCE_MODE !== 'postgres_primary') errors.push('NV0_PERSISTENCE_MODE must be postgres_primary');
   if (env.NV0_SESSION_STORE !== 'redis' || env.NV0_RATE_LIMIT_STORE !== 'redis' || env.NV0_LOCK_PROVIDER !== 'redis') errors.push('Redis-backed session, rate limit, and lock are required');
-  if (env.NV0_PAYMENT_PROVIDER !== 'portone_v2') errors.push('NV0_PAYMENT_PROVIDER must be portone_v2');
+  if (commercialLaunchReady && env.NV0_PAYMENT_PROVIDER !== 'portone_v2') errors.push('NV0_PAYMENT_PROVIDER must be portone_v2');
+  if (prelaunch && env.NV0_PAYMENT_PROVIDER !== 'disabled') errors.push('NV0_PAYMENT_PROVIDER must be disabled when NV0_DEPLOYMENT_STAGE=prelaunch');
   if (env.NV0_SCAN_PROVIDER !== 'external_http') errors.push('NV0_SCAN_PROVIDER must be external_http');
-  for (const key of ['NV0_PUBLIC_BASE_URL','NV0_SUPPORT_EMAIL','NV0_MAIL_ORDER_REGISTRATION_NUMBER','NV0_HOSTING_PROVIDER','NV0_CUSTOMER_SERVICE_PHONE','NV0_PRIVACY_OFFICER_EMAIL','NV0_SMTP_URL','NV0_ADMIN_IP_ALLOWLIST']) finalized(key);
+  const publicKeys = ['NV0_PUBLIC_BASE_URL','NV0_SUPPORT_EMAIL','NV0_HOSTING_PROVIDER','NV0_CUSTOMER_SERVICE_PHONE','NV0_PRIVACY_OFFICER_EMAIL','NV0_SMTP_URL','NV0_ADMIN_IP_ALLOWLIST'];
+  if (commercialLaunchReady) publicKeys.push('NV0_MAIL_ORDER_REGISTRATION_NUMBER');
+  for (const key of publicKeys) finalized(key);
 } else {
   warnings.push('preflight running in non-commercial mode');
 }
@@ -63,7 +68,7 @@ if (String(env.NV0_TRUST_PROXY_HEADERS) !== 'true') {
 if (!fs.existsSync('./server/index.mjs')) errors.push('server/index.mjs not found');
 
 if (errors.length) {
-  console.error(JSON.stringify({ ok: false, commercial, errors, warnings }, null, 2));
+  console.error(JSON.stringify({ ok: false, commercial, deploymentStage, commercialLaunchReady, prelaunch, errors, warnings }, null, 2));
   process.exit(1);
 }
-console.log(JSON.stringify({ ok: true, commercial, errors, warnings }, null, 2));
+console.log(JSON.stringify({ ok: true, commercial, deploymentStage, commercialLaunchReady, prelaunch, errors, warnings }, null, 2));

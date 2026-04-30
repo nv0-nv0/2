@@ -14,7 +14,6 @@ const criticalRequired = [
   'NV0_DATABASE_URL',
   'NV0_BOOTSTRAP_ADMIN_PASSWORD',
   'NV0_ADMIN_IP_ALLOWLIST',
-  'NV0_MAIL_ORDER_REGISTRATION_NUMBER',
   'NV0_TURNSTILE_SITE_KEY',
   'NV0_TURNSTILE_SECRET',
   'NV0_S3_ENDPOINT',
@@ -22,13 +21,10 @@ const criticalRequired = [
   'NV0_S3_ACCESS_KEY_ID',
   'NV0_S3_SECRET_ACCESS_KEY',
   'NV0_SCAN_PROVIDER_URL',
-  'NV0_PORTONE_API_SECRET',
-  'NV0_PORTONE_STORE_ID',
-  'NV0_PORTONE_CHANNEL_KEY',
-  'NV0_PORTONE_WEBHOOK_SECRET',
   'NV0_SMTP_URL'
 ];
 
+const optionalPrelaunchKeys = ['NV0_MAIL_ORDER_REGISTRATION_NUMBER','NV0_PORTONE_API_SECRET','NV0_PORTONE_STORE_ID','NV0_PORTONE_CHANNEL_KEY','NV0_PORTONE_WEBHOOK_SECRET'];
 const forbiddenInCoolifyCompose = [
   /env_file\s*:/,
   /NV0_PAYMENT_PROVIDER\s*[:=]\s*demo/,
@@ -67,8 +63,8 @@ const bulkRaw = await fs.readFile(path.join(ROOT, bulkFile), 'utf8');
 const bulk = parseBulkKeys(bulkRaw);
 if (bulk.duplicates.length) errors.push({ file: bulkFile, error: `duplicate keys: ${bulk.duplicates.join(', ')}` });
 
-for (const key of criticalRequired) {
-  if (!bulk.seen.has(key)) errors.push({ file: bulkFile, error: `missing critical key: ${key}` });
+for (const key of [...criticalRequired, ...optionalPrelaunchKeys]) {
+  if (!bulk.seen.has(key)) errors.push({ file: bulkFile, error: `missing key: ${key}` });
 }
 
 const composeReports = [];
@@ -81,6 +77,9 @@ for (const rel of composeFiles) {
   for (const key of criticalRequired) {
     if (!vars.has(key)) errors.push({ file: rel, error: `critical key is not UI-detectable through \${${key}}` });
     if (!raw.includes(`\${${key}:?`)) errors.push({ file: rel, error: `critical key is not marked required with :? guard: ${key}` });
+  }
+  for (const key of optionalPrelaunchKeys) {
+    if (!vars.has(key)) errors.push({ file: rel, error: `prelaunch optional key is not UI-detectable through \${${key}}` });
   }
   for (const key of bulk.keys) {
     if (!vars.has(key)) errors.push({ file: rel, error: `bulk env key is not referenced in compose: ${key}` });

@@ -46,6 +46,9 @@ const PORT = Number(process.env.PORT || 3210);
 const HOST = String(process.env.HOST || process.env.NV0_HOST || '0.0.0.0');
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const PLATFORM = createPlatformProfile(process.env);
+const DEPLOYMENT_STAGE = String(process.env.NV0_DEPLOYMENT_STAGE || (PLATFORM.commercial ? 'prelaunch' : 'mvp')).trim().toLowerCase();
+const COMMERCIAL_LAUNCH_READY = process.env.NV0_COMMERCIAL_LAUNCH_READY === 'true' || DEPLOYMENT_STAGE === 'commercial_launch';
+const PRELAUNCH_MODE = PLATFORM.commercial && !COMMERCIAL_LAUNCH_READY;
 const TRUST_PROXY_HEADERS = process.env.NV0_TRUST_PROXY_HEADERS === 'true';
 const ADMIN_KEY = process.env.NV0_ADMIN_KEY || ''; // legacy MVP-only shared key
 const SESSION_TTL_MS = Number(process.env.NV0_ADMIN_SESSION_TTL_MS || 1000 * 60 * 60);
@@ -70,7 +73,7 @@ const SCAN_PROVIDER_URL = process.env.NV0_SCAN_PROVIDER_URL || '';
 const SCAN_PROVIDER_TOKEN = process.env.NV0_SCAN_PROVIDER_TOKEN || '';
 const SCAN_PROVIDER_FALLBACK = process.env.NV0_SCAN_PROVIDER_FALLBACK !== 'false';
 const TARGET_FETCH_ENABLED = process.env.NV0_TARGET_FETCH_ENABLED !== 'false';
-const PAYMENT_PROVIDER = process.env.NV0_PAYMENT_PROVIDER || (PLATFORM.commercial ? 'portone_v2' : 'demo');
+const PAYMENT_PROVIDER = process.env.NV0_PAYMENT_PROVIDER || (PRELAUNCH_MODE ? 'disabled' : (PLATFORM.commercial ? 'portone_v2' : 'demo'));
 const PAYMENT_PROVIDER_URL = process.env.NV0_PAYMENT_PROVIDER_URL || '';
 const PAYMENT_PROVIDER_TOKEN = process.env.NV0_PAYMENT_PROVIDER_TOKEN || '';
 const PORTONE_CLIENT = createPortOneV2Client(process.env);
@@ -235,16 +238,19 @@ if (process.env.NV0_SESSION_STORE !== 'redis') throw new Error('Commercial launc
 if (process.env.NV0_RATE_LIMIT_STORE !== 'redis') throw new Error('Commercial launch requires NV0_RATE_LIMIT_STORE=redis.');
 if (process.env.NV0_LOCK_PROVIDER !== 'redis') throw new Error('Commercial launch requires NV0_LOCK_PROVIDER=redis.');
 if (!String(process.env.NV0_REDIS_URL || '').trim()) throw new Error('Commercial launch requires NV0_REDIS_URL.');
-if (PAYMENT_PROVIDER !== 'portone_v2') throw new Error('Commercial launch requires NV0_PAYMENT_PROVIDER=portone_v2.');
+if (COMMERCIAL_LAUNCH_READY && PAYMENT_PROVIDER !== 'portone_v2') throw new Error('Commercial launch requires NV0_PAYMENT_PROVIDER=portone_v2.');
+if (PRELAUNCH_MODE && PAYMENT_PROVIDER === 'portone_v2') throw new Error('Prelaunch mode must not enable PortOne payment without NV0_COMMERCIAL_LAUNCH_READY=true.');
 if (SCAN_PROVIDER !== 'external_http') throw new Error('Commercial launch requires NV0_SCAN_PROVIDER=external_http.');
 if (!SCAN_PROVIDER_URL) throw new Error('Commercial launch requires NV0_SCAN_PROVIDER_URL.');
 if (!['s3','s3_compatible','object_storage'].includes(STORAGE_MODE)) throw new Error('Commercial launch requires object storage mode, not local_fs.');
 for (const key of ['NV0_S3_ENDPOINT','NV0_S3_BUCKET','NV0_S3_ACCESS_KEY_ID','NV0_S3_SECRET_ACCESS_KEY']) {
 if (!String(process.env[key] || '').trim()) throw new Error('Commercial launch requires object storage credentials.');
 }
-for (const key of ['NV0_PUBLIC_BASE_URL','NV0_SUPPORT_EMAIL','NV0_MAIL_ORDER_REGISTRATION_NUMBER','NV0_HOSTING_PROVIDER','NV0_CUSTOMER_SERVICE_PHONE','NV0_PRIVACY_OFFICER_EMAIL','NV0_SMTP_URL','NV0_ADMIN_IP_ALLOWLIST']) {
+const commercialRequiredKeys = ['NV0_PUBLIC_BASE_URL','NV0_SUPPORT_EMAIL','NV0_HOSTING_PROVIDER','NV0_CUSTOMER_SERVICE_PHONE','NV0_PRIVACY_OFFICER_EMAIL','NV0_SMTP_URL','NV0_ADMIN_IP_ALLOWLIST'];
+if (COMMERCIAL_LAUNCH_READY) commercialRequiredKeys.push('NV0_MAIL_ORDER_REGISTRATION_NUMBER');
+for (const key of commercialRequiredKeys) {
 const raw = String(process.env[key] || '').trim();
-if (!raw || isPlaceholderConfigValue(raw)) throw new Error('Commercial launch requires real ' + key + '.');
+if (!raw || isPlaceholderConfigValue(raw)) throw new Error('Commercial/prelaunch deployment requires real ' + key + '.');
 }
 if (!/^https:\/\//.test(String(process.env.NV0_PUBLIC_BASE_URL || ''))) throw new Error('Commercial launch requires HTTPS NV0_PUBLIC_BASE_URL.');
 if (!isValidEmail(BUSINESS_PROFILE.contactEmail)) throw new Error('Commercial launch requires valid NV0_SUPPORT_EMAIL.');
@@ -2164,7 +2170,10 @@ return Date.now() - paidAt <= REFUND_REQUEST_WINDOW_DAYS * 24 * 60 * 60 * 1000;
 }
 function buildReleaseReadiness(db) {
 const requiredEnv = ['NV0_PUBLIC_BASE_URL','NV0_SUPPORT_EMAIL'];
-if (PLATFORM.commercial) requiredEnv.push('NV0_DATABASE_URL','NV0_REDIS_URL','NV0_PORTONE_STORE_ID','NV0_PORTONE_CHANNEL_KEY','NV0_PORTONE_API_SECRET','NV0_PORTONE_WEBHOOK_SECRET','NV0_TURNSTILE_SECRET','NV0_TURNSTILE_SITE_KEY','NV0_ADMIN_IP_ALLOWLIST','NV0_SMTP_URL');
+if (PLATFORM.commercial) {
+requiredEnv.push('NV0_DATABASE_URL','NV0_REDIS_URL','NV0_TURNSTILE_SECRET','NV0_TURNSTILE_SITE_KEY','NV0_ADMIN_IP_ALLOWLIST','NV0_SMTP_URL');
+if (COMMERCIAL_LAUNCH_READY) requiredEnv.push('NV0_PORTONE_STORE_ID','NV0_PORTONE_CHANNEL_KEY','NV0_PORTONE_API_SECRET','NV0_PORTONE_WEBHOOK_SECRET','NV0_MAIL_ORDER_REGISTRATION_NUMBER');
+}
 const missingEnv = requiredEnv.filter(name => !String(process.env[name] || '').trim());
 const placeholderEnv = PLATFORM.commercial ? requiredEnv.filter(name => isPlaceholderConfigValue(process.env[name])) : [];
 const counts = {
@@ -2180,9 +2189,9 @@ auditLogs: (db.auditLogs || []).length
 const gates = [
 { key: 'privacy_minimized', ok: true, label: '회원가입·결제 최소 개인정보 수집' },
 { key: 'consent_required', ok: true, label: '개인정보·이용약관·환불정책·디지털 산출물 제공 동의 필수' },
-{ key: 'mail_order_registration', ok: Boolean(BUSINESS_PROFILE.mailOrderRegistrationNumber), label: '통신판매업 신고번호 운영환경 입력' },
+{ key: 'mail_order_registration', ok: !COMMERCIAL_LAUNCH_READY || Boolean(BUSINESS_PROFILE.mailOrderRegistrationNumber), label: COMMERCIAL_LAUNCH_READY ? '통신판매업 신고번호 운영환경 입력' : '정식 결제 오픈 전 통신판매업 신고번호 검증 보류' },
 { key: 'secure_headers', ok: true, label: '보안 헤더 기본 적용' },
-{ key: 'payment_provider_configured', ok: PAYMENT_PROVIDER !== 'demo' || !PLATFORM.commercial, label: '상용 결제 제공자 사용' },
+{ key: 'payment_provider_configured', ok: PRELAUNCH_MODE ? PAYMENT_PROVIDER === 'disabled' : (PAYMENT_PROVIDER !== 'demo' || !PLATFORM.commercial), label: PRELAUNCH_MODE ? '정식 결제 오픈 전 결제 기능 비활성화' : '상용 결제 제공자 사용' },
 { key: 'webhook_signature_strict', ok: !PLATFORM.commercial || (PAYMENT_PROVIDER !== 'portone_v2') || (PORTONE_WEBHOOK_VERIFY_MODE === 'strict' && !!PORTONE_WEBHOOK_SECRET), label: '결제 웹훅 서명 엄격 검증' },
 { key: 'admin_ip_policy_reviewed', ok: ADMIN_IP_ALLOWLIST.length > 0 || !PLATFORM.commercial, label: '관리자 IP 제한 정책 설정' },
 { key: 'missing_env', ok: missingEnv.length === 0, label: '필수 운영 환경변수 설정', missing: missingEnv },
@@ -2193,7 +2202,7 @@ const gates = [
 { key: 'support_email', ok: isValidEmail(BUSINESS_PROFILE.contactEmail), label: '지원 이메일 유효성' },
 { key: 'operator_alert_email', ok: isValidEmail(OPERATOR_ALERT_EMAIL), label: '운영 알림 이메일 유효성' }
 ];
-return { phase: RELEASE_PHASE, target: PLATFORM.target, commercial: PLATFORM.commercial, paymentProvider: PAYMENT_PROVIDER, persistenceMode: PERSISTENCE_MODE, storageMode: STORAGE_MODE, secureRecordStore: persistence.secureRecordStore || null, dataRetentionDays: DATA_RETENTION_DAYS, refundRequestWindowDays: REFUND_REQUEST_WINDOW_DAYS, missingEnv, placeholderEnv, counts, gates, ready: gates.every(g => g.ok), checkedAt: nowIso() };
+return { phase: RELEASE_PHASE, target: PLATFORM.target, commercial: PLATFORM.commercial, deploymentStage: DEPLOYMENT_STAGE, commercialLaunchReady: COMMERCIAL_LAUNCH_READY, prelaunchMode: PRELAUNCH_MODE, paymentProvider: PAYMENT_PROVIDER, persistenceMode: PERSISTENCE_MODE, storageMode: STORAGE_MODE, secureRecordStore: persistence.secureRecordStore || null, dataRetentionDays: DATA_RETENTION_DAYS, refundRequestWindowDays: REFUND_REQUEST_WINDOW_DAYS, missingEnv, placeholderEnv, counts, gates, ready: gates.every(g => g.ok), checkedAt: nowIso() };
 }
 function isPlaceholderConfigValue(value) {
 const text = String(value || '').trim().toLowerCase();
@@ -2673,7 +2682,7 @@ const probePath = path.join(REPORTS_DIR, `.readyz-${process.pid}.tmp`);
 await fs.writeFile(probePath, JSON.stringify({ checkedAt: nowIso() }));
 await fs.unlink(probePath);
 if (PLATFORM.commercial && (!redisSessionReady || !redisRateLimitReady || !redisLockReady)) throw new Error('Commercial readiness requires Redis-backed session, rate-limit, and lock providers.');
-return json(req, res, 200, { ok: true, ready: true, runtimeWritable: true, platformTarget: PLATFORM.target, persistenceMode: PERSISTENCE_MODE, storageMode: STORAGE_MODE, turnstileEnabled: ENABLE_TURNSTILE, redis: { sessionStore: redisSessionReady, rateLimitStore: redisRateLimitReady, lockProvider: redisLockReady }, paymentProvider: PAYMENT_PROVIDER === 'portone_v2' ? PORTONE_CLIENT.configSummary() : { mode: PAYMENT_PROVIDER }, secureRecordStore: persistence.secureRecordStore || null });
+return json(req, res, 200, { ok: true, ready: true, runtimeWritable: true, platformTarget: PLATFORM.target, deploymentStage: DEPLOYMENT_STAGE, commercialLaunchReady: COMMERCIAL_LAUNCH_READY, prelaunchMode: PRELAUNCH_MODE, persistenceMode: PERSISTENCE_MODE, storageMode: STORAGE_MODE, turnstileEnabled: ENABLE_TURNSTILE, redis: { sessionStore: redisSessionReady, rateLimitStore: redisRateLimitReady, lockProvider: redisLockReady }, paymentProvider: PAYMENT_PROVIDER === 'portone_v2' ? PORTONE_CLIENT.configSummary() : { mode: PAYMENT_PROVIDER }, secureRecordStore: persistence.secureRecordStore || null });
 } catch (error) {
 return json(req, res, 503, { ok: false, ready: false, runtimeWritable: false, error: error.message });
 }
@@ -3034,6 +3043,9 @@ await writeDb(db);
 return json(req, res, 200, { ok: true, result: { ...result, siteId: site.id, guidanceId: guidance.id, autoFixJobsCount: autoFixJobs.length, savedToAccount: !!customerSession?.customer, ctaPublicationId: ctaPublication?.id || null, diagnosis: buildPublicDiagnosisPackage(result, { rulesVersion: RULES_VERSION, ctaIntervalMs: CTA_AUTOPUBLISH_INTERVAL_MS }) } });
 }
 if (pathname === '/api/public/checkout-session' && req.method === 'POST') {
+if (PRELAUNCH_MODE || PAYMENT_PROVIDER === 'disabled') {
+return json(req, res, 503, { ok: false, error: '결제 기능은 정식 오픈 준비 중입니다. 고객지원 이메일로 신청해 주세요.', stage: DEPLOYMENT_STAGE, supportEmail: BUSINESS_PROFILE.contactEmail });
+}
 const rate = await hitRateLimit('checkout-session', clientIp(req), { windowMs: PUBLIC_SCAN_WINDOW_MS, limit: Math.max(5, Math.floor(PUBLIC_SCAN_LIMIT / 2)) });
 if (rate.blocked) {
 return json(req, res, 429, { ok: false, error: '결제 세션 생성 요청이 너무 많습니다. 잠시 후 다시 시도하세요.' }, { 'retry-after': String(Math.ceil((rate.resetAt - Date.now()) / 1000)) });
@@ -3333,7 +3345,9 @@ backupRetentionCount: BACKUP_RETENTION_COUNT,
 auditLogRetentionCount: AUDIT_LOG_RETENTION_COUNT,
 storageMode: STORAGE_MODE,
 scanProvider: SCAN_PROVIDER,
-paymentProvider: PAYMENT_PROVIDER
+paymentProvider: PAYMENT_PROVIDER,
+deploymentStage: DEPLOYMENT_STAGE,
+commercialLaunchReady: COMMERCIAL_LAUNCH_READY
 },
 storage: { uploadsDir: UPLOADS_DIR, runtimeDir: RUNTIME_DIR, backupsDir: BACKUPS_DIR, reportsDir: REPORTS_DIR },
 integrations: {
@@ -3839,7 +3853,7 @@ await ensureBootstrapAdmin(db, process.env, uid, nowIso);
 await runCtaAutopublish('startup');
 await writeDb(db);
 server.listen(PORT, HOST, () => {
-console.log(`nv0 cleanroom server listening on http://${HOST}:${PORT} target=${PLATFORM.target} payment=${PAYMENT_PROVIDER}`);
+console.log(`nv0 cleanroom server listening on http://${HOST}:${PORT} target=${PLATFORM.target} stage=${DEPLOYMENT_STAGE} launchReady=${COMMERCIAL_LAUNCH_READY} payment=${PAYMENT_PROVIDER}`);
 });
 }).catch((error) => {
 console.error('server startup failed', error);

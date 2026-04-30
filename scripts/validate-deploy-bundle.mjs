@@ -42,7 +42,7 @@ assert(/HEALTHCHECK[\s\S]*\/healthz/.test(dockerfile), 'Dockerfile /healthz heal
 
 const rootCompose = await read('docker-compose.yml');
 for (const token of [
-  '${NV0_PLATFORM_TARGET', '${NV0_PERSISTENCE_MODE', '${NV0_SESSION_STORE', '${NV0_PAYMENT_PROVIDER',
+  '${NV0_PLATFORM_TARGET', '${NV0_DEPLOYMENT_STAGE', '${NV0_COMMERCIAL_LAUNCH_READY', '${NV0_PERSISTENCE_MODE', '${NV0_SESSION_STORE', '${NV0_PAYMENT_PROVIDER',
   '${NV0_S3_ENDPOINT:?', '${NV0_S3_REGION:-auto}', '${NV0_S3_FORCE_PATH_STYLE:-true}',
   'expose:', '/readyz', 'postgres:16-alpine', 'redis:7-alpine'
 ]) assert(rootCompose.includes(token), `root compose missing: ${token}`);
@@ -51,12 +51,12 @@ assert(!rootCompose.includes('minio/minio'), 'root Coolify compose must use R2 p
 
 const coolifyCompose = await read('deploy/docker-compose.coolify.yml');
 for (const token of [
-  '${NV0_PLATFORM_TARGET', '${NV0_PERSISTENCE_MODE', '${NV0_SESSION_STORE', '${NV0_PAYMENT_PROVIDER',
+  '${NV0_PLATFORM_TARGET', '${NV0_DEPLOYMENT_STAGE', '${NV0_COMMERCIAL_LAUNCH_READY', '${NV0_PERSISTENCE_MODE', '${NV0_SESSION_STORE', '${NV0_PAYMENT_PROVIDER',
   '${NV0_S3_ENDPOINT:?', '${NV0_S3_REGION:-auto}', '${NV0_S3_FORCE_PATH_STYLE:-true}',
   'expose:', '/readyz', 'postgres:16-alpine', 'redis:7-alpine'
 ]) assert(coolifyCompose.includes(token), `coolify compose missing: ${token}`);
 assert(!coolifyCompose.includes('env_file:'), 'coolify compose must not rely on env_file for UI detection');
-for (const token of ['${NV0_BOOTSTRAP_ADMIN_PASSWORD:?', '${NV0_PORTONE_API_SECRET:?', '${POSTGRES_PASSWORD:?', '${NV0_SMTP_URL:?']) {
+for (const token of ['${NV0_BOOTSTRAP_ADMIN_PASSWORD:?', '${POSTGRES_PASSWORD:?', '${NV0_SMTP_URL:?']) {
   assert(coolifyCompose.includes(token), `coolify compose missing required env guard: ${token}`);
 }
 
@@ -74,6 +74,8 @@ for (const token of ['minio/minio', 'minio/mc', 'mc mb --ignore-existing', 'NV0_
 const envBulk = await read('deploy/coolify.env.bulk.txt');
 for (const token of [
   'NV0_STORAGE_MODE=s3',
+  'NV0_DEPLOYMENT_STAGE=prelaunch',
+  'NV0_COMMERCIAL_LAUNCH_READY=false',
   'NV0_S3_ENDPOINT=https://R2_ACCOUNT_ID.r2.cloudflarestorage.com',
   'NV0_S3_BUCKET=nv0-production',
   'NV0_S3_REGION=auto',
