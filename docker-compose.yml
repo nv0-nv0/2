@@ -46,7 +46,7 @@ services:
       - NV0_TURNSTILE_SITE_KEY=${NV0_TURNSTILE_SITE_KEY:?set NV0_TURNSTILE_SITE_KEY in Coolify}
       - NV0_TURNSTILE_SECRET=${NV0_TURNSTILE_SECRET:?set NV0_TURNSTILE_SECRET in Coolify}
       - NV0_PERSISTENCE_MODE=${NV0_PERSISTENCE_MODE:-postgres_primary}
-      - NV0_DATABASE_URL=${NV0_DATABASE_URL:?set NV0_DATABASE_URL in Coolify}
+      - NV0_DATABASE_URL=postgres://nv0:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in Coolify}@postgres:5432/nv0
       - NV0_DB_COMPARE_MODE=${NV0_DB_COMPARE_MODE:-0}
       - NV0_REDIS_URL=${NV0_REDIS_URL:-redis://redis:6379/0}
       - NV0_REDIS_TIMEOUT_MS=${NV0_REDIS_TIMEOUT_MS:-1500}
@@ -111,8 +111,8 @@ services:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      - POSTGRES_DB=${POSTGRES_DB:-nv0}
-      - POSTGRES_USER=${POSTGRES_USER:-nv0}
+      - POSTGRES_DB=nv0
+      - POSTGRES_USER=nv0
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in Coolify}
     volumes:
       - nv0_postgres:/var/lib/postgresql/data

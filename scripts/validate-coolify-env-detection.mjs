@@ -11,7 +11,6 @@ const bulkFile = 'deploy/coolify.env.bulk.txt';
 
 const criticalRequired = [
   'POSTGRES_PASSWORD',
-  'NV0_DATABASE_URL',
   'NV0_BOOTSTRAP_ADMIN_PASSWORD',
   'NV0_ADMIN_IP_ALLOWLIST',
   'NV0_TURNSTILE_SITE_KEY',
@@ -77,6 +76,9 @@ for (const rel of composeFiles) {
   for (const key of criticalRequired) {
     if (!vars.has(key)) errors.push({ file: rel, error: `critical key is not UI-detectable through \${${key}}` });
     if (!raw.includes(`\${${key}:?`)) errors.push({ file: rel, error: `critical key is not marked required with :? guard: ${key}` });
+  }
+  if (!raw.includes('NV0_DATABASE_URL=postgres://nv0:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in Coolify}@postgres:5432/nv0')) {
+    errors.push({ file: rel, error: 'NV0_DATABASE_URL must be composed internally from postgres service and POSTGRES_PASSWORD' });
   }
   for (const key of optionalPrelaunchKeys) {
     if (!vars.has(key)) errors.push({ file: rel, error: `prelaunch optional key is not UI-detectable through \${${key}}` });

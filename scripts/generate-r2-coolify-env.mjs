@@ -1,7 +1,7 @@
 import crypto from 'node:crypto';
 
 function randBase64(bytes = 32) {
-  return crypto.randomBytes(bytes).toString('base64').replace(/[=\n\r]/g, '');
+  return crypto.randomBytes(bytes).toString('base64url');
 }
 function randHex(bytes = 32) {
   return crypto.randomBytes(bytes).toString('hex');
@@ -45,11 +45,10 @@ const lines = [
   'NV0_HOSTING_PROVIDER=Coolify/Contabo',
   'NV0_CUSTOMER_SERVICE_PHONE=이메일 전용 고객지원',
   'NV0_MAIL_ORDER_REGISTRATION_NUMBER=',
-  'POSTGRES_DB=nv0',
-  'POSTGRES_USER=nv0',
+  '# PostgreSQL is internal to docker-compose. Do not set NV0_DATABASE_URL manually in Coolify.',
+  '# Compose sets NV0_DATABASE_URL to postgres://nv0:${POSTGRES_PASSWORD}@postgres:5432/nv0.',
   `POSTGRES_PASSWORD=${postgresPassword}`,
   'NV0_PERSISTENCE_MODE=postgres_primary',
-  `NV0_DATABASE_URL=postgres://nv0:${postgresPassword}@postgres:5432/nv0`,
   'NV0_DB_COMPARE_MODE=0',
   'NV0_REDIS_URL=redis://redis:6379/0',
   'NV0_REDIS_TIMEOUT_MS=1500',
