@@ -15,7 +15,7 @@ COPY docs ./docs
 COPY scripts ./scripts
 COPY deploy/entrypoint.sh ./deploy/entrypoint.sh
 
-RUN apk add --no-cache curl \
+RUN apk add --no-cache curl postgresql-client \
   && mkdir -p /app/runtime/data /app/runtime/uploads /app/runtime/backups /app/runtime/reports \
   && chown -R node:node /app \
   && chmod +x /app/deploy/entrypoint.sh
