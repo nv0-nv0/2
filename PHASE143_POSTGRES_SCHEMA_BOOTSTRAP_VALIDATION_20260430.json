@@ -1,0 +1,75 @@
+{
+  "ok": true,
+  "phase": 143,
+  "date": "2026-04-30",
+  "target": "nv0.kr Coolify PostgreSQL schema bootstrap fix",
+  "modifiedFiles": [
+    "server/infrastructure/persistence/postgres-bridge.mjs",
+    "README_PATCH_KO.txt",
+    "PHASE143_POSTGRES_SCHEMA_BOOTSTRAP_FIX_20260430_KO.md",
+    "PHASE143_POSTGRES_SCHEMA_BOOTSTRAP_VALIDATION_20260430.json"
+  ],
+  "schemaBootstrap": {
+    "implemented": true,
+    "dedupePromise": "schemaBootstrapPromise",
+    "entrypoint": "ensurePostgresSchema(databaseUrl, logger)",
+    "sqlExecutionPath": "execPsql() calls ensurePostgresSchema() before runPsql()",
+    "tables": [
+      "settings",
+      "orders",
+      "publications",
+      "library_items",
+      "scans",
+      "audit_logs",
+      "admin_sessions",
+      "state_snapshots",
+      "payment_events",
+      "webhook_inbox"
+    ]
+  },
+  "preserved": {
+    "storageMode": "s3",
+    "r2Primary": true,
+    "prelaunchMode": true,
+    "paymentProvider": "disabled",
+    "fakePortOneValuesAdded": false,
+    "fakeMailOrderRegistrationNumberAdded": false,
+    "databaseHost": "postgres",
+    "dockerfilePostgresqlClient": true
+  },
+  "checks": [
+    {
+      "command": "node --check server/infrastructure/persistence/postgres-bridge.mjs",
+      "status": "pass"
+    },
+    {
+      "command": "node --check server/index.mjs",
+      "status": "pass"
+    },
+    {
+      "command": "node --check scripts/preflight.mjs",
+      "status": "pass"
+    },
+    {
+      "command": "node --check scripts/validate-deploy-bundle.mjs",
+      "status": "pass"
+    },
+    {
+      "command": "node scripts/validate-deploy-bundle.mjs",
+      "status": "pass",
+      "output": "Deploy bundle validation passed"
+    },
+    {
+      "command": "python -m zipfile -t nv0_patch_only_schema_bootstrap_20260430.zip",
+      "status": "pass"
+    },
+    {
+      "command": "python -m zipfile -t nv0p143_postgres_schema_bootstrap_fix_20260430.zip",
+      "status": "pass"
+    }
+  ],
+  "dockerComposeRuntimeCheck": {
+    "performed": false,
+    "reason": "Docker daemon based compose-up runtime verification is not available in this artifact generation environment."
+  }
+}
