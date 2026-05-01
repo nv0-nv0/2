@@ -8,7 +8,7 @@ import { PAYMENT_SESSION_TRANSITIONS, ORDER_STATUS_TRANSITIONS, canTransition } 
 import { handleAccountRescan, customerRecentScans } from './core/account-rescan.mjs';
 import { buildPublicDiagnosisPackage } from './core/diagnosis-report-package.mjs';
 import { buildPremiumPurchasedAsset, buildPremiumAssetPdfLines } from './core/premium-asset-builder.mjs';
-import { buildCtaBoardArticle, chooseCtaVariant } from './core/cta-publication.mjs';
+import { buildCtaBoardArticle, chooseCtaVariant, ctaTopicPacks, ctaCombinationStats } from './core/cta-publication.mjs';
 import { authenticateAdminAccount, ensureAdminCollections, ensureBootstrapAdmin, getAdminPermissions, getAdminRoles } from './core/admin-auth.mjs';
 import { hashPassword, verifyPassword } from './core/passwords.mjs';
 import { createPersistenceManager } from './infrastructure/persistence/persistence.mjs';
@@ -736,8 +736,21 @@ return [
 }
 function buildSitemapXml() {
 const base = BUSINESS_PROFILE.domain.replace(/\/$/, '');
-const paths = ['/', '/products', '/products/veridion/demo', '/documents', '/guides', '/solutions', '/service', '/plans', '/board', '/board/post', '/guides', '/resources', '/cases', '/terms', '/privacy', '/refund', '/business-info', '/auth'];
-const urls = paths.map(item => `<url><loc>${base}${item}</loc><changefreq>weekly</changefreq><priority>${item === '/' ? '1.0' : '0.7'}</priority></url>`).join('');
+const entries = [
+{ path: '/', priority: '1.0', changefreq: 'weekly' },
+{ path: '/products/veridion/demo', priority: '0.95', changefreq: 'weekly' },
+{ path: '/plans', priority: '0.9', changefreq: 'weekly' },
+{ path: '/board', priority: '0.85', changefreq: 'daily' },
+{ path: '/documents', priority: '0.82', changefreq: 'weekly' },
+{ path: '/guides', priority: '0.75', changefreq: 'weekly' },
+{ path: '/resources', priority: '0.72', changefreq: 'weekly' },
+{ path: '/solutions', priority: '0.72', changefreq: 'weekly' },
+{ path: '/terms', priority: '0.45', changefreq: 'monthly' },
+{ path: '/privacy', priority: '0.45', changefreq: 'monthly' },
+{ path: '/refund', priority: '0.45', changefreq: 'monthly' },
+{ path: '/business-info', priority: '0.55', changefreq: 'monthly' }
+];
+const urls = entries.map(item => `<url><loc>${base}${item.path}</loc><changefreq>${item.changefreq}</changefreq><priority>${item.priority}</priority></url>`).join('');
 return `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}</urlset>`;
 }
 function createPasswordResetToken(db, customer, req) {
@@ -887,55 +900,76 @@ return String(value ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;
 function routeMeta(urlPath) {
 const base = BUSINESS_PROFILE.domain.replace(/\/$/, '');
 const metas = {
-'/': ['웹사이트 필수 안내 무료 진단 | NV0', '쇼핑몰과 랜딩페이지의 필수 고지, 개인정보, 환불 안내, 광고 문구를 빠르게 점검하고 개선 순서를 제안합니다.'],
-'/products/veridion/demo': ['NV0 무료 진단 | NV0', '무료 진단으로 웹사이트 안내 문구와 정책 고지 위험을 먼저 확인하세요.'],
-'/plans': ['상품·요금 | NV0', '무료 진단 이후 상세 리포트, 수정안, 정책 템플릿, 구독 점검 상품을 비교하세요.'],
-'/documents': ['정책 문서 | NV0', '개인정보처리방침, 이용약관, 환불 정책 문서 초안을 빠르게 정리합니다.'],
-'/policy-documents': ['정책 문서 | NV0', '개인정보처리방침, 이용약관, 환불 정책 문서 초안을 빠르게 정리합니다.'],
-'/guides': ['운영 가이드 | NV0', '쇼핑몰 신뢰도, 환불 정책, 구매 CTA, 게시판 자동 발행 활용법을 정리한 운영 가이드입니다.'],
-'/resources': ['운영 가이드 | NV0', '쇼핑몰 신뢰도, 환불 정책, 구매 CTA, 게시판 자동 발행 활용법을 정리한 운영 가이드입니다.'],
-'/solutions': ['솔루션 | NV0', '웹사이트 안내 고지, 정책 문서, 결제 전환 흐름을 점검하는 솔루션입니다.'],
-'/board': ['게시판 | NV0', '전자상거래 사이트 운영자가 참고할 수 있는 필수 고지와 정책 점검 사례를 제공합니다.'],
-'/business-info': ['사업자 정보 | NV0', 'NV0 서비스 운영자의 사업자 고지와 지원 정보를 확인하세요.'],
-'/terms': ['이용약관 | NV0', 'NV0 서비스 이용약관입니다.'],
-'/privacy': ['개인정보처리방침 | NV0', 'NV0 서비스 개인정보 처리 기준입니다.'],
-'/refund': ['환불·배송·교환 정책 | NV0', '디지털 산출물 제공과 환불 기준을 안내합니다.']
+'/': { title: '웹사이트 필수 안내 무료 진단 | NV0', description: '쇼핑몰과 랜딩페이지의 사업자 정보, 개인정보처리방침, 환불 안내, 광고 문구, CTA 흐름을 무료로 점검하고 개선 순서를 확인하세요.', keywords: ['웹사이트 무료 진단','쇼핑몰 신뢰도 점검','환불 정책 점검','개인정보처리방침 점검','CTA 개선'] },
+'/products/veridion/demo': { title: 'NV0 무료 진단 | 웹사이트 신뢰·전환 공백 점검', description: 'URL 하나로 결제 전 신뢰 공백, 정책 안내 누락, CTA 전환 흐름을 즉시 요약 진단합니다. 전체 결과와 저장은 로그인 후 이용합니다.', keywords: ['무료 사이트 진단','결제 전 이탈 점검','랜딩페이지 점검','신뢰 공백 진단'] },
+'/plans': { title: '상품·요금 | NV0 리포트·FixPack·Auto 비교', description: '무료 진단 이후 상세 리포트, 수정 문구안, 정책 템플릿, Auto 정기 점검 상품을 상황별로 비교하세요.', keywords: ['사이트 진단 요금','FixPack','Auto 정기 점검','정책 문서 템플릿'] },
+'/documents': { title: '정책 문서 초안 | 개인정보·이용약관·환불 안내 생성', description: '개인정보처리방침, 이용약관, 환불·배송·교환 정책, 사업자 고지, CS 안내문 초안을 최소 입력으로 생성합니다.', keywords: ['정책 문서 생성','개인정보처리방침 초안','이용약관 초안','환불 정책 초안'] },
+'/policy-documents': { title: '정책 문서 초안 | 개인정보·이용약관·환불 안내 생성', description: '개인정보처리방침, 이용약관, 환불·배송·교환 정책, 사업자 고지, CS 안내문 초안을 최소 입력으로 생성합니다.', keywords: ['정책 문서 생성','개인정보처리방침 초안','이용약관 초안','환불 정책 초안'] },
+'/guides': { title: '운영 가이드 | 쇼핑몰 신뢰도·CTA·정책 점검', description: '쇼핑몰 신뢰도, 환불 정책, 구매 CTA, 게시판 자동 발행, 반복 재진단 활용법을 정리한 운영 가이드입니다.' },
+'/resources': { title: '운영 가이드 | 쇼핑몰 신뢰도·CTA·정책 점검', description: '쇼핑몰 신뢰도, 환불 정책, 구매 CTA, 게시판 자동 발행, 반복 재진단 활용법을 정리한 운영 가이드입니다.' },
+'/solutions': { title: '솔루션 | 웹사이트 안내 고지·정책 문서·전환 흐름 점검', description: '웹사이트 필수 고지, 정책 문서, 결제 전환 흐름, 고객지원 안내를 한 번에 점검하는 NV0 솔루션입니다.' },
+'/board': { title: 'CTA 게시판 | 자동 발행 콘텐츠·SEO 운영 파이프라인', description: '진단 결과를 FAQ, 체크리스트, 사례, 정책 안내, 내부링크형 콘텐츠로 자동 발행해 재유입과 상품 비교 흐름을 강화합니다.' },
+'/business-info': { title: '사업자 정보·고객지원 | NV0', description: 'NV0 서비스 운영자의 사업자 정보, 고객지원 이메일, 서비스 범위, 법률 자문 아님 고지를 확인하세요.' },
+'/terms': { title: '이용약관 | NV0', description: 'NV0 서비스 이용약관과 서비스 범위 기준입니다.' },
+'/privacy': { title: '개인정보처리방침 | NV0', description: 'NV0 서비스의 개인정보 처리 기준과 입력 정보 최소화 원칙입니다.' },
+'/refund': { title: '환불·배송·교환 정책 | NV0', description: '디지털 산출물 제공 시점, 환불 요청 기준, 배송·교환 비대상 안내를 확인하세요.' },
+'/auth': { title: '로그인·회원가입 | NV0', description: '진단 결과 저장, 전체 결과 확인, 내 사이트 재진단을 위한 로그인·회원가입 페이지입니다.' },
+'/portal': { title: '내 사이트 관리 | NV0', description: '저장한 사이트의 진단 결과, 재검사, 개선 이력, 게시판 발행 상태를 확인합니다.' },
+'/checkout': { title: '신청·결제 확인 | NV0', description: '상품 신청 전 제공 범위, 디지털 산출물 환불 제한, 정책 동의 항목을 확인합니다.' }
 };
-const [title, description] = metas[urlPath] || metas['/'];
-return { title, description, canonical: `${base}${urlPath === '/' ? '/' : urlPath}` };
+const meta = metas[urlPath] || metas['/'];
+return { ...meta, canonical: `${base}${urlPath === '/' ? '/' : urlPath}`, locale: 'ko_KR' };
+}
+function stripManagedSeoTags(body) {
+return body
+.replace(/<meta\s+name=["']description["'][^>]*>/gi, '')
+.replace(/<meta\s+name=["']robots["'][^>]*>/gi, '')
+.replace(/<meta\s+name=["']keywords["'][^>]*>/gi, '')
+.replace(/<meta\s+name=["']theme-color["'][^>]*>/gi, '')
+.replace(/<link\s+rel=["']canonical["'][^>]*>/gi, '')
+.replace(/<meta\s+property=["']og:[^"']+["'][^>]*>/gi, '')
+.replace(/<meta\s+name=["']twitter:[^"']+["'][^>]*>/gi, '');
 }
 function injectSeoMeta(body, urlPath) {
 const meta = routeMeta(urlPath);
 const robots = urlPath.startsWith('/admin') || ['/auth','/portal','/checkout'].includes(urlPath) ? 'noindex,nofollow' : 'index,follow';
+const keywords = (meta.keywords || []).join(', ');
 const tags = [
 `<meta name="description" content="${escapeHtml(meta.description)}">`,
+keywords ? `<meta name="keywords" content="${escapeHtml(keywords)}">` : '',
 `<meta name="robots" content="${robots}">`,
 `<link rel="canonical" href="${escapeHtml(meta.canonical)}">`,
+`<meta property="og:locale" content="${escapeHtml(meta.locale)}">`,
 `<meta property="og:type" content="website">`,
+`<meta property="og:site_name" content="NV0">`,
 `<meta property="og:title" content="${escapeHtml(meta.title)}">`,
 `<meta property="og:description" content="${escapeHtml(meta.description)}">`,
 `<meta property="og:url" content="${escapeHtml(meta.canonical)}">`,
-`<meta name="twitter:card" content="summary">`
-].join('');
-let out = body.replace(/<title>[^<]*<\/title>/, `<title>${escapeHtml(meta.title)}</title>`);
-if (!out.includes('name="description"')) out = out.replace('</head>', `${tags}</head>`);
+`<meta name="twitter:card" content="summary">`,
+`<meta name="twitter:title" content="${escapeHtml(meta.title)}">`,
+`<meta name="twitter:description" content="${escapeHtml(meta.description)}">`,
+`<meta name="theme-color" content="#0B0F14">`
+].filter(Boolean).join('');
+let out = stripManagedSeoTags(body).replace(/<title>[^<]*<\/title>/, `<title>${escapeHtml(meta.title)}</title>`);
+out = out.replace('</head>', `${tags}</head>`);
 return out;
 }
 function buildStructuredData(urlPath) {
 if (urlPath.startsWith('/admin') || ['/auth','/portal','/checkout'].includes(urlPath)) return '';
 const base = BUSINESS_PROFILE.domain.replace(/\/$/, '');
-const data = {
-'@context': 'https://schema.org',
-'@type': 'SoftwareApplication',
-name: 'NV0',
-applicationCategory: 'BusinessApplication',
-operatingSystem: 'Web',
-url: `${base}${urlPath === '/' ? '/' : urlPath}`,
-description: '웹사이트 필수 고지, 개인정보, 약관, 환불 정책, 광고 문구 리스크를 점검하고 개선안을 정리하는 서비스',
-offers: { '@type': 'Offer', priceCurrency: 'KRW', price: '0', availability: 'https://schema.org/InStock' },
-provider: { '@type': 'Organization', name: BUSINESS_PROFILE.tradeName, email: BUSINESS_PROFILE.contactEmail, url: base }
-};
-return `<script type="application/ld+json">${JSON.stringify(data).replace(/<\//g, '<\\/')}</script>`;
+const meta = routeMeta(urlPath);
+const pageUrl = `${base}${urlPath === '/' ? '/' : urlPath}`;
+const graph = [
+{ '@type': 'Organization', '@id': `${base}/#organization`, name: BUSINESS_PROFILE.tradeName, url: base, email: BUSINESS_PROFILE.contactEmail },
+{ '@type': 'WebSite', '@id': `${base}/#website`, name: 'NV0', url: base, inLanguage: 'ko-KR', publisher: { '@id': `${base}/#organization` } },
+{ '@type': 'SoftwareApplication', '@id': `${base}/#software`, name: 'NV0', applicationCategory: 'BusinessApplication', operatingSystem: 'Web', url: base, description: meta.description, offers: { '@type': 'Offer', priceCurrency: 'KRW', price: '0', availability: 'https://schema.org/InStock' }, provider: { '@id': `${base}/#organization` } },
+{ '@type': 'WebPage', '@id': `${pageUrl}#webpage`, url: pageUrl, name: meta.title, description: meta.description, isPartOf: { '@id': `${base}/#website` }, about: { '@id': `${base}/#software` }, inLanguage: 'ko-KR' },
+{ '@type': 'BreadcrumbList', '@id': `${pageUrl}#breadcrumb`, itemListElement: [
+{ '@type': 'ListItem', position: 1, name: '홈', item: `${base}/` },
+...(urlPath === '/' ? [] : [{ '@type': 'ListItem', position: 2, name: meta.title.replace(/\s*\|\s*NV0.*/, ''), item: pageUrl }])
+] }
+];
+return `<script type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }).replace(/<\//g, '<\\/')}</script>`;
 }
 function injectStructuredData(body, urlPath) {
 if (body.includes('application/ld+json')) return body;
@@ -958,7 +992,7 @@ return `<a class="skip-link" href="#main">본문 바로가기</a><nav class="sit
 <a href="/documents"${navAttrs(urlPath, '/documents')}>문서 생성</a>
 <a href="/business-info"${navAttrs(urlPath, '/business-info')}>고객지원</a>
 <a href="/auth"${navAttrs(urlPath, '/auth', 'login-link')}>로그인</a>
-<a href="/products/veridion/demo" class="cta">무료 진단</a>
+<a href="/products/veridion/demo" class="cta">무료 시작</a>
 </div>
 </nav>`;
 }
@@ -2632,19 +2666,20 @@ db.publications ||= [];
 db.boards ||= [];
 let article = null;
 const tried = [];
-for (let offset = 0; offset < 12; offset += 1) {
+for (let offset = 0; offset < 144; offset += 1) {
 const variant = chooseCtaVariant(db, { ...options, sequenceOffset: offset });
-if (tried.includes(variant.ctaType)) continue;
-tried.push(variant.ctaType);
+const triedKey = variant.combinationKey || variant.ctaType;
+if (tried.includes(triedKey)) continue;
+tried.push(triedKey);
 const draft = buildCtaBoardArticle(scan || {}, variant, options);
 const duplicate = [...db.publications, ...db.boards].some(item => item.contentFingerprint === draft.contentFingerprint || (item.title && item.title === draft.title));
 if (!duplicate) { article = draft; break; }
 }
 if (!article) {
-const variant = chooseCtaVariant(db, { ...options, sequenceOffset: Date.now() % 12 });
+const variant = chooseCtaVariant(db, { ...options, sequenceOffset: Date.now() % 144 });
 article = buildCtaBoardArticle(scan || {}, variant, { ...options, title: `${variant.headline} · ${new Date().toLocaleDateString('ko-KR')}` });
 }
-const base = { ctaType: article.ctaType, titleCandidates: article.titleCandidates, tags: article.tags, qualityStandard: 'cta-board-v6.7-encyclopedic-router-diverse', wordRangeKo: '900-1500', sections: ['제목 후보', '도입', '문제 제기', '해결 과정', '신뢰 근거', 'FAQ', '자연스러운 CTA', '태그'], diversityKey: article.diversityKey, contentFingerprint: article.contentFingerprint };
+const base = { ctaType: article.ctaType, titleCandidates: article.titleCandidates, tags: article.tags, qualityStandard:'cta-v8-unbounded-seo', seoQualityStandard:'cta-v8-unbounded-seo', wordRangeKo: '900-1500', sections: ['제목 후보', '도입', '문제 제기', '해결 과정', '신뢰 근거', 'FAQ', '자연스러운 CTA', '태그'], diversityKey: article.diversityKey, contentFingerprint: article.contentFingerprint, searchIntent: article.seo?.searchIntent || null, funnelStage: article.seo?.funnelStage || null, primaryKeyword: article.seo?.primaryKeyword || null, secondaryKeywords: article.seo?.secondaryKeywords || [], metaDescription: article.seo?.metaDescription || null, baseCtaType: article.baseCtaType || null, combinationMode: article.combinationMode || null, combinationKey: article.combinationKey || null, contentArchetype: article.contentArchetype || article.seo?.contentArchetype || null, audienceSegment: article.audienceSegment || article.seo?.audienceSegment || null };
 const publication = { id: uid('pub'), title: article.title, status: 'published', type: 'cta', boardType: article.boardType, ...base, relatedRequestId: scan?.requestId || null, body: article.body, createdAt: nowIso(), autoPublished: options.autoPublished === true };
 db.publications.unshift(publication);
 db.boards.unshift({ id: uid('board'), title: article.title, boardType: article.boardType, type: 'cta', ...base, body: article.body, createdAt: nowIso(), visibility: 'public', autoPublished: options.autoPublished === true, publishIntervalMs: CTA_AUTOPUBLISH_INTERVAL_MS });
@@ -2681,7 +2716,7 @@ if (pathname === '/healthz') {
 return json(req, res, 200, { ok: true, service: 'nv0-veridion', uptimeSec: Math.round(process.uptime()) });
 }
 if (pathname === '/api/public/diagnosis-engine' && req.method === 'GET') {
-return json(req, res, 200, { ok: true, phase: RELEASE_PHASE, engine: 'NV0 Builtin Diagnosis Engine', rulesVersion: RULES_VERSION, targetFetchEnabled: TARGET_FETCH_ENABLED, scanProvider: SCAN_PROVIDER, endpoints: { scan: 'POST /api/public/scan', diagnose: 'POST /api/public/diagnose', board: 'GET /api/public/system-items', engine: 'GET /api/public/diagnosis-engine' }, autoPublish: { boardName: '게시판', intervalMs: CTA_AUTOPUBLISH_INTERVAL_MS, intervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000), variants: ['진단 요약형','위험 경고형','비교형','개선 전후형','체크리스트형','재진단 유도형'] }, checks: buildRuleCatalog().map(({ code, category, title, severity, penaltyMax }) => ({ code, category, title, severity, penaltyMax })) });
+return json(req, res, 200, { ok: true, phase: RELEASE_PHASE, engine: 'NV0 Builtin Diagnosis Engine', rulesVersion: RULES_VERSION, targetFetchEnabled: TARGET_FETCH_ENABLED, scanProvider: SCAN_PROVIDER, endpoints: { scan: 'POST /api/public/scan', diagnose: 'POST /api/public/diagnose', board: 'GET /api/public/system-items', engine: 'GET /api/public/diagnosis-engine' }, autoPublish: { boardName: '게시판', intervalMs: CTA_AUTOPUBLISH_INTERVAL_MS, intervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000), topicPackCount: ctaTopicPacks().length, combinationStats: ctaCombinationStats(), variants: ctaTopicPacks().map(item => item.headline) }, checks: buildRuleCatalog().map(({ code, category, title, severity, penaltyMax }) => ({ code, category, title, severity, penaltyMax })) });
 }
 if (pathname === '/readyz') {
 try {
@@ -2748,7 +2783,7 @@ return json(req, res, 200, { ok: true, preview });
 }
 if (pathname === '/api/public/board' && req.method === 'GET') {
 const db = await readDb();
-return json(req, res, 200, { ok: true, publishIntervalMs: CTA_AUTOPUBLISH_INTERVAL_MS, publishIntervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000), variantCount: 12, posts: db.boards.slice(0, 20) });
+return json(req, res, 200, { ok: true, publishIntervalMs: CTA_AUTOPUBLISH_INTERVAL_MS, publishIntervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000), variantCount: ctaTopicPacks().length, topicPackCount: ctaTopicPacks().length, combinationMode: 'unbounded_seeded_combinatorial', combinationStats: ctaCombinationStats(), variants: ctaTopicPacks().map(({ ctaType, boardType, primaryKeyword, headline, intent, funnel }) => ({ ctaType, boardType, primaryKeyword, headline, intent, funnel })), posts: db.boards.slice(0, 20) });
 }
 if (pathname === '/api/public/content' && req.method === 'GET') {
 const db = await readDb();
@@ -3874,3 +3909,4 @@ console.log(`nv0 cleanroom server listening on http://${HOST}:${PORT} target=${P
 console.error('server startup failed', error);
 process.exit(1);
 });
+

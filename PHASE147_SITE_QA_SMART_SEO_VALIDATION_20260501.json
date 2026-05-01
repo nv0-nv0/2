@@ -1,0 +1,101 @@
+{
+  "ok": true,
+  "phase": "P147",
+  "checks": [
+    {
+      "key": "server_imports_cta_topic_packs",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "route_meta_keywords",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "structured_data_graph",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "top_nav_cta_deduped",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "board_api_variant_count_dynamic",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "diagnosis_engine_variants_dynamic",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "sitemap_excludes_auth",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "board_copy_24_types",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "board_empty_state_fixed",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "board_js_seo_meta_render",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "board_js_internal_link_heading",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "cta_internal_links",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "cta_three_faq",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "cta_reading_time",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "work_order_30_items",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "readme_exists",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "topic_pack_count_24",
+      "ok": true,
+      "detail": "topics=24"
+    },
+    {
+      "key": "sample_title_diversity",
+      "ok": true,
+      "detail": "titles=27"
+    },
+    {
+      "key": "sample_fingerprint_diversity",
+      "ok": true,
+      "detail": "fingerprints=30"
+    }
+  ]
+}
