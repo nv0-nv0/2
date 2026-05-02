@@ -1,0 +1,24 @@
+{
+  "ok": true,
+  "phase": "phase172-runtime-permission-route-hardening",
+  "checkedAt": "2026-05-02T14:05:10Z",
+  "fixed": [
+    "public auth/session publicCustomer undefined runtime error",
+    "account route split missing ctx dependencies",
+    "payment route split missing sanitizeOrderForPublic dependency",
+    "postgres_primary automatic backup db.json EACCES path",
+    "Coolify Docker volume ownership drift",
+    "public system-items documented endpoint returning 404"
+  ],
+  "validated": [
+    "check:syntax",
+    "test:all",
+    "test:e2e",
+    "test:routes",
+    "validate:deploy",
+    "check:env-examples",
+    "validate:phase167",
+    "manual public runtime smoke",
+    "backup permission fallback simulation"
+  ]
+}

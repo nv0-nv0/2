@@ -18,7 +18,7 @@ function encryptBackupPayload(buffer, secret) {
 }
 
 export function createBackupOperations(config) {
-  const { dataDir, uploadsDir, backupsDir, env = process.env, nowIso = () => new Date().toISOString(), logger = console } = config;
+  const { dataDir, uploadsDir, backupsDir, env = process.env, nowIso = () => new Date().toISOString(), logger = console, dbSnapshotProvider = null } = config;
   const remoteEnabled = env.NV0_BACKUP_REMOTE_ENABLED !== 'false' && ['s3','s3_compatible','object_storage'].includes(String(env.NV0_STORAGE_MODE || '').trim());
   const remotePrefix = String(env.NV0_BACKUP_REMOTE_PREFIX || 'backups/nv0').trim().replace(/^\/+|\/+$/g, '') || 'backups/nv0';
   const compress = env.NV0_BACKUP_COMPRESS !== 'false';
@@ -51,6 +51,17 @@ export function createBackupOperations(config) {
     return manifest;
   }
 
+  async function readDbSnapshotBuffer(dbSource) {
+    try {
+      return { buffer: await fs.readFile(dbSource), source: 'json_db_file' };
+    } catch (error) {
+      if (!dbSnapshotProvider) throw error;
+      if (!['ENOENT', 'EACCES', 'EPERM'].includes(error?.code)) throw error;
+      const snapshot = await dbSnapshotProvider();
+      return { buffer: Buffer.from(JSON.stringify(snapshot || {}, null, 2)), source: `provider_after_${error.code}` };
+    }
+  }
+
   async function createSnapshot({ reason = 'manual' } = {}) {
     await fs.mkdir(backupsDir, { recursive: true });
     const createdAt = nowIso();
@@ -58,10 +69,10 @@ export function createBackupOperations(config) {
     const dbSource = path.join(dataDir, 'db.json');
     const dbTarget = path.join(backupsDir, `db-${stamp}.json`);
     const manifestTarget = path.join(backupsDir, `db-${stamp}.manifest.json`);
-    const dbBuffer = await fs.readFile(dbSource);
+    const { buffer: dbBuffer, source: dbSourceType } = await readDbSnapshotBuffer(dbSource);
     await fs.writeFile(dbTarget, dbBuffer);
     const uploadsManifest = await buildUploadsManifest();
-    const manifest = { version: 'phase163-remote-backup-v1', createdAt, reason, local: { dbTarget, manifestTarget, dbSha256: sha256Hex(dbBuffer), dbSize: dbBuffer.length }, security: { compressed: compress, encrypted: !!encryptionSecret, encryptionAlgorithm: encryptionSecret ? 'aes-256-gcm+scrypt' : null, plaintextSha256StoredInManifest: true }, remote: { enabled: remoteEnabled, prefix: remotePrefix, db: null, manifest: null, uploadsManifest: null, errors: [] }, uploads: { localRuntimeFileCount: uploadsManifest.length, manifestSha256: sha256Hex(Buffer.from(JSON.stringify(uploadsManifest))) } };
+    const manifest = { version: 'phase172-runtime-permission-backup-v1', createdAt, reason, local: { dbTarget, manifestTarget, dbSourceType, dbSha256: sha256Hex(dbBuffer), dbSize: dbBuffer.length }, security: { compressed: compress, encrypted: !!encryptionSecret, encryptionAlgorithm: encryptionSecret ? 'aes-256-gcm+scrypt' : null, plaintextSha256StoredInManifest: true }, remote: { enabled: remoteEnabled, prefix: remotePrefix, db: null, manifest: null, uploadsManifest: null, errors: [] }, uploads: { localRuntimeFileCount: uploadsManifest.length, manifestSha256: sha256Hex(Buffer.from(JSON.stringify(uploadsManifest))) } };
     let remotePayload = dbBuffer;
     let remoteKey = `${remotePrefix}/db-${stamp}.json`;
     let remoteContentType = 'application/json; charset=utf-8';
@@ -129,15 +140,27 @@ export function createBackupOperations(config) {
     try {
       await fs.access(dbSource);
     } catch (error) {
-      if (error?.code === 'ENOENT') {
+      if (!dbSnapshotProvider && error?.code === 'ENOENT') {
         logger.warn?.('automatic backup skipped because json db snapshot is not present', { reason, persistenceMode: env.NV0_PERSISTENCE_MODE || 'json' });
         return { ok: true, skipped: true, reason: 'json_db_snapshot_missing' };
       }
+      if (!dbSnapshotProvider && ['EACCES', 'EPERM'].includes(error?.code)) {
+        logger.error?.('automatic backup skipped because runtime data directory is not writable/readable', { reason, code: error.code, path: dbSource });
+        return { ok: false, skipped: true, reason: 'runtime_data_permission_denied', code: error.code, path: dbSource };
+      }
+      if (!dbSnapshotProvider) throw error;
+    }
+    try {
+      const backup = await createSnapshot({ reason });
+      if (backup.remote?.db && backup.remote.db.ok === false && !backup.remote.db.skipped) logger.error('automatic backup remote upload failed', backup.remote.db.error || backup.remote.db.reason);
+      return { ok: true, backup };
+    } catch (error) {
+      if (['EACCES', 'EPERM'].includes(error?.code)) {
+        logger.error?.('automatic backup skipped because runtime backup path is not writable', { reason, code: error.code, path: error.path || backupsDir });
+        return { ok: false, skipped: true, reason: 'runtime_backup_permission_denied', code: error.code, path: error.path || backupsDir };
+      }
       throw error;
     }
-    const backup = await createSnapshot({ reason });
-    if (backup.remote?.db && backup.remote.db.ok === false && !backup.remote.db.skipped) logger.error('automatic backup remote upload failed', backup.remote.db.error || backup.remote.db.reason);
-    return { ok: true, backup };
   }
 
   return { securitySummary, createSnapshot, listSnapshots, pruneSnapshots, restoreSnapshot, runAutomatic };

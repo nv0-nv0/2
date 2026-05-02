@@ -17,13 +17,12 @@ COPY deploy/entrypoint.sh ./deploy/entrypoint.sh
 COPY deploy/postgres ./deploy/postgres
 
 FROM base AS runtime
-RUN apk add --no-cache curl postgresql-client \
+RUN apk add --no-cache curl postgresql-client su-exec \
   && addgroup -S nv0 && adduser -S nv0 -G nv0 \
   && mkdir -p /app/runtime/data /app/runtime/uploads /app/runtime/backups /app/runtime/reports
 COPY --from=source --chown=nv0:nv0 /app /app
 RUN chmod +x /app/deploy/entrypoint.sh \
   && chown -R nv0:nv0 /app/runtime
-USER nv0
 VOLUME ["/app/runtime"]
 EXPOSE 3210
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=10 \

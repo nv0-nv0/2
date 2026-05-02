@@ -115,6 +115,7 @@ export function createPaymentRouteHandler(ctx) {
   parseCookies,
   path,
   persistence,
+  sanitizeOrderForPublic,
   rateLimitStore,
   readDb,
   scanResultFor,

@@ -117,6 +117,8 @@ export function createPublicRouteHandler(ctx) {
   parseCookies,
   path,
   persistence,
+  publicCustomer,
+  sanitizeOrderForPublic,
   rateLimitStore,
   readDb,
   scanResultFor,
@@ -258,12 +260,12 @@ pagination: { page, pageSize, total, totalPages, hasPrev: page > 1, hasNext: pag
 posts
 });
 }
-if (pathname === '/api/public/content' && req.method === 'GET') {
+if ((pathname === '/api/public/content' || pathname === '/api/public/system-items') && req.method === 'GET') {
 const db = await readDb();
 const type = String(url.searchParams.get('type') || '').trim();
 let items = buildSystemItemsFeed(db).filter(item => item.visibility !== 'private');
 if (type) items = items.filter(item => item.type === type);
-return json(req, res, 200, { ok: true, items: items.slice(0, 50) });
+return json(req, res, 200, { ok: true, alias: pathname === '/api/public/system-items' ? 'system-items' : undefined, items: items.slice(0, 50) });
 }
 if (pathname === '/api/public/auth/session' && req.method === 'GET') {
 const db = await readDb();

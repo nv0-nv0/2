@@ -115,6 +115,8 @@ export function createAccountRouteHandler(ctx) {
   parseCookies,
   path,
   persistence,
+  publicCustomer,
+  sanitizeOrderForPublic,
   rateLimitStore,
   readDb,
   scanResultFor,

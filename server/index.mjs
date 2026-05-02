@@ -149,7 +149,7 @@ const sessionStore = createSessionStore(process.env, console);
 const rateLimitStore = createRateLimitStore(process.env, console);
 const distributedLock = createDistributedLock(process.env, console);
 const nowIso = () => new Date().toISOString();
-const backupOps = createBackupOperations({ dataDir: DATA_DIR, uploadsDir: UPLOADS_DIR, backupsDir: BACKUPS_DIR, env: process.env, nowIso, logger: console, defaultAutoEnabled: PLATFORM.commercial });
+const backupOps = createBackupOperations({ dataDir: DATA_DIR, uploadsDir: UPLOADS_DIR, backupsDir: BACKUPS_DIR, env: process.env, nowIso, logger: console, defaultAutoEnabled: PLATFORM.commercial, dbSnapshotProvider: () => readDb() });
 let defaultDb = {
 settings: {
 autoPublicationEnabled: true,
@@ -3253,12 +3253,6 @@ await fs.writeFile(filePath, JSON.stringify(report, null, 2));
 return { filePath, report };
 }
 async function runAutomaticBackup(reason = 'scheduled') {
-if (PERSISTENCE_MODE === 'postgres_primary' && PLATFORM.commercial) {
-  await ensureRuntime();
-  const db = await readDb();
-  const snapshotPath = path.join(DATA_DIR, 'db.json');
-  await fs.writeFile(snapshotPath, JSON.stringify(db, null, 2));
-}
 return backupOps.runAutomatic(reason);
 }
 function parseMultipart(rawBuffer, boundary) {
