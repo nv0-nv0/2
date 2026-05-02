@@ -44,7 +44,7 @@ const rootCompose = await read('docker-compose.yml');
 for (const token of [
   '${NV0_PLATFORM_TARGET', '${NV0_DEPLOYMENT_STAGE', '${NV0_COMMERCIAL_LAUNCH_READY', '${NV0_PERSISTENCE_MODE', '${NV0_SESSION_STORE', '${NV0_PAYMENT_PROVIDER',
   '${NV0_S3_ENDPOINT:?', '${NV0_S3_REGION:-auto}', '${NV0_S3_FORCE_PATH_STYLE:-true}',
-  'expose:', '/readyz', 'postgres:16-alpine', 'redis:7-alpine'
+  'expose:', '/healthz', 'postgres:16-alpine', 'redis:7-alpine'
 ]) assert(rootCompose.includes(token), `root compose missing: ${token}`);
 assert(!rootCompose.includes('env_file:'), 'root compose must not rely on env_file for Coolify UI detection');
 assert(!rootCompose.includes('minio/minio'), 'root Coolify compose must use R2 primary and must not start MinIO by default');
@@ -53,7 +53,7 @@ const coolifyCompose = await read('deploy/docker-compose.coolify.yml');
 for (const token of [
   '${NV0_PLATFORM_TARGET', '${NV0_DEPLOYMENT_STAGE', '${NV0_COMMERCIAL_LAUNCH_READY', '${NV0_PERSISTENCE_MODE', '${NV0_SESSION_STORE', '${NV0_PAYMENT_PROVIDER',
   '${NV0_S3_ENDPOINT:?', '${NV0_S3_REGION:-auto}', '${NV0_S3_FORCE_PATH_STYLE:-true}',
-  'expose:', '/readyz', 'postgres:16-alpine', 'redis:7-alpine'
+  'expose:', '/healthz', 'postgres:16-alpine', 'redis:7-alpine'
 ]) assert(coolifyCompose.includes(token), `coolify compose missing: ${token}`);
 assert(!coolifyCompose.includes('env_file:'), 'coolify compose must not rely on env_file for UI detection');
 for (const token of ['${NV0_BOOTSTRAP_ADMIN_PASSWORD:?', '${POSTGRES_PASSWORD:?', '${NV0_SMTP_URL:?']) {
@@ -61,7 +61,7 @@ for (const token of ['${NV0_BOOTSTRAP_ADMIN_PASSWORD:?', '${POSTGRES_PASSWORD:?'
 }
 
 const commercialCompose = await read('deploy/docker-compose.commercial.yml');
-for (const token of ['NV0_PLATFORM_TARGET: commercial', 'NV0_STORAGE_MODE: s3', '${NV0_S3_ENDPOINT:?', '${NV0_S3_REGION:-auto}', '${NV0_S3_FORCE_PATH_STYLE:-true}', '/readyz']) {
+for (const token of ['NV0_PLATFORM_TARGET: commercial', 'NV0_STORAGE_MODE: s3', '${NV0_S3_ENDPOINT:?', '${NV0_S3_REGION:-auto}', '${NV0_S3_FORCE_PATH_STYLE:-true}', '/healthz']) {
   assert(commercialCompose.includes(token), `commercial R2 compose missing: ${token}`);
 }
 assert(!commercialCompose.includes('minio/minio'), 'commercial R2 compose must not include MinIO; use deploy/docker-compose.local-minio.yml for fallback');

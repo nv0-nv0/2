@@ -3253,6 +3253,12 @@ await fs.writeFile(filePath, JSON.stringify(report, null, 2));
 return { filePath, report };
 }
 async function runAutomaticBackup(reason = 'scheduled') {
+if (PERSISTENCE_MODE === 'postgres_primary' && PLATFORM.commercial) {
+  await ensureRuntime();
+  const db = await readDb();
+  const snapshotPath = path.join(DATA_DIR, 'db.json');
+  await fs.writeFile(snapshotPath, JSON.stringify(db, null, 2));
+}
 return backupOps.runAutomatic(reason);
 }
 function parseMultipart(rawBuffer, boundary) {
@@ -3713,7 +3719,9 @@ try {
   return json(req, res, 200, { ...payload, cacheHit: false }, { 'cache-control': 'no-store' });
 } catch (error) {
   readyzCache = null;
-  return json(req, res, 503, { ok: false, ready: false, runtimeWritable: false, error: error.message }, { 'cache-control': 'no-store' });
+  const message = error?.message || 'readiness check failed';
+  console.error(JSON.stringify({ level: 'error', event: 'readyz_failed', message, deploymentStage: DEPLOYMENT_STAGE, commercialLaunchReady: COMMERCIAL_LAUNCH_READY, prelaunchMode: PRELAUNCH_MODE, persistenceMode: PERSISTENCE_MODE, storageMode: STORAGE_MODE, redisStrict: READYZ_REDIS_STRICT }));
+  return json(req, res, 503, { ok: false, ready: false, runtimeWritable: false, error: message, stage: DEPLOYMENT_STAGE, prelaunchMode: PRELAUNCH_MODE, commercialLaunchReady: COMMERCIAL_LAUNCH_READY, redisStrict: READYZ_REDIS_STRICT }, { 'cache-control': 'no-store' });
 }
 }
 

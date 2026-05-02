@@ -57,6 +57,7 @@ services:
       - NV0_DB_COMPARE_MODE=${NV0_DB_COMPARE_MODE:-0}
       - NV0_REDIS_URL=${NV0_REDIS_URL:-redis://redis:6379/0}
       - NV0_REDIS_TIMEOUT_MS=${NV0_REDIS_TIMEOUT_MS:-1500}
+      - NV0_READYZ_REDIS_STRICT=${NV0_READYZ_REDIS_STRICT:-false}
       - NV0_SESSION_STORE=${NV0_SESSION_STORE:-redis}
       - NV0_RATE_LIMIT_STORE=${NV0_RATE_LIMIT_STORE:-redis}
       - NV0_LOCK_PROVIDER=${NV0_LOCK_PROVIDER:-redis}
@@ -108,7 +109,7 @@ services:
       redis:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3210/readyz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3210/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
       interval: 30s
       timeout: 10s
       retries: 10

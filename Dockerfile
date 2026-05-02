@@ -27,5 +27,5 @@ USER nv0
 VOLUME ["/app/runtime"]
 EXPOSE 3210
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=10 \
-  CMD curl -fsS "http://127.0.0.1:${PORT:-3210}/readyz" || exit 1
+  CMD curl -fsS "http://127.0.0.1:${PORT:-3210}/healthz" || exit 1
 ENTRYPOINT ["/app/deploy/entrypoint.sh"]

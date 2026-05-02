@@ -100,7 +100,7 @@ services:
       - NV0_PAYMENT_IDEMPOTENCY_TTL_MS=${NV0_PAYMENT_IDEMPOTENCY_TTL_MS:-86400000}
       - NV0_PUBLIC_CACHE_SECONDS=${NV0_PUBLIC_CACHE_SECONDS:-60}
       - NV0_PUBLIC_ASSET_CACHE_SECONDS=${NV0_PUBLIC_ASSET_CACHE_SECONDS:-60}
-      - NV0_READYZ_REDIS_STRICT=${NV0_READYZ_REDIS_STRICT:-true}
+      - NV0_READYZ_REDIS_STRICT=${NV0_READYZ_REDIS_STRICT:-false}
       - NV0_READYZ_CACHE_TTL_MS=${NV0_READYZ_CACHE_TTL_MS:-3000}
       - NV0_CORS_ALLOWED_ORIGINS=${NV0_CORS_ALLOWED_ORIGINS:-https://nv0.kr,https://www.nv0.kr}
       - NV0_JWT_TTL_SECONDS=${NV0_JWT_TTL_SECONDS:-3600}
@@ -116,7 +116,7 @@ services:
       redis:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3210/readyz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3210/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
       interval: 30s
       timeout: 10s
       retries: 10

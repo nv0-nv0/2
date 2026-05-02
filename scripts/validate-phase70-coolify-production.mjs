@@ -18,7 +18,7 @@ add('compose:runtime-volume-mounted', compose.includes('nv0_runtime:/app/runtime
 add('compose:runtime-volume-declared', /volumes:\s*[\s\S]*nv0_runtime:/m.test(compose));
 add('compose:postgres-volume', compose.includes('nv0_postgres:/var/lib/postgresql/data'));
 add('compose:redis-volume', compose.includes('nv0_redis:/data'));
-add('compose:readyz-healthcheck', compose.includes('/readyz'));
+add('compose:healthz-healthcheck', compose.includes('/healthz'));  // app liveness healthcheck; /readyz remains runtime readiness endpoint
 add('compose:no-broken-env-lines', !/^NV0_/m.test(compose), 'every env key must be nested under environment');
 add('compose:required-secret-guards', compose.includes('${NV0_PORTONE_API_SECRET:?') && compose.includes('${POSTGRES_PASSWORD:?'));
 add('entrypoint:optional-preflight', entrypoint.includes('NV0_RUN_PREFLIGHT') && entrypoint.includes('exec node server/index.mjs'));

@@ -1,6 +1,6 @@
 {
   "name": "nv0-veridion-cleanroom",
-  "version": "1.0.0-commercial-final-100-score-phase160-evidence-first-diagnosis-phase161-zero-cost-max-coverage-phase162-free-auto-disclosure-phase163-remote-backup-security-phase164-zero-cost-hardening-50-phase165-route-security-validation-fix-phase165-final-consolidation-phase166-native-route-split-phase167-native-http-load-security-phase168-zero-risk-best-unified-delivery-phase170-redis-readyz-backup-hotfix",
+  "version": "1.0.0-commercial-final-100-score-phase160-evidence-first-diagnosis-phase161-zero-cost-max-coverage-phase162-free-auto-disclosure-phase163-remote-backup-security-phase164-zero-cost-hardening-50-phase165-route-security-validation-fix-phase165-final-consolidation-phase166-native-route-split-phase167-native-http-load-security-phase168-zero-risk-best-unified-delivery-phase171-healthz-readyz-backup-final-hotfix",
   "private": true,
   "type": "module",
   "scripts": {
