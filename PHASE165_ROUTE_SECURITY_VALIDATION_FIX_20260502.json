@@ -1,0 +1,125 @@
+{
+  "ok": true,
+  "phase": "phase165-route-security-validation-fix",
+  "checkedAt": "2026-05-02T11:32:54.599Z",
+  "total": 23,
+  "passed": 23,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "phase165:package-version",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "phase165:script-registered",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "routes:public-module-exists",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "routes:admin-module-exists",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "routes:index-imports-public-module",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "routes:index-imports-admin-module",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "routes:index-delegates-public-before-inline-chain",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "routes:index-delegates-admin-before-inline-chain",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "routes:public-prefix-boundary",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "routes:admin-prefix-boundary",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "routes:admin-ip-allowlist-gate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "routes:admin-session-gate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "routes:admin-csrf-gate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "routes:admin-rbac-gate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "routes:object-storage-import-fixed",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "config:validation-module-exists",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "config:index-calls-validation-module",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "config:enum-guards",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "config:range-guards",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "config:commercial-guards",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "config:placeholder-guards",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "runtime:source-syntax",
+      "ok": true,
+      "detail": "{\n  \"ok\": true,\n  \"checkedCount\": 194,\n  \"failures\": []\n}\n"
+    },
+    {
+      "name": "runtime:routes-smoke",
+      "ok": true,
+      "detail": "{\n  \"ok\": true,\n  \"checked\": 24\n}\n"
+    }
+  ]
+}

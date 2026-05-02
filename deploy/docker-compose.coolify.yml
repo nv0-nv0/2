@@ -8,6 +8,15 @@ services:
       context: ..
       dockerfile: Dockerfile
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
     environment:
       - NODE_ENV=${NODE_ENV:-production}
       - HOST=${HOST:-0.0.0.0}
@@ -21,6 +30,7 @@ services:
       - NV0_ALLOWED_ADMIN_ORIGINS=${NV0_ALLOWED_ADMIN_ORIGINS:-nv0.kr,www.nv0.kr}
       - NV0_ALLOWED_HOSTS=${NV0_ALLOWED_HOSTS:-nv0.kr,www.nv0.kr}
       - NV0_REQUEST_TIMEOUT_MS=${NV0_REQUEST_TIMEOUT_MS:-15000}
+      - NV0_SLOW_REQUEST_THRESHOLD_MS=${NV0_SLOW_REQUEST_THRESHOLD_MS:-1500}
       - NV0_MAX_JSON_BODY_BYTES=${NV0_MAX_JSON_BODY_BYTES:-1048576}
       - NV0_MAX_MULTIPART_BODY_BYTES=${NV0_MAX_MULTIPART_BODY_BYTES:-10485760}
       - NV0_SUPPORT_EMAIL=${NV0_SUPPORT_EMAIL:-ct@nv0.kr}
@@ -29,6 +39,7 @@ services:
       - NV0_CUSTOMER_SERVICE_PHONE=${NV0_CUSTOMER_SERVICE_PHONE:-이메일전용고객지원}
       - NV0_PRIVACY_OFFICER_EMAIL=${NV0_PRIVACY_OFFICER_EMAIL:-privacy@nv0.kr}
       - NV0_DATA_RETENTION_DAYS=${NV0_DATA_RETENTION_DAYS:-90}
+      - NV0_DATA_DESTRUCTION_GRACE_DAYS=${NV0_DATA_DESTRUCTION_GRACE_DAYS:-30}
       - NV0_REFUND_REQUEST_WINDOW_DAYS=${NV0_REFUND_REQUEST_WINDOW_DAYS:-7}
       - NV0_RULES_VERSION=${NV0_RULES_VERSION:-production-20260427}
       - NV0_OPERATOR_ALERT_EMAIL=${NV0_OPERATOR_ALERT_EMAIL:-ct@nv0.kr}
@@ -106,6 +117,11 @@ services:
   postgres:
     image: postgres:16-alpine
     restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
     environment:
       - POSTGRES_DB=nv0
       - POSTGRES_USER=nv0
@@ -122,6 +138,11 @@ services:
   redis:
     image: redis:7-alpine
     restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
     command: ["redis-server", "--appendonly", "yes"]
     volumes:
       - nv0_redis:/data

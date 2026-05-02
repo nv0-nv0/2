@@ -1,0 +1,182 @@
+{
+  "ok": true,
+  "phase": "phase168-zero-risk-best-unified-delivery",
+  "generatedAt": "2026-05-02T11:35:08Z",
+  "sourcePackages": [
+    "nv0_full_p167_native_http_load_security_delivery(2).zip",
+    "nv0_phase166_best_unified_delivery_20260502.zip"
+  ],
+  "base": "Phase167 native HTTP load/security codebase",
+  "absorbed": [
+    "Phase166 final delivery gate scripts",
+    "Phase165 final consolidation validator/report",
+    "clean release runtime gate",
+    ".env.test",
+    "db.seed.json"
+  ],
+  "criticalFixes": [
+    "Imported missing evidence/disclosure builders used by external/builtin scan normalization.",
+    "Forwarded sanitizeUploadFilename through route context and admin route destructuring.",
+    "Corrected provider-adapter test buyerEmail to a syntactically valid address.",
+    "Hardened clean-release-runtime to reset stale secure-record split storage.",
+    "Updated legacy validators to inspect split native route modules instead of only server/index.mjs."
+  ],
+  "validation": {
+    "passed": 28,
+    "failed": 0,
+    "commands": [
+      {
+        "command": "node scripts/clean-release-runtime.mjs",
+        "ok": true,
+        "scope": "release runtime reset, secure-record cleanup"
+      },
+      {
+        "command": "node scripts/check-source-syntax.mjs",
+        "ok": true,
+        "scope": "194 source files syntax"
+      },
+      {
+        "command": "node scripts/test-all.mjs",
+        "ok": true,
+        "scope": "88 package/content/route assertions"
+      },
+      {
+        "command": "node tests/e2e.mjs",
+        "ok": true,
+        "scope": "public checkout/auth/admin flow static E2E"
+      },
+      {
+        "command": "node tests/routes-smoke.mjs",
+        "ok": true,
+        "scope": "24 route/page smoke checks"
+      },
+      {
+        "command": "node tests/provider-adapters.mjs",
+        "ok": true,
+        "scope": "external scan/payment adapter smoke"
+      },
+      {
+        "command": "node tests/session-persistence.mjs",
+        "ok": true,
+        "scope": "admin session persistence"
+      },
+      {
+        "command": "node tests/runtime-persistence.mjs",
+        "ok": true,
+        "scope": "upload/backup/restore/runtime retention"
+      },
+      {
+        "command": "node tests/security-stateful.mjs",
+        "ok": true,
+        "scope": "stateful security checks"
+      },
+      {
+        "command": "node tests/contracts-fuzz.mjs",
+        "ok": true,
+        "scope": "14 contract/fuzz checks"
+      },
+      {
+        "command": "node tests/portone-provider.mjs",
+        "ok": true,
+        "scope": "PortOne provider adapter"
+      },
+      {
+        "command": "node tests/portone-events.mjs",
+        "ok": true,
+        "scope": "PortOne event handling"
+      },
+      {
+        "command": "node scripts/check-links.mjs --summary",
+        "ok": true,
+        "scope": "149 internal link checks"
+      },
+      {
+        "command": "node scripts/restore-drill.mjs",
+        "ok": true,
+        "scope": "non-destructive restore drill"
+      },
+      {
+        "command": "node scripts/stress-smoke.mjs",
+        "ok": true,
+        "scope": "56 request stress smoke"
+      },
+      {
+        "command": "node scripts/validate-phase156-global-ux-flow.mjs",
+        "ok": true,
+        "scope": "Phase156 global UX flow"
+      },
+      {
+        "command": "node scripts/validate-phase157-nonpayment-ops.mjs",
+        "ok": true,
+        "scope": "Phase157 non-payment ops"
+      },
+      {
+        "command": "node scripts/validate-phase158-e2big-hotfix.mjs",
+        "ok": true,
+        "scope": "Phase158 PostgreSQL E2BIG hotfix"
+      },
+      {
+        "command": "node scripts/validate-phase159-reader-demo-board.mjs",
+        "ok": true,
+        "scope": "Phase159 reader demo board"
+      },
+      {
+        "command": "node scripts/validate-phase160-evidence-first-diagnosis.mjs",
+        "ok": true,
+        "scope": "Phase160 evidence-first diagnosis"
+      },
+      {
+        "command": "node scripts/validate-phase161-zero-cost-max-coverage.mjs",
+        "ok": true,
+        "scope": "Phase161 zero-cost max coverage"
+      },
+      {
+        "command": "node scripts/validate-phase162-free-auto-disclosure.mjs",
+        "ok": true,
+        "scope": "Phase162 free auto disclosure"
+      },
+      {
+        "command": "node scripts/validate-phase163-remote-backup-security.mjs",
+        "ok": true,
+        "scope": "Phase163 remote backup security"
+      },
+      {
+        "command": "node scripts/validate-phase164-zero-cost-hardening-50.mjs",
+        "ok": true,
+        "scope": "Phase164 50 hardening matrix"
+      },
+      {
+        "command": "node scripts/validate-phase165-route-security-validation-fix.mjs",
+        "ok": true,
+        "scope": "Phase165 route security validation"
+      },
+      {
+        "command": "node scripts/validate-phase165-final-consolidation.mjs",
+        "ok": true,
+        "scope": "Phase165 final consolidation"
+      },
+      {
+        "command": "node scripts/validate-phase166-native-route-split.mjs",
+        "ok": true,
+        "scope": "Phase166 native route split"
+      },
+      {
+        "command": "node scripts/validate-phase167-native-http-load-security.mjs",
+        "ok": true,
+        "scope": "Phase167 native HTTP load/security"
+      }
+    ]
+  },
+  "artifact": {
+    "fileCount": 625,
+    "bytes": 3172489
+  },
+  "externalKeysRequiredForLiveProduction": [
+    "NV0_PORTONE_* or external payment provider keys",
+    "NV0_SMTP_URL / live mail credentials",
+    "NV0_SECURE_RECORDS_KEY for encrypted production secure records",
+    "Commercial DATABASE_URL/Redis/R2 or S3-compatible credentials if those modes are enabled",
+    "Mail-order registration number when commercial launch gate is enabled"
+  ],
+  "limitations": "Local/offline tests, built-in/demo/external mock adapters, and static validators passed. Real payment, live SMTP, external scan providers, DNS/CDN, and production secret-backed paths require live environment verification after keys are supplied."
+}

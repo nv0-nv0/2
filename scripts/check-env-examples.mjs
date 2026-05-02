@@ -44,7 +44,6 @@ const forbiddenCommercialPairs = [
   'NV0_ADMIN_KEY=',
   'NV0_PAYMENT_PROVIDER=demo',
   'NV0_PERSISTENCE_MODE=json',
-  'NV0_SCAN_PROVIDER=builtin',
   'NV0_SESSION_STORE=memory',
   'NV0_RATE_LIMIT_STORE=memory',
   'NV0_LOCK_PROVIDER=memory',

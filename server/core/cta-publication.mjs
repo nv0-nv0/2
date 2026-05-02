@@ -428,53 +428,63 @@ function humanTitleCandidates(ctx, keyword, legacyTitle = '') {
   ]).filter(Boolean).slice(0, 8);
 }
 
+function cleanPublicPhrase(value = '') {
+  return stripJargon(value)
+    .replace(/https?:\/\/example\.com/gi, '운영 중인 사이트')
+    .replace(/\s*·\s*쉬운 점검\s*\d+-\d+\s*$/g, '')
+    .replace(/\bCTA\b/g, '안내 버튼')
+    .replace(/\bSEO\b/g, '검색 노출')
+    .replace(/전환/g, '문의나 구매로 이어지는 흐름')
+    .replace(/이탈/g, '페이지를 떠남')
+    .replace(/랜딩/g, '첫 화면')
+    .replace(/퍼널/g, '고객 단계')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function helpfulTitle(ctx, keyword, legacyTitle = '') {
+  const topic = cleanPublicPhrase(keyword || legacyTitle || ctx.baseVariant?.headline || '사이트 안내');
+  const candidates = [
+    `${ctx.industry} 사이트에서 고객이 안심하는 안내 정리법`,
+    `문의와 구매 전에 꼭 보여줘야 할 ${topic} 체크리스트`,
+    `고객이 헷갈리지 않게 환불·문의·개인정보 안내를 정리하는 방법`,
+    `모바일 방문자가 바로 이해하는 사이트 안내 문구 만들기`,
+    `처음 온 고객이 믿고 읽을 수 있는 사이트 운영 글`
+  ];
+  return unique(candidates).slice(0, 5);
+}
+
 function humanizeBody({ ctx, legacy, title, titleCandidates, findingCount, top, keyword, faqSet, internalLinks, sequenceLabel }) {
-  const issue = top === '확인할 항목' ? '고객 안내, 환불 기준, 개인정보 안내' : top;
-  const introLine = `${ctx.target}를 처음 보는 고객은 “여기서 사도 괜찮을까?”를 먼저 생각합니다.`;
-  const simpleProblem = `${issue} 같은 안내가 잘 보이지 않으면 고객은 결제나 문의 전에 멈출 수 있습니다.`;
-  const example = `${ctx.microCase.replace(/ 상황$/, '')}라면 고객은 필요한 정보를 찾기 위해 화면을 더 내려 보거나 다른 사이트로 이동할 수 있습니다.`;
+  const target = cleanPublicPhrase(ctx.target || '사이트');
+  const industry = cleanPublicPhrase(ctx.industry || '온라인 사업');
+  const issue = cleanPublicPhrase(top === '확인할 항목' ? '환불 기준, 개인정보 안내, 문의 경로' : top);
+  const topic = cleanPublicPhrase(keyword || title || '사이트 안내');
+  const example = cleanPublicPhrase(comboPick(HUMAN_EASY_EXAMPLES, ctx.seed, 48) || HUMAN_EASY_EXAMPLES[0]);
+  const firstQuestion = `처음 온 고객은 ${target}에서 상품을 보기 전에 “믿고 문의해도 되는 곳인가?”를 먼저 확인합니다.`;
+  const realSituation = `${issue}이 잘 보이지 않으면 고객은 결제나 문의 전에 다시 검색하거나 페이지를 닫을 수 있습니다.`;
   const checklist = [
-    `첫 화면에서 무엇을 하는 사이트인지 바로 보이는지 확인합니다.`,
-    `가격, 환불, 취소, 개인정보 안내가 고객 눈에 잘 보이는지 확인합니다.`,
-    `문의 버튼 옆에 고객이 궁금해할 답이 있는지 확인합니다.`,
-    `모바일 화면에서 버튼과 설명이 너무 작거나 멀리 떨어져 있지 않은지 봅니다.`,
-    `수정한 뒤 다시 진단해서 같은 문제가 남았는지 확인합니다.`
+    '푸터에 상호, 대표자, 연락 가능한 이메일 또는 문의 경로가 보이는지 확인합니다.',
+    '환불, 취소, 교환 기준이 결제 버튼 가까이에 연결되어 있는지 확인합니다.',
+    '개인정보를 입력하는 화면 옆에 개인정보 안내 링크가 있는지 확인합니다.',
+    '문의 버튼을 눌렀을 때 처리 순서와 예상 답변 시간이 보이는지 확인합니다.',
+    '모바일 화면에서 버튼과 안내 문구가 작거나 아래로 밀려 있지 않은지 확인합니다.'
   ];
-  const fixLines = [
-    `어려운 말은 줄이고 고객이 묻는 말에 바로 답하는 문장으로 바꿉니다.`,
-    `버튼 이름은 “확인하기”, “문의하기”, “무료 진단하기”처럼 행동이 분명한 말로 적습니다.`,
-    `중요한 안내는 페이지 아래쪽에 숨기지 말고 버튼 가까이에 둡니다.`,
-    `한 문단에는 한 가지 내용만 담습니다. 문장이 길면 두 문장으로 나눕니다.`
+  const phraseBeforeAfter = [
+    ['문의하기', '문의하기 · 보통 영업일 기준 1일 안에 답변드립니다'],
+    ['자세히 보기', '환불·취소 기준 먼저 보기'],
+    ['무료', '무료 진단: 요약 결과까지 무료로 확인'],
+    ['개인정보 동의', '입력한 정보의 수집 목적과 보관 기간 확인']
   ];
+  const faq = faqSet.length ? faqSet : easyFaq(ctx.seed, industry, target, issue);
   const linksText = internalLinks.map(link => `${link.label}: ${link.href}`).join('\n');
-  const readableFocus = stripJargon(ctx.angle?.[0] || '고객이 안심하는 흐름');
-  const readableTitle = stripJargon(title).replace(/·\s*쉬운 점검.*$/, '').trim();
-  const readerMemo = comboPick(HUMAN_READER_MEMOS, ctx.seed, 47) || HUMAN_READER_MEMOS[0];
-  const easyExample = comboPick(HUMAN_EASY_EXAMPLES, ctx.seed, 48) || HUMAN_EASY_EXAMPLES[0];
   return [
-    easySection('왜 이 글을 썼나요?', [
-      introLine,
-      `${ctx.industry} 사이트는 예쁜 디자인만큼이나 쉬운 안내가 중요합니다.`,
-      `이번 글은 ${ctx.audience}가 ${readableFocus}을 쉽게 확인할 수 있도록 썼습니다.`,
-      `같은 설명을 반복하지 않기 위해 ${sequenceLabel}번 점검 메모로 따로 정리했습니다.`,
-      `오늘의 핵심 주제는 “${readableTitle}”입니다.`,
-      `이 글은 어려운 점검표가 아니라 고객 입장에서 “어디가 헷갈리는지”를 쉽게 정리한 글입니다.`
-    ]),
-    easySection('지금 보이는 문제', [
-      `${findingCount}개 정도의 확인할 부분이 보입니다.`,
-      simpleProblem,
-      example,
-      `이 내용은 법률 판단이나 매출 보장을 뜻하지 않습니다. 실제 운영 정보는 운영자가 한 번 더 확인해야 합니다.`
-    ]),
-    `고객 입장에서 보면\n고객은 긴 설명을 꼼꼼히 읽기보다 필요한 답을 빨리 찾고 싶어 합니다.\n\n${readerMemo}\n\n${easyExample}\n\n예를 들어 “환불은 어떻게 되나요?”, “문의는 어디로 하나요?”, “내 정보는 안전한가요?” 같은 질문에 바로 답이 보여야 합니다.\n\n답이 보이면 고객은 안심하고 다음 행동을 할 수 있습니다.`,
-    `바로 고칠 수 있는 것\n${checklist.map((item, index) => `${index + 1}. ${item}`).join('\n')}`,
-    `문구를 쉽게 바꾸는 방법\n${fixLines.map((item, index) => `${index + 1}. ${item}`).join('\n')}`,
-    `자주 묻는 질문\n${faqSet.map(([q, a], index) => `Q${index + 1}. ${sentence(q)}\nA. ${sentence(a)}`).join('\n\n')}`,
-    easySection('다음에 할 일', [
-      `먼저 무료 진단으로 현재 사이트 상태를 확인합니다.`,
-      `문제가 큰 부분부터 하나씩 고치고, 고친 뒤 다시 확인합니다.`,
-      `더 자세한 정리가 필요하면 상품 비교 페이지에서 리포트, 문구 수정안, 정기 점검 방식을 비교할 수 있습니다.`
-    ]),
+    `이 글에서 바로 얻을 수 있는 것\n${industry} 사이트에서 고객이 망설이기 쉬운 지점을 실제 운영자가 확인하기 쉽게 정리했습니다. ${firstQuestion} 이 글은 내부 운영 기록이 아니라 방문자가 읽어도 도움이 되는 안내 글입니다.`,
+    `이런 경우 문제가 됩니다\n${realSituation} 특히 ${topic}와 관련된 안내가 흩어져 있으면 고객은 “나중에 확인하자”라고 생각하기 쉽습니다. ${example}`,
+    `고객은 이렇게 느낍니다\n고객은 긴 약관 전문을 처음부터 끝까지 읽기보다 필요한 답을 빠르게 찾고 싶어 합니다. “환불은 가능한가요?”, “문의하면 답이 오나요?”, “내 정보는 어디에 쓰이나요?” 같은 질문에 바로 답이 보이면 다음 행동으로 넘어가기 쉽습니다.`,
+    `오늘 바로 확인할 체크리스트\n${checklist.map((item, index) => `${index + 1}. ${item}`).join('\n')}`,
+    `문구를 이렇게 바꿔보세요\n${phraseBeforeAfter.map(([before, after], index) => `${index + 1}. 바꾸기 전: “${before}”\n   바꾼 뒤: “${after}”`).join('\n')}`,
+    `자주 묻는 질문\n${faq.map(([q, a], index) => `Q${index + 1}. ${sentence(q)}\nA. ${sentence(a)}`).join('\n\n')}`,
+    `마무리\n이 글만으로 법률 판단이나 매출 상승을 단정할 수는 없습니다. 다만 고객이 헷갈리는 안내를 앞으로 꺼내면 문의와 구매 과정은 더 편해집니다. 먼저 무료 진단으로 현재 상태를 확인하고, 문제가 큰 항목부터 하나씩 정리하세요.`,
     `관련 링크\n${linksText}`
   ].join('\n\n');
 }
@@ -500,12 +510,12 @@ export function buildCtaBoardArticle(scan = {}, variant = {}, options = {}) {
   const top = humanList(scan.topFindings || (scan.detailFindings || []).map(item => item?.title), '고객 안내, 환불 기준, 개인정보 안내');
   const rawKeyword = `${legacy.seo?.primaryKeyword || ctx.baseVariant.primaryKeyword || '사이트 점검'} ${ctx.angle[3]}`;
   const keyword = stripJargon(rawKeyword);
-  const titleCandidates = humanTitleCandidates(ctx, keyword, legacy.title);
+  const titleCandidates = helpfulTitle(ctx, keyword, legacy.title);
   const pickedTitle = normalizeText(options.title || variant.title || comboPick(titleCandidates, ctx.seed, 8), titleCandidates[0]);
   const titleSlot = `${(Number.parseInt(ctx.token, 16) % 999) + 1}-${String(options.sequenceOffset ?? 0).padStart(3, '0')}`;
-  const title = options.title || variant.title ? pickedTitle : `${pickedTitle} · 쉬운 점검 ${titleSlot}`;
+  const title = cleanPublicPhrase(options.title || variant.title ? pickedTitle : pickedTitle);
   const faqSet = easyFaq(ctx.seed, ctx.industry, ctx.target, top);
-  const metaDescription = clampText(`${ctx.industry} 사이트를 고객 입장에서 쉽게 점검하고, 바로 고칠 부분을 정리합니다.`);
+  const metaDescription = clampText(`${ctx.industry} 사이트에서 고객이 문의·구매 전에 확인하는 안내를 쉽게 정리합니다.`);
   const tags = unique([
     `#${ctx.industry.replace(/[\s·/]+/g, '')}`,
     '#쉬운사이트점검',

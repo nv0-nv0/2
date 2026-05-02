@@ -28,28 +28,31 @@ export function buildPublicDiagnosisPackage(result = {}, options = {}) {
     /광고|최고|무조건|보장|표현/i.test(joined) && '과장 표현으로 인한 신뢰 저하 가능성'
   ].filter(Boolean);
   return {
-    engine: 'NV0 Builtin Diagnosis Engine',
+    engine: 'NV0 Evidence-first Preliminary Check Engine',
     version: rulesVersion,
-    summary: result.summary || '자동 진단이 완료되었습니다.',
-    score: { value: scoreValue, level: result.riskLevel || '미확인', max: 100 },
-    scannedPages: result.scannedPages || [],
+    summary: result.summary || '공개 페이지 기준 예비 점검이 완료되었습니다.',
+    score: { value: scoreValue, level: result.riskLevel || '미확인', max: 100, label: '탐지 점수', disclaimer: result.scoreModel?.scoreDisclaimer || '점수는 법적 결론이 아니라 발견 항목의 우선순위입니다.' },
+    scannedPages: result.evidenceSummary?.scannedPages || result.scannedPages || [],
+    evidenceSummary: result.evidenceSummary || {},
+    scoreModel: result.scoreModel || {},
+    qualityAssurance: result.qualityAssurance || {},
     probeCount: result.probeCount || 0,
     mainChecks,
     topIssues,
     issueStats: { totalIssues, criticalIssues, autoFixableIssues },
     deliverableBundle: {
-      standard: 'commercial-core-v6.7-100-point-output',
+      standard: 'evidence-first-preliminary-output-v7.0',
       targetLengthKo: '900-1500',
-      valueStandard: '가격의 3배 구성 가치 기준이며 실제 매출·법률 안전성을 보장하지 않습니다.',
-      requiredSections: ['제목 후보', '도입', '문제 제기', '해결 과정', '신뢰 근거', 'FAQ', '자연스러운 CTA', '태그'],
+      valueStandard: '근거·확인범위·수동검토 항목을 분리하는 실무 점검 기준이며 실제 매출·법률 안전성을 보장하지 않습니다.',
+      requiredSections: ['확인 범위', '확인 URL', '발견 근거', '신뢰도', '한계', '수동 검토 필요', '개선 순서', '재점검 기준'],
       titleCandidates: ['사이트 신뢰 공백을 줄이는 실무 점검법', '결제 전 고객이 확인하는 안내 문구 정리', '운영 리스크를 낮추는 리포트 활용법'],
       faq: ['이 결과는 법률 자문인가요? 아니요, 운영 참고용 진단입니다.', '결제 후 무엇을 받나요? 리포트, 수정 방향, CTA 문구, 재점검 기준을 확인합니다.', '바로 적용 가능한가요? 운영 정보 확인 후 적용하는 것을 권장합니다.'],
-      tags: ['#사이트점검', '#무료진단', '#상세리포트', '#수정문구', '#CTA', '#문의전환']
+      tags: ['#사이트점검', '#예비점검', '#근거기반진단', '#수동검토', '#상세리포트', '#수정문구']
     },
     reportExample: {
-      standard: 'veridion-hybrid-report-v6.8',
-      basicInfo: { target: result.target || result.normalizedTarget || '', analysisChannel: '공개 웹페이지 기준', salesType: '현재 입력만으로 특정 불가 · 확인 필요' },
-      overall: { currentScore: scoreValue, maxScore: 100, status: result.riskLevel || '미확인', projectedScore: projected, projectedScoreDisclaimer: '내부 진단 모델 기준의 개선 목표이며 법적 안전성이나 매출 개선을 보장하지 않습니다.' },
+      standard: 'veridion-evidence-first-report-v7.0',
+      basicInfo: { target: result.target || result.normalizedTarget || '', analysisChannel: '공개 웹페이지 기준 예비 점검', salesType: '현재 입력만으로 특정 불가 · 확인 필요' },
+      overall: { currentScore: scoreValue, maxScore: 100, status: result.riskLevel || '미확인', projectedScore: projected, projectedScoreDisclaimer: '내부 탐지 모델 기준의 개선 목표이며 법적 안전성이나 매출 개선을 보장하지 않습니다.', confidenceScore: result.evidenceSummary?.confidenceScore || 0, confidenceLabel: result.evidenceSummary?.confidenceLabel || '확인 필요' },
       categoryAnalysis: mainChecks.map(item => ({ label: item.label, score: item.score, status: item.status, note: item.issue })),
       majorIssues: topIssues,
       expectedRisks: (expectedRisks.length ? expectedRisks : ['필수 고지 확인 지연으로 인한 구매 전 이탈 가능성','고객지원·정책 안내 불명확으로 인한 문의 증가 가능성']).slice(0, 4),

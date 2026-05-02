@@ -8,8 +8,16 @@ for (const file of ['server/index.mjs','shared/base.css','apps/public/home/index
 const pkg=JSON.parse(read('package.json'));
 add('version:commercial-final', /commercial-final/.test(pkg.version));
 const server=read('server/index.mjs');
+const routeSources = [
+  server,
+  read('server/routes/public.mjs'),
+  read('server/routes/admin.mjs'),
+  read('server/routes/payment.mjs'),
+  read('server/routes/account.mjs'),
+  read('server/routes/ops.mjs')
+].join('\n');
 for (const route of ['/', '/plans', '/documents', '/products/veridion/demo', '/checkout', '/portal', '/board', '/business-info', '/privacy', '/terms', '/refund']) add(`route:${route}`, route==='/' || server.includes(`'${route}'`));
-for (const api of ['/api/public/products','/api/public/plans','/api/public/scan','/api/public/document-preview','/api/public/checkout-session','/api/public/payment/complete','/api/public/fulfillment','/healthz','/readyz']) add(`api:${api}`, server.includes(api));
+for (const api of ['/api/public/products','/api/public/plans','/api/public/scan','/api/public/document-preview','/api/public/checkout-session','/api/public/payment/complete','/api/public/fulfillment','/healthz','/readyz']) add(`api:${api}`, routeSources.includes(api));
 for (const code of ['Report','FixPack','TemplatePack','IndustryGuide','Basic','Pro','Auto','Certified','Agency']) add(`offer:${code}`, server.includes(`code: '${code}'`) || server.includes(`code:"${code}"`) || server.includes(code));
 const home=read('apps/public/home/index.html');
 for (const token of ['NV0','무료 진단 시작','광고를 시작하기 전에','결제 전 신뢰 점검','위험도 72 / 100','추천 이용 순서','상세 리포트','법률 자문 서비스인가요?']) add(`home:${token}`, home.includes(token));

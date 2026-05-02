@@ -36,7 +36,7 @@ function renderAsset(asset, order, accessToken) {
   if (!asset) return '';
   const downloadUrl = order?.id && asset.downloadable !== false ? `/api/public/fulfillment-download?orderId=${encodeURIComponent(order.id)}${accessToken ? `&accessToken=${encodeURIComponent(accessToken)}` : ''}` : '';
   const titleCandidates = renderList(asset.titleCandidates || [], '', item => `<li>${escapeHtml(item)}</li>`);
-  const executive = asset.executiveBrief ? `<section class="asset-section asset-executive"><h3>핵심 요약</h3><div class="asset-kpi-grid"><article><span>리스크 점수</span><b>${escapeHtml(asset.executiveBrief.riskScore ?? '-')} / 100</b></article><article><span>상태</span><b>${escapeHtml(asset.executiveBrief.riskLevel || '확인 필요')}</b></article><article><span>구성 가치</span><b>${escapeHtml(asset.valueStatement || '확인 필요')}</b></article></div><p>${escapeHtml(asset.executiveBrief.purpose || '')}</p></section>` : '';
+  const executive = asset.executiveBrief ? `<section class="asset-section asset-executive"><h3>핵심 요약</h3><div class="asset-kpi-grid"><article><span>보완 후보 점수</span><b>${escapeHtml(asset.executiveBrief.riskScore ?? '-')} / 100</b></article><article><span>상태</span><b>${escapeHtml(asset.executiveBrief.riskLevel || '확인 필요')}</b></article><article><span>구성 가치</span><b>${escapeHtml(asset.valueStatement || '확인 필요')}</b></article></div><p>${escapeHtml(asset.executiveBrief.purpose || '')}</p></section>` : '';
   const sections = renderList(asset.sections || [], '', item => `<section class="asset-section"><h3>${escapeHtml(item.title)}</h3>${item.objective ? `<p class="muted"><b>목적</b> · ${escapeHtml(item.objective)}</p>` : ''}<pre class="pre-wrap asset-body">${escapeHtml(item.body || '')}</pre>${(item.actionItems || []).length ? `<div class="asset-mini-block"><b>실행 항목</b><ul>${renderList(item.actionItems, '', row => `<li>${escapeHtml(row)}</li>`)}</ul></div>` : ''}${(item.acceptanceCriteria || []).length ? `<div class="asset-mini-block"><b>수용 기준</b><ul>${renderList(item.acceptanceCriteria, '', row => `<li>${escapeHtml(row)}</li>`)}</ul></div>` : ''}</section>`);
   const fixes = renderList(asset.fixes || [], '', item => `<section class="asset-section asset-fix"><div class="meta-row"><h3>${escapeHtml(item.title)}</h3><span class="pill ${item.priority === 'P0' ? 'gold' : ''}">${escapeHtml(item.priority || 'P2')}</span></div><div class="asset-before-after"><article><span>현재 상태</span><p>${escapeHtml(item.before || '')}</p></article><article><span>수정 문구/방향</span><p>${escapeHtml(item.after || '')}</p></article></div>${item.rationale ? `<p class="muted"><b>이유</b> · ${escapeHtml(item.rationale)}</p>` : ''}${(item.whereToApply || []).length ? `<div class="asset-mini-block"><b>적용 위치</b><ul>${renderList(item.whereToApply, '', row => `<li>${escapeHtml(row)}</li>`)}</ul></div>` : ''}${(item.acceptanceCriteria || []).length ? `<div class="asset-mini-block"><b>검수 기준</b><ul>${renderList(item.acceptanceCriteria, '', row => `<li>${escapeHtml(row)}</li>`)}</ul></div>` : ''}</section>`);
   const templates = renderList(asset.templates || [], '', item => `<section class="asset-section"><h3>${escapeHtml(item.title)}</h3>${item.purpose ? `<p class="muted"><b>목적</b> · ${escapeHtml(item.purpose)}</p>` : ''}<pre class="pre-wrap asset-body">${escapeHtml(item.content || '')}</pre>${item.usageNote ? `<p class="muted"><b>사용 전 확인</b> · ${escapeHtml(item.usageNote)}</p>` : ''}</section>`);
@@ -48,7 +48,7 @@ function renderAsset(asset, order, accessToken) {
   const conversionCopyPack = asset.conversionCopyPack ? `<section class="asset-section"><h3>전환 카피 팩</h3><div class="asset-mini-block"><b>제목 후보</b><ul>${renderList(asset.conversionCopyPack.heroTitles || [], '', item => `<li>${escapeHtml(item)}</li>`)}</ul></div><p>${escapeHtml(asset.conversionCopyPack.opening || '')}</p><p class="muted"><b>문제 제기</b> · ${escapeHtml(asset.conversionCopyPack.problemStatement || '')}</p><div class="asset-tags">${(asset.conversionCopyPack.ctaButtons || []).map(item => `<span>${escapeHtml(item)}</span>`).join('')}</div></section>` : '';
   const acceptanceChecklist = (asset.acceptanceChecklist || []).length ? `<section class="asset-section"><h3>수용 기준 체크리스트</h3><ol class="asset-checklist">${renderList(asset.acceptanceChecklist || [], '', item => `<li>${escapeHtml(item)}</li>`)}</ol></section>` : '';
   const measurementPlan = (asset.measurementPlan || []).length ? `<section class="asset-section"><h3>재점검/성과 관찰 기준</h3><div class="asset-index-grid">${(asset.measurementPlan || []).map(item => `<article class="included"><span>${escapeHtml(item.metric)}</span><b>${escapeHtml(item.afterTarget || '')}</b><p>현재: ${escapeHtml(item.before || '')}</p><small>${escapeHtml(item.checkMethod || '')}</small></article>`).join('')}</div></section>` : '';
-  const riskRegister = (asset.riskRegister || []).length ? `<section class="asset-section"><h3>리스크 관리표</h3><div class="asset-risk-grid">${(asset.riskRegister || []).map(item => `<article><b>${escapeHtml(item.risk)}</b><p>${escapeHtml(item.mitigation)}</p><small>담당: ${escapeHtml(item.owner || '확인 필요')}</small></article>`).join('')}</div></section>` : '';
+  const riskRegister = (asset.riskRegister || []).length ? `<section class="asset-section"><h3>보완 후보 관리표</h3><div class="asset-risk-grid">${(asset.riskRegister || []).map(item => `<article><b>${escapeHtml(item.risk)}</b><p>${escapeHtml(item.mitigation)}</p><small>담당: ${escapeHtml(item.owner || '확인 필요')}</small></article>`).join('')}</div></section>` : '';
   const stakeholderHandoff = asset.stakeholderHandoff ? `<section class="asset-section"><h3>담당자별 실행 메모</h3><div class="asset-handoff-grid">${Object.entries(asset.stakeholderHandoff || {}).map(([role, items]) => `<article><b>${escapeHtml(role)}</b><ul>${renderList(items || [], '', item => `<li>${escapeHtml(item)}</li>`)}</ul></article>`).join('')}</div></section>` : '';
   const outputPerformanceProfile = asset.outputPerformanceProfile ? `<section class="asset-section"><h3>품질·성능 프로파일</h3><div class="asset-maturity-grid"><article><span>상세도</span><b>${escapeHtml(asset.outputPerformanceProfile.detailDepth || '')}</b></article><article><span>가치 기준</span><b>${escapeHtml(asset.outputPerformanceProfile.valueMultiple || '')}</b></article><article><span>렌더링</span><b>${escapeHtml((asset.outputPerformanceProfile.renderPerformance || []).join(' · '))}</b></article></div></section>` : '';
   const tags = (asset.tags || []).length ? `<div class="asset-tags">${(asset.tags || []).map(tag => `<span>#${escapeHtml(tag)}</span>`).join('')}</div>` : '';
@@ -58,7 +58,7 @@ function renderAsset(asset, order, accessToken) {
 }
 function renderSavedSites(sites = []) {
   if (!sites.length) {
-    return `<div class="portal-empty"><strong>아직 저장된 사이트가 없습니다.</strong><p>무료 진단을 실행하거나 아래 입력창에서 사이트를 저장하면 재검사와 최근 내역 관리가 시작됩니다.</p><a class="btn primary" href="/products/veridion/demo">무료 진단 시작</a></div>`;
+    return `<div class="portal-empty"><strong>아직 저장된 사이트가 없습니다.</strong><p>예비 점검을 실행하거나 아래 입력창에서 사이트를 저장하면 재검사와 최근 내역 관리가 시작됩니다.</p><a class="btn primary" href="/products/veridion/demo">예비 점검 시작</a></div>`;
   }
   const rows = sites.map(site => `<tr>
     <td><div class="nv74-site-title"><span class="nv74-thumb"></span><div><b>${escapeHtml(site.label || site.domain)}</b><small>${escapeHtml(site.domain || '-')} · ${escapeHtml(site.industry || '업종 미지정')}</small></div></div></td>
@@ -73,7 +73,7 @@ function reportRiskCopy(score) {
   const n = Number(score);
   if (!Number.isFinite(n)) return '확인 필요';
   if (n >= 75) return '즉시 보완 필요';
-  if (n >= 55) return '일부 운영 리스크 존재';
+  if (n >= 55) return '일부 운영 보완 후보 존재';
   return '비교적 안정적';
 }
 function reportProjectedScore(score, issueCount = 0) {
@@ -95,7 +95,7 @@ function renderPortalDiagnosisReport(scan) {
   const riskCopy = reportRiskCopy(scan.riskScore);
   return `<div class="card stack portal-report-example portal-report-clean"><div class="meta-row"><strong>VERIDION 진단 리포트 요약</strong><span class="pill brand">실제 검사 결과</span></div>
     <div class="portal-report-hero">
-      <article class="portal-report-score"><span>총 리스크 점수</span><strong>${escapeHtml(scan.riskScore ?? '-')} / 100</strong><small>${escapeHtml(riskCopy)}</small></article>
+      <article class="portal-report-score"><span>탐지 점수</span><strong>${escapeHtml(scan.riskScore ?? '-')} / 100</strong><small>${escapeHtml(riskCopy)}</small></article>
       <article class="portal-report-score alt"><span>개선 목표 점수</span><strong>${escapeHtml(projected ?? '확인 필요')} / 100</strong><small>우선순위 항목 반영 시 내부 모델 기준</small></article>
       <article class="portal-report-payment"><span>추천 다음 단계</span><b>상세 리포트 결제 → 수정 실행</b><small>포트원 기반 결제 흐름으로 빠르게 전환</small></article>
     </div>

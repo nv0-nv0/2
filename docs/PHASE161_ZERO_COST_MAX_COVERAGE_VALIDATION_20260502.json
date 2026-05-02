@@ -1,0 +1,117 @@
+{
+  "generatedAt": "2026-05-02T02:52:37.954Z",
+  "ok": true,
+  "phase": "P161-zero-cost-max-coverage",
+  "scope": "no paid API by default, adaptive internal link crawling, negative evidence, coverage gaps, expanded rules, bounded concurrency",
+  "total": 21,
+  "passed": 21,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "phase161 release marker",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "builtin is default provider",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "target fetch enabled by example",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "zero cost controls exist",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "adaptive link extraction exists",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "concurrent bounded fetch exists",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "failed pages are retained",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "business info rule not footer-only",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "expanded rule catalog",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "negative evidence copy exists",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "manual review for low certainty and failed pages",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "score model still avoids legal conclusion",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "demo shows adaptive collection",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "demo shows manual review count not penalty as certainty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "demo page copy is evidence-first",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "package scripts registered",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "no impossible overclaim 1",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "no impossible overclaim 2",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "no impossible overclaim 3",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "no impossible overclaim 4",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "no impossible overclaim 5",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "failures": []
+}

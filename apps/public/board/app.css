@@ -64,3 +64,11 @@ pre,code,.document-preview pre,#consoleState{background:#0B1220!important;color:
 .post-section p,.post-paragraph{margin:0;white-space:normal;color:var(--p73-muted,#a8b3c4)}
 .board-post{gap:18px}.board-post>.meta-row strong{font-size:clamp(20px,3vw,30px);line-height:1.25}.post-meta span:last-child{color:var(--p73-blue-soft,#60a5fa)}
 @media(max-width:620px){.post-section{padding:14px}.post-body{gap:14px}.board-post>.meta-row{display:grid;gap:8px}}
+
+/* PHASE159: five-item pagination and reader-first board cleanup */
+.compact-board .board-flow{grid-template-columns:auto auto auto auto auto}.compact-board-cards{grid-template-columns:repeat(4,1fr)}
+.board-pagination{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:18px;padding-top:18px;border-top:1px solid var(--p73-line-soft,#273244)}
+.board-pagination button{min-width:42px;height:42px;border-radius:12px;border:1px solid var(--p73-line,#334155);background:#0B1220;color:#E2E8F0;font-weight:900;cursor:pointer}
+.board-pagination button.active,.board-pagination button[aria-current="page"]{background:#2563EB;color:#fff;border-color:#2563EB}
+.board-post .upgrade-box{display:none!important}.board-post .post-cta{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}.board-post .post-meta{display:flex;flex-wrap:wrap;gap:8px;color:var(--p73-muted,#A8B3C4);font-size:13px}.board-post .post-meta span{border:1px solid var(--p73-line-soft,#273244);border-radius:999px;padding:6px 10px;background:#0B1220}.post-section p{line-height:1.85}.post-section p br+br{display:none}
+@media(max-width:760px){.compact-board-cards{grid-template-columns:1fr}.board-pagination{justify-content:flex-start}.board-post .post-cta .btn{width:100%;justify-content:center}}

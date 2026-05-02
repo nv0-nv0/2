@@ -13,6 +13,11 @@ import { buildPremiumPurchasedAsset, buildPremiumAssetPdfLines } from './core/pr
 import { buildCtaBoardArticle, chooseCtaVariant, ctaTopicPacks, ctaCombinationStats } from './core/cta-publication.mjs';
 import { buildProductIntelligence, annotateOffersWithIntelligence, buildProductDashboard } from './core/product-intelligence.mjs';
 import { buildSmartProductOrchestration, buildSmartPublicSnapshot } from './core/smart-product-orchestrator.mjs';
+import { discoverTargetAutomationLinks } from './core/free-auto-discovery.mjs';
+import { buildEvidenceSummary, buildScoreModel } from './core/scan-evidence-model.mjs';
+import { buildAutomationDisclosure, buildAutomatedActionPlan } from './core/free-auto-disclosure.mjs';
+import { createBackupOperations } from './core/backup-operations.mjs';
+import { buildOpenApiSpec as buildOpenApiSpecFromContext, buildHardeningMatrix as buildHardeningMatrixFromContext } from './core/hardening-matrix.mjs';
 import { authenticateAdminAccount, ensureAdminCollections, ensureBootstrapAdmin, getAdminPermissions, getAdminRoles } from './core/admin-auth.mjs';
 import { hashPassword, verifyPassword } from './core/passwords.mjs';
 import { createPersistenceManager } from './infrastructure/persistence/persistence.mjs';
@@ -22,6 +27,14 @@ import { createDistributedLock } from './infrastructure/lock/distributed-lock.mj
 import { createPortOneV2Client, verifyPortOnePaymentAgainstOrder } from './infrastructure/payments/portone-v2.mjs';
 import { sanitizeAuditPayload } from './infrastructure/security/secure-record-store.mjs';
 import { verifyPortOneWebhook } from './infrastructure/payments/portone-webhook-verify.mjs';
+import { createPublicRouteHandler } from './routes/public.mjs';
+import { createAdminRouteHandler } from './routes/admin.mjs';
+import { validateRuntimeConfig } from './config/validation.mjs';
+import { readEnvConfig } from './config/env.mjs';
+import { createSecurityMiddleware } from './middleware/security.mjs';
+import { resolveNativeRouteState } from './core/native-route-state.mjs';
+import { putObjectToS3Compatible } from './infrastructure/storage/s3-compatible.mjs';
+const ENV_CONFIG = readEnvConfig(process.env);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, '..');
@@ -46,14 +59,14 @@ hostingProvider: process.env.NV0_HOSTING_PROVIDER || 'Contabo GmbH',
 customerServicePhone: process.env.NV0_CUSTOMER_SERVICE_PHONE || '',
 privacyOfficerEmail: process.env.NV0_PRIVACY_OFFICER_EMAIL || process.env.NV0_SUPPORT_EMAIL || 'ct@nv0.kr'
 });
-const PORT = Number(process.env.PORT || 3210);
-const HOST = String(process.env.HOST || process.env.NV0_HOST || '0.0.0.0');
-const NODE_ENV = process.env.NODE_ENV || 'development';
+const PORT = ENV_CONFIG.port;
+const HOST = ENV_CONFIG.host;
+const NODE_ENV = ENV_CONFIG.nodeEnv;
 const PLATFORM = createPlatformProfile(process.env);
 const DEPLOYMENT_STAGE = String(process.env.NV0_DEPLOYMENT_STAGE || (PLATFORM.commercial ? 'prelaunch' : 'mvp')).trim().toLowerCase();
 const COMMERCIAL_LAUNCH_READY = process.env.NV0_COMMERCIAL_LAUNCH_READY === 'true' || DEPLOYMENT_STAGE === 'commercial_launch';
 const PRELAUNCH_MODE = PLATFORM.commercial && !COMMERCIAL_LAUNCH_READY;
-const TRUST_PROXY_HEADERS = process.env.NV0_TRUST_PROXY_HEADERS === 'true';
+const TRUST_PROXY_HEADERS = ENV_CONFIG.trustProxyHeaders;
 const ADMIN_KEY = process.env.NV0_ADMIN_KEY || ''; // legacy MVP-only shared key
 const SESSION_TTL_MS = Number(process.env.NV0_ADMIN_SESSION_TTL_MS || 1000 * 60 * 60);
 const MAX_JSON_BODY_BYTES = Number(process.env.NV0_MAX_JSON_BODY_BYTES || 64 * 1024);
@@ -67,14 +80,22 @@ const PUBLIC_SCAN_LIMIT = Number(process.env.NV0_PUBLIC_SCAN_LIMIT || 20);
 const PUBLIC_SCAN_WINDOW_MS = Number(process.env.NV0_PUBLIC_SCAN_WINDOW_MS || 60_000);
 const ADMIN_AUTH_LIMIT = Number(process.env.NV0_ADMIN_AUTH_LIMIT || 8);
 const ADMIN_AUTH_WINDOW_MS = Number(process.env.NV0_ADMIN_AUTH_WINDOW_MS || 10 * 60_000);
-const ALLOWED_ADMIN_ORIGINS = String(process.env.NV0_ALLOWED_ADMIN_ORIGINS || '').split(',').map(v => v.trim()).filter(Boolean);
+const ALLOWED_ADMIN_ORIGINS = ENV_CONFIG.allowedAdminOrigins;
 const BACKUP_RETENTION_COUNT = Number(process.env.NV0_BACKUP_RETENTION_COUNT || 20);
+const BACKUP_REMOTE_ENABLED = process.env.NV0_BACKUP_REMOTE_ENABLED !== 'false' && ['s3','s3_compatible','object_storage'].includes(String(process.env.NV0_STORAGE_MODE || '').trim() || (PLATFORM.commercial ? 's3' : 'local_fs'));
+const BACKUP_REMOTE_PREFIX = String(process.env.NV0_BACKUP_REMOTE_PREFIX || 'backups/nv0').trim().replace(/^\/+|\/+$/g, '') || 'backups/nv0';
+const BACKUP_COMPRESS = process.env.NV0_BACKUP_COMPRESS !== 'false';
+const BACKUP_ENCRYPTION_SECRET = String(process.env.NV0_BACKUP_ENCRYPTION_SECRET || '').trim();
+const BACKUP_REMOTE_REQUIRE_ENCRYPTION = process.env.NV0_BACKUP_REMOTE_REQUIRE_ENCRYPTION === 'true';
+const AUTO_BACKUP_ENABLED = process.env.NV0_AUTO_BACKUP_ENABLED === 'true' || (PLATFORM.commercial && process.env.NV0_AUTO_BACKUP_ENABLED !== 'false');
+const AUTO_BACKUP_ON_STARTUP = process.env.NV0_AUTO_BACKUP_ON_STARTUP !== 'false';
+const AUTO_BACKUP_INTERVAL_MS = Number(process.env.NV0_AUTO_BACKUP_INTERVAL_MS || 6 * 60 * 60_000);
 const AUDIT_LOG_RETENTION_COUNT = Number(process.env.NV0_AUDIT_LOG_RETENTION_COUNT || 200);
 const ADMIN_AUTH_MODE = process.env.NV0_ADMIN_AUTH_MODE || (PLATFORM.commercial ? 'account_rbac' : 'shared_key');
 const STORAGE_MODE = process.env.NV0_STORAGE_MODE || (PLATFORM.commercial ? 's3' : 'local_fs');
 const PERSISTENCE_MODE = process.env.NV0_PERSISTENCE_MODE || (PLATFORM.commercial ? 'postgres_primary' : 'json');
 const DATABASE_URL = process.env.NV0_DATABASE_URL || '';
-const SCAN_PROVIDER = process.env.NV0_SCAN_PROVIDER || (PLATFORM.commercial ? 'external_http' : 'builtin');
+const SCAN_PROVIDER = process.env.NV0_SCAN_PROVIDER || 'builtin';
 const SCAN_PROVIDER_URL = process.env.NV0_SCAN_PROVIDER_URL || '';
 const SCAN_PROVIDER_TOKEN = process.env.NV0_SCAN_PROVIDER_TOKEN || '';
 const SCAN_PROVIDER_FALLBACK = process.env.NV0_SCAN_PROVIDER_FALLBACK !== 'false';
@@ -85,23 +106,38 @@ const PAYMENT_PROVIDER_TOKEN = process.env.NV0_PAYMENT_PROVIDER_TOKEN || '';
 const PORTONE_CLIENT = createPortOneV2Client(process.env);
 const PORTONE_WEBHOOK_SECRET = process.env.NV0_PORTONE_WEBHOOK_SECRET || '';
 const PORTONE_WEBHOOK_VERIFY_MODE = process.env.NV0_PORTONE_WEBHOOK_VERIFY_MODE || (PLATFORM.target === 'commercial' || NODE_ENV === 'production' ? 'strict' : 'optional');
-const RULES_VERSION = process.env.NV0_RULES_VERSION || '2026.04.25-phase68-auto-diagnosis';
+const RULES_VERSION = process.env.NV0_RULES_VERSION || '2026.05.02-phase164-zero-cost-hardening-50';
 const SCAN_CACHE_TTL_MS = Number(process.env.NV0_SCAN_CACHE_TTL_MS || 10 * 60_000);
+const TARGET_FETCH_TIMEOUT_MS = Number(process.env.NV0_TARGET_FETCH_TIMEOUT_MS || 3000);
+const TARGET_FETCH_MAX_PAGES = Math.max(4, Math.min(24, Number(process.env.NV0_TARGET_FETCH_MAX_PAGES || 12)));
+const TARGET_FETCH_CONCURRENCY = Math.max(1, Math.min(6, Number(process.env.NV0_TARGET_FETCH_CONCURRENCY || 4)));
+const TARGET_FETCH_ROBOTS_ENABLED = process.env.NV0_TARGET_FETCH_ROBOTS_ENABLED !== 'false';
+const TARGET_FETCH_SITEMAP_ENABLED = process.env.NV0_TARGET_FETCH_SITEMAP_ENABLED !== 'false';
+const TARGET_FETCH_MAX_SITEMAP_URLS = Math.max(0, Math.min(80, Number(process.env.NV0_TARGET_FETCH_MAX_SITEMAP_URLS || 40)));
+const TARGET_FETCH_MAX_DISCOVERY_RESOURCES = Math.max(1, Math.min(6, Number(process.env.NV0_TARGET_FETCH_MAX_DISCOVERY_RESOURCES || 4)));
+const TARGET_FETCH_AUTOMATION_LEVEL = process.env.NV0_TARGET_FETCH_AUTOMATION_LEVEL || 'maximum_free_safe';
 const CTA_AUTOPUBLISH_INTERVAL_MS = Number(process.env.NV0_CTA_AUTOPUBLISH_INTERVAL_MS || 30 * 60_000);
-const RELEASE_PHASE = 'phase157-nonpayment-ops-completion';
+const AI_REVIEW_PROVIDER = String(process.env.NV0_AI_REVIEW_PROVIDER || 'disabled').trim().toLowerCase();
+const GEMINI_API_KEY = String(process.env.NV0_GEMINI_API_KEY || '').trim();
+const GEMINI_MODEL = String(process.env.NV0_GEMINI_MODEL || 'gemini-2.5-flash').trim();
+const AI_REVIEW_ENABLED = AI_REVIEW_PROVIDER === 'gemini' && !!GEMINI_API_KEY;
+const RELEASE_PHASE = 'phase167-native-http-load-security-50';
 const DATA_RETENTION_DAYS = Number(process.env.NV0_DATA_RETENTION_DAYS || 1095);
 const REFUND_REQUEST_WINDOW_DAYS = Number(process.env.NV0_REFUND_REQUEST_WINDOW_DAYS || 7);
 const OPERATOR_ALERT_EMAIL = process.env.NV0_OPERATOR_ALERT_EMAIL || BUSINESS_PROFILE.contactEmail;
 const PAYMENT_IDEMPOTENCY_TTL_MS = Number(process.env.NV0_PAYMENT_IDEMPOTENCY_TTL_MS || 24 * 60 * 60_000);
 const EMAIL_MAX_RETRY_COUNT = Number(process.env.NV0_EMAIL_MAX_RETRY_COUNT || 5);
 const EMAIL_RETRY_BACKOFF_MS = Number(process.env.NV0_EMAIL_RETRY_BACKOFF_MS || 5 * 60_000);
-const ADMIN_IP_ALLOWLIST = String(process.env.NV0_ADMIN_IP_ALLOWLIST || '').split(',').map(v => v.trim()).filter(Boolean);
-const PUBLIC_CACHE_SECONDS = Number(process.env.NV0_PUBLIC_CACHE_SECONDS || 0);
-const PUBLIC_ASSET_CACHE_SECONDS = Number(process.env.NV0_PUBLIC_ASSET_CACHE_SECONDS || 0);
+const ADMIN_IP_ALLOWLIST = ENV_CONFIG.adminIpAllowlist;
+const PUBLIC_CACHE_SECONDS = ENV_CONFIG.publicCacheSeconds;
+const PUBLIC_ASSET_CACHE_SECONDS = ENV_CONFIG.publicAssetCacheSeconds;
 const SERVER_HEADER = 'nv0';
-const ALLOWED_HOSTS = String(process.env.NV0_ALLOWED_HOSTS || 'nv0.kr,www.nv0.kr,localhost,127.0.0.1,0.0.0.0,::1').split(',').map(v => v.trim().toLowerCase()).filter(Boolean);
-const REQUEST_TIMEOUT_MS = Number(process.env.NV0_REQUEST_TIMEOUT_MS || 15_000);
+const ALLOWED_HOSTS = ENV_CONFIG.allowedHosts;
+const REQUEST_TIMEOUT_MS = ENV_CONFIG.requestTimeoutMs;
 const READYZ_REDIS_STRICT = process.env.NV0_READYZ_REDIS_STRICT === 'true' || COMMERCIAL_LAUNCH_READY;
+const SLOW_REQUEST_THRESHOLD_MS = ENV_CONFIG.slowRequestThresholdMs;
+const DATA_DESTRUCTION_GRACE_DAYS = Number(process.env.NV0_DATA_DESTRUCTION_GRACE_DAYS || 30);
+const SECURITY_POSTURE_VERSION = 'phase164-hardening-matrix-v1';
 function assertFiniteConfigNumber(name, value, { min = 0, max = Number.MAX_SAFE_INTEGER } = {}) {
 if (!Number.isFinite(value) || value < min || value > max) {
 throw new Error(`${name} must be a finite number between ${min} and ${max}.`);
@@ -113,6 +149,7 @@ const sessionStore = createSessionStore(process.env, console);
 const rateLimitStore = createRateLimitStore(process.env, console);
 const distributedLock = createDistributedLock(process.env, console);
 const nowIso = () => new Date().toISOString();
+const backupOps = createBackupOperations({ dataDir: DATA_DIR, uploadsDir: UPLOADS_DIR, backupsDir: BACKUPS_DIR, env: process.env, nowIso, logger: console, defaultAutoEnabled: PLATFORM.commercial });
 let defaultDb = {
 settings: {
 autoPublicationEnabled: true,
@@ -209,6 +246,39 @@ idempotencyKeys: []
 };
 }
 function validateConfig() {
+validateRuntimeConfig({
+env: process.env,
+platform: PLATFORM,
+port: PORT,
+nodeEnv: NODE_ENV,
+deploymentStage: DEPLOYMENT_STAGE,
+commercialLaunchReady: COMMERCIAL_LAUNCH_READY,
+prelaunchMode: PRELAUNCH_MODE,
+adminAuthMode: ADMIN_AUTH_MODE,
+persistenceMode: PERSISTENCE_MODE,
+storageMode: STORAGE_MODE,
+scanProvider: SCAN_PROVIDER,
+paymentProvider: PAYMENT_PROVIDER,
+databaseUrl: DATABASE_URL,
+sessionTtlMs: SESSION_TTL_MS,
+maxJsonBodyBytes: MAX_JSON_BODY_BYTES,
+maxMultipartBodyBytes: MAX_MULTIPART_BODY_BYTES,
+publicScanLimit: PUBLIC_SCAN_LIMIT,
+publicScanWindowMs: PUBLIC_SCAN_WINDOW_MS,
+adminAuthLimit: ADMIN_AUTH_LIMIT,
+adminAuthWindowMs: ADMIN_AUTH_WINDOW_MS,
+backupRetentionCount: BACKUP_RETENTION_COUNT,
+autoBackupIntervalMs: AUTO_BACKUP_INTERVAL_MS,
+auditLogRetentionCount: AUDIT_LOG_RETENTION_COUNT,
+scanCacheTtlMs: SCAN_CACHE_TTL_MS,
+ctaAutopublishIntervalMs: CTA_AUTOPUBLISH_INTERVAL_MS,
+publicCacheSeconds: PUBLIC_CACHE_SECONDS,
+requestTimeoutMs: REQUEST_TIMEOUT_MS,
+slowRequestThresholdMs: SLOW_REQUEST_THRESHOLD_MS,
+dataDestructionGraceDays: DATA_DESTRUCTION_GRACE_DAYS,
+businessProfile: BUSINESS_PROFILE,
+operatorAlertEmail: OPERATOR_ALERT_EMAIL
+});
 assertFiniteConfigNumber('PORT', PORT, { min: 1, max: 65535 });
 assertFiniteConfigNumber('NV0_ADMIN_SESSION_TTL_MS', SESSION_TTL_MS, { min: 60_000, max: 86_400_000 });
 assertFiniteConfigNumber('NV0_MAX_JSON_BODY_BYTES', MAX_JSON_BODY_BYTES, { min: 1024, max: 1_048_576 });
@@ -218,11 +288,14 @@ assertFiniteConfigNumber('NV0_PUBLIC_SCAN_WINDOW_MS', PUBLIC_SCAN_WINDOW_MS, { m
 assertFiniteConfigNumber('NV0_ADMIN_AUTH_LIMIT', ADMIN_AUTH_LIMIT, { min: 1, max: 100 });
 assertFiniteConfigNumber('NV0_ADMIN_AUTH_WINDOW_MS', ADMIN_AUTH_WINDOW_MS, { min: 1000, max: 3_600_000 });
 assertFiniteConfigNumber('NV0_BACKUP_RETENTION_COUNT', BACKUP_RETENTION_COUNT, { min: 1, max: 500 });
+assertFiniteConfigNumber('NV0_AUTO_BACKUP_INTERVAL_MS', AUTO_BACKUP_INTERVAL_MS, { min: 300_000, max: 7 * 24 * 60 * 60_000 });
 assertFiniteConfigNumber('NV0_AUDIT_LOG_RETENTION_COUNT', AUDIT_LOG_RETENTION_COUNT, { min: 1, max: 10000 });
 assertFiniteConfigNumber('NV0_SCAN_CACHE_TTL_MS', SCAN_CACHE_TTL_MS, { min: 0, max: 86_400_000 });
 assertFiniteConfigNumber('NV0_CTA_AUTOPUBLISH_INTERVAL_MS', CTA_AUTOPUBLISH_INTERVAL_MS, { min: 60_000, max: 86_400_000 });
 assertFiniteConfigNumber('NV0_PUBLIC_CACHE_SECONDS', PUBLIC_CACHE_SECONDS, { min: 0, max: 86_400 });
 assertFiniteConfigNumber('NV0_REQUEST_TIMEOUT_MS', REQUEST_TIMEOUT_MS, { min: 1000, max: 120_000 });
+assertFiniteConfigNumber('NV0_SLOW_REQUEST_THRESHOLD_MS', SLOW_REQUEST_THRESHOLD_MS, { min: 100, max: 60_000 });
+assertFiniteConfigNumber('NV0_DATA_DESTRUCTION_GRACE_DAYS', DATA_DESTRUCTION_GRACE_DAYS, { min: 0, max: 3650 });
 if (PLATFORM.commercial && ADMIN_AUTH_MODE === 'shared_key') {
 throw new Error('NV0_ADMIN_AUTH_MODE=shared_key is not allowed in production. Use account_rbac.');
 }
@@ -235,6 +308,9 @@ throw new Error(commercialFailures.join(' | '));
 }
 if (['dual_write', 'postgres_primary'].includes(PERSISTENCE_MODE) && !DATABASE_URL) {
 throw new Error('NV0_DATABASE_URL is required when NV0_PERSISTENCE_MODE enables PostgreSQL.');
+}
+if (BACKUP_REMOTE_REQUIRE_ENCRYPTION && !BACKUP_ENCRYPTION_SECRET) {
+throw new Error('NV0_BACKUP_ENCRYPTION_SECRET is required when NV0_BACKUP_REMOTE_REQUIRE_ENCRYPTION=true.');
 }
 if (PLATFORM.commercial) {
 if (PERSISTENCE_MODE !== 'postgres_primary') throw new Error('Commercial launch requires NV0_PERSISTENCE_MODE=postgres_primary.');
@@ -483,6 +559,12 @@ return false;
 }
 return true;
 }
+function requireAdminPermission(req, res, session, permission) {
+const permissions = new Set(session?.permissions || []);
+if (permissions.has('*') || permissions.has(permission)) return true;
+json(req, res, 403, { ok: false, error: '관리자 권한이 부족합니다.', requiredPermission: permission });
+return false;
+}
 async function requireAdmin(req, res) {
 const session = await getSession(req);
 if (!session) {
@@ -538,7 +620,7 @@ return String(req.url || '/').split('?')[0] || '/';
 }
 function isHealthcheckPath(req) {
 const pathname = requestPathname(req);
-return pathname === '/healthz' || pathname === '/readyz';
+return pathname === '/healthz' || pathname === '/health' || pathname === '/livez' || pathname === '/readyz';
 }
 function requestHost(req) {
 const rawHost = String(req.headers.host || 'localhost').trim().toLowerCase();
@@ -629,7 +711,7 @@ function ownsOrder(customer, order) { return !!customer && !!order && (order.cus
 function generateOrderAccessToken(order) { if (!order.accessToken) order.accessToken = crypto.randomBytes(18).toString('base64url'); return order.accessToken; }
 function canAccessOrder(req, order) {
 if (!order) return false;
-const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+const url = req._nv0Url || requestUrlFrom(req);
 const token = String(url.searchParams.get('accessToken') || req.headers['x-nv0-order-token'] || '').trim();
 if (!order.accessToken || !token || token.length !== order.accessToken.length) return false;
 return crypto.timingSafeEqual(Buffer.from(order.accessToken), Buffer.from(token));
@@ -840,6 +922,49 @@ function cleanupIdempotencyKeys(db) {
 db.idempotencyKeys ||= [];
 const cutoff = Date.now() - PAYMENT_IDEMPOTENCY_TTL_MS;
 db.idempotencyKeys = db.idempotencyKeys.filter(item => Date.parse(item.createdAt || 0) >= cutoff);
+}
+
+function cleanupDataRetention(db, { dryRun = false } = {}) {
+const now = Date.now();
+const dayMs = 24 * 60 * 60 * 1000;
+const retentionCutoff = now - DATA_RETENTION_DAYS * dayMs;
+const disabledCutoff = now - DATA_DESTRUCTION_GRACE_DAYS * dayMs;
+const summary = { dryRun, retentionDays: DATA_RETENTION_DAYS, destructionGraceDays: DATA_DESTRUCTION_GRACE_DAYS, removed: {}, anonymizedCustomers: 0 };
+function pruneArray(key, predicate) {
+const before = Array.isArray(db[key]) ? db[key].length : 0;
+const next = (db[key] || []).filter(item => !predicate(item));
+summary.removed[key] = before - next.length;
+if (!dryRun) db[key] = next;
+}
+pruneArray('customerSessions', item => Date.parse(item.expiresAt || 0) < now);
+pruneArray('passwordResetTokens', item => Date.parse(item.expiresAt || 0) < now || (item.usedAt && Date.parse(item.usedAt || 0) < now - 7 * dayMs));
+pruneArray('idempotencyKeys', item => Date.parse(item.createdAt || 0) < now - PAYMENT_IDEMPOTENCY_TTL_MS);
+pruneArray('emailOutbox', item => ['sent','failed','dry_run_preview'].includes(item.status || item.deliveryMode || '') && Date.parse(item.updatedAt || item.lastAttemptAt || item.createdAt || 0) < retentionCutoff);
+pruneArray('operationalEvents', item => Date.parse(item.at || 0) < retentionCutoff);
+if (Array.isArray(db.auditLogs)) {
+const before = db.auditLogs.length;
+const retained = db.auditLogs.filter(item => Date.parse(item.at || 0) >= retentionCutoff).slice(0, AUDIT_LOG_RETENTION_COUNT);
+summary.removed.auditLogs = before - retained.length;
+if (!dryRun) db.auditLogs = retained;
+}
+if (Array.isArray(db.customers)) {
+for (const customer of db.customers) {
+const disabledAt = Date.parse(customer.disabledAt || 0);
+if (customer.status === 'disabled' && disabledAt && disabledAt < disabledCutoff && !customer.anonymizedAt) {
+summary.anonymizedCustomers += 1;
+if (!dryRun) {
+const digest = crypto.createHash('sha256').update(String(customer.email || customer.id || '')).digest('hex').slice(0, 12);
+customer.email = `deleted-${digest}@nv0.local`;
+customer.displayName = 'Deleted customer';
+customer.passwordHash = null;
+customer.marketingConsentAt = null;
+customer.anonymizedAt = nowIso();
+customer.updatedAt = nowIso();
+}
+}
+}
+}
+return summary;
 }
 function getIdempotencyKey(req, body = {}) {
 return String(req.headers['idempotency-key'] || req.headers['x-idempotency-key'] || body.idempotencyKey || '').trim().slice(0, 120);
@@ -1090,8 +1215,8 @@ function routeMeta(urlPath) {
 const base = seoBaseUrl();
 const metas = {
 '/': { title: '웹사이트 안내·정책 무료 점검 | NV0', description: '쇼핑몰과 서비스 페이지에서 고객이 꼭 확인하는 사업자 정보, 개인정보 안내, 환불 기준, 문의 버튼, 가격 안내를 쉽게 점검합니다.', keywords: ['웹사이트 무료 점검','쇼핑몰 신뢰도 점검','환불 안내 점검','개인정보 안내 점검','문의 버튼 개선'] },
-'/products/veridion/demo': { title: 'NV0 무료 진단 | 웹사이트 신뢰 안내 점검', description: '사이트 주소로 고객이 결제나 문의 전에 헷갈릴 수 있는 안내 공백을 확인하고, 먼저 고칠 부분을 쉽게 정리합니다.', keywords: ['무료 사이트 진단','웹사이트 신뢰 점검','문의 구매 흐름 점검','쇼핑몰 안내 점검'] },
-'/plans': { title: '상품·요금 | NV0 리포트·FixPack·Auto 비교', description: '무료 진단 이후 상세 리포트, 바로 붙여넣는 수정 문구, 정기 점검 상품을 상황별로 비교합니다.', keywords: ['사이트 진단 요금','FixPack','Auto 정기 점검','정책 문서 템플릿'] },
+'/products/veridion/demo': { title: 'NV0 예비 점검 | 웹사이트 신뢰 안내 점검', description: '사이트 주소로 고객이 결제나 문의 전에 헷갈릴 수 있는 안내 공백을 확인하고, 먼저 고칠 부분을 쉽게 정리합니다.', keywords: ['무료 사이트 진단','웹사이트 신뢰 점검','문의 구매 흐름 점검','쇼핑몰 안내 점검'] },
+'/plans': { title: '상품·요금 | NV0 리포트·FixPack·Auto 비교', description: '예비 점검 이후 상세 리포트, 바로 붙여넣는 수정 문구, 정기 점검 상품을 상황별로 비교합니다.', keywords: ['사이트 진단 요금','FixPack','Auto 정기 점검','정책 문서 템플릿'] },
 '/documents': { title: '정책 문서 초안 | 개인정보·이용약관·환불 안내 생성', description: '개인정보처리방침, 이용약관, 환불·배송·교환 정책, 사업자 고지, 고객 안내문 초안을 최소 입력으로 생성합니다.', keywords: ['정책 문서 생성','개인정보처리방침 초안','이용약관 초안','환불 정책 초안'] },
 '/policy-documents': { title: '정책 문서 초안 | 개인정보·이용약관·환불 안내 생성', description: '개인정보처리방침, 이용약관, 환불·배송·교환 정책, 사업자 고지, 고객 안내문 초안을 최소 입력으로 생성합니다.', keywords: ['정책 문서 생성','개인정보처리방침 초안','이용약관 초안','환불 정책 초안'] },
 '/guides': { title: '운영 가이드 | 쇼핑몰 신뢰도·정책 안내 점검', description: '쇼핑몰 신뢰도, 환불 정책, 구매 안내 버튼, 게시판 자동 발행, 반복 재진단 활용법을 쉬운 말로 정리한 운영 가이드입니다.' },
@@ -1152,14 +1277,14 @@ function pageFaqStructuredData(urlPath) {
 const faqMap = {
 '/': [
 ['NV0는 무엇을 점검하나요?', '고객이 문의하거나 결제하기 전에 확인하는 사업자 정보, 개인정보 안내, 환불 기준, 문의 버튼, 가격 안내를 쉽게 점검합니다.'],
-['무료 진단 후 무엇을 보면 되나요?', '위험도가 높은 항목과 먼저 고칠 안내 문구를 확인한 뒤 필요한 상품을 비교하면 됩니다.']
+['예비 점검 후 무엇을 보면 되나요?', '탐지 점수가 높은 항목과 먼저 고칠 안내 문구를 확인한 뒤 필요한 상품을 비교하면 됩니다.']
 ],
 '/products/veridion/demo': [
-['무료 진단은 무엇을 보여주나요?', '사이트의 신뢰 안내 공백과 먼저 고칠 부분을 요약해서 보여줍니다.'],
+['예비 점검은 무엇을 보여주나요?', '사이트의 신뢰 안내 공백과 먼저 고칠 부분을 요약해서 보여줍니다.'],
 ['로그인하면 무엇이 달라지나요?', '전체 결과 저장, 내 사이트 관리, 재검사 흐름을 이용할 수 있습니다.']
 ],
 '/plans': [
-['어떤 상품을 먼저 선택해야 하나요?', '먼저 무료 진단을 보고, 근거가 필요하면 상세 리포트, 바로 붙여넣을 문구가 필요하면 FixPack, 반복 관리가 필요하면 Auto를 비교하면 됩니다.'],
+['어떤 상품을 먼저 선택해야 하나요?', '먼저 예비 점검을 보고, 근거가 필요하면 상세 리포트, 바로 붙여넣을 문구가 필요하면 FixPack, 반복 관리가 필요하면 Auto를 비교하면 됩니다.'],
 ['결제 전 어떤 내용을 확인해야 하나요?', '제공 범위, 디지털 산출물 제공 시점, 환불 제한, 고객지원 경로를 확인해야 합니다.']
 ],
 '/board': [
@@ -1325,20 +1450,48 @@ function hasAny(haystack, terms) {
 const value = String(haystack || '').toLowerCase();
 return terms.some(term => value.includes(String(term).toLowerCase()));
 }
+function hasAllGroups(haystack, groups) {
+return groups.every(group => hasAny(haystack, group));
+}
+function hasCommerceSignal(text = '') {
+return hasAny(text, ['결제','구매','주문','장바구니','상품','가격','배송','환불','checkout','cart','order','buy','shop','store','subscribe','구독']);
+}
+function hasBusinessIdentity(text = '') {
+return hasAllGroups(text, [
+['상호','회사명','법인명','사업자','대표자','대표'],
+['사업자등록','사업자 번호','사업자번호','주소','소재지','고객센터','전화','이메일','contact','@']
+]);
+}
+function hasPrivacyNotice(text = '') {
+return hasAny(text, ['개인정보처리방침','개인정보 처리방침','privacy policy','privacy']) && hasAny(text, ['수집','이용','보관','파기','처리','동의','보유','제공']);
+}
+function hasTermsNotice(text = '') {
+return hasAny(text, ['이용약관','서비스 약관','terms of use','terms']) && hasAny(text, ['회원','서비스','책임','제한','해지','분쟁']);
+}
+function hasRefundNotice(text = '') {
+return hasAny(text, ['환불','교환','반품','청약철회','취소']) && hasAny(text, ['기간','기준','불가','가능','절차','조건','수수료']);
+}
+function hasContactChannel(text = '') {
+return hasAny(text, ['고객센터','문의','contact','전화','이메일','상담','카카오톡','채널톡','@']) && hasAny(text, ['운영시간','답변','영업일','접수','전화','이메일','@','상담']);
+}
 function buildRuleCatalog() {
 return [
-{ code: 'ECOM-BUSINESS-INFO', category: '전자상거래', title: '사업자 정보 고지', severity: 24, penaltyMax: 5000000, fixTemplate: '푸터에 상호/대표자/사업자등록번호/통신판매신고번호/주소/연락처를 추가합니다.', match: ({ html, text }) => !(hasAny(text, ['사업자등록','통신판매','대표자','상호']) || hasAny(html, ['footer'])) },
-{ code: 'PRIVACY-POLICY', category: '개인정보', title: '개인정보처리방침 링크 또는 본문', severity: 26, penaltyMax: 10000000, fixTemplate: '푸터와 회원가입 영역에 개인정보처리방침 링크를 노출합니다.', match: ({ text }) => !hasAny(text, ['개인정보처리방침','privacy']) },
-{ code: 'TERMS-OF-USE', category: '전자상거래', title: '이용약관 링크 또는 본문', severity: 12, penaltyMax: 3000000, fixTemplate: '푸터와 가입/결제 구간에 이용약관 링크를 배치합니다.', match: ({ text }) => !hasAny(text, ['이용약관','terms']) },
-{ code: 'REFUND-POLICY', category: '환불·청약철회', title: '환불·교환·청약철회 안내', severity: 18, penaltyMax: 5000000, fixTemplate: '상품상세·푸터·정책 페이지에 환불/교환/청약철회 기준을 분리 표기합니다.', match: ({ text }) => !hasAny(text, ['환불','교환','청약철회','취소']) },
-{ code: 'CONTACT-CHANNEL', category: '지원', title: '고객센터 연락수단', severity: 10, penaltyMax: 2000000, fixTemplate: '대표 이메일 또는 전화번호를 푸터와 문의영역에 추가합니다.', match: ({ text }) => !hasAny(text, ['고객센터','문의','contact','전화','이메일','@']) },
-{ code: 'MARKETING-CLAIM', category: '광고표시', title: '과장·확정형 표현', severity: 16, penaltyMax: 5000000, fixTemplate: '무조건, 100%, 완치, guaranteed 같은 확정형 표현을 완화합니다.', match: ({ text }) => hasAny(text, ['100%','완치','무조건','guaranteed','최고보장','확정수익']) },
-{ code: 'HTTPS-ONLY', category: '보안', title: 'HTTPS 미사용', severity: 20, penaltyMax: 3000000, fixTemplate: 'HTTP 접근을 HTTPS로 리다이렉트하고 HSTS를 설정합니다.', match: ({ url }) => url.protocol !== 'https:' },
-{ code: 'TRACKING-CONSENT', category: '개인정보', title: '쿠키/추적 고지 부족', severity: 8, penaltyMax: 2000000, fixTemplate: '분석·광고 쿠키 사용 시 배너 또는 정책 내 고지 항목을 추가합니다.', match: ({ text }) => !hasAny(text, ['쿠키','cookie','tracking','analytics']) },
-{ code: 'YOUTH-RESTRICTED', category: '청소년보호', title: '연령 제한·주의 문구 부족', severity: 14, penaltyMax: 3000000, fixTemplate: '주류/성인/베팅/흡연 연관 키워드가 있으면 성인 인증 또는 주의문구를 추가합니다.', match: ({ text }) => hasAny(text, ['주류','술','성인','adult','bet','카지노','담배','vape']) && !hasAny(text, ['19세','성인인증','청소년']) },
-{ code: 'PAYMENT-NOTICE-PROXIMITY', category: '결제화면', title: '결제 전 주요 고지 근접 노출 부족', severity: 15, penaltyMax: 3000000, fixTemplate: '결제 버튼 주변에 환불 기준, 제공 범위, 약관/개인정보 링크를 한 번 더 배치합니다.', match: ({ text }) => hasAny(text, ['결제','checkout','주문','구매하기']) && !hasAny(text, ['환불','개인정보처리방침','이용약관']) },
-{ code: 'SERVICE-SCOPE', category: '상품·서비스', title: '제공 범위 안내 부족', severity: 13, penaltyMax: 2000000, fixTemplate: '상품/서비스 상세에 제공 범위, 제외 범위, 산출물 형태를 분리해 적습니다.', match: ({ text }) => hasAny(text, ['서비스','상품','리포트','구독','진단']) && !hasAny(text, ['제공 범위','제외 범위','산출물','작업 범위']) },
-{ code: 'LEGAL-ADVICE-DISCLAIMER', category: '고지문구', title: '법률 자문 아님 고지 부족', severity: 9, penaltyMax: 1000000, fixTemplate: '자동 진단/문구 제안은 법률 자문이 아니며 최종 적용 전 사업자 확인이 필요하다는 고지를 추가합니다.', match: ({ text }) => hasAny(text, ['진단','리포트','수정 문구','약관']) && !hasAny(text, ['법률 자문','법적 자문','변호사 자문']) }
+{ code: 'ECOM-BUSINESS-INFO', category: '전자상거래', title: '사업자 정보 고지', severity: 24, penaltyMax: 5000000, match: ({ text }) => hasCommerceSignal(text) && !hasBusinessIdentity(text) },
+{ code: 'PRIVACY-POLICY', category: '개인정보', title: '개인정보처리방침 링크 또는 본문', severity: 26, penaltyMax: 10000000, match: ({ text }) => !hasPrivacyNotice(text) },
+{ code: 'TERMS-OF-USE', category: '전자상거래', title: '이용약관 링크 또는 본문', severity: 12, penaltyMax: 3000000, match: ({ text }) => hasCommerceSignal(text) && !hasTermsNotice(text) },
+{ code: 'REFUND-POLICY', category: '환불·청약철회', title: '환불·교환·청약철회 안내', severity: 18, penaltyMax: 5000000, match: ({ text }) => hasCommerceSignal(text) && !hasRefundNotice(text) },
+{ code: 'CONTACT-CHANNEL', category: '지원', title: '고객센터 연락수단', severity: 10, penaltyMax: 2000000, match: ({ text }) => !hasContactChannel(text) },
+{ code: 'MARKETING-CLAIM', category: '광고표시', title: '과장·확정형 표현', severity: 16, penaltyMax: 5000000, match: ({ text }) => hasAny(text, ['100%','완치','무조건','guaranteed','최고보장','확정수익','반드시 수익','완전 해결']) },
+{ code: 'HTTPS-ONLY', category: '보안', title: 'HTTPS 미사용', severity: 20, penaltyMax: 3000000, match: ({ url }) => url?.protocol !== 'https:' },
+{ code: 'TRACKING-CONSENT', category: '개인정보', title: '쿠키/추적 고지 부족', severity: 8, penaltyMax: 2000000, match: ({ html, text }) => hasAny(html, ['gtag(', 'googletagmanager', 'GoogleAnalytics', 'fbq(', 'kakaoPixel', 'naver_']) && !hasAny(text, ['쿠키','cookie','tracking','analytics','광고 식별자']) },
+{ code: 'YOUTH-RESTRICTED', category: '청소년보호', title: '연령 제한·주의 문구 부족', severity: 14, penaltyMax: 3000000, match: ({ text }) => hasAny(text, ['주류','술','성인','adult','bet','카지노','담배','vape']) && !hasAny(text, ['19세','성인인증','청소년']) },
+{ code: 'PAYMENT-NOTICE-PROXIMITY', category: '결제화면', title: '결제 전 주요 고지 근접 노출 부족', severity: 15, penaltyMax: 3000000, match: ({ text }) => hasAny(text, ['결제','checkout','주문','구매하기','신청하기','구독하기']) && !hasAny(text, ['환불','개인정보처리방침','이용약관','취소 기준']) },
+{ code: 'SERVICE-SCOPE', category: '상품·서비스', title: '제공 범위 안내 부족', severity: 13, penaltyMax: 2000000, match: ({ text }) => hasAny(text, ['서비스','상품','리포트','구독','진단','플랜','패키지']) && !hasAny(text, ['제공 범위','제외 범위','산출물','작업 범위','포함 항목']) },
+{ code: 'PRICE-TOTAL-COST', category: '가격·비용', title: '총 결제금액·추가비용 안내 부족', severity: 12, penaltyMax: 2000000, match: ({ text }) => hasAny(text, ['원','₩','가격','결제','구매','주문']) && !hasAny(text, ['총 결제금액','부가세','배송비','추가 비용','VAT','vat']) },
+{ code: 'SHIPPING-DELIVERY-POLICY', category: '배송·제공', title: '배송·제공 시점 안내 부족', severity: 11, penaltyMax: 2000000, match: ({ text }) => hasCommerceSignal(text) && !hasAny(text, ['배송','제공 시점','납품','발송','영업일','소요 기간','전달 방식']) },
+{ code: 'RECURRING-BILLING-NOTICE', category: '구독·자동결제', title: '구독·자동결제 조건 안내 부족', severity: 14, penaltyMax: 3000000, match: ({ text }) => hasAny(text, ['구독','정기결제','자동결제','월간','연간','subscription']) && !hasAny(text, ['해지','갱신','결제 주기','자동결제','정기결제']) },
+{ code: 'FORM-CONSENT-PROXIMITY', category: '입력폼', title: '입력폼 주변 동의·안내 부족', severity: 13, penaltyMax: 3000000, match: ({ html, text }) => hasAny(html, ['<input','<textarea','type="email"','type="tel"']) && !hasAny(text, ['개인정보처리방침','수집 목적','보관 기간','동의']) },
+{ code: 'LEGAL-ADVICE-DISCLAIMER', category: '고지문구', title: '법률 자문 아님 고지 부족', severity: 9, penaltyMax: 1000000, match: ({ text }) => hasAny(text, ['진단','리포트','수정 문구','약관']) && !hasAny(text, ['법률 자문','법적 자문','변호사 자문']) }
 ];
 }
 function classifyIndustry(target, text = '') {
@@ -1407,6 +1560,120 @@ const entries = Array.from(totals.entries()).map(([category, total]) => ({ categ
 entries.sort((a, b) => b.score - a.score);
 return Object.fromEntries(entries.map(item => [item.category, item.score]));
 }
+function confidenceLabel(score) {
+const value = Number(score);
+if (!Number.isFinite(value)) return '확인 필요';
+if (value >= 80) return '높음';
+if (value >= 55) return '보통';
+if (value >= 30) return '낮음';
+return '매우 낮음';
+}
+function normalizeScannedPages(fetched = {}) {
+const pages = Array.isArray(fetched.pages) ? fetched.pages : [];
+if (pages.length) return pages.map((page) => ({
+url: page.url || page.finalUrl || '',
+finalUrl: page.finalUrl || page.url || '',
+status: Number(page.status || 0),
+contentType: page.contentType || '',
+contentLength: Number(page.contentLength || 0),
+fetched: page.fetched !== false && Number(page.status || 0) > 0,
+error: page.error || null,
+verifiedBy: page.verifiedBy || 'http_fetch',
+renderedByBrowser: page.renderedByBrowser === true,
+source: page.source || 'probe'
+}));
+return [{
+url: fetched.finalUrl || '',
+finalUrl: fetched.finalUrl || '',
+status: Number(fetched.status || 0),
+contentType: fetched.contentType || '',
+contentLength: stripHtml(fetched.html || '').length,
+fetched: fetched.fetched === true,
+error: fetched.error || null,
+verifiedBy: 'http_fetch',
+renderedByBrowser: false,
+source: 'primary'
+}].filter(item => item.finalUrl || item.url);
+}
+function rulePageSignals(rule = {}) {
+const explicit = Array.isArray(rule.expectedPaths) ? rule.expectedPaths : [];
+const fallback = {
+'PRIVACY-POLICY': ['/privacy', 'privacy'],
+'TERMS-OF-USE': ['/terms', 'terms'],
+'REFUND-POLICY': ['/refund', 'refund', 'return', 'exchange', 'cancel'],
+'PAYMENT-NOTICE-PROXIMITY': ['/checkout', '/cart', '/order', '/payment'],
+'ECOM-BUSINESS-INFO': ['/', '/business-info', '/company', '/about', '/contact'],
+'CONTACT-CHANNEL': ['/', '/contact', '/support', '/cs', '/help'],
+'TRACKING-CONSENT': ['/', '/privacy', '/cookie'],
+'PRICE-TOTAL-COST': ['/product', '/products', '/plans', '/pricing', '/checkout'],
+'SHIPPING-DELIVERY-POLICY': ['/shipping', '/delivery', '/guide', '/product'],
+'RECURRING-BILLING-NOTICE': ['/plans', '/pricing', '/subscribe', '/checkout'],
+'FORM-CONSENT-PROXIMITY': ['/contact', '/signup', '/join', '/checkout', '/order']
+}[String(rule.code || '')] || ['/'];
+return [...explicit, ...fallback].map(v => String(v || '').toLowerCase()).filter(Boolean);
+}
+function ruleEvidenceTerms(rule = {}) {
+const explicit = Array.isArray(rule.evidenceTerms) ? rule.evidenceTerms : [];
+const fallback = {
+'ECOM-BUSINESS-INFO': ['사업자', '상호', '대표자', '사업자등록', '주소', '고객센터'],
+'PRIVACY-POLICY': ['개인정보', 'privacy', '수집', '보관', '파기'],
+'TERMS-OF-USE': ['약관', 'terms', '책임', '해지'],
+'REFUND-POLICY': ['환불', '교환', '취소', '청약철회'],
+'CONTACT-CHANNEL': ['문의', '고객센터', 'contact', '@'],
+'MARKETING-CLAIM': ['100%', '완치', '무조건', '보장', 'guaranteed'],
+'TRACKING-CONSENT': ['쿠키', 'cookie', 'analytics'],
+'PAYMENT-NOTICE-PROXIMITY': ['결제', '주문', '구매'],
+'SERVICE-SCOPE': ['제공 범위', '산출물', '서비스'],
+'LEGAL-ADVICE-DISCLAIMER': ['법률 자문', '진단', '약관']
+}[String(rule.code || '')] || [rule.title];
+return [...explicit, ...fallback].map(v => String(v || '').trim()).filter(Boolean);
+}
+function evidenceExcerptForRule(rule, text = '') {
+const normalized = String(text || '').replace(/\s+/g, ' ').trim();
+if (!normalized) return '본문 근거가 제한됩니다.';
+const terms = ruleEvidenceTerms(rule);
+const lower = normalized.toLowerCase();
+let index = -1;
+for (const term of terms) {
+const found = lower.indexOf(String(term).toLowerCase());
+if (found >= 0) { index = found; break; }
+}
+const start = Math.max(0, index < 0 ? 0 : index - 60);
+return normalized.slice(start, start + 240) || normalized.slice(0, 240);
+}
+function pagesForRule(rule, scannedPages = []) {
+const signals = rulePageSignals(rule);
+const matched = scannedPages.filter((page) => {
+const value = String(page.finalUrl || page.url || '').toLowerCase();
+return signals.some(signal => signal === '/' ? value.endsWith('/') || !new URL(value, 'https://fallback.local').pathname.replace(/^\/$/, '') : value.includes(signal));
+});
+return (matched.length ? matched : scannedPages.slice(0, 3)).map(page => page.finalUrl || page.url).filter(Boolean).slice(0, 5);
+}
+function pageCoverageForRule(rule, scannedPages = []) {
+const signals = rulePageSignals(rule);
+const relevant = scannedPages.filter((page) => {
+const value = String(page.finalUrl || page.url || '').toLowerCase();
+return signals.some(signal => signal === '/' ? true : value.includes(signal));
+});
+const successful = relevant.filter(page => page.status >= 200 && page.status < 400 && Number(page.contentLength || 0) > 20);
+const failed = relevant.filter(page => !(page.status >= 200 && page.status < 400 && Number(page.contentLength || 0) > 20));
+return { relevant, successful, failed };
+}
+function certaintyForRule(rule, fetched = {}, scannedPages = []) {
+if (!fetched.fetched) return '낮음';
+if (['MARKETING-CLAIM', 'YOUTH-RESTRICTED', 'LEGAL-ADVICE-DISCLAIMER'].includes(rule.code)) return '수동확인 필요';
+const coverage = pageCoverageForRule(rule, scannedPages);
+if (coverage.successful.length >= 2) return '높음';
+if (coverage.successful.length >= 1) return '보통';
+return '낮음';
+}
+function evidenceForFinding(rule, text, scannedPages = [], url = null) {
+if (rule.code === 'HTTPS-ONLY') return url?.protocol || 'unknown';
+if (['MARKETING-CLAIM', 'YOUTH-RESTRICTED'].includes(rule.code)) return evidenceExcerptForRule(rule, text);
+const pages = pagesForRule(rule, scannedPages);
+const terms = ruleEvidenceTerms(rule).slice(0, 4).join(', ');
+return `${rule.title} 관련 신호(${terms})를 확인한 공개 페이지에서 충분히 찾지 못했습니다. 확인 위치: ${pages.slice(0, 3).join(' · ') || '수집 페이지 제한'}`;
+}
 function findReusableScan(db, input) {
 if (!db || !Array.isArray(db.scans) || !SCAN_CACHE_TTL_MS) return null;
 const normalized = normalizeTargetForCache(input);
@@ -1437,6 +1704,55 @@ for (const item of db.library || []) items.push({ id: item.id, type: item.type =
 items.sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
 return items;
 }
+function boardTopicFromItem(item = {}, index = 0) {
+const source = [item.title, item.body, item.summary, item.primaryKeyword, item.searchIntent, item.funnelStage].join(' ').toLowerCase();
+if (hasAny(source, ['환불','교환','청약','취소','refund'])) return { title: '환불·취소 기준을 고객이 바로 찾게 만드는 방법', keyword: '환불 안내', issue: '환불 기준이 흩어져 있거나 결제 직전에 보이지 않는 상황' };
+if (hasAny(source, ['개인정보','privacy','동의','보관','파기'])) return { title: '개인정보 안내를 입력 화면 가까이에 두는 방법', keyword: '개인정보 안내', issue: '개인정보 입력 목적과 보관 기준을 고객이 바로 확인하기 어려운 상황' };
+if (hasAny(source, ['사업자','푸터','대표자','고객센터','contact','문의'])) return { title: '사업자 정보와 문의 경로를 믿음직하게 정리하는 방법', keyword: '사업자 정보', issue: '상호, 연락 경로, 답변 기준이 서로 떨어져 있는 상황' };
+if (hasAny(source, ['결제','구매','checkout','주문'])) return { title: '결제 버튼 앞에서 고객 불안을 줄이는 안내 정리법', keyword: '결제 전 안내', issue: '결제 버튼 주변에 제공 범위, 환불, 문의 기준이 부족한 상황' };
+if (hasAny(source, ['모바일','mobile','가독성'])) return { title: '모바일 화면에서 안내 문구가 잘 보이게 하는 방법', keyword: '모바일 안내', issue: '작은 화면에서 중요한 버튼과 정책 링크가 아래로 밀리는 상황' };
+if (hasAny(source, ['광고','표현','보장','무조건','최고'])) return { title: '광고 문구를 과장 없이 믿을 수 있게 바꾸는 방법', keyword: '광고 문구 점검', issue: '강한 표현은 보이지만 근거와 조건이 함께 보이지 않는 상황' };
+if (hasAny(source, ['약관','terms','정책'])) return { title: '이용약관과 정책 링크를 고객 흐름에 맞게 연결하는 방법', keyword: '약관 연결', issue: '약관은 있지만 회원가입이나 결제 화면에서 찾기 어려운 상황' };
+const fallback = [
+{ title: '처음 온 고객이 믿고 읽을 수 있는 사이트 안내 만들기', keyword: '사이트 신뢰 안내', issue: '고객이 필요한 정보를 찾기 위해 여러 화면을 돌아다녀야 하는 상황' },
+{ title: '문의와 구매 전에 꼭 보여줘야 할 안내 체크리스트', keyword: '고객 안내 체크리스트', issue: '문의, 결제, 회원가입 직전에 필요한 답이 보이지 않는 상황' },
+{ title: '고객이 헷갈리지 않게 사이트 문구를 정리하는 방법', keyword: '사이트 문구 정리', issue: '운영자에게는 익숙하지만 고객에게는 설명이 부족한 상황' }
+];
+return fallback[index % fallback.length];
+}
+function publicBoardBodyFor(item = {}, index = 0) {
+const topic = boardTopicFromItem(item, index);
+const target = String(item.target || item.normalizedTarget || '사이트').replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0] || '사이트';
+const keyword = item.primaryKeyword || topic.keyword;
+return [
+`이 글에서 바로 얻을 수 있는 것\n${topic.title}을 운영자가 바로 확인할 수 있게 정리했습니다. 방문자는 긴 설명보다 “어디서 확인하면 되는지”를 먼저 찾습니다. 이 글은 내부 운영 메모가 아니라 실제 고객이 읽어도 도움이 되는 안내 글입니다.`,
+`이런 경우 문제가 됩니다\n${topic.issue}이라면 고객은 구매나 문의를 미루기 쉽습니다. ${target}처럼 처음 방문한 사이트에서는 작은 안내 공백도 신뢰 판단에 영향을 줄 수 있습니다.`,
+`고객은 이렇게 느낍니다\n고객은 “환불은 가능한가요?”, “문의하면 답을 받을 수 있나요?”, “내 정보는 어디에 쓰이나요?” 같은 질문에 빠르게 답을 얻고 싶어 합니다. 답이 버튼 가까이에 있으면 다음 행동으로 넘어가기 쉽고, 답이 숨어 있으면 다시 검색하게 됩니다.`,
+`오늘 바로 확인할 체크리스트\n1. 첫 화면이나 푸터에서 운영자 정보와 문의 경로가 보이는지 확인합니다.\n2. 결제나 신청 버튼 주변에 환불·취소 기준이 연결되어 있는지 확인합니다.\n3. 개인정보를 입력하는 곳에서 개인정보 안내 링크를 바로 볼 수 있는지 확인합니다.\n4. 모바일 화면에서 버튼과 안내 문구가 접히거나 너무 작게 보이지 않는지 확인합니다.\n5. 수정한 뒤 같은 주소로 다시 진단해서 남은 항목을 확인합니다.`,
+`문구를 이렇게 바꿔보세요\n1. “문의하기” → “문의하기 · 보통 영업일 기준 1일 안에 답변드립니다”\n2. “자세히 보기” → “환불·취소 기준 먼저 보기”\n3. “무료” → “예비 점검: 요약 결과까지 무료로 확인”\n4. “개인정보 동의” → “수집 목적과 보관 기간 확인 후 동의”`,
+`자주 묻는 질문\nQ1. 이 글만 보면 모든 문제가 해결되나요?\nA. 아닙니다. 먼저 확인할 순서를 정리한 글입니다. 실제 사업자 정보와 운영 정책은 운영자가 직접 확인해야 합니다.\n\nQ2. 가장 먼저 고칠 부분은 어디인가요?\nA. 고객이 행동하기 직전에 보는 화면입니다. 결제, 문의, 회원가입, 가격표 주변을 먼저 확인하는 것이 좋습니다.\n\nQ3. 검색 노출에도 도움이 되나요?\nA. 고객 질문에 쉬운 말로 답하는 글은 검색 유입자가 내용을 이해하고 다음 페이지로 이동하는 데 도움이 됩니다.`,
+`마무리\n${keyword}은 복잡한 기술 문제가 아니라 고객이 안심할 수 있는 기본 안내에 가깝습니다. 작은 문구부터 정리하면 문의와 구매 과정이 더 자연스러워집니다. 먼저 예비 점검으로 현재 상태를 확인하고, 필요한 경우 상세 리포트나 수정 문구안으로 이어가면 됩니다.`,
+`관련 링크\n예비 점검: /products/veridion/demo\n상품 비교: /plans\n문서 초안: /documents\n내 사이트 관리: /portal`
+].join('\n\n');
+}
+function toPublicBoardPost(item = {}, index = 0) {
+const ctaLike = item.boardType === 'cta' || item.autoPublished || item.type === 'cta' || item.ctaType || /제목 후보|검색 의도|퍼널|contentFingerprint|CTA|SEO|https:\/\/example\.com/i.test(String(item.body || ''));
+if (!ctaLike) return item;
+const topic = boardTopicFromItem(item, index);
+return {
+...item,
+title: topic.title,
+body: publicBoardBodyFor(item, index),
+summary: `${topic.keyword}을 고객 입장에서 쉽게 확인하는 공개 안내 글입니다.`,
+primaryKeyword: topic.keyword,
+searchIntent: '고객 도움형',
+funnelStage: '읽고 바로 확인',
+contentArchetype: 'reader_helpful_public_article',
+readabilityTarget: 'general_public_korean',
+publicDisplayVersion: 'phase159-reader-helpful-board'
+};
+}
+
 function buildGuidanceForSite(site, scan, settings = {}) {
 const mustFix = (scan?.detailFindings || []).filter(item => item.priority === 'P0' || item.priority === 'P1');
 const lines = [
@@ -1444,8 +1760,8 @@ const lines = [
 '',
 `- 업종: ${site.industry || '일반 이커머스'}`,
 `- 관할: ${site.jurisdiction || settings.defaultJurisdiction || 'KR'}`,
-`- 최근 위험도: ${scan?.riskScore ?? '-'}점 (${scan?.riskLevel || '-'})`,
-`- 예상 최대 과태료 노출: ${toKrw(scan?.estimatedMaxPenalty || 0)}원`,
+`- 최근 탐지 점수: ${scan?.riskScore ?? '-'}점 (${scan?.riskLevel || '-'})`,
+`- 수동 확인 필요 노출: ${toKrw(scan?.estimatedMaxPenalty || 0)}원`,
 '',
 '## 즉시 수정 우선순위',
 ...(mustFix.length ? mustFix.map((item, idx) => `${idx + 1}. [${item.priority}] ${item.title} — ${item.recommendation}`) : ['1. 즉시 수정 필요 P0/P1 항목 없음']),
@@ -1460,9 +1776,9 @@ settings.autoFixMode === 'approval_required'
 : '- 수정 후보는 제한적으로 사용하고, 되돌릴 수 있도록 변경 이력을 저장',
 '',
 '## 고객 안내 콘텐츠 기준',
-'- 무료 진단 → 상세 결과 확인 → 수정 후보 검토 흐름 유지',
+'- 예비 점검 → 상세 결과 확인 → 수정 후보 검토 흐름 유지',
 '- 과태료 공포 과장 금지, 근거 조항과 조치 문구를 함께 노출',
-'- 게시글 말미에 무료 진단 버튼 1개만 배치'
+'- 게시글 말미에 예비 점검 버튼 1개만 배치'
 ];
 return lines.join('\n');
 }
@@ -1748,23 +2064,23 @@ return 'Basic';
 }
 function buildCommercialOfferCatalog() {
 const commonAssurance = ['법률 자문이 아닌 운영 참고용 점검 결과입니다.', '결제 후 내 사이트 관리에서 결과 확인', '가격의 3배 구성 가치 기준으로 제공합니다.', 'ct@nv0.kr 문의 연결'];
-const kpi = ['신뢰 안내 보강률', '문의·구매 흐름 개선 항목 수', '재점검 시 남은 고위험 항목 수'];
+const kpi = ['신뢰 안내 보강률', '문의·구매 흐름 개선 항목 수', '재점검 시 남은 고발견 항목 수'];
 return [
-{ code: 'Report', group: 'one_time', title: '상세 리포트', price: 69000, period: '1회', priority: 1, summary: '무료 진단 결과를 더 자세한 리포트로 확장합니다. 위험 항목, 근거, 우선순위, 개선 순서를 한 번에 확인할 수 있습니다.', targetCustomer: '쇼핑몰·랜딩페이지 담당자, 1인 사업자, 외주 제작 완료 후 점검이 필요한 고객', deliverables: ['위험도 점수 해설', '전체 탐지 근거', '페이지별 우선 조치 목록', '공유용 리포트 본문', '재점검 체크리스트', 'FAQ·CTA 요약'], operations: ['결제 확인 후 내 사이트 관리에서 결과 확인', '진단 이력이 없을 경우 기본 점검 양식으로 제공', ...commonAssurance], benefits: ['위험 항목의 근거와 우선순위를 더 명확하게 확인', '개선 순서를 정리해 바로 조치 가능'], cta: '상세 리포트 신청', referencePrice: 100000, valuePackWorth: 207000 },
-{ code: 'FixPack', group: 'one_time', title: '수정 문구안', price: 99000, period: '1회', priority: 2, summary: '탐지 항목별로 사이트에 바로 반영 가능한 고지·약관·환불·광고 문구 초안을 제공합니다.', targetCustomer: '사이트 안내 문구를 먼저 정리해야 하는 소상공인·마케터', deliverables: ['푸터 사업자 고지 문안', '환불·교환 안내 문구', '개인정보/약관 노출 가이드', '광고 표현 리스크 완화안', '수정 전/후 예시', 'FAQ·CTA 문구'], operations: ['우선순위가 높은 문구안부터 제공', '주의가 필요한 표현은 별도 표시', ...commonAssurance], benefits: ['사이트에 반영하기 쉬운 문구 예시 제공', '고객 오해 가능성이 있는 표현을 완화'], cta: '수정 문구안 받기', referencePrice: 150000, valuePackWorth: 297000 },
+{ code: 'Report', group: 'one_time', title: '상세 리포트', price: 69000, period: '1회', priority: 1, summary: '무료 예비 점검 결과를 더 자세한 리포트로 확장합니다. 확인 URL, 근거, 신뢰도, 수동 검토 항목, 개선 순서를 한 번에 확인할 수 있습니다.', targetCustomer: '쇼핑몰·랜딩페이지 담당자, 1인 사업자, 외주 제작 완료 후 점검이 필요한 고객', deliverables: ['탐지 점수 해설', '전체 확인 근거', '페이지별 우선 조치 목록', '공유용 리포트 본문', '재점검 체크리스트', 'FAQ·CTA 요약'], operations: ['결제 확인 후 내 사이트 관리에서 결과 확인', '진단 이력이 없을 경우 기본 점검 양식으로 제공', ...commonAssurance], benefits: ['발견 항목의 근거와 우선순위를 더 명확하게 확인', '개선 순서를 정리해 바로 조치 가능'], cta: '상세 리포트 신청', referencePrice: 100000, valuePackWorth: 207000 },
+{ code: 'FixPack', group: 'one_time', title: '수정 문구안', price: 99000, period: '1회', priority: 2, summary: '탐지 항목별로 사이트에 바로 반영 가능한 고지·약관·환불·광고 문구 초안을 제공합니다.', targetCustomer: '사이트 안내 문구를 먼저 정리해야 하는 소상공인·마케터', deliverables: ['푸터 사업자 고지 문안', '환불·교환 안내 문구', '개인정보/약관 노출 가이드', '광고 표현 보완 후보 완화안', '수정 전/후 예시', 'FAQ·CTA 문구'], operations: ['우선순위가 높은 문구안부터 제공', '주의가 필요한 표현은 별도 표시', ...commonAssurance], benefits: ['사이트에 반영하기 쉬운 문구 예시 제공', '고객 오해 가능성이 있는 표현을 완화'], cta: '수정 문구안 받기', referencePrice: 150000, valuePackWorth: 297000 },
 { code: 'TemplatePack', group: 'one_time', title: '법률 문서 템플릿 팩', price: 69000, period: '1회', priority: 3, summary: '이용약관, 개인정보처리방침, 환불 정책 기본 템플릿을 묶어 제공합니다.', targetCustomer: '신규 사이트 오픈 전 필수 문서가 필요한 고객', deliverables: ['이용약관 템플릿', '개인정보처리방침 템플릿', '환불·배송·교환 정책', '필수 고지 체크리스트', '정기결제 고지 문구', '정책 섹션'], operations: ['문서 화면에서 입력한 정보 활용', '입력한 사업자 정보 기준으로 기본 문안 제공', ...commonAssurance], benefits: ['필수 문서를 빠르게 준비', '신규 사이트 오픈 전 기본 안내 정리'], cta: '템플릿 팩 구매', referencePrice: 100000, valuePackWorth: 207000 },
-{ code: 'IndustryGuide', group: 'one_time', title: '업종별 규제 가이드', price: 99000, period: '1회', priority: 4, summary: '쇼핑몰·건기식·화장품·교육·의료 광고 등 업종별 표현 리스크와 필수 고지를 정리합니다.', targetCustomer: '광고 문구와 상세페이지 표현 리스크가 큰 업종 고객', deliverables: ['업종별 금지·주의 표현', '필수 고지 위치', '상세페이지 체크리스트', '광고 문구 점검표', '사전 검수 기준', 'FAQ·CTA 표현'], operations: ['업종 정보에 맞춰 주요 항목 제공', '업종이 정해지지 않은 경우 공통 가이드 제공', ...commonAssurance], benefits: ['업종별 주의 표현을 사전에 확인', '상세페이지와 광고 문구 점검에 활용'], cta: '업종 가이드 받기', referencePrice: 150000, valuePackWorth: 297000 },
-{ code: 'Basic', group: 'subscription', title: 'Basic 모니터링', price: 99000, period: '월', priority: 5, summary: '소규모 사이트의 월 1회 리스크 재점검과 기본 이력 확인을 제공합니다.', targetCustomer: '월 1회 정기 점검만 필요한 소규모 사이트 고객', deliverables: ['월 1회 재점검', '전체 탐지 항목 해금', '기본 정책 초안', '이력 저장', '이메일 알림', '월간 요약 리포트'], operations: ['신청 후 사이트 이력 확인 가능', '월간 점검 알림 제공', ...commonAssurance], benefits: ['월 1회 정기 점검으로 변경 사항 확인', '이력 저장으로 이전 결과와 비교 가능'], cta: 'Basic 시작', referencePrice: 140000, valuePackWorth: 297000 },
+{ code: 'IndustryGuide', group: 'one_time', title: '업종별 규제 가이드', price: 99000, period: '1회', priority: 4, summary: '쇼핑몰·건기식·화장품·교육·의료 광고 등 업종별 표현 보완 후보와 필수 고지를 정리합니다.', targetCustomer: '광고 문구와 상세페이지 표현 보완 후보가 큰 업종 고객', deliverables: ['업종별 금지·주의 표현', '필수 고지 위치', '상세페이지 체크리스트', '광고 문구 점검표', '사전 검수 기준', 'FAQ·CTA 표현'], operations: ['업종 정보에 맞춰 주요 항목 제공', '업종이 정해지지 않은 경우 공통 가이드 제공', ...commonAssurance], benefits: ['업종별 주의 표현을 사전에 확인', '상세페이지와 광고 문구 점검에 활용'], cta: '업종 가이드 받기', referencePrice: 150000, valuePackWorth: 297000 },
+{ code: 'Basic', group: 'subscription', title: 'Basic 모니터링', price: 99000, period: '월', priority: 5, summary: '소규모 사이트의 월 1회 보완 후보 재점검과 기본 이력 확인을 제공합니다.', targetCustomer: '월 1회 정기 점검만 필요한 소규모 사이트 고객', deliverables: ['월 1회 재점검', '전체 탐지 항목 해금', '기본 정책 초안', '이력 저장', '이메일 알림', '월간 요약 리포트'], operations: ['신청 후 사이트 이력 확인 가능', '월간 점검 알림 제공', ...commonAssurance], benefits: ['월 1회 정기 점검으로 변경 사항 확인', '이력 저장으로 이전 결과와 비교 가능'], cta: 'Basic 시작', referencePrice: 140000, valuePackWorth: 297000 },
 { code: 'Pro', group: 'subscription', title: 'Pro 정기 개선', price: 199000, period: '월', priority: 6, summary: '정밀 리포트, 수정 문구안, 법령 변경 알림을 포함한 추천 플랜입니다.', targetCustomer: '사이트 주문·문의가 발생하고 반복 점검이 필요한 고객', deliverables: ['Basic 전체 포함', '정밀 리포트 포함', '수정 문구안', '법령 변경 알림', '재점검 및 개선 추적', '전환용 CTA 포스팅 초안'], operations: ['결제 확인 후 Pro 결과 제공', '다음 조치 항목을 우선순위로 표시', ...commonAssurance], benefits: ['정밀 리포트와 수정 문구안을 함께 확인', '다음 조치 항목을 우선순위로 정리'], cta: 'Pro 시작', referencePrice: 290000, valuePackWorth: 597000 },
-{ code: 'Auto', group: 'subscription', title: 'Auto 정기 케어', price: 299000, period: '월', priority: 7, summary: '반복 점검, 고객 안내 인사이트, 게시판 자동 발행으로 사이트 신뢰 관리를 돕습니다.', targetCustomer: '여러 캠페인·랜딩페이지를 꾸준히 점검해야 하는 팀', deliverables: ['Pro 전체 포함', '정기 고객 안내 인사이트', '게시판 자동 발행 상태', '승인 후 반영할 수 있는 수정 후보', '고위험 항목 우선 알림', '내 사이트 관리 대시보드', 'CTA 포스팅'], operations: ['정기 점검 결과 제공', '수정 후보는 확인 후 사용할 수 있도록 제공', ...commonAssurance], benefits: ['반복 점검 부담 완화', '게시판이 비어 보이지 않도록 운영감 유지', '여러 랜딩페이지의 고위험 항목을 우선 확인'], cta: 'Auto 시작', referencePrice: 450000, valuePackWorth: 897000 },
+{ code: 'Auto', group: 'subscription', title: 'Auto 정기 케어', price: 299000, period: '월', priority: 7, summary: '반복 점검, 고객 안내 인사이트, 게시판 자동 발행으로 사이트 신뢰 관리를 돕습니다.', targetCustomer: '여러 캠페인·랜딩페이지를 꾸준히 점검해야 하는 팀', deliverables: ['Pro 전체 포함', '정기 고객 안내 인사이트', '게시판 자동 발행 상태', '승인 후 반영할 수 있는 수정 후보', '고발견 항목 우선 알림', '내 사이트 관리 대시보드', 'CTA 포스팅'], operations: ['정기 점검 결과 제공', '수정 후보는 확인 후 사용할 수 있도록 제공', ...commonAssurance], benefits: ['반복 점검 부담 완화', '게시판이 비어 보이지 않도록 운영감 유지', '여러 랜딩페이지의 고발견 항목을 우선 확인'], cta: 'Auto 시작', referencePrice: 450000, valuePackWorth: 897000 },
 { code: 'Certified', group: 'annual', title: 'NV0 Certified', price: 199000, period: '연', priority: 8, summary: '점검 완료 사이트에 신뢰 인증 마크와 공개 인증 페이지를 제공합니다.', targetCustomer: '구매 전 신뢰 표시가 필요한 쇼핑몰·B2B 랜딩페이지', deliverables: ['인증 마크 스니펫', '공개 인증 페이지', '연 1회 재검토', '인증 만료일 표기', '고객 신뢰 요소', '인증 안내 FAQ·CTA 문구'], operations: ['인증 검토 진행 상태 제공', '검토 완료 후 사용할 수 있는 표시 제공', ...commonAssurance], benefits: ['구매 전 신뢰 요소로 활용', '점검 완료 여부를 외부에 명확히 표시'], cta: '인증 신청', referencePrice: 290000, valuePackWorth: 597000 },
-{ code: 'Agency', group: 'b2b', title: '대행사 리포트 패키지', price: 399000, period: '월', priority: 9, summary: '광고대행사·웹에이전시가 고객사 리스크 리포트를 반복 생성할 수 있는 패키지입니다.', targetCustomer: '고객사 사이트를 제작·지원하는 에이전시와 퍼포먼스 마케팅사', deliverables: ['고객사별 리포트', '고객사 제출용 문구 영역', '월 10개 도메인 기준', '고객 안내 인사이트 제공', '대행사 맞춤 안내 문구', '고객사 CTA 포스팅'], operations: ['서비스 신청 후 고객사별 리포트 구성 지원', '고객사별 결과를 구분해 확인 가능', ...commonAssurance], benefits: ['고객사별 리포트 제공에 활용', '여러 도메인의 점검 결과를 구분해 관리'], cta: '대행사 패키지 시작', referencePrice: 600000, valuePackWorth: 1197000 }
+{ code: 'Agency', group: 'b2b', title: '대행사 리포트 패키지', price: 399000, period: '월', priority: 9, summary: '광고대행사·웹에이전시가 고객사 보완 후보 리포트를 반복 생성할 수 있는 패키지입니다.', targetCustomer: '고객사 사이트를 제작·지원하는 에이전시와 퍼포먼스 마케팅사', deliverables: ['고객사별 리포트', '고객사 제출용 문구 영역', '월 10개 도메인 기준', '고객 안내 인사이트 제공', '대행사 맞춤 안내 문구', '고객사 CTA 포스팅'], operations: ['서비스 신청 후 고객사별 리포트 구성 지원', '고객사별 결과를 구분해 확인 가능', ...commonAssurance], benefits: ['고객사별 리포트 제공에 활용', '여러 도메인의 점검 결과를 구분해 관리'], cta: '대행사 패키지 시작', referencePrice: 600000, valuePackWorth: 1197000 }
 ].sort((a, b) => a.priority - b.priority);
 }
 function getCommercialOffer(code) { return buildCommercialOfferCatalog().find(item => item.code === code) || null; }
 function buildPlanCatalog(recommendedPlan = 'Pro') {
 const offers = buildCommercialOfferCatalog();
-const free = { code: 'Free', monthlyPrice: 0, period: '무료', title: 'Free', group: 'free', summary: '체험용 무료 진단. 위험도와 주요 리스크만 간단히 확인합니다.', features: ['URL 1개 즉시 진단', '위험도 점수', '상위 위험 2개 요약', '상세 근거·페이지별 조치안 잠금', '일일 무료 3회 제한'], recommended: false };
+const free = { code: 'Free', monthlyPrice: 0, period: '무료', title: 'Free', group: 'free', summary: '체험용 무료 예비 점검. 탐지 점수와 확인 근거 일부를 간단히 확인합니다.', features: ['URL 1개 즉시 예비 점검', '탐지 점수', '상위 발견 항목 2개 요약', '상세 근거·페이지별 조치안 잠금', '일일 무료 3회 제한'], recommended: false };
 const paid = offers.map(offer => ({ code: offer.code, monthlyPrice: offer.price, period: offer.period, title: offer.title, group: offer.group, summary: offer.summary, features: offer.deliverables, targetCustomer: offer.targetCustomer, referencePrice: offer.referencePrice, valuePackWorth: offer.valuePackWorth, marketPosition: '약 30% 낮은 경쟁가와 실무 산출물 구성 기준', dailyPrice: offer.period === '월' ? Math.ceil(offer.price / 30) : 0, recommended: offer.code === recommendedPlan || (recommendedPlan === 'Pro' && offer.code === 'Pro') }));
 return [free, ...paid];
 }
@@ -1809,6 +2125,23 @@ const autoFixCandidates = Array.isArray(payload?.autoFixCandidates) && payload.a
 : detailFindings.filter(item => item.autoFixEligible).slice(0, 5).map(item => ({ findingCode: item.code, title: item.title, patchSummary: item.recommendation }));
 const siteProfile = payload?.siteProfile || buildSiteProfile(input, `${payload?.summary || ''} ${topFindings.join(' ')}`);
 const categoryScores = payload?.categoryScores && typeof payload.categoryScores === 'object' ? payload.categoryScores : buildCategoryScores(detailFindings);
+const externalPages = Array.isArray(payload?.scannedPages) ? payload.scannedPages : (Array.isArray(payload?.pages) ? payload.pages : []);
+const evidenceSummary = payload?.evidenceSummary || {
+collectionMethod: payload?.scanMode || 'external_provider',
+verifiedBy: 'external_http',
+aiReviewProvider: payload?.aiReview?.provider || 'external_provider',
+externalMeasurementProviders: payload?.externalMeasurementProviders || {},
+coverageScore: Number(payload?.coverageScore || 0),
+confidenceScore: Number(payload?.confidenceScore || 70),
+confidenceLabel: payload?.confidenceLabel || confidenceLabel(payload?.confidenceScore || 70),
+successfulPageCount: externalPages.length,
+attemptedPageCount: externalPages.length,
+manualReviewCount: Number(payload?.manualReviewCount || 0),
+scannedPages: externalPages,
+limitations: payload?.limitations || ['외부 제공자 결과 기준이며 법률 판단 확정값이 아닙니다.'],
+disclaimer: payload?.disclaimer || '외부 스캔 결과도 법률 자문이나 성과 보장을 의미하지 않습니다.'
+};
+const scoreModel = payload?.scoreModel || buildScoreModel({ riskScore, findings: detailFindings, evidenceSummary });
 return {
 requestId: payload?.requestId || uid('scan'),
 provider: 'external_http',
@@ -1820,19 +2153,25 @@ fetchStatus: Number(payload?.fetchStatus || 200),
 fetchError: payload?.fetchError || null,
 industry: payload?.industry || siteProfile.industry || '일반 이커머스',
 siteProfile,
-scannedPages: Array.isArray(payload?.scannedPages) ? payload.scannedPages : (Array.isArray(payload?.pages) ? payload.pages : []),
+scannedPages: externalPages,
 probeCount: Number(payload?.probeCount || (Array.isArray(payload?.scannedPages) ? payload.scannedPages.length : Array.isArray(payload?.pages) ? payload.pages.length : 1)),
 categoryScores,
 ruleVersion: payload?.ruleVersion || RULES_VERSION,
-scanMode: payload?.scanMode || 'focused_key_pages',
+scanMode: payload?.scanMode || 'evidence_first_external',
+scanScopeLabel: payload?.scanScopeLabel || '외부 제공자 기반 예비 점검',
 cached: payload?.cached === true,
 riskScore,
 riskLevel,
 totalFindings: Number(payload?.totalFindings || detailFindings.length),
 categoryCounts,
 estimatedMaxPenalty,
+penaltyDisclaimer: payload?.penaltyDisclaimer || '금액은 법적 확정값이 아니며 화면에는 보장·확정 표현으로 표시하지 않습니다.',
 topFindings,
 detailFindings,
+evidenceSummary,
+scoreModel,
+qualityAssurance: payload?.qualityAssurance || { resultType: 'external_assisted_check', canGuaranteeLegalAccuracy: false, canGuaranteeBusinessOutcome: false, requiresManualReview: true },
+aiReview: payload?.aiReview || { enabled: AI_REVIEW_ENABLED, provider: AI_REVIEW_ENABLED ? 'gemini' : 'disabled', model: AI_REVIEW_ENABLED ? GEMINI_MODEL : null, role: '해석 보조 레이어이며 측정 원천이 아닙니다.' },
 autoFixCandidates,
 recommendedPlan,
 lockedPreviewCount: Math.max(0, detailFindings.length - 3),
@@ -1842,6 +2181,78 @@ findings: detailFindings.slice(0, 3).map(item => ({ key: item.code, label: item.
 nextActions: payload?.nextActions || ['/plans', '/checkout', '/portal']
 };
 }
+async function runGeminiEvidenceReview(scan) {
+if (!AI_REVIEW_ENABLED) return { enabled: false, provider: 'disabled', model: null, role: '해석 보조 레이어이며 측정 원천이 아닙니다.' };
+const controller = new AbortController();
+const timeout = setTimeout(() => controller.abort(), 7000);
+try {
+const findings = (scan.detailFindings || []).slice(0, 8).map(item => ({
+code: item.code,
+title: item.title,
+priority: item.priority,
+category: item.category,
+certainty: item.certainty,
+evidence: String(item.evidence || '').slice(0, 280),
+sourcePages: item.sourcePages || [],
+recommendation: item.recommendation
+}));
+const prompt = [
+'당신은 웹사이트 공개 페이지 예비 점검 결과를 검수하는 보조 분석기입니다.',
+'법률 위반, 과태료, 성과를 확정하지 마세요.',
+'제공된 근거만 사용하고, 확인되지 않은 내용은 수동확인 필요로 분리하세요.',
+JSON.stringify({ target: scan.target, scoreModel: scan.scoreModel, evidenceSummary: scan.evidenceSummary, findings }, null, 2)
+].join('\n\n');
+const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(GEMINI_MODEL)}:generateContent?key=${encodeURIComponent(GEMINI_API_KEY)}`;
+const res = await fetch(endpoint, {
+method: 'POST',
+signal: controller.signal,
+headers: { 'content-type': 'application/json' },
+body: JSON.stringify({
+contents: [{ role: 'user', parts: [{ text: prompt }] }],
+generationConfig: {
+responseMimeType: 'application/json',
+responseSchema: {
+type: 'object',
+properties: {
+summary: { type: 'string' },
+manualReviewNeeded: { type: 'array', items: { type: 'string' } },
+confidenceNotes: { type: 'array', items: { type: 'string' } },
+recommendedNextSteps: { type: 'array', items: { type: 'string' } }
+},
+required: ['summary', 'manualReviewNeeded', 'confidenceNotes', 'recommendedNextSteps']
+}
+}
+})
+});
+const data = await res.json().catch(() => null);
+if (!res.ok) throw new Error(data?.error?.message || `Gemini review failed: ${res.status}`);
+const text = data?.candidates?.[0]?.content?.parts?.map(part => part.text || '').join('').trim() || '{}';
+let parsed = {};
+try { parsed = JSON.parse(text); } catch { parsed = { summary: text }; }
+return {
+enabled: true,
+provider: 'gemini',
+model: GEMINI_MODEL,
+role: '규칙 기반 결과를 사람이 읽기 쉬운 확인·수동검토 항목으로 재정리하는 보조 레이어입니다.',
+...parsed,
+reviewedAt: nowIso()
+};
+} catch (error) {
+return { enabled: false, provider: 'gemini', model: GEMINI_MODEL, role: '해석 보조 레이어', error: error.message, reviewedAt: nowIso() };
+} finally {
+clearTimeout(timeout);
+}
+}
+async function enhanceScanWithAiReview(scan) {
+const aiReview = await runGeminiEvidenceReview(scan);
+if (!aiReview.enabled && !aiReview.error) return { ...scan, aiReview };
+return {
+...scan,
+aiReview,
+qualityAssurance: { ...(scan.qualityAssurance || {}), aiReviewed: aiReview.enabled, aiReviewError: aiReview.error || null }
+};
+}
+
 async function runExternalScan(target) {
 const controller = new AbortController();
 const timeout = setTimeout(() => controller.abort(), 5000);
@@ -1867,6 +2278,7 @@ const url = safeUrl(String(input).trim());
 const html = fetched.html || '';
 const text = stripHtml(html);
 const rules = buildRuleCatalog();
+const scannedPages= normalizeScannedPages(fetched);
 const findings = [];
 for (const rule of rules) {
 let triggered = false;
@@ -1877,6 +2289,9 @@ triggered = false;
 }
 if (!triggered) continue;
 const priority = rule.severity >= 22 ? 'P0' : rule.severity >= 16 ? 'P1' : 'P2';
+const sourcePages = pagesForRule(rule, scannedPages);
+const certainty = certaintyForRule(rule, fetched, scannedPages);
+const coverage = pageCoverageForRule(rule, scannedPages);
 findings.push({
 id: uid('finding'),
 code: rule.code,
@@ -1885,8 +2300,16 @@ title: rule.title,
 severity: rule.severity,
 priority,
 estimatedPenaltyMax: rule.penaltyMax,
-evidence: rule.code === 'HTTPS-ONLY' ? url?.protocol || 'unknown' : (text.slice(0, 160) || '페이지 본문 미수집'),
-recommendation: rule.fixTemplate,
+impact: rule.impact || '고객 안내와 운영 신뢰에 영향을 줄 수 있는 항목입니다.',
+evidence: evidenceForFinding(rule, text, scannedPages, url),
+evidenceType: rule.code === 'HTTPS-ONLY' ? 'url_protocol' : (['MARKETING-CLAIM', 'YOUTH-RESTRICTED'].includes(rule.code) ? 'detected_public_html_text' : 'negative_public_html_evidence'),
+evidenceStatus: ['MARKETING-CLAIM', 'YOUTH-RESTRICTED', 'HTTPS-ONLY'].includes(rule.code) ? 'detected' : 'not_found_in_scanned_pages',
+sourcePages,
+certainty,
+manualReviewRequired: ['MARKETING-CLAIM', 'YOUTH-RESTRICTED', 'LEGAL-ADVICE-DISCLAIMER'].includes(rule.code) || certainty === '낮음' || coverage.failed.length > 0,
+coverage: { relevantPages: coverage.relevant.length, successfulPages: coverage.successful.length, failedPages: coverage.failed.length },
+limitation: coverage.failed.length ? '일부 후보 페이지는 수동 확인 필요.' : (sourcePages.length ? '표시된 공개 페이지 기준으로 확인했습니다.' : '확인 범위가 제한적입니다.'),
+recommendation: rule.fixTemplate || '필요 안내를 보강합니다.',
 autoFixEligible: !['MARKETING-CLAIM', 'YOUTH-RESTRICTED'].includes(rule.code)
 });
 }
@@ -1899,23 +2322,29 @@ if (!fetched.fetched) riskScore += 8;
 const siteProfile = buildSiteProfile(input, text);
 if (siteProfile.likelyHighRegulation && riskScore > 0) riskScore += 4;
 riskScore = clamp(riskScore, 8, 100);
-const riskLevel = riskScore >= 80 ? '매우 높음' : riskScore >= 60 ? '높음' : riskScore >= 40 ? '주의' : riskScore >= 20 ? '보통' : '낮음';
+const riskLevel = riskScore >= 80 ? '즉시 개선' : riskScore >= 60 ? '우선 개선' : riskScore >= 40 ? '점검 필요' : riskScore >= 20 ? '관찰' : '낮음';
 const industry = siteProfile.industry;
 const recommendedPlan = pickRecommendedPlan(riskScore);
 const detailFindings = findings.sort((a, b) => b.severity - a.severity);
-const topFindings = detailFindings.slice(0, 5).map(item => `${item.title} (${item.priority})`);
+const topFindings = detailFindings.slice(0, 5).map(item => `${item.title} (${item.priority} · 신뢰도 ${item.certainty})`);
 const autoFixCandidates = detailFindings.filter(item => item.autoFixEligible).slice(0, 5).map(item => ({
 findingCode: item.code,
 title: item.title,
-patchSummary: item.recommendation
+patchSummary: item.recommendation,
+sourcePages: item.sourcePages,
+certainty: item.certainty
 }));
 const categoryScores = buildCategoryScores(detailFindings);
+const evidenceSummary = buildEvidenceSummary({ fetched: { ...fetched, pages: scannedPages }, findings: detailFindings, text });
+const scoreModel = buildScoreModel({ riskScore, findings: detailFindings, evidenceSummary });
+const automationDisclosure = buildAutomationDisclosure({ fetched: { ...fetched, pages: scannedPages }, findings: detailFindings, scoreModel });
+const automatedActionPlan = buildAutomatedActionPlan({ findings: detailFindings, evidenceSummary, disclosure: automationDisclosure });
 return {
 requestId: uid('scan'),
 provider: 'builtin',
 target: String(input).trim(),
 normalizedTarget: fetched.finalUrl || input,
-summary: `${String(input).trim()} 핵심 페이지 중심 분석이 완료되었습니다.`,
+summary: `${String(input).trim()} 무료 전자동 예비 점검이 완료되었습니다. 자동 확인 근거와 수동확인 한계를 함께 표시합니다.`,
 fetched: fetched.fetched,
 fetchStatus: fetched.status,
 fetchError: fetched.error || null,
@@ -1923,15 +2352,31 @@ industry,
 siteProfile,
 categoryScores,
 ruleVersion: RULES_VERSION,
-scanMode: 'focused_key_pages',
+scanMode: 'zero_cost_full_auto_disclosure',
+scanScopeLabel: '무료 전자동 공개 페이지 최대 커버리지 예비 점검',
 cached: false,
 riskScore,
+detectionScore: riskScore,
 riskLevel,
 totalFindings: detailFindings.length,
 categoryCounts,
 estimatedMaxPenalty,
+penaltyDisclaimer: '금액은 법적 확정값이 아니며 화면에는 보장·확정 표현으로 표시하지 않습니다.',
 topFindings,
 detailFindings,
+evidenceSummary,
+scoreModel,
+automationDisclosure,
+automatedActionPlan,
+qualityAssurance: {
+resultType: 'preliminary_check',
+canGuaranteeLegalAccuracy: false,
+canGuaranteeBusinessOutcome: false,
+requiresManualReview: true,
+automationPolicy: '자동 확인 가능한 공개 항목은 기본 처리하고, 자동 확정 불가 영역은 명확히 고지합니다.',
+recommendedExternalTools: ['Playwright(선택)', 'Lighthouse(선택)', 'Search Console(선택)', 'Gemini(선택)']
+},
+aiReview: { enabled: AI_REVIEW_ENABLED, provider: AI_REVIEW_ENABLED ? 'gemini' : 'disabled', model: AI_REVIEW_ENABLED ? GEMINI_MODEL : null, role: '해석 보조 레이어이며 측정 원천이 아닙니다.' },
 autoFixCandidates,
 recommendedPlan,
 lockedPreviewCount: Math.max(0, detailFindings.length - 3),
@@ -1940,11 +2385,14 @@ elapsedMs: Date.now() - startedAt,
 findings: detailFindings.slice(0, 3).map(item => ({
 key: item.code,
 label: item.title,
-status: item.priority
+status: item.priority,
+certainty: item.certainty,
+sourcePages: item.sourcePages
 })),
 nextActions: ['/plans', '/checkout', '/portal']
 };
 }
+
 async function callExternalPaymentSession(payload) {
 const controller = new AbortController();
 const timeout = setTimeout(() => controller.abort(), 5000);
@@ -2008,7 +2456,7 @@ productTitle: offer.title,
 status: 'ready',
 createdAt: nowIso(),
 supportEmail: BUSINESS_PROFILE.contactEmail,
-legalDisclaimer: premium.legalDisclaimer || '본 산출물은 웹사이트 안내 리스크 점검 및 문구 개선 참고 자료이며, 개별 사건에 대한 법률 자문이 아닙니다.'
+legalDisclaimer: premium.legalDisclaimer || '본 산출물은 웹사이트 안내 보완 후보 점검 및 문구 개선 참고 자료이며, 개별 사건에 대한 법률 자문이 아닙니다.'
 };
 if (isCertifiedPlan) {
 return { ...base, ...premium, badgeSnippet: buildCertificationSnippet(order) };
@@ -2303,61 +2751,171 @@ plans: buildPlanCatalog(scan?.recommendedPlan || subscription?.plan || 'Pro')
 }
 async function fetchTargetHtml(target) {
 const controller = new AbortController();
-const timeout = setTimeout(() => controller.abort(), 4000);
+const timeout = setTimeout(() => controller.abort(), TARGET_FETCH_TIMEOUT_MS);
 try {
 const res = await fetch(target, {
 redirect: 'follow',
 signal: controller.signal,
 headers: {
-'user-agent': 'Mozilla/5.0 (compatible; NV0/0.1; +https://nv0.kr/bot)'
+'user-agent': 'Mozilla/5.0 (compatible; NV0/0.1; +https://nv0.kr/bot)',
+'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+'accept-language': 'ko-KR,ko;q=0.9,en;q=0.6'
 }
 });
 const contentType = String(res.headers.get('content-type') || '');
 const html = contentType.includes('text/html') ? await res.text() : '';
-return { fetched: true, status: res.status, html, finalUrl: res.url, contentType };
+return { fetched: true, status: res.status, html, finalUrl: res.url, contentType, error: null };
 } catch (error) {
 return { fetched: false, error: error.message, html: '', finalUrl: target, status: 0, contentType: '' };
 } finally {
 clearTimeout(timeout);
 }
 }
-function buildProbeUrls(target) {
+function canonicalProbeUrl(target, pathname = '/') {
 const url = safeUrl(String(target || '').trim());
-if (!url) return [];
-const paths = ['/', '/privacy', '/terms', '/refund', '/business-info', '/checkout', '/cart', '/order'];
-const seen = new Set();
-return paths.map((pathname) => {
+if (!url) return null;
 const next = new URL(url.toString());
-next.pathname = pathname;
+next.pathname = pathname || '/';
 next.search = '';
 next.hash = '';
 return next.toString();
-}).filter((item) => {
-if (seen.has(item)) return false;
+}
+function normalizeInternalUrl(href = '', baseUrl = '') {
+const raw = String(href || '').trim();
+if (!raw || raw.startsWith('#') || /^(mailto:|tel:|javascript:|data:)/i.test(raw)) return null;
+try {
+const base = new URL(baseUrl);
+const url = new URL(raw, base);
+if (url.origin !== base.origin) return null;
+url.hash = '';
+url.search = '';
+return url.toString();
+} catch {
+return null;
+}
+}
+function scoreProbeUrl(url = '') {
+const value = String(url || '').toLowerCase();
+let score = 0;
+const rules = [
+[120, /privacy|개인정보/],
+[112, /terms|약관/],
+[108, /refund|return|exchange|cancel|환불|반품|교환|취소/],
+[102, /contact|support|cs|help|faq|문의|고객센터/],
+[98, /business|company|about|회사|소개|사업자/],
+[92, /checkout|cart|order|payment|subscribe|결제|주문|장바구니/],
+[84, /shipping|delivery|guide|배송|납품|제공/],
+[80, /pricing|plans|price|상품|product|service|서비스|요금/],
+[72, /notice|공지|policy|정책/]
+];
+for (const [weight, pattern] of rules) if (pattern.test(value)) score = Math.max(score, weight);
+if (/\/$/.test(value)) score = Math.max(score, 70);
+return score;
+}
+function extractInternalCandidateLinks(html = '', baseUrl = '') {
+const links = [];
+const source = String(html || '');
+const hrefRe = /<a\b[^>]*?href\s*=\s*(['"])(.*?)\1/gi;
+let match;
+while ((match = hrefRe.exec(source))) {
+const url = normalizeInternalUrl(match[2], baseUrl);
+if (url) links.push(url);
+}
+const formRe = /<form\b[^>]*?action\s*=\s*(['"])(.*?)\1/gi;
+while ((match = formRe.exec(source))) {
+const url = normalizeInternalUrl(match[2], baseUrl);
+if (url) links.push(url);
+}
+return links;
+}
+function buildProbeUrls(target, discoveredLinks = []) {
+const url = safeUrl(String(target || '').trim());
+if (!url) return [];
+const original = new URL(url.toString());
+original.hash = '';
+original.search = '';
+const home = canonicalProbeUrl(url.toString(), '/');
+const staticPaths = [
+'/', '/privacy', '/privacy-policy', '/policy/privacy', '/terms', '/terms-of-use', '/policy/terms',
+'/refund', '/return', '/exchange', '/cancel', '/shipping', '/delivery', '/business-info', '/company', '/about',
+'/contact', '/support', '/cs', '/help', '/faq', '/notice', '/guide', '/pricing', '/plans', '/product', '/products',
+'/checkout', '/cart', '/order', '/payment', '/subscribe'
+];
+const candidates = [original.toString(), home, ...discoveredLinks, ...staticPaths.map(pathname => canonicalProbeUrl(url.toString(), pathname))]
+.filter(Boolean)
+.map(item => normalizeInternalUrl(item, url.toString()))
+.filter(Boolean);
+const seen = new Set();
+const unique = [];
+for (const item of candidates) {
+if (seen.has(item)) continue;
 seen.add(item);
-return true;
-});
+unique.push(item);
+}
+const [primary, ...rest] = unique;
+const rankedRest = rest.map(item => ({ url: item, score: scoreProbeUrl(item) })).sort((a, b) => b.score - a.score || a.url.localeCompare(b.url)).map(item => item.url);
+return [primary, ...rankedRest].slice(0, TARGET_FETCH_MAX_PAGES);
+}
+async function mapWithConcurrency(items, limit, mapper) {
+const out = new Array(items.length);
+let index = 0;
+async function worker() {
+while (index < items.length) {
+const current = index++;
+out[current] = await mapper(items[current], current);
+}
+}
+await Promise.all(Array.from({ length: Math.min(limit, items.length) }, worker));
+return out;
+}
+function compactPageRecord(probeUrl, page, source = 'probe') {
+const contentLength = stripHtml(page.html || '').length;
+return {
+url: probeUrl,
+finalUrl: page.finalUrl || probeUrl,
+status: Number(page.status || 0),
+contentType: page.contentType || '',
+contentLength,
+fetched: page.fetched === true,
+error: page.error || null,
+source,
+html: page.html || ''
+};
 }
 async function fetchTargetHtmlBundle(target) {
-const urls = buildProbeUrls(target);
+const url = safeUrl(String(target || '').trim());
+if (!url) return { fetched: false, error: 'invalid url', html: '', finalUrl: target, status: 0, contentType: '', pages: [], probeCount: 0 };
+const primaryUrl = canonicalProbeUrl(url.toString(), url.pathname || '/') || url.toString();
+const primaryFetch = await fetchTargetHtml(primaryUrl);
+const discovery = await discoverTargetAutomationLinks(url.toString(), primaryFetch, { timeoutMs: TARGET_FETCH_TIMEOUT_MS, concurrency: TARGET_FETCH_CONCURRENCY, robotsEnabled: TARGET_FETCH_ROBOTS_ENABLED, sitemapEnabled: TARGET_FETCH_SITEMAP_ENABLED, maxSitemapUrls: TARGET_FETCH_MAX_SITEMAP_URLS, maxDiscoveryResources: TARGET_FETCH_MAX_DISCOVERY_RESOURCES, automationLevel: TARGET_FETCH_AUTOMATION_LEVEL });
+const discovered = discovery.discoveredLinks || [];
+const urls = buildProbeUrls(target, discovered);
 if (!urls.length) return { fetched: false, error: 'invalid url', html: '', finalUrl: target, status: 0, contentType: '', pages: [], probeCount: 0 };
-const pages = [];
-for (const probeUrl of urls.slice(0, 8)) {
-const page = await fetchTargetHtml(probeUrl);
-const contentLength = stripHtml(page.html || '').length;
-if (page.fetched && page.status < 400 && contentLength > 20) {
-pages.push({ url: probeUrl, finalUrl: page.finalUrl, status: page.status, contentType: page.contentType, contentLength, html: page.html });
-}
-}
-const primary = pages[0] || await fetchTargetHtml(urls[0]);
-const combinedHtml = pages.map((page) => '\n<!-- NV0_PAGE:' + (page.finalUrl || page.url) + ' -->\n' + page.html).join('\n');
+const primaryRecord = compactPageRecord(primaryUrl, primaryFetch, 'primary');
+const remaining = urls.filter(item => item !== primaryUrl).slice(0, Math.max(0, TARGET_FETCH_MAX_PAGES - 1));
+const restRecords = await mapWithConcurrency(remaining, TARGET_FETCH_CONCURRENCY, async (probeUrl) => compactPageRecord(probeUrl, await fetchTargetHtml(probeUrl), 'adaptive_probe'));
+const allPages = [primaryRecord, ...restRecords];
+const successful = allPages.filter(page => page.fetched && page.status >= 200 && page.status < 400 && page.contentLength > 20);
+const primary = successful[0] || allPages[0] || primaryRecord;
+const combinedHtml = successful.map((page) => '\n<!-- NV0_PAGE:' + (page.finalUrl || page.url) + ' -->\n' + page.html).join('\n');
 return {
 ...primary,
-fetched: pages.length > 0 || primary.fetched,
+fetched: successful.length > 0,
 html: combinedHtml || primary.html || '',
 finalUrl: primary.finalUrl || urls[0],
-pages: pages.map(({ url, finalUrl, status, contentType, contentLength }) => ({ url, finalUrl, status, contentType, contentLength })),
-probeCount: urls.length
+pages: allPages.map(({ url, finalUrl, status, contentType, contentLength, fetched, error, source }) => ({ url, finalUrl, status, contentType, contentLength, fetched, error, source })),
+probeCount: urls.length,
+coverageStrategy: 'free_auto_home_robots_sitemap_key_path_probe',
+discoveredLinkCount: discovered.length,
+automationDiscovery: {
+level: discovery.level,
+capabilities: discovery.capabilities,
+htmlLinkCount: discovery.htmlLinkCount,
+sitemapLinkCount: discovery.sitemapLinkCount,
+robotsEnabled: discovery.robotsEnabled,
+sitemapEnabled: discovery.sitemapEnabled,
+resourceFetches: discovery.resources
+}
 };
 }
 async function scanResultFor(input, db = null) {
@@ -2368,7 +2926,7 @@ if (SCAN_PROVIDER === 'external_http') {
 try {
 const external = await runExternalScan(input);
 external.elapsedMs = external.elapsedMs || (Date.now() - startedAt);
-return external;
+return await enhanceScanWithAiReview(external);
 } catch (error) {
 if (!SCAN_PROVIDER_FALLBACK) throw error;
 const url = safeUrl(String(input).trim());
@@ -2378,72 +2936,43 @@ const fallback = buildBuiltinScanResult(input, fetched, startedAt);
 fallback.provider = 'builtin_fallback';
 fallback.fetchError = error.message;
 fallback.summary = `${String(input).trim()} 외부 스캔 실패로 내장 엔진으로 분석했습니다.`;
-return fallback;
+return await enhanceScanWithAiReview(fallback);
 }
 }
 const url = safeUrl(String(input).trim());
 if (url && isBlockedTargetUrl(url)) {
-return buildBuiltinScanResult(input, { fetched: false, html: '', error: 'blocked target url', finalUrl: input, status: 0 }, startedAt);
+return await enhanceScanWithAiReview(buildBuiltinScanResult(input, { fetched: false, html: '', error: 'blocked target url', finalUrl: input, status: 0 }, startedAt));
 }
 const fetched = (TARGET_FETCH_ENABLED && url)
 ? await fetchTargetHtmlBundle(url.toString())
 : { fetched: false, html: '', error: TARGET_FETCH_ENABLED ? 'invalid url' : 'target fetch disabled', finalUrl: input, status: 0 };
-return buildBuiltinScanResult(input, fetched, startedAt);
+return await enhanceScanWithAiReview(buildBuiltinScanResult(input, fetched, startedAt));
 }
-function hmac(key, value, encoding) {
-return crypto.createHmac('sha256', key).update(value).digest(encoding);
+function backupSecurityConfigSummary() {
+return backupOps.securitySummary();
 }
-function sha256Hex(value) {
-return crypto.createHash('sha256').update(value).digest('hex');
-}
-async function putObjectToS3Compatible({ key, content, contentType }) {
-const endpoint = String(process.env.NV0_S3_ENDPOINT || '').replace(/\/$/, '');
-const bucket = String(process.env.NV0_S3_BUCKET || '').trim();
-const region = String(process.env.NV0_S3_REGION || 'ap-northeast-2').trim();
-const accessKey = String(process.env.NV0_S3_ACCESS_KEY_ID || '').trim();
-const secretKey = String(process.env.NV0_S3_SECRET_ACCESS_KEY || '').trim();
-const publicBaseUrl = String(process.env.NV0_S3_PUBLIC_BASE_URL || '').replace(/\/$/, '');
-if (!endpoint || !bucket || !accessKey || !secretKey) throw new Error('S3 compatible storage is not configured.');
-const now = new Date();
-const amzDate = now.toISOString().replace(/[:-]|\.\d{3}/g, '');
-const dateStamp = amzDate.slice(0, 8);
-const encodedKey = key.split('/').map(encodeURIComponent).join('/');
-const url = new URL(`${endpoint}/${bucket}/${encodedKey}`);
-const host = url.host;
-const payloadHash = sha256Hex(content);
-const canonicalHeaders = `host:${host}\nx-amz-content-sha256:${payloadHash}\nx-amz-date:${amzDate}\n`;
-const signedHeaders = 'host;x-amz-content-sha256;x-amz-date';
-const canonicalRequest = ['PUT', url.pathname, '', canonicalHeaders, signedHeaders, payloadHash].join('\n');
-const credentialScope = `${dateStamp}/${region}/s3/aws4_request`;
-const stringToSign = ['AWS4-HMAC-SHA256', amzDate, credentialScope, sha256Hex(canonicalRequest)].join('\n');
-const kDate = hmac(`AWS4${secretKey}`, dateStamp);
-const kRegion = hmac(kDate, region);
-const kService = hmac(kRegion, 's3');
-const kSigning = hmac(kService, 'aws4_request');
-const signature = hmac(kSigning, stringToSign, 'hex');
-const authorization = `AWS4-HMAC-SHA256 Credential=${accessKey}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
-const response = await fetch(url, {
-method: 'PUT',
-headers: {
-authorization,
-'content-type': contentType || 'application/octet-stream',
-'x-amz-content-sha256': payloadHash,
-'x-amz-date': amzDate
-},
-body: content
-});
-if (!response.ok) {
-const errorText = await response.text().catch(() => "");
-throw new Error(`S3 upload failed: ${response.status} ${errorText}`.trim());
-}
-return { key, url: publicBaseUrl ? `${publicBaseUrl}/${encodedKey}` : url.toString() };
-}
+
 function isRefundRequestAllowed(order) {
 if (!order || order.status !== 'paid') return false;
 const paidAt = Date.parse(order.paidAt || order.createdAt || '');
 if (!Number.isFinite(paidAt)) return true;
 return Date.now() - paidAt <= REFUND_REQUEST_WINDOW_DAYS * 24 * 60 * 60 * 1000;
 }
+
+
+function hardeningContext(db = {}) {
+const backup = backupSecurityConfigSummary();
+return {
+baseUrl: seoBaseUrl(), releasePhase: RELEASE_PHASE, version: SECURITY_POSTURE_VERSION, checkedAt: nowIso(),
+platformCommercial: PLATFORM.commercial, databaseUrl: DATABASE_URL, pgSslMode: process.env.PGSSLMODE || '',
+adminAuthLimit: ADMIN_AUTH_LIMIT, adminAuthWindowMs: ADMIN_AUTH_WINDOW_MS, publicScanLimit: PUBLIC_SCAN_LIMIT, publicScanWindowMs: PUBLIC_SCAN_WINDOW_MS,
+sessionTtlMs: SESSION_TTL_MS, adminIpAllowlistCount: ADMIN_IP_ALLOWLIST.length, redisConfigured: Boolean(process.env.NV0_REDIS_URL),
+slowRequestThresholdMs: SLOW_REQUEST_THRESHOLD_MS, auditLogRetentionCount: AUDIT_LOG_RETENTION_COUNT, dataDestructionGraceDays: DATA_DESTRUCTION_GRACE_DAYS,
+backupConfigured: backup.objectStorage?.configured || false, supportMode: BUSINESS_PROFILE.customerServicePhone ? 'phone_or_email' : 'email_only'
+};
+}
+function buildOpenApiSpec() { return buildOpenApiSpecFromContext(hardeningContext()); }
+function buildHardeningMatrix(db = {}) { return buildHardeningMatrixFromContext(hardeningContext(db)); }
 function buildReleaseReadiness(db) {
 const requiredEnv = ['NV0_PUBLIC_BASE_URL','NV0_SUPPORT_EMAIL'];
 if (PLATFORM.commercial) {
@@ -2460,7 +2989,9 @@ queuedEmails: (db.emailOutbox || []).filter(item => ['queued','retry_scheduled']
 failedEmails: (db.emailOutbox || []).filter(item => item.status === 'failed').length,
 idempotencyKeys: (db.idempotencyKeys || []).length,
 unresolvedRefunds: (db.refundRequests || []).filter(item => ['requested','reviewing'].includes(item.status)).length,
-auditLogs: (db.auditLogs || []).length
+auditLogs: (db.auditLogs || []).length,
+expiredCustomerSessions: (db.customerSessions || []).filter(item => Date.parse(item.expiresAt || 0) < Date.now()).length,
+expiredPasswordResetTokens: (db.passwordResetTokens || []).filter(item => Date.parse(item.expiresAt || 0) < Date.now()).length
 };
 const gates = [
 { key: 'privacy_minimized', ok: true, label: '회원가입·결제 최소 개인정보 수집' },
@@ -2476,7 +3007,9 @@ const gates = [
 { key: 'turnstile_enabled', ok: !COMMERCIAL_LAUNCH_READY || TURNSTILE_PUBLIC_ENABLED, label: COMMERCIAL_LAUNCH_READY ? '상용 봇 방지 Turnstile 활성화' : 'prelaunch Turnstile 선택 적용' },
 { key: 'smtp_configured', ok: !PLATFORM.commercial || !isPlaceholderConfigValue(process.env.NV0_SMTP_URL), label: '거래성 이메일 SMTP 설정' },
 { key: 'support_email', ok: isValidEmail(BUSINESS_PROFILE.contactEmail), label: '지원 이메일 유효성' },
-{ key: 'operator_alert_email', ok: isValidEmail(OPERATOR_ALERT_EMAIL), label: '운영 알림 이메일 유효성' }
+{ key: 'operator_alert_email', ok: isValidEmail(OPERATOR_ALERT_EMAIL), label: '운영 알림 이메일 유효성' },
+{ key: 'hardening_matrix_50', ok: buildHardeningMatrix(db).checks.length === 50, label: '50개 보안·운영·QA 하드닝 매트릭스 유지' },
+{ key: 'data_retention_cleanup_ready', ok: true, label: '만료 세션·토큰·탈퇴 계정 정리 로직 준비' }
 ];
 return { phase: RELEASE_PHASE, target: PLATFORM.target, commercial: PLATFORM.commercial, deploymentStage: DEPLOYMENT_STAGE, commercialLaunchReady: COMMERCIAL_LAUNCH_READY, prelaunchMode: PRELAUNCH_MODE, paymentProvider: PAYMENT_PROVIDER, persistenceMode: PERSISTENCE_MODE, storageMode: STORAGE_MODE, secureRecordStore: persistence.secureRecordStore || null, dataRetentionDays: DATA_RETENTION_DAYS, refundRequestWindowDays: REFUND_REQUEST_WINDOW_DAYS, missingEnv, placeholderEnv, counts, gates, ready: gates.every(g => g.ok), checkedAt: nowIso() };
 }
@@ -2555,7 +3088,7 @@ at: nowIso(),
 event,
 ip: clientIp(req),
 method: req.method,
-path: new URL(req.url, `http://${req.headers.host}`).pathname,
+path: req._nv0RouteState?.pathname || requestUrlFrom(req).pathname,
 meta: sanitizeAuditPayload(maskSensitive(meta))
 };
 db.auditLogs.unshift(entry);
@@ -2617,49 +3150,19 @@ source,
 payload
 });
 }
-async function createBackupSnapshot() {
-await ensureRuntime();
-const stamp = nowIso().replace(/[:.]/g, '-');
-const dbSource = path.join(DATA_DIR, 'db.json');
-const dbTarget = path.join(BACKUPS_DIR, `db-${stamp}.json`);
-await fs.copyFile(dbSource, dbTarget);
-return { dbTarget };
+async function createBackupSnapshot(options = {}) {
+return backupOps.createSnapshot(options);
 }
 async function listBackupSnapshots() {
-await ensureRuntime();
-const names = (await fs.readdir(BACKUPS_DIR)).filter(name => name.startsWith('db-') && name.endsWith('.json')).sort().reverse();
-const items = [];
-for (const name of names) {
-const fullPath = path.join(BACKUPS_DIR, name);
-const stat = await fs.stat(fullPath);
-items.push({ name, fullPath, size: stat.size, mtime: stat.mtime.toISOString() });
-}
-return items;
+return backupOps.listSnapshots();
 }
 async function pruneBackupSnapshots() {
-const backups = await listBackupSnapshots();
-const keep = Math.max(BACKUP_RETENTION_COUNT, 1);
-const removed = [];
-for (const backup of backups.slice(keep)) {
-await fs.unlink(backup.fullPath).catch(() => {});
-removed.push(backup.name);
-}
-return { keep, removed };
+return backupOps.pruneSnapshots(BACKUP_RETENTION_COUNT);
 }
 async function restoreBackupSnapshot(name) {
-await ensureRuntime();
-if (!/^db-[a-zA-Z0-9T:._-]+\.json$/.test(name)) {
-throw new Error('invalid backup name');
+return backupOps.restoreSnapshot(name);
 }
-const source = path.join(BACKUPS_DIR, name);
-const normalized = path.normalize(source);
-if (!normalized.startsWith(BACKUPS_DIR)) {
-throw new Error('invalid backup path');
-}
-await fs.access(normalized);
-await fs.copyFile(normalized, path.join(DATA_DIR, 'db.json'));
-return { restoredFrom: normalized };
-}
+
 function sanitizedEnvSummary() {
 return {
 NODE_ENV,
@@ -2680,6 +3183,7 @@ SESSION_TTL_MS,
 MAX_JSON_BODY_BYTES,
 MAX_MULTIPART_BODY_BYTES,
 BACKUP_RETENTION_COUNT,
+backupSecurity: backupSecurityConfigSummary(),
 AUDIT_LOG_RETENTION_COUNT,
 STORAGE_MODE,
 SCAN_PROVIDER,
@@ -2749,6 +3253,9 @@ const filePath = path.join(REPORTS_DIR, `ops-report-${stamp}.json`);
 await fs.writeFile(filePath, JSON.stringify(report, null, 2));
 return { filePath, report };
 }
+async function runAutomaticBackup(reason = 'scheduled') {
+return backupOps.runAutomatic(reason);
+}
 function parseMultipart(rawBuffer, boundary) {
 const result = { fields: {}, files: [] };
 const textBody = rawBuffer.toString('latin1');
@@ -2810,19 +3317,30 @@ return true;
 }
 async function verifyTurnstile(req, token) {
 if (!TURNSTILE_PUBLIC_ENABLED) return { ok: true, skipped: true, reason: ENABLE_TURNSTILE ? 'turnstile_not_configured_or_placeholder' : 'turnstile_disabled' };
-if (!token || typeof token !== 'string') return { ok: false, error: 'turnstile token required' };
+const normalizedToken = typeof token === 'string' ? token.trim() : '';
+if (!normalizedToken) {
+if (PRELAUNCH_MODE) return { ok: true, skipped: true, reason: 'prelaunch_turnstile_token_missing' };
+return { ok: false, error: 'turnstile token required' };
+}
 const form = new URLSearchParams({
 secret: TURNSTILE_SECRET,
-response: token,
+response: normalizedToken,
 remoteip: clientIp(req)
 });
+try {
 const response = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
 method: 'POST',
 headers: { 'content-type': 'application/x-www-form-urlencoded' },
 body: form.toString()
 });
-const data = await response.json();
-return { ok: !!data.success, raw: data, error: data['error-codes']?.join(', ') || null };
+const data = await response.json().catch(() => ({}));
+if (data?.success) return { ok: true, raw: data, error: null };
+if (PRELAUNCH_MODE) return { ok: true, skipped: true, reason: 'prelaunch_turnstile_verify_soft_fail', raw: data, error: data['error-codes']?.join(', ') || 'turnstile verify failed' };
+return { ok: false, raw: data, error: data['error-codes']?.join(', ') || 'turnstile verify failed' };
+} catch (error) {
+if (PRELAUNCH_MODE) return { ok: true, skipped: true, reason: 'prelaunch_turnstile_network_soft_fail', error: error.message };
+return { ok: false, error: error.message || 'turnstile verify request failed' };
+}
 }
 function ensureSiteRecord(db, scan) {
 db.sites ||= [];
@@ -2944,17 +3462,212 @@ appendAudit(db, { headers: {}, socket: {} }, 'system.cta.autopublished', { id: i
 await writeDb(db);
 return { ok: true, publication: item };
 }
-async function handleApi(req, res) {
-const url = new URL(req.url, `http://${req.headers.host}`);
-const pathname = url.pathname;
-if (pathname === '/healthz') {
-return json(req, res, 200, { ok: true, service: 'nv0-veridion', uptimeSec: Math.round(process.uptime()) });
+
+function createRouteContext() {
+return {
+ADMIN_AUTH_LIMIT,
+ADMIN_AUTH_MODE,
+ADMIN_AUTH_WINDOW_MS,
+ADMIN_KEY,
+AI_REVIEW_ENABLED,
+AI_REVIEW_PROVIDER,
+AUDIT_LOG_RETENTION_COUNT,
+AUTO_BACKUP_ENABLED,
+BACKUPS_DIR,
+BACKUP_ENCRYPTION_SECRET,
+BACKUP_REMOTE_ENABLED,
+BACKUP_RETENTION_COUNT,
+BUSINESS_PROFILE,
+COMMERCIAL_LAUNCH_READY,
+CTA_AUTOPUBLISH_INTERVAL_MS,
+DATA_DIR,
+DEPLOYMENT_STAGE,
+EMAIL_MAX_RETRY_COUNT,
+EMAIL_RETRY_BACKOFF_MS,
+ENABLE_TURNSTILE,
+MAX_JSON_BODY_BYTES,
+MAX_MULTIPART_BODY_BYTES,
+NODE_ENV,
+OPERATOR_ALERT_EMAIL,
+ORDER_STATUS_TRANSITIONS,
+PAYMENT_PROVIDER,
+PAYMENT_PROVIDER_URL,
+PERSISTENCE_MODE,
+PLATFORM,
+PORTONE_CLIENT,
+PORTONE_WEBHOOK_SECRET,
+PORTONE_WEBHOOK_VERIFY_MODE,
+PRELAUNCH_MODE,
+PUBLIC_SCAN_LIMIT,
+PUBLIC_SCAN_WINDOW_MS,
+READYZ_REDIS_STRICT,
+RELEASE_PHASE,
+REPORTS_DIR,
+RULES_VERSION,
+RUNTIME_DIR,
+SCAN_PROVIDER,
+SCAN_PROVIDER_FALLBACK,
+SCAN_PROVIDER_URL,
+SESSION_TTL_MS,
+STORAGE_MODE,
+TARGET_FETCH_AUTOMATION_LEVEL,
+TARGET_FETCH_ENABLED,
+TARGET_FETCH_MAX_DISCOVERY_RESOURCES,
+TARGET_FETCH_MAX_PAGES,
+TARGET_FETCH_ROBOTS_ENABLED,
+TARGET_FETCH_SITEMAP_ENABLED,
+TRUST_PROXY_HEADERS,
+TURNSTILE_CONFIGURED,
+TURNSTILE_PUBLIC_ENABLED,
+TURNSTILE_SITE_KEY,
+UPLOADS_DIR,
+adminIpAllowed,
+annotateOffersWithIntelligence,
+appendAudit,
+appendWebhookInbox,
+asTrimmedString,
+assertCommercialRouteAllowed,
+authenticateAdminAccount,
+backupSecurityConfigSummary,
+bodyBuffer,
+bodyJson,
+bodyText,
+buildAssetPdfBuffer,
+buildCommercialFinalGate,
+buildCommercialOfferCatalog,
+buildFeedXml,
+buildHardeningMatrix,
+buildOpenApiSpec,
+buildOpsReport,
+buildPlanCatalog,
+buildPolicyDocumentPreview,
+buildPortalSummary,
+buildProductDashboard,
+buildProductIntelligence,
+buildProductionLaunchChecklist,
+buildPublicDiagnosisPackage,
+buildReleaseReadiness,
+buildRobotsTxt,
+buildRuleCatalog,
+buildSitemapXml,
+buildSmartProductOrchestration,
+buildSmartPublicSnapshot,
+buildSystemItemsFeed,
+canAccessOrder,
+canTransition,
+clamp,
+cleanupDataRetention,
+clientIp,
+completeCheckoutOrder,
+createBackupSnapshot,
+createCheckoutOrder,
+createCtaPublication,
+createGuidanceDocument,
+createPasswordResetToken,
+crypto,
+ctaCombinationStats,
+ctaTopicPacks,
+customerOrders,
+customerRecentScans,
+customerSavedSites,
+customerSessionCookie,
+distributedLock,
+enqueueTransactionalEmail,
+ensureBootstrapAdmin,
+ensureFulfillmentForOrder,
+ensureRuntime,
+ensureSiteRecord,
+ensureSubscriptionForSite,
+expiredCustomerSessionCookie,
+expiredSessionCookie,
+findIdempotencyRecord,
+findLatestGuidanceForSite,
+findSiteByAny,
+fs,
+generateOrderAccessToken,
+getCommercialOffer,
+getCustomerSession,
+getIdempotencyKey,
+getSession,
+handleAccountRescan,
+hashPassword,
+hashPasswordResetToken,
+hashRequestPayload,
+hitRateLimit,
+isAllowedUpload,
+sanitizeUploadFilename,
+isRefundRequestAllowed,
+isValidEmail,
+json,
+linkCustomerToSite,
+listBackupSnapshots,
+markSessionsDirty,
+maskEmail,
+normalizeCheckoutPayload,
+normalizeDocumentPreviewPayload,
+normalizeDomainInput,
+normalizeEmail,
+normalizeEmailDeliveryPayload,
+normalizeIdPayload,
+normalizeIdStatusPayload,
+normalizeLibraryNotePayload,
+normalizeMarketingConsentPayload,
+normalizeOpsPayload,
+normalizePublicationPayload,
+normalizeRefundRequestPayload,
+normalizeRequestIdPayload,
+normalizeRulePayload,
+normalizeSavedSitePayload,
+normalizeScanPayload,
+normalizeSettingsPayload,
+normalizeSubscriptionPayload,
+normalizeSystemItemPayload,
+nowIso,
+ownsOrder,
+parseCookies,
+parseMultipart,
+path,
+persistence,
+processEmailOutbox,
+pruneBackupSnapshots,
+publicCustomer,
+putObjectToS3Compatible,
+rateLimitStore,
+readDb,
+requireAdminCsrf,
+requireAdminPermission,
+restoreBackupSnapshot,
+sanitizeOrderForPublic,
+scanResultFor,
+seedAutoFixJobs,
+sessionCookie,
+sessionStore,
+sessions,
+storeIdempotencyRecord,
+syncPortOneCheckoutOrder,
+text,
+toPublicBoardPost,
+uid,
+validateConfig,
+verifyPassword,
+verifyPortOneWebhook,
+verifyTurnstile,
+writeDb,
+writeOpsReportSnapshot,
+writeSessionsToDisk
+};
 }
-if (pathname === '/api/public/diagnosis-engine' && req.method === 'GET') {
-return json(req, res, 200, { ok: true, phase: RELEASE_PHASE, engine: 'NV0 Builtin Diagnosis Engine', rulesVersion: RULES_VERSION, targetFetchEnabled: TARGET_FETCH_ENABLED, scanProvider: SCAN_PROVIDER, endpoints: { scan: 'POST /api/public/scan', diagnose: 'POST /api/public/diagnose', board: 'GET /api/public/system-items', engine: 'GET /api/public/diagnosis-engine', productIntelligence: 'GET /api/public/product-intelligence' }, smartProduct: { version: 'p153-smart-ops-v1', nextBestAction: true, planFitScoring: true, journeyOrchestration: true, smartProductEndpoint: '/api/public/smart-product', userPath: ['무료 진단','스마트 추천','요금제 선택','내 사이트 관리','CTA 재유입'] }, autoPublish: { boardName: '게시판', intervalMs: CTA_AUTOPUBLISH_INTERVAL_MS, intervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000), topicPackCount: ctaTopicPacks().length, combinationStats: ctaCombinationStats(), variants: ctaTopicPacks().map(item => item.headline) }, checks: buildRuleCatalog().map(({ code, category, title, severity, penaltyMax }) => ({ code, category, title, severity, penaltyMax })) });
-}
-if (pathname === '/readyz') {
-try {
+
+const routeContext = createRouteContext();
+const publicRouteHandler = createPublicRouteHandler(routeContext);
+const adminRouteHandler = createAdminRouteHandler(routeContext);
+const securityMiddleware = createSecurityMiddleware({ isAllowedHost, text, baseHeaders, requestUrlFrom, redirect });
+const READYZ_CACHE_TTL_MS = Math.max(0, Number(process.env.NV0_READYZ_CACHE_TTL_MS || 3000));
+let readyzCache = null;
+let publicXmlCache = { sitemap: null, feed: null };
+
+
+async function buildReadyzPayload() {
 validateConfig();
 await ensureRuntime();
 await readDb();
@@ -2966,1167 +3679,88 @@ const redisLockReady = READYZ_REDIS_STRICT ? await distributedLock.ping() : Bool
 const probePath = path.join(REPORTS_DIR, `.readyz-${process.pid}.tmp`);
 await fs.writeFile(probePath, JSON.stringify({ checkedAt: nowIso() }));
 await fs.unlink(probePath);
-if (READYZ_REDIS_STRICT && (!redisSessionReady || !redisRateLimitReady || !redisLockReady)) throw new Error("Strict readiness requires Redis-backed session, rate-limit, and lock providers.");
-return json(req, res, 200, { ok: true, ready: true, runtimeWritable: true, platformTarget: PLATFORM.target, deploymentStage: DEPLOYMENT_STAGE, commercialLaunchReady: COMMERCIAL_LAUNCH_READY, prelaunchMode: PRELAUNCH_MODE, persistenceMode: PERSISTENCE_MODE, storageMode: STORAGE_MODE, turnstileEnabled: TURNSTILE_PUBLIC_ENABLED, redis: { readinessMode: READYZ_REDIS_STRICT ? "strict_ping" : "prelaunch_advisory_no_ping", sessionStore: redisSessionReady, rateLimitStore: redisRateLimitReady, lockProvider: redisLockReady }, paymentProvider: PAYMENT_PROVIDER === "portone_v2" ? PORTONE_CLIENT.configSummary() : { mode: PAYMENT_PROVIDER }, secureRecordStore: persistence.secureRecordStore || null });
+if (READYZ_REDIS_STRICT && (!redisSessionReady || !redisRateLimitReady || !redisLockReady)) throw new Error('Strict readiness requires Redis-backed session, rate-limit, and lock providers.');
+return {
+  ok: true,
+  ready: true,
+  runtimeWritable: true,
+  platformTarget: PLATFORM.target,
+  deploymentStage: DEPLOYMENT_STAGE,
+  commercialLaunchReady: COMMERCIAL_LAUNCH_READY,
+  prelaunchMode: PRELAUNCH_MODE,
+  persistenceMode: PERSISTENCE_MODE,
+  storageMode: STORAGE_MODE,
+  turnstileEnabled: TURNSTILE_PUBLIC_ENABLED,
+  redis: {
+    readinessMode: READYZ_REDIS_STRICT ? 'strict_ping' : 'prelaunch_advisory_no_ping',
+    sessionStore: redisSessionReady,
+    rateLimitStore: redisRateLimitReady,
+    lockProvider: redisLockReady
+  },
+  paymentProvider: PAYMENT_PROVIDER === 'portone_v2' ? PORTONE_CLIENT.configSummary() : { mode: PAYMENT_PROVIDER },
+  secureRecordStore: persistence.secureRecordStore || null,
+  cachedForMs: READYZ_CACHE_TTL_MS
+};
+}
+
+async function handleReadyz(req, res) {
+try {
+  const now = Date.now();
+  if (readyzCache && READYZ_CACHE_TTL_MS > 0 && readyzCache.expiresAt > now) {
+    return json(req, res, 200, { ...readyzCache.payload, cacheHit: true }, { 'cache-control': 'no-store' });
+  }
+  const payload = await buildReadyzPayload();
+  readyzCache = { payload, expiresAt: now + READYZ_CACHE_TTL_MS };
+  return json(req, res, 200, { ...payload, cacheHit: false }, { 'cache-control': 'no-store' });
 } catch (error) {
-return json(req, res, 503, { ok: false, ready: false, runtimeWritable: false, error: error.message });
+  readyzCache = null;
+  return json(req, res, 503, { ok: false, ready: false, runtimeWritable: false, error: error.message }, { 'cache-control': 'no-store' });
 }
 }
+
+async function cachedXml(name, ttlMs, builder) {
+const now = Date.now();
+const cached = publicXmlCache[name];
+if (cached && cached.expiresAt > now) return { body: cached.body, cacheHit: true };
+const db = await readDb();
+const body = builder(db);
+publicXmlCache[name] = { body, expiresAt: now + ttlMs };
+return { body, cacheHit: false };
+}
+
+async function handleApi(req, res, state = {}) {
+const routeState = state.requestUrl ? state : resolveNativeRouteState(req);
+const { pathname } = routeState;
+if (pathname.startsWith('/api/public/')) return publicRouteHandler(req, res, routeState);
+if (pathname.startsWith('/api/admin/')) return adminRouteHandler(req, res, routeState);
+if (pathname === '/healthz' || pathname === '/health' || pathname === '/livez') {
+return json(req, res, 200, { ok: true, live: true, service: 'nv0-veridion', phase: RELEASE_PHASE, uptimeSec: Math.round(process.uptime()) }, { 'cache-control': 'no-store' });
+}
+if (pathname === '/readyz') return handleReadyz(req, res);
 if (pathname === '/robots.txt' && req.method === 'GET') {
 return text(req, res, 200, buildRobotsTxt(), { 'cache-control': 'public, max-age=3600' });
 }
 if (pathname === '/sitemap.xml' && req.method === 'GET') {
-const db = await readDb();
-return text(req, res, 200, buildSitemapXml(db), { 'content-type': 'application/xml; charset=utf-8', 'cache-control': 'public, max-age=1800, stale-while-revalidate=3600' });
+const cached = await cachedXml('sitemap', 30_000, buildSitemapXml);
+return text(req, res, 200, cached.body, { 'content-type': 'application/xml; charset=utf-8', 'cache-control': 'public, max-age=1800, stale-while-revalidate=3600', 'x-nv0-cache': cached.cacheHit ? 'hit' : 'miss' });
 }
 if (pathname === '/feed.xml' && req.method === 'GET') {
-const db = await readDb();
-return text(req, res, 200, buildFeedXml(db), { 'content-type': 'application/rss+xml; charset=utf-8', 'cache-control': 'public, max-age=1800, stale-while-revalidate=3600' });
+const cached = await cachedXml('feed', 30_000, buildFeedXml);
+return text(req, res, 200, cached.body, { 'content-type': 'application/rss+xml; charset=utf-8', 'cache-control': 'public, max-age=1800, stale-while-revalidate=3600', 'x-nv0-cache': cached.cacheHit ? 'hit' : 'miss' });
 }
-if (pathname === '/api/public/config' && req.method === 'GET') {
-return json(req, res, 200, { ok: true, turnstileEnabled: TURNSTILE_PUBLIC_ENABLED, turnstileConfigured: TURNSTILE_CONFIGURED, prelaunchMode: PRELAUNCH_MODE, turnstileSiteKey: TURNSTILE_PUBLIC_ENABLED ? TURNSTILE_SITE_KEY : '' });
+return false;
 }
-if (pathname === '/api/public/health' && req.method === 'GET') {
-return json(req, res, 200, { ok: true, area: 'public', time: nowIso(), phase: RELEASE_PHASE, privacy: 'minimum_required_only' });
-}
-if (pathname === '/api/public/release-readiness' && req.method === 'GET') {
-const db = await readDb();
-return json(req, res, 200, { ok: true, readiness: buildReleaseReadiness(db) });
-}
-if (pathname === '/api/public/launch-checklist' && req.method === 'GET') {
-const db = await readDb();
-const checklist = buildProductionLaunchChecklist(db);
-return json(req, res, checklist.ok ? 200 : 503, { ok: checklist.ok, checklist: { phase: checklist.phase, checkedAt: checklist.checkedAt, blockers: checklist.blockers, checks: checklist.checks.map(item => ({ key: item.key, ok: item.ok, label: item.label })) } });
-}
-if (pathname === '/api/public/commercial-final-gate' && req.method === 'GET') {
-const db = await readDb();
-const gate = buildCommercialFinalGate(db);
-return json(req, res, gate.ok ? 200 : 503, { ok: gate.ok, phase: gate.phase, checkedAt: gate.checkedAt, summary: gate.summary, blockers: gate.blockers.map(item => ({ key: item.key, label: item.label, count: item.count || undefined })) });
-}
-if (pathname === '/api/public/smart-product' && req.method === 'GET') {
-const db = await readDb();
-const offers = buildCommercialOfferCatalog();
-const requestedRiskScore = Number(url.searchParams.get('riskScore') || 0);
-const domain = String(url.searchParams.get('domain') || '').trim();
-let intelligence = null;
-if (requestedRiskScore || domain) {
-const site = domain ? findSiteByAny(db, '', domain) : null;
-const scan = site ? (db.scans || []).find(item => item.siteId === site.id) || db.scans[0] || {} : db.scans[0] || {};
-intelligence = buildProductIntelligence({ scan, site, riskScore: requestedRiskScore || site?.latestRiskScore || scan?.riskScore || 55, offers, source: 'smart-product' });
-}
-return json(req, res, 200, buildSmartPublicSnapshot(db, { offers, intelligence }));
-}
-if (pathname === '/api/public/product-intelligence' && req.method === 'GET') {
-const db = await readDb();
-const requestedRiskScore = Number(url.searchParams.get('riskScore') || 0);
-const siteId = url.searchParams.get('siteId') || '';
-const domain = String(url.searchParams.get('domain') || '').trim();
-const site = siteId || domain ? findSiteByAny(db, siteId, domain) : null;
-const scan = site ? (db.scans || []).find(item => item.siteId === site.id) || db.scans[0] || {} : db.scans[0] || {};
-const offers = buildCommercialOfferCatalog();
-const intelligence = buildProductIntelligence({ scan, site, riskScore: requestedRiskScore || site?.latestRiskScore || scan?.riskScore || 55, offers, source: 'public-api' });
-const dashboard = buildProductDashboard(db);
-const orchestration = buildSmartProductOrchestration({ scan, site, intelligence, offers, dashboard, source: 'public-api' });
-return json(req, res, 200, { ok: true, intelligence, dashboard, orchestration });
-}
-if (pathname === '/api/public/products' && req.method === 'GET') {
-const riskScore = Number(url.searchParams.get('riskScore') || 55);
-const offers = buildCommercialOfferCatalog();
-const intelligence = buildProductIntelligence({ riskScore, offers, source: 'products' });
-const orchestration = buildSmartProductOrchestration({ intelligence, offers, source: 'products' });
-return json(req, res, 200, { ok: true, offers: annotateOffersWithIntelligence(offers, intelligence), intelligence, orchestration });
-}
-if (pathname === '/api/public/plans' && req.method === 'GET') {
-const db = await readDb();
-const requestedRiskScore = Number(url.searchParams.get('riskScore') || 0);
-const siteId = url.searchParams.get('siteId') || '';
-const site = siteId ? findSiteByAny(db, siteId) : null;
-const scan = site ? (db.scans || []).find(item => item.siteId === site.id) || db.scans[0] || {} : db.scans[0] || {};
-const riskScore = requestedRiskScore || site?.latestRiskScore || scan?.riskScore || 55;
-const offers = buildCommercialOfferCatalog();
-const intelligence = buildProductIntelligence({ scan, site, riskScore, offers, source: 'plans' });
-const recommendedPlan = intelligence.recommendedPlan;
-const orchestration = buildSmartProductOrchestration({ scan, site, intelligence, offers, dashboard: buildProductDashboard(db), source: 'plans' });
-return json(req, res, 200, { ok: true, recommendedPlan, plans: buildPlanCatalog(recommendedPlan), riskScore, intelligence, orchestration, smartOffers: intelligence.offerFit });
-}
-if (pathname === '/api/public/document-preview' && req.method === 'POST') {
-const body = normalizeDocumentPreviewPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
-const db = await readDb();
-const preview = buildPolicyDocumentPreview(body, db.settings || {});
-return json(req, res, 200, { ok: true, preview });
-}
-if (pathname === '/api/public/board' && req.method === 'GET') {
-const db = await readDb();
-return json(req, res, 200, { ok: true, publishIntervalMs: CTA_AUTOPUBLISH_INTERVAL_MS, publishIntervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000), variantCount: ctaTopicPacks().length, topicPackCount: ctaTopicPacks().length, combinationMode: 'unbounded_seeded_combinatorial', combinationStats: ctaCombinationStats(), variants: ctaTopicPacks().map(({ ctaType, boardType, primaryKeyword, headline, intent, funnel }) => ({ ctaType, boardType, primaryKeyword, headline, intent, funnel })), posts: db.boards.slice(0, 20) });
-}
-if (pathname === '/api/public/content' && req.method === 'GET') {
-const db = await readDb();
-const type = String(url.searchParams.get('type') || '').trim();
-let items = buildSystemItemsFeed(db).filter(item => item.visibility !== 'private');
-if (type) items = items.filter(item => item.type === type);
-return json(req, res, 200, { ok: true, items: items.slice(0, 50) });
-}
-if (pathname === '/api/public/auth/session' && req.method === 'GET') {
-const db = await readDb();
-const session = await getCustomerSession(req, db);
-return json(req, res, 200, { ok: true, authenticated: !!session, customer: publicCustomer(db, session?.customer) });
-}
-if (pathname === '/api/public/auth/register' && req.method === 'POST') {
-const rate = await hitRateLimit('customer-register', clientIp(req), { windowMs: PUBLIC_SCAN_WINDOW_MS, limit: 10 });
-if (rate.blocked) return json(req, res, 429, { ok: false, error: '요청이 너무 많습니다.' });
-const body = await bodyJson(req, MAX_JSON_BODY_BYTES) || {};
-const email = normalizeEmail(body.email);
-const password = String(body.password || '');
-const consent = body.privacyConsent === true || body.privacyConsent === 'true';
-if (!isValidEmail(email)) return json(req, res, 400, { ok: false, error: '유효한 이메일이 필요합니다.' });
-if (password.length < 12) return json(req, res, 400, { ok: false, error: '비밀번호는 12자 이상이어야 합니다.' });
-if (!consent) return json(req, res, 400, { ok: false, error: '개인정보 처리방침 동의가 필요합니다.' });
-const db = await readDb();
-db.customers ||= [];
-db.customerSessions ||= [];
-if (db.customers.some(item => normalizeEmail(item.email) === email)) return json(req, res, 409, { ok: false, error: '이미 가입된 이메일입니다.' });
-const customer = { id: uid('cus'), email, status: 'active', passwordHash: await hashPassword(password), privacyConsentAt: nowIso(), dataMinimizationVersion: RELEASE_PHASE, createdAt: nowIso(), updatedAt: nowIso() };
-const sid = uid('csess') + crypto.randomBytes(16).toString('hex');
-const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 14).toISOString();
-db.customers.unshift(customer);
-db.customerSessions.unshift({ sid, customerId: customer.id, createdAt: nowIso(), lastSeenAt: nowIso(), expiresAt, ip: clientIp(req) });
-for (const order of db.orders || []) {
-if (!order.customerId && normalizeEmail(order.email) === email) { order.customerId = customer.id; generateOrderAccessToken(order); }
-}
-appendAudit(db, req, 'public.customer.registered', { customerId: customer.id, email });
-await writeDb(db);
-return json(req, res, 200, { ok: true, customer: publicCustomer(db, customer) }, { 'set-cookie': customerSessionCookie(req, sid, 60 * 60 * 24 * 14) });
-}
-if (pathname === '/api/public/auth/login' && req.method === 'POST') {
-const rate = await hitRateLimit('customer-login', clientIp(req), { windowMs: ADMIN_AUTH_WINDOW_MS, limit: 12 });
-if (rate.blocked) return json(req, res, 429, { ok: false, error: '요청이 너무 많습니다.' });
-const body = await bodyJson(req, MAX_JSON_BODY_BYTES) || {};
-const email = normalizeEmail(body.email);
-const password = String(body.password || '');
-const db = await readDb();
-db.customers ||= [];
-db.customerSessions ||= [];
-const customer = db.customers.find(item => normalizeEmail(item.email) === email && item.status !== 'disabled');
-if (!customer || !await verifyPassword(password, customer.passwordHash)) {
-appendAudit(db, req, 'public.customer.login_failed', { email });
-await writeDb(db);
-return json(req, res, 401, { ok: false, error: '로그인 정보가 올바르지 않습니다.' });
-}
-customer.lastLoginAt = nowIso();
-customer.updatedAt = nowIso();
-const sid = uid('csess') + crypto.randomBytes(16).toString('hex');
-const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 14).toISOString();
-db.customerSessions.unshift({ sid, customerId: customer.id, createdAt: nowIso(), lastSeenAt: nowIso(), expiresAt, ip: clientIp(req) });
-db.customerSessions = db.customerSessions.slice(0, 2000);
-appendAudit(db, req, 'public.customer.login_succeeded', { customerId: customer.id, email });
-await writeDb(db);
-return json(req, res, 200, { ok: true, customer: publicCustomer(db, customer) }, { 'set-cookie': customerSessionCookie(req, sid, 60 * 60 * 24 * 14) });
-}
-if (pathname === '/api/public/auth/logout' && req.method === 'POST') {
-const sid = parseCookies(req).nv0_customer_sid;
-const db = await readDb();
-db.customerSessions ||= [];
-db.customerSessions = db.customerSessions.filter(item => item.sid !== sid);
-appendAudit(db, req, 'public.customer.logout');
-await writeDb(db);
-return json(req, res, 200, { ok: true }, { 'set-cookie': expiredCustomerSessionCookie(req) });
-}
-if (pathname === '/api/public/auth/request-password-reset' && req.method === 'POST') {
-const body = await bodyJson(req, MAX_JSON_BODY_BYTES) || {};
-const email = normalizeEmail(body.email);
-if (!isValidEmail(email)) return json(req, res, 400, { ok: false, error: '유효한 이메일이 필요합니다.' });
-const db = await readDb();
-const customer = (db.customers || []).find(item => normalizeEmail(item.email) === email && item.status !== 'disabled');
-if (customer) {
-const { rawToken, record } = createPasswordResetToken(db, customer, req);
-const resetUrl = `${BUSINESS_PROFILE.domain.replace(/\/$/, '')}/auth?resetToken=${encodeURIComponent(rawToken)}&email=${encodeURIComponent(email)}`;
-enqueueTransactionalEmail(db, { to: email, customerId: customer.id, template: 'password_reset', subject: '[NV0] 비밀번호 재설정 안내', body: `30분 안에 아래 링크에서 비밀번호를 재설정하세요.\n${resetUrl}`, meta: { resetTokenId: record.id, resetUrl } });
-appendAudit(db, req, 'public.customer.password_reset_requested', { customerId: customer.id, email });
-} else {
-appendAudit(db, req, 'public.customer.password_reset_requested_unknown', { email });
-}
-await writeDb(db);
-return json(req, res, 200, { ok: true, message: '가입된 이메일이면 재설정 안내가 발송됩니다.' });
-}
-if (pathname === '/api/public/auth/reset-password' && req.method === 'POST') {
-const body = await bodyJson(req, MAX_JSON_BODY_BYTES) || {};
-const email = normalizeEmail(body.email);
-const token = String(body.token || '').trim();
-const password = String(body.password || '');
-if (!isValidEmail(email) || !token) return json(req, res, 400, { ok: false, error: '이메일과 재설정 토큰이 필요합니다.' });
-if (password.length < 12) return json(req, res, 400, { ok: false, error: '비밀번호는 12자 이상이어야 합니다.' });
-const db = await readDb();
-const customer = (db.customers || []).find(item => normalizeEmail(item.email) === email && item.status !== 'disabled');
-const record = (db.passwordResetTokens || []).find(item => item.tokenHash === hashPasswordResetToken(token) && !item.usedAt);
-if (!customer || !record || record.customerId !== customer.id || Date.parse(record.expiresAt) < Date.now()) {
-appendAudit(db, req, 'public.customer.password_reset_failed', { email });
-await writeDb(db);
-return json(req, res, 400, { ok: false, error: '재설정 링크가 올바르지 않거나 만료되었습니다.' });
-}
-customer.passwordHash = await hashPassword(password);
-customer.updatedAt = nowIso();
-record.usedAt = nowIso();
-db.customerSessions = (db.customerSessions || []).filter(item => item.customerId !== customer.id);
-enqueueTransactionalEmail(db, { to: email, customerId: customer.id, template: 'password_changed', subject: '[NV0] 비밀번호가 변경되었습니다', body: '계정 비밀번호가 변경되었습니다. 본인이 요청하지 않았다면 즉시 고객센터로 문의하세요.' });
-appendAudit(db, req, 'public.customer.password_reset_completed', { customerId: customer.id, email });
-await writeDb(db);
-return json(req, res, 200, { ok: true, message: '비밀번호가 변경되었습니다. 다시 로그인하세요.' }, { 'set-cookie': expiredCustomerSessionCookie(req) });
-}
-if (pathname === '/api/public/account' && req.method === 'GET') {
-const db = await readDb();
-const session = await getCustomerSession(req, db);
-if (!session) return json(req, res, 401, { ok: false, error: '로그인이 필요합니다.' });
-const orders = customerOrders(db, session.customer);
-const assets = (db.purchasedAssets || []).filter(asset => orders.some(order => order.id === asset.orderId));
-return json(req, res, 200, { ok: true, customer: publicCustomer(db, session.customer), orders, assets, savedSites: customerSavedSites(db, session.customer), recentScans: customerRecentScans(db, session.customer, 5) });
-}
-if (pathname === '/api/public/account/export' && req.method === 'GET') {
-const db = await readDb();
-const session = await getCustomerSession(req, db);
-if (!session) return json(req, res, 401, { ok: false, error: '로그인이 필요합니다.' });
-const orders = customerOrders(db, session.customer).map(sanitizeOrderForPublic);
-const assets = (db.purchasedAssets || []).filter(asset => orders.some(order => order.id === asset.orderId));
-return json(req, res, 200, { ok: true, export: { customer: publicCustomer(db, session.customer), orders, assets, savedSites: customerSavedSites(db, session.customer), exportedAt: nowIso() } });
-}
-if (pathname === '/api/public/account/deactivate' && req.method === 'POST') {
-const db = await readDb();
-const session = await getCustomerSession(req, db);
-if (!session) return json(req, res, 401, { ok: false, error: '로그인이 필요합니다.' });
-session.customer.status = 'disabled';
-session.customer.disabledAt = nowIso();
-session.customer.updatedAt = nowIso();
-db.customerSessions = (db.customerSessions || []).filter(item => item.customerId !== session.customer.id);
-appendAudit(db, req, 'public.customer.deactivated', { customerId: session.customer.id });
-await writeDb(db);
-return json(req, res, 200, { ok: true, message: '계정이 비활성화되었습니다.' }, { 'set-cookie': expiredCustomerSessionCookie(req) });
-}
-if (pathname === '/api/public/account/marketing-consent' && req.method === 'POST') {
-const db = await readDb();
-const session = await getCustomerSession(req, db);
-if (!session) return json(req, res, 401, { ok: false, error: '로그인이 필요합니다.' });
-const body = normalizeMarketingConsentPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
-session.customer.marketingConsentAt = body.marketingConsent ? nowIso() : null;
-session.customer.marketingConsentRevokedAt = body.marketingConsent ? null : nowIso();
-session.customer.updatedAt = nowIso();
-appendAudit(db, req, 'public.customer.marketing_consent_changed', { customerId: session.customer.id, marketingConsent: body.marketingConsent });
-await writeDb(db);
-return json(req, res, 200, { ok: true, customer: publicCustomer(db, session.customer) });
-}
-if (pathname === '/api/public/account/sites' && req.method === 'GET') {
-const db = await readDb();
-const session = await getCustomerSession(req, db);
-if (!session) return json(req, res, 401, { ok: false, error: '로그인이 필요합니다.' });
-return json(req, res, 200, { ok: true, sites: customerSavedSites(db, session.customer), recentScans: customerRecentScans(db, session.customer, 5) });
-}
-if (pathname === '/api/public/account/scan-detail' && req.method === 'GET') {
-const db = await readDb();
-const session = await getCustomerSession(req, db);
-if (!session) return json(req, res, 401, { ok: false, error: '로그인이 필요합니다.' });
-const requestId = String(url.searchParams.get('requestId') || '').trim();
-const siteId = String(url.searchParams.get('siteId') || '').trim();
-const scan = (db.scans || []).find(item => (requestId && item.requestId === requestId) || (siteId && item.siteId === siteId));
-if (!scan) return json(req, res, 404, { ok: false, error: '검사 결과를 찾을 수 없습니다.' });
-const ownsLinkedSite = (db.customerSiteLinks || []).some(item => item.customerId === session.customer.id && item.siteId === scan.siteId);
-if (scan.customerId !== session.customer.id && !ownsLinkedSite) return json(req, res, 403, { ok: false, error: '검사 결과 접근 권한이 없습니다.' });
-return json(req, res, 200, { ok: true, result: { ...scan, diagnosis: buildPublicDiagnosisPackage(scan), savedToAccount: true } });
-}
-if (pathname === '/api/public/account/sites' && req.method === 'POST') {
-const body = normalizeSavedSitePayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
-if (!body.domain && !body.siteId) return json(req, res, 400, { ok: false, error: '저장할 사이트 주소가 필요합니다.' });
-const db = await readDb();
-const session = await getCustomerSession(req, db);
-if (!session) return json(req, res, 401, { ok: false, error: '로그인이 필요합니다.' });
-db.sites ||= [];
-let site = body.siteId ? findSiteByAny(db, body.siteId) : null;
-if (!site) site = findSiteByAny(db, '', body.domain);
-if (!site) {
-site = { id: uid('site'), domain: body.domain, industry: body.industry || '일반 이커머스', jurisdiction: db.settings?.defaultJurisdiction || 'KR', latestRiskScore: null, latestRiskLevel: null, latestEstimatedMaxPenalty: 0, lastScanAt: null, createdAt: nowIso(), status: 'saved' };
-db.sites.unshift(site);
-}
-const link = linkCustomerToSite(db, session.customer.id, site, { label: body.label, industry: body.industry, memo: body.memo });
-appendAudit(db, req, 'public.customer.site_saved', { customerId: session.customer.id, siteId: site.id, domain: site.domain });
-await writeDb(db);
-return json(req, res, 200, { ok: true, site: customerSavedSites(db, session.customer).find(item => item.siteId === site.id) || { ...link, domain: site.domain } });
-}
-if (pathname.startsWith('/api/public/account/sites/') && req.method === 'DELETE') {
-const siteId = decodeURIComponent(pathname.split('/').pop() || '');
-const db = await readDb();
-const session = await getCustomerSession(req, db);
-if (!session) return json(req, res, 401, { ok: false, error: '로그인이 필요합니다.' });
-const before = (db.customerSiteLinks || []).length;
-db.customerSiteLinks = (db.customerSiteLinks || []).filter(item => !(item.customerId === session.customer.id && item.siteId === siteId));
-appendAudit(db, req, 'public.customer.site_removed', { customerId: session.customer.id, siteId, removed: before !== db.customerSiteLinks.length });
-await writeDb(db);
-return json(req, res, 200, { ok: true, removed: before !== db.customerSiteLinks.length });
-}
-if (pathname === '/api/public/account/rescan' && req.method === 'POST') return handleAccountRescan([req,res,json,readDb,writeDb,getCustomerSession,bodyJson,MAX_JSON_BODY_BYTES,asTrimmedString,normalizeDomainInput,findSiteByAny,scanResultFor,ensureSiteRecord,ensureSubscriptionForSite,createGuidanceDocument,seedAutoFixJobs,createCtaPublication,buildPublicDiagnosisPackage,customerSavedSites,appendAudit,nowIso]);
-if (pathname === '/api/public/refund-request' && req.method === 'POST') {
-const body = normalizeRefundRequestPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
-const db = await readDb();
-db.refundRequests ||= [];
-const order = (db.orders || []).find(item => item.id === body.orderId);
-if (!order) return json(req, res, 404, { ok: false, error: '주문을 찾을 수 없습니다.' });
-const customerSession = await getCustomerSession(req, db);
-const tokenAllowed = body.accessToken && order.accessToken && body.accessToken.length === order.accessToken.length && crypto.timingSafeEqual(Buffer.from(String(body.accessToken)), Buffer.from(String(order.accessToken)));
-if (!tokenAllowed && !ownsOrder(customerSession?.customer, order)) return json(req, res, 403, { ok: false, error: '환불 요청 권한이 없습니다.' });
-if (!isRefundRequestAllowed(order)) return json(req, res, 400, { ok: false, error: '환불 요청 가능 기간이 지났거나 결제 완료 주문이 아닙니다.' });
-const existing = db.refundRequests.find(item => item.orderId === order.id && ['requested','reviewing'].includes(item.status));
-if (existing) return json(req, res, 200, { ok: true, refundRequest: existing, duplicate: true });
-const refundRequest = { id: uid('refund'), orderId: order.id, customerId: order.customerId || null, email: order.email || null, reason: body.reason, status: 'requested', requestedAt: nowIso(), amount: order.amount, plan: order.plan };
-db.refundRequests.unshift(refundRequest);
-enqueueTransactionalEmail(db, { to: BUSINESS_PROFILE.contactEmail, template: 'refund_request_operator', subject: '[NV0] 환불 요청 접수', body: '환불 요청이 접수되었습니다.', meta: { refundRequestId: refundRequest.id, orderId: order.id } });
-appendAudit(db, req, 'public.refund.requested', { orderId: order.id, refundRequestId: refundRequest.id });
-await writeDb(db);
-return json(req, res, 200, { ok: true, refundRequest });
-}
-if (pathname === '/api/public/portal-summary' && req.method === 'GET') {
-const db = await readDb();
-const orderId = String(url.searchParams.get('orderId') || '');
-if (orderId) {
-const order = (db.orders || []).find(item => item.id === orderId);
-const customerSession = await getCustomerSession(req, db);
-if (!order) return json(req, res, 404, { ok: false, error: '주문을 찾을 수 없습니다.' });
-if (order.customerId && !canAccessOrder(req, order) && !ownsOrder(customerSession?.customer, order)) return json(req, res, 403, { ok: false, error: '내 사이트 관리 접근 권한이 없습니다.' });
-}
-const summary = buildPortalSummary(db, { orderId, siteId: url.searchParams.get('siteId') });
-summary.order = sanitizeOrderForPublic(summary.order, { includeAccessToken: !!summary.order && canAccessOrder(req, summary.order) });
-return json(req, res, 200, { ok: true, summary });
-}
-if (pathname === '/api/public/order' && req.method === 'GET') {
-const db = await readDb();
-const orderId = String(url.searchParams.get('orderId') || '');
-const order = (db.orders || []).find(item => item.id === orderId);
-if (!order) return json(req, res, 404, { ok: false, error: '주문을 찾을 수 없습니다.' });
-const customerSession = await getCustomerSession(req, db);
-if (order.customerId && !canAccessOrder(req, order) && !ownsOrder(customerSession?.customer, order)) return json(req, res, 403, { ok: false, error: '주문 접근 권한이 없습니다.' });
-const paymentSession = (db.paymentSessions || []).find(item => item.orderId === order.id) || null;
-return json(req, res, 200, { ok: true, order: sanitizeOrderForPublic(order, { includeAccessToken: canAccessOrder(req, order) || ownsOrder(customerSession?.customer, order) }), paymentSession });
-}
-if (pathname === '/api/public/fulfillment' && req.method === 'GET') {
-const db = await readDb();
-const orderId = String(url.searchParams.get('orderId') || '').trim();
-if (!orderId) return json(req, res, 400, { ok: false, error: 'orderId가 필요합니다.' });
-const order = (db.orders || []).find(item => item.id === orderId);
-if (!order) return json(req, res, 404, { ok: false, error: '주문을 찾을 수 없습니다.' });
-const customerSession = await getCustomerSession(req, db);
-if ((order.customerId || order.status === 'paid') && !canAccessOrder(req, order) && !ownsOrder(customerSession?.customer, order)) return json(req, res, 403, { ok: false, error: '산출물 접근 권한이 없습니다.' });
-const asset = order.status === 'paid' ? ensureFulfillmentForOrder(db, order) : null;
-if (asset || !order.accessToken) await writeDb(db);
-return json(req, res, 200, { ok: true, order: { ...order, accessToken: generateOrderAccessToken(order) }, asset, locked: order.status !== 'paid' });
-}
-if (pathname === '/api/public/fulfillment-download' && req.method === 'GET') {
-const db = await readDb();
-const orderId = String(url.searchParams.get('orderId') || '').trim();
-const order = (db.orders || []).find(item => item.id === orderId);
-if (!order) return json(req, res, 404, { ok: false, error: '주문을 찾을 수 없습니다.' });
-const customerSession = await getCustomerSession(req, db);
-if ((order.customerId || order.status === 'paid') && !canAccessOrder(req, order) && !ownsOrder(customerSession?.customer, order)) return json(req, res, 403, { ok: false, error: '산출물 접근 권한이 없습니다.' });
-if (order.status !== 'paid') return json(req, res, 402, { ok: false, error: '결제 완료 후 다운로드할 수 있습니다.' });
-const asset = ensureFulfillmentForOrder(db, order);
-await writeDb(db);
-const pdf = buildAssetPdfBuffer(asset, order);
-res.writeHead(200, { 'content-type': 'application/pdf', 'content-disposition': `attachment; filename="nv0-${order.id}.pdf"`, ...baseHeaders(req, 'dynamic') });
-res.end(pdf);
-return;
-}
-if (pathname === '/api/public/product-detail' && req.method === 'GET') {
-const code = String(url.searchParams.get('code') || '').trim();
-const offer = getCommercialOffer(code);
-if (!offer) return json(req, res, 404, { ok: false, error: '상품을 찾을 수 없습니다.' });
-return json(req, res, 200, { ok: true, offer });
-}
-if (pathname === '/api/public/guidance' && req.method === 'GET') {
-const db = await readDb();
-const siteId = String(url.searchParams.get('siteId') || '');
-const guidance = siteId ? findLatestGuidanceForSite(db, siteId) : db.guidanceDocuments[0] || null;
-if (!guidance) return json(req, res, 404, { ok: false, error: '지침 문서를 찾을 수 없습니다.' });
-return json(req, res, 200, { ok: true, guidance });
-}
-if ((pathname === '/api/public/scan' || pathname === '/api/public/diagnose') && req.method === 'POST') {
-const rate = await hitRateLimit('scan', clientIp(req), { windowMs: PUBLIC_SCAN_WINDOW_MS, limit: PUBLIC_SCAN_LIMIT });
-if (rate.blocked) {
-return json(req, res, 429, { ok: false, error: '요청이 너무 많습니다. 잠시 후 다시 시도하세요.' }, { 'retry-after': String(Math.ceil((rate.resetAt - Date.now()) / 1000)) });
-}
-const body = normalizeScanPayload(await bodyJson(req, MAX_JSON_BODY_BYTES));
-const turnstile = await verifyTurnstile(req, body.turnstileToken);
-if (!turnstile.ok) return json(req, res, 400, { ok: false, error: 'Turnstile 검증에 실패했습니다.' });
-const db = await readDb();
-const result = await scanResultFor(body.target, db);
-const site = ensureSiteRecord(db, result);
-const customerSession = await getCustomerSession(req, db);
-if (customerSession?.customer) linkCustomerToSite(db, customerSession.customer.id, site, { label: site.domain, industry: site.industry });
-const subscription = ensureSubscriptionForSite(db, site, result.recommendedPlan);
-const guidance = createGuidanceDocument(db, site, result);
-const autoFixJobs = seedAutoFixJobs(db, site, result);
-const offers = buildCommercialOfferCatalog();
-const intelligence = buildProductIntelligence({ scan: result, site, offers, source: 'scan' });
-const journey = buildSmartProductOrchestration({ scan: result, site, intelligence, offers, source: 'scan' });
-let ctaPublication = null;
-if (db.settings.ctaAutopublishEnabled) ctaPublication = createCtaPublication(db, result, { autoPublished: true });
-db.scans.unshift({ siteId: site.id, subscriptionId: subscription.id, customerId: customerSession?.customer?.id || null, createdAt: nowIso(), intelligence, journey, ...result });
-db.scans = db.scans.slice(0, 100);
-appendAudit(db, req, 'public.scan.created', { requestId: result.requestId, target: result.target, siteId: site.id, provider: result.provider || SCAN_PROVIDER, linkedCustomer: !!customerSession?.customer, ctaPublicationId: ctaPublication?.id || null, recommendedPlan: intelligence.recommendedPlan });
-await writeDb(db);
-return json(req, res, 200, { ok: true, result: { ...result, siteId: site.id, guidanceId: guidance.id, autoFixJobsCount: autoFixJobs.length, savedToAccount: !!customerSession?.customer, ctaPublicationId: ctaPublication?.id || null, intelligence, journey, diagnosis: buildPublicDiagnosisPackage(result, { rulesVersion: RULES_VERSION, ctaIntervalMs: CTA_AUTOPUBLISH_INTERVAL_MS }) } });
-}
-if (pathname === '/api/public/checkout-session' && req.method === 'POST') {
-if (PRELAUNCH_MODE || PAYMENT_PROVIDER === 'disabled') {
-return json(req, res, 503, { ok: false, error: '현재는 고객지원 이메일로 신청을 접수합니다. 결제창 이용이 필요한 경우 고객지원으로 문의해 주세요.', stage: DEPLOYMENT_STAGE, supportEmail: BUSINESS_PROFILE.contactEmail });
-}
-const rate = await hitRateLimit('checkout-session', clientIp(req), { windowMs: PUBLIC_SCAN_WINDOW_MS, limit: Math.max(5, Math.floor(PUBLIC_SCAN_LIMIT / 2)) });
-if (rate.blocked) {
-return json(req, res, 429, { ok: false, error: '결제 세션 생성 요청이 너무 많습니다. 잠시 후 다시 시도하세요.' }, { 'retry-after': String(Math.ceil((rate.resetAt - Date.now()) / 1000)) });
-}
-const body = normalizeCheckoutPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
-const idempotencyKey = getIdempotencyKey(req, body);
-const requestHash = hashRequestPayload({ plan: body.plan, email: normalizeEmail(body.email || body.buyerEmail || ''), domain: body.domain, siteId: body.siteId });
-const db = await readDb();
-const replay = findIdempotencyRecord(db, 'checkout', idempotencyKey);
-if (replay) {
-if (replay.requestHash !== requestHash) return json(req, res, 409, { ok: false, error: '동일 idempotency key로 다른 결제 요청을 재사용할 수 없습니다.' });
-return json(req, res, 200, { ok: true, replay: true, ...replay.result });
-}
-const customerSession = await getCustomerSession(req, db);
-if (customerSession?.customer) {
-body.customerId = customerSession.customer.id;
-body.buyerEmail ||= customerSession.customer.email;
-}
-if (!isValidEmail(body.buyerEmail || '')) return json(req, res, 400, { ok: false, error: '산출물 수신 이메일이 필요합니다.' });
-if (!body.privacyConsent || !body.termsConsent || !body.refundConsent || !body.deliveryConsent) {
-return json(req, res, 400, { ok: false, error: '개인정보처리방침, 이용약관, 환불정책, 디지털 산출물 제공 및 청약철회 제한 고지 확인이 필요합니다.' });
-}
-const lockKey = `checkout:${body.siteId || body.domain || body.buyerEmail || clientIp(req)}`;
-if (!await distributedLock.acquire(lockKey, 10)) {
-return json(req, res, 409, { ok: false, error: '동일 대상의 결제 세션 생성이 이미 진행 중입니다.' });
-}
-let created;
-try {
-created = await createCheckoutOrder(db, body);
-} finally {
-await distributedLock.release(lockKey);
-}
-const checkoutResult = { order: { ...created.order, accessToken: generateOrderAccessToken(created.order) }, paymentSession: created.paymentSession, providerMode: PAYMENT_PROVIDER };
-storeIdempotencyRecord(db, { scope: 'checkout', key: idempotencyKey, requestHash, result: checkoutResult });
-appendAudit(db, req, 'public.checkout.created', { orderId: created.order.id, provider: PAYMENT_PROVIDER, siteId: created.order.siteId || null, plan: created.order.plan, idempotency: !!idempotencyKey });
-await writeDb(db);
-return json(req, res, 200, { ok: true, ...checkoutResult });
-}
-if (pathname === '/api/public/payment/retry' && req.method === 'POST') {
-const body = await bodyJson(req, MAX_JSON_BODY_BYTES) || {};
-const orderId = String(body.orderId || body.id || '').trim();
-const db = await readDb();
-const order = (db.orders || []).find(item => item.id === orderId);
-if (!order) return json(req, res, 404, { ok: false, error: '주문을 찾을 수 없습니다.' });
-const customerSession = await getCustomerSession(req, db);
-if (!canAccessOrder(req, order) && !ownsOrder(customerSession?.customer, order)) return json(req, res, 403, { ok: false, error: '결제 재시도 권한이 없습니다.' });
-if (order.status === 'paid') return json(req, res, 409, { ok: false, error: '이미 결제 완료된 주문입니다.' });
-order.status = 'pending'; order.stage = 'checkout_retry'; order.retryCount = Number(order.retryCount || 0) + 1; order.updatedAt = nowIso();
-const paymentSession = { id: uid('pay'), orderId: order.id, provider: PAYMENT_PROVIDER, redirectUrl: null, providerState: PAYMENT_PROVIDER === 'demo' ? 'ready_for_demo_capture' : 'retry_requested', createdAt: nowIso(), retry: true };
-db.paymentSessions ||= []; db.paymentSessions.unshift(paymentSession); order.paymentSessionId = paymentSession.id;
-appendAudit(db, req, 'public.payment.retry_requested', { orderId: order.id, retryCount: order.retryCount });
-await writeDb(db);
-return json(req, res, 200, { ok: true, order: { ...sanitizeOrderForPublic(order), accessToken: generateOrderAccessToken(order) }, paymentSession });
-}
-if (pathname === '/api/public/payment/complete' && req.method === 'POST') {
-const rate = await hitRateLimit('payment-complete', clientIp(req), { windowMs: PUBLIC_SCAN_WINDOW_MS, limit: Math.max(8, PUBLIC_SCAN_LIMIT) });
-if (rate.blocked) {
-return json(req, res, 429, { ok: false, error: '결제 완료 요청이 너무 많습니다. 잠시 후 다시 시도하세요.' }, { 'retry-after': String(Math.ceil((rate.resetAt - Date.now()) / 1000)) });
-}
-const body = await bodyJson(req, MAX_JSON_BODY_BYTES) || {};
-const orderId = String(body.orderId || body.id || '').trim();
-if (!orderId) return json(req, res, 400, { ok: false, error: 'orderId가 필요합니다.' });
-const lockKey = `payment-complete:${orderId}`;
-if (!await distributedLock.acquire(lockKey, 15)) {
-return json(req, res, 409, { ok: false, error: '동일 주문의 결제 완료 처리가 이미 진행 중입니다.' });
-}
-const db = await readDb();
-try {
-if (PAYMENT_PROVIDER === 'portone_v2') {
-const synced = await syncPortOneCheckoutOrder(db, orderId, body.paymentId, 'client_complete');
-if (!synced.order) return json(req, res, 404, { ok: false, error: '주문을 찾을 수 없습니다.' });
-appendAudit(db, req, synced.ok ? 'public.payment.portone.completed' : 'public.payment.portone.verification_failed', { orderId, paymentId: body.paymentId || orderId, reason: synced.reason || null });
-await writeDb(db);
-if (!synced.ok && synced.reason !== 'payment_not_completed') {
-return json(req, res, 400, { ok: false, error: `결제 검증에 실패했습니다: ${synced.reason}`, order: synced.order, paymentSession: synced.paymentSession });
-}
-return json(req, res, 200, { ok: true, order: { ...synced.order, accessToken: generateOrderAccessToken(synced.order) }, paymentSession: synced.paymentSession, payment: synced.payment || null, pendingSettlement: !!synced.pendingSettlement });
-}
-try {
-assertCommercialRouteAllowed(PLATFORM, 'demo_payment_complete');
-} catch (error) {
-return json(req, res, 403, { ok: false, error: '상용 타깃에서는 테스트 결제 완료 라우트를 사용할 수 없습니다.' });
-}
-if (PAYMENT_PROVIDER === 'external_http') return json(req, res, 400, { ok: false, error: '외부 결제 방식에서는 결제 확인 절차가 필요합니다.' });
-const completed = completeCheckoutOrder(db, orderId);
-if (!completed) return json(req, res, 404, { ok: false, error: '주문을 찾을 수 없습니다.' });
-appendAudit(db, req, 'public.payment.completed', { orderId: completed.order.id, provider: PAYMENT_PROVIDER });
-await writeDb(db);
-return json(req, res, 200, { ok: true, order: { ...completed.order, accessToken: generateOrderAccessToken(completed.order) }, paymentSession: completed.paymentSession });
-} finally {
-await distributedLock.release(lockKey);
-}
-}
-if (pathname === '/api/public/payment/portone/webhook' && req.method === 'POST') {
-const raw = await bodyText(req, MAX_JSON_BODY_BYTES);
-const rawSha256 = crypto.createHash('sha256').update(raw || '').digest('hex');
-const signatureHeader = req.headers['webhook-signature'] || req.headers['x-webhook-signature'] || req.headers['x-portone-signature'] || '';
-const webhookVerification = verifyPortOneWebhook({ rawBody: raw, headers: req.headers, secret: PORTONE_WEBHOOK_SECRET });
-let payload;
-try {
-payload = raw ? JSON.parse(raw) : {};
-} catch {
-const db = await readDb();
-appendWebhookInbox(db, {
-provider: 'portone_v2',
-eventType: 'payment.webhook.invalid_json',
-paymentId: null,
-signaturePresent: Boolean(signatureHeader),
-verified: false,
-verificationMode: 'standard_webhooks_v1',
-status: 'rejected',
-rawSha256,
-reason: 'invalid_json',
-payload: {}
-});
-await writeDb(db);
-return json(req, res, 400, { ok: false, error: '유효한 JSON 웹훅 본문이 필요합니다.' });
-}
-const paymentId = PORTONE_CLIENT.extractWebhookPaymentId(payload);
-if (!webhookVerification.ok && PORTONE_WEBHOOK_VERIFY_MODE === 'strict') {
-const db = await readDb();
-appendWebhookInbox(db, {
-provider: 'portone_v2',
-eventType: String(payload?.type || payload?.eventType || 'payment.webhook').trim() || 'payment.webhook',
-paymentId: paymentId || null,
-signaturePresent: Boolean(signatureHeader),
-verified: false,
-verificationMode: 'standard_webhooks_v1',
-status: 'rejected',
-rawSha256,
-reason: webhookVerification.reason,
-payload
-});
-appendAudit(db, req, 'public.payment.portone.webhook_rejected', { paymentId: paymentId || null, reason: webhookVerification.reason, verificationMode: 'standard_webhooks_v1' });
-await writeDb(db);
-return json(req, res, 401, { ok: false, error: '결제 알림 서명 검증에 실패했습니다.', reason: webhookVerification.reason });
-}
-if (!paymentId) return json(req, res, 202, { ok: true, ignored: true, reason: 'payment_id_missing' });
-const lockKey = `portone-webhook:${paymentId}`;
-if (!await distributedLock.acquire(lockKey, 15)) {
-return json(req, res, 202, { ok: true, queued: false, reason: 'duplicate_inflight' });
-}
-try {
-const db = await readDb();
-appendWebhookInbox(db, {
-provider: 'portone_v2',
-eventType: String(payload?.type || payload?.eventType || 'payment.webhook').trim() || 'payment.webhook',
-paymentId,
-signaturePresent: Boolean(signatureHeader),
-verified: webhookVerification.ok,
-verificationMode: webhookVerification.ok ? 'standard_webhooks_v1' : 'provider_refetch',
-status: 'received',
-rawSha256,
-reason: webhookVerification.reason || null,
-payload
-});
-const synced = await syncPortOneCheckoutOrder(db, paymentId, paymentId, 'webhook');
-const inbox = db.webhookInbox?.[0];
-if (inbox) {
-inbox.status = synced.ok ? 'processed' : 'failed';
-inbox.verified = webhookVerification.ok && synced.ok;
-inbox.orderId = synced.order?.id || paymentId;
-inbox.reason = synced.reason || webhookVerification.reason || null;
-}
-appendAudit(db, req, synced.ok ? 'public.payment.portone.webhook_synced' : 'public.payment.portone.webhook_failed', { orderId: synced.order?.id || paymentId, paymentId, reason: synced.reason || webhookVerification.reason || null, verificationMode: webhookVerification.ok ? 'standard_webhooks_v1' : 'provider_refetch' });
-await writeDb(db);
-return json(req, res, 200, { ok: true, synced: synced.ok, reason: synced.reason || webhookVerification.reason || null, verificationMode: webhookVerification.ok ? 'standard_webhooks_v1' : 'provider_refetch' });
-} finally {
-await distributedLock.release(lockKey);
-}
-}
-if (pathname === '/api/admin/session' && req.method === 'GET') {
-const session = await getSession(req);
-return json(req, res, 200, { ok: true, authenticated: !!session, csrfToken: session?.csrfToken || '', turnstileEnabled: ENABLE_TURNSTILE, turnstileSiteKey: ENABLE_TURNSTILE ? TURNSTILE_SITE_KEY : '', adminAuthMode: ADMIN_AUTH_MODE, platformTarget: PLATFORM.target, adminUser: session ? { id: session.adminUserId || null, email: session.adminEmail || null, displayName: session.adminDisplayName || null, roles: session.roles || [], permissions: session.permissions || [] } : null });
-}
-if (pathname === '/api/admin/session' && req.method === 'POST') {
-const rate = await hitRateLimit('admin-auth', clientIp(req), { windowMs: ADMIN_AUTH_WINDOW_MS, limit: ADMIN_AUTH_LIMIT });
-if (rate.blocked) {
-return json(req, res, 429, { ok: false, error: '인증 시도가 너무 많습니다. 잠시 후 다시 시도하세요.' }, { 'retry-after': String(Math.ceil((rate.resetAt - Date.now()) / 1000)) });
-}
-const body = await bodyJson(req, MAX_JSON_BODY_BYTES);
-const db = await readDb();
-await ensureBootstrapAdmin(db, process.env, uid, nowIso);
-const turnstile = await verifyTurnstile(req, body?.turnstileToken);
-if (!turnstile.ok) {
-appendAudit(db, req, 'admin.auth.turnstile_failed');
-await writeDb(db);
-return json(req, res, 400, { ok: false, error: 'Turnstile 검증에 실패했습니다.' });
-}
-if (ADMIN_AUTH_MODE === 'account_rbac') {
-const email = asTrimmedString(body?.email, { field: 'email', required: true, max: 200, pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ });
-const password = asTrimmedString(body?.password, { field: 'password', required: true, max: 200 });
-const auth = await authenticateAdminAccount(db, email, password);
-if (!auth) {
-appendAudit(db, req, 'admin.auth.failed', { mode: 'account_rbac', email });
-await writeDb(db);
-return json(req, res, 401, { ok: false, error: '로그인 정보가 올바르지 않습니다.' });
-}
-const sid = crypto.randomBytes(24).toString('hex');
-const csrfToken = crypto.randomBytes(16).toString('hex');
-sessions.set(sid, {
-createdAt: Date.now(),
-lastSeenAt: Date.now(),
-expiresAt: Date.now() + SESSION_TTL_MS,
-csrfToken,
-adminUserId: auth.user.id,
-adminEmail: auth.user.email,
-adminDisplayName: auth.user.displayName,
-roles: auth.roles,
-permissions: auth.permissions
-});
-markSessionsDirty();
-await writeSessionsToDisk();
-auth.user.lastLoginAt = nowIso();
-auth.user.updatedAt = nowIso();
-db.adminSessions.unshift({ id: uid('admsess'), sessionId: sid, userId: auth.user.id, createdAt: nowIso(), expiresAt: new Date(Date.now() + SESSION_TTL_MS).toISOString(), ip: clientIp(req) });
-appendAudit(db, req, 'admin.auth.succeeded', { mode: 'account_rbac', userId: auth.user.id, email: auth.user.email, roles: auth.roles });
-await writeDb(db);
-return json(req, res, 200, { ok: true, csrfToken, adminUser: { id: auth.user.id, email: auth.user.email, displayName: auth.user.displayName, roles: auth.roles, permissions: auth.permissions } }, { 'set-cookie': sessionCookie(req, sid, Math.floor(SESSION_TTL_MS / 1000)) });
-}
-if (PLATFORM.commercial) {
-appendAudit(db, req, 'admin.auth.blocked', { reason: 'commercial_requires_account_rbac' });
-await writeDb(db);
-return json(req, res, 501, { ok: false, error: '상용 타깃에서는 account_rbac 인증 구현 후 관리자 로그인을 활성화해야 합니다.' });
-}
-const key = asTrimmedString(body?.key, { field: 'key', max: 200 });
-if (!key || key !== ADMIN_KEY) {
-appendAudit(db, req, 'admin.auth.failed', { mode: 'shared_key' });
-await writeDb(db);
-return json(req, res, 401, { ok: false, error: '키가 올바르지 않습니다.' });
-}
-const sid = crypto.randomBytes(24).toString('hex');
-const csrfToken = crypto.randomBytes(16).toString('hex');
-sessions.set(sid, { createdAt: Date.now(), lastSeenAt: Date.now(), expiresAt: Date.now() + SESSION_TTL_MS, csrfToken, roles: ['super_admin'], permissions: ['*'] });
-markSessionsDirty();
-await writeSessionsToDisk();
-appendAudit(db, req, 'admin.auth.succeeded', { mode: 'shared_key' });
-await writeDb(db);
-return json(req, res, 200, { ok: true, csrfToken, adminUser: { id: null, email: null, displayName: 'Shared Key Admin', roles: ['super_admin'], permissions: ['*'] } }, { 'set-cookie': sessionCookie(req, sid, Math.floor(SESSION_TTL_MS / 1000)) });
-}
-if (pathname === '/api/admin/logout' && req.method === 'POST') {
-const session = await getSession(req);
-if (session && !requireAdminCsrf(req, res, session)) return;
-const db = await readDb();
-if (session) {
-sessions.delete(session.sid);
-markSessionsDirty();
-await writeSessionsToDisk();
-db.adminSessions = (db.adminSessions || []).filter((item) => item.sessionId !== session.sid);
-}
-appendAudit(db, req, 'admin.logout');
-await writeDb(db);
-return json(req, res, 200, { ok: true }, { 'set-cookie': expiredSessionCookie(req) });
-}
-if (!pathname.startsWith('/api/admin/')) return false;
-if (!adminIpAllowed(req)) return json(req, res, 403, { ok: false, error: '관리자 접근 IP가 허용 목록에 없습니다.' });
-const session = await getSession(req);
-if (!session) return json(req, res, 401, { ok: false, error: '관리자 세션이 필요합니다.' });
-if (!['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
-if (!requireAdminCsrf(req, res, session)) return;
-}
-const db = await readDb();
-if (pathname === '/api/admin/status' && req.method === 'GET') {
-const highRiskSites = db.sites.filter(item => (item.latestRiskScore || 0) >= 70).length;
-const pendingAutoFixJobs = db.autoFixJobs.filter(item => item.status === 'pending').length;
-return json(req, res, 200, {
-ok: true,
-counts: {
-orders: db.orders.length,
-subscriptions: db.subscriptions.length,
-sites: db.sites.length,
-publications: db.publications.length,
-library: db.library.length,
-scans: db.scans.length,
-legalUpdates: db.legalUpdates.length,
-autoFixJobs: db.autoFixJobs.length,
-paymentSessions: db.paymentSessions.length,
-pendingAutoFixJobs,
-highRiskSites,
-auditLogs: db.auditLogs.length
-},
-session: { active: true, expiresAt: session.expiresAt }
-});
-}
-if (pathname === '/api/admin/diagnostics' && req.method === 'GET') {
-return json(req, res, 200, {
-ok: true,
-runtime: {
-pid: process.pid,
-uptimeSec: Math.round(process.uptime()),
-memoryRss: process.memoryUsage().rss,
-env: NODE_ENV,
-turnstileEnabled: TURNSTILE_PUBLIC_ENABLED,
-turnstileConfigured: TURNSTILE_CONFIGURED,
-trustProxyHeaders: TRUST_PROXY_HEADERS,
-csrfProtection: true,
-backupRetentionCount: BACKUP_RETENTION_COUNT,
-auditLogRetentionCount: AUDIT_LOG_RETENTION_COUNT,
-storageMode: STORAGE_MODE,
-scanProvider: SCAN_PROVIDER,
-paymentProvider: PAYMENT_PROVIDER,
-deploymentStage: DEPLOYMENT_STAGE,
-commercialLaunchReady: COMMERCIAL_LAUNCH_READY
-},
-storage: { uploadsDir: UPLOADS_DIR, runtimeDir: RUNTIME_DIR, backupsDir: BACKUPS_DIR, reportsDir: REPORTS_DIR },
-integrations: {
-scanProvider: { mode: SCAN_PROVIDER, urlConfigured: !!SCAN_PROVIDER_URL, fallbackEnabled: SCAN_PROVIDER_FALLBACK },
-paymentProvider: PAYMENT_PROVIDER === 'portone_v2' ? { mode: PAYMENT_PROVIDER, ...PORTONE_CLIENT.configSummary() } : { mode: PAYMENT_PROVIDER, urlConfigured: !!PAYMENT_PROVIDER_URL },
-storage: { mode: STORAGE_MODE, uploadsDir: UPLOADS_DIR },
-email: { smtpConfigured: !!String(process.env.NV0_SMTP_URL || '').trim(), liveAdapter: true, maxRetryCount: EMAIL_MAX_RETRY_COUNT, retryBackoffMs: EMAIL_RETRY_BACKOFF_MS }
-},
-readiness: buildReleaseReadiness(db),
-launchChecklist: buildProductionLaunchChecklist(db),
-emailOutbox: {
-queued: (db.emailOutbox || []).filter(item => ['queued','retry_scheduled'].includes(item.status)).length,
-failed: (db.emailOutbox || []).filter(item => item.status === 'failed').length,
-recent: (db.emailOutbox || []).slice(0, 10).map(item => ({ id: item.id, to: maskEmail(item.to), subject: item.subject, status: item.status, retryCount: item.retryCount, deliveryMode: item.deliveryMode || null, createdAt: item.createdAt }))
-},
-recentOperationalEvents: (db.operationalEvents || []).slice(0, 10),
-recentAuditLogs: db.auditLogs.slice(0, 10),
-recentScans: db.scans.slice(0, 5),
-pendingAutoFixJobs: db.autoFixJobs.filter(item => item.status === 'pending').slice(0, 10)
-});
-}
-if (pathname === '/api/admin/audit-logs' && req.method === 'GET') {
-return json(req, res, 200, { ok: true, auditLogs: db.auditLogs.slice(0, 100) });
-}
-if (pathname === '/api/admin/ops-report' && req.method === 'GET') {
-const report = await buildOpsReport();
-return json(req, res, 200, { ok: true, report });
-}
-if (pathname === '/api/admin/ops-report/run' && req.method === 'POST') {
-const snapshot = await writeOpsReportSnapshot();
-const reloaded = await readDb();
-const audit = appendAudit(reloaded, req, 'admin.ops_report.created', { filePath: snapshot.filePath });
-await writeDb(reloaded);
-return json(req, res, 200, { ok: true, snapshot: { filePath: snapshot.filePath }, audit, report: snapshot.report });
-}
-if (pathname === '/api/admin/maintenance/prune' && req.method === 'POST') {
-const pruned = await pruneBackupSnapshots();
-const reloaded = await readDb();
-const audit = appendAudit(reloaded, req, 'admin.maintenance.pruned', pruned);
-await writeDb(reloaded);
-return json(req, res, 200, { ok: true, pruned, audit });
-}
-if (pathname === '/api/admin/backups' && req.method === 'GET') {
-const backups = await listBackupSnapshots();
-return json(req, res, 200, { ok: true, backups });
-}
-if (pathname === '/api/admin/backups/restore' && req.method === 'POST') {
-const body = { name: asTrimmedString((await bodyJson(req, MAX_JSON_BODY_BYTES) || {}).name, { field: 'name', required: true, max: 255 }) };
-const restored = await restoreBackupSnapshot(body.name);
-const reloaded = await readDb();
-const audit = appendAudit(reloaded, req, 'admin.backup.restored', { name: body.name, ...restored });
-await writeDb(reloaded);
-return json(req, res, 200, { ok: true, restored, audit });
-}
-if (pathname === '/api/admin/backups/run' && req.method === 'POST') {
-const backup = await createBackupSnapshot();
-const audit = appendAudit(db, req, 'admin.backup.created', backup);
-await writeDb(db);
-return json(req, res, 200, { ok: true, backup, audit });
-}
-if (pathname === '/api/admin/settings' && req.method === 'GET') return json(req, res, 200, { ok: true, settings: db.settings });
-if (pathname === '/api/admin/settings' && req.method === 'POST') {
-const body = normalizeSettingsPayload(await bodyJson(req, MAX_JSON_BODY_BYTES));
-db.settings = { ...db.settings, ...body };
-appendAudit(db, req, 'admin.settings.updated', { keys: Object.keys(body) });
-await writeDb(db);
-return json(req, res, 200, { ok: true, settings: db.settings });
-}
-if (pathname === '/api/admin/publications' && req.method === 'GET') return json(req, res, 200, { ok: true, publications: db.publications.slice(0, 100) });
-if (pathname === '/api/admin/publications/publish-now' && req.method === 'POST') {
-const body = normalizePublicationPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
-const item = { id: uid('pub'), title: body.title, status: 'published', type: body.type, body: body.body || '', createdAt: nowIso() };
-db.publications.unshift(item);
-appendAudit(db, req, 'admin.publication.publish_now', { id: item.id, title: item.title });
-await writeDb(db);
-return json(req, res, 200, { ok: true, publication: item });
-}
-if (pathname === '/api/admin/publications/seed' && req.method === 'POST') {
-if (PLATFORM.commercial || NODE_ENV === 'production') return json(req, res, 404, { ok: false, error: 'Not found' });
-const body = await bodyJson(req, MAX_JSON_BODY_BYTES) || {};
-const item = { id: uid('seed'), title: body.title || '시드 데이터', status: 'seeded', type: 'seed', createdAt: nowIso() };
-db.publications.unshift(item);
-appendAudit(db, req, 'admin.publication.seed', { id: item.id, title: item.title });
-await writeDb(db);
-return json(req, res, 200, { ok: true, seed: item });
-}
-if (pathname === '/api/admin/publications/cta-generate' && req.method === 'POST') {
-const body = normalizeRequestIdPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
-const scan = db.scans.find(item => item.requestId === body.requestId) || db.scans[0];
-if (!scan) return json(req, res, 404, { ok: false, error: '기준 스캔 결과가 없습니다.' });
-const item = createCtaPublication(db, scan);
-appendAudit(db, req, 'admin.publication.cta_generated', { id: item.id, requestId: scan.requestId });
-await writeDb(db);
-return json(req, res, 200, { ok: true, publication: item });
-}
-if (pathname === '/api/admin/orders' && req.method === 'GET') return json(req, res, 200, { ok: true, orders: db.orders, subscriptions: db.subscriptions, sites: db.sites });
-if (pathname === '/api/admin/payments/portone/sync' && req.method === 'POST') {
-const body = await bodyJson(req, MAX_JSON_BODY_BYTES) || {};
-const orderId = String(body.orderId || body.paymentId || '').trim();
-const paymentId = String(body.paymentId || orderId).trim();
-if (!orderId) return json(req, res, 400, { ok: false, error: 'orderId가 필요합니다.' });
-const synced = await syncPortOneCheckoutOrder(db, orderId, paymentId, 'admin_sync');
-appendAudit(db, req, synced.ok ? 'admin.payment.portone.synced' : 'admin.payment.portone.sync_failed', { orderId, paymentId, reason: synced.reason || null });
-await writeDb(db);
-return json(req, res, synced.ok ? 200 : 400, { ok: synced.ok, reason: synced.reason || null, order: synced.order || null, paymentSession: synced.paymentSession || null, payment: synced.payment || null });
-}
-if (pathname === '/api/admin/payments/portone/cancel' && req.method === 'POST') {
-const body = await bodyJson(req, MAX_JSON_BODY_BYTES) || {};
-const orderId = String(body.orderId || '').trim();
-if (!orderId) return json(req, res, 400, { ok: false, error: 'orderId가 필요합니다.' });
-const order = db.orders.find(item => item.id === orderId);
-const paymentSession = (db.paymentSessions || []).find(item => item.orderId === orderId);
-if (!order || !paymentSession || paymentSession.provider !== 'portone_v2') return json(req, res, 404, { ok: false, error: '결제 세션을 찾을 수 없습니다.' });
-const cancelled = await PORTONE_CLIENT.cancelPayment(paymentSession.providerPaymentId || order.id, { reason: String(body.reason || 'admin_cancel').trim() || 'admin_cancel' });
-const synced = await syncPortOneCheckoutOrder(db, orderId, paymentSession.providerPaymentId || order.id, 'admin_cancel');
-appendAudit(db, req, 'admin.payment.portone.cancel_requested', { orderId, paymentId: paymentSession.providerPaymentId || order.id, reason: String(body.reason || 'admin_cancel').trim() || 'admin_cancel' });
-await writeDb(db);
-return json(req, res, 200, { ok: true, cancellation: cancelled, order: synced.order || order, paymentSession: synced.paymentSession || paymentSession, payment: synced.payment || null });
-}
-if (pathname === '/api/admin/orders/status' && req.method === 'POST') {
-const body = normalizeIdStatusPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {}, { allowStatuses: ['draft','pending','paid','failed','cancelled'] });
-const row = db.orders.find(x => x.id === body.id);
-if (!row) return json(req, res, 404, { ok: false, error: '주문을 찾을 수 없습니다.' });
-if (body.status && !canTransition(row.status, body.status, ORDER_STATUS_TRANSITIONS) && body.status !== row.status) {
-return json(req, res, 400, { ok: false, error: `허용되지 않는 주문 상태 전이입니다: ${row.status} -> ${body.status}` });
-}
-row.status = body.status || row.status;
-appendAudit(db, req, 'admin.order.status_updated', { id: row.id, status: row.status });
-await writeDb(db);
-return json(req, res, 200, { ok: true, order: row });
-}
-if (pathname === '/api/admin/orders/advance' && req.method === 'POST') {
-const body = normalizeIdPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
-const row = db.orders.find(x => x.id === body.id);
-if (!row) return json(req, res, 404, { ok: false, error: '주문을 찾을 수 없습니다.' });
-const flow = ['draft', 'scan_requested', 'result_ready', 'plan_selected', 'checkout_ready', 'completed'];
-const idx = Math.max(flow.indexOf(row.stage), 0);
-row.stage = flow[Math.min(idx + 1, flow.length - 1)];
-appendAudit(db, req, 'admin.order.advanced', { id: row.id, stage: row.stage });
-await writeDb(db);
-return json(req, res, 200, { ok: true, order: row });
-}
-if (pathname === '/api/admin/subscriptions' && req.method === 'GET') {
-return json(req, res, 200, { ok: true, subscriptions: db.subscriptions });
-}
-if (pathname === '/api/admin/subscriptions/upsert' && req.method === 'POST') {
-const body = normalizeSubscriptionPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
-const site = db.sites.find(item => item.id === body.siteId);
-if (!site) return json(req, res, 404, { ok: false, error: '사이트를 찾을 수 없습니다.' });
-const sub = ensureSubscriptionForSite(db, site, body.plan);
-if (body.status) sub.status = body.status;
-appendAudit(db, req, 'admin.subscription.upserted', { id: sub.id, plan: sub.plan, status: sub.status });
-await writeDb(db);
-return json(req, res, 200, { ok: true, subscription: sub });
-}
-if (pathname === '/api/admin/sites' && req.method === 'GET') {
-return json(req, res, 200, { ok: true, sites: db.sites, scans: db.scans.slice(0, 100), guidanceDocuments: db.guidanceDocuments.slice(0, 100) });
-}
-if (pathname === '/api/admin/sites/rescan' && req.method === 'POST') {
-const body = normalizeScanPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
-const result = await scanResultFor(body.target, db);
-const site = ensureSiteRecord(db, result);
-const subscription = ensureSubscriptionForSite(db, site, result.recommendedPlan);
-const guidance = createGuidanceDocument(db, site, result);
-const autoFixJobs = seedAutoFixJobs(db, site, result);
-db.scans.unshift({ siteId: site.id, subscriptionId: subscription.id, createdAt: nowIso(), ...result });
-appendAudit(db, req, 'admin.site.rescanned', { requestId: result.requestId, siteId: site.id });
-await writeDb(db);
-return json(req, res, 200, { ok: true, result: { ...result, siteId: site.id, guidanceId: guidance.id, autoFixJobsCount: autoFixJobs.length } });
-}
-if (pathname === '/api/admin/guidance' && req.method === 'GET') {
-return json(req, res, 200, { ok: true, guidanceDocuments: db.guidanceDocuments.slice(0, 100) });
-}
-if (pathname === '/api/admin/legal-updates' && req.method === 'GET') {
-return json(req, res, 200, { ok: true, legalUpdates: db.legalUpdates.slice(0, 100) });
-}
-if (pathname === '/api/admin/legal-updates/seed' && req.method === 'POST') {
-if (PLATFORM.commercial || NODE_ENV === 'production') return json(req, res, 404, { ok: false, error: 'Not found' });
-const body = normalizeSystemItemPayload({ ...(await bodyJson(req, MAX_JSON_BODY_BYTES) || {}), type: 'legal_update' });
-const item = {
-id: uid('law'),
-source: body.source || '관리자 입력',
-title: body.title,
-summary: body.summary || '요약 없음',
-effectiveDate: body.effectiveDate || nowIso().slice(0, 10),
-severity: body.severity || 'medium',
-createdAt: nowIso()
-};
-db.legalUpdates.unshift(item);
-appendAudit(db, req, 'admin.legal_update.seeded', { id: item.id, title: item.title });
-await writeDb(db);
-return json(req, res, 200, { ok: true, item });
-}
-if (pathname === '/api/admin/rules' && req.method === 'GET') {
-const rules = buildRuleCatalog().map(rule => {
-const override = (db.rules || []).find(item => item.code === rule.code) || {};
-return {
-code: rule.code,
-category: override.category || rule.category,
-title: override.title || rule.title,
-severity: Number(override.severity || rule.severity),
-penaltyMax: Number(override.penaltyMax || rule.penaltyMax),
-fixTemplate: override.fixTemplate || rule.fixTemplate,
-source: override.id ? 'override' : 'builtin'
-};
-});
-const customRules = (db.rules || []).filter(item => !rules.some(rule => rule.code === item.code)).map(item => ({
-code: item.code,
-category: item.category || '기타',
-title: item.title || item.code,
-severity: Number(item.severity || 10),
-penaltyMax: Number(item.penaltyMax || 0),
-fixTemplate: item.fixTemplate || '',
-source: 'custom'
-}));
-return json(req, res, 200, { ok: true, rules: [...rules, ...customRules] });
-}
-if (pathname === '/api/admin/rules' && req.method === 'POST') {
-const body = normalizeRulePayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
-const code = body.code;
-db.rules ||= [];
-let rule = db.rules.find(item => item.code === code);
-if (!rule) {
-rule = { id: uid('rule'), code, createdAt: nowIso() };
-db.rules.unshift(rule);
-}
-rule.category = body.category || rule.category || '기타';
-rule.title = body.title || rule.title || code;
-rule.severity = body.severity ?? rule.severity ?? 10;
-rule.penaltyMax = body.penaltyMax ?? rule.penaltyMax ?? 0;
-rule.fixTemplate = body.fixTemplate || rule.fixTemplate || '';
-rule.updatedAt = nowIso();
-appendAudit(db, req, 'admin.rule.upserted', { code: rule.code });
-await writeDb(db);
-return json(req, res, 200, { ok: true, rule });
-}
-if (pathname === '/api/admin/auto-fix-jobs' && req.method === 'GET') {
-return json(req, res, 200, { ok: true, autoFixJobs: db.autoFixJobs.slice(0, 100) });
-}
-if (pathname === '/api/admin/auto-fix-jobs/approve' && req.method === 'POST') {
-const body = normalizeIdStatusPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
-const job = db.autoFixJobs.find(item => item.id === body.id);
-if (!job) return json(req, res, 404, { ok: false, error: '수정 후보 작업을 찾을 수 없습니다.' });
-job.previousStatus = job.status || 'pending';
-job.status = 'approved';
-job.approvedAt = nowIso();
-job.rollbackToken = uid('rollback');
-appendAudit(db, req, 'admin.auto_fix.approved', { id: job.id, rollbackToken: job.rollbackToken });
-await writeDb(db);
-return json(req, res, 200, { ok: true, job });
-}
-if (pathname === '/api/admin/auto-fix-jobs/rollback' && req.method === 'POST') {
-const body = normalizeIdStatusPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
-const job = db.autoFixJobs.find(item => item.id === body.id);
-if (!job) return json(req, res, 404, { ok: false, error: '수정 후보 작업을 찾을 수 없습니다.' });
-if (!job.rollbackToken) return json(req, res, 400, { ok: false, error: '롤백 가능한 작업이 아닙니다.' });
-job.status = 'rolled_back';
-job.rolledBackAt = nowIso();
-appendAudit(db, req, 'admin.auto_fix.rolled_back', { id: job.id, rollbackToken: job.rollbackToken });
-await writeDb(db);
-return json(req, res, 200, { ok: true, job });
-}
-if (pathname === '/api/admin/library' && req.method === 'GET') return json(req, res, 200, { ok: true, library: db.library });
-if (pathname === '/api/admin/library/post' && req.method === 'POST') {
-const body = normalizeLibraryNotePayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
-const item = { id: uid('lib'), type: body.type, title: body.title, body: body.body || '', createdAt: nowIso() };
-db.library.unshift(item);
-appendAudit(db, req, 'admin.library.posted', { id: item.id, title: item.title });
-await writeDb(db);
-return json(req, res, 200, { ok: true, item });
-}
-if (pathname === '/api/admin/library/upload' && req.method === 'POST') {
-const ct = req.headers['content-type'] || '';
-const match = /boundary=(?:"([^"]+)"|([^;]+))/i.exec(ct);
-if (!match) return json(req, res, 400, { ok: false, error: 'multipart/form-data 가 필요합니다.' });
-const raw = await bodyBuffer(req, MAX_MULTIPART_BODY_BYTES);
-const parsed = parseMultipart(raw, match[1] || match[2]);
-const file = parsed.files[0];
-if (!file) return json(req, res, 400, { ok: false, error: '파일이 없습니다.' });
-if (!isAllowedUpload(file)) return json(req, res, 400, { ok: false, error: '허용되지 않은 파일 형식이거나 파일이 너무 큽니다.' });
-const safeName = `${Date.now()}-${crypto.randomBytes(6).toString('hex')}-${sanitizeUploadFilename(file.filename)}`;
-let objectUrl = null;
-if (STORAGE_MODE === 'local_fs') {
-await fs.writeFile(path.join(UPLOADS_DIR, safeName), file.content);
-} else {
-const uploaded = await putObjectToS3Compatible({ key: safeName, content: file.content, contentType: file.contentType });
-objectUrl = uploaded.url;
-}
-const item = { id: uid('upload'), type: 'file', title: parsed.fields.title || file.filename, filename: safeName, objectUrl, storageMode: STORAGE_MODE, contentType: file.contentType, createdAt: nowIso() };
-db.library.unshift(item);
-appendAudit(db, req, 'admin.library.uploaded', { id: item.id, filename: item.filename });
-await writeDb(db);
-return json(req, res, 200, { ok: true, item });
-}
-if (pathname === '/api/admin/system-items' && req.method === 'GET') {
-const type = String(url.searchParams.get('type') || '').trim();
-let items = buildSystemItemsFeed(db);
-if (type) items = items.filter(item => item.type === type);
-return json(req, res, 200, { ok: true, items: items.slice(0, 100) });
-}
-if (pathname === '/api/admin/system-items' && req.method === 'POST') {
-const body = normalizeSystemItemPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
-const type = body.type;
-let created = null;
-if (type === 'legal_update') {
-created = { id: uid('law'), source: body.source || '관리자 입력', title: body.title, summary: body.summary || body.body || '요약 없음', effectiveDate: body.effectiveDate || nowIso().slice(0, 10), severity: body.severity || 'medium', createdAt: nowIso() };
-db.legalUpdates.unshift(created);
-} else if (type === 'publication') {
-created = { id: uid('pub'), title: body.title, status: 'published', type: body.publicationType || 'manual', body: body.body || body.summary || '', createdAt: nowIso() };
-db.publications.unshift(created);
-} else if (type === 'board') {
-created = { id: uid('board'), boardType: body.boardType || 'notice', title: body.title, body: body.body || '', createdAt: nowIso(), visibility: body.visibility || 'public' };
-db.boards.unshift(created);
-} else if (type === 'library_note') {
-created = { id: uid('lib'), type: 'document', title: body.title, body: body.body || '', createdAt: nowIso() };
-db.library.unshift(created);
-} else {
-return json(req, res, 400, { ok: false, error: '지원하지 않는 type 입니다.' });
-}
-appendAudit(db, req, 'admin.system_item.created', { id: created.id, type });
-await writeDb(db);
-return json(req, res, 200, { ok: true, item: created, type });
-}
-if (pathname === '/api/admin/customers' && req.method === 'GET') {
-return json(req, res, 200, { ok: true, customers: (db.customers || []).map(customer => ({ ...publicCustomer(db, customer), status: customer.status || 'active', orders: (db.orders || []).filter(order => ownsOrder(customer, order)).length })) });
-}
-if (pathname === '/api/admin/customers/status' && req.method === 'POST') {
-const body = normalizeIdStatusPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {}, { allowStatuses: ['active', 'disabled'] });
-const customer = (db.customers || []).find(item => item.id === body.id);
-if (!customer) return json(req, res, 404, { ok: false, error: '고객을 찾을 수 없습니다.' });
-customer.status = body.status;
-customer.updatedAt = nowIso();
-if (body.status === 'disabled') db.customerSessions = (db.customerSessions || []).filter(item => item.customerId !== customer.id);
-appendAudit(db, req, 'admin.customer.status_changed', { customerId: customer.id, status: body.status });
-await writeDb(db);
-return json(req, res, 200, { ok: true, customer: publicCustomer(db, customer) });
-}
-if (pathname === '/api/admin/orders/fulfillment' && req.method === 'POST') {
-const body = normalizeIdPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
-const order = (db.orders || []).find(item => item.id === body.id);
-if (!order) return json(req, res, 404, { ok: false, error: '주문을 찾을 수 없습니다.' });
-if (order.status !== 'paid') return json(req, res, 400, { ok: false, error: '결제 완료 주문만 산출물을 생성할 수 있습니다.' });
-const asset = ensureFulfillmentForOrder(db, order);
-appendAudit(db, req, 'admin.order.fulfillment_generated', { orderId: order.id, assetId: asset.id });
-await writeDb(db);
-return json(req, res, 200, { ok: true, order: sanitizeOrderForPublic(order), asset });
-}
-if (pathname === '/api/admin/email-outbox' && req.method === 'GET') {
-return json(req, res, 200, { ok: true, emails: (db.emailOutbox || []).slice(0, 200).map(item => ({ ...item, body: String(item.body || '').slice(0, 500) })) });
-}
-if (pathname === '/api/admin/email-outbox/status' && req.method === 'POST') {
-const body = normalizeEmailDeliveryPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
-const email = (db.emailOutbox || []).find(item => item.id === body.id);
-if (!email) return json(req, res, 404, { ok: false, error: '이메일 대기열 항목을 찾을 수 없습니다.' });
-email.status = body.status; email.updatedAt = nowIso();
-if (body.status === 'sent') email.sentAt = nowIso();
-if (body.status === 'failed') { email.lastError = body.error || 'delivery failed'; email.retryCount = Number(email.retryCount || 0) + 1; }
-appendAudit(db, req, 'admin.email.status_changed', { id: email.id, status: email.status });
-await writeDb(db);
-return json(req, res, 200, { ok: true, email: { ...email, body: String(email.body || '').slice(0, 500) } });
-}
-if (pathname === '/api/admin/refund-requests' && req.method === 'GET') return json(req, res, 200, { ok: true, refundRequests: (db.refundRequests || []).slice(0, 200) });
-if (pathname === '/api/admin/refund-requests/status' && req.method === 'POST') {
-const body = normalizeIdStatusPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {}, { allowStatuses: ['requested','reviewing','approved','rejected','completed'] });
-const request = (db.refundRequests || []).find(item => item.id === body.id);
-if (!request) return json(req, res, 404, { ok: false, error: '환불 요청을 찾을 수 없습니다.' });
-request.status = body.status; request.updatedAt = nowIso();
-const order = (db.orders || []).find(item => item.id === request.orderId);
-if (order && ['approved','completed'].includes(body.status)) { order.refundStatus = body.status; order.updatedAt = nowIso(); }
-appendAudit(db, req, 'admin.refund.status_changed', { refundRequestId: request.id, orderId: request.orderId, status: body.status });
-await writeDb(db);
-return json(req, res, 200, { ok: true, refundRequest: request, order: order ? sanitizeOrderForPublic(order) : null });
-}
-if (pathname === '/api/admin/release-readiness' && req.method === 'GET') return json(req, res, 200, { ok: true, readiness: buildReleaseReadiness(db), operationalEvents: (db.operationalEvents || []).slice(0, 100) });
-if (pathname === '/api/admin/launch-checklist' && req.method === 'GET') {
-const checklist = buildProductionLaunchChecklist(db);
-appendAudit(db, req, 'admin.launch_checklist.viewed', { ok: checklist.ok, blockers: checklist.blockers.map(item => item.key) });
-await writeDb(db);
-return json(req, res, checklist.ok ? 200 : 503, { ok: checklist.ok, checklist });
-}
-if (pathname === '/api/admin/commercial-final-gate' && req.method === 'GET') {
-const gate = buildCommercialFinalGate(db);
-appendAudit(db, req, 'admin.commercial_final_gate.viewed', { ok: gate.ok, blockers: gate.blockers.map(item => item.key) });
-await writeDb(db);
-return json(req, res, gate.ok ? 200 : 503, { ok: gate.ok, gate });
-}
-if (pathname === '/api/admin/email-outbox' && req.method === 'GET') {
-return json(req, res, 200, { ok: true, outbox: (db.emailOutbox || []).map(item => ({ ...item, to: maskEmail(item.to) })).slice(0, 200) });
-}
-if (pathname === '/api/admin/email-outbox/process' && req.method === 'POST') {
-const body = await bodyJson(req, MAX_JSON_BODY_BYTES) || {};
-const result = await processEmailOutbox(db, { dryRun: body.dryRun !== false, limit: Math.min(Number(body.limit || 20), 100) });
-appendAudit(db, req, 'admin.email_outbox.processed', { processed: result.processed, dryRun: body.dryRun !== false });
-await writeDb(db);
-return json(req, res, 200, result);
-}
-if (pathname === '/api/admin/ops/self-test' && req.method === 'POST') {
-const readiness = buildReleaseReadiness(db);
-const emailProbe = enqueueTransactionalEmail(db, { to: OPERATOR_ALERT_EMAIL, template: 'ops_self_test', subject: '[NV0] 운영 자가검수', body: '운영 자가검수 이메일 큐 테스트입니다.' });
-appendAudit(db, req, 'admin.ops.self_test', { ready: readiness.ready, emailProbeId: emailProbe.id });
-await writeDb(db);
-return json(req, res, 200, { ok: true, readiness, probes: { emailOutboxId: emailProbe.id, dbWritable: true, runtime: 'ok' } });
-}
-if (pathname === '/api/admin/ops' && req.method === 'POST') {
-const body = normalizeOpsPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
-const action = body.action;
-if (action === 'backup') {
-const backup = await createBackupSnapshot();
-appendAudit(db, req, 'admin.ops.backup', { target: backup.dbTarget });
-await writeDb(db);
-return json(req, res, 200, { ok: true, action, backup });
-}
-if (action === 'restore_latest') {
-const backups = await listBackupSnapshots();
-if (!backups.length) return json(req, res, 404, { ok: false, error: '복원할 백업이 없습니다.' });
-const restored = await restoreBackupSnapshot(backups[0].name);
-const fresh = await readDb();
-appendAudit(fresh, req, 'admin.ops.restore_latest', { name: backups[0].name });
-await writeDb(fresh);
-return json(req, res, 200, { ok: true, action, restored });
-}
-if (action === 'prune') {
-const pruned = await pruneBackupSnapshots();
-appendAudit(db, req, 'admin.ops.prune', pruned);
-await writeDb(db);
-return json(req, res, 200, { ok: true, action, pruned });
-}
-if (action === 'report') {
-const report = await writeOpsReportSnapshot();
-appendAudit(db, req, 'admin.ops.report', { filePath: report.filePath });
-await writeDb(db);
-return json(req, res, 200, { ok: true, action, report });
-}
-return json(req, res, 400, { ok: false, error: '지원하지 않는 action 입니다.' });
-}
-return json(req, res, 404, { ok: false, error: 'Not found' });
-}
+
 const server = http.createServer(async (req, res) => {
 req.setTimeout(REQUEST_TIMEOUT_MS, () => req.destroy(new Error('REQUEST_TIMEOUT')));
 const startedAt = Date.now();
 const requestId = uid('req');
 res.setHeader('x-request-id', requestId);
 try {
-if (!isAllowedHost(req)) return text(req, res, 421, 'Misdirected Request');
-const requestUrl = requestUrlFrom(req);
-const pathname = requestUrl.pathname;
-if (req.method === 'OPTIONS') { res.writeHead(204, { allow: 'GET, HEAD, POST, OPTIONS', ...baseHeaders(req) }); return res.end(); }
-if (pathname.length > 1 && pathname.endsWith('/')) {
-requestUrl.pathname = pathname.replace(/\/+$/, '');
-return redirect(req, res, 308, requestUrl.pathname + requestUrl.search);
-}
+const gate = securityMiddleware(req, res);
+if (gate.handled) return;
+const requestState = gate;
+const pathname = requestState.pathname;
 if (pathname.startsWith('/shared/')) return serveStaticRoot(req, res, ROOT, '/');
 if (pathname.startsWith('/apps/public/')) return serveStaticRoot(req, res, ROOT, '/');
 if (pathname.startsWith('/apps/admin/gate/')) return serveStaticRoot(req, res, ROOT, '/');
@@ -4139,7 +3773,7 @@ const uploadSession = await getSession(req);
 if (!uploadSession) return text(req, res, 403, 'Forbidden');
 return serveStaticRoot(req, res, ROOT, '/');
 }
-const apiHandled = await handleApi(req, res);
+const apiHandled = await handleApi(req, res, requestState);
 if (apiHandled !== false) return;
 const rendered = await renderPage(pathname, req, res);
 if (rendered) return;
@@ -4148,14 +3782,16 @@ text(req, res, 404, 'Not found');
 const status = error?.code === 'PAYLOAD_TOO_LARGE' ? 413 : ['INVALID_JSON', 'INVALID_PAYLOAD'].includes(error?.code) ? 400 : 500;
 json(req, res, status, { ok: false, error: status === 413 ? '요청 크기가 너무 큽니다.' : status === 400 ? (error.message || '잘못된 요청입니다.') : '서버 오류가 발생했습니다.', requestId });
 } finally {
-const pathname = (() => { try { return requestUrlFrom(req).pathname; } catch { return 'invalid-url'; } })();
+const pathname = req._nv0RouteState?.pathname || (() => { try { return requestUrlFrom(req).pathname; } catch { return 'invalid-url'; } })();
+const elapsedMs = Date.now() - startedAt;
 console.log(JSON.stringify({
-level: 'info',
+level: elapsedMs >= SLOW_REQUEST_THRESHOLD_MS ? 'warn' : 'info',
+event: elapsedMs >= SLOW_REQUEST_THRESHOLD_MS ? 'slow_request' : 'request',
 requestId,
 method: req.method,
 path: pathname,
 statusCode: res.statusCode,
-elapsedMs: Date.now() - startedAt,
+elapsedMs,
 ip: clientIp(req)
 }));
 }
@@ -4168,9 +3804,14 @@ const ctaAutopublishInterval = setInterval(() => {
 runCtaAutopublish('interval').catch(error => console.error('cta autopublish failed', error));
 }, CTA_AUTOPUBLISH_INTERVAL_MS);
 ctaAutopublishInterval.unref();
+const autoBackupInterval = setInterval(() => {
+runAutomaticBackup('scheduled').catch(error => console.error('automatic backup failed', error));
+}, AUTO_BACKUP_INTERVAL_MS);
+autoBackupInterval.unref();
 async function shutdown() {
 clearInterval(cleanupInterval);
 clearInterval(ctaAutopublishInterval);
+clearInterval(autoBackupInterval);
 if (sessionsDirty) await writeSessionsToDisk();
 const forceExit = setTimeout(() => process.exit(0), 1500);
 forceExit.unref();
@@ -4189,6 +3830,9 @@ const db = await readDb();
 await ensureBootstrapAdmin(db, process.env, uid, nowIso);
 await runCtaAutopublish('startup');
 await writeDb(db);
+if (AUTO_BACKUP_ENABLED && AUTO_BACKUP_ON_STARTUP) {
+setTimeout(() => { runAutomaticBackup('startup').catch(error => console.error('startup backup failed', error)); }, 15_000).unref();
+}
 server.listen(PORT, HOST, () => {
 console.log(`nv0 cleanroom server listening on http://${HOST}:${PORT} target=${PLATFORM.target} stage=${DEPLOYMENT_STAGE} launchReady=${COMMERCIAL_LAUNCH_READY} payment=${PAYMENT_PROVIDER}`);
 });

@@ -1,0 +1,122 @@
+{
+  "generatedAt": "2026-05-02T11:32:46.721Z",
+  "ok": true,
+  "phase": "P162-free-auto-disclosure",
+  "scope": "free full-auto public discovery, robots/sitemap, automated drafts, explicit manual boundaries, no paid API dependency",
+  "total": 22,
+  "passed": 22,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "phase162 release marker",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "free automation env switches exist",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "robots discovery implemented",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "sitemap discovery implemented",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "automation discovery included in bundle",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "automation disclosure model exists",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "automated action plan exists",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "auto and manual split exists",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "clear notice avoids hidden failures",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "result contract exposes automation",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "demo copy shows full auto public probe",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "demo loading states mention auto discovery",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "demo renders automation disclosure section",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "demo renders automated action plan",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "existing zero cost defaults remain",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "package scripts registered",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "no impossible overclaim in public demo 1",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "no impossible overclaim in public demo 2",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "no impossible overclaim in public demo 3",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "no impossible overclaim in public demo 4",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "no impossible overclaim in public demo 5",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "no impossible overclaim in public demo 6",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "failures": []
+}

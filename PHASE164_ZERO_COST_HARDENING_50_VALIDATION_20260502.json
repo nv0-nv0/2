@@ -1,0 +1,125 @@
+{
+  "ok": true,
+  "phase": "phase164-zero-cost-hardening-50",
+  "checkedAt": "2026-05-02T11:32:52.398Z",
+  "total": 23,
+  "passed": 23,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "phase:package-version",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "phase:script-registered",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "phase:final-script-registered",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:release-phase",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:hardening-module-imported",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:health-aliases",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:openapi-endpoint",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:hardening-endpoint",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:data-retention-cleanup",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:slow-request-logging",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "matrix:exactly-50",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "matrix:operator-required-separated",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "compose:app-no-new-privileges",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "compose:app-cap-drop",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "compose:log-rotation",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "coolify:log-rotation",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "env:slow-threshold",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "env:data-destruction-grace",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "script:restore-drill-exists",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "script:stress-smoke-exists",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "docs:phase164-report",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "runtime:restore-drill",
+      "ok": true,
+      "detail": "{\n  \"ok\": true,\n  \"phase\": \"phase164-zero-cost-hardening-50\",\n  \"source\": \"/mnt/data/nv0_final_work/out/nv0_zero_risk_best_delivery_20260502/runtime/data/db.json\",\n  \"snapshot\": \"/tmp/nv0-restore-drill/2026-05-02T11-32-49-709Z/db-2026-05-02T11-32-49-709Z.json\",\n  \"restoreTarget\": \"/tmp/nv0-restore-drill/2026-05-02T11-32-49-709Z/restore-target-2026-05-02T11-32-49-709Z.json\",\n  \"manifestPath\": \"/tmp/nv0-restore-drill/2026-05-02T11-32-49-709Z/db-2026-05-02T11-32-49-709Z.manifest.json\",\n  \"sha256\": \"3828a59248dae185938373f43b825ee976f0b73e78006ab2767e646e2eaa35fd\",\n  \"bytes\": 160746,\n  \"nonDestructive\": true\n}\n"
+    },
+    {
+      "name": "runtime:stress-smoke",
+      "ok": true,
+      "detail": "{\n  \"ok\": true,\n  \"phase\": \"phase164-zero-cost-hardening-50\",\n  \"requests\": 56,\n  \"failures\": [],\n  \"elapsedMs\": 505\n}\n"
+    }
+  ]
+}

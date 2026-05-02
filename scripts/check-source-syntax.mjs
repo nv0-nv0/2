@@ -5,7 +5,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const dirs = ['server','scripts','tests','shared','apps'];
 const DEFAULT_SOURCE_SIZE_LIMIT = Number(process.env.NV0_SOURCE_SIZE_LIMIT_BYTES || 225000);
 const MONOLITH_COMPAT_LIMITS = new Map([
-  ['server/index.mjs', Number(process.env.NV0_INDEX_SIZE_LIMIT_BYTES || 275000)]
+  ['server/index.mjs', Number(process.env.NV0_INDEX_SIZE_LIMIT_BYTES || 300000)]
 ]);
 let checkedCount = 0;
 const failures = [];

@@ -1,0 +1,153 @@
+{
+  "ok": true,
+  "phase": "phase167-native-http-load-security-50",
+  "checkedAt": "2026-05-02T10:03:13Z",
+  "sourcePackage": "nv0_full_p166_native_http_route_split_load_reduction_delivery.zip",
+  "appliedScope": [
+    "Native HTTP route dispatch refinement",
+    "single pre-parsed route state reuse",
+    "index dead public/admin branch cleanup",
+    "root health/robots/sitemap/feed ownership cleanup",
+    "readyz and XML TTL cache",
+    "phase167 regression validator update"
+  ],
+  "metrics": {
+    "serverIndexLinesBefore": 4973,
+    "serverIndexLinesAfter": 3840,
+    "handleApiLinesAfter": 22,
+    "routeModuleNewUrlReqUrlCount": 0,
+    "routeModuleResolveNativeRouteStateReqCount": 0,
+    "routeSmokeChecked": 24,
+    "linkCheckedCount": 149,
+    "stressRequests": 56,
+    "syntaxCheckedCount": 191,
+    "unitIntegrationPassed": 88,
+    "unitIntegrationFailed": 0
+  },
+  "commands": [
+    {
+      "command": "npm run check:syntax",
+      "ok": true,
+      "result": "191 source files checked"
+    },
+    {
+      "command": "npm run test:all",
+      "ok": true,
+      "result": "88 passed / 0 failed"
+    },
+    {
+      "command": "npm run test:e2e",
+      "ok": true,
+      "result": "E2E passed"
+    },
+    {
+      "command": "npm run test:routes",
+      "ok": true,
+      "result": "24 routes checked"
+    },
+    {
+      "command": "npm run test:security-stateful",
+      "ok": true,
+      "result": "5 security checks passed"
+    },
+    {
+      "command": "npm run validate:phase166",
+      "ok": true,
+      "result": "phase166 compatibility retained"
+    },
+    {
+      "command": "npm run validate:phase167",
+      "ok": true,
+      "result": "15 phase167 checks passed"
+    },
+    {
+      "command": "npm run check:links",
+      "ok": true,
+      "result": "149 links checked / 0 errors"
+    },
+    {
+      "command": "npm run stress:smoke",
+      "ok": true,
+      "result": "56 requests / 0 failures"
+    },
+    {
+      "command": "npm run phase167:final",
+      "ok": true,
+      "result": "final gate passed after runtime report cleanup"
+    }
+  ],
+  "phase167Validator": {
+    "ok": true,
+    "phase": "phase167-native-http-load-security",
+    "checkedAt": "2026-05-02T10:02:11.240Z",
+    "checks": [
+      {
+        "name": "release phase updated",
+        "ok": true
+      },
+      {
+        "name": "readyz ttl cache implemented",
+        "ok": true
+      },
+      {
+        "name": "public native dispatch retained",
+        "ok": true
+      },
+      {
+        "name": "admin native dispatch retained",
+        "ok": true
+      },
+      {
+        "name": "dead public route branches removed from index",
+        "ok": true
+      },
+      {
+        "name": "dead admin route branches removed from index",
+        "ok": true
+      },
+      {
+        "name": "single URL parse state attached",
+        "ok": true
+      },
+      {
+        "name": "route modules avoid URL reparse",
+        "ok": true
+      },
+      {
+        "name": "public route duplicate root branches removed",
+        "ok": true
+      },
+      {
+        "name": "child route state forwarding",
+        "ok": true
+      },
+      {
+        "name": "route modules do not create URL objects",
+        "ok": true
+      },
+      {
+        "name": "admin CSRF safe-method helper",
+        "ok": true
+      },
+      {
+        "name": "sitemap feed xml cache",
+        "ok": true
+      },
+      {
+        "name": "express router not introduced",
+        "ok": true
+      },
+      {
+        "name": "internal helpers reuse parsed URL",
+        "ok": true
+      }
+    ],
+    "failed": []
+  },
+  "operatorRequired": [
+    "production traffic load test under real Coolify/container resource limits",
+    "Cloudflare cache and WAF policy confirmation",
+    "real payment provider webhook secret and callback verification in staging",
+    "production PostgreSQL/R2/Redis credential and SSL policy confirmation"
+  ]
+}

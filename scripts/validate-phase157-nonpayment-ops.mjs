@@ -4,6 +4,7 @@ import path from 'node:path';
 const root = process.cwd();
 const read = (rel) => fs.readFileSync(path.join(root, rel), 'utf8');
 const server = read('server/index.mjs');
+const routeSources = [server, 'server/routes/public.mjs', 'server/routes/admin.mjs', 'server/routes/ops.mjs'].map(item => item === server ? server : (fs.existsSync(path.join(root, item)) ? read(item) : '')).join('\n');
 const diagnosticsHtml = read('apps/admin/diagnostics/index.html');
 const diagnosticsJs = read('apps/admin/diagnostics/app.js');
 const preflight = read('scripts/preflight.mjs');
@@ -23,7 +24,7 @@ add('external-scan:undefined-fetched-bug-removed', normalizeExternalBlock.includ
 add('external-scan:fallback-still-supported', server.includes("fallback.provider = 'builtin_fallback'") && server.includes('SCAN_PROVIDER_FALLBACK'));
 add('launch-gate:portone-excluded-until-enabled', server.includes("if (COMMERCIAL_LAUNCH_READY && PAYMENT_PROVIDER === 'portone_v2')") && server.includes("PAYMENT_PROVIDER !== 'portone_v2' || PORTONE_WEBHOOK_VERIFY_MODE === 'strict'"));
 add('launch-gate:mailorder-excluded-until-launch', server.includes("if (COMMERCIAL_LAUNCH_READY) mustNotBePlaceholder.push('NV0_MAIL_ORDER_REGISTRATION_NUMBER')"));
-add('diagnostics:readiness-api-expanded', server.includes('readiness: buildReleaseReadiness(db)') && server.includes('emailOutbox: {') && server.includes('recentOperationalEvents'));
+add('diagnostics:readiness-api-expanded', routeSources.includes('readiness: buildReleaseReadiness(db)') && routeSources.includes('emailOutbox: {') && routeSources.includes('recentOperationalEvents'));
 add('diagnostics:admin-actions-added', diagnosticsHtml.includes('selfTestBtn') && diagnosticsHtml.includes('emailDryRunBtn') && diagnosticsHtml.includes('emailLiveBtn'));
 add('diagnostics:admin-js-actions-wired', diagnosticsJs.includes('/api/admin/ops/self-test') && diagnosticsJs.includes('/api/admin/email-outbox/process') && diagnosticsJs.includes('dryRun: false'));
 add('preflight:smtp-url-validation', preflight.includes('function validateSmtpUrl') && preflight.includes('NV0_SMTP_URL must start with smtp:// or smtps://'));

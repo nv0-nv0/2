@@ -1,0 +1,102 @@
+{
+  "generatedAt": "2026-05-02T01:54:58.266Z",
+  "ok": true,
+  "phase": "P159-reader-demo-board-hotfix",
+  "scope": "home copy dedupe, demo turnstile resilience, board pagination, reader-helpful CTA content",
+  "total": 18,
+  "passed": 18,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "home:copy-compressed",
+      "ok": true,
+      "details": "메인 페이지 반복 동적 패널 제거 및 무료 진단 반복 최소화"
+    },
+    {
+      "name": "home:no-url-input",
+      "ok": true,
+      "details": "메인 주소 입력창 없음"
+    },
+    {
+      "name": "home:required-cta-kept",
+      "ok": true,
+      "details": "기존 CTA 검증 호환"
+    },
+    {
+      "name": "demo:prelaunch-turnstile-soft-pass",
+      "ok": true,
+      "details": "prelaunch에서는 Turnstile 누락/실패가 데모 실패로 직결되지 않음"
+    },
+    {
+      "name": "demo:error-shows-detail",
+      "ok": true,
+      "details": "데모 실패 시 원인별 안내"
+    },
+    {
+      "name": "board:page-size-five-api",
+      "ok": true,
+      "details": "게시판 API 5개 페이지네이션"
+    },
+    {
+      "name": "board:frontend-pagination",
+      "ok": true,
+      "details": "게시판 프론트 페이지 번호 이동"
+    },
+    {
+      "name": "board:html-pagination-container",
+      "ok": true,
+      "details": "게시판 UI 안내 및 페이지 컨테이너"
+    },
+    {
+      "name": "board:css-pagination",
+      "ok": true,
+      "details": "페이지네이션 스타일"
+    },
+    {
+      "name": "board:hide-internal-upgrade-box",
+      "ok": true,
+      "details": "내부 운영 목적 박스 숨김"
+    },
+    {
+      "name": "board:public-transform-api",
+      "ok": true,
+      "details": "기존 조잡한 CTA 글도 공개 응답에서 도움형 글로 변환"
+    },
+    {
+      "name": "cta:no-title-candidates-body",
+      "ok": true,
+      "details": "신규 자동 글 본문이 도움형 humanizeBody로 교체됨"
+    },
+    {
+      "name": "cta:helpful-sections",
+      "ok": true,
+      "details": "사람이 읽는 도움형 섹션"
+    },
+    {
+      "name": "package:phase159-script",
+      "ok": true,
+      "details": "검증 스크립트 등록"
+    },
+    {
+      "name": "board-ui:no-marker:제목 후보",
+      "ok": true,
+      "details": "게시판 공개 UI 내부용 표현 제거"
+    },
+    {
+      "name": "board-ui:no-marker:contentFingerprint",
+      "ok": true,
+      "details": "게시판 공개 UI 내부용 표현 제거"
+    },
+    {
+      "name": "board-ui:no-marker:퍼널",
+      "ok": true,
+      "details": "게시판 공개 UI 내부용 표현 제거"
+    },
+    {
+      "name": "board-ui:no-marker:아키타입",
+      "ok": true,
+      "details": "게시판 공개 UI 내부용 표현 제거"
+    }
+  ],
+  "failures": []
+}

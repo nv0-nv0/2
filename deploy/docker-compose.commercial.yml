@@ -9,6 +9,15 @@ services:
       context: ..
       dockerfile: Dockerfile
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
     env_file:
       - ./env.commercial.template
     environment:
@@ -18,6 +27,8 @@ services:
       NV0_RATE_LIMIT_STORE: redis
       NV0_LOCK_PROVIDER: redis
       NV0_STORAGE_MODE: s3
+      NV0_SLOW_REQUEST_THRESHOLD_MS: ${NV0_SLOW_REQUEST_THRESHOLD_MS:-1500}
+      NV0_DATA_DESTRUCTION_GRACE_DAYS: ${NV0_DATA_DESTRUCTION_GRACE_DAYS:-30}
       NV0_DATABASE_URL: postgres://nv0:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}@postgres:5432/nv0
       NV0_REDIS_URL: redis://redis:6379/0
       NV0_S3_ENDPOINT: ${NV0_S3_ENDPOINT:?set NV0_S3_ENDPOINT}
@@ -44,6 +55,15 @@ services:
   postgres:
     image: postgres:16-alpine
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
     environment:
       POSTGRES_DB: nv0
       POSTGRES_USER: nv0
@@ -60,6 +80,11 @@ services:
   redis:
     image: redis:7-alpine
     restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
     command: ["redis-server", "--appendonly", "yes"]
     volumes:
       - redis-data:/data

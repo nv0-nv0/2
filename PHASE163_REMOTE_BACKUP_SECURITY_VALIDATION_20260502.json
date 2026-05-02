@@ -1,0 +1,303 @@
+{
+  "ok": true,
+  "total": 59,
+  "passed": 59,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "phase-version",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "phase-script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:BACKUP_REMOTE_ENABLED",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:BACKUP_REMOTE_PREFIX",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:BACKUP_ENCRYPTION_SECRET",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:BACKUP_REMOTE_REQUIRE_ENCRYPTION",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:AUTO_BACKUP_ENABLED",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:AUTO_BACKUP_INTERVAL_MS",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:createBackupSnapshot({ reason",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:backupSecurityConfigSummary",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:runAutomaticBackup",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:requireAdminPermission(req, res, session, 'ops.write')",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:if (!adminIpAllowed(req)) return json(req, res, 403",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "backup-operations:uploadRemoteBackupObject",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "backup-operations:encryptBackupPayload",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "backup-operations:backup integrity check failed",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "backup-operations:createSnapshot",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "backup-operations:restoreSnapshot",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "backup-operations:runAutomatic",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "backup-operations:s3CompatibleConfigSummary",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "storage:putObjectToS3Compatible",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "storage:isS3CompatibleConfigured",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "storage:AWS4-HMAC-SHA256",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "storage:sha256Hex",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "storage:s3CompatibleConfigSummary",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "backup-runtime:backup-manifest.json",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "backup-runtime:uploads-manifest.json",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "backup-runtime:NV0_BACKUP_ENCRYPTION_SECRET",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "backup-runtime:encryptBackupPayload",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "backup-runtime:remotePut",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "backup-runtime:sha256Hex(dbBuffer)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": ".env.example:NV0_BACKUP_REMOTE_ENABLED=true",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": ".env.example:NV0_BACKUP_REMOTE_PREFIX=backups/nv0",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": ".env.example:NV0_BACKUP_COMPRESS=true",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": ".env.example:NV0_BACKUP_ENCRYPTION_SECRET=CHANGE_ME_LONG_RANDOM_BACKUP_SECRET",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": ".env.example:NV0_BACKUP_REMOTE_REQUIRE_ENCRYPTION=true",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": ".env.example:NV0_AUTO_BACKUP_ENABLED=true",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": ".env.example:NV0_AUTO_BACKUP_INTERVAL_MS=21600000",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": ".env.coolify.example:NV0_BACKUP_REMOTE_ENABLED=true",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": ".env.coolify.example:NV0_BACKUP_REMOTE_PREFIX=backups/nv0",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": ".env.coolify.example:NV0_BACKUP_COMPRESS=true",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": ".env.coolify.example:NV0_BACKUP_ENCRYPTION_SECRET=CHANGE_ME_LONG_RANDOM_BACKUP_SECRET",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": ".env.coolify.example:NV0_BACKUP_REMOTE_REQUIRE_ENCRYPTION=true",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": ".env.coolify.example:NV0_AUTO_BACKUP_ENABLED=true",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": ".env.coolify.example:NV0_AUTO_BACKUP_INTERVAL_MS=21600000",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "deploy/coolify.env.bulk.txt:NV0_BACKUP_REMOTE_ENABLED=true",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "deploy/coolify.env.bulk.txt:NV0_BACKUP_REMOTE_PREFIX=backups/nv0",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "deploy/coolify.env.bulk.txt:NV0_BACKUP_COMPRESS=true",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "deploy/coolify.env.bulk.txt:NV0_BACKUP_ENCRYPTION_SECRET=CHANGE_ME_LONG_RANDOM_BACKUP_SECRET",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "deploy/coolify.env.bulk.txt:NV0_BACKUP_REMOTE_REQUIRE_ENCRYPTION=true",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "deploy/coolify.env.bulk.txt:NV0_AUTO_BACKUP_ENABLED=true",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "deploy/coolify.env.bulk.txt:NV0_AUTO_BACKUP_INTERVAL_MS=21600000",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "deploy/coolify.env.example:NV0_BACKUP_REMOTE_ENABLED=true",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "deploy/coolify.env.example:NV0_BACKUP_REMOTE_PREFIX=backups/nv0",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "deploy/coolify.env.example:NV0_BACKUP_COMPRESS=true",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "deploy/coolify.env.example:NV0_BACKUP_ENCRYPTION_SECRET=CHANGE_ME_LONG_RANDOM_BACKUP_SECRET",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "deploy/coolify.env.example:NV0_BACKUP_REMOTE_REQUIRE_ENCRYPTION=true",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "deploy/coolify.env.example:NV0_AUTO_BACKUP_ENABLED=true",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "deploy/coolify.env.example:NV0_AUTO_BACKUP_INTERVAL_MS=21600000",
+      "ok": true,
+      "detail": ""
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "package": "nv0_full_p167_native_http_load_security_delivery.zip",
+  "phase": "phase167-native-http-load-security-50",
+  "createdAt": "2026-05-02T10:03:13Z",
+  "base": "phase166-native-http-route-split",
+  "primaryChangedFiles": [
+    "package.json",
+    "server/index.mjs",
+    "server/core/native-route-state.mjs",
+    "server/middleware/security.mjs",
+    "server/routes/public.mjs",
+    "server/routes/admin.mjs",
+    "server/routes/payment.mjs",
+    "server/routes/account.mjs",
+    "server/routes/ops.mjs",
+    "scripts/validate-phase167-native-http-load-security.mjs",
+    "tests/e2e.mjs",
+    "tests/routes-smoke.mjs",
+    "docs/PHASE167_NATIVE_HTTP_LOAD_SECURITY_REPORT_20260502_KO.md",
+    "docs/PHASE167_NATIVE_HTTP_LOAD_SECURITY_VALIDATION_20260502.json",
+    "docs/PHASE167_NV0_NATIVE_HTTP_LOAD_SECURITY_50_WORK_ORDER_KO.md"
+  ],
+  "validation": [
+    {
+      "command": "npm run check:syntax",
+      "ok": true,
+      "result": "191 source files checked"
+    },
+    {
+      "command": "npm run test:all",
+      "ok": true,
+      "result": "88 passed / 0 failed"
+    },
+    {
+      "command": "npm run test:e2e",
+      "ok": true,
+      "result": "E2E passed"
+    },
+    {
+      "command": "npm run test:routes",
+      "ok": true,
+      "result": "24 routes checked"
+    },
+    {
+      "command": "npm run test:security-stateful",
+      "ok": true,
+      "result": "5 security checks passed"
+    },
+    {
+      "command": "npm run validate:phase166",
+      "ok": true,
+      "result": "phase166 compatibility retained"
+    },
+    {
+      "command": "npm run validate:phase167",
+      "ok": true,
+      "result": "15 phase167 checks passed"
+    },
+    {
+      "command": "npm run check:links",
+      "ok": true,
+      "result": "149 links checked / 0 errors"
+    },
+    {
+      "command": "npm run stress:smoke",
+      "ok": true,
+      "result": "56 requests / 0 failures"
+    },
+    {
+      "command": "npm run phase167:final",
+      "ok": true,
+      "result": "final gate passed after runtime report cleanup"
+    }
+  ],
+  "notes": [
+    "runtime/ is excluded from final zip",
+    "node_modules is excluded from final zip"
+  ]
+}

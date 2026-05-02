@@ -97,7 +97,7 @@ try {
   assert.equal(x.data.result.riskScore, 66);
   assert.equal(x.data.result.totalFindings, 2);
 
-  x = await j('/api/public/checkout-session', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ plan: 'Pro', siteId: x.data.result.siteId, buyerEmail: 'external.com', privacyConsent: true, termsConsent: true, refundConsent: true, deliveryConsent: true }) });
+  x = await j('/api/public/checkout-session', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ plan: 'Pro', siteId: x.data.result.siteId, buyerEmail: 'buyer@external.com', privacyConsent: true, termsConsent: true, refundConsent: true, deliveryConsent: true }) });
   assert.equal(x.res.status, 200);
   assert.equal(x.data.paymentSession.provider, 'external_http');
   assert.match(x.data.paymentSession.redirectUrl, /pay\.example\.test/);

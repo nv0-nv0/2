@@ -1,6 +1,6 @@
 {
   "name": "nv0-veridion-cleanroom",
-  "version": "1.0.0-commercial-final-100-score-phase158-e2big-hotfix",
+  "version": "1.0.0-commercial-final-100-score-phase160-evidence-first-diagnosis-phase161-zero-cost-max-coverage-phase162-free-auto-disclosure-phase163-remote-backup-security-phase164-zero-cost-hardening-50-phase165-route-security-validation-fix-phase165-final-consolidation-phase166-native-route-split-phase167-native-http-load-security-phase168-zero-risk-best-unified-delivery",
   "private": true,
   "type": "module",
   "scripts": {
@@ -151,6 +151,31 @@
     "validate:phase157": "node scripts/validate-phase157-nonpayment-ops.mjs",
     "phase157:final": "node scripts/check-source-syntax.mjs && node scripts/test-all.mjs && node tests/e2e.mjs && node tests/routes-smoke.mjs && node scripts/check-links.mjs --summary && node scripts/validate-phase156-global-ux-flow.mjs && node scripts/validate-phase157-nonpayment-ops.mjs && node scripts/check-runtime-clean.mjs",
     "validate:phase158": "node scripts/validate-phase158-e2big-hotfix.mjs",
-    "phase158:final": "node scripts/check-source-syntax.mjs && node scripts/test-all.mjs && node tests/e2e.mjs && node tests/routes-smoke.mjs && node scripts/validate-phase156-global-ux-flow.mjs && node scripts/validate-phase157-nonpayment-ops.mjs && node scripts/validate-phase158-e2big-hotfix.mjs"
+    "phase158:final": "node scripts/check-source-syntax.mjs && node scripts/test-all.mjs && node tests/e2e.mjs && node tests/routes-smoke.mjs && node scripts/validate-phase156-global-ux-flow.mjs && node scripts/validate-phase157-nonpayment-ops.mjs && node scripts/validate-phase158-e2big-hotfix.mjs",
+    "validate:phase159": "node scripts/validate-phase159-reader-demo-board.mjs",
+    "phase159:final": "node scripts/check-source-syntax.mjs && node scripts/test-all.mjs && node tests/e2e.mjs && node tests/routes-smoke.mjs && node scripts/check-links.mjs --summary && node scripts/validate-phase156-global-ux-flow.mjs && node scripts/validate-phase157-nonpayment-ops.mjs && node scripts/validate-phase158-e2big-hotfix.mjs && node scripts/validate-phase159-reader-demo-board.mjs",
+    "validate:phase160": "node scripts/validate-phase160-evidence-first-diagnosis.mjs",
+    "phase160:final": "node scripts/check-source-syntax.mjs && node scripts/test-all.mjs && node tests/e2e.mjs && node tests/routes-smoke.mjs && node scripts/check-links.mjs --summary && node scripts/validate-phase156-global-ux-flow.mjs && node scripts/validate-phase157-nonpayment-ops.mjs && node scripts/validate-phase158-e2big-hotfix.mjs && node scripts/validate-phase159-reader-demo-board.mjs && node scripts/validate-phase160-evidence-first-diagnosis.mjs",
+    "validate:phase161": "node scripts/validate-phase161-zero-cost-max-coverage.mjs",
+    "phase161:final": "node scripts/check-source-syntax.mjs && node scripts/test-all.mjs && node tests/e2e.mjs && node tests/routes-smoke.mjs && node scripts/check-links.mjs --summary && node scripts/validate-phase156-global-ux-flow.mjs && node scripts/validate-phase157-nonpayment-ops.mjs && node scripts/validate-phase158-e2big-hotfix.mjs && node scripts/validate-phase159-reader-demo-board.mjs && node scripts/validate-phase160-evidence-first-diagnosis.mjs && node scripts/validate-phase161-zero-cost-max-coverage.mjs",
+    "validate:phase162": "node scripts/validate-phase162-free-auto-disclosure.mjs",
+    "phase162:final": "node scripts/check-source-syntax.mjs && node scripts/test-all.mjs && node tests/e2e.mjs && node tests/routes-smoke.mjs && node scripts/check-links.mjs --summary && node scripts/validate-phase156-global-ux-flow.mjs && node scripts/validate-phase157-nonpayment-ops.mjs && node scripts/validate-phase158-e2big-hotfix.mjs && node scripts/validate-phase159-reader-demo-board.mjs && node scripts/validate-phase160-evidence-first-diagnosis.mjs && node scripts/validate-phase161-zero-cost-max-coverage.mjs && node scripts/validate-phase162-free-auto-disclosure.mjs",
+    "validate:phase163": "node scripts/validate-phase163-remote-backup-security.mjs",
+    "phase163:final": "node scripts/check-source-syntax.mjs && node scripts/test-all.mjs && node tests/e2e.mjs && node tests/routes-smoke.mjs && node scripts/check-links.mjs --summary && node scripts/validate-phase156-global-ux-flow.mjs && node scripts/validate-phase157-nonpayment-ops.mjs && node scripts/validate-phase158-e2big-hotfix.mjs && node scripts/validate-phase159-reader-demo-board.mjs && node scripts/validate-phase160-evidence-first-diagnosis.mjs && node scripts/validate-phase161-zero-cost-max-coverage.mjs && node scripts/validate-phase162-free-auto-disclosure.mjs && node scripts/validate-phase163-remote-backup-security.mjs",
+    "restore:drill": "node scripts/restore-drill.mjs",
+    "stress:smoke": "node scripts/stress-smoke.mjs",
+    "validate:phase164": "node scripts/validate-phase164-zero-cost-hardening-50.mjs",
+    "phase164:final": "node scripts/clean-release-runtime.mjs && node scripts/check-source-syntax.mjs && node scripts/test-all.mjs && node tests/e2e.mjs && node tests/routes-smoke.mjs && node scripts/check-links.mjs --summary && node scripts/restore-drill.mjs && node scripts/stress-smoke.mjs && node scripts/validate-phase156-global-ux-flow.mjs && node scripts/validate-phase157-nonpayment-ops.mjs && node scripts/validate-phase158-e2big-hotfix.mjs && node scripts/validate-phase159-reader-demo-board.mjs && node scripts/validate-phase160-evidence-first-diagnosis.mjs && node scripts/validate-phase161-zero-cost-max-coverage.mjs && node scripts/validate-phase162-free-auto-disclosure.mjs && node scripts/validate-phase163-remote-backup-security.mjs && node scripts/validate-phase164-zero-cost-hardening-50.mjs",
+    "validate:phase165": "node scripts/validate-phase165-route-security-validation-fix.mjs",
+    "phase165:final": "node scripts/clean-release-runtime.mjs && node scripts/check-source-syntax.mjs && node scripts/test-all.mjs && node tests/e2e.mjs && node tests/routes-smoke.mjs && node scripts/validate-phase164-zero-cost-hardening-50.mjs && node scripts/validate-phase165-route-security-validation-fix.mjs",
+    "validate:phase166": "node scripts/validate-phase166-native-route-split.mjs",
+    "phase166:final": "node scripts/clean-release-runtime.mjs && node scripts/check-source-syntax.mjs && node scripts/test-all.mjs && node tests/e2e.mjs && node tests/routes-smoke.mjs && node scripts/validate-phase165-route-security-validation-fix.mjs && node scripts/validate-phase166-native-route-split.mjs",
+    "validate:phase167": "node scripts/validate-phase167-native-http-load-security.mjs",
+    "phase167:final": "node scripts/check-source-syntax.mjs && node scripts/test-all.mjs && node tests/e2e.mjs && node tests/routes-smoke.mjs && node scripts/validate-phase166-native-route-split.mjs && node scripts/validate-phase167-native-http-load-security.mjs && node scripts/stress-smoke.mjs",
+    "validate:phase165-final": "node scripts/validate-phase165-final-consolidation.mjs",
+    "release:clean-runtime": "node scripts/clean-release-runtime.mjs",
+    "final:delivery": "node scripts/run-final-delivery-gate.mjs",
+    "delivery:final": "npm run final:delivery",
+    "phase168:final": "node scripts/clean-release-runtime.mjs && node scripts/check-source-syntax.mjs && node scripts/test-all.mjs && node tests/e2e.mjs && node tests/routes-smoke.mjs && node tests/provider-adapters.mjs && node tests/session-persistence.mjs && node tests/runtime-persistence.mjs && node tests/security-stateful.mjs && node tests/contracts-fuzz.mjs && node scripts/validate-phase166-native-route-split.mjs && node scripts/validate-phase167-native-http-load-security.mjs && node scripts/stress-smoke.mjs && node scripts/clean-release-runtime.mjs"
   }
 }

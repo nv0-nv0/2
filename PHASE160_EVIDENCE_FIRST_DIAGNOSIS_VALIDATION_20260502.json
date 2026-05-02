@@ -1,0 +1,123 @@
+{
+  "ok": true,
+  "total": 23,
+  "passed": 23,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "release phase updated",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "rule version updated",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "builtin result includes evidence summary",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "builtin result includes score model",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "findings include source pages",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "findings include certainty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "manual review is explicit",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "legal guarantee disabled",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "business outcome guarantee disabled",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Gemini optional env supported",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Gemini is not measurement source",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "demo hero is evidence-first",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "demo shows verified pages",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "demo shows finding evidence",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "demo shows limitations",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "demo copy downgraded to preliminary check",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "css supports evidence UI",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "report package evidence-first",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "package version updated",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "package script registered",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "no overclaim copy: apps/public/veridion-demo/index.html",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "no overclaim copy: apps/public/home/index.html",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "no overclaim copy: apps/public/plans/index.html",
+      "ok": true,
+      "detail": ""
+    }
+  ]
+}

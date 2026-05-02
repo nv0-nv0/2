@@ -6,6 +6,14 @@ const root = process.cwd();
 const read = (...parts) => fs.readFileSync(path.join(root, ...parts), 'utf8');
 const exists = (...parts) => fs.existsSync(path.join(root, ...parts));
 const server = read('server/index.mjs');
+const routeSources = [
+  server,
+  read('server/routes/public.mjs'),
+  read('server/routes/admin.mjs'),
+  read('server/routes/payment.mjs'),
+  read('server/routes/account.mjs'),
+  read('server/routes/ops.mjs')
+].join('\n');
 
 const routePairs = [
   ['/', 'apps/public/home/index.html', ['NV0 Veridion', '온라인 사업 리스크']],
@@ -34,7 +42,7 @@ for (const route of ['/admin', '/admin/console', '/admin/orders', '/admin/public
   assert.ok(server.includes(route), `admin route missing ${route}`);
 }
 for (const route of ['/healthz', '/readyz', '/api/public/health', '/api/admin/session']) {
-  assert.ok(server.includes(route), `system route missing ${route}`);
+  assert.ok(routeSources.includes(route), `system route missing ${route}`);
 }
 assert.match(server, /redirect\(req, res, 302, '\/admin'\)|location.*\/admin|\/admin\/console/);
 console.log(JSON.stringify({ ok: true, checked: routePairs.length + 11 }, null, 2));
