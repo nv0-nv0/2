@@ -2,6 +2,8 @@ import http from 'node:http';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import net from 'node:net';
+import tls from 'node:tls';
 import { fileURLToPath } from 'node:url';
 import { assertCommercialRouteAllowed, createPlatformProfile } from './core/platform.mjs';
 import { PAYMENT_SESSION_TRANSITIONS, ORDER_STATUS_TRANSITIONS, canTransition } from './core/payment-state-machine.mjs';
@@ -9,6 +11,8 @@ import { handleAccountRescan, customerRecentScans } from './core/account-rescan.
 import { buildPublicDiagnosisPackage } from './core/diagnosis-report-package.mjs';
 import { buildPremiumPurchasedAsset, buildPremiumAssetPdfLines } from './core/premium-asset-builder.mjs';
 import { buildCtaBoardArticle, chooseCtaVariant, ctaTopicPacks, ctaCombinationStats } from './core/cta-publication.mjs';
+import { buildProductIntelligence, annotateOffersWithIntelligence, buildProductDashboard } from './core/product-intelligence.mjs';
+import { buildSmartProductOrchestration, buildSmartPublicSnapshot } from './core/smart-product-orchestrator.mjs';
 import { authenticateAdminAccount, ensureAdminCollections, ensureBootstrapAdmin, getAdminPermissions, getAdminRoles } from './core/admin-auth.mjs';
 import { hashPassword, verifyPassword } from './core/passwords.mjs';
 import { createPersistenceManager } from './infrastructure/persistence/persistence.mjs';
@@ -38,7 +42,7 @@ businessTypes: ['정보통신업', '소프트웨어 개발 및 공급업', '전�
 contactEmail: process.env.NV0_SUPPORT_EMAIL || 'ct@nv0.kr',
 domain: process.env.NV0_PUBLIC_BASE_URL || 'https://nv0.kr',
 mailOrderRegistrationNumber: process.env.NV0_MAIL_ORDER_REGISTRATION_NUMBER || '',
-hostingProvider: process.env.NV0_HOSTING_PROVIDER || '',
+hostingProvider: process.env.NV0_HOSTING_PROVIDER || 'Contabo GmbH',
 customerServicePhone: process.env.NV0_CUSTOMER_SERVICE_PHONE || '',
 privacyOfficerEmail: process.env.NV0_PRIVACY_OFFICER_EMAIL || process.env.NV0_SUPPORT_EMAIL || 'ct@nv0.kr'
 });
@@ -57,6 +61,8 @@ const MAX_MULTIPART_BODY_BYTES = Number(process.env.NV0_MAX_MULTIPART_BODY_BYTES
 const ENABLE_TURNSTILE = process.env.NV0_ENABLE_TURNSTILE === 'true';
 const TURNSTILE_SECRET = process.env.NV0_TURNSTILE_SECRET || '';
 const TURNSTILE_SITE_KEY = process.env.NV0_TURNSTILE_SITE_KEY || '';
+const TURNSTILE_CONFIGURED = ENABLE_TURNSTILE && !isPlaceholderConfigValue(TURNSTILE_SECRET) && !isPlaceholderConfigValue(TURNSTILE_SITE_KEY);
+const TURNSTILE_PUBLIC_ENABLED = ENABLE_TURNSTILE && TURNSTILE_CONFIGURED;
 const PUBLIC_SCAN_LIMIT = Number(process.env.NV0_PUBLIC_SCAN_LIMIT || 20);
 const PUBLIC_SCAN_WINDOW_MS = Number(process.env.NV0_PUBLIC_SCAN_WINDOW_MS || 60_000);
 const ADMIN_AUTH_LIMIT = Number(process.env.NV0_ADMIN_AUTH_LIMIT || 8);
@@ -82,7 +88,7 @@ const PORTONE_WEBHOOK_VERIFY_MODE = process.env.NV0_PORTONE_WEBHOOK_VERIFY_MODE 
 const RULES_VERSION = process.env.NV0_RULES_VERSION || '2026.04.25-phase68-auto-diagnosis';
 const SCAN_CACHE_TTL_MS = Number(process.env.NV0_SCAN_CACHE_TTL_MS || 10 * 60_000);
 const CTA_AUTOPUBLISH_INTERVAL_MS = Number(process.env.NV0_CTA_AUTOPUBLISH_INTERVAL_MS || 30 * 60_000);
-const RELEASE_PHASE = 'phase114-revenue-launch-finalization';
+const RELEASE_PHASE = 'phase157-nonpayment-ops-completion';
 const DATA_RETENTION_DAYS = Number(process.env.NV0_DATA_RETENTION_DAYS || 1095);
 const REFUND_REQUEST_WINDOW_DAYS = Number(process.env.NV0_REFUND_REQUEST_WINDOW_DAYS || 7);
 const OPERATOR_ALERT_EMAIL = process.env.NV0_OPERATOR_ALERT_EMAIL || BUSINESS_PROFILE.contactEmail;
@@ -220,11 +226,8 @@ assertFiniteConfigNumber('NV0_REQUEST_TIMEOUT_MS', REQUEST_TIMEOUT_MS, { min: 10
 if (PLATFORM.commercial && ADMIN_AUTH_MODE === 'shared_key') {
 throw new Error('NV0_ADMIN_AUTH_MODE=shared_key is not allowed in production. Use account_rbac.');
 }
-if (ENABLE_TURNSTILE && !TURNSTILE_SECRET) {
-throw new Error('NV0_TURNSTILE_SECRET is required when NV0_ENABLE_TURNSTILE=true.');
-}
-if (ENABLE_TURNSTILE && !TURNSTILE_SITE_KEY) {
-throw new Error('NV0_TURNSTILE_SITE_KEY is required when NV0_ENABLE_TURNSTILE=true.');
+if (ENABLE_TURNSTILE && COMMERCIAL_LAUNCH_READY && !TURNSTILE_CONFIGURED) {
+throw new Error('Real NV0_TURNSTILE_SECRET and NV0_TURNSTILE_SITE_KEY are required when commercial launch is ready.');
 }
 const commercialFailures = PLATFORM.requireCommercialControls();
 if (commercialFailures.length) {
@@ -366,10 +369,10 @@ const cspParts = [
 "form-action 'self'",
 "img-src 'self' data: blob:",
 "object-src 'none'",
-`script-src 'self' https://cdn.portone.io${ENABLE_TURNSTILE ? ' https://challenges.cloudflare.com' : ''}`,
+`script-src 'self' https://cdn.portone.io${TURNSTILE_PUBLIC_ENABLED ? ' https://challenges.cloudflare.com' : ''}`,
 "style-src 'self'",
-`connect-src 'self' https://cdn.portone.io https://api.portone.io${ENABLE_TURNSTILE ? ' https://challenges.cloudflare.com' : ''}`,
-ENABLE_TURNSTILE ? 'frame-src https://challenges.cloudflare.com' : "frame-src 'none'"
+`connect-src 'self' https://cdn.portone.io https://api.portone.io${TURNSTILE_PUBLIC_ENABLED ? ' https://challenges.cloudflare.com' : ''}`,
+TURNSTILE_PUBLIC_ENABLED ? 'frame-src https://challenges.cloudflare.com' : "frame-src 'none'"
 ];
 const headers = {
 'x-content-type-options': 'nosniff',
@@ -672,25 +675,166 @@ item.nextAttemptAt = new Date(Date.now() + delay).toISOString();
 }
 return item;
 }
+function stripHeaderValue(value = '') {
+return String(value || '').replace(/[\r\n]+/g, ' ').trim();
+}
+function normalizeMailRecipients(value) {
+return String(value || '').split(',').map(item => item.trim()).filter(Boolean);
+}
+function parseSmtpUrl(rawUrl = '') {
+const raw = String(rawUrl || '').trim();
+if (!raw) return null;
+const parsed = new URL(raw);
+const protocol = parsed.protocol.replace(':', '').toLowerCase();
+if (!['smtp', 'smtps'].includes(protocol)) throw new Error('NV0_SMTP_URL protocol must be smtp:// or smtps://');
+const secure = protocol === 'smtps' || parsed.searchParams.get('secure') === 'true';
+const port = Number(parsed.port || (secure ? 465 : 587));
+const user = decodeURIComponent(parsed.username || '');
+const pass = decodeURIComponent(parsed.password || '');
+const from = parsed.searchParams.get('from') ? decodeURIComponent(parsed.searchParams.get('from')) : (process.env.NV0_EMAIL_FROM || user || BUSINESS_PROFILE.contactEmail);
+return { host: parsed.hostname, port, secure, user, pass, from, starttls: parsed.searchParams.get('starttls') !== 'false', rejectUnauthorized: parsed.searchParams.get('rejectUnauthorized') !== 'false' };
+}
+function smtpMessage({ from, to, subject, body, messageId }) {
+const recipients = normalizeMailRecipients(to);
+const lines = [
+`From: ${stripHeaderValue(from)}`,
+`To: ${recipients.map(stripHeaderValue).join(', ')}`,
+`Subject: ${stripHeaderValue(subject)}`,
+`Date: ${new Date().toUTCString()}`,
+`Message-ID: <${stripHeaderValue(messageId || uid('mailmsg'))}@nv0.kr>`,
+'MIME-Version: 1.0',
+'Content-Type: text/plain; charset=UTF-8',
+'Content-Transfer-Encoding: 8bit',
+'',
+String(body || '')
+];
+return lines.join('\r\n').replace(/\r?\n/g, '\r\n').replace(/^\./gm, '..');
+}
+async function sendSmtpMail({ to, subject, body, smtpUrl = process.env.NV0_SMTP_URL }) {
+const config = parseSmtpUrl(smtpUrl);
+if (!config?.host || !Number.isFinite(config.port)) throw new Error('SMTP configuration is incomplete.');
+const recipients = normalizeMailRecipients(to);
+if (!recipients.length) throw new Error('SMTP recipient is empty.');
+let socket;
+let buffer = '';
+let current = [];
+const responses = [];
+const waiters = [];
+let closed = false;
+function failAll(error) {
+closed = true;
+while (waiters.length) waiters.shift().reject(error);
+}
+function completeResponse() {
+const lines = current;
+current = [];
+const first = lines[0] || '';
+const code = Number(first.slice(0, 3));
+const payload = { code, lines, text: lines.join('\n') };
+const waiter = waiters.shift();
+if (waiter) waiter.resolve(payload);
+else responses.push(payload);
+}
+function onData(chunk) {
+buffer += chunk;
+let idx;
+while ((idx = buffer.indexOf('\n')) >= 0) {
+const line = buffer.slice(0, idx).replace(/\r$/, '');
+buffer = buffer.slice(idx + 1);
+current.push(line);
+if (/^\d{3} /.test(line)) completeResponse();
+}
+}
+function attach(nextSocket) {
+if (socket) {
+try { socket.removeListener('data', onData); } catch {}
+}
+ socket = nextSocket;
+ socket.setEncoding('utf8');
+ socket.setTimeout(15_000, () => failAll(new Error('SMTP request timed out')));
+ socket.on('data', onData);
+ socket.on('error', failAll);
+ socket.on('close', () => { if (!closed) failAll(new Error('SMTP connection closed')); });
+}
+function readResponse() {
+if (responses.length) return Promise.resolve(responses.shift());
+if (closed) return Promise.reject(new Error('SMTP connection closed'));
+return new Promise((resolve, reject) => waiters.push({ resolve, reject }));
+}
+async function command(line) {
+if (line != null) socket.write(`${line}\r\n`);
+return readResponse();
+}
+function expect(res, codes, label) {
+if (!codes.includes(res.code)) throw new Error(`${label} failed: ${res.text}`);
+return res;
+}
+await new Promise((resolve, reject) => {
+const creator = config.secure ? tls.connect : net.connect;
+const options = config.secure ? { host: config.host, port: config.port, servername: config.host, rejectUnauthorized: config.rejectUnauthorized } : { host: config.host, port: config.port };
+const s = creator(options, resolve);
+attach(s);
+setTimeout(() => reject(new Error('SMTP connect timed out')), 15_000).unref?.();
+});
+try {
+expect(await readResponse(), [220], 'SMTP greeting');
+let ehlo = await command(`EHLO ${requestHost({ headers: { host: 'nv0.kr' }, socket: { remoteAddress: '127.0.0.1' } }) || 'nv0.kr'}`);
+if (![250].includes(ehlo.code)) ehlo = await command('HELO nv0.kr');
+expect(ehlo, [250], 'SMTP EHLO');
+if (!config.secure && config.starttls && /STARTTLS/i.test(ehlo.text)) {
+expect(await command('STARTTLS'), [220], 'SMTP STARTTLS');
+const upgraded = tls.connect({ socket, servername: config.host, rejectUnauthorized: config.rejectUnauthorized });
+await new Promise((resolve, reject) => { upgraded.once('secureConnect', resolve); upgraded.once('error', reject); });
+attach(upgraded);
+expect(await command('EHLO nv0.kr'), [250], 'SMTP EHLO after STARTTLS');
+}
+if (config.user || config.pass) {
+const authPlain = Buffer.from(`\0${config.user}\0${config.pass}`).toString('base64');
+const auth = await command(`AUTH PLAIN ${authPlain}`);
+if (auth.code !== 235) {
+expect(await command('AUTH LOGIN'), [334], 'SMTP AUTH LOGIN');
+expect(await command(Buffer.from(config.user).toString('base64')), [334], 'SMTP AUTH USER');
+expect(await command(Buffer.from(config.pass).toString('base64')), [235], 'SMTP AUTH PASS');
+}
+}
+expect(await command(`MAIL FROM:<${config.from}>`), [250], 'SMTP MAIL FROM');
+for (const recipient of recipients) expect(await command(`RCPT TO:<${recipient}>`), [250, 251], 'SMTP RCPT TO');
+expect(await command('DATA'), [354], 'SMTP DATA');
+socket.write(smtpMessage({ from: config.from, to: recipients.join(','), subject, body, messageId: uid('smtp') }) + '\r\n.\r\n');
+expect(await readResponse(), [250], 'SMTP message body');
+await command('QUIT').catch(() => null);
+return { ok: true, host: config.host, port: config.port, secure: config.secure, recipients: recipients.length, from: maskEmail(config.from) };
+} finally {
+closed = true;
+try { socket.end(); } catch {}
+}
+}
 async function processEmailOutbox(db, { dryRun = true, limit = 20 } = {}) {
 const due = dueEmailItems(db, limit);
 const results = [];
 for (const item of due) {
 if (dryRun) {
-markEmailAttempt(item, { ok: true });
-item.deliveryMode = 'dry_run';
-results.push({ id: item.id, ok: true, mode: item.deliveryMode });
+item.deliveryMode = 'dry_run_preview';
+results.push({ id: item.id, ok: true, mode: item.deliveryMode, to: maskEmail(item.to), subject: item.subject });
 } else if (!process.env.NV0_SMTP_URL) {
 markEmailAttempt(item, { ok: false, error: 'NV0_SMTP_URL is not configured' });
 item.deliveryMode = 'blocked_no_smtp_url';
 results.push({ id: item.id, ok: false, error: item.lastError });
 } else {
-markEmailAttempt(item, { ok: false, error: 'SMTP live-send adapter must be connected in deployment environment' });
-item.deliveryMode = 'blocked_no_live_adapter';
+try {
+const sent = await sendSmtpMail({ to: item.to, subject: item.subject, body: item.body });
+markEmailAttempt(item, { ok: true });
+item.deliveryMode = 'smtp_live';
+item.smtp = sent;
+results.push({ id: item.id, ok: true, mode: item.deliveryMode, smtp: sent });
+} catch (error) {
+markEmailAttempt(item, { ok: false, error: error.message });
+item.deliveryMode = 'smtp_live_failed';
 results.push({ id: item.id, ok: false, error: item.lastError });
 }
 }
-return { ok: true, processed: results.length, results };
+}
+return { ok: true, dryRun, processed: results.length, results };
 }
 function cleanupIdempotencyKeys(db) {
 db.idempotencyKeys ||= [];
@@ -722,36 +866,81 @@ if (!ADMIN_IP_ALLOWLIST.length) return true;
 const ip = clientIp(req);
 return ADMIN_IP_ALLOWLIST.includes(ip);
 }
+function xmlEscape(value = '') {
+return String(value ?? '').replace(/[<>&'"]/g, ch => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', "'": '&apos;', '"': '&quot;' }[ch]));
+}
+function seoBaseUrl() {
+return BUSINESS_PROFILE.domain.replace(/\/$/, '') || 'https://nv0.kr';
+}
+function lastmodDate(value) {
+const parsed = value ? new Date(value) : new Date();
+if (Number.isNaN(parsed.getTime())) return new Date().toISOString().slice(0, 10);
+return parsed.toISOString().slice(0, 10);
+}
 function buildRobotsTxt() {
+const base = seoBaseUrl();
 return [
 'User-agent: *',
 'Allow: /',
+'Allow: /apps/public/',
+'Allow: /shared/',
+'Disallow: /admin',
 'Disallow: /auth',
 'Disallow: /portal',
 'Disallow: /checkout',
-'Disallow: /admin',
-`Sitemap: ${BUSINESS_PROFILE.domain.replace(/\/$/, '')}/sitemap.xml`,
+'Disallow: /runtime',
+'Disallow: /api/',
+'Allow: /api/public/health',
+'Allow: /api/public/board',
+'Allow: /api/public/plans',
+'Allow: /api/public/smart-product',
+`Sitemap: ${base}/sitemap.xml`,
+`Sitemap: ${base}/feed.xml`,
 ''
 ].join('\n');
 }
-function buildSitemapXml() {
-const base = BUSINESS_PROFILE.domain.replace(/\/$/, '');
-const entries = [
-{ path: '/', priority: '1.0', changefreq: 'weekly' },
-{ path: '/products/veridion/demo', priority: '0.95', changefreq: 'weekly' },
-{ path: '/plans', priority: '0.9', changefreq: 'weekly' },
-{ path: '/board', priority: '0.85', changefreq: 'daily' },
-{ path: '/documents', priority: '0.82', changefreq: 'weekly' },
-{ path: '/guides', priority: '0.75', changefreq: 'weekly' },
-{ path: '/resources', priority: '0.72', changefreq: 'weekly' },
-{ path: '/solutions', priority: '0.72', changefreq: 'weekly' },
-{ path: '/terms', priority: '0.45', changefreq: 'monthly' },
-{ path: '/privacy', priority: '0.45', changefreq: 'monthly' },
-{ path: '/refund', priority: '0.45', changefreq: 'monthly' },
-{ path: '/business-info', priority: '0.55', changefreq: 'monthly' }
+function publicSitemapEntries(db = {}) {
+const today = new Date().toISOString().slice(0, 10);
+const staticEntries = [
+{ path: '/', priority: '1.0', changefreq: 'weekly', lastmod: today },
+{ path: '/products/veridion/demo', priority: '0.95', changefreq: 'weekly', lastmod: today },
+{ path: '/plans', priority: '0.9', changefreq: 'weekly', lastmod: today },
+{ path: '/board', priority: '0.85', changefreq: 'daily', lastmod: today },
+{ path: '/documents', priority: '0.82', changefreq: 'weekly', lastmod: today },
+{ path: '/guides', priority: '0.78', changefreq: 'weekly', lastmod: today },
+{ path: '/resources', priority: '0.72', changefreq: 'weekly', lastmod: today },
+{ path: '/solutions', priority: '0.74', changefreq: 'weekly', lastmod: today },
+{ path: '/terms', priority: '0.45', changefreq: 'monthly', lastmod: today },
+{ path: '/privacy', priority: '0.45', changefreq: 'monthly', lastmod: today },
+{ path: '/refund', priority: '0.45', changefreq: 'monthly', lastmod: today },
+{ path: '/business-info', priority: '0.55', changefreq: 'monthly', lastmod: today }
 ];
-const urls = entries.map(item => `<url><loc>${base}${item.path}</loc><changefreq>${item.changefreq}</changefreq><priority>${item.priority}</priority></url>`).join('');
+return staticEntries;
+}
+function buildSitemapXml(db = {}) {
+const base = seoBaseUrl();
+const seen = new Set();
+const urls = publicSitemapEntries(db).filter(item => item.path && !seen.has(item.path) && seen.add(item.path)).map(item => `<url><loc>${xmlEscape(base + item.path)}</loc><lastmod>${xmlEscape(item.lastmod || lastmodDate())}</lastmod><changefreq>${xmlEscape(item.changefreq)}</changefreq><priority>${xmlEscape(item.priority)}</priority></url>`).join('');
 return `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}</urlset>`;
+}
+function feedItems(db = {}) {
+const rows = [...(db.publications || []), ...(db.boards || [])]
+.filter(item => item && typeof item === 'object')
+.filter(item => item.status === 'published' || item.autoPublished || item.boardType === 'cta' || item.type === 'cta')
+.sort((a, b) => String(b.createdAt || b.rewrittenAt || '').localeCompare(String(a.createdAt || a.rewrittenAt || '')))
+.slice(0, 30);
+return rows;
+}
+function buildFeedXml(db = {}) {
+const base = seoBaseUrl();
+const items = feedItems(db).map((item, index) => {
+const title = xmlEscape(item.title || `NV0 운영 글 ${index + 1}`);
+const summary = xmlEscape(item.summary || item.seo?.metaDescription || stripHtml(item.body || '').slice(0, 240));
+const pubDate = new Date(item.createdAt || item.rewrittenAt || Date.now()).toUTCString();
+const guid = xmlEscape(item.id ? `${base}/board#${item.id}` : `${base}/board#item-${index + 1}`);
+return `<item><title>${title}</title><link>${xmlEscape(base + '/board')}</link><guid isPermaLink="false">${guid}</guid><description>${summary}</description><pubDate>${pubDate}</pubDate></item>`;
+}).join('');
+return `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>NV0 쉬운 사이트 점검 글</title><link>${xmlEscape(base + '/board')}</link><description>고객이 이해하기 쉬운 사이트 점검 글과 운영 가이드입니다.</description><language>ko-KR</language><lastBuildDate>${new Date().toUTCString()}</lastBuildDate>${items}</channel></rss>`;
 }
 function createPasswordResetToken(db, customer, req) {
 db.passwordResetTokens ||= [];
@@ -898,17 +1087,17 @@ function escapeHtml(value = '') {
 return String(value ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
 }
 function routeMeta(urlPath) {
-const base = BUSINESS_PROFILE.domain.replace(/\/$/, '');
+const base = seoBaseUrl();
 const metas = {
-'/': { title: '웹사이트 필수 안내 무료 진단 | NV0', description: '쇼핑몰과 랜딩페이지의 사업자 정보, 개인정보처리방침, 환불 안내, 광고 문구, CTA 흐름을 무료로 점검하고 개선 순서를 확인하세요.', keywords: ['웹사이트 무료 진단','쇼핑몰 신뢰도 점검','환불 정책 점검','개인정보처리방침 점검','CTA 개선'] },
-'/products/veridion/demo': { title: 'NV0 무료 진단 | 웹사이트 신뢰·전환 공백 점검', description: 'URL 하나로 결제 전 신뢰 공백, 정책 안내 누락, CTA 전환 흐름을 즉시 요약 진단합니다. 전체 결과와 저장은 로그인 후 이용합니다.', keywords: ['무료 사이트 진단','결제 전 이탈 점검','랜딩페이지 점검','신뢰 공백 진단'] },
-'/plans': { title: '상품·요금 | NV0 리포트·FixPack·Auto 비교', description: '무료 진단 이후 상세 리포트, 수정 문구안, 정책 템플릿, Auto 정기 점검 상품을 상황별로 비교하세요.', keywords: ['사이트 진단 요금','FixPack','Auto 정기 점검','정책 문서 템플릿'] },
-'/documents': { title: '정책 문서 초안 | 개인정보·이용약관·환불 안내 생성', description: '개인정보처리방침, 이용약관, 환불·배송·교환 정책, 사업자 고지, CS 안내문 초안을 최소 입력으로 생성합니다.', keywords: ['정책 문서 생성','개인정보처리방침 초안','이용약관 초안','환불 정책 초안'] },
-'/policy-documents': { title: '정책 문서 초안 | 개인정보·이용약관·환불 안내 생성', description: '개인정보처리방침, 이용약관, 환불·배송·교환 정책, 사업자 고지, CS 안내문 초안을 최소 입력으로 생성합니다.', keywords: ['정책 문서 생성','개인정보처리방침 초안','이용약관 초안','환불 정책 초안'] },
-'/guides': { title: '운영 가이드 | 쇼핑몰 신뢰도·CTA·정책 점검', description: '쇼핑몰 신뢰도, 환불 정책, 구매 CTA, 게시판 자동 발행, 반복 재진단 활용법을 정리한 운영 가이드입니다.' },
-'/resources': { title: '운영 가이드 | 쇼핑몰 신뢰도·CTA·정책 점검', description: '쇼핑몰 신뢰도, 환불 정책, 구매 CTA, 게시판 자동 발행, 반복 재진단 활용법을 정리한 운영 가이드입니다.' },
-'/solutions': { title: '솔루션 | 웹사이트 안내 고지·정책 문서·전환 흐름 점검', description: '웹사이트 필수 고지, 정책 문서, 결제 전환 흐름, 고객지원 안내를 한 번에 점검하는 NV0 솔루션입니다.' },
-'/board': { title: 'CTA 게시판 | 자동 발행 콘텐츠·SEO 운영 파이프라인', description: '진단 결과를 FAQ, 체크리스트, 사례, 정책 안내, 내부링크형 콘텐츠로 자동 발행해 재유입과 상품 비교 흐름을 강화합니다.' },
+'/': { title: '웹사이트 안내·정책 무료 점검 | NV0', description: '쇼핑몰과 서비스 페이지에서 고객이 꼭 확인하는 사업자 정보, 개인정보 안내, 환불 기준, 문의 버튼, 가격 안내를 쉽게 점검합니다.', keywords: ['웹사이트 무료 점검','쇼핑몰 신뢰도 점검','환불 안내 점검','개인정보 안내 점검','문의 버튼 개선'] },
+'/products/veridion/demo': { title: 'NV0 무료 진단 | 웹사이트 신뢰 안내 점검', description: '사이트 주소로 고객이 결제나 문의 전에 헷갈릴 수 있는 안내 공백을 확인하고, 먼저 고칠 부분을 쉽게 정리합니다.', keywords: ['무료 사이트 진단','웹사이트 신뢰 점검','문의 구매 흐름 점검','쇼핑몰 안내 점검'] },
+'/plans': { title: '상품·요금 | NV0 리포트·FixPack·Auto 비교', description: '무료 진단 이후 상세 리포트, 바로 붙여넣는 수정 문구, 정기 점검 상품을 상황별로 비교합니다.', keywords: ['사이트 진단 요금','FixPack','Auto 정기 점검','정책 문서 템플릿'] },
+'/documents': { title: '정책 문서 초안 | 개인정보·이용약관·환불 안내 생성', description: '개인정보처리방침, 이용약관, 환불·배송·교환 정책, 사업자 고지, 고객 안내문 초안을 최소 입력으로 생성합니다.', keywords: ['정책 문서 생성','개인정보처리방침 초안','이용약관 초안','환불 정책 초안'] },
+'/policy-documents': { title: '정책 문서 초안 | 개인정보·이용약관·환불 안내 생성', description: '개인정보처리방침, 이용약관, 환불·배송·교환 정책, 사업자 고지, 고객 안내문 초안을 최소 입력으로 생성합니다.', keywords: ['정책 문서 생성','개인정보처리방침 초안','이용약관 초안','환불 정책 초안'] },
+'/guides': { title: '운영 가이드 | 쇼핑몰 신뢰도·정책 안내 점검', description: '쇼핑몰 신뢰도, 환불 정책, 구매 안내 버튼, 게시판 자동 발행, 반복 재진단 활용법을 쉬운 말로 정리한 운영 가이드입니다.' },
+'/resources': { title: '운영 가이드 | 쇼핑몰 신뢰도·정책 안내 점검', description: '쇼핑몰 신뢰도, 환불 정책, 구매 안내 버튼, 게시판 자동 발행, 반복 재진단 활용법을 쉬운 말로 정리한 운영 가이드입니다.' },
+'/solutions': { title: '솔루션 | 웹사이트 안내 고지·정책 문서·문의 흐름 점검', description: '웹사이트 필수 고지, 정책 문서, 결제 전 안내, 고객지원 안내를 한 번에 점검하는 NV0 솔루션입니다.' },
+'/board': { title: '운영 게시판 | 쉬운 사이트 점검 글 자동 발행', description: '진단 결과를 자주 묻는 질문, 체크리스트, 사례, 정책 안내, 관련 링크형 글로 쉽게 풀어 재방문과 상품 비교 흐름을 돕습니다.' },
 '/business-info': { title: '사업자 정보·고객지원 | NV0', description: 'NV0 서비스 운영자의 사업자 정보, 고객지원 이메일, 서비스 범위, 법률 자문 아님 고지를 확인하세요.' },
 '/terms': { title: '이용약관 | NV0', description: 'NV0 서비스 이용약관과 서비스 범위 기준입니다.' },
 '/privacy': { title: '개인정보처리방침 | NV0', description: 'NV0 서비스의 개인정보 처리 기준과 입력 정보 최소화 원칙입니다.' },
@@ -932,13 +1121,18 @@ return body
 }
 function injectSeoMeta(body, urlPath) {
 const meta = routeMeta(urlPath);
-const robots = urlPath.startsWith('/admin') || ['/auth','/portal','/checkout'].includes(urlPath) ? 'noindex,nofollow' : 'index,follow';
+const privateRoute = urlPath.startsWith('/admin') || ['/auth','/portal','/checkout'].includes(urlPath);
+const robots = privateRoute ? 'noindex,nofollow,noarchive' : 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1';
 const keywords = (meta.keywords || []).join(', ');
 const tags = [
 `<meta name="description" content="${escapeHtml(meta.description)}">`,
 keywords ? `<meta name="keywords" content="${escapeHtml(keywords)}">` : '',
 `<meta name="robots" content="${robots}">`,
+`<meta name="googlebot" content="${robots}">`,
+`<meta name="naverbot" content="${robots}">`,
 `<link rel="canonical" href="${escapeHtml(meta.canonical)}">`,
+`<link rel="sitemap" type="application/xml" href="${escapeHtml(seoBaseUrl() + '/sitemap.xml')}">`,
+`<link rel="alternate" type="application/rss+xml" title="NV0 쉬운 사이트 점검 글" href="${escapeHtml(seoBaseUrl() + '/feed.xml')}">`,
 `<meta property="og:locale" content="${escapeHtml(meta.locale)}">`,
 `<meta property="og:type" content="website">`,
 `<meta property="og:site_name" content="NV0">`,
@@ -954,21 +1148,47 @@ let out = stripManagedSeoTags(body).replace(/<title>[^<]*<\/title>/, `<title>${e
 out = out.replace('</head>', `${tags}</head>`);
 return out;
 }
+function pageFaqStructuredData(urlPath) {
+const faqMap = {
+'/': [
+['NV0는 무엇을 점검하나요?', '고객이 문의하거나 결제하기 전에 확인하는 사업자 정보, 개인정보 안내, 환불 기준, 문의 버튼, 가격 안내를 쉽게 점검합니다.'],
+['무료 진단 후 무엇을 보면 되나요?', '위험도가 높은 항목과 먼저 고칠 안내 문구를 확인한 뒤 필요한 상품을 비교하면 됩니다.']
+],
+'/products/veridion/demo': [
+['무료 진단은 무엇을 보여주나요?', '사이트의 신뢰 안내 공백과 먼저 고칠 부분을 요약해서 보여줍니다.'],
+['로그인하면 무엇이 달라지나요?', '전체 결과 저장, 내 사이트 관리, 재검사 흐름을 이용할 수 있습니다.']
+],
+'/plans': [
+['어떤 상품을 먼저 선택해야 하나요?', '먼저 무료 진단을 보고, 근거가 필요하면 상세 리포트, 바로 붙여넣을 문구가 필요하면 FixPack, 반복 관리가 필요하면 Auto를 비교하면 됩니다.'],
+['결제 전 어떤 내용을 확인해야 하나요?', '제공 범위, 디지털 산출물 제공 시점, 환불 제한, 고객지원 경로를 확인해야 합니다.']
+],
+'/board': [
+['게시판 글은 어떤 역할을 하나요?', '진단 결과를 고객이 이해하기 쉬운 말로 풀어 재방문과 상품 비교를 돕습니다.'],
+['글이 어렵지 않게 작성되나요?', '중학생도 이해할 수 있는 쉬운 문장과 자주 묻는 질문 중심으로 작성됩니다.']
+]
+};
+return faqMap[urlPath] || [];
+}
 function buildStructuredData(urlPath) {
 if (urlPath.startsWith('/admin') || ['/auth','/portal','/checkout'].includes(urlPath)) return '';
-const base = BUSINESS_PROFILE.domain.replace(/\/$/, '');
+const base = seoBaseUrl();
 const meta = routeMeta(urlPath);
 const pageUrl = `${base}${urlPath === '/' ? '/' : urlPath}`;
 const graph = [
 { '@type': 'Organization', '@id': `${base}/#organization`, name: BUSINESS_PROFILE.tradeName, url: base, email: BUSINESS_PROFILE.contactEmail },
-{ '@type': 'WebSite', '@id': `${base}/#website`, name: 'NV0', url: base, inLanguage: 'ko-KR', publisher: { '@id': `${base}/#organization` } },
+{ '@type': 'WebSite', '@id': `${base}/#website`, name: 'NV0', url: base, inLanguage: 'ko-KR', publisher: { '@id': `${base}/#organization` }, potentialAction: { '@type': 'SearchAction', target: `${base}/board?q={search_term_string}`, 'query-input': 'required name=search_term_string' } },
 { '@type': 'SoftwareApplication', '@id': `${base}/#software`, name: 'NV0', applicationCategory: 'BusinessApplication', operatingSystem: 'Web', url: base, description: meta.description, offers: { '@type': 'Offer', priceCurrency: 'KRW', price: '0', availability: 'https://schema.org/InStock' }, provider: { '@id': `${base}/#organization` } },
-{ '@type': 'WebPage', '@id': `${pageUrl}#webpage`, url: pageUrl, name: meta.title, description: meta.description, isPartOf: { '@id': `${base}/#website` }, about: { '@id': `${base}/#software` }, inLanguage: 'ko-KR' },
+{ '@type': 'Service', '@id': `${base}/#service`, name: '웹사이트 안내·정책 점검', serviceType: 'Website trust and policy guidance check', provider: { '@id': `${base}/#organization` }, areaServed: 'KR', audience: { '@type': 'Audience', audienceType: '온라인 사업자' } },
+{ '@type': 'WebPage', '@id': `${pageUrl}#webpage`, url: pageUrl, name: meta.title, description: meta.description, isPartOf: { '@id': `${base}/#website` }, about: { '@id': `${base}/#software` }, inLanguage: 'ko-KR', dateModified: new Date().toISOString().slice(0, 10) },
 { '@type': 'BreadcrumbList', '@id': `${pageUrl}#breadcrumb`, itemListElement: [
 { '@type': 'ListItem', position: 1, name: '홈', item: `${base}/` },
 ...(urlPath === '/' ? [] : [{ '@type': 'ListItem', position: 2, name: meta.title.replace(/\s*\|\s*NV0.*/, ''), item: pageUrl }])
 ] }
 ];
+const faqs = pageFaqStructuredData(urlPath);
+if (faqs.length) {
+graph.push({ '@type': 'FAQPage', '@id': `${pageUrl}#faq`, mainEntity: faqs.map(([name, answer]) => ({ '@type': 'Question', name, acceptedAnswer: { '@type': 'Answer', text: answer } })) });
+}
 return `<script type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }).replace(/<\//g, '<\\/')}</script>`;
 }
 function injectStructuredData(body, urlPath) {
@@ -987,12 +1207,12 @@ return `<a class="skip-link" href="#main">본문 바로가기</a><nav class="sit
 <div class="site-menu">
 <a href="/products/veridion/demo"${navAttrs(urlPath, '/products/veridion/demo')}>무료 진단</a>
 <a href="/portal"${navAttrs(urlPath, '/portal')}>내 사이트</a>
-<a href="/board"${navAttrs(urlPath, '/board')}>CTA 게시판</a>
+<a href="/board"${navAttrs(urlPath, '/board')}>운영 게시판</a>
 <a href="/plans"${navAttrs(urlPath, '/plans')}>요금제</a>
 <a href="/documents"${navAttrs(urlPath, '/documents')}>문서 생성</a>
 <a href="/business-info"${navAttrs(urlPath, '/business-info')}>고객지원</a>
 <a href="/auth"${navAttrs(urlPath, '/auth', 'login-link')}>로그인</a>
-<a href="/products/veridion/demo" class="cta">무료 시작</a>
+<a href="/products/veridion/demo" class="cta">진단 시작</a>
 </div>
 </nav>`;
 }
@@ -1411,12 +1631,12 @@ type: asTrimmedString(body.type || 'document', { field: 'type', enumValues: ['do
 };
 }
 function buildPolicyDocumentPreview(payload = {}, settings = {}) {
-const businessName = String(payload.businessName || payload.siteName || payload.companyName || '상호 미입력').trim();
-const representative = String(payload.representative || payload.ownerName || '대표자 미입력').trim();
+const businessName = String(payload.businessName || payload.siteName || payload.companyName || '입력한 상호').trim();
+const representative = String(payload.representative || payload.ownerName || '대표자 또는 책임자').trim();
 const domain = String(payload.domain || payload.target || '').trim() || 'example.com';
 const contactEmail = String(payload.contactEmail || payload.email || settings.supportEmail || 'ct@nv0.kr').trim();
-const phone = String(payload.phone || payload.contactPhone || '고객센터 미입력').trim();
-const address = String(payload.address || '사업장 주소 미입력').trim();
+const phone = String(payload.phone || payload.contactPhone || '').trim();
+const address = String(payload.address || '').trim();
 const refundWindowDays = Number(payload.refundWindowDays || 7);
 const shippingLeadDays = Number(payload.shippingLeadDays || 3);
 const collectsPersonalData = payload.collectsPersonalData !== false;
@@ -1527,25 +1747,25 @@ if (riskScore >= 50) return 'Pro';
 return 'Basic';
 }
 function buildCommercialOfferCatalog() {
-const kpiPublicUiRemoved = true; // kpi field intentionally hidden from public pages.
 const commonAssurance = ['법률 자문이 아닌 운영 참고용 점검 결과입니다.', '결제 후 내 사이트 관리에서 결과 확인', '가격의 3배 구성 가치 기준으로 제공합니다.', 'ct@nv0.kr 문의 연결'];
+const kpi = ['신뢰 안내 보강률', '문의·구매 흐름 개선 항목 수', '재점검 시 남은 고위험 항목 수'];
 return [
-{ code: 'Report', group: 'one_time', title: '상세 리포트', price: 69000, period: '1회', priority: 1, summary: '무료 진단 결과를 더 자세한 리포트로 확장합니다. 위험 항목, 근거, 우선순위, 개선 순서를 한 번에 확인할 수 있습니다.', targetCustomer: '쇼핑몰·랜딩페이지 담당자, 1인 사업자, 외주 제작 완료 후 점검이 필요한 고객', deliverables: ['위험도 점수 해설', '전체 탐지 근거', '페이지별 우선 조치 목록', '공유용 리포트 본문', '재점검 체크리스트', 'FAQ·CTA 요약'], operations: ['결제 확인 후 내 사이트 관리에서 결과 확인', '진단 이력이 없을 경우 기본 점검 양식으로 제공', ...commonAssurance], benefits: ['위험 항목의 근거와 우선순위를 더 명확하게 확인', '개선 순서를 정리해 바로 조치 가능'], cta: '상세 리포트 신청', referencePrice: 100000, valuePackWorth: 207000, marketPosition: '30% 경쟁가', valueStandard: '3x 구성가치' },
-{ code: 'FixPack', group: 'one_time', title: '수정 문구안', price: 99000, period: '1회', priority: 2, summary: '탐지 항목별로 사이트에 바로 반영 가능한 고지·약관·환불·광고 문구 초안을 제공합니다.', targetCustomer: '사이트 안내 문구를 먼저 정리해야 하는 소상공인·마케터', deliverables: ['푸터 사업자 고지 문안', '환불·교환 안내 문구', '개인정보/약관 노출 가이드', '광고 표현 리스크 완화안', '수정 전/후 예시', 'FAQ·CTA 문구'], operations: ['우선순위가 높은 문구안부터 제공', '주의가 필요한 표현은 별도 표시', ...commonAssurance], benefits: ['사이트에 반영하기 쉬운 문구 예시 제공', '고객 오해 가능성이 있는 표현을 완화'], cta: '수정 문구안 받기', referencePrice: 150000, valuePackWorth: 297000, marketPosition: '30% 경쟁가', valueStandard: '3x 구성가치' },
-{ code: 'TemplatePack', group: 'one_time', title: '법률 문서 템플릿 팩', price: 69000, period: '1회', priority: 3, summary: '이용약관, 개인정보처리방침, 환불 정책 기본 템플릿을 묶어 제공합니다.', targetCustomer: '신규 사이트 오픈 전 필수 문서가 필요한 고객', deliverables: ['이용약관 템플릿', '개인정보처리방침 템플릿', '환불·배송·교환 정책', '필수 고지 체크리스트', '정기결제 고지 문구', '정책 섹션'], operations: ['문서 화면에서 입력한 정보 활용', '입력한 사업자 정보 기준으로 기본 문안 제공', ...commonAssurance], benefits: ['필수 문서를 빠르게 준비', '신규 사이트 오픈 전 기본 안내 정리'], cta: '템플릿 팩 구매', referencePrice: 100000, valuePackWorth: 207000, marketPosition: '30% 경쟁가', valueStandard: '3x 구성가치' },
-{ code: 'IndustryGuide', group: 'one_time', title: '업종별 규제 가이드', price: 99000, period: '1회', priority: 4, summary: '쇼핑몰·건기식·화장품·교육·의료 광고 등 업종별 표현 리스크와 필수 고지를 정리합니다.', targetCustomer: '광고 문구와 상세페이지 표현 리스크가 큰 업종 고객', deliverables: ['업종별 금지·주의 표현', '필수 고지 위치', '상세페이지 체크리스트', '광고 문구 점검표', '사전 검수 기준', 'FAQ·CTA 표현'], operations: ['업종 정보에 맞춰 주요 항목 제공', '업종이 정해지지 않은 경우 공통 가이드 제공', ...commonAssurance], benefits: ['업종별 주의 표현을 사전에 확인', '상세페이지와 광고 문구 점검에 활용'], cta: '업종 가이드 받기', referencePrice: 150000, valuePackWorth: 297000, marketPosition: '30% 경쟁가', valueStandard: '3x 구성가치' },
-{ code: 'Basic', group: 'subscription', title: 'Basic 모니터링', price: 99000, period: '월', priority: 5, summary: '소규모 사이트의 월 1회 리스크 재점검과 기본 이력 확인을 제공합니다.', targetCustomer: '월 1회 정기 점검만 필요한 소규모 사이트 고객', deliverables: ['월 1회 재점검', '전체 탐지 항목 해금', '기본 정책 초안', '이력 저장', '이메일 알림', '월간 요약 리포트'], operations: ['신청 후 사이트 이력 확인 가능', '월간 점검 알림 제공', ...commonAssurance], benefits: ['월 1회 정기 점검으로 변경 사항 확인', '이력 저장으로 이전 결과와 비교 가능'], cta: 'Basic 시작', referencePrice: 140000, valuePackWorth: 297000, marketPosition: '30% 경쟁가', valueStandard: '3x 구성가치' },
-{ code: 'Pro', group: 'subscription', title: 'Pro 정기 개선', price: 199000, period: '월', priority: 6, summary: '정밀 리포트, 수정 문구안, 법령 변경 알림을 포함한 추천 플랜입니다.', targetCustomer: '사이트 주문·문의가 발생하고 반복 점검이 필요한 고객', deliverables: ['Basic 전체 포함', '정밀 리포트 포함', '수정 문구안', '법령 변경 알림', '재점검 및 개선 추적', '전환용 CTA 포스팅 초안'], operations: ['결제 확인 후 Pro 결과 제공', '다음 조치 항목을 우선순위로 표시', ...commonAssurance], benefits: ['정밀 리포트와 수정 문구안을 함께 확인', '다음 조치 항목을 우선순위로 정리'], cta: 'Pro 시작', referencePrice: 290000, valuePackWorth: 597000, marketPosition: '30% 경쟁가', valueStandard: '3x 구성가치' },
-{ code: 'Auto', group: 'subscription', title: 'Auto 정기 케어', price: 299000, period: '월', priority: 7, summary: '반복 점검, 고객 안내 인사이트, 게시판 자동 발행으로 사이트 신뢰 관리를 돕습니다.', targetCustomer: '여러 캠페인·랜딩페이지를 꾸준히 점검해야 하는 팀', deliverables: ['Pro 전체 포함', '정기 고객 안내 인사이트', '게시판 자동 발행 상태', '승인 후 반영할 수 있는 수정 후보', '고위험 항목 우선 알림', '내 사이트 관리 대시보드', 'CTA 포스팅'], operations: ['정기 점검 결과 제공', '수정 후보는 확인 후 사용할 수 있도록 제공', ...commonAssurance], benefits: ['반복 점검 부담 완화', '게시판이 비어 보이지 않도록 운영감 유지', '여러 랜딩페이지의 고위험 항목을 우선 확인'], cta: 'Auto 시작', referencePrice: 450000, valuePackWorth: 897000, marketPosition: '30% 경쟁가', valueStandard: '3x 구성가치' },
-{ code: 'Certified', group: 'annual', title: 'NV0 Certified', price: 199000, period: '연', priority: 8, summary: '점검 완료 사이트에 신뢰 인증 마크와 공개 인증 페이지를 제공합니다.', targetCustomer: '구매 전 신뢰 표시가 필요한 쇼핑몰·B2B 랜딩페이지', deliverables: ['인증 마크 스니펫', '공개 인증 페이지', '연 1회 재검토', '인증 만료일 표기', '고객 신뢰 요소', '인증 안내 FAQ·CTA 문구'], operations: ['인증 검토 진행 상태 제공', '검토 완료 후 사용할 수 있는 표시 제공', ...commonAssurance], benefits: ['구매 전 신뢰 요소로 활용', '점검 완료 여부를 외부에 명확히 표시'], cta: '인증 신청', referencePrice: 290000, valuePackWorth: 597000, marketPosition: '30% 경쟁가', valueStandard: '3x 구성가치' },
-{ code: 'Agency', group: 'b2b', title: '대행사 리포트 패키지', price: 399000, period: '월', priority: 9, summary: '광고대행사·웹에이전시가 고객사 리스크 리포트를 반복 생성할 수 있는 패키지입니다.', targetCustomer: '고객사 사이트를 제작·지원하는 에이전시와 퍼포먼스 마케팅사', deliverables: ['고객사별 리포트', '고객사 제출용 문구 영역', '월 10개 도메인 기준', '고객 안내 인사이트 제공', '대행사 맞춤 안내 문구', '고객사 CTA 포스팅'], operations: ['서비스 신청 후 고객사별 리포트 구성 지원', '고객사별 결과를 구분해 확인 가능', ...commonAssurance], benefits: ['고객사별 리포트 제공에 활용', '여러 도메인의 점검 결과를 구분해 관리'], cta: '대행사 패키지 시작', referencePrice: 600000, valuePackWorth: 1197000, marketPosition: '30% 경쟁가', valueStandard: '3x 구성가치' }
+{ code: 'Report', group: 'one_time', title: '상세 리포트', price: 69000, period: '1회', priority: 1, summary: '무료 진단 결과를 더 자세한 리포트로 확장합니다. 위험 항목, 근거, 우선순위, 개선 순서를 한 번에 확인할 수 있습니다.', targetCustomer: '쇼핑몰·랜딩페이지 담당자, 1인 사업자, 외주 제작 완료 후 점검이 필요한 고객', deliverables: ['위험도 점수 해설', '전체 탐지 근거', '페이지별 우선 조치 목록', '공유용 리포트 본문', '재점검 체크리스트', 'FAQ·CTA 요약'], operations: ['결제 확인 후 내 사이트 관리에서 결과 확인', '진단 이력이 없을 경우 기본 점검 양식으로 제공', ...commonAssurance], benefits: ['위험 항목의 근거와 우선순위를 더 명확하게 확인', '개선 순서를 정리해 바로 조치 가능'], cta: '상세 리포트 신청', referencePrice: 100000, valuePackWorth: 207000 },
+{ code: 'FixPack', group: 'one_time', title: '수정 문구안', price: 99000, period: '1회', priority: 2, summary: '탐지 항목별로 사이트에 바로 반영 가능한 고지·약관·환불·광고 문구 초안을 제공합니다.', targetCustomer: '사이트 안내 문구를 먼저 정리해야 하는 소상공인·마케터', deliverables: ['푸터 사업자 고지 문안', '환불·교환 안내 문구', '개인정보/약관 노출 가이드', '광고 표현 리스크 완화안', '수정 전/후 예시', 'FAQ·CTA 문구'], operations: ['우선순위가 높은 문구안부터 제공', '주의가 필요한 표현은 별도 표시', ...commonAssurance], benefits: ['사이트에 반영하기 쉬운 문구 예시 제공', '고객 오해 가능성이 있는 표현을 완화'], cta: '수정 문구안 받기', referencePrice: 150000, valuePackWorth: 297000 },
+{ code: 'TemplatePack', group: 'one_time', title: '법률 문서 템플릿 팩', price: 69000, period: '1회', priority: 3, summary: '이용약관, 개인정보처리방침, 환불 정책 기본 템플릿을 묶어 제공합니다.', targetCustomer: '신규 사이트 오픈 전 필수 문서가 필요한 고객', deliverables: ['이용약관 템플릿', '개인정보처리방침 템플릿', '환불·배송·교환 정책', '필수 고지 체크리스트', '정기결제 고지 문구', '정책 섹션'], operations: ['문서 화면에서 입력한 정보 활용', '입력한 사업자 정보 기준으로 기본 문안 제공', ...commonAssurance], benefits: ['필수 문서를 빠르게 준비', '신규 사이트 오픈 전 기본 안내 정리'], cta: '템플릿 팩 구매', referencePrice: 100000, valuePackWorth: 207000 },
+{ code: 'IndustryGuide', group: 'one_time', title: '업종별 규제 가이드', price: 99000, period: '1회', priority: 4, summary: '쇼핑몰·건기식·화장품·교육·의료 광고 등 업종별 표현 리스크와 필수 고지를 정리합니다.', targetCustomer: '광고 문구와 상세페이지 표현 리스크가 큰 업종 고객', deliverables: ['업종별 금지·주의 표현', '필수 고지 위치', '상세페이지 체크리스트', '광고 문구 점검표', '사전 검수 기준', 'FAQ·CTA 표현'], operations: ['업종 정보에 맞춰 주요 항목 제공', '업종이 정해지지 않은 경우 공통 가이드 제공', ...commonAssurance], benefits: ['업종별 주의 표현을 사전에 확인', '상세페이지와 광고 문구 점검에 활용'], cta: '업종 가이드 받기', referencePrice: 150000, valuePackWorth: 297000 },
+{ code: 'Basic', group: 'subscription', title: 'Basic 모니터링', price: 99000, period: '월', priority: 5, summary: '소규모 사이트의 월 1회 리스크 재점검과 기본 이력 확인을 제공합니다.', targetCustomer: '월 1회 정기 점검만 필요한 소규모 사이트 고객', deliverables: ['월 1회 재점검', '전체 탐지 항목 해금', '기본 정책 초안', '이력 저장', '이메일 알림', '월간 요약 리포트'], operations: ['신청 후 사이트 이력 확인 가능', '월간 점검 알림 제공', ...commonAssurance], benefits: ['월 1회 정기 점검으로 변경 사항 확인', '이력 저장으로 이전 결과와 비교 가능'], cta: 'Basic 시작', referencePrice: 140000, valuePackWorth: 297000 },
+{ code: 'Pro', group: 'subscription', title: 'Pro 정기 개선', price: 199000, period: '월', priority: 6, summary: '정밀 리포트, 수정 문구안, 법령 변경 알림을 포함한 추천 플랜입니다.', targetCustomer: '사이트 주문·문의가 발생하고 반복 점검이 필요한 고객', deliverables: ['Basic 전체 포함', '정밀 리포트 포함', '수정 문구안', '법령 변경 알림', '재점검 및 개선 추적', '전환용 CTA 포스팅 초안'], operations: ['결제 확인 후 Pro 결과 제공', '다음 조치 항목을 우선순위로 표시', ...commonAssurance], benefits: ['정밀 리포트와 수정 문구안을 함께 확인', '다음 조치 항목을 우선순위로 정리'], cta: 'Pro 시작', referencePrice: 290000, valuePackWorth: 597000 },
+{ code: 'Auto', group: 'subscription', title: 'Auto 정기 케어', price: 299000, period: '월', priority: 7, summary: '반복 점검, 고객 안내 인사이트, 게시판 자동 발행으로 사이트 신뢰 관리를 돕습니다.', targetCustomer: '여러 캠페인·랜딩페이지를 꾸준히 점검해야 하는 팀', deliverables: ['Pro 전체 포함', '정기 고객 안내 인사이트', '게시판 자동 발행 상태', '승인 후 반영할 수 있는 수정 후보', '고위험 항목 우선 알림', '내 사이트 관리 대시보드', 'CTA 포스팅'], operations: ['정기 점검 결과 제공', '수정 후보는 확인 후 사용할 수 있도록 제공', ...commonAssurance], benefits: ['반복 점검 부담 완화', '게시판이 비어 보이지 않도록 운영감 유지', '여러 랜딩페이지의 고위험 항목을 우선 확인'], cta: 'Auto 시작', referencePrice: 450000, valuePackWorth: 897000 },
+{ code: 'Certified', group: 'annual', title: 'NV0 Certified', price: 199000, period: '연', priority: 8, summary: '점검 완료 사이트에 신뢰 인증 마크와 공개 인증 페이지를 제공합니다.', targetCustomer: '구매 전 신뢰 표시가 필요한 쇼핑몰·B2B 랜딩페이지', deliverables: ['인증 마크 스니펫', '공개 인증 페이지', '연 1회 재검토', '인증 만료일 표기', '고객 신뢰 요소', '인증 안내 FAQ·CTA 문구'], operations: ['인증 검토 진행 상태 제공', '검토 완료 후 사용할 수 있는 표시 제공', ...commonAssurance], benefits: ['구매 전 신뢰 요소로 활용', '점검 완료 여부를 외부에 명확히 표시'], cta: '인증 신청', referencePrice: 290000, valuePackWorth: 597000 },
+{ code: 'Agency', group: 'b2b', title: '대행사 리포트 패키지', price: 399000, period: '월', priority: 9, summary: '광고대행사·웹에이전시가 고객사 리스크 리포트를 반복 생성할 수 있는 패키지입니다.', targetCustomer: '고객사 사이트를 제작·지원하는 에이전시와 퍼포먼스 마케팅사', deliverables: ['고객사별 리포트', '고객사 제출용 문구 영역', '월 10개 도메인 기준', '고객 안내 인사이트 제공', '대행사 맞춤 안내 문구', '고객사 CTA 포스팅'], operations: ['서비스 신청 후 고객사별 리포트 구성 지원', '고객사별 결과를 구분해 확인 가능', ...commonAssurance], benefits: ['고객사별 리포트 제공에 활용', '여러 도메인의 점검 결과를 구분해 관리'], cta: '대행사 패키지 시작', referencePrice: 600000, valuePackWorth: 1197000 }
 ].sort((a, b) => a.priority - b.priority);
 }
 function getCommercialOffer(code) { return buildCommercialOfferCatalog().find(item => item.code === code) || null; }
 function buildPlanCatalog(recommendedPlan = 'Pro') {
 const offers = buildCommercialOfferCatalog();
 const free = { code: 'Free', monthlyPrice: 0, period: '무료', title: 'Free', group: 'free', summary: '체험용 무료 진단. 위험도와 주요 리스크만 간단히 확인합니다.', features: ['URL 1개 즉시 진단', '위험도 점수', '상위 위험 2개 요약', '상세 근거·페이지별 조치안 잠금', '일일 무료 3회 제한'], recommended: false };
-const paid = offers.map(offer => ({ code: offer.code, monthlyPrice: offer.price, period: offer.period, title: offer.title, group: offer.group, summary: offer.summary, features: offer.deliverables, targetCustomer: offer.targetCustomer, dailyPrice: offer.period === '월' ? Math.ceil(offer.price / 30) : 0, recommended: offer.code === recommendedPlan || (recommendedPlan === 'Pro' && offer.code === 'Pro') }));
+const paid = offers.map(offer => ({ code: offer.code, monthlyPrice: offer.price, period: offer.period, title: offer.title, group: offer.group, summary: offer.summary, features: offer.deliverables, targetCustomer: offer.targetCustomer, referencePrice: offer.referencePrice, valuePackWorth: offer.valuePackWorth, marketPosition: '약 30% 낮은 경쟁가와 실무 산출물 구성 기준', dailyPrice: offer.period === '월' ? Math.ceil(offer.price / 30) : 0, recommended: offer.code === recommendedPlan || (recommendedPlan === 'Pro' && offer.code === 'Pro') }));
 return [free, ...paid];
 }
 function planPrice(plan) {
@@ -1600,8 +1820,8 @@ fetchStatus: Number(payload?.fetchStatus || 200),
 fetchError: payload?.fetchError || null,
 industry: payload?.industry || siteProfile.industry || '일반 이커머스',
 siteProfile,
-scannedPages: Array.isArray(fetched.pages) ? fetched.pages : [],
-probeCount: fetched.probeCount || 1,
+scannedPages: Array.isArray(payload?.scannedPages) ? payload.scannedPages : (Array.isArray(payload?.pages) ? payload.pages : []),
+probeCount: Number(payload?.probeCount || (Array.isArray(payload?.scannedPages) ? payload.scannedPages.length : Array.isArray(payload?.pages) ? payload.pages.length : 1)),
 categoryScores,
 ruleVersion: payload?.ruleVersion || RULES_VERSION,
 scanMode: payload?.scanMode || 'focused_key_pages',
@@ -1771,8 +1991,15 @@ const scan = (db.scans || []).find(item => item.siteId === order.siteId) || (db.
 const industryGuide = buildIndustryGuide(scan?.industry || site?.industry || '일반 이커머스');
 const policyDocuments = buildPolicyDocumentPreview({}, db.settings || {}).documents;
 const premium = buildPremiumPurchasedAsset({ order, offer, scan, site, businessProfile: BUSINESS_PROFILE, policyDocuments, industryGuide });
+const isReportPlan = order.plan === 'Report';
+const isFixPackPlan = order.plan === 'FixPack';
+const isTemplatePackPlan = order.plan === 'TemplatePack';
+const isIndustryGuidePlan = order.plan === 'IndustryGuide';
+const isCertifiedPlan = order.plan === 'Certified';
+const assetKind = isFixPackPlan ? 'fix_pack' : isTemplatePackPlan ? 'template_pack' : isIndustryGuidePlan ? 'industry_guide' : isCertifiedPlan ? 'certification' : ['Basic','Pro','Auto','Agency'].includes(order.plan) ? 'subscription_entitlement' : isReportPlan ? 'report' : 'report';
 const base = {
 id: uid('asset'),
+assetKind,
 orderId: order.id,
 siteId: order.siteId || null,
 domain: order.domain || site?.domain || null,
@@ -1783,7 +2010,7 @@ createdAt: nowIso(),
 supportEmail: BUSINESS_PROFILE.contactEmail,
 legalDisclaimer: premium.legalDisclaimer || '본 산출물은 웹사이트 안내 리스크 점검 및 문구 개선 참고 자료이며, 개별 사건에 대한 법률 자문이 아닙니다.'
 };
-if (order.plan === 'Certified') {
+if (isCertifiedPlan) {
 return { ...base, ...premium, badgeSnippet: buildCertificationSnippet(order) };
 }
 return { ...base, ...premium };
@@ -2220,8 +2447,8 @@ return Date.now() - paidAt <= REFUND_REQUEST_WINDOW_DAYS * 24 * 60 * 60 * 1000;
 function buildReleaseReadiness(db) {
 const requiredEnv = ['NV0_PUBLIC_BASE_URL','NV0_SUPPORT_EMAIL'];
 if (PLATFORM.commercial) {
-requiredEnv.push('NV0_DATABASE_URL','NV0_REDIS_URL','NV0_TURNSTILE_SECRET','NV0_TURNSTILE_SITE_KEY','NV0_ADMIN_IP_ALLOWLIST','NV0_SMTP_URL');
-if (COMMERCIAL_LAUNCH_READY) requiredEnv.push('NV0_PORTONE_STORE_ID','NV0_PORTONE_CHANNEL_KEY','NV0_PORTONE_API_SECRET','NV0_PORTONE_WEBHOOK_SECRET','NV0_MAIL_ORDER_REGISTRATION_NUMBER');
+requiredEnv.push('NV0_DATABASE_URL','NV0_REDIS_URL','NV0_ADMIN_IP_ALLOWLIST','NV0_SMTP_URL');
+if (COMMERCIAL_LAUNCH_READY) requiredEnv.push('NV0_TURNSTILE_SECRET','NV0_TURNSTILE_SITE_KEY','NV0_PORTONE_STORE_ID','NV0_PORTONE_CHANNEL_KEY','NV0_PORTONE_API_SECRET','NV0_PORTONE_WEBHOOK_SECRET','NV0_MAIL_ORDER_REGISTRATION_NUMBER');
 }
 const missingEnv = requiredEnv.filter(name => !String(process.env[name] || '').trim());
 const placeholderEnv = PLATFORM.commercial ? requiredEnv.filter(name => isPlaceholderConfigValue(process.env[name])) : [];
@@ -2246,7 +2473,7 @@ const gates = [
 { key: 'missing_env', ok: missingEnv.length === 0, label: '필수 운영 환경변수 설정', missing: missingEnv },
 { key: 'placeholder_env_removed', ok: placeholderEnv.length === 0, label: '운영 환경변수 placeholder 제거', placeholder: placeholderEnv },
 { key: 'https_public_base_url', ok: !PLATFORM.commercial || /^https:\/\//.test(String(process.env.NV0_PUBLIC_BASE_URL || '')), label: '공개 URL HTTPS 사용' },
-{ key: 'turnstile_enabled', ok: !PLATFORM.commercial || ENABLE_TURNSTILE, label: '상용 봇 방지 Turnstile 활성화' },
+{ key: 'turnstile_enabled', ok: !COMMERCIAL_LAUNCH_READY || TURNSTILE_PUBLIC_ENABLED, label: COMMERCIAL_LAUNCH_READY ? '상용 봇 방지 Turnstile 활성화' : 'prelaunch Turnstile 선택 적용' },
 { key: 'smtp_configured', ok: !PLATFORM.commercial || !isPlaceholderConfigValue(process.env.NV0_SMTP_URL), label: '거래성 이메일 SMTP 설정' },
 { key: 'support_email', ok: isValidEmail(BUSINESS_PROFILE.contactEmail), label: '지원 이메일 유효성' },
 { key: 'operator_alert_email', ok: isValidEmail(OPERATOR_ALERT_EMAIL), label: '운영 알림 이메일 유효성' }
@@ -2261,20 +2488,23 @@ return ['replace-with', 'example.com', 'localhost', '127.0.0.1', 'changeme', 'yo
 function buildProductionLaunchChecklist(db) {
 const readiness = buildReleaseReadiness(db);
 const mustNotBePlaceholder = [
-'NV0_PUBLIC_BASE_URL','NV0_SUPPORT_EMAIL','NV0_DATABASE_URL','NV0_REDIS_URL','NV0_PORTONE_STORE_ID',
-'NV0_PORTONE_CHANNEL_KEY','NV0_PORTONE_API_SECRET','NV0_PORTONE_WEBHOOK_SECRET','NV0_TURNSTILE_SECRET',
-'NV0_TURNSTILE_SITE_KEY','NV0_ADMIN_IP_ALLOWLIST','NV0_MAIL_ORDER_REGISTRATION_NUMBER','NV0_HOSTING_PROVIDER',
+'NV0_PUBLIC_BASE_URL','NV0_SUPPORT_EMAIL','NV0_DATABASE_URL','NV0_REDIS_URL','NV0_TURNSTILE_SECRET',
+'NV0_TURNSTILE_SITE_KEY','NV0_ADMIN_IP_ALLOWLIST','NV0_HOSTING_PROVIDER',
 'NV0_PRIVACY_OFFICER_EMAIL','NV0_SMTP_URL'
 ];
+if (COMMERCIAL_LAUNCH_READY && PAYMENT_PROVIDER === 'portone_v2') {
+mustNotBePlaceholder.push('NV0_PORTONE_STORE_ID','NV0_PORTONE_CHANNEL_KEY','NV0_PORTONE_API_SECRET','NV0_PORTONE_WEBHOOK_SECRET');
+}
+if (COMMERCIAL_LAUNCH_READY) mustNotBePlaceholder.push('NV0_MAIL_ORDER_REGISTRATION_NUMBER');
 const placeholderEnv = PLATFORM.commercial ? mustNotBePlaceholder.filter(name => isPlaceholderConfigValue(process.env[name])) : [];
 const checks = [
 { key: 'release_readiness_green', ok: readiness.ready, label: '릴리즈 준비상태 게이트 통과' },
 { key: 'no_placeholder_env', ok: placeholderEnv.length === 0, label: '운영 환경변수 placeholder 제거', details: placeholderEnv },
 { key: 'production_node_env', ok: NODE_ENV === 'production' || !PLATFORM.commercial, label: 'NODE_ENV=production' },
 { key: 'https_public_base_url', ok: /^https:\/\//.test(String(process.env.NV0_PUBLIC_BASE_URL || '')) || !PLATFORM.commercial, label: '공개 URL HTTPS 사용' },
-{ key: 'turnstile_enabled', ok: ENABLE_TURNSTILE || !PLATFORM.commercial, label: '봇 방지 Turnstile 활성화' },
+{ key: 'turnstile_enabled', ok: !COMMERCIAL_LAUNCH_READY || TURNSTILE_PUBLIC_ENABLED, label: COMMERCIAL_LAUNCH_READY ? '봇 방지 Turnstile 활성화' : 'prelaunch Turnstile 선택 적용' },
 { key: 'smtp_configured', ok: !isPlaceholderConfigValue(process.env.NV0_SMTP_URL) || !PLATFORM.commercial, label: '거래성 이메일 SMTP 설정' },
-{ key: 'strict_webhook', ok: PORTONE_WEBHOOK_VERIFY_MODE === 'strict' || !PLATFORM.commercial, label: 'PortOne 웹훅 strict 검증' },
+{ key: 'strict_webhook', ok: PAYMENT_PROVIDER !== 'portone_v2' || PORTONE_WEBHOOK_VERIFY_MODE === 'strict' || !PLATFORM.commercial, label: PAYMENT_PROVIDER === 'portone_v2' ? 'PortOne 웹훅 strict 검증' : '결제 공급자 비활성/비PortOne 상태' },
 { key: 'admin_ip_allowlist', ok: ADMIN_IP_ALLOWLIST.length > 0 || !PLATFORM.commercial, label: '관리자 IP allowlist 설정' },
 { key: 'runtime_clean_enough', ok: (db.pendingJobs || []).length === 0 && (db.emailOutbox || []).filter(item => item.status === 'sending').length === 0, label: '배포 직전 런타임 미완료 작업 없음' },
 { key: 'unresolved_refunds_empty', ok: (db.refundRequests || []).filter(item => ['requested','reviewing'].includes(item.status)).length === 0, label: '미처리 환불 요청 없음' },
@@ -2438,6 +2668,8 @@ PLATFORM_TARGET: PLATFORM.target,
 COMMERCIAL_TARGET: PLATFORM.commercial,
 TRUST_PROXY_HEADERS,
 ENABLE_TURNSTILE,
+TURNSTILE_CONFIGURED,
+TURNSTILE_PUBLIC_ENABLED,
 TURNSTILE_SITE_KEY_PRESENT: !!TURNSTILE_SITE_KEY,
 TURNSTILE_SECRET_PRESENT: !!TURNSTILE_SECRET,
 PUBLIC_SCAN_LIMIT,
@@ -2460,7 +2692,10 @@ ALLOWED_ADMIN_ORIGINS,
 ADMIN_AUTH_MODE,
 ADMIN_KEY_CONFIGURED: ADMIN_KEY !== 'change-this-key',
 BOOTSTRAP_ADMIN_EMAIL_PRESENT: !!String(process.env.NV0_BOOTSTRAP_ADMIN_EMAIL || '').trim(),
-BOOTSTRAP_ADMIN_PASSWORD_PRESENT: !!String(process.env.NV0_BOOTSTRAP_ADMIN_PASSWORD || '')
+BOOTSTRAP_ADMIN_PASSWORD_PRESENT: !!String(process.env.NV0_BOOTSTRAP_ADMIN_PASSWORD || ''),
+SMTP_URL_PRESENT: !!String(process.env.NV0_SMTP_URL || '').trim(),
+SMTP_LIVE_ADAPTER: true,
+EMAIL_FROM_PRESENT: !!String(process.env.NV0_EMAIL_FROM || '').trim()
 };
 }
 async function buildOpsReport() {
@@ -2574,7 +2809,7 @@ if (ext === '.webp' && !(file.content.subarray(0, 4).toString('ascii') === 'RIFF
 return true;
 }
 async function verifyTurnstile(req, token) {
-if (!ENABLE_TURNSTILE) return { ok: true, skipped: true };
+if (!TURNSTILE_PUBLIC_ENABLED) return { ok: true, skipped: true, reason: ENABLE_TURNSTILE ? 'turnstile_not_configured_or_placeholder' : 'turnstile_disabled' };
 if (!token || typeof token !== 'string') return { ok: false, error: 'turnstile token required' };
 const form = new URLSearchParams({
 secret: TURNSTILE_SECRET,
@@ -2716,7 +2951,7 @@ if (pathname === '/healthz') {
 return json(req, res, 200, { ok: true, service: 'nv0-veridion', uptimeSec: Math.round(process.uptime()) });
 }
 if (pathname === '/api/public/diagnosis-engine' && req.method === 'GET') {
-return json(req, res, 200, { ok: true, phase: RELEASE_PHASE, engine: 'NV0 Builtin Diagnosis Engine', rulesVersion: RULES_VERSION, targetFetchEnabled: TARGET_FETCH_ENABLED, scanProvider: SCAN_PROVIDER, endpoints: { scan: 'POST /api/public/scan', diagnose: 'POST /api/public/diagnose', board: 'GET /api/public/system-items', engine: 'GET /api/public/diagnosis-engine' }, autoPublish: { boardName: '게시판', intervalMs: CTA_AUTOPUBLISH_INTERVAL_MS, intervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000), topicPackCount: ctaTopicPacks().length, combinationStats: ctaCombinationStats(), variants: ctaTopicPacks().map(item => item.headline) }, checks: buildRuleCatalog().map(({ code, category, title, severity, penaltyMax }) => ({ code, category, title, severity, penaltyMax })) });
+return json(req, res, 200, { ok: true, phase: RELEASE_PHASE, engine: 'NV0 Builtin Diagnosis Engine', rulesVersion: RULES_VERSION, targetFetchEnabled: TARGET_FETCH_ENABLED, scanProvider: SCAN_PROVIDER, endpoints: { scan: 'POST /api/public/scan', diagnose: 'POST /api/public/diagnose', board: 'GET /api/public/system-items', engine: 'GET /api/public/diagnosis-engine', productIntelligence: 'GET /api/public/product-intelligence' }, smartProduct: { version: 'p153-smart-ops-v1', nextBestAction: true, planFitScoring: true, journeyOrchestration: true, smartProductEndpoint: '/api/public/smart-product', userPath: ['무료 진단','스마트 추천','요금제 선택','내 사이트 관리','CTA 재유입'] }, autoPublish: { boardName: '게시판', intervalMs: CTA_AUTOPUBLISH_INTERVAL_MS, intervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000), topicPackCount: ctaTopicPacks().length, combinationStats: ctaCombinationStats(), variants: ctaTopicPacks().map(item => item.headline) }, checks: buildRuleCatalog().map(({ code, category, title, severity, penaltyMax }) => ({ code, category, title, severity, penaltyMax })) });
 }
 if (pathname === '/readyz') {
 try {
@@ -2732,7 +2967,7 @@ const probePath = path.join(REPORTS_DIR, `.readyz-${process.pid}.tmp`);
 await fs.writeFile(probePath, JSON.stringify({ checkedAt: nowIso() }));
 await fs.unlink(probePath);
 if (READYZ_REDIS_STRICT && (!redisSessionReady || !redisRateLimitReady || !redisLockReady)) throw new Error("Strict readiness requires Redis-backed session, rate-limit, and lock providers.");
-return json(req, res, 200, { ok: true, ready: true, runtimeWritable: true, platformTarget: PLATFORM.target, deploymentStage: DEPLOYMENT_STAGE, commercialLaunchReady: COMMERCIAL_LAUNCH_READY, prelaunchMode: PRELAUNCH_MODE, persistenceMode: PERSISTENCE_MODE, storageMode: STORAGE_MODE, turnstileEnabled: ENABLE_TURNSTILE, redis: { readinessMode: READYZ_REDIS_STRICT ? "strict_ping" : "prelaunch_advisory_no_ping", sessionStore: redisSessionReady, rateLimitStore: redisRateLimitReady, lockProvider: redisLockReady }, paymentProvider: PAYMENT_PROVIDER === "portone_v2" ? PORTONE_CLIENT.configSummary() : { mode: PAYMENT_PROVIDER }, secureRecordStore: persistence.secureRecordStore || null });
+return json(req, res, 200, { ok: true, ready: true, runtimeWritable: true, platformTarget: PLATFORM.target, deploymentStage: DEPLOYMENT_STAGE, commercialLaunchReady: COMMERCIAL_LAUNCH_READY, prelaunchMode: PRELAUNCH_MODE, persistenceMode: PERSISTENCE_MODE, storageMode: STORAGE_MODE, turnstileEnabled: TURNSTILE_PUBLIC_ENABLED, redis: { readinessMode: READYZ_REDIS_STRICT ? "strict_ping" : "prelaunch_advisory_no_ping", sessionStore: redisSessionReady, rateLimitStore: redisRateLimitReady, lockProvider: redisLockReady }, paymentProvider: PAYMENT_PROVIDER === "portone_v2" ? PORTONE_CLIENT.configSummary() : { mode: PAYMENT_PROVIDER }, secureRecordStore: persistence.secureRecordStore || null });
 } catch (error) {
 return json(req, res, 503, { ok: false, ready: false, runtimeWritable: false, error: error.message });
 }
@@ -2741,10 +2976,15 @@ if (pathname === '/robots.txt' && req.method === 'GET') {
 return text(req, res, 200, buildRobotsTxt(), { 'cache-control': 'public, max-age=3600' });
 }
 if (pathname === '/sitemap.xml' && req.method === 'GET') {
-return text(req, res, 200, buildSitemapXml(), { 'content-type': 'application/xml; charset=utf-8', 'cache-control': 'public, max-age=3600' });
+const db = await readDb();
+return text(req, res, 200, buildSitemapXml(db), { 'content-type': 'application/xml; charset=utf-8', 'cache-control': 'public, max-age=1800, stale-while-revalidate=3600' });
+}
+if (pathname === '/feed.xml' && req.method === 'GET') {
+const db = await readDb();
+return text(req, res, 200, buildFeedXml(db), { 'content-type': 'application/rss+xml; charset=utf-8', 'cache-control': 'public, max-age=1800, stale-while-revalidate=3600' });
 }
 if (pathname === '/api/public/config' && req.method === 'GET') {
-return json(req, res, 200, { ok: true, turnstileEnabled: ENABLE_TURNSTILE, turnstileSiteKey: ENABLE_TURNSTILE ? TURNSTILE_SITE_KEY : '' });
+return json(req, res, 200, { ok: true, turnstileEnabled: TURNSTILE_PUBLIC_ENABLED, turnstileConfigured: TURNSTILE_CONFIGURED, prelaunchMode: PRELAUNCH_MODE, turnstileSiteKey: TURNSTILE_PUBLIC_ENABLED ? TURNSTILE_SITE_KEY : '' });
 }
 if (pathname === '/api/public/health' && req.method === 'GET') {
 return json(req, res, 200, { ok: true, area: 'public', time: nowIso(), phase: RELEASE_PHASE, privacy: 'minimum_required_only' });
@@ -2763,17 +3003,51 @@ const db = await readDb();
 const gate = buildCommercialFinalGate(db);
 return json(req, res, gate.ok ? 200 : 503, { ok: gate.ok, phase: gate.phase, checkedAt: gate.checkedAt, summary: gate.summary, blockers: gate.blockers.map(item => ({ key: item.key, label: item.label, count: item.count || undefined })) });
 }
+if (pathname === '/api/public/smart-product' && req.method === 'GET') {
+const db = await readDb();
+const offers = buildCommercialOfferCatalog();
+const requestedRiskScore = Number(url.searchParams.get('riskScore') || 0);
+const domain = String(url.searchParams.get('domain') || '').trim();
+let intelligence = null;
+if (requestedRiskScore || domain) {
+const site = domain ? findSiteByAny(db, '', domain) : null;
+const scan = site ? (db.scans || []).find(item => item.siteId === site.id) || db.scans[0] || {} : db.scans[0] || {};
+intelligence = buildProductIntelligence({ scan, site, riskScore: requestedRiskScore || site?.latestRiskScore || scan?.riskScore || 55, offers, source: 'smart-product' });
+}
+return json(req, res, 200, buildSmartPublicSnapshot(db, { offers, intelligence }));
+}
+if (pathname === '/api/public/product-intelligence' && req.method === 'GET') {
+const db = await readDb();
+const requestedRiskScore = Number(url.searchParams.get('riskScore') || 0);
+const siteId = url.searchParams.get('siteId') || '';
+const domain = String(url.searchParams.get('domain') || '').trim();
+const site = siteId || domain ? findSiteByAny(db, siteId, domain) : null;
+const scan = site ? (db.scans || []).find(item => item.siteId === site.id) || db.scans[0] || {} : db.scans[0] || {};
+const offers = buildCommercialOfferCatalog();
+const intelligence = buildProductIntelligence({ scan, site, riskScore: requestedRiskScore || site?.latestRiskScore || scan?.riskScore || 55, offers, source: 'public-api' });
+const dashboard = buildProductDashboard(db);
+const orchestration = buildSmartProductOrchestration({ scan, site, intelligence, offers, dashboard, source: 'public-api' });
+return json(req, res, 200, { ok: true, intelligence, dashboard, orchestration });
+}
 if (pathname === '/api/public/products' && req.method === 'GET') {
-return json(req, res, 200, { ok: true, offers: buildCommercialOfferCatalog() });
+const riskScore = Number(url.searchParams.get('riskScore') || 55);
+const offers = buildCommercialOfferCatalog();
+const intelligence = buildProductIntelligence({ riskScore, offers, source: 'products' });
+const orchestration = buildSmartProductOrchestration({ intelligence, offers, source: 'products' });
+return json(req, res, 200, { ok: true, offers: annotateOffersWithIntelligence(offers, intelligence), intelligence, orchestration });
 }
 if (pathname === '/api/public/plans' && req.method === 'GET') {
 const db = await readDb();
 const requestedRiskScore = Number(url.searchParams.get('riskScore') || 0);
 const siteId = url.searchParams.get('siteId') || '';
 const site = siteId ? findSiteByAny(db, siteId) : null;
-const riskScore = requestedRiskScore || site?.latestRiskScore || db.scans[0]?.riskScore || 55;
-const recommendedPlan = pickRecommendedPlan(riskScore);
-return json(req, res, 200, { ok: true, recommendedPlan, plans: buildPlanCatalog(recommendedPlan), riskScore });
+const scan = site ? (db.scans || []).find(item => item.siteId === site.id) || db.scans[0] || {} : db.scans[0] || {};
+const riskScore = requestedRiskScore || site?.latestRiskScore || scan?.riskScore || 55;
+const offers = buildCommercialOfferCatalog();
+const intelligence = buildProductIntelligence({ scan, site, riskScore, offers, source: 'plans' });
+const recommendedPlan = intelligence.recommendedPlan;
+const orchestration = buildSmartProductOrchestration({ scan, site, intelligence, offers, dashboard: buildProductDashboard(db), source: 'plans' });
+return json(req, res, 200, { ok: true, recommendedPlan, plans: buildPlanCatalog(recommendedPlan), riskScore, intelligence, orchestration, smartOffers: intelligence.offerFit });
 }
 if (pathname === '/api/public/document-preview' && req.method === 'POST') {
 const body = normalizeDocumentPreviewPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
@@ -3084,17 +3358,20 @@ if (customerSession?.customer) linkCustomerToSite(db, customerSession.customer.i
 const subscription = ensureSubscriptionForSite(db, site, result.recommendedPlan);
 const guidance = createGuidanceDocument(db, site, result);
 const autoFixJobs = seedAutoFixJobs(db, site, result);
+const offers = buildCommercialOfferCatalog();
+const intelligence = buildProductIntelligence({ scan: result, site, offers, source: 'scan' });
+const journey = buildSmartProductOrchestration({ scan: result, site, intelligence, offers, source: 'scan' });
 let ctaPublication = null;
 if (db.settings.ctaAutopublishEnabled) ctaPublication = createCtaPublication(db, result, { autoPublished: true });
-db.scans.unshift({ siteId: site.id, subscriptionId: subscription.id, customerId: customerSession?.customer?.id || null, createdAt: nowIso(), ...result });
+db.scans.unshift({ siteId: site.id, subscriptionId: subscription.id, customerId: customerSession?.customer?.id || null, createdAt: nowIso(), intelligence, journey, ...result });
 db.scans = db.scans.slice(0, 100);
-appendAudit(db, req, 'public.scan.created', { requestId: result.requestId, target: result.target, siteId: site.id, provider: result.provider || SCAN_PROVIDER, linkedCustomer: !!customerSession?.customer, ctaPublicationId: ctaPublication?.id || null });
+appendAudit(db, req, 'public.scan.created', { requestId: result.requestId, target: result.target, siteId: site.id, provider: result.provider || SCAN_PROVIDER, linkedCustomer: !!customerSession?.customer, ctaPublicationId: ctaPublication?.id || null, recommendedPlan: intelligence.recommendedPlan });
 await writeDb(db);
-return json(req, res, 200, { ok: true, result: { ...result, siteId: site.id, guidanceId: guidance.id, autoFixJobsCount: autoFixJobs.length, savedToAccount: !!customerSession?.customer, ctaPublicationId: ctaPublication?.id || null, diagnosis: buildPublicDiagnosisPackage(result, { rulesVersion: RULES_VERSION, ctaIntervalMs: CTA_AUTOPUBLISH_INTERVAL_MS }) } });
+return json(req, res, 200, { ok: true, result: { ...result, siteId: site.id, guidanceId: guidance.id, autoFixJobsCount: autoFixJobs.length, savedToAccount: !!customerSession?.customer, ctaPublicationId: ctaPublication?.id || null, intelligence, journey, diagnosis: buildPublicDiagnosisPackage(result, { rulesVersion: RULES_VERSION, ctaIntervalMs: CTA_AUTOPUBLISH_INTERVAL_MS }) } });
 }
 if (pathname === '/api/public/checkout-session' && req.method === 'POST') {
 if (PRELAUNCH_MODE || PAYMENT_PROVIDER === 'disabled') {
-return json(req, res, 503, { ok: false, error: '결제 기능은 정식 오픈 준비 중입니다. 고객지원 이메일로 신청해 주세요.', stage: DEPLOYMENT_STAGE, supportEmail: BUSINESS_PROFILE.contactEmail });
+return json(req, res, 503, { ok: false, error: '현재는 고객지원 이메일로 신청을 접수합니다. 결제창 이용이 필요한 경우 고객지원으로 문의해 주세요.', stage: DEPLOYMENT_STAGE, supportEmail: BUSINESS_PROFILE.contactEmail });
 }
 const rate = await hitRateLimit('checkout-session', clientIp(req), { windowMs: PUBLIC_SCAN_WINDOW_MS, limit: Math.max(5, Math.floor(PUBLIC_SCAN_LIMIT / 2)) });
 if (rate.blocked) {
@@ -3388,7 +3665,8 @@ pid: process.pid,
 uptimeSec: Math.round(process.uptime()),
 memoryRss: process.memoryUsage().rss,
 env: NODE_ENV,
-turnstileEnabled: ENABLE_TURNSTILE,
+turnstileEnabled: TURNSTILE_PUBLIC_ENABLED,
+turnstileConfigured: TURNSTILE_CONFIGURED,
 trustProxyHeaders: TRUST_PROXY_HEADERS,
 csrfProtection: true,
 backupRetentionCount: BACKUP_RETENTION_COUNT,
@@ -3403,8 +3681,17 @@ storage: { uploadsDir: UPLOADS_DIR, runtimeDir: RUNTIME_DIR, backupsDir: BACKUPS
 integrations: {
 scanProvider: { mode: SCAN_PROVIDER, urlConfigured: !!SCAN_PROVIDER_URL, fallbackEnabled: SCAN_PROVIDER_FALLBACK },
 paymentProvider: PAYMENT_PROVIDER === 'portone_v2' ? { mode: PAYMENT_PROVIDER, ...PORTONE_CLIENT.configSummary() } : { mode: PAYMENT_PROVIDER, urlConfigured: !!PAYMENT_PROVIDER_URL },
-storage: { mode: STORAGE_MODE, uploadsDir: UPLOADS_DIR }
+storage: { mode: STORAGE_MODE, uploadsDir: UPLOADS_DIR },
+email: { smtpConfigured: !!String(process.env.NV0_SMTP_URL || '').trim(), liveAdapter: true, maxRetryCount: EMAIL_MAX_RETRY_COUNT, retryBackoffMs: EMAIL_RETRY_BACKOFF_MS }
 },
+readiness: buildReleaseReadiness(db),
+launchChecklist: buildProductionLaunchChecklist(db),
+emailOutbox: {
+queued: (db.emailOutbox || []).filter(item => ['queued','retry_scheduled'].includes(item.status)).length,
+failed: (db.emailOutbox || []).filter(item => item.status === 'failed').length,
+recent: (db.emailOutbox || []).slice(0, 10).map(item => ({ id: item.id, to: maskEmail(item.to), subject: item.subject, status: item.status, retryCount: item.retryCount, deliveryMode: item.deliveryMode || null, createdAt: item.createdAt }))
+},
+recentOperationalEvents: (db.operationalEvents || []).slice(0, 10),
 recentAuditLogs: db.auditLogs.slice(0, 10),
 recentScans: db.scans.slice(0, 5),
 pendingAutoFixJobs: db.autoFixJobs.filter(item => item.status === 'pending').slice(0, 10)

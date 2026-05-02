@@ -304,6 +304,181 @@ function comboContext(scan = {}, variant = {}, options = {}) {
   return { target, industry, baseVariant, baseSeed, seed, angle, audience, archetype, sectionSet, cta, microCase, hook, token };
 }
 
+
+const HUMAN_TONE_VERSION = 'p155-human-reader-friendly-existing-rewrite-v2';
+const HARD_WORDS = [
+  ['CTA', '안내 버튼'],
+  ['SEO', '검색 노출'],
+  ['contentFingerprint', '중복 확인값'],
+  ['fingerprint', '중복 확인값'],
+  ['퍼널', '고객 단계'],
+  ['전환율', '문의나 구매로 이어지는 흐름'],
+  ['전환', '다음 행동'],
+  ['아키타입', '글 구성'],
+  ['메타 설명', '검색에 보일 짧은 설명'],
+  ['리드', '문의 고객'],
+  ['랜딩', '첫 화면'],
+  ['이탈', '나가기'],
+  ['고도화', '더 좋게 만들기'],
+  ['최적화', '더 잘 보이게 정리하기']
+];
+
+const HUMAN_READER_MEMOS = [
+  '처음 온 사람도 10초 안에 이해할 수 있는지 봅니다.',
+  '고객이 버튼을 누르기 전에 궁금해할 말을 먼저 적습니다.',
+  '운영자 기준이 아니라 고객 눈높이로 순서를 다시 잡습니다.',
+  '길게 설명하기보다 필요한 답을 가까운 곳에 둡니다.',
+  '모바일 화면에서 손가락으로 바로 누를 수 있는지 확인합니다.',
+  '가격을 보기 전, 믿을 수 있는 정보가 보이는지 확인합니다.',
+  '문의하기 전, 개인정보 안내가 쉽게 보이는지 확인합니다.',
+  '결제 전, 취소와 환불 기준을 쉽게 찾을 수 있는지 확인합니다.',
+  '광고 문구와 실제 안내가 서로 다르지 않은지 봅니다.',
+  '자주 묻는 질문이 고객의 걱정을 바로 풀어주는지 확인합니다.',
+  '처음 보는 단어가 많다면 쉬운 말로 바꿉니다.',
+  '한 문단에 여러 내용을 넣지 않고 하나씩 나눕니다.',
+  '고객이 다시 검색하지 않아도 되게 필요한 링크를 붙입니다.',
+  '너무 강한 표현보다 확인 가능한 말로 바꿉니다.',
+  '상품 설명보다 먼저 안심할 수 있는 근거를 보여줍니다.',
+  '고객센터로 물어보기 전에 답을 찾을 수 있게 만듭니다.',
+  '페이지 아래에 숨어 있는 중요한 안내를 앞으로 올립니다.',
+  '같은 말을 반복하지 말고 실제 상황 예시로 설명합니다.',
+  '문의, 결제, 회원가입처럼 중요한 순간을 따로 봅니다.',
+  '고객이 망설이는 지점을 하나씩 줄이는 데 집중합니다.',
+  '전문가용 문서가 아니라 실제 방문자가 읽는 글처럼 씁니다.',
+  '문제가 커 보이지 않게 숨기는 것이 아니라 쉽게 이해하게 만듭니다.',
+  '고객이 다음에 무엇을 누르면 되는지 분명히 보여줍니다.',
+  '운영자가 바로 고칠 수 있는 작은 문장부터 찾습니다.'
+];
+
+const HUMAN_EASY_EXAMPLES = [
+  '예를 들어 환불 안내가 버튼 아래에만 있으면 고객은 못 보고 지나칠 수 있습니다.',
+  '예를 들어 문의 버튼은 있는데 답변 시간이 없으면 고객은 기다려도 되는지 헷갈립니다.',
+  '예를 들어 “상세 내용 확인”보다 “환불 기준 보기”가 더 이해하기 쉽습니다.',
+  '예를 들어 개인정보 안내가 작은 글씨로만 있으면 불안하게 느낄 수 있습니다.',
+  '예를 들어 모바일에서 버튼이 너무 아래에 있으면 고객은 어디를 눌러야 할지 모릅니다.',
+  '예를 들어 혜택은 크게 보이는데 조건은 작게 보이면 오해가 생길 수 있습니다.',
+  '예를 들어 회사 정보가 푸터마다 다르게 보이면 신뢰가 떨어질 수 있습니다.',
+  '예를 들어 가격표 옆에 포함 범위가 없으면 고객은 추가 비용을 걱정합니다.',
+  '예를 들어 신청 완료 후 다음 안내가 없으면 고객은 접수가 된 건지 불안해합니다.',
+  '예를 들어 같은 공지가 오래 남아 있으면 사이트가 관리되지 않는 것처럼 보일 수 있습니다.',
+  '예를 들어 회원가입 전에 필요한 정보가 무엇인지 알려주면 고객이 덜 망설입니다.',
+  '예를 들어 “무료”라고 썼다면 어디까지 무료인지 함께 적어야 합니다.',
+  '예를 들어 상담 신청 버튼 옆에 처리 순서를 적으면 고객이 더 쉽게 이해합니다.',
+  '예를 들어 배송, 취소, 문의 안내가 서로 떨어져 있으면 고객은 여러 번 찾아야 합니다.',
+  '예를 들어 어려운 약어는 풀어서 쓰는 편이 처음 보는 사람에게 더 친절합니다.',
+  '예를 들어 고객이 자주 묻는 질문 3개만 먼저 보여줘도 불필요한 문의를 줄일 수 있습니다.'
+];
+
+function easyWord(value = '') {
+  return HARD_WORDS.reduce((text, [from, to]) => text.replaceAll(from, to), String(value || ''));
+}
+
+function stripJargon(value = '') {
+  return easyWord(value)
+    .replace(/\s+/g, ' ')
+    .replace(/\s+([,.!?])/g, '$1')
+    .trim();
+}
+
+function sentence(value = '') {
+  const text = stripJargon(value);
+  if (!text) return '';
+  return /[.!?다요죠음함됨임]$/.test(text) ? text : `${text}.`;
+}
+
+function humanList(items = [], fallback = '확인할 항목') {
+  const list = unique(items.map(item => stripJargon(item)).filter(Boolean)).slice(0, 3);
+  return list.length ? list.join(', ') : fallback;
+}
+
+function easySection(title, lines = []) {
+  const body = lines.map(line => sentence(line)).filter(Boolean).join('\n');
+  return `${title}\n${body}`;
+}
+
+function easyFaq(seed, industry, target, top) {
+  const pool = [
+    ['왜 이런 글이 필요한가요?', `${target}를 처음 보는 사람은 상품보다 먼저 믿을 수 있는지 확인합니다. 그래서 안내가 비어 있는 곳을 쉽게 설명해 주는 글이 필요합니다.`],
+    ['가장 먼저 봐야 할 부분은 어디인가요?', `고객이 결제하거나 문의하기 직전에 보는 화면부터 보면 됩니다. 예를 들면 가격, 환불, 개인정보 안내, 문의 버튼 주변입니다.`],
+    ['전문가가 아니어도 이해할 수 있나요?', `네. 어려운 말보다 “어디가 불편한지”, “무엇을 고치면 되는지”를 짧게 나누어 보면 충분히 확인할 수 있습니다.`],
+    ['바로 매출이 오른다고 볼 수 있나요?', `그렇게 단정할 수는 없습니다. 다만 고객이 헷갈리는 부분을 줄이면 문의와 구매 과정이 더 편해질 수 있습니다.`],
+    ['이 글 다음에는 무엇을 하면 되나요?', `무료 진단으로 현재 상태를 확인하고, 문제가 큰 항목부터 문구와 버튼 위치를 차례대로 정리하면 됩니다.`],
+    ['반복 글처럼 보이지 않게 하려면요?', `같은 말을 반복하지 말고 실제 사이트 상황, 고객 질문, 수정 예시를 바꿔서 쓰면 훨씬 자연스럽습니다.`],
+    ['고객이 가장 답답해하는 부분은 무엇인가요?', `${top}처럼 결정을 앞둔 순간에 필요한 정보가 안 보이면 고객은 다시 검색하거나 페이지를 닫을 수 있습니다.`],
+    ['검색에도 도움이 되나요?', `${industry}와 관련된 고객 질문을 쉬운 말로 풀어 쓰면 검색하는 사람에게 더 잘 맞는 글이 됩니다.`]
+  ];
+  return unique([
+    JSON.stringify(comboPick(pool, seed, 31)),
+    JSON.stringify(comboPick(pool, seed, 32)),
+    JSON.stringify(comboPick(pool, seed, 33))
+  ]).map(item => JSON.parse(item)).slice(0, 3);
+}
+
+function humanTitleCandidates(ctx, keyword, legacyTitle = '') {
+  const easyKeyword = stripJargon(keyword).replace(/\s+/g, ' ');
+  return unique([
+    `${ctx.industry} 사이트, 고객이 헷갈리지 않게 고치는 방법`,
+    `${ctx.target} 점검 후 먼저 바꾸면 좋은 부분`,
+    `${ctx.audience}가 바로 확인할 수 있는 쉬운 사이트 점검`,
+    `${easyKeyword}을 쉽게 정리하는 방법`,
+    `고객이 안심하고 문의하게 만드는 안내 문구 정리`,
+    `처음 온 고객이 믿고 읽을 수 있는 사이트 만들기`,
+    `복잡한 설명 줄이고 필요한 안내만 보여주는 법`,
+    stripJargon(legacyTitle).replace(/[|·].*$/, '').trim()
+  ]).filter(Boolean).slice(0, 8);
+}
+
+function humanizeBody({ ctx, legacy, title, titleCandidates, findingCount, top, keyword, faqSet, internalLinks, sequenceLabel }) {
+  const issue = top === '확인할 항목' ? '고객 안내, 환불 기준, 개인정보 안내' : top;
+  const introLine = `${ctx.target}를 처음 보는 고객은 “여기서 사도 괜찮을까?”를 먼저 생각합니다.`;
+  const simpleProblem = `${issue} 같은 안내가 잘 보이지 않으면 고객은 결제나 문의 전에 멈출 수 있습니다.`;
+  const example = `${ctx.microCase.replace(/ 상황$/, '')}라면 고객은 필요한 정보를 찾기 위해 화면을 더 내려 보거나 다른 사이트로 이동할 수 있습니다.`;
+  const checklist = [
+    `첫 화면에서 무엇을 하는 사이트인지 바로 보이는지 확인합니다.`,
+    `가격, 환불, 취소, 개인정보 안내가 고객 눈에 잘 보이는지 확인합니다.`,
+    `문의 버튼 옆에 고객이 궁금해할 답이 있는지 확인합니다.`,
+    `모바일 화면에서 버튼과 설명이 너무 작거나 멀리 떨어져 있지 않은지 봅니다.`,
+    `수정한 뒤 다시 진단해서 같은 문제가 남았는지 확인합니다.`
+  ];
+  const fixLines = [
+    `어려운 말은 줄이고 고객이 묻는 말에 바로 답하는 문장으로 바꿉니다.`,
+    `버튼 이름은 “확인하기”, “문의하기”, “무료 진단하기”처럼 행동이 분명한 말로 적습니다.`,
+    `중요한 안내는 페이지 아래쪽에 숨기지 말고 버튼 가까이에 둡니다.`,
+    `한 문단에는 한 가지 내용만 담습니다. 문장이 길면 두 문장으로 나눕니다.`
+  ];
+  const linksText = internalLinks.map(link => `${link.label}: ${link.href}`).join('\n');
+  const readableFocus = stripJargon(ctx.angle?.[0] || '고객이 안심하는 흐름');
+  const readableTitle = stripJargon(title).replace(/·\s*쉬운 점검.*$/, '').trim();
+  const readerMemo = comboPick(HUMAN_READER_MEMOS, ctx.seed, 47) || HUMAN_READER_MEMOS[0];
+  const easyExample = comboPick(HUMAN_EASY_EXAMPLES, ctx.seed, 48) || HUMAN_EASY_EXAMPLES[0];
+  return [
+    easySection('왜 이 글을 썼나요?', [
+      introLine,
+      `${ctx.industry} 사이트는 예쁜 디자인만큼이나 쉬운 안내가 중요합니다.`,
+      `이번 글은 ${ctx.audience}가 ${readableFocus}을 쉽게 확인할 수 있도록 썼습니다.`,
+      `같은 설명을 반복하지 않기 위해 ${sequenceLabel}번 점검 메모로 따로 정리했습니다.`,
+      `오늘의 핵심 주제는 “${readableTitle}”입니다.`,
+      `이 글은 어려운 점검표가 아니라 고객 입장에서 “어디가 헷갈리는지”를 쉽게 정리한 글입니다.`
+    ]),
+    easySection('지금 보이는 문제', [
+      `${findingCount}개 정도의 확인할 부분이 보입니다.`,
+      simpleProblem,
+      example,
+      `이 내용은 법률 판단이나 매출 보장을 뜻하지 않습니다. 실제 운영 정보는 운영자가 한 번 더 확인해야 합니다.`
+    ]),
+    `고객 입장에서 보면\n고객은 긴 설명을 꼼꼼히 읽기보다 필요한 답을 빨리 찾고 싶어 합니다.\n\n${readerMemo}\n\n${easyExample}\n\n예를 들어 “환불은 어떻게 되나요?”, “문의는 어디로 하나요?”, “내 정보는 안전한가요?” 같은 질문에 바로 답이 보여야 합니다.\n\n답이 보이면 고객은 안심하고 다음 행동을 할 수 있습니다.`,
+    `바로 고칠 수 있는 것\n${checklist.map((item, index) => `${index + 1}. ${item}`).join('\n')}`,
+    `문구를 쉽게 바꾸는 방법\n${fixLines.map((item, index) => `${index + 1}. ${item}`).join('\n')}`,
+    `자주 묻는 질문\n${faqSet.map(([q, a], index) => `Q${index + 1}. ${sentence(q)}\nA. ${sentence(a)}`).join('\n\n')}`,
+    easySection('다음에 할 일', [
+      `먼저 무료 진단으로 현재 사이트 상태를 확인합니다.`,
+      `문제가 큰 부분부터 하나씩 고치고, 고친 뒤 다시 확인합니다.`,
+      `더 자세한 정리가 필요하면 상품 비교 페이지에서 리포트, 문구 수정안, 정기 점검 방식을 비교할 수 있습니다.`
+    ]),
+    `관련 링크\n${linksText}`
+  ].join('\n\n');
+}
+
 export function ctaTopicPacks() { return legacyCtaTopicPacks(); }
 export function ctaFingerprint(value = '') { return legacyCtaFingerprint(value); }
 export function ctaCombinationStats() {
@@ -313,8 +488,8 @@ export function ctaCombinationStats() {
     topicPackCount: legacyCtaTopicPacks().length,
     finiteTemplateFloor: comboStatsFloor(),
     theoreticalCombinations: 'unbounded_by_seed_time_scan_target_findings_and_history',
-    displayLabel: '24개 주제팩 × 검색의도 × 고객단계 × 업종 × 제목패턴 × 본문구조 × FAQ × CTA × 시간/시드 조합',
-    duplicateDefense: ['contentFingerprint', 'title', 'baseCtaType', 'searchIntent', 'funnelStage', 'recent history rotation']
+    displayLabel: '24개 기본 글감에 업종, 고객 질문, 글 구성, 제목 방식, 자주 묻는 질문을 섞어 쉬운 글을 만듭니다.',
+    duplicateDefense: ['본문 중복 확인', '제목 중복 확인', '최근 글감 반복 방지', '고객 질문 다양화']
   };
 }
 
@@ -322,57 +497,34 @@ export function buildCtaBoardArticle(scan = {}, variant = {}, options = {}) {
   const ctx = comboContext(scan, variant, options);
   const legacy = legacyBuildCtaBoardArticle(scan, ctx.baseVariant, { ...options, seed: ctx.baseSeed });
   const findingCount = Number.isFinite(Number(scan.totalFindings)) ? Number(scan.totalFindings) : Array.isArray(scan.detailFindings) ? scan.detailFindings.length : 3;
-  const top = listText(scan.topFindings || (scan.detailFindings || []).map(item => item?.title));
-  const keyword = `${legacy.seo?.primaryKeyword || ctx.baseVariant.primaryKeyword || '사이트 점검'} ${ctx.angle[3]}`;
-  const titleCandidates = unique([
-    `${ctx.industry} ${keyword}, ${ctx.angle[0]} 기준으로 보는 방법`,
-    `${ctx.target} ${legacy.title.replace(/\s+/g, ' ')} ${ctx.archetype[1]} 정리`,
-    `${ctx.audience}를 위한 ${ctx.industry} CTA·SEO 점검`,
-    `${ctx.angle[3]}부터 ${legacy.seo?.funnelStage || ctx.angle[2]} 단계 전환까지`,
-    `${ctx.industry} 운영 글감 자동화: ${ctx.archetype[1]} 콘텐츠 설계`,
-    `${ctx.microCase.replace(/ 상황$/, '')} 대응: ${ctx.angle[3]} ${ctx.archetype[1]}`,
-    `${ctx.target} ${ctx.audience} ${ctx.angle[0]} ${ctx.archetype[1]}`,
-    `${keyword} 실무 점검: ${ctx.audience} 관점 ${ctx.archetype[1]}`,
-    ...(legacy.titleCandidates || [])
-  ]).slice(0, 12);
+  const top = humanList(scan.topFindings || (scan.detailFindings || []).map(item => item?.title), '고객 안내, 환불 기준, 개인정보 안내');
+  const rawKeyword = `${legacy.seo?.primaryKeyword || ctx.baseVariant.primaryKeyword || '사이트 점검'} ${ctx.angle[3]}`;
+  const keyword = stripJargon(rawKeyword);
+  const titleCandidates = humanTitleCandidates(ctx, keyword, legacy.title);
   const pickedTitle = normalizeText(options.title || variant.title || comboPick(titleCandidates, ctx.seed, 8), titleCandidates[0]);
-  const titleSuffix = `${ctx.audience} · ${ctx.angle[0]} · ${ctx.archetype[1]}`;
   const titleSlot = `${(Number.parseInt(ctx.token, 16) % 999) + 1}-${String(options.sequenceOffset ?? 0).padStart(3, '0')}`;
-  const title = options.title || variant.title
-    ? pickedTitle
-    : `${pickedTitle.includes(ctx.audience) && pickedTitle.includes(ctx.angle[0]) ? pickedTitle : `${pickedTitle} | ${titleSuffix}`} · 체크포인트 ${titleSlot}`;
-  const faqSet = unique([
-    JSON.stringify(comboPick(COMBO_FAQS, ctx.seed, 9)),
-    JSON.stringify(comboPick(COMBO_FAQS, ctx.seed, 10)),
-    JSON.stringify(comboPick(COMBO_FAQS, ctx.seed, 11)),
-    JSON.stringify(FAQ_BANK[Math.abs(hashInt(ctx.seed)) % FAQ_BANK.length])
-  ]).map(item => JSON.parse(item)).slice(0, 4);
-  const metaDescription = clampText(`${ctx.industry} ${ctx.audience}가 ${keyword}을 점검할 때 필요한 FAQ, 내부링크, CTA 연결 방식을 ${ctx.archetype[1]}으로 정리했습니다.`);
-  const tags = unique([...(legacy.tags || []), `#${ctx.angle[3].replace(/[\s·/]+/g, '')}`, `#${ctx.archetype[1].replace(/[\s·/]+/g, '')}`, `#${ctx.audience.replace(/[\s·/]+/g, '')}`]).slice(0, 14);
+  const title = options.title || variant.title ? pickedTitle : `${pickedTitle} · 쉬운 점검 ${titleSlot}`;
+  const faqSet = easyFaq(ctx.seed, ctx.industry, ctx.target, top);
+  const metaDescription = clampText(`${ctx.industry} 사이트를 고객 입장에서 쉽게 점검하고, 바로 고칠 부분을 정리합니다.`);
+  const tags = unique([
+    `#${ctx.industry.replace(/[\s·/]+/g, '')}`,
+    '#쉬운사이트점검',
+    '#고객친화문구',
+    '#문의흐름개선',
+    '#모바일점검',
+    '#사이트개선',
+    '#고객안내',
+    '#쉬운설명',
+    '#문의버튼',
+    '#환불안내'
+  ]).slice(0, 12);
   const internalLinks = [
     { label: '무료 진단', href: '/products/veridion/demo' },
-    { label: ctx.archetype[0] === 'before_after' ? 'FixPack' : '상품 비교', href: ctx.archetype[0] === 'before_after' ? '/plans#fixpack' : '/plans' },
-    { label: ctx.angle[2] === '유지' ? 'Auto 정기 케어' : '내 사이트 관리', href: ctx.angle[2] === '유지' ? '/plans#subscription' : '/portal' },
+    { label: '상품 비교', href: '/plans' },
+    { label: '내 사이트 관리', href: '/portal' },
     { label: '게시판', href: '/board' }
   ];
-  const checklist = [
-    `${ctx.target}에서 고객이 행동하기 직전에 보는 화면을 확인합니다.`,
-    `${top} 항목을 정책 문서, CTA, FAQ와 연결합니다.`,
-    `${ctx.angle[3]} 관점에서 제목과 본문 질문을 다시 맞춥니다.`,
-    `${ctx.archetype[1]} 구조에 맞춰 문단 순서와 내부링크를 바꿉니다.`,
-    `발행 후 contentFingerprint와 제목 중복 여부를 다시 확인합니다.`
-  ];
-  const body = [
-    `제목 후보\n선택 제목: ${title}\n${titleCandidates.slice(0, 5).map((candidate, index) => `${index + 1}. ${candidate}`).join('\n')}`,
-    `${ctx.sectionSet[1] || '도입'}\n${ctx.hook({ target: ctx.target, industry: ctx.industry, keyword, headline: legacy.title })} ${ctx.microCase}을 기준으로 보면, 이 글은 단순한 홍보 문구가 아니라 고객이 다음 행동을 선택하기 전에 확인하는 정보를 재배치하는 콘텐츠입니다.`,
-    `${ctx.sectionSet[2] || '문제 제기'}\n이번 점검 기준으로는 ${findingCount}개 항목을 우선 확인 대상으로 보았습니다. 특히 ${top} 항목은 고객이 구매, 문의, 체험 신청 전에 확인하려는 정보와 연결됩니다. 이 결과만으로 법률 위반 여부나 매출 상승을 단정하지 않습니다.`,
-    `${ctx.sectionSet[3] || '실행 체크리스트'}\n${checklist.map((item, index) => `${index + 1}) ${item}`).join('\n')}`,
-    `${ctx.sectionSet[4] || '신뢰 근거'}\n자동 발행 글은 진단 정보와 내부 점검 항목을 바탕으로 작성되며, 외부 확인이 필요한 가격·법령·인증 여부는 임의로 단정하지 않습니다. 중복 발행을 줄이기 위해 주제, 검색 의도, 고객 단계, FAQ, 문단 구조, CTA를 매번 다르게 구성합니다.`,
-    `FAQ\n${faqSet.map(([q, a], index) => `Q${index + 1}. ${q}\n${a}`).join('\n\n')}`,
-    `${ctx.sectionSet.includes('자연스러운 CTA') ? '자연스러운 CTA' : '다음 행동'}\n${ctx.cta} 무료 진단으로 안내 공백을 확인하고, 결과를 저장하면 상세 리포트, 수정 문구안, Auto 정기 점검으로 이어서 관리할 수 있습니다.`,
-    `내부링크\n${internalLinks.map(link => `${link.label}: ${link.href}`).join('\n')}`,
-    `태그\n${tags.join(' ')}`
-  ].join('\n\n');
+  const body = humanizeBody({ ctx, legacy, title, titleCandidates, findingCount, top, keyword, faqSet, internalLinks, sequenceLabel: titleSlot });
   const combinationKey = `${ctx.baseVariant.ctaType}:${ctx.angle[0]}:${ctx.audience}:${ctx.archetype[0]}:${ctx.token}`;
   return {
     ...legacy,
@@ -386,24 +538,133 @@ export function buildCtaBoardArticle(scan = {}, variant = {}, options = {}) {
     combinationKey,
     contentArchetype: ctx.archetype[0],
     audienceSegment: ctx.audience,
+    toneProfile: 'human_reader_friendly_middle_school',
+    readabilityTarget: 'middle_school_korean',
     diversityKey: `${ctx.baseVariant.ctaType}:${ctx.angle[1]}:${ctx.angle[2]}:${ctx.angle[0]}:${ctx.archetype[0]}:${fingerprint(body)}`,
     contentFingerprint: fingerprint(body),
     seo: {
       ...(legacy.seo || {}),
       primaryKeyword: keyword,
-      secondaryKeywords: unique([...(legacy.seo?.secondaryKeywords || []), ctx.angle[3], `${ctx.industry} ${keyword}`, `${ctx.audience} 운영 체크`, `${ctx.archetype[1]} 콘텐츠`]).slice(0, 12),
+      secondaryKeywords: unique([...(legacy.seo?.secondaryKeywords || []), '쉬운 사이트 점검', '고객 안내 문구', '모바일 안내 개선', `${ctx.industry} 사이트 개선`]).slice(0, 10),
       searchIntent: ctx.angle[1],
       funnelStage: ctx.angle[2],
-      persona: `${ctx.audience} / ${legacy.seo?.persona || '운영자'}`,
+      persona: `${ctx.audience} / 일반 독자`,
       metaDescription,
       internalLinks,
       readingTimeMinutes: Math.max(3, Math.ceil(body.length / 850)),
-      contentGoal: `${ctx.angle[1]} 방문자를 ${ctx.angle[2]} 단계 CTA로 연결`,
+      contentGoal: '독자가 어려운 말 없이 현재 사이트 문제와 다음 행동을 이해하게 만들기',
       combinationMode: 'unbounded_seeded_combinatorial',
       combinationKey,
-      contentArchetype: ctx.archetype[1],
-      audienceSegment: ctx.audience
+      contentArchetype: 'reader_friendly_explainer',
+      audienceSegment: ctx.audience,
+      toneProfile: 'human_reader_friendly_middle_school',
+      humanToneVersion: HUMAN_TONE_VERSION
     }
+  };
+}
+
+
+function isCtaLikePublication(item = {}) {
+  const typeText = [
+    item.type,
+    item.boardType,
+    item.ctaType,
+    item.baseCtaType,
+    item.combinationMode,
+    item.autoPublished ? 'autoPublished' : ''
+  ].join(' ').toLowerCase();
+  if (/cta|auto|board|publication/.test(typeText) && (item.autoPublished || item.ctaType || item.baseCtaType)) return true;
+  const body = String(item.body || item.summary || '');
+  return /제목 후보|검색 의도|고객 단계|CTA|SEO|퍼널|랜딩|메타 설명|fingerprint|아키타입/.test(body);
+}
+
+function inferRewriteScan(item = {}, options = {}) {
+  const seo = item.seo || {};
+  const target = options.target || item.target || item.normalizedTarget || item.site || item.url || seo.target || '등록 사이트';
+  const industry = options.industry || item.industry || seo.industry || '온라인 사업';
+  const findings = unique([
+    ...(Array.isArray(item.topFindings) ? item.topFindings : []),
+    ...(Array.isArray(item.detailFindings) ? item.detailFindings.map(row => row?.title || row?.label || row?.message) : []),
+    item.primaryKeyword,
+    seo.primaryKeyword,
+    item.qualityStandard,
+    item.searchIntent
+  ]).filter(Boolean).slice(0, 5);
+  return {
+    requestId: item.requestId || item.id || options.seed || fingerprint(JSON.stringify(item).slice(0, 800)),
+    target,
+    normalizedTarget: target,
+    industry,
+    totalFindings: Number(item.totalFindings || findings.length || 3),
+    topFindings: findings.length ? findings : ['고객 안내', '환불 기준', '개인정보 안내'],
+    detailFindings: findings.map((title, index) => ({ id: `legacy-${index + 1}`, title }))
+  };
+}
+
+export function rewriteExistingCtaPublication(item = {}, options = {}) {
+  if (!item || typeof item !== 'object') return item;
+  if (!isCtaLikePublication(item) && !options.force) return item;
+  const scan = inferRewriteScan(item, options);
+  const baseType = item.baseCtaType || baseTypeOf(item.ctaType) || 'reader_friendly_rewrite';
+  const variant = {
+    ctaType: baseType,
+    baseCtaType: baseType,
+    primaryKeyword: item.primaryKeyword || item.seo?.primaryKeyword || '쉬운 사이트 점검',
+    headline: stripJargon(item.title || item.headline || '사이트 안내를 쉽게 정리하기'),
+    intent: '고객 이해형',
+    funnel: '이해',
+    persona: '일반 독자'
+  };
+  const rewritten = buildCtaBoardArticle(scan, variant, {
+    ...options,
+    seed: `${options.seed || 'existing-cta-rewrite'}:${item.id || item.createdAt || fingerprint(JSON.stringify(item).slice(0, 400))}`,
+    sequenceOffset: options.sequenceOffset ?? 0
+  });
+  const oldBody = String(item.body || item.summary || '');
+  return {
+    ...item,
+    title: rewritten.title,
+    body: rewritten.body,
+    summary: clampText(rewritten.seo?.metaDescription || rewritten.body, 180),
+    tags: rewritten.tags,
+    seo: {
+      ...(item.seo || {}),
+      ...(rewritten.seo || {}),
+      legacyTitle: item.title || item.seo?.legacyTitle,
+      legacyContentFingerprint: item.contentFingerprint || fingerprint(oldBody)
+    },
+    searchIntent: '고객 이해형',
+    funnelStage: '쉬운 이해',
+    primaryKeyword: rewritten.seo?.primaryKeyword || '쉬운 사이트 점검',
+    ctaType: rewritten.ctaType,
+    baseCtaType: rewritten.baseCtaType,
+    combinationMode: rewritten.combinationMode,
+    combinationKey: rewritten.combinationKey,
+    contentArchetype: 'reader_friendly_existing_rewrite',
+    audienceSegment: rewritten.audienceSegment || '일반 독자',
+    toneProfile: 'human_reader_friendly_middle_school',
+    readabilityTarget: 'middle_school_korean',
+    humanToneVersion: HUMAN_TONE_VERSION,
+    rewrittenAt: options.rewrittenAt || new Date().toISOString(),
+    rewrittenBy: 'phase155_existing_cta_humanizer',
+    originalContentFingerprint: item.originalContentFingerprint || fingerprint(oldBody),
+    contentFingerprint: fingerprint(rewritten.body),
+    migrationNote: '기존 자동 발행 글을 독자가 이해하기 쉬운 말투로 다시 정리했습니다.'
+  };
+}
+
+export function auditHumanFriendlyCtaArticle(item = {}) {
+  const text = [item.title, item.body, item.summary, (item.tags || []).join(' ')].join('\n');
+  const banned = HARD_WORDS.map(([from]) => from).filter(word => new RegExp(String(word).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i').test(text));
+  const longSentences = String(item.body || '').split(/[.!?\n]/).map(s => s.trim()).filter(s => s.length > 95);
+  const requiredSections = ['왜 이 글을 썼나요?', '지금 보이는 문제', '고객 입장에서 보면', '바로 고칠 수 있는 것', '문구를 쉽게 바꾸는 방법', '자주 묻는 질문', '다음에 할 일'];
+  const missingSections = requiredSections.filter(section => !String(item.body || '').includes(section));
+  return {
+    ok: banned.length === 0 && missingSections.length === 0 && longSentences.length <= 3,
+    banned,
+    missingSections,
+    longSentenceCount: longSentences.length,
+    readabilityTarget: item.readabilityTarget || item.seo?.readabilityTarget || 'unknown'
   };
 }
 

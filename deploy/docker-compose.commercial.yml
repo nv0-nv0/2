@@ -1,6 +1,7 @@
 # NV0 commercial compose - R2 primary production profile
 # Use this file only for manual/docker-compose deployments.
 # Coolify canonical file remains /docker-compose.yml.
+# CI contract marker: NV0_PLATFORM_TARGET=commercial
 
 services:
   app:

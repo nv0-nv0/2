@@ -3,7 +3,7 @@ try {
   const readiness = document.createElement('div');
   readiness.id = 'demoReadinessStatus';
   readiness.className = 'sr-only';
-  readiness.textContent = '무료 진단 안내 페이지 로딩 완료. 모든 CTA는 Veridion 진단 실행 화면으로 연결됩니다.';
+  readiness.textContent = '무료 진단 안내 페이지 로딩 완료. 모든 안내 버튼는 Veridion 진단 실행 화면으로 연결됩니다.';
   document.querySelector('main')?.appendChild(readiness);
 
   startLinks.forEach((link, index) => {

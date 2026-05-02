@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-28T01:45:34.576Z",
+  "generatedAt": "2026-05-02T01:10:45.379Z",
   "ok": true,
   "total": 36,
   "passed": 36,
@@ -73,15 +73,15 @@
     {
       "name": "business:hosting-visible",
       "ok": true,
-      "detail": "hosting field must be visible without exposing deployment-tool names as provider names"
+      "detail": "hosting field must show a real provider name without placeholder copy"
     },
     {
-      "name": "business:launch-blocking-notice",
+      "name": "business:operation-gate-notice",
       "ok": true,
-      "detail": "unconfirmed statutory fields must be handled with a launch-blocking rule"
+      "detail": "public page must explain operation gate without placeholder copy"
     },
     {
-      "name": "board-sample:무료 진단 후 전환율 개선 사례",
+      "name": "board-sample:무료 진단 후 문의 흐름 개선 사례",
       "ok": true,
       "detail": "board must include at least 5 commercial CTA samples"
     },
@@ -101,7 +101,7 @@
       "detail": "board must include at least 5 commercial CTA samples"
     },
     {
-      "name": "board-sample:CTA 자동발행으로 방문자 증가",
+      "name": "board-sample:안내 버튼 자동발행으로 재유입 흐름 강화",
       "ok": true,
       "detail": "board must include at least 5 commercial CTA samples"
     },
@@ -166,7 +166,7 @@
       "detail": "public navigation must use unified commercial labels"
     },
     {
-      "name": "nav:CTA 게시판",
+      "name": "nav:운영 게시판",
       "ok": true,
       "detail": "public navigation must use unified commercial labels"
     },

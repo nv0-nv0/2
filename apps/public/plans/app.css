@@ -74,3 +74,13 @@ pre,code,.document-preview pre,#consoleState{background:#0B1220!important;color:
 
 /* PHASE132: competitive pricing value labels */
 .offer-value{margin-top:6px;color:#93C5FD!important;font-size:13px;font-weight:900;line-height:1.45}.offer-value.muted{color:#A8B3C4!important;font-weight:800}
+
+/* PHASE152: smart product recommendation layer */
+.smart-advice{margin:18px 0}
+.smart-advice-card{border-color:rgba(96,165,250,.42)!important;background:linear-gradient(135deg,#111827,#172036)!important}
+.smart-action-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:10px}
+.smart-action-grid span,.smart-fit{border:1px solid var(--p73-line,#334155);background:#0B1220;border-radius:14px;padding:10px;color:var(--p73-text-soft,#E2E8F0)}
+.smart-fit{margin:10px 0}
+.smart-fit b{display:block;margin-bottom:4px;color:#93C5FD!important}
+.smart-fit p{margin:0;color:var(--p73-muted,#A8B3C4)!important}
+@media(max-width:760px){.smart-action-grid{grid-template-columns:1fr}}

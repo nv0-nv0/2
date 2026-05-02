@@ -17,10 +17,10 @@ pass('support-email:ct@nv0.kr', runtimeText.includes('ct@nv0.kr'), 'confirmed su
 pass('business-number:584-77-00586', runtimeText.includes('584-77-00586'), 'confirmed business registration number must be visible');
 const business = read('apps/public/business-info/index.html');
 pass('business:email-only-support', business.includes('이메일 전용 고객지원'), 'customer support must be explicit when no phone number is provided');
-pass('business:hosting-visible', business.includes('호스팅 제공자') && business.includes('운영값 미입력'), 'hosting field must be visible without exposing deployment-tool names as provider names');
-pass('business:launch-blocking-notice', business.includes('상용 공개 차단 기준'), 'unconfirmed statutory fields must be handled with a launch-blocking rule');
+pass('business:hosting-visible', business.includes('호스팅 제공자') && business.includes('Contabo GmbH'), 'hosting field must show a real provider name without placeholder copy');
+pass('business:operation-gate-notice', business.includes('운영 공개 기준'), 'public page must explain operation gate without placeholder copy');
 const board = read('apps/public/board/index.html');
-for (const title of ['무료 진단 후 전환율 개선 사례','이용약관 자동 생성으로 리스크 제거','FixPack 적용 후 즉시 운영 가능 상태 달성','Auto 플랜으로 유지관리 자동화','CTA 자동발행으로 방문자 증가']) pass(`board-sample:${title}`, board.includes(title), 'board must include at least 5 commercial CTA samples');
+for (const title of ['무료 진단 후 문의 흐름 개선 사례','이용약관 자동 생성으로 리스크 제거','FixPack 적용 후 즉시 운영 가능 상태 달성','Auto 플랜으로 유지관리 자동화','안내 버튼 자동발행으로 재유입 흐름 강화']) pass(`board-sample:${title}`, board.includes(title), 'board must include at least 5 commercial CTA samples');
 const plans = read('apps/public/plans/index.html');
 for (const token of ['Pro / FixPack / Auto 핵심 차이','상품별 실제 제공 결과 예시','Pro 결과 예시','FixPack 결과 예시','Auto 결과 예시']) pass(`plans-conversion:${token}`, plans.includes(token), 'plans page must include conversion proof and comparison');
 const demo = read('apps/public/demo/index.html');
@@ -33,7 +33,7 @@ pass('documents:label-split', docs.includes('<label><span>상호</span><input') 
 const auth = read('apps/public/auth/index.html');
 pass('auth:label-split', auth.includes('<label><span>이메일</span><input') && auth.includes('<label><span>비밀번호</span><input'), 'auth form labels must be separated');
 const server = read('server/index.mjs');
-for (const nav of ['무료 진단','내 사이트','CTA 게시판','요금제','문서 생성','고객지원']) pass(`nav:${nav}`, server.includes(`>${nav}</a>`) || server.includes(nav), 'public navigation must use unified commercial labels');
+for (const nav of ['무료 진단','내 사이트','운영 게시판','요금제','문서 생성','고객지원']) pass(`nav:${nav}`, server.includes(`>${nav}</a>`) || server.includes(nav), 'public navigation must use unified commercial labels');
 const report = { generatedAt: new Date().toISOString(), ok: errors.length === 0, total: checks.length, passed: checks.filter(c=>c.ok).length, failed: errors.length, checks, errors };
 fs.writeFileSync(path.join(root, 'docs', 'PHASE108_COMMERCIAL_100_VALIDATION_20260426.json'), JSON.stringify(report, null, 2));
 console.log(JSON.stringify(report, null, 2));

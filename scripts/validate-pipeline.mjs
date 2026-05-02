@@ -37,9 +37,12 @@ for (const token of ['npm run validate:commercial', 'npm run ci:strict', 'npm ru
 }
 
 const compose = fs.existsSync(path.join(root, 'deploy/docker-compose.commercial.yml')) ? fs.readFileSync(path.join(root, 'deploy/docker-compose.commercial.yml'), 'utf8') : '';
-for (const token of ['postgres:16-alpine', 'redis:7-alpine', 'minio/minio', 'healthcheck', 'NV0_PLATFORM_TARGET=commercial']) {
+for (const token of ['postgres:16-alpine', 'redis:7-alpine', 'healthcheck', 'NV0_PLATFORM_TARGET=commercial']) {
   if (!compose.includes(token)) failures.push(`commercial compose missing ${token}`);
 }
+if (compose.includes('minio/minio')) failures.push('commercial compose must not include minio/minio; R2 is the production storage path');
+const localMinio = fs.existsSync(path.join(root, 'deploy/docker-compose.local-minio.yml')) ? fs.readFileSync(path.join(root, 'deploy/docker-compose.local-minio.yml'), 'utf8') : '';
+if (!localMinio.includes('minio/minio')) failures.push('local minio fallback compose missing minio/minio');
 
 if (failures.length) {
   console.error(JSON.stringify({ ok: false, failures }, null, 2));

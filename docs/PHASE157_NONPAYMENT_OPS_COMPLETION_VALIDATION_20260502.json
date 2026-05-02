@@ -1,0 +1,106 @@
+{
+  "ok": true,
+  "phase": "PHASE157_NONPAYMENT_OPS_COMPLETION",
+  "scope": "PortOne 결제 연결과 통신판매업 신고번호를 제외한 운영 연결성·진단 안정성·관리자 UX 보강 검증",
+  "checkedAt": "2026-05-02T01:21:34.957Z",
+  "passed": 19,
+  "failed": 0,
+  "checks": [
+    {
+      "key": "smtp:node-native-adapter-imports",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "smtp:url-parser-present",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "smtp:live-send-present",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "smtp:dry-run-non-destructive",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "smtp:retry-path-preserved",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "external-scan:undefined-fetched-bug-removed",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "external-scan:fallback-still-supported",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "launch-gate:portone-excluded-until-enabled",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "launch-gate:mailorder-excluded-until-launch",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "diagnostics:readiness-api-expanded",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "diagnostics:admin-actions-added",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "diagnostics:admin-js-actions-wired",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "preflight:smtp-url-validation",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "env:deploy/env.commercial.template:email-from",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "env:deploy/coolify.env.bulk.txt:email-from",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "env:deploy/coolify.env.example:email-from",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "env:deploy/env.production.template:email-from",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "env:deploy/env.production.nv0.kr.example:email-from",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "package:phase157-script",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "failures": []
+}

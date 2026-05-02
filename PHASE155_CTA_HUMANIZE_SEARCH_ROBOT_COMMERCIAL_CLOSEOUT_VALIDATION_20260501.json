@@ -1,0 +1,50 @@
+{
+  "ok": true,
+  "phase": "P155",
+  "name": "CTA Humanize + Existing Rewrite + Search Robot Max + Non-key Commercial Closeout",
+  "completed": {
+    "newCtaHumanFriendly": true,
+    "existingCtaMigrationTool": true,
+    "publicJargonRemoved": true,
+    "searchRobotMax": true,
+    "robotsTxt": true,
+    "sitemapXml": true,
+    "rssFeedXml": true,
+    "structuredData": [
+      "Organization",
+      "WebSite",
+      "SearchAction",
+      "SoftwareApplication",
+      "Service",
+      "WebPage",
+      "BreadcrumbList",
+      "FAQPage"
+    ],
+    "canonical": true,
+    "privateRoutesNoindex": [
+      "/auth",
+      "/portal",
+      "/checkout",
+      "/admin"
+    ],
+    "deployPrecheckPassed": true
+  },
+  "externalKeyWaitlist": [
+    "NV0_PORTONE_API_SECRET",
+    "NV0_PORTONE_STORE_ID",
+    "NV0_PORTONE_CHANNEL_KEY",
+    "NV0_PORTONE_WEBHOOK_SECRET",
+    "NV0_TURNSTILE_SITE_KEY",
+    "NV0_TURNSTILE_SECRET",
+    "NV0_SMTP_URL",
+    "NV0_SCAN_PROVIDER_URL",
+    "NV0_SCAN_PROVIDER_TOKEN",
+    "NV0_MAIL_ORDER_REGISTRATION_NUMBER"
+  ],
+  "validationCommandsPassed": [
+    "node scripts/validate-phase155-cta-existing-rewrite.mjs",
+    "node scripts/validate-phase155-nonkey-commercial-closeout.mjs",
+    "node scripts/validate-phase155-search-robot-max.mjs",
+    "npm run deploy:precheck"
+  ]
+}

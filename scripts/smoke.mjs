@@ -59,9 +59,9 @@ try {
   await ensureServer();
   await check('/healthz', 200, '"ok": true');
   await check('/readyz', 200, '"ready": true');
-  await check('/', 200, '고객이 믿고 결제할 상태');
+  await check('/', 200, '결제 전에 고객이 이탈하는 이유');
   await check('/demo', 200, '주소 하나로');
-  await check('/products/veridion/demo', 200, '사이트 주소 하나로');
+  await check('/products/veridion/demo', 200, '주소 하나로');
   await check('/admin', 200, '관리자');
   const adminRedirect = await fetch(`${base}/admin/console`, { redirect: 'manual' });
   if (adminRedirect.status !== 302 || adminRedirect.headers.get('location') !== '/admin') {

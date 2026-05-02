@@ -258,7 +258,7 @@ async function createSession() {
   }
   isCreatingSession = true;
   updateCheckoutButtonState();
-  state.textContent = '신청 정보를 확인하고 포트원 결제 준비 중...';
+  state.textContent = '신청 정보를 확인하고 결제창을 연결하고 있습니다.';
   let data;
   try {
     const res = await fetch('/api/public/checkout-session', {

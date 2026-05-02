@@ -18,6 +18,20 @@ function required(name) {
   if (!String(env[name] || '').trim()) errors.push(`${name} is required`);
 }
 
+function validateSmtpUrl() {
+  const raw = String(env.NV0_SMTP_URL || '').trim();
+  if (!raw) return;
+  if (placeholder(raw)) return;
+  try {
+    const parsed = new URL(raw);
+    if (!['smtp:', 'smtps:'].includes(parsed.protocol)) errors.push('NV0_SMTP_URL must start with smtp:// or smtps://');
+    if (!parsed.hostname) errors.push('NV0_SMTP_URL must include SMTP host');
+    if (!parsed.searchParams.get('from') && !parsed.username && !env.NV0_EMAIL_FROM) warnings.push('NV0_SMTP_URL has no from query, username, or NV0_EMAIL_FROM; support email will be used as sender');
+  } catch {
+    errors.push('NV0_SMTP_URL must be a valid URL');
+  }
+}
+
 function finalized(name) {
   const value = String(env[name] || '').trim();
   if (!value) errors.push(`${name} is required`);
@@ -65,6 +79,7 @@ if (String(env.NV0_ENABLE_TURNSTILE) === 'true') {
 if (String(env.NV0_TRUST_PROXY_HEADERS) !== 'true') {
   warnings.push('NV0_TRUST_PROXY_HEADERS is not true; Cloudflare/Coolify forwarded proto and client IP may not be trusted');
 }
+validateSmtpUrl();
 if (!fs.existsSync('./server/index.mjs')) errors.push('server/index.mjs not found');
 
 if (errors.length) {

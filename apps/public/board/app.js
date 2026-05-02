@@ -9,7 +9,7 @@ function renderPostBody(body = '') {
   if (!sections.length) return '<p class="post-paragraph muted">본문이 준비되지 않았습니다.</p>';
   return `<div class="post-body">${sections.map(section => {
     const [first, ...rest] = section.split('\n');
-    const headingLike = /^(제목 후보|도입|문제 제기|해결 과정|신뢰 근거|FAQ|자연스러운 CTA|내부링크|태그)$/.test(first.trim());
+    const headingLike = /^(제목 후보|도입|문제 제기|해결 과정|신뢰 근거|FAQ|자연스러운 안내 버튼|내부링크|태그|왜 이 글을 썼나요\?|지금 보이는 문제|고객 입장에서 보면|바로 고칠 수 있는 것|문구를 쉽게 바꾸는 방법|자주 묻는 질문|다음에 할 일|관련 링크)$/.test(first.trim());
     if (headingLike) {
       const content = rest.join('\n').trim();
       return `<section class="post-section"><h3>${escapeHtml(first)}</h3>${content ? `<p>${escapeHtml(content).replace(/\n/g, '<br>')}</p>` : ''}</section>`;
@@ -23,9 +23,9 @@ function render(){
   const autoCount = posts.filter(item => item.boardType === 'cta' || item.autoPublished).length;
   const variantCount = Number(window.__NV0_BOARD_VARIANT_COUNT__ || 24);
   const comboMode = window.__NV0_BOARD_COMBINATION_MODE__ || 'unbounded_seeded_combinatorial';
-  const comboLabel = comboMode === 'unbounded_seeded_combinatorial' ? '무한 조합형 생성' : '주제 순환';
-  state.textContent = `공개 게시글 ${posts.length}건 · 현재 ${shown.length}건 표시 · 자동 발행 ${autoCount}건 · 기본 주제팩 ${variantCount}개 · ${comboLabel}`;
-  list.innerHTML = renderList(shown, '<div class="empty-state stack"><strong>조건에 맞는 게시글이 없습니다.</strong><p>전체 탭으로 이동하거나 Auto 플랜에서 사이트별 진단 결과 기반 게시글을 발행하세요.</p><a class="btn secondary" href="/plans#subscription">Auto 플랜 확인</a></div>', item => `<article class="result-card stack board-post ${item.boardType === 'cta' || item.autoPublished ? 'cta' : ''}"><div class="meta-row"><strong>${escapeHtml(item.title)}</strong><span class="pill">${escapeHtml(item.boardType || item.type || 'post')}</span></div><div class="post-meta"><span>${item.autoPublished ? '자동 발행' : '수동 발행'}</span><span>${escapeHtml(item.createdAt || '-')}</span><span>${escapeHtml(item.searchIntent || '검색의도 확인')}</span><span>${escapeHtml(item.funnelStage || '고객단계 확인')}</span><span>${escapeHtml(item.primaryKeyword || item.qualityStandard || 'SEO 기준')}</span></div>${renderPostBody(item.body || item.summary || '')}<div class="upgrade-box"><strong>이 글의 목적</strong><ul class="result-list"><li>방문자가 본인 사이트 위험도를 바로 확인하게 만들기</li><li>검색 의도·고객 단계·업종·FAQ·CTA를 조합해 반복 콘텐츠를 줄이기</li><li>게시글 말미에 무료 진단·상품 비교·내 사이트 관리 링크를 상황별로 유지하기</li></ul></div><div class="post-cta"><a class="btn primary" href="/products/veridion/demo">무료 진단</a><a class="btn secondary" href="/plans">상품 비교</a><a class="btn secondary" href="/portal">내 사이트 관리</a></div></article>`);
+  const comboLabel = comboMode === 'unbounded_seeded_combinatorial' ? '쉬운 글 자동 생성' : '글감 순환';
+  state.textContent = `공개 게시글 ${posts.length}건 · 현재 ${shown.length}건 표시 · 자동 발행 ${autoCount}건 · 글감 ${variantCount}개 · ${comboLabel}`;
+  list.innerHTML = renderList(shown, '<div class="empty-state stack"><strong>조건에 맞는 게시글이 없습니다.</strong><p>전체 탭으로 이동하거나 Auto 플랜에서 사이트별 진단 결과 기반 게시글을 발행하세요.</p><a class="btn secondary" href="/plans#subscription">Auto 플랜 확인</a></div>', item => `<article class="result-card stack board-post ${item.boardType === 'cta' || item.autoPublished ? 'cta' : ''}"><div class="meta-row"><strong>${escapeHtml(item.title)}</strong><span class="pill">${escapeHtml(item.boardType || item.type || 'post')}</span></div><div class="post-meta"><span>${item.autoPublished ? '자동 발행' : '수동 발행'}</span><span>${escapeHtml(item.createdAt || '-')}</span><span>${escapeHtml(item.searchIntent || '읽는 목적 확인')}</span><span>${escapeHtml(item.funnelStage || '고객 단계 확인')}</span><span>${escapeHtml(item.primaryKeyword || item.qualityStandard || '검색 기준')}</span></div>${renderPostBody(item.body || item.summary || '')}<div class="upgrade-box"><strong>이 글의 목적</strong><ul class="result-list"><li>방문자가 본인 사이트 위험도를 바로 확인하게 만들기</li><li>어려운 말 대신 고객이 바로 이해할 수 있는 쉬운 문장으로 설명하기</li><li>글 마지막에 무료 진단·상품 비교·내 사이트 관리 링크를 자연스럽게 연결하기</li></ul></div><div class="post-cta"><a class="btn primary" href="/products/veridion/demo">무료 진단</a><a class="btn secondary" href="/plans">상품 비교</a><a class="btn secondary" href="/portal">내 사이트 관리</a></div></article>`);
 }
 tabs.forEach(btn => btn.addEventListener('click', () => { filter = btn.dataset.filter; render(); }));
 try {

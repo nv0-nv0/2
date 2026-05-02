@@ -1,0 +1,332 @@
+{
+  "generatedAt": "2026-05-02T01:21:02.667Z",
+  "ok": true,
+  "phase": "P156-global-ux-flow-reaudit",
+  "scope": "public copy, UX route flow, session nav, business info, checkout copy, validation guard",
+  "total": 64,
+  "passed": 64,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "exists:apps/public/home/index.html",
+      "ok": true,
+      "details": "public route html must exist"
+    },
+    {
+      "name": "exists:apps/public/veridion-demo/index.html",
+      "ok": true,
+      "details": "public route html must exist"
+    },
+    {
+      "name": "exists:apps/public/demo/index.html",
+      "ok": true,
+      "details": "public route html must exist"
+    },
+    {
+      "name": "exists:apps/public/plans/index.html",
+      "ok": true,
+      "details": "public route html must exist"
+    },
+    {
+      "name": "exists:apps/public/solutions/index.html",
+      "ok": true,
+      "details": "public route html must exist"
+    },
+    {
+      "name": "exists:apps/public/documents/index.html",
+      "ok": true,
+      "details": "public route html must exist"
+    },
+    {
+      "name": "exists:apps/public/board/index.html",
+      "ok": true,
+      "details": "public route html must exist"
+    },
+    {
+      "name": "exists:apps/public/guides/index.html",
+      "ok": true,
+      "details": "public route html must exist"
+    },
+    {
+      "name": "exists:apps/public/business-info/index.html",
+      "ok": true,
+      "details": "public route html must exist"
+    },
+    {
+      "name": "exists:apps/public/terms/index.html",
+      "ok": true,
+      "details": "public route html must exist"
+    },
+    {
+      "name": "exists:apps/public/privacy/index.html",
+      "ok": true,
+      "details": "public route html must exist"
+    },
+    {
+      "name": "exists:apps/public/refund/index.html",
+      "ok": true,
+      "details": "public route html must exist"
+    },
+    {
+      "name": "exists:apps/public/auth/index.html",
+      "ok": true,
+      "details": "public route html must exist"
+    },
+    {
+      "name": "exists:apps/public/portal/index.html",
+      "ok": true,
+      "details": "public route html must exist"
+    },
+    {
+      "name": "exists:apps/public/checkout/index.html",
+      "ok": true,
+      "details": "public route html must exist"
+    },
+    {
+      "name": "no-public-token:운영값 미입력",
+      "ok": true,
+      "details": "unfinished or unnatural visible copy must not remain"
+    },
+    {
+      "name": "no-public-token:확정 후 입력",
+      "ok": true,
+      "details": "unfinished or unnatural visible copy must not remain"
+    },
+    {
+      "name": "no-public-token:운영 예정",
+      "ok": true,
+      "details": "unfinished or unnatural visible copy must not remain"
+    },
+    {
+      "name": "no-public-token:버튼와",
+      "ok": true,
+      "details": "unfinished or unnatural visible copy must not remain"
+    },
+    {
+      "name": "no-public-token:버튼를",
+      "ok": true,
+      "details": "unfinished or unnatural visible copy must not remain"
+    },
+    {
+      "name": "no-public-token:상용 결제 전 입력 필요",
+      "ok": true,
+      "details": "unfinished or unnatural visible copy must not remain"
+    },
+    {
+      "name": "no-public-token:통신판매업 신고 완료 후 표시 예정",
+      "ok": true,
+      "details": "unfinished or unnatural visible copy must not remain"
+    },
+    {
+      "name": "no-public-token:호스팅 제공자 실제 운영 인프라 확정 후 입력 필요",
+      "ok": true,
+      "details": "unfinished or unnatural visible copy must not remain"
+    },
+    {
+      "name": "no-public-token:support@nv0.kr",
+      "ok": true,
+      "details": "unfinished or unnatural visible copy must not remain"
+    },
+    {
+      "name": "no-public-token:Why it matters",
+      "ok": true,
+      "details": "unfinished or unnatural visible copy must not remain"
+    },
+    {
+      "name": "no-public-token:Overview",
+      "ok": true,
+      "details": "unfinished or unnatural visible copy must not remain"
+    },
+    {
+      "name": "no-public-token:Next Step",
+      "ok": true,
+      "details": "unfinished or unnatural visible copy must not remain"
+    },
+    {
+      "name": "business:real-support-email",
+      "ok": true,
+      "details": ""
+    },
+    {
+      "name": "business:real-hosting-provider",
+      "ok": true,
+      "details": ""
+    },
+    {
+      "name": "business:no-mail-order-placeholder",
+      "ok": true,
+      "details": ""
+    },
+    {
+      "name": "business:operation-gate-copy",
+      "ok": true,
+      "details": ""
+    },
+    {
+      "name": "checkout:title-clean",
+      "ok": true,
+      "details": ""
+    },
+    {
+      "name": "checkout:flow-clean",
+      "ok": true,
+      "details": ""
+    },
+    {
+      "name": "checkout:no-galaxia-pending-copy",
+      "ok": true,
+      "details": ""
+    },
+    {
+      "name": "checkout:refund-consent",
+      "ok": true,
+      "details": ""
+    },
+    {
+      "name": "guides:grammar-button-and",
+      "ok": true,
+      "details": ""
+    },
+    {
+      "name": "demo:result-flow",
+      "ok": true,
+      "details": ""
+    },
+    {
+      "name": "demo:no-awkward-mobile-copy",
+      "ok": true,
+      "details": ""
+    },
+    {
+      "name": "route:mapped:/",
+      "ok": true,
+      "details": ""
+    },
+    {
+      "name": "route:mapped:/products/veridion/demo",
+      "ok": true,
+      "details": ""
+    },
+    {
+      "name": "route:mapped:/plans",
+      "ok": true,
+      "details": ""
+    },
+    {
+      "name": "route:mapped:/solutions",
+      "ok": true,
+      "details": ""
+    },
+    {
+      "name": "route:mapped:/documents",
+      "ok": true,
+      "details": ""
+    },
+    {
+      "name": "route:mapped:/board",
+      "ok": true,
+      "details": ""
+    },
+    {
+      "name": "route:mapped:/guides",
+      "ok": true,
+      "details": ""
+    },
+    {
+      "name": "route:mapped:/business-info",
+      "ok": true,
+      "details": ""
+    },
+    {
+      "name": "route:mapped:/auth",
+      "ok": true,
+      "details": ""
+    },
+    {
+      "name": "route:mapped:/portal",
+      "ok": true,
+      "details": ""
+    },
+    {
+      "name": "route:mapped:/checkout",
+      "ok": true,
+      "details": ""
+    },
+    {
+      "name": "nav:label:무료 진단",
+      "ok": true,
+      "details": ""
+    },
+    {
+      "name": "nav:label:내 사이트",
+      "ok": true,
+      "details": ""
+    },
+    {
+      "name": "nav:label:운영 게시판",
+      "ok": true,
+      "details": ""
+    },
+    {
+      "name": "nav:label:요금제",
+      "ok": true,
+      "details": ""
+    },
+    {
+      "name": "nav:label:문서 생성",
+      "ok": true,
+      "details": ""
+    },
+    {
+      "name": "nav:label:고객지원",
+      "ok": true,
+      "details": ""
+    },
+    {
+      "name": "session-nav:logout-state",
+      "ok": true,
+      "details": ""
+    },
+    {
+      "name": "server:business-provider-fallback",
+      "ok": true,
+      "details": ""
+    },
+    {
+      "name": "server:document-preview-fallback-natural",
+      "ok": true,
+      "details": ""
+    },
+    {
+      "name": "server:plan-market-position-exposed",
+      "ok": true,
+      "details": ""
+    },
+    {
+      "name": "package:script:check:syntax",
+      "ok": true,
+      "details": ""
+    },
+    {
+      "name": "package:script:test:all",
+      "ok": true,
+      "details": ""
+    },
+    {
+      "name": "package:script:test:e2e",
+      "ok": true,
+      "details": ""
+    },
+    {
+      "name": "package:script:test:routes",
+      "ok": true,
+      "details": ""
+    },
+    {
+      "name": "package:script:check:links",
+      "ok": true,
+      "details": ""
+    }
+  ],
+  "failures": []
+}

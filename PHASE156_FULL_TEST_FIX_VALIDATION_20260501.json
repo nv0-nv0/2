@@ -1,0 +1,58 @@
+{
+  "ok": true,
+  "phase": "P156",
+  "name": "Full test and deficiency fix after P155",
+  "fixed": [
+    "veridion demo regression copy mismatch",
+    "home app render safety escaper naming",
+    "commercial offers contract strings and checkout options",
+    "full commercial flow plan branches and page tokens",
+    "commercial env template portone_v2 strict mode",
+    "pipeline/deploy-bundle R2 vs MinIO validation conflict",
+    "final commercial gate Docker HOST marker and commercial tokens",
+    "runtime clean release state"
+  ],
+  "passed": [
+    "check-source-syntax",
+    "test-all",
+    "routes-smoke",
+    "e2e",
+    "check-data-integrity",
+    "check-page-integrity",
+    "check-client-render-safety",
+    "check-links",
+    "check-handoff-docs",
+    "check-no-debug-client",
+    "check-commercial-offers",
+    "check-runtime-clean",
+    "check-full-commercial-flow",
+    "validate-commercial-release",
+    "validate-commercial-runtime",
+    "validate-pipeline",
+    "pipeline-release-gate",
+    "final-commercial-gate",
+    "phase155-cta-existing-rewrite",
+    "phase155-nonkey-commercial-closeout",
+    "phase155-search-robot-max",
+    "validate-deploy-bundle",
+    "check-env-examples",
+    "check-storage-config",
+    "deploy-precheck"
+  ],
+  "conditional": [
+    "Coolify live container redeploy verification",
+    "real external key validation"
+  ],
+  "externalKeyWaitlist": [
+    "NV0_PORTONE_API_SECRET",
+    "NV0_PORTONE_STORE_ID",
+    "NV0_PORTONE_CHANNEL_KEY",
+    "NV0_PORTONE_WEBHOOK_SECRET",
+    "NV0_TURNSTILE_SITE_KEY",
+    "NV0_TURNSTILE_SECRET",
+    "NV0_SMTP_URL",
+    "NV0_SCAN_PROVIDER_URL",
+    "NV0_SCAN_PROVIDER_TOKEN",
+    "NV0_MAIL_ORDER_REGISTRATION_NUMBER"
+  ]
+}

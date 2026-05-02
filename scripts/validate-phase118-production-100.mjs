@@ -75,7 +75,7 @@ const html = [
 for (const token of ['Why it matters', 'Overview', 'Next Step', 'Preview', '통신판매업 신고 완료 후 표시 예정', '상용 결제 전 입력 필요', '호스팅 제공자 실제 운영 인프라 확정 후 입력 필요', 'support@nv0.kr']) {
   add(`public:no-banned-copy:${token}`, !html.includes(token));
 }
-for (const token of ['무료 진단 시작', '결제 전 신뢰 점검', '위험도 72 / 100', '전체 상품 비교', '상용 공개 차단 기준', '이메일 전용 고객지원']) {
+for (const token of ['무료 진단 시작', '결제 전 신뢰 점검', '위험도 72 / 100', '전체 상품 비교', '운영 공개 기준', '이메일 전용 고객지원']) {
   add(`public:required-copy:${token}`, html.includes(token));
 }
 

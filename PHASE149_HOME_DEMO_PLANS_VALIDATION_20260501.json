@@ -1,0 +1,61 @@
+{
+  "ok": true,
+  "checkedAt": "2026-05-01T01:58:30.717Z",
+  "checks": [
+    {
+      "name": "home_url_input_removed",
+      "ok": true,
+      "detail": "메인 화면 URL input 제거"
+    },
+    {
+      "name": "home_cta_only",
+      "ok": true,
+      "detail": "메인 CTA 버튼화"
+    },
+    {
+      "name": "home_css_cta_box",
+      "ok": true,
+      "detail": "입력창 제거 후 CTA 레이아웃 보강"
+    },
+    {
+      "name": "demo_security_not_stuck_copy",
+      "ok": true,
+      "detail": "보안 확인 고착 문구 제거"
+    },
+    {
+      "name": "turnstile_timeout_fallback",
+      "ok": true,
+      "detail": "Turnstile timeout/fallback 구현"
+    },
+    {
+      "name": "server_turnstile_effective_flag",
+      "ok": true,
+      "detail": "서버 Turnstile 유효 설정 플래그"
+    },
+    {
+      "name": "server_public_config_hides_placeholder",
+      "ok": true,
+      "detail": "placeholder key public 노출 방지"
+    },
+    {
+      "name": "server_turnstile_verify_skips_placeholder",
+      "ok": true,
+      "detail": "placeholder/prelaunch verify skip"
+    },
+    {
+      "name": "plans_missing_functions_fixed",
+      "ok": true,
+      "detail": "요금제 JS 누락 함수 보강"
+    },
+    {
+      "name": "plans_api_fallback",
+      "ok": true,
+      "detail": "요금제 API 실패 fallback"
+    },
+    {
+      "name": "demo_no_duplicate_function_declarations",
+      "ok": true,
+      "detail": "[]"
+    }
+  ]
+}

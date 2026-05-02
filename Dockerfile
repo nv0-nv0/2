@@ -7,6 +7,8 @@ ENV NODE_ENV=production \
     PORT=3210 \
     NV0_RUNTIME_DIR=/app/runtime
 
+ENV HOST=0.0.0.0
+
 COPY package*.json ./
 COPY server ./server
 COPY apps ./apps
