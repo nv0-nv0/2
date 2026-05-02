@@ -8,16 +8,24 @@ on:
   workflow_dispatch:
 
 jobs:
-  ci-strict:
+  validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
-      - name: Install dependencies
-        run: npm ci --ignore-scripts
-      - name: Run Phase106 final commercial CI
-        run: npm run ci:strict && npm run phase106:final
+      - name: Install only when lockfile exists
+        run: |
+          if [ -f package-lock.json ]; then npm ci --ignore-scripts; else npm install --ignore-scripts --package-lock=false; fi
+      - name: Syntax gate
+        run: npm run check:syntax
+      - name: Unit and route smoke tests
+        run: npm run test:all && npm run test:routes
+      - name: Browser-level E2E smoke
+        run: npm run test:e2e
+      - name: Link and validation JSON gate
+        run: npm run check:links -- --summary && node scripts/check-validation-json.mjs
+      - name: Docker build gate
+        run: docker build -t nv0-ci:latest .

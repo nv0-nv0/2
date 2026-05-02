@@ -176,6 +176,8 @@
     "release:clean-runtime": "node scripts/clean-release-runtime.mjs",
     "final:delivery": "node scripts/run-final-delivery-gate.mjs",
     "delivery:final": "npm run final:delivery",
-    "phase168:final": "node scripts/clean-release-runtime.mjs && node scripts/check-source-syntax.mjs && node scripts/test-all.mjs && node tests/e2e.mjs && node tests/routes-smoke.mjs && node tests/provider-adapters.mjs && node tests/session-persistence.mjs && node tests/runtime-persistence.mjs && node tests/security-stateful.mjs && node tests/contracts-fuzz.mjs && node scripts/validate-phase166-native-route-split.mjs && node scripts/validate-phase167-native-http-load-security.mjs && node scripts/stress-smoke.mjs && node scripts/clean-release-runtime.mjs"
+    "phase168:final": "node scripts/clean-release-runtime.mjs && node scripts/check-source-syntax.mjs && node scripts/test-all.mjs && node tests/e2e.mjs && node tests/routes-smoke.mjs && node tests/provider-adapters.mjs && node tests/session-persistence.mjs && node tests/runtime-persistence.mjs && node tests/security-stateful.mjs && node tests/contracts-fuzz.mjs && node scripts/validate-phase166-native-route-split.mjs && node scripts/validate-phase167-native-http-load-security.mjs && node scripts/stress-smoke.mjs && node scripts/clean-release-runtime.mjs",
+    "check:validation-json": "node scripts/check-validation-json.mjs",
+    "phase169:final": "node scripts/check-source-syntax.mjs && node scripts/test-all.mjs && node tests/e2e.mjs && node tests/routes-smoke.mjs && node scripts/check-links.mjs --summary && node scripts/check-validation-json.mjs && node scripts/validate-phase167-native-http-load-security.mjs"
   }
 }

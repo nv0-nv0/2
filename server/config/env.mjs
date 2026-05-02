@@ -3,7 +3,9 @@
 export function readEnvConfig(env = process.env) {
   const csv = (name, fallback = '') => String(env[name] ?? fallback).split(',').map(v => v.trim()).filter(Boolean);
   const number = (name, fallback, { min = Number.NEGATIVE_INFINITY, max = Number.POSITIVE_INFINITY } = {}) => {
-    const value = Number(env[name] ?? fallback);
+    const raw = env[name];
+    const normalized = raw === undefined || String(raw).trim() === '' ? fallback : String(raw).trim();
+    const value = Number(normalized);
     if (!Number.isFinite(value) || value < min || value > max) {
       throw new Error(`${name} must be a finite number between ${min} and ${max}.`);
     }

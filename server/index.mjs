@@ -98,7 +98,7 @@ const DATABASE_URL = process.env.NV0_DATABASE_URL || '';
 const SCAN_PROVIDER = process.env.NV0_SCAN_PROVIDER || 'builtin';
 const SCAN_PROVIDER_URL = process.env.NV0_SCAN_PROVIDER_URL || '';
 const SCAN_PROVIDER_TOKEN = process.env.NV0_SCAN_PROVIDER_TOKEN || '';
-const SCAN_PROVIDER_FALLBACK = process.env.NV0_SCAN_PROVIDER_FALLBACK !== 'false';
+const SCAN_PROVIDER_FALLBACK = process.env.NV0_SCAN_PROVIDER_FALLBACK !== 'false' || PRELAUNCH_MODE || DEPLOYMENT_STAGE === 'prelaunch';
 const TARGET_FETCH_ENABLED = process.env.NV0_TARGET_FETCH_ENABLED !== 'false';
 const PAYMENT_PROVIDER = process.env.NV0_PAYMENT_PROVIDER || (PRELAUNCH_MODE ? 'disabled' : (PLATFORM.commercial ? 'portone_v2' : 'demo'));
 const PAYMENT_PROVIDER_URL = process.env.NV0_PAYMENT_PROVIDER_URL || '';
@@ -1337,7 +1337,6 @@ return `<a class="skip-link" href="#main">본문 바로가기</a><nav class="sit
 <a href="/documents"${navAttrs(urlPath, '/documents')}>문서 생성</a>
 <a href="/business-info"${navAttrs(urlPath, '/business-info')}>고객지원</a>
 <a href="/auth"${navAttrs(urlPath, '/auth', 'login-link')}>로그인</a>
-<a href="/products/veridion/demo" class="cta">진단 시작</a>
 </div>
 </nav>`;
 }
@@ -3780,6 +3779,7 @@ if (rendered) return;
 text(req, res, 404, 'Not found');
 } catch (error) {
 const status = error?.code === 'PAYLOAD_TOO_LARGE' ? 413 : ['INVALID_JSON', 'INVALID_PAYLOAD'].includes(error?.code) ? 400 : 500;
+console.error(JSON.stringify({ level: 'error', event: 'request_error', requestId, statusCode: status, message: error?.message || 'unknown error', code: error?.code || null, stack: NODE_ENV === 'production' ? undefined : error?.stack }));
 json(req, res, status, { ok: false, error: status === 413 ? '요청 크기가 너무 큽니다.' : status === 400 ? (error.message || '잘못된 요청입니다.') : '서버 오류가 발생했습니다.', requestId });
 } finally {
 const pathname = req._nv0RouteState?.pathname || (() => { try { return requestUrlFrom(req).pathname; } catch { return 'invalid-url'; } })();

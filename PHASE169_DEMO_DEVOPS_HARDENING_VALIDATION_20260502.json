@@ -1,0 +1,55 @@
+{
+  "ok": true,
+  "phase": 169,
+  "scope": "demo UX, Docker, env secrecy, schema migration baseline, compose readiness, CI validation, docs wiki",
+  "checks": [
+    "duplicate_top_nav_cta_removed",
+    "prelaunch_scan_provider_fallback_enabled",
+    "dockerfile_multistage_nonroot_readyz_healthcheck",
+    "gitignore_dockerignore_env_runtime_exclusion",
+    "postgres_migration_baseline_added",
+    "compose_healthcheck_and_readiness_env 강화",
+    "ci_validation_json_gate_added",
+    "docs_wiki_index_added"
+  ],
+  "errors": [],
+  "warnings": [],
+  "executed": {
+    "check_source_syntax": {
+      "ok": true,
+      "checkedCount": 195
+    },
+    "test_all": {
+      "ok": true,
+      "passed": 88,
+      "failed": 0
+    },
+    "e2e": {
+      "ok": true
+    },
+    "routes_smoke": {
+      "ok": true,
+      "checked": 24
+    },
+    "links": {
+      "ok": true,
+      "checkedCount": 149,
+      "errorCount": 0
+    },
+    "validation_json_gate": {
+      "ok": true,
+      "validationFiles": 80,
+      "gatedFromDate": "20260501",
+      "legacyWarnings": 1
+    },
+    "demo_external_provider_failure_fallback_smoke": {
+      "ok": true,
+      "statusCode": 200,
+      "provider": "builtin_fallback"
+    },
+    "docker_build": {
+      "ok": null,
+      "notExecutedReason": "docker CLI is not available in this execution container"
+    }
+  }
+}
