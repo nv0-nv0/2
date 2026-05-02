@@ -121,7 +121,7 @@ const AI_REVIEW_PROVIDER = String(process.env.NV0_AI_REVIEW_PROVIDER || 'disable
 const GEMINI_API_KEY = String(process.env.NV0_GEMINI_API_KEY || '').trim();
 const GEMINI_MODEL = String(process.env.NV0_GEMINI_MODEL || 'gemini-2.5-flash').trim();
 const AI_REVIEW_ENABLED = AI_REVIEW_PROVIDER === 'gemini' && !!GEMINI_API_KEY;
-const RELEASE_PHASE = 'phase167-native-http-load-security-50';
+const RELEASE_PHASE = 'phase167-native-http-load-security-50-phase173-rootless-entrypoint-runtime';
 const DATA_RETENTION_DAYS = Number(process.env.NV0_DATA_RETENTION_DAYS || 1095);
 const REFUND_REQUEST_WINDOW_DAYS = Number(process.env.NV0_REFUND_REQUEST_WINDOW_DAYS || 7);
 const OPERATOR_ALERT_EMAIL = process.env.NV0_OPERATOR_ALERT_EMAIL || BUSINESS_PROFILE.contactEmail;

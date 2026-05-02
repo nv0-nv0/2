@@ -17,7 +17,7 @@ COPY deploy/entrypoint.sh ./deploy/entrypoint.sh
 COPY deploy/postgres ./deploy/postgres
 
 FROM base AS runtime
-RUN apk add --no-cache curl postgresql-client su-exec \
+RUN apk add --no-cache curl postgresql-client \
   && addgroup -S nv0 && adduser -S nv0 -G nv0 \
   && mkdir -p /app/runtime/data /app/runtime/uploads /app/runtime/backups /app/runtime/reports
 COPY --from=source --chown=nv0:nv0 /app /app
@@ -28,3 +28,4 @@ EXPOSE 3210
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=10 \
   CMD curl -fsS "http://127.0.0.1:${PORT:-3210}/healthz" || exit 1
 ENTRYPOINT ["/app/deploy/entrypoint.sh"]
+CMD ["node", "server/index.mjs"]

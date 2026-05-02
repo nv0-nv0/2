@@ -59,10 +59,12 @@ try {
   await ensureServer();
   await check('/healthz', 200, '"ok": true');
   await check('/readyz', 200, '"ready": true');
-  await check('/', 200, '결제 전에 고객이 이탈하는 이유');
+  await check('/', 200, '고객이 결제 전에 망설이는 지점');
   await check('/demo', 200, '주소 하나로');
   await check('/products/veridion/demo', 200, '주소 하나로');
   await check('/admin', 200, '관리자');
+  await check('/api/public/auth/session', 200, '"authenticated": false');
+  await check('/api/public/system-items', 200, '"ok": true');
   const adminRedirect = await fetch(`${base}/admin/console`, { redirect: 'manual' });
   if (adminRedirect.status !== 302 || adminRedirect.headers.get('location') !== '/admin') {
     throw new Error('/admin/console should redirect to /admin when unauthenticated');
