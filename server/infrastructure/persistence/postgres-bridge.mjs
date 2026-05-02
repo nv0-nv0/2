@@ -148,26 +148,71 @@ create index if not exists idx_webhook_inbox_received_at on webhook_inbox(receiv
 create index if not exists idx_webhook_inbox_payment_id on webhook_inbox(payment_id);
 `;
 
-function runPsql(databaseUrl, sql) {
+function createPsqlEnv(sourceEnv = process.env) {
+  // Coolify can inject a very large environment block. Passing the whole
+  // process.env to child_process.spawn can exceed Linux ARG_MAX and crash
+  // before psql starts with `spawn E2BIG`. Keep only the variables psql
+  // actually needs plus a safe executable search path.
+  const allowList = [
+    'PATH',
+    'HOME',
+    'LANG',
+    'LC_ALL',
+    'PGAPPNAME',
+    'PGCONNECT_TIMEOUT',
+    'PGSSLMODE',
+    'PGSSLROOTCERT',
+    'PGSSLCERT',
+    'PGSSLKEY',
+    'PGSERVICEFILE',
+    'PGSERVICE'
+  ];
+  const childEnv = {
+    PATH: sourceEnv.PATH || '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+    HOME: sourceEnv.HOME || '/tmp',
+    LANG: sourceEnv.LANG || 'C.UTF-8'
+  };
+  for (const key of allowList) {
+    if (sourceEnv[key]) childEnv[key] = sourceEnv[key];
+  }
+  return childEnv;
+}
 
+function runPsql(databaseUrl, sql) {
   return new Promise((resolve, reject) => {
-    const child = spawn('psql', [databaseUrl, '-v', 'ON_ERROR_STOP=1', '-t', '-A', '-c', sql], {
-      env: process.env,
-      stdio: ['ignore', 'pipe', 'pipe']
+    // Never pass SQL through `-c`. Snapshot payloads can contain large JSON
+    // blobs; putting them in argv triggers E2BIG in production. Stream the SQL
+    // over stdin instead so the command line remains tiny and deterministic.
+    const child = spawn('psql', [databaseUrl, '-v', 'ON_ERROR_STOP=1', '-t', '-A'], {
+      env: createPsqlEnv(process.env),
+      stdio: ['pipe', 'pipe', 'pipe']
     });
     let stdout = '';
     let stderr = '';
+    let settled = false;
+
+    const fail = error => {
+      if (settled) return;
+      settled = true;
+      reject(error);
+    };
+
     child.stdout.on('data', chunk => {
       stdout += chunk.toString();
     });
     child.stderr.on('data', chunk => {
       stderr += chunk.toString();
     });
-    child.on('error', reject);
+    child.on('error', fail);
     child.on('close', code => {
+      if (settled) return;
+      settled = true;
       if (code === 0) resolve(stdout.trim());
       else reject(new Error(stderr.trim() || `psql exited with code ${code}`));
     });
+
+    child.stdin.on('error', fail);
+    child.stdin.end(String(sql) + '\n');
   });
 }
 

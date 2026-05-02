@@ -1,0 +1,45 @@
+{
+  "ok": true,
+  "phase": "P158",
+  "fix": "postgres psql spawn E2BIG hotfix",
+  "checks": [
+    {
+      "name": "postgres bridge streams SQL via stdin",
+      "ok": true
+    },
+    {
+      "name": "postgres bridge no longer sends SQL through argv -c",
+      "ok": true
+    },
+    {
+      "name": "postgres bridge uses minimal child environment",
+      "ok": true
+    },
+    {
+      "name": "CTA migration psql helper also avoids argv SQL",
+      "ok": true
+    },
+    {
+      "name": "runtime bridge successfully spawned psql with 2MB parent env",
+      "ok": true,
+      "calls": 24
+    },
+    {
+      "name": "fake psql never received SQL in argv",
+      "ok": true
+    },
+    {
+      "name": "fake psql received large snapshot over stdin",
+      "ok": true
+    },
+    {
+      "name": "fake psql did not inherit huge Coolify environment blob",
+      "ok": true
+    }
+  ],
+  "summary": {
+    "total": 8,
+    "passed": 8,
+    "failed": 0
+  }
+}

@@ -1,6 +1,6 @@
 {
   "name": "nv0-veridion-cleanroom",
-  "version": "1.0.0-commercial-final-100-score-phase157-nonpayment-ops",
+  "version": "1.0.0-commercial-final-100-score-phase158-e2big-hotfix",
   "private": true,
   "type": "module",
   "scripts": {
@@ -149,6 +149,8 @@
     "validate:phase156": "node scripts/validate-phase156-global-ux-flow.mjs",
     "phase156:final": "node scripts/check-source-syntax.mjs && node scripts/test-all.mjs && node tests/e2e.mjs && node tests/routes-smoke.mjs && node scripts/check-links.mjs --summary && node scripts/check-phase105-whole-package-completion.mjs && node scripts/validate-phase108-commercial-100.mjs && node scripts/validate-phase132-competitive-3x-value.mjs && node scripts/validate-phase154-human-cta.mjs && node scripts/validate-phase155-cta-existing-rewrite.mjs && node scripts/validate-phase155-search-robot-max.mjs && node scripts/validate-phase155-nonkey-commercial-closeout.mjs && node scripts/validate-phase156-global-ux-flow.mjs && node scripts/check-runtime-clean.mjs",
     "validate:phase157": "node scripts/validate-phase157-nonpayment-ops.mjs",
-    "phase157:final": "node scripts/check-source-syntax.mjs && node scripts/test-all.mjs && node tests/e2e.mjs && node tests/routes-smoke.mjs && node scripts/check-links.mjs --summary && node scripts/validate-phase156-global-ux-flow.mjs && node scripts/validate-phase157-nonpayment-ops.mjs && node scripts/check-runtime-clean.mjs"
+    "phase157:final": "node scripts/check-source-syntax.mjs && node scripts/test-all.mjs && node tests/e2e.mjs && node tests/routes-smoke.mjs && node scripts/check-links.mjs --summary && node scripts/validate-phase156-global-ux-flow.mjs && node scripts/validate-phase157-nonpayment-ops.mjs && node scripts/check-runtime-clean.mjs",
+    "validate:phase158": "node scripts/validate-phase158-e2big-hotfix.mjs",
+    "phase158:final": "node scripts/check-source-syntax.mjs && node scripts/test-all.mjs && node tests/e2e.mjs && node tests/routes-smoke.mjs && node scripts/validate-phase156-global-ux-flow.mjs && node scripts/validate-phase157-nonpayment-ops.mjs && node scripts/validate-phase158-e2big-hotfix.mjs"
   }
 }

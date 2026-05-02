@@ -2,7 +2,7 @@
   "ok": true,
   "phase": "PHASE157_NONPAYMENT_OPS_COMPLETION",
   "scope": "PortOne 결제 연결과 통신판매업 신고번호를 제외한 운영 연결성·진단 안정성·관리자 UX 보강 검증",
-  "checkedAt": "2026-05-02T01:21:34.957Z",
+  "checkedAt": "2026-05-02T01:35:21.282Z",
   "passed": 19,
   "failed": 0,
   "checks": [

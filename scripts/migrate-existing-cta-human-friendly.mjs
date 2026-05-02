@@ -15,21 +15,53 @@ const dbPath = process.env.NV0_DB_JSON_PATH || path.join(dataDir, 'db.json');
 const now = new Date().toISOString();
 const stamp = now.replace(/[:.]/g, '-');
 
+function createPsqlEnv(sourceEnv = process.env) {
+  const childEnv = {
+    PATH: sourceEnv.PATH || '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+    HOME: sourceEnv.HOME || '/tmp',
+    LANG: sourceEnv.LANG || 'C.UTF-8'
+  };
+  for (const key of [
+    'LC_ALL',
+    'PGAPPNAME',
+    'PGCONNECT_TIMEOUT',
+    'PGSSLMODE',
+    'PGSSLROOTCERT',
+    'PGSSLCERT',
+    'PGSSLKEY',
+    'PGSERVICEFILE',
+    'PGSERVICE'
+  ]) {
+    if (sourceEnv[key]) childEnv[key] = sourceEnv[key];
+  }
+  return childEnv;
+}
+
 function psql(databaseUrl, sql) {
   return new Promise((resolve, reject) => {
-    const child = spawn('psql', [databaseUrl, '-v', 'ON_ERROR_STOP=1', '-t', '-A', '-c', sql], {
-      env: process.env,
-      stdio: ['ignore', 'pipe', 'pipe']
+    const child = spawn('psql', [databaseUrl, '-v', 'ON_ERROR_STOP=1', '-t', '-A'], {
+      env: createPsqlEnv(process.env),
+      stdio: ['pipe', 'pipe', 'pipe']
     });
     let stdout = '';
     let stderr = '';
+    let settled = false;
+    const fail = error => {
+      if (settled) return;
+      settled = true;
+      reject(error);
+    };
     child.stdout.on('data', chunk => { stdout += chunk.toString(); });
     child.stderr.on('data', chunk => { stderr += chunk.toString(); });
-    child.on('error', reject);
+    child.on('error', fail);
     child.on('close', code => {
+      if (settled) return;
+      settled = true;
       if (code === 0) resolve(stdout.trim());
       else reject(new Error(stderr.trim() || `psql exited with code ${code}`));
     });
+    child.stdin.on('error', fail);
+    child.stdin.end(String(sql) + '\n');
   });
 }
 
