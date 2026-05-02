@@ -82,18 +82,35 @@ async function execRedis(url, commands, timeoutMs = 3000) {
       fn(value);
     };
 
+    const toPublicValues = responses => {
+      const relevant = responses.slice(responses.length - commands.length);
+      return relevant.map(item => Buffer.isBuffer(item) ? item.toString('utf8') : item);
+    };
+
+    const tryResolveFromBuffer = () => {
+      try {
+        const responses = parseRespMany(Buffer.concat(chunks));
+        if (responses.length >= queue.length) finalize(resolve, toPublicValues(responses));
+      } catch (error) {
+        // Partial RESP frames are normal while data is still arriving. Keep waiting.
+        if (!/Incomplete RESP/.test(String(error.message || ''))) finalize(reject, error);
+      }
+    };
+
     const timer = setTimeout(() => finalize(reject, new Error('Redis request timeout')), timeoutMs);
 
     socket.on('connect', () => {
       for (const command of queue) socket.write(encodeCommand(command));
     });
-    socket.on('data', chunk => chunks.push(chunk));
+    socket.on('data', chunk => {
+      chunks.push(chunk);
+      tryResolveFromBuffer();
+    });
     socket.on('error', error => finalize(reject, error));
     socket.on('end', () => {
       try {
         const responses = parseRespMany(Buffer.concat(chunks));
-        const relevant = responses.slice(responses.length - commands.length);
-        finalize(resolve, relevant.map(item => Buffer.isBuffer(item) ? item.toString('utf8') : item));
+        finalize(resolve, toPublicValues(responses));
       } catch (error) {
         finalize(reject, error);
       }

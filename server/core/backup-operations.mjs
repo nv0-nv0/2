@@ -125,6 +125,16 @@ export function createBackupOperations(config) {
 
   async function runAutomatic(reason = 'scheduled') {
     if (!autoEnabled) return { ok: true, skipped: true, reason: 'auto_backup_disabled' };
+    const dbSource = path.join(dataDir, 'db.json');
+    try {
+      await fs.access(dbSource);
+    } catch (error) {
+      if (error?.code === 'ENOENT') {
+        logger.warn?.('automatic backup skipped because json db snapshot is not present', { reason, persistenceMode: env.NV0_PERSISTENCE_MODE || 'json' });
+        return { ok: true, skipped: true, reason: 'json_db_snapshot_missing' };
+      }
+      throw error;
+    }
     const backup = await createSnapshot({ reason });
     if (backup.remote?.db && backup.remote.db.ok === false && !backup.remote.db.skipped) logger.error('automatic backup remote upload failed', backup.remote.db.error || backup.remote.db.reason);
     return { ok: true, backup };
