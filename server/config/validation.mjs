@@ -59,6 +59,7 @@ export function validateRuntimeConfig(input = {}) {
   assertEnumConfig('NV0_STORAGE_MODE', storageMode, ['local_fs', 's3', 's3_compatible', 'object_storage']);
   assertEnumConfig('NV0_SCAN_PROVIDER', scanProvider, ['builtin', 'external_http']);
   assertEnumConfig('NV0_PAYMENT_PROVIDER', paymentProvider, ['disabled', 'demo', 'external_http', 'portone_v2']);
+  if (input.accessLogMode) assertEnumConfig('NV0_ACCESS_LOG_MODE', input.accessLogMode, ['quiet', 'normal', 'verbose']);
 
   assertFiniteConfigNumber('PORT', Number(input.port), { min: 1, max: 65535 });
   assertFiniteConfigNumber('NV0_ADMIN_SESSION_TTL_MS', Number(input.sessionTtlMs), { min: 60_000, max: 86_400_000 });

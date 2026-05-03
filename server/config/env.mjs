@@ -28,6 +28,9 @@ export function readEnvConfig(env = process.env) {
     allowedAdminOrigins: csv('NV0_ALLOWED_ADMIN_ORIGINS'),
     trustProxyHeaders: bool('NV0_TRUST_PROXY_HEADERS', false),
     publicCacheSeconds: number('NV0_PUBLIC_CACHE_SECONDS', 0, { min: 0, max: 86400 }),
-    publicAssetCacheSeconds: number('NV0_PUBLIC_ASSET_CACHE_SECONDS', 0, { min: 0, max: 86400 })
+    publicAssetCacheSeconds: number('NV0_PUBLIC_ASSET_CACHE_SECONDS', 0, { min: 0, max: 86400 }),
+    logHealthcheckRequests: bool('NV0_LOG_HEALTHCHECK_REQUESTS', false),
+    logFaviconRequests: bool('NV0_LOG_FAVICON_REQUESTS', false),
+    accessLogMode: String(env.NV0_ACCESS_LOG_MODE || 'normal').trim().toLowerCase()
   });
 }

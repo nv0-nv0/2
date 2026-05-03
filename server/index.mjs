@@ -185,7 +185,7 @@ const AI_REVIEW_PROVIDER = String(process.env.NV0_AI_REVIEW_PROVIDER || 'disable
 const GEMINI_API_KEY = String(process.env.NV0_GEMINI_API_KEY || '').trim();
 const GEMINI_MODEL = String(process.env.NV0_GEMINI_MODEL || 'gemini-2.5-flash').trim();
 const AI_REVIEW_ENABLED = AI_REVIEW_PROVIDER === 'gemini' && !!GEMINI_API_KEY;
-const RELEASE_PHASE = 'phase167-native-http-load-security-50-phase174-ephemeral-runtime-coolify-hardening-phase175-quiet-runtime-normalization';
+const RELEASE_PHASE = 'phase167-native-http-load-security-50-phase174-ephemeral-runtime-coolify-hardening-phase175-quiet-runtime-normalization-phase176-access-log-scan-hygiene';
 const DATA_RETENTION_DAYS = Number(process.env.NV0_DATA_RETENTION_DAYS || 1095);
 const REFUND_REQUEST_WINDOW_DAYS = Number(process.env.NV0_REFUND_REQUEST_WINDOW_DAYS || 7);
 const OPERATOR_ALERT_EMAIL = process.env.NV0_OPERATOR_ALERT_EMAIL || BUSINESS_PROFILE.contactEmail;
@@ -200,6 +200,9 @@ const ALLOWED_HOSTS = ENV_CONFIG.allowedHosts;
 const REQUEST_TIMEOUT_MS = ENV_CONFIG.requestTimeoutMs;
 const READYZ_REDIS_STRICT = process.env.NV0_READYZ_REDIS_STRICT === 'true' || COMMERCIAL_LAUNCH_READY;
 const SLOW_REQUEST_THRESHOLD_MS = ENV_CONFIG.slowRequestThresholdMs;
+const ACCESS_LOG_MODE = ENV_CONFIG.accessLogMode || 'normal';
+const LOG_HEALTHCHECK_REQUESTS = Boolean(ENV_CONFIG.logHealthcheckRequests) || ACCESS_LOG_MODE === 'verbose';
+const LOG_FAVICON_REQUESTS = Boolean(ENV_CONFIG.logFaviconRequests) || ACCESS_LOG_MODE === 'verbose';
 const DATA_DESTRUCTION_GRACE_DAYS = Number(process.env.NV0_DATA_DESTRUCTION_GRACE_DAYS || 30);
 const SECURITY_POSTURE_VERSION = 'phase164-hardening-matrix-v1';
 function assertFiniteConfigNumber(name, value, { min = 0, max = Number.MAX_SAFE_INTEGER } = {}) {
@@ -339,6 +342,7 @@ ctaAutopublishIntervalMs: CTA_AUTOPUBLISH_INTERVAL_MS,
 publicCacheSeconds: PUBLIC_CACHE_SECONDS,
 requestTimeoutMs: REQUEST_TIMEOUT_MS,
 slowRequestThresholdMs: SLOW_REQUEST_THRESHOLD_MS,
+accessLogMode: ACCESS_LOG_MODE,
 dataDestructionGraceDays: DATA_DESTRUCTION_GRACE_DAYS,
 businessProfile: BUSINESS_PROFILE,
 operatorAlertEmail: OPERATOR_ALERT_EMAIL
@@ -544,6 +548,31 @@ res.end(JSON.stringify(payload, null, 2));
 function text(req, res, status, payload, extraHeaders = {}) {
 res.writeHead(status, { 'content-type': 'text/plain; charset=utf-8', ...baseHeaders(req), ...extraHeaders });
 res.end(payload);
+}
+function noContent(req, res, status = 204, extraHeaders = {}, category = 'static') {
+res.writeHead(status, { ...baseHeaders(req, category), ...extraHeaders });
+res.end();
+}
+function buildSecurityTxt() {
+const contact = BUSINESS_PROFILE.privacyOfficerEmail || BUSINESS_PROFILE.contactEmail || 'ct@nv0.kr';
+const base = String(process.env.NV0_PUBLIC_BASE_URL || BUSINESS_PROFILE.domain || 'https://nv0.kr').replace(/\/+$/, '');
+return [
+  `Contact: mailto:${contact}`,
+  `Policy: ${base}/privacy`,
+  `Preferred-Languages: ko, en`,
+  `Canonical: ${base}/.well-known/security.txt`,
+  `Expires: ${new Date(Date.now() + 1000 * 60 * 60 * 24 * 30).toISOString()}`
+].join('\n') + '\n';
+}
+function shouldLogRequest(req, res, pathname, elapsedMs) {
+const statusCode = Number(res.statusCode || 0);
+if (ACCESS_LOG_MODE === 'verbose') return true;
+if (statusCode >= 400) return true;
+if (elapsedMs >= SLOW_REQUEST_THRESHOLD_MS) return true;
+if (isHealthcheckPath(req) && !LOG_HEALTHCHECK_REQUESTS) return false;
+if (pathname === '/favicon.ico' && statusCode === 204 && !LOG_FAVICON_REQUESTS) return false;
+if (ACCESS_LOG_MODE === 'quiet' && statusCode < 400) return false;
+return true;
 }
 function html(req, res, status, payload, extraHeaders = {}, category = 'public-page') {
 res.writeHead(status, { 'content-type': 'text/html; charset=utf-8', ...baseHeaders(req, category), ...extraHeaders });
@@ -3806,6 +3835,12 @@ if (pathname === '/healthz' || pathname === '/health' || pathname === '/livez') 
 return json(req, res, 200, { ok: true, live: true, service: 'nv0-veridion', phase: RELEASE_PHASE, uptimeSec: Math.round(process.uptime()) }, { 'cache-control': 'no-store' });
 }
 if (pathname === '/readyz') return handleReadyz(req, res);
+if (pathname === '/favicon.ico' && (req.method === 'GET' || req.method === 'HEAD')) {
+return noContent(req, res, 204, { 'cache-control': 'public, max-age=86400, immutable' }, 'static');
+}
+if (pathname === '/.well-known/security.txt' && req.method === 'GET') {
+return text(req, res, 200, buildSecurityTxt(), { 'cache-control': 'public, max-age=86400' });
+}
 if (pathname === '/robots.txt' && req.method === 'GET') {
 return text(req, res, 200, buildRobotsTxt(), { 'cache-control': 'public, max-age=3600' });
 }
@@ -3854,6 +3889,7 @@ json(req, res, status, { ok: false, error: status === 413 ? '요청 크기가 �
 } finally {
 const pathname = req._nv0RouteState?.pathname || (() => { try { return requestUrlFrom(req).pathname; } catch { return 'invalid-url'; } })();
 const elapsedMs = Date.now() - startedAt;
+if (shouldLogRequest(req, res, pathname, elapsedMs)) {
 console.log(JSON.stringify({
 level: elapsedMs >= SLOW_REQUEST_THRESHOLD_MS ? 'warn' : 'info',
 event: elapsedMs >= SLOW_REQUEST_THRESHOLD_MS ? 'slow_request' : 'request',
@@ -3864,6 +3900,7 @@ statusCode: res.statusCode,
 elapsedMs,
 ip: clientIp(req)
 }));
+}
 }
 });
 const cleanupInterval = setInterval(() => {
