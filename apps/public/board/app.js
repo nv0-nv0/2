@@ -52,13 +52,19 @@ function renderPostBody(body = '') {
   if (!sections.length) return '<p class="post-paragraph muted">본문이 준비되지 않았습니다.</p>';
   return `<div class="post-body">${sections.map(section => {
     const [first, ...rest] = section.split('\n');
-    const headingLike = /^(왜 이 글을 썼나요|한눈에 보는 핵심 요약|지금 보이는 문제|고객 입장에서 보면|실제로 확인할 요소|바로 고칠 수 있는 것|문구를 쉽게 바꾸는 방법|검색에 잘 읽히게 정리하는 방법|제목 후보|자주 묻는 질문|다음에 할 일|관련 링크|이 글에서 바로 얻을 수 있는 것|이런 경우 문제가 됩니다|고객은 이렇게 느낍니다|오늘 바로 확인할 체크리스트|문구를 이렇게 바꿔보세요|마무리|공지|사례|체크리스트)[.!?。]?$/.test(first.trim());
+    const headingLike = /^(왜 이 글을 썼나요|한눈에 보는 핵심 요약|지금 보이는 문제|고객 입장에서 보면|실제로 확인할 요소|바로 고칠 수 있는 것|문구를 쉽게 바꾸는 방법|검색에 잘 읽히게 정리하는 방법|제목 후보|자주 묻는 질문|다음에 할 일|관련 링크|이 글에서 바로 얻을 수 있는 것|이런 경우 문제가 됩니다|고객은 이렇게 느낍니다|오늘 바로 확인할 체크리스트|문구를 이렇게 바꿔보세요|마무리|공지|사례|체크리스트|도입|이 글이 도움이 되는 경우|연관 예시|고객이 실제로 확인하는 포인트|바로 적용할 체크리스트|문구 예시|FAQ|자연스러운 CTA|해시태그)[.!?。]?$/.test(first.trim());
     if (headingLike) {
       const content = rest.join('\n').trim();
       return `<section class="post-section"><h3>${escapeHtml(first)}</h3>${content ? `<p>${escapeHtml(content).replace(/\n/g, '<br>')}</p>` : ''}</section>`;
     }
     return `<p class="post-paragraph">${escapeHtml(section).replace(/\n/g, '<br>')}</p>`;
   }).join('')}</div>`;
+}
+
+function renderPostTags(tags = []) {
+  const items = Array.isArray(tags) ? tags.map(tag => String(tag || '').trim().replace(/^#/, '')).filter(Boolean).slice(0, 10) : [];
+  if (!items.length) return '';
+  return `<div class="post-tags">${items.map(tag => `<span>#${escapeHtml(tag)}</span>`).join('')}</div>`;
 }
 
 function renderPagination() {
@@ -82,7 +88,7 @@ function render(){
   renderActivity();
   const autoCount = Number(stats.cta || window.__NV0_BOARD_AUTO_COUNT__ || 0);
   state.textContent = `공개 게시글 ${pagination.total}건 · ${pagination.page}/${pagination.totalPages}페이지 · 한 페이지 5개 · 진단 연결 ${autoCount}건`;
-  list.innerHTML = renderList(posts, '<div class="empty-state stack"><strong>조건에 맞는 게시글이 없습니다.</strong><p>전체 탭으로 이동하거나 무료 진단 후 새 글을 발행하세요.</p><a class="btn secondary" href="/products/veridion/demo">무료 진단 시작</a></div>', item => `<article class="result-card stack board-post ${item.boardType === 'cta' || item.autoPublished ? 'cta' : ''}"><div class="meta-row"><strong>${escapeHtml(item.title)}</strong><span class="pill">${escapeHtml(item.boardType || item.type || 'post')}</span></div><div class="post-meta"><span>${item.autoPublished ? '자동 발행' : '운영 글'}</span><span>${escapeHtml(item.createdAt || '-')}</span><span>${escapeHtml(item.primaryKeyword || '고객 안내')}</span></div>${renderPostBody(item.body || item.summary || '')}<div class="post-cta"><a class="btn primary" href="/products/veridion/demo">무료 진단</a><a class="btn secondary" href="/plans">상품 비교</a><a class="btn secondary" href="/portal">내 사이트 관리</a></div></article>`);
+  list.innerHTML = renderList(posts, '<div class="empty-state stack"><strong>조건에 맞는 게시글이 없습니다.</strong><p>전체 탭으로 이동하거나 무료 진단 후 새 글을 발행하세요.</p><a class="btn secondary" href="/products/veridion/demo">무료 진단 시작</a></div>', item => `<article class="result-card stack board-post ${item.boardType === 'cta' || item.autoPublished ? 'cta' : ''}"><div class="meta-row"><strong>${escapeHtml(item.title)}</strong><span class="pill">${escapeHtml(item.boardType || item.type || 'post')}</span></div><div class="post-meta"><span>${item.autoPublished ? '자동 발행' : '운영 글'}</span><span>${escapeHtml(item.createdAt || '-')}</span><span>${escapeHtml(item.primaryKeyword || '고객 안내')}</span></div>${item.summary ? `<p class="post-summary">${escapeHtml(item.summary)}</p>` : ''}${renderPostBody(item.body || item.summary || '')}${renderPostTags(item.tags || [])}<div class="post-cta"><a class="btn primary" href="/products/veridion/demo">내 사이트도 무료 진단</a><a class="btn secondary" href="/plans">플랜 비교</a><a class="btn secondary" href="/portal">내 사이트 관리</a></div></article>`);
   renderPagination();
 }
 

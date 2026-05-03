@@ -13,7 +13,9 @@ const scoreNumber = document.querySelector('.nv74-score-number');
 const scoreStatus = document.querySelector('.nv74-score-card .nv74-status-warning');
 const scoreFooter = document.querySelector('.nv74-score-card footer span');
 const workCard = document.querySelector('.nv74-work-card');
-const metricList = document.querySelector('.nv74-metrics');
+const scoreDesc = document.querySelector('.nv74-score-desc');
+const scoreBars = document.getElementById('portalScoreBars');
+const scoreMetrics = document.getElementById('portalScoreMetrics');
 
 function getSavedScan() {
   try { return JSON.parse(localStorage.getItem('nv0:lastScan') || 'null'); } catch { return null; }
@@ -32,6 +34,72 @@ function formatDate(value) {
 }
 function latestScanFrom(account, summary) {
   return account?.recentScans?.[0] || summary?.latestScan || null;
+}
+function clampText(value = '', max = 140) {
+  const text = String(value || '').replace(/\s+/g, ' ').trim();
+  return text.length <= max ? text : `${text.slice(0, max - 1)}…`;
+}
+function readableDomain(value = '') {
+  const raw = String(value || '').trim();
+  if (!raw) return '';
+  return raw.replace(/^https?:\/\//i, '').replace(/^www\./i, '').split('/')[0] || raw;
+}
+function findCountFromScan(scan = {}) {
+  const detailCount = Array.isArray(scan?.detailFindings) ? scan.detailFindings.length : 0;
+  const numeric = Number(scan?.totalFindings);
+  return Number.isFinite(numeric) && numeric > 0 ? numeric : detailCount;
+}
+function urgentCountFromScan(scan = {}) {
+  const details = Array.isArray(scan?.detailFindings) ? scan.detailFindings : [];
+  const urgent = details.filter(item => ['P0', 'P1'].includes(String(item?.priority || '').toUpperCase())).length;
+  if (urgent) return urgent;
+  const total = findCountFromScan(scan);
+  return total ? Math.max(1, Math.min(total, Math.ceil(total / 2))) : 0;
+}
+function nextActionFromScan(scan = {}) {
+  const score = Number(scan?.riskScore);
+  const findings = findCountFromScan(scan);
+  if (!Number.isFinite(score)) return { title: '새 진단 시작', note: '최근 결과가 없으므로 먼저 검사하세요.' };
+  if (score <= 39 || findings >= 6) return { title: '핵심 문구 먼저 보완', note: '결제·문의 직전 안내를 우선 정리하는 편이 좋습니다.' };
+  if (score <= 69 || findings >= 3) return { title: '상세 리포트 확인', note: '보완 우선순위와 수정 방향을 함께 확인하세요.' };
+  return { title: '재검사로 유지 확인', note: '현재 구조를 유지하면서 새 공백이 생기지 않는지 확인하세요.' };
+}
+function renderScoreSummary(latest, account, summary) {
+  const target = readableDomain(latest?.target || summary?.site?.domain || '');
+  const findings = findCountFromScan(latest);
+  const urgent = urgentCountFromScan(latest);
+  const nextAction = nextActionFromScan(latest);
+  const cards = [
+    { label: '최근 검사 대상', value: target || '검사 전', note: target ? '마지막 실행 기준' : '저장 후 다시 확인 가능' },
+    { label: '발견 항목', value: `${findings}개`, note: '최근 검사 기준' },
+    { label: '우선 보완', value: `${urgent}개`, note: 'P0·P1 또는 상위 발견' },
+    { label: '다음 단계', value: nextAction.title, note: nextAction.note }
+  ];
+  const metrics = [
+    { label: '저장 사이트', value: `${account?.savedSites?.length || 0}개`, note: '계정 기준' },
+    { label: '최근 검사', value: `${account?.recentScans?.length || 0}개`, note: '최근 5개 기준' },
+    { label: '검토 필요', value: `${findings}개`, note: '최근 검사 발견' }
+  ];
+  if (scoreBars) scoreBars.innerHTML = cards.map(item => `<article class="nv74-score-chip"><span>${escapeHtml(item.label)}</span><b>${escapeHtml(item.value)}</b><small>${escapeHtml(item.note)}</small></article>`).join('');
+  if (scoreMetrics) scoreMetrics.innerHTML = metrics.map(item => `<article><span>${escapeHtml(item.label)}</span><b>${escapeHtml(item.value)}</b><small>${escapeHtml(item.note)}</small></article>`).join('');
+  if (scoreDesc) {
+    scoreDesc.textContent = Number.isFinite(Number(latest?.riskScore))
+      ? `${findings ? `최근 검사에서 ${findings}개 항목이 확인되었습니다.` : '최근 검사에서 즉시 보완할 항목은 적었습니다.'} ${nextAction.note}`
+      : '진단을 실행하면 최근 점수와 보완 우선순위가 이곳에 정리됩니다.';
+  }
+}
+function renderBoardHighlights(boards = []) {
+  const items = (boards || []).filter(item => item && (item.boardType === 'cta' || item.autoPublished || item.type === 'cta')).slice(0, 3);
+  if (!items.length) return '<div class="muted">게시판 연결 글 없음</div>';
+  return items.map(item => {
+    const tags = Array.isArray(item.tags) ? item.tags.slice(0, 5) : [];
+    return `<div class="result-card stack"><div class="meta-row"><strong>${escapeHtml(item.title || '게시글')}</strong><span class="pill">진단 연결</span></div><div class="muted">${escapeHtml(formatDate(item.createdAt || '-'))}</div><p>${escapeHtml(clampText(item.summary || item.body || '', 170))}</p>${tags.length ? `<div class="asset-tags">${tags.map(tag => `<span>#${escapeHtml(String(tag).replace(/^#/, ''))}</span>`).join('')}</div>` : ''}<div class="topnav"><a class="btn secondary" href="/board">보드에서 보기</a><a class="btn secondary" href="/products/veridion/demo">무료 진단</a></div></div>`;
+  }).join('');
+}
+function renderInsightFeed(boards = []) {
+  const items = (boards || []).filter(item => item && item.boardType !== 'cta').slice(0, 4);
+  if (!items.length) return '<div class="muted">공지 없음</div>';
+  return items.map(item => `<div class="result-card"><div>${escapeHtml(item.title || '공지')}</div><div class="muted">${escapeHtml(formatDate(item.createdAt || '-'))}</div><p>${escapeHtml(clampText(item.summary || item.body || '', 120))}</p></div>`).join('');
 }
 function renderAsset(asset, order, accessToken) {
   if (!asset) return '';
@@ -111,17 +179,15 @@ function updateStaticDashboard(session, account, summary) {
   const authenticated = !!session?.authenticated;
   const latest = latestScanFrom(account, summary);
   const sitesCount = account?.savedSites?.length || 0;
-  const scansCount = account?.recentScans?.length || 0;
-  const latestFindings = latest?.totalFindings ?? summary?.site?.latestFindings ?? '-';
   if (sidebarAccount) sidebarAccount.textContent = authenticated ? (account?.customer?.email || session.customer?.email || '로그인 계정') : '비회원 · 저장 기능 비활성';
-  if (planCard) planCard.innerHTML = `<div><b>${authenticated ? '내 사이트 관리' : '무료 계정 필요'}</b><small><span>사이트 ${sitesCount}개</span><span>최근 검사 ${scansCount}개</span></small></div><a class="btn secondary" href="${authenticated ? '/plans' : '/auth?next=/portal'}">${authenticated ? '상품 보기' : '로그인·회원가입'}</a>`;
+  if (planCard) planCard.innerHTML = `<div><b>${authenticated ? '회원 전용 관리' : '무료 계정 필요'}</b><small><span>사이트 ${sitesCount}개</span><span>최근 검사 ${account?.recentScans?.length || 0}개</span></small></div><a class="btn secondary" href="${authenticated ? '/plans' : '/auth?next=/portal'}">${authenticated ? '상품 보기' : '로그인·회원가입'}</a>`;
   if (topbarTitle) topbarTitle.textContent = authenticated ? '내 사이트 관리' : '검사 결과를 저장하려면 로그인하세요';
-  if (topbarCopy) topbarCopy.textContent = authenticated ? '사이트 저장, 다시 검사, 최근 검사 내역만 간단하게 관리합니다.' : '회원가입하면 내 사이트 저장, 원클릭 재검사, 지난 검사 내역 확인을 사용할 수 있습니다.';
+  if (topbarCopy) topbarCopy.textContent = authenticated ? '저장한 사이트를 다시 검사하고 최근 결과를 한곳에서 확인하세요.' : '회원가입하면 내 사이트 저장, 원클릭 재검사, 지난 검사 내역 확인을 사용할 수 있습니다.';
   if (scoreNumber) scoreNumber.textContent = latest?.riskScore ?? '-';
   if (scoreStatus) scoreStatus.textContent = latest?.riskLevel || '검사 전';
   if (scoreFooter) scoreFooter.textContent = `최근 진단일: ${formatDate(latest?.createdAt || latest?.generatedAt)}`;
-  if (metricList) metricList.innerHTML = `<li><i class="blue"></i><span>저장 사이트</span><b>${sitesCount}개</b></li><li><i class="purple"></i><span>최근 검사</span><b>${scansCount}개</b></li><li><i class="orange"></i><span>검토 필요</span><b>${escapeHtml(latestFindings)}개</b></li>`;
-  if (workCard) workCard.innerHTML = `<div class="nv74-card-head"><h2>가능한 작업</h2><a href="#saveSiteForm">사이트 등록 ›</a></div><div class="nv74-task-list"><div class="nv74-task"><i class="blue">01</i><div><b>내 사이트 저장</b><small>검사할 URL을 계정에 보관</small></div><span class="status ok">사용 가능</span></div><div class="nv74-task"><i class="purple">02</i><div><b>다시 검사하기</b><small>저장된 URL을 바로 재검사</small></div><span class="status ok">사용 가능</span></div><div class="nv74-task"><i class="orange">03</i><div><b>최근 검사 확인</b><small>최근 5개 결과 확인</small></div><span class="status ok">사용 가능</span></div></div>`;
+  renderScoreSummary(latest, account, summary);
+  if (workCard) workCard.innerHTML = `<div class="nv74-card-head"><h2>바로 할 수 있는 일</h2><a href="#saveSiteForm">사이트 등록 ›</a></div><div class="nv74-task-list"><div class="nv74-task"><i class="blue">01</i><div><b>내 사이트 저장</b><small>검사할 URL을 계정에 보관합니다.</small></div><progress value="100" max="100"></progress><span class="status ok">기본</span></div><div class="nv74-task"><i class="purple">02</i><div><b>다시 검사하기</b><small>저장된 URL을 바로 재검사합니다.</small></div><progress value="100" max="100"></progress><span class="status ok">기본</span></div><div class="nv74-task"><i class="orange">03</i><div><b>최근 결과 비교</b><small>최근 5개 검사를 한곳에서 확인합니다.</small></div><progress value="100" max="100"></progress><span class="status ok">기본</span></div></div>`;
 }
 async function loadPortal() {
   const url = new URL(location.href);
@@ -149,12 +215,14 @@ async function loadPortal() {
     ${renderSavedSites(account?.savedSites || [])}
     ${renderRecentScans(account?.recentScans || [])}
     ${renderMemberValueBox(session, account)}
+    ${summary?.order ? `<div class="nv74-state"><strong>최근 주문</strong> · ${escapeHtml(summary.order.plan)} · ${escapeHtml(summary.order.status)}</div>` : ''}
+    ${fulfillment?.locked ? `<div class="nv74-state"><strong>산출물 잠금</strong> · 결제 완료 후 리포트·수정안·템플릿 등 구매 산출물이 표시됩니다.</div>` : ''}
+    ${renderAsset(fulfillment?.asset, fulfillment?.order || summary?.order, accessToken)}
     ${summary?.site ? `<div class="nv74-state"><strong>현재 선택 사이트</strong> · ${escapeHtml(summary.site.domain)} · ${escapeHtml(summary.site.latestRiskLevel || '검사 전')} · 최근 발견 ${escapeHtml(summary.site.latestFindings ?? summary.latestScan?.totalFindings ?? '-')}개</div>` : ''}
-    ${renderAsset(fulfillment?.asset, fulfillment?.order || summary?.order, accessToken)}`;
-  if (feed) {
-    feed.hidden = true;
-    feed.innerHTML = '';
-  }
+    ${summary?.guidance ? `<div class="nv74-state"><strong>맞춤 지침</strong><pre class="pre-wrap">${escapeHtml(summary.guidance.content)}</pre></div>` : ''}`;
+  feed.innerHTML = `
+    <div class="card stack"><div class="meta-row"><strong>게시판 연결 글</strong><a class="btn secondary" href="/board">게시판 보기</a></div>${renderBoardHighlights(summary?.boards || [])}</div>
+    <div class="card stack"><strong>공지·인사이트</strong>${renderInsightFeed(summary?.boards || [])}</div>`;
 }
 
 saveForm?.addEventListener('submit', async (event) => {
@@ -189,6 +257,6 @@ primary?.addEventListener('click', async (event) => {
 loadPortal().catch(error => {
   state.textContent = `내 사이트 관리 정보를 불러오지 못했습니다: ${error.message}`;
   primary.innerHTML = '<div class="nv74-state">내 사이트 관리 요약을 불러오지 못했습니다.</div>';
-  if (feed) { feed.hidden = false; feed.innerHTML = '<div class="nv74-state">잠시 후 다시 시도하세요.</div>'; }
+  feed.innerHTML = '<div class="nv74-state">잠시 후 다시 시도하세요.</div>';
 });
 

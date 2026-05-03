@@ -1277,7 +1277,6 @@ const m = {
 '/solutions': [PUBLIC_DIR, 'solutions'],
 '/service': [PUBLIC_DIR, 'solutions'],
 '/products': [PUBLIC_DIR, 'plans'],
-'/demo': [PUBLIC_DIR, 'demo'],
 '/products/veridion/demo': [PUBLIC_DIR, 'veridion-demo'],
 '/plans': [PUBLIC_DIR, 'plans'],
 '/checkout': [PUBLIC_DIR, 'checkout'],
@@ -1491,6 +1490,7 @@ return `<nav class="admin-nav">
 </nav>`;
 }
 async function renderPage(urlPath, req, res) {
+if (urlPath === '/demo') { redirect(req, res, 301, '/products/veridion/demo'); return true; }
 const mapped = pageMap(urlPath);
 if (!mapped) return false;
 const [baseDir, slug] = mapped;
@@ -1824,25 +1824,67 @@ const target = String(item.target || item.normalizedTarget || '사이트').repla
 const keyword = item.primaryKeyword || topic.keyword;
 const source = [topic.title, keyword, topic.issue, item.body, item.summary].join(' ').toLowerCase();
 const theme = (() => {
-if (/환불|취소|교환|청약/.test(source)) return ['환불·취소 안내', ['환불 가능 조건','취소 접수 위치','처리 기간','예외 기준','문의 경로'], '환불·취소 기준 먼저 보기'];
-if (/개인정보|동의|보관|파기|privacy/.test(source)) return ['개인정보 안내', ['수집 항목','수집 목적','보관 기간','파기 기준','문의 이메일'], '수집 목적과 보관 기간 확인'];
-if (/사업자|문의|고객센터|푸터|대표자/.test(source)) return ['사업자 정보와 문의 경로', ['상호','대표자','사업자번호','고객지원 이메일','답변 기준'], '운영자 정보와 문의 방법 보기'];
-if (/결제|구매|주문|가격/.test(source)) return ['결제 전 안내', ['제공 범위','가격 포함 항목','환불 기준','결제 후 제공 시점','고객지원 경로'], '결제 전 제공 범위 확인'];
-return ['사이트 신뢰 안내', ['운영자 정보','문의 경로','환불 기준','개인정보 안내','모바일 표시 상태'], '필수 안내 먼저 확인'];
+if (/환불|취소|교환|청약/.test(source)) return { label: '환불·취소 안내', elements: ['환불 가능 조건', '취소 접수 위치', '처리 기간', '예외 기준', '문의 경로'], buttonCopy: '환불 가능 조건 먼저 확인', example: '예를 들어 결제 버튼 가까이에 “결제 후 7일 이내 취소 가능 / 제작이 시작된 주문은 예외”처럼 핵심 기준이 바로 보이면 고객이 다시 문의하지 않아도 됩니다.', cta: '환불 기준이 페이지마다 다르다면 무료 진단으로 먼저 공백을 확인해 보세요.' };
+if (/개인정보|동의|보관|파기|privacy/.test(source)) return { label: '개인정보 안내', elements: ['수집 항목', '수집 목적', '보관 기간', '파기 기준', '문의 이메일'], buttonCopy: '수집 목적과 보관 기간 확인', example: '문의폼 아래에 “상담 답변을 위해 이름과 연락처를 수집하며, 접수 후 1년 보관합니다.”처럼 바로 읽히는 문장이 있으면 입력 이탈이 줄어듭니다.', cta: '개인정보 안내가 입력 화면과 멀리 떨어져 있다면 먼저 위치부터 점검해 보세요.' };
+if (/사업자|문의|고객센터|푸터|대표자/.test(source)) return { label: '사업자 정보와 문의 경로', elements: ['상호', '대표자', '사업자번호', '고객지원 이메일', '답변 기준'], buttonCopy: '운영자 정보와 문의 방법 보기', example: '푸터에 상호와 고객지원 메일만 있고 답변 기준이 없다면 고객은 “문의해도 답이 올까?”를 걱정하기 쉽습니다. “평일 기준 1영업일 내 답변” 한 줄만 더해도 인상이 달라집니다.', cta: '사업자 정보와 문의 경로가 흩어져 있다면 푸터와 문의 버튼 주변부터 먼저 정리하세요.' };
+if (/결제|구매|주문|가격/.test(source)) return { label: '결제 전 안내', elements: ['제공 범위', '가격 포함 항목', '환불 기준', '결제 후 제공 시점', '고객지원 경로'], buttonCopy: '결제 전 제공 범위 확인', example: '가격표 아래에 “결제 후 제공 시점 / 환불 가능 여부 / 문의 경로”가 함께 보이면 고객이 마지막 단계에서 멈추는 일이 줄어듭니다.', cta: '결제 직전 이탈이 많다면 버튼 바로 위·아래 안내부터 무료 진단으로 확인해 보세요.' };
+return { label: '사이트 신뢰 안내', elements: ['운영자 정보', '문의 경로', '환불 기준', '개인정보 안내', '모바일 표시 상태'], buttonCopy: '필수 안내 먼저 확인', example: '처음 방문한 고객은 긴 소개글보다 “누가 운영하는지, 문의는 어디로 하는지, 문제가 생기면 어떻게 처리되는지”를 먼저 찾습니다.', cta: '사이트 첫인상을 더 안정적으로 만들고 싶다면 무료 진단으로 주요 공백부터 확인해 보세요.' };
 })();
-const [label, elements, buttonCopy] = theme;
+const useCases = [
+`${theme.label} 안내가 여러 페이지에 흩어져 있어 고객이 한 번에 찾기 어려운 경우`,
+'문의나 결제 버튼은 있는데 바로 옆에 필요한 설명이 부족한 경우',
+'운영자는 익숙하지만 처음 방문한 고객 기준으로는 설명이 부족해 보이는 경우'
+];
+const checklist = [
+`첫 화면, 가격표, 문의 버튼, 결제 버튼, 푸터 중 어디에서 ${theme.label}을 바로 확인할 수 있는지 점검합니다.`,
+`고객이 가장 먼저 묻게 되는 ${theme.elements.slice(0, 3).join(', ')} 항목이 한 화면 안에서 이어지는지 확인합니다.`,
+'모바일 화면에서 안내 문구가 접히거나 버튼 아래로 너무 멀리 밀리지 않는지 확인합니다.',
+'수정 후 같은 주소로 다시 점검해 남은 항목이 줄었는지 비교합니다.'
+];
+const copyExamples = [
+['문의하기', '문의하기 · 평일 기준 1영업일 안에 답변드립니다.'],
+['자세히 보기', `${theme.buttonCopy}.`],
+['무료', '무료 진단: 요약 결과까지 무료로 확인'],
+['개인정보 동의', '입력한 정보의 수집 목적과 보관 기간 확인']
+];
+const faqs = [
+['이 글은 어떤 상황에서 가장 도움이 되나요?', `처음 방문한 고객이 ${theme.label} 때문에 멈추는 장면을 줄이고 싶을 때 가장 도움이 됩니다.`],
+['가장 먼저 고칠 위치는 어디인가요?', '결제, 문의, 회원가입처럼 고객이 행동을 결정하는 바로 직전 화면을 먼저 확인하는 것이 좋습니다.'],
+['무료 진단만으로도 방향을 잡을 수 있나요?', '네. 무료 진단으로 현재 공백을 먼저 보고, 더 자세한 수정 방향이 필요할 때만 리포트나 수정 문구안을 이어서 확인하면 됩니다.']
+];
+const tags = [
+`#${String(keyword || theme.label).replace(/[\s·/]+/g, '')}`,
+`#${String(theme.label).replace(/[\s·/]+/g, '')}`,
+'#사이트점검',
+'#고객안내',
+'#무료진단',
+'#전환개선',
+'#문의흐름',
+'#모바일가독성'
+].join(' ');
 return [
-`왜 이 글을 썼나요?\n${target} 사이트를 처음 보는 고객은 상품 설명보다 먼저 믿고 문의해도 되는 곳인지 확인합니다. 이 글은 ${label} 항목을 고객이 바로 찾게 만드는 방법을 정리한 공개 안내 글입니다.`,
-`한눈에 보는 핵심 요약\n확인 주제: ${label}\n주요 문제: ${topic.issue}\n확인할 요소: ${elements.slice(0, 5).join(', ')}\n우선 위치: 가격표, 문의 버튼, 결제 버튼, 입력 화면, 푸터.`,
-`지금 보이는 문제\n${topic.issue}이라면 고객은 구매나 문의를 미루기 쉽습니다. 처음 방문한 사이트에서는 작은 안내 공백도 신뢰 판단에 영향을 줍니다.`,
-`고객 입장에서 보면\n고객은 “환불은 가능한가요?”, “문의하면 답을 받을 수 있나요?”, “내 정보는 어디에 쓰이나요?” 같은 질문에 빠르게 답을 얻고 싶어 합니다. 답이 버튼 가까이에 있으면 다음 행동으로 넘어가기 쉽습니다.`,
-`실제로 확인할 요소\n${elements.map((name, n) => `${n + 1}. ${name}.`).join('\n')}`,
-`바로 고칠 수 있는 것\n1. 첫 화면이나 푸터에서 운영자 정보와 문의 경로가 보이는지 확인합니다.\n2. 결제나 신청 버튼 주변에 ${label} 링크가 있는지 확인합니다.\n3. 개인정보 입력 화면에서 개인정보 안내 링크가 바로 보이는지 확인합니다.\n4. 모바일 화면에서 버튼과 안내 문구가 접히거나 너무 작게 보이지 않는지 확인합니다.\n5. 수정한 뒤 같은 주소로 다시 진단해 남은 항목을 확인합니다.`,
-`문구를 쉽게 바꾸는 방법\n1. 바꾸기 전: “문의하기”\n   바꾼 뒤: “문의하기 · 보통 영업일 기준 1일 안에 답변드립니다”.\n2. 바꾸기 전: “자세히 보기”\n   바꾼 뒤: “${buttonCopy}”.\n3. 바꾸기 전: “무료”\n   바꾼 뒤: “무료 진단: 요약 결과까지 무료로 확인”.\n4. 바꾸기 전: “개인정보 동의”\n   바꾼 뒤: “입력한 정보의 수집 목적과 보관 기간 확인”.`,
-`검색에 잘 읽히게 정리하는 방법\n제목에는 ${label}처럼 고객이 실제로 찾는 말을 넣습니다. 같은 단어를 억지로 반복하지 말고 질문, 답변, 예시, 내부 링크를 자연스럽게 이어 주세요.`,
-`자주 묻는 질문\nQ1. 이 글만 보면 모든 문제가 해결되나요?\nA. 아닙니다. 먼저 확인할 순서를 정리한 글입니다. 실제 사업자 정보와 운영 정책은 운영자가 직접 확인해야 합니다.\n\nQ2. 가장 먼저 고칠 부분은 어디인가요?\nA. 고객이 행동하기 직전에 보는 화면입니다. 결제, 문의, 회원가입, 가격표 주변을 먼저 확인하세요.\n\nQ3. 검색 노출에도 도움이 되나요?\nA. 고객 질문에 쉬운 말로 답하는 글은 검색 유입자가 내용을 이해하고 다음 페이지로 이동하는 데 도움이 됩니다.`,
-`다음에 할 일\n${keyword}은 고객이 안심할 수 있는 기본 안내입니다. 먼저 무료 진단으로 현재 상태를 확인하고, 필요한 경우 상세 리포트나 수정 문구안으로 이어가면 됩니다.`,
-`관련 링크\n무료 진단: /products/veridion/demo\n상품 비교: /plans\n문서 초안: /documents\n내 사이트 관리: /portal`
+`도입
+${target} 사이트를 처음 보는 고객은 상품 설명보다 먼저 “여기서 안심하고 문의하거나 결제해도 될까?”를 확인합니다. 이 글은 ${theme.label}을 자연스럽게 보여 주는 방법을 쉬운 말로 정리한 안내 글입니다.`,
+`이 글이 도움이 되는 경우
+${useCases.map((line, idx) => `${idx + 1}. ${line}`).join('\n')}`,
+`연관 예시
+${theme.example}`,
+`고객이 실제로 확인하는 포인트
+${theme.elements.map((name, idx) => `${idx + 1}. ${name}`).join('\n')}`,
+`바로 적용할 체크리스트
+${checklist.map((line, idx) => `${idx + 1}. ${line}`).join('\n')}`,
+`문구 예시
+${copyExamples.map(([before, after], idx) => `${idx + 1}. 바꾸기 전: “${before}”\n   바꾼 뒤: “${after}”`).join('\n')}`,
+`FAQ
+${faqs.map(([q, a], idx) => `Q${idx + 1}. ${q}\nA. ${a}`).join('\n\n')}`,
+`자연스러운 CTA
+${theme.cta} 비슷한 유형의 페이지를 운영 중이라면 내 사이트도 무료 진단으로 먼저 확인하고, 필요하면 상세 리포트에서 수정 우선순위를 이어서 보세요.`,
+`관련 링크
+무료 진단: /products/veridion/demo
+플랜 비교: /plans
+내 사이트 관리: /portal`,
+`해시태그
+${tags}`
 ].join('\n\n');
 }
 
@@ -1850,12 +1892,14 @@ function toPublicBoardPost(item = {}, index = 0) {
 const ctaLike = item.boardType === 'cta' || item.autoPublished || item.type === 'cta' || item.ctaType || /제목 후보|검색 의도|퍼널|contentFingerprint|CTA|SEO|https:\/\/example\.com/i.test(String(item.body || ''));
 if (!ctaLike) return item;
 const topic = boardTopicFromItem(item, index);
+const tags = Array.isArray(item.tags) && item.tags.length ? item.tags : [topic.keyword, '사이트 점검', '고객 안내', '무료 진단', '전환 개선', '모바일 가독성'];
 return {
 ...item,
 title: topic.title,
 body: publicBoardBodyFor(item, index),
-summary: `${topic.keyword}을 고객 입장에서 쉽게 확인하는 공개 안내 글입니다.`,
+summary: `${topic.keyword}과 관련된 고객 질문을 쉬운 예시와 체크리스트로 정리한 공개 안내 글입니다.`,
 primaryKeyword: topic.keyword,
+tags,
 searchIntent: '고객 도움형',
 funnelStage: '읽고 바로 확인',
 contentArchetype: 'reader_helpful_public_article',

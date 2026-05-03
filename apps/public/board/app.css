@@ -12,3 +12,13 @@
 .activity-item:last-child{border-bottom:0;padding-bottom:0;}
 .nv0-avatar{background:#0b1220;color:#93c5fd;border:1px solid rgba(51,65,85,.85);}
 @media(max-width:720px){.board-post strong{font-size:20px}.post-paragraph{font-size:15px;line-height:1.75}}
+
+
+/* PHASE188: board article readability and tag visibility */
+.post-summary{margin:0;color:#dbe7f8;font-size:16px;line-height:1.75;}
+.post-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;}
+.post-tags span{display:inline-flex;align-items:center;padding:8px 12px;border-radius:999px;background:rgba(37,99,235,.14);border:1px solid rgba(96,165,250,.24);color:#dbeafe;font-weight:850;font-size:13px;}
+.post-section h3{margin:0 0 8px;color:#fff;font-size:18px;}
+.post-section p{margin:0;color:#e5edf8;line-height:1.82;}
+.post-cta{display:flex;flex-wrap:wrap;gap:10px;padding-top:4px;}
+@media(max-width:720px){.post-summary{font-size:15px}.post-tags span{font-size:12px;padding:7px 10px;}}
