@@ -1,5 +1,6 @@
 import http from 'node:http';
 import { promises as fs } from 'node:fs';
+import fsSync from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import net from 'node:net';
@@ -38,7 +39,42 @@ const ENV_CONFIG = readEnvConfig(process.env);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, '..');
-const RUNTIME_DIR = path.resolve(process.env.NV0_RUNTIME_DIR || path.join(ROOT, 'runtime'));
+function externalDurableRuntimeMode(env = process.env) {
+  const platformTarget = String(env.NV0_PLATFORM_TARGET || 'commercial').trim().toLowerCase();
+  const persistenceMode = String(env.NV0_PERSISTENCE_MODE || (platformTarget === 'commercial' ? 'postgres_primary' : 'json')).trim().toLowerCase();
+  const storageMode = String(env.NV0_STORAGE_MODE || (platformTarget === 'commercial' ? 's3' : 'local_fs')).trim().toLowerCase();
+  return platformTarget === 'commercial' && persistenceMode === 'postgres_primary' && storageMode !== 'local_fs';
+}
+function tryPrepareRuntimeDirSync(dir) {
+  try {
+    const reportsDir = path.join(dir, 'reports');
+    fsSync.mkdirSync(path.join(dir, 'data'), { recursive: true });
+    fsSync.mkdirSync(path.join(dir, 'uploads'), { recursive: true });
+    fsSync.mkdirSync(path.join(dir, 'backups'), { recursive: true });
+    fsSync.mkdirSync(reportsDir, { recursive: true });
+    const probe = path.join(reportsDir, `.runtime-probe-${process.pid}-${Date.now()}`);
+    fsSync.writeFileSync(probe, 'ok', { mode: 0o600 });
+    fsSync.unlinkSync(probe);
+    return true;
+  } catch {
+    return false;
+  }
+}
+function resolveRuntimeDir(root, env = process.env) {
+  const requested = path.resolve(env.NV0_RUNTIME_DIR || path.join(root, 'runtime'));
+  if (tryPrepareRuntimeDirSync(requested)) return requested;
+  if (externalDurableRuntimeMode(env)) {
+    const fallback = path.resolve(env.NV0_FALLBACK_RUNTIME_DIR || '/tmp/nv0-runtime');
+    if (tryPrepareRuntimeDirSync(fallback)) {
+      env.NV0_RUNTIME_DIR = fallback;
+      env.NV0_RUNTIME_EPHEMERAL = 'true';
+      console.info(`nv0 runtime: using ephemeral scratch runtime '${fallback}' because requested runtime '${requested}' is not writable and durable state is external.`);
+      return fallback;
+    }
+  }
+  return requested;
+}
+const RUNTIME_DIR = resolveRuntimeDir(ROOT);
 const DATA_DIR = path.join(RUNTIME_DIR, 'data');
 const UPLOADS_DIR = path.join(RUNTIME_DIR, 'uploads');
 const BACKUPS_DIR = path.join(RUNTIME_DIR, 'backups');
@@ -121,7 +157,7 @@ const AI_REVIEW_PROVIDER = String(process.env.NV0_AI_REVIEW_PROVIDER || 'disable
 const GEMINI_API_KEY = String(process.env.NV0_GEMINI_API_KEY || '').trim();
 const GEMINI_MODEL = String(process.env.NV0_GEMINI_MODEL || 'gemini-2.5-flash').trim();
 const AI_REVIEW_ENABLED = AI_REVIEW_PROVIDER === 'gemini' && !!GEMINI_API_KEY;
-const RELEASE_PHASE = 'phase167-native-http-load-security-50-phase173-rootless-entrypoint-runtime';
+const RELEASE_PHASE = 'phase167-native-http-load-security-50-phase174-ephemeral-runtime-coolify-hardening';
 const DATA_RETENTION_DAYS = Number(process.env.NV0_DATA_RETENTION_DAYS || 1095);
 const REFUND_REQUEST_WINDOW_DAYS = Number(process.env.NV0_REFUND_REQUEST_WINDOW_DAYS || 7);
 const OPERATOR_ALERT_EMAIL = process.env.NV0_OPERATOR_ALERT_EMAIL || BUSINESS_PROFILE.contactEmail;
@@ -3185,6 +3221,8 @@ BACKUP_RETENTION_COUNT,
 backupSecurity: backupSecurityConfigSummary(),
 AUDIT_LOG_RETENTION_COUNT,
 STORAGE_MODE,
+RUNTIME_DIR,
+RUNTIME_EPHEMERAL: process.env.NV0_RUNTIME_EPHEMERAL === 'true',
 SCAN_PROVIDER,
 SCAN_PROVIDER_URL_PRESENT: !!SCAN_PROVIDER_URL,
 SCAN_PROVIDER_FALLBACK,
@@ -3689,6 +3727,8 @@ return {
   prelaunchMode: PRELAUNCH_MODE,
   persistenceMode: PERSISTENCE_MODE,
   storageMode: STORAGE_MODE,
+  runtimeDir: RUNTIME_DIR,
+  runtimeEphemeral: process.env.NV0_RUNTIME_EPHEMERAL === 'true',
   turnstileEnabled: TURNSTILE_PUBLIC_ENABLED,
   redis: {
     readinessMode: READYZ_REDIS_STRICT ? 'strict_ping' : 'prelaunch_advisory_no_ping',

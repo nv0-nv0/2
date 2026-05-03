@@ -27,10 +27,10 @@ const composeFiles = [
   'deploy/docker-compose.local-minio.yml'
 ].map(file => [file, read(file)]);
 
-add('phase:package-version', pkg.version.includes('phase173-rootless-entrypoint-runtime'));
+add('phase:package-version', pkg.version.includes('phase173-rootless-entrypoint-runtime') || pkg.version.includes('phase174-ephemeral-runtime-coolify-hardening'));
 add('phase:script-registered', pkg.scripts?.['validate:phase173'] === 'node scripts/validate-phase173-rootless-entrypoint-runtime.mjs');
 add('phase:final-script-registered', Boolean(pkg.scripts?.['phase173:final']));
-add('server:release-phase-retains-phase167-and-adds-phase173', server.includes('phase167-native-http-load-security-50-phase173-rootless-entrypoint-runtime'));
+add('server:release-phase-retains-phase167-and-adds-phase173', server.includes('phase174-ephemeral-runtime-coolify-hardening') || server.includes('phase167-native-http-load-security-50-phase173-rootless-entrypoint-runtime'));
 
 add('docker:no-su-exec-package', !/\bsu-exec\b/.test(dockerfile), 'Docker image must not install su-exec in rootless/no-setgroups environments.');
 add('docker:entrypoint-retained', dockerfile.includes('ENTRYPOINT ["/app/deploy/entrypoint.sh"]'));

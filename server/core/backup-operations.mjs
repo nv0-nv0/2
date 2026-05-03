@@ -56,23 +56,47 @@ export function createBackupOperations(config) {
       return { buffer: await fs.readFile(dbSource), source: 'json_db_file' };
     } catch (error) {
       if (!dbSnapshotProvider) throw error;
-      if (!['ENOENT', 'EACCES', 'EPERM'].includes(error?.code)) throw error;
+      if (!['ENOENT', 'EACCES', 'EPERM', 'EROFS'].includes(error?.code)) throw error;
       const snapshot = await dbSnapshotProvider();
       return { buffer: Buffer.from(JSON.stringify(snapshot || {}, null, 2)), source: `provider_after_${error.code}` };
     }
   }
 
   async function createSnapshot({ reason = 'manual' } = {}) {
-    await fs.mkdir(backupsDir, { recursive: true });
+    let localWritable = true;
+    let localWriteError = null;
+    try {
+      await fs.mkdir(backupsDir, { recursive: true });
+    } catch (error) {
+      if (['EACCES', 'EPERM', 'EROFS'].includes(error?.code) && remoteEnabled) {
+        localWritable = false;
+        localWriteError = { code: error.code, path: error.path || backupsDir, message: error.message };
+        logger.warn?.('local backup directory is not writable; continuing with remote-only backup path', localWriteError);
+      } else {
+        throw error;
+      }
+    }
     const createdAt = nowIso();
     const stamp = createdAt.replace(/[:.]/g, '-');
     const dbSource = path.join(dataDir, 'db.json');
     const dbTarget = path.join(backupsDir, `db-${stamp}.json`);
     const manifestTarget = path.join(backupsDir, `db-${stamp}.manifest.json`);
     const { buffer: dbBuffer, source: dbSourceType } = await readDbSnapshotBuffer(dbSource);
-    await fs.writeFile(dbTarget, dbBuffer);
+    if (localWritable) {
+      try {
+        await fs.writeFile(dbTarget, dbBuffer);
+      } catch (error) {
+        if (['EACCES', 'EPERM', 'EROFS'].includes(error?.code) && remoteEnabled) {
+          localWritable = false;
+          localWriteError = { code: error.code, path: error.path || dbTarget, message: error.message };
+          logger.warn?.('local db backup file is not writable; continuing with remote-only backup path', localWriteError);
+        } else {
+          throw error;
+        }
+      }
+    }
     const uploadsManifest = await buildUploadsManifest();
-    const manifest = { version: 'phase172-runtime-permission-backup-v1', createdAt, reason, local: { dbTarget, manifestTarget, dbSourceType, dbSha256: sha256Hex(dbBuffer), dbSize: dbBuffer.length }, security: { compressed: compress, encrypted: !!encryptionSecret, encryptionAlgorithm: encryptionSecret ? 'aes-256-gcm+scrypt' : null, plaintextSha256StoredInManifest: true }, remote: { enabled: remoteEnabled, prefix: remotePrefix, db: null, manifest: null, uploadsManifest: null, errors: [] }, uploads: { localRuntimeFileCount: uploadsManifest.length, manifestSha256: sha256Hex(Buffer.from(JSON.stringify(uploadsManifest))) } };
+    const manifest = { version: 'phase174-ephemeral-runtime-remote-backup-v1', createdAt, reason, local: { enabled: localWritable, dbTarget: localWritable ? dbTarget : null, manifestTarget: localWritable ? manifestTarget : null, dbSourceType, dbSha256: sha256Hex(dbBuffer), dbSize: dbBuffer.length, writeError: localWriteError }, security: { compressed: compress, encrypted: !!encryptionSecret, encryptionAlgorithm: encryptionSecret ? 'aes-256-gcm+scrypt' : null, plaintextSha256StoredInManifest: true }, remote: { enabled: remoteEnabled, prefix: remotePrefix, db: null, manifest: null, uploadsManifest: null, errors: [] }, uploads: { localRuntimeFileCount: uploadsManifest.length, manifestSha256: sha256Hex(Buffer.from(JSON.stringify(uploadsManifest))) } };
     let remotePayload = dbBuffer;
     let remoteKey = `${remotePrefix}/db-${stamp}.json`;
     let remoteContentType = 'application/json; charset=utf-8';
@@ -83,18 +107,39 @@ export function createBackupOperations(config) {
     if (remoteDb.ok) manifest.remote.uploadsManifest = await uploadRemoteBackupObject({ key: `${remotePrefix}/uploads-manifest-${stamp}.json`, content: Buffer.from(JSON.stringify(uploadsManifest, null, 2)), contentType: 'application/json; charset=utf-8' });
     if (!remoteDb.ok && !remoteDb.skipped) manifest.remote.errors.push(remoteDb.error || remoteDb.reason || 'remote db backup upload failed');
     let manifestBuffer = Buffer.from(JSON.stringify(manifest, null, 2));
-    await fs.writeFile(manifestTarget, manifestBuffer);
+    if (localWritable) {
+      await fs.writeFile(manifestTarget, manifestBuffer);
+    }
     const remoteManifest = await uploadRemoteBackupObject({ key: `${remotePrefix}/db-${stamp}.manifest.json`, content: manifestBuffer, contentType: 'application/json; charset=utf-8' });
     manifest.remote.manifest = remoteManifest;
     if (!remoteManifest.ok && !remoteManifest.skipped) manifest.remote.errors.push(remoteManifest.error || remoteManifest.reason || 'remote manifest upload failed');
     manifestBuffer = Buffer.from(JSON.stringify(manifest, null, 2));
-    await fs.writeFile(manifestTarget, manifestBuffer);
-    return { dbTarget, manifestTarget, dbSha256: manifest.local.dbSha256, dbSize: dbBuffer.length, remote: manifest.remote, security: manifest.security };
+    if (localWritable) {
+      await fs.writeFile(manifestTarget, manifestBuffer);
+    }
+    return { dbTarget: localWritable ? dbTarget : null, manifestTarget: localWritable ? manifestTarget : null, dbSha256: manifest.local.dbSha256, dbSize: dbBuffer.length, localWritable, remote: manifest.remote, security: manifest.security };
   }
 
   async function listSnapshots() {
-    await fs.mkdir(backupsDir, { recursive: true });
-    const names = (await fs.readdir(backupsDir)).filter(name => name.startsWith('db-') && name.endsWith('.json') && !name.endsWith('.manifest.json')).sort().reverse();
+    try {
+      await fs.mkdir(backupsDir, { recursive: true });
+    } catch (error) {
+      if (['EACCES', 'EPERM', 'EROFS'].includes(error?.code)) {
+        logger.warn?.('local backup directory is not readable; returning empty local backup list', { code: error.code, path: error.path || backupsDir });
+        return [];
+      }
+      throw error;
+    }
+    let names = [];
+    try {
+      names = (await fs.readdir(backupsDir)).filter(name => name.startsWith('db-') && name.endsWith('.json') && !name.endsWith('.manifest.json')).sort().reverse();
+    } catch (error) {
+      if (['EACCES', 'EPERM', 'EROFS'].includes(error?.code)) {
+        logger.warn?.('local backup directory is not readable; returning empty local backup list', { code: error.code, path: error.path || backupsDir });
+        return [];
+      }
+      throw error;
+    }
     const items = [];
     for (const name of names) {
       const fullPath = path.join(backupsDir, name);

@@ -21,7 +21,9 @@ services:
       - NODE_ENV=${NODE_ENV:-production}
       - HOST=${HOST:-0.0.0.0}
       - PORT=${PORT:-3210}
-      - NV0_RUNTIME_DIR=${NV0_RUNTIME_DIR:-/app/runtime}
+      - NV0_RUNTIME_DIR=${NV0_RUNTIME_DIR:-/tmp/nv0-runtime}
+      - NV0_FALLBACK_RUNTIME_DIR=${NV0_FALLBACK_RUNTIME_DIR:-/tmp/nv0-runtime}
+      - NV0_REQUIRE_PERSISTENT_RUNTIME=${NV0_REQUIRE_PERSISTENT_RUNTIME:-auto}
       - NV0_PLATFORM_TARGET=${NV0_PLATFORM_TARGET:-commercial}
       - NV0_DEPLOYMENT_STAGE=${NV0_DEPLOYMENT_STAGE:-prelaunch}
       - NV0_COMMERCIAL_LAUNCH_READY=${NV0_COMMERCIAL_LAUNCH_READY:-false}
@@ -101,8 +103,6 @@ services:
       - NV0_RUN_PREFLIGHT=${NV0_RUN_PREFLIGHT:-true}
     expose:
       - "3210"
-    volumes:
-      - nv0_runtime:/app/runtime
     depends_on:
       postgres:
         condition: service_healthy
@@ -154,6 +154,5 @@ services:
       retries: 10
 
 volumes:
-  nv0_runtime:
   nv0_postgres:
   nv0_redis:

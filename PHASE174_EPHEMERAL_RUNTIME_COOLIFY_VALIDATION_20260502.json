@@ -1,0 +1,125 @@
+{
+  "ok": true,
+  "phase": "phase174-ephemeral-runtime-coolify-hardening",
+  "checkedAt": "2026-05-02T14:49:28.896Z",
+  "total": 23,
+  "passed": 23,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "phase:package-version",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "phase:script-registered",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "phase:final-script-registered",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:release-phase-updated",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "docker:no-implicit-volume",
+      "ok": true,
+      "detail": "Dockerfile must not create an anonymous /app/runtime volume in Coolify/rootless deployments."
+    },
+    {
+      "name": "docker:tmp-runtime-default",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "docker:healthcheck-healthz",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "compose:root-no-app-runtime-volume",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "compose:coolify-no-app-runtime-volume",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "compose:root-runtime-default-tmp",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "compose:coolify-runtime-default-tmp",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "env:bulk-runtime-default-tmp",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "entrypoint:external-durable-mode",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "entrypoint:persistent-runtime-required-gate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "entrypoint:tmp-scratch-info-not-warning-for-external",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "entrypoint:no-su-exec",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "entrypoint:sh-syntax",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "entrypoint:external-durable-command-exec",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:sync-runtime-fallback",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:readyz-reports-runtime-mode",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "backup:remote-only-local-permission-support",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "backup:list-snapshots-permission-safe",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "backup:provider-handles-erofs",
+      "ok": true,
+      "detail": ""
+    }
+  ]
+}

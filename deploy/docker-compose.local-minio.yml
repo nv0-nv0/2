@@ -20,6 +20,9 @@ services:
       - ./env.commercial.template
     environment:
       NV0_PLATFORM_TARGET: commercial
+      NV0_RUNTIME_DIR: ${NV0_RUNTIME_DIR:-/tmp/nv0-runtime}
+      NV0_FALLBACK_RUNTIME_DIR: ${NV0_FALLBACK_RUNTIME_DIR:-/tmp/nv0-runtime}
+      NV0_REQUIRE_PERSISTENT_RUNTIME: ${NV0_REQUIRE_PERSISTENT_RUNTIME:-auto}
       NV0_PERSISTENCE_MODE: postgres_primary
       NV0_SESSION_STORE: redis
       NV0_RATE_LIMIT_STORE: redis

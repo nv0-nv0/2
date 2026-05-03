@@ -4,7 +4,8 @@ WORKDIR /app
 ENV NODE_ENV=production \
     HOST=0.0.0.0 \
     PORT=3210 \
-    NV0_RUNTIME_DIR=/app/runtime
+    NV0_RUNTIME_DIR=/tmp/nv0-runtime \
+    NV0_FALLBACK_RUNTIME_DIR=/tmp/nv0-runtime
 
 FROM base AS source
 COPY package*.json ./
@@ -23,7 +24,6 @@ RUN apk add --no-cache curl postgresql-client \
 COPY --from=source --chown=nv0:nv0 /app /app
 RUN chmod +x /app/deploy/entrypoint.sh \
   && chown -R nv0:nv0 /app/runtime
-VOLUME ["/app/runtime"]
 EXPOSE 3210
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=10 \
   CMD curl -fsS "http://127.0.0.1:${PORT:-3210}/healthz" || exit 1
