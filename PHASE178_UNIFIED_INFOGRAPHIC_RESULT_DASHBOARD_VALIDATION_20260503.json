@@ -1,0 +1,19 @@
+{
+  "phase": "178",
+  "ok": true,
+  "checks": [
+    "node --check apps/public/veridion-demo/app.js",
+    "node --check apps/public/portal/app.js"
+  ],
+  "changedFiles": [
+    "apps/public/veridion-demo/app.js",
+    "apps/public/veridion-demo/app.css",
+    "apps/public/portal/app.js",
+    "apps/public/portal/app.css"
+  ],
+  "notes": [
+    "Result dashboard unified with infographic UI",
+    "Frontend diagnose timeout raised to 30000ms",
+    "Error card redesigned"
+  ]
+}

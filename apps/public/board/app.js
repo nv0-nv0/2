@@ -13,7 +13,7 @@ function renderPostBody(body = '') {
   if (!sections.length) return '<p class="post-paragraph muted">본문이 준비되지 않았습니다.</p>';
   return `<div class="post-body">${sections.map(section => {
     const [first, ...rest] = section.split('\n');
-    const headingLike = /^(이 글에서 바로 얻을 수 있는 것|이런 경우 문제가 됩니다|고객은 이렇게 느낍니다|오늘 바로 확인할 체크리스트|문구를 이렇게 바꿔보세요|자주 묻는 질문|마무리|관련 링크|공지|사례|체크리스트)$/.test(first.trim());
+    const headingLike = /^(왜 이 글을 썼나요|한눈에 보는 핵심 요약|지금 보이는 문제|고객 입장에서 보면|실제로 확인할 요소|바로 고칠 수 있는 것|문구를 쉽게 바꾸는 방법|검색에 잘 읽히게 정리하는 방법|제목 후보|자주 묻는 질문|다음에 할 일|관련 링크|이 글에서 바로 얻을 수 있는 것|이런 경우 문제가 됩니다|고객은 이렇게 느낍니다|오늘 바로 확인할 체크리스트|문구를 이렇게 바꿔보세요|마무리|공지|사례|체크리스트)[.!?。]?$/.test(first.trim());
     if (headingLike) {
       const content = rest.join('\n').trim();
       return `<section class="post-section"><h3>${escapeHtml(first)}</h3>${content ? `<p>${escapeHtml(content).replace(/\n/g, '<br>')}</p>` : ''}</section>`;
