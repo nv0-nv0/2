@@ -1277,6 +1277,7 @@ const m = {
 '/solutions': [PUBLIC_DIR, 'solutions'],
 '/service': [PUBLIC_DIR, 'solutions'],
 '/products': [PUBLIC_DIR, 'plans'],
+'/demo': [PUBLIC_DIR, 'demo'],
 '/products/veridion/demo': [PUBLIC_DIR, 'veridion-demo'],
 '/plans': [PUBLIC_DIR, 'plans'],
 '/checkout': [PUBLIC_DIR, 'checkout'],
@@ -1490,7 +1491,6 @@ return `<nav class="admin-nav">
 </nav>`;
 }
 async function renderPage(urlPath, req, res) {
-if (urlPath === '/demo') { redirect(req, res, 301, '/products/veridion/demo'); return true; }
 const mapped = pageMap(urlPath);
 if (!mapped) return false;
 const [baseDir, slug] = mapped;

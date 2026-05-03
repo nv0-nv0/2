@@ -13,6 +13,7 @@ const scoreNumber = document.querySelector('.nv74-score-number');
 const scoreStatus = document.querySelector('.nv74-score-card .nv74-status-warning');
 const scoreFooter = document.querySelector('.nv74-score-card footer span');
 const workCard = document.querySelector('.nv74-work-card');
+const metricList = document.querySelector('.nv74-metrics');
 
 function getSavedScan() {
   try { return JSON.parse(localStorage.getItem('nv0:lastScan') || 'null'); } catch { return null; }
@@ -110,14 +111,17 @@ function updateStaticDashboard(session, account, summary) {
   const authenticated = !!session?.authenticated;
   const latest = latestScanFrom(account, summary);
   const sitesCount = account?.savedSites?.length || 0;
+  const scansCount = account?.recentScans?.length || 0;
+  const latestFindings = latest?.totalFindings ?? summary?.site?.latestFindings ?? '-';
   if (sidebarAccount) sidebarAccount.textContent = authenticated ? (account?.customer?.email || session.customer?.email || '로그인 계정') : '비회원 · 저장 기능 비활성';
-  if (planCard) planCard.innerHTML = `<div><b>${authenticated ? '회원 전용 관리' : '무료 계정 필요'}</b><small><span>사이트 ${sitesCount}개</span><span>최근 검사 ${account?.recentScans?.length || 0}개</span></small></div><a class="btn secondary" href="${authenticated ? '/plans' : '/auth?next=/portal'}">${authenticated ? '상품 보기' : '로그인·회원가입'}</a>`;
+  if (planCard) planCard.innerHTML = `<div><b>${authenticated ? '내 사이트 관리' : '무료 계정 필요'}</b><small><span>사이트 ${sitesCount}개</span><span>최근 검사 ${scansCount}개</span></small></div><a class="btn secondary" href="${authenticated ? '/plans' : '/auth?next=/portal'}">${authenticated ? '상품 보기' : '로그인·회원가입'}</a>`;
   if (topbarTitle) topbarTitle.textContent = authenticated ? '내 사이트 관리' : '검사 결과를 저장하려면 로그인하세요';
-  if (topbarCopy) topbarCopy.textContent = authenticated ? '저장한 사이트를 다시 검사하고 최근 결과를 한곳에서 확인하세요.' : '회원가입하면 내 사이트 저장, 원클릭 재검사, 지난 검사 내역 확인을 사용할 수 있습니다.';
+  if (topbarCopy) topbarCopy.textContent = authenticated ? '사이트 저장, 다시 검사, 최근 검사 내역만 간단하게 관리합니다.' : '회원가입하면 내 사이트 저장, 원클릭 재검사, 지난 검사 내역 확인을 사용할 수 있습니다.';
   if (scoreNumber) scoreNumber.textContent = latest?.riskScore ?? '-';
   if (scoreStatus) scoreStatus.textContent = latest?.riskLevel || '검사 전';
   if (scoreFooter) scoreFooter.textContent = `최근 진단일: ${formatDate(latest?.createdAt || latest?.generatedAt)}`;
-  if (workCard) workCard.innerHTML = `<div class="nv74-card-head"><h2>회원 전용 간단 기능</h2><a href="#saveSiteForm">사이트 등록 ›</a></div><div class="nv74-task-list"><div class="nv74-task"><i class="blue">01</i><div><b>내 사이트 저장</b><small>검사할 URL을 계정에 보관</small></div><progress value="100" max="100"></progress><span class="status ok">적용</span></div><div class="nv74-task"><i class="purple">02</i><div><b>다시 검사하기</b><small>저장된 URL을 바로 재검사</small></div><progress value="100" max="100"></progress><span class="status ok">적용</span></div><div class="nv74-task"><i class="orange">03</i><div><b>최근 검사 5개</b><small>지난 결과를 목록으로 확인</small></div><progress value="100" max="100"></progress><span class="status ok">적용</span></div></div>`;
+  if (metricList) metricList.innerHTML = `<li><i class="blue"></i><span>저장 사이트</span><b>${sitesCount}개</b></li><li><i class="purple"></i><span>최근 검사</span><b>${scansCount}개</b></li><li><i class="orange"></i><span>검토 필요</span><b>${escapeHtml(latestFindings)}개</b></li>`;
+  if (workCard) workCard.innerHTML = `<div class="nv74-card-head"><h2>가능한 작업</h2><a href="#saveSiteForm">사이트 등록 ›</a></div><div class="nv74-task-list"><div class="nv74-task"><i class="blue">01</i><div><b>내 사이트 저장</b><small>검사할 URL을 계정에 보관</small></div><span class="status ok">사용 가능</span></div><div class="nv74-task"><i class="purple">02</i><div><b>다시 검사하기</b><small>저장된 URL을 바로 재검사</small></div><span class="status ok">사용 가능</span></div><div class="nv74-task"><i class="orange">03</i><div><b>최근 검사 확인</b><small>최근 5개 결과 확인</small></div><span class="status ok">사용 가능</span></div></div>`;
 }
 async function loadPortal() {
   const url = new URL(location.href);
@@ -145,14 +149,12 @@ async function loadPortal() {
     ${renderSavedSites(account?.savedSites || [])}
     ${renderRecentScans(account?.recentScans || [])}
     ${renderMemberValueBox(session, account)}
-    ${summary?.order ? `<div class="nv74-state"><strong>최근 주문</strong> · ${escapeHtml(summary.order.plan)} · ${escapeHtml(summary.order.status)}</div>` : ''}
-    ${fulfillment?.locked ? `<div class="nv74-state"><strong>산출물 잠금</strong> · 결제 완료 후 리포트·수정안·템플릿 등 구매 산출물이 표시됩니다.</div>` : ''}
-    ${renderAsset(fulfillment?.asset, fulfillment?.order || summary?.order, accessToken)}
     ${summary?.site ? `<div class="nv74-state"><strong>현재 선택 사이트</strong> · ${escapeHtml(summary.site.domain)} · ${escapeHtml(summary.site.latestRiskLevel || '검사 전')} · 최근 발견 ${escapeHtml(summary.site.latestFindings ?? summary.latestScan?.totalFindings ?? '-')}개</div>` : ''}
-    ${summary?.guidance ? `<div class="nv74-state"><strong>맞춤 지침</strong><pre class="pre-wrap">${escapeHtml(summary.guidance.content)}</pre></div>` : ''}`;
-  feed.innerHTML = `
-    <div class="card stack"><div class="meta-row"><strong>게시판 연결 글</strong><a class="btn secondary" href="/board">게시판 보기</a></div>${renderList((summary?.boards || []).filter(item => item.boardType === 'cta'), '<div class="muted">게시판 연결 글 없음</div>', item => `<div class="result-card"><div>${escapeHtml(item.title)}</div><div class="muted">${escapeHtml(item.createdAt || '-')}</div><p>${escapeHtml(item.body || '')}</p></div>`)}</div>
-    <div class="card stack"><strong>공지·인사이트</strong>${renderList(summary?.boards || [], '<div class="muted">공지 없음</div>', item => `<div class="result-card"><div>${escapeHtml(item.title)}</div><div class="muted">${escapeHtml(item.createdAt || '-')}</div></div>`)}</div>`;
+    ${renderAsset(fulfillment?.asset, fulfillment?.order || summary?.order, accessToken)}`;
+  if (feed) {
+    feed.hidden = true;
+    feed.innerHTML = '';
+  }
 }
 
 saveForm?.addEventListener('submit', async (event) => {
@@ -187,6 +189,6 @@ primary?.addEventListener('click', async (event) => {
 loadPortal().catch(error => {
   state.textContent = `내 사이트 관리 정보를 불러오지 못했습니다: ${error.message}`;
   primary.innerHTML = '<div class="nv74-state">내 사이트 관리 요약을 불러오지 못했습니다.</div>';
-  feed.innerHTML = '<div class="nv74-state">잠시 후 다시 시도하세요.</div>';
+  if (feed) { feed.hidden = false; feed.innerHTML = '<div class="nv74-state">잠시 후 다시 시도하세요.</div>'; }
 });
 

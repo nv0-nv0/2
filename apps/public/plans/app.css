@@ -9,3 +9,20 @@
 .comparison-table td:nth-child(3),.comparison-table td:nth-child(4){font-size:15px;line-height:1.72;color:#e2e8f0;}
 .comparison-table td:nth-child(1){font-size:15px;}
 .comparison-table thead th{font-size:15px;line-height:1.35;}
+
+/* PHASE188: plan card screenshot repair - no cramped badge/price/card overflow */
+.nv0-grid-4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;align-items:stretch;}
+.offer-card{position:relative;min-width:0;overflow:hidden;display:flex;flex-direction:column;gap:14px;min-height:100%;padding:22px!important;border-radius:24px;}
+.offer-card *{min-width:0;}
+.offer-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-right:0;}
+.offer-head h3{margin:6px 0 0;font-size:clamp(21px,2.2vw,28px);line-height:1.18;letter-spacing:-.055em;word-break:keep-all;}
+.offer-price{font-size:clamp(34px,4vw,48px)!important;line-height:1!important;letter-spacing:-.07em!important;white-space:nowrap;margin:2px 0 0;}
+.offer-card p{line-height:1.62;word-break:keep-all;overflow-wrap:normal;}
+.offer-card .result-list{display:grid;gap:8px;margin:0;}
+.offer-actions{margin-top:auto;display:flex;flex-wrap:wrap;gap:10px;}
+.offer-actions .btn{flex:1 1 150px;justify-content:center;text-align:center;}
+.recommended-badge,.recommended-ribbon{position:absolute!important;top:14px!important;right:14px!important;z-index:2;max-width:calc(100% - 28px);white-space:nowrap;}
+.plan-highlight{padding-top:42px!important;}
+@media(max-width:1240px){.nv0-grid-4{grid-template-columns:repeat(2,minmax(0,1fr));}.offer-price{font-size:clamp(32px,6vw,46px)!important;}}
+@media(max-width:680px){.nv0-grid-4{grid-template-columns:1fr;}.offer-card{padding:18px!important;}.offer-head{padding-right:0}.recommended-badge,.recommended-ribbon{position:static!important;align-self:flex-start;margin-bottom:4px}.plan-highlight{padding-top:22px!important;}.offer-actions .btn{flex-basis:100%;}}
+
