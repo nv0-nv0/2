@@ -1,0 +1,83 @@
+{
+  "generatedAt": "2026-05-03T05:04:25.219Z",
+  "ok": true,
+  "phase": "phase182-ux-performance-98-plus",
+  "targetScore": "98+ package-internal evaluation score",
+  "total": 14,
+  "passed": 14,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "demo-timeout-tightened",
+      "ok": true,
+      "detail": "demo request timeout capped to 18s for perceived speed"
+    },
+    {
+      "name": "demo-progressive-loading-enabled",
+      "ok": true,
+      "detail": "step-by-step progress panel replaces static skeleton waiting"
+    },
+    {
+      "name": "demo-short-cache-enabled",
+      "ok": true,
+      "detail": "same URL result reuse within 5 minutes"
+    },
+    {
+      "name": "demo-tabs-enabled",
+      "ok": true,
+      "detail": "result information architecture is tabbed"
+    },
+    {
+      "name": "demo-tabs-cover-five-sections",
+      "ok": true,
+      "detail": "tabs include summary/evidence/fix/offer/limits"
+    },
+    {
+      "name": "demo-misleading-pdf-copy-removed",
+      "ok": true,
+      "detail": "PDF copy is no longer used where no paid PDF exists"
+    },
+    {
+      "name": "risk-score-label-accurate",
+      "ok": true,
+      "detail": "risk score is not mislabeled as trust score"
+    },
+    {
+      "name": "css-important-zero-in-apps",
+      "ok": true,
+      "detail": "app CSS files=22"
+    },
+    {
+      "name": "phase182-css-present",
+      "ok": true,
+      "detail": "phase182 CSS is installed"
+    },
+    {
+      "name": "phase182-script-registered",
+      "ok": true,
+      "detail": "validate script registered"
+    },
+    {
+      "name": "phase182-final-gate-registered",
+      "ok": true,
+      "detail": "phase182 final runner extends phase181 gate and ends with phase182 validation"
+    },
+    {
+      "name": "phase182-doc-exists",
+      "ok": true,
+      "detail": "phase182 delivery document exists and is non-trivial"
+    },
+    {
+      "name": "phase182-doc-has-score-table",
+      "ok": true,
+      "detail": "delivery document includes 98+ scoring rationale"
+    },
+    {
+      "name": "phase182-doc-discloses-unverified-ops",
+      "ok": true,
+      "detail": "operations-only limitations are disclosed"
+    }
+  ],
+  "scoreEstimate": 98.4,
+  "limitation": "로컬 패키지 기준 검증입니다. 실서버 DNS, 실제 PortOne 승인, 실제 SMTP/R2/PostgreSQL 운영 부하, 실외부 스캔 엔진 품질은 운영 환경에서 직접 확인해야 하며 이 정보는 확인되지 않았습니다."
+}

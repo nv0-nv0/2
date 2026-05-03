@@ -27,5 +27,7 @@ jobs:
         run: npm run test:e2e
       - name: Link and validation JSON gate
         run: npm run check:links -- --summary && node scripts/check-validation-json.mjs
+      - name: Strict commercial CI gate
+        run: npm run ci:strict
       - name: Docker build gate
         run: docker build -t nv0-ci:latest .

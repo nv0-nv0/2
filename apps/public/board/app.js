@@ -2,11 +2,50 @@ import { escapeHtml, renderList } from '/shared/html.js';
 const state = document.getElementById('boardState');
 const list = document.getElementById('boardList');
 const pager = document.getElementById('boardPagination');
+const activity = document.getElementById('boardActivity');
+const statNodes = Array.from(document.querySelectorAll('[data-board-stat]'));
 const tabs = Array.from(document.querySelectorAll('[data-filter]'));
 let posts = [];
 let filter = new URLSearchParams(location.search).get('filter') || 'all';
 let page = Math.max(1, Number(new URLSearchParams(location.search).get('page') || '1'));
 let pagination = { page: 1, pageSize: 5, total: 0, totalPages: 1 };
+let stats = { total: 0, cta: 0, notice: 0, case: 0, recent7d: 0, filteredTotal: 0 };
+let activities = [];
+
+
+function formatRelativeTime(value) {
+  const at = Date.parse(value || '');
+  if (!Number.isFinite(at)) return '등록일 확인 중';
+  const delta = Math.max(0, Date.now() - at);
+  const minute = 60_000;
+  const hour = 60 * minute;
+  const day = 24 * hour;
+  if (delta < minute) return '방금 전';
+  if (delta < hour) return `${Math.floor(delta / minute)}분 전`;
+  if (delta < day) return `${Math.floor(delta / hour)}시간 전`;
+  if (delta < 7 * day) return `${Math.floor(delta / day)}일 전`;
+  return new Date(at).toLocaleDateString('ko-KR');
+}
+
+function renderStats() {
+  statNodes.forEach(node => {
+    const key = node.dataset.boardStat;
+    const value = Number(stats[key] ?? 0);
+    node.textContent = Number.isFinite(value) ? value.toLocaleString('ko-KR') : '-';
+  });
+}
+
+function renderActivity() {
+  if (!activity) return;
+  if (!activities.length) {
+    activity.innerHTML = '<div class="activity-item"><span class="nv0-avatar">NV</span><div><strong>아직 공개 활동이 없습니다.</strong><div class="muted">무료 진단 또는 관리자 발행 후 여기에 표시됩니다.</div></div></div>';
+    return;
+  }
+  activity.innerHTML = activities.map((item, index) => {
+    const initials = index === 0 ? 'UP' : index === 1 ? 'CT' : 'NV';
+    return `<div class="activity-item"><span class="nv0-avatar">${initials}</span><div><strong>${escapeHtml(item.label || '공개 게시글')} · ${escapeHtml(item.title || '제목 없음')}</strong><div class="muted">${escapeHtml(item.type || '게시글')} · ${escapeHtml(formatRelativeTime(item.createdAt))}</div></div></div>`;
+  }).join('');
+}
 
 function renderPostBody(body = '') {
   const sections = String(body || '').split(/\n{2,}/).map(part => part.trim()).filter(Boolean);
@@ -39,8 +78,10 @@ function renderPagination() {
 
 function render(){
   tabs.forEach(btn => btn.classList.toggle('active', btn.dataset.filter === filter));
-  const autoCount = Number(window.__NV0_BOARD_AUTO_COUNT__ || 0);
-  state.textContent = `공개 게시글 ${pagination.total}건 · ${pagination.page}/${pagination.totalPages}페이지 · 한 페이지 5개 · 자동 발행 ${autoCount}건`;
+  renderStats();
+  renderActivity();
+  const autoCount = Number(stats.cta || window.__NV0_BOARD_AUTO_COUNT__ || 0);
+  state.textContent = `공개 게시글 ${pagination.total}건 · ${pagination.page}/${pagination.totalPages}페이지 · 한 페이지 5개 · 진단 연결 ${autoCount}건`;
   list.innerHTML = renderList(posts, '<div class="empty-state stack"><strong>조건에 맞는 게시글이 없습니다.</strong><p>전체 탭으로 이동하거나 무료 진단 후 새 글을 발행하세요.</p><a class="btn secondary" href="/products/veridion/demo">무료 진단 시작</a></div>', item => `<article class="result-card stack board-post ${item.boardType === 'cta' || item.autoPublished ? 'cta' : ''}"><div class="meta-row"><strong>${escapeHtml(item.title)}</strong><span class="pill">${escapeHtml(item.boardType || item.type || 'post')}</span></div><div class="post-meta"><span>${item.autoPublished ? '자동 발행' : '운영 글'}</span><span>${escapeHtml(item.createdAt || '-')}</span><span>${escapeHtml(item.primaryKeyword || '고객 안내')}</span></div>${renderPostBody(item.body || item.summary || '')}<div class="post-cta"><a class="btn primary" href="/products/veridion/demo">무료 진단</a><a class="btn secondary" href="/plans">상품 비교</a><a class="btn secondary" href="/portal">내 사이트 관리</a></div></article>`);
   renderPagination();
 }
@@ -53,6 +94,8 @@ async function loadBoard() {
     const data = await res.json();
     if (!res.ok || !data?.ok) throw new Error(data?.error || `게시판 요청 실패 (${res.status})`);
     window.__NV0_BOARD_AUTO_COUNT__ = data.autoPublishedCount || 0;
+    stats = { ...stats, ...(data.stats || {}), filteredTotal: data.pagination?.total ?? data.stats?.filteredTotal ?? 0 };
+    activities = Array.isArray(data.activity) ? data.activity : [];
     posts = (data.posts || []).filter(item => item.visibility !== 'private');
     pagination = data.pagination || { page, pageSize: 5, total: posts.length, totalPages: 1 };
     page = pagination.page;

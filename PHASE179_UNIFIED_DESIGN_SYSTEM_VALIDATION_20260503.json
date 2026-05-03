@@ -1,0 +1,411 @@
+{
+  "generatedAt": "2026-05-03T05:04:23.449Z",
+  "ok": true,
+  "phase": 179,
+  "title": "unified infographic design system package QA",
+  "total": 100,
+  "passed": 100,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "shared-css:exists",
+      "ok": true
+    },
+    {
+      "name": "shared-css:nv0-dark",
+      "ok": true
+    },
+    {
+      "name": "shared-css:nv0-topbar",
+      "ok": true
+    },
+    {
+      "name": "shared-css:nv0-hero",
+      "ok": true
+    },
+    {
+      "name": "shared-css:nv0-kpi-grid",
+      "ok": true
+    },
+    {
+      "name": "shared-css:checkout-layout",
+      "ok": true
+    },
+    {
+      "name": "shared-css:board-pagination",
+      "ok": true
+    },
+    {
+      "name": "shared-css:@media",
+      "ok": true
+    },
+    {
+      "name": "home:exists",
+      "ok": true
+    },
+    {
+      "name": "home:doctype",
+      "ok": true
+    },
+    {
+      "name": "home:dark-body",
+      "ok": true
+    },
+    {
+      "name": "home:shared-css-linked",
+      "ok": true
+    },
+    {
+      "name": "home:topbar",
+      "ok": true
+    },
+    {
+      "name": "home:footer",
+      "ok": true
+    },
+    {
+      "name": "home:no-replacement-char",
+      "ok": true
+    },
+    {
+      "name": "home:no-nvo-typo",
+      "ok": true
+    },
+    {
+      "name": "home:nav-home",
+      "ok": true
+    },
+    {
+      "name": "home:nav-plans",
+      "ok": true
+    },
+    {
+      "name": "home:nav-board",
+      "ok": true
+    },
+    {
+      "name": "home:nav-documents",
+      "ok": true
+    },
+    {
+      "name": "home:nav-checkout",
+      "ok": true
+    },
+    {
+      "name": "home:no-duplicate-id",
+      "ok": true
+    },
+    {
+      "name": "plans:exists",
+      "ok": true
+    },
+    {
+      "name": "plans:doctype",
+      "ok": true
+    },
+    {
+      "name": "plans:dark-body",
+      "ok": true
+    },
+    {
+      "name": "plans:shared-css-linked",
+      "ok": true
+    },
+    {
+      "name": "plans:topbar",
+      "ok": true
+    },
+    {
+      "name": "plans:footer",
+      "ok": true
+    },
+    {
+      "name": "plans:no-replacement-char",
+      "ok": true
+    },
+    {
+      "name": "plans:no-nvo-typo",
+      "ok": true
+    },
+    {
+      "name": "plans:nav-home",
+      "ok": true
+    },
+    {
+      "name": "plans:nav-plans",
+      "ok": true
+    },
+    {
+      "name": "plans:nav-board",
+      "ok": true
+    },
+    {
+      "name": "plans:nav-documents",
+      "ok": true
+    },
+    {
+      "name": "plans:nav-checkout",
+      "ok": true
+    },
+    {
+      "name": "plans:no-duplicate-id",
+      "ok": true
+    },
+    {
+      "name": "board:exists",
+      "ok": true
+    },
+    {
+      "name": "board:doctype",
+      "ok": true
+    },
+    {
+      "name": "board:dark-body",
+      "ok": true
+    },
+    {
+      "name": "board:shared-css-linked",
+      "ok": true
+    },
+    {
+      "name": "board:topbar",
+      "ok": true
+    },
+    {
+      "name": "board:footer",
+      "ok": true
+    },
+    {
+      "name": "board:no-replacement-char",
+      "ok": true
+    },
+    {
+      "name": "board:no-nvo-typo",
+      "ok": true
+    },
+    {
+      "name": "board:nav-home",
+      "ok": true
+    },
+    {
+      "name": "board:nav-plans",
+      "ok": true
+    },
+    {
+      "name": "board:nav-board",
+      "ok": true
+    },
+    {
+      "name": "board:nav-documents",
+      "ok": true
+    },
+    {
+      "name": "board:nav-checkout",
+      "ok": true
+    },
+    {
+      "name": "board:no-duplicate-id",
+      "ok": true
+    },
+    {
+      "name": "documents:exists",
+      "ok": true
+    },
+    {
+      "name": "documents:doctype",
+      "ok": true
+    },
+    {
+      "name": "documents:dark-body",
+      "ok": true
+    },
+    {
+      "name": "documents:shared-css-linked",
+      "ok": true
+    },
+    {
+      "name": "documents:topbar",
+      "ok": true
+    },
+    {
+      "name": "documents:footer",
+      "ok": true
+    },
+    {
+      "name": "documents:no-replacement-char",
+      "ok": true
+    },
+    {
+      "name": "documents:no-nvo-typo",
+      "ok": true
+    },
+    {
+      "name": "documents:nav-home",
+      "ok": true
+    },
+    {
+      "name": "documents:nav-plans",
+      "ok": true
+    },
+    {
+      "name": "documents:nav-board",
+      "ok": true
+    },
+    {
+      "name": "documents:nav-documents",
+      "ok": true
+    },
+    {
+      "name": "documents:nav-checkout",
+      "ok": true
+    },
+    {
+      "name": "documents:no-duplicate-id",
+      "ok": true
+    },
+    {
+      "name": "checkout:exists",
+      "ok": true
+    },
+    {
+      "name": "checkout:doctype",
+      "ok": true
+    },
+    {
+      "name": "checkout:dark-body",
+      "ok": true
+    },
+    {
+      "name": "checkout:shared-css-linked",
+      "ok": true
+    },
+    {
+      "name": "checkout:topbar",
+      "ok": true
+    },
+    {
+      "name": "checkout:footer",
+      "ok": true
+    },
+    {
+      "name": "checkout:no-replacement-char",
+      "ok": true
+    },
+    {
+      "name": "checkout:no-nvo-typo",
+      "ok": true
+    },
+    {
+      "name": "checkout:nav-home",
+      "ok": true
+    },
+    {
+      "name": "checkout:nav-plans",
+      "ok": true
+    },
+    {
+      "name": "checkout:nav-board",
+      "ok": true
+    },
+    {
+      "name": "checkout:nav-documents",
+      "ok": true
+    },
+    {
+      "name": "checkout:nav-checkout",
+      "ok": true
+    },
+    {
+      "name": "checkout:no-duplicate-id",
+      "ok": true
+    },
+    {
+      "name": "demo:exists",
+      "ok": true
+    },
+    {
+      "name": "demo:doctype",
+      "ok": true
+    },
+    {
+      "name": "demo:dark-body",
+      "ok": true
+    },
+    {
+      "name": "demo:shared-css-linked",
+      "ok": true
+    },
+    {
+      "name": "demo:topbar",
+      "ok": true
+    },
+    {
+      "name": "demo:footer",
+      "ok": true
+    },
+    {
+      "name": "demo:no-replacement-char",
+      "ok": true
+    },
+    {
+      "name": "demo:no-nvo-typo",
+      "ok": true
+    },
+    {
+      "name": "demo:nav-home",
+      "ok": true
+    },
+    {
+      "name": "demo:nav-plans",
+      "ok": true
+    },
+    {
+      "name": "demo:nav-board",
+      "ok": true
+    },
+    {
+      "name": "demo:nav-documents",
+      "ok": true
+    },
+    {
+      "name": "demo:nav-checkout",
+      "ok": true
+    },
+    {
+      "name": "demo:no-duplicate-id",
+      "ok": true
+    },
+    {
+      "name": "home:score-preview",
+      "ok": true
+    },
+    {
+      "name": "home:cta-count",
+      "ok": true
+    },
+    {
+      "name": "plans:four-core-plans",
+      "ok": true
+    },
+    {
+      "name": "plans:dynamic-containers-preserved",
+      "ok": true
+    },
+    {
+      "name": "board:filters-preserved",
+      "ok": true
+    },
+    {
+      "name": "documents:form-preserved",
+      "ok": true
+    },
+    {
+      "name": "checkout:required-ids-preserved",
+      "ok": true
+    },
+    {
+      "name": "checkout:refund-visible",
+      "ok": true
+    }
+  ]
+}

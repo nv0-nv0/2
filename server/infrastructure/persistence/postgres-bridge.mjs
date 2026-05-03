@@ -259,11 +259,23 @@ export function createPostgresBridge(env = process.env, logger = console) {
     await execPsql(databaseUrl, sql, logger);
   }
 
+  async function writeCollections(payloads = {}) {
+    if (!enabled) return;
+    const parts = ['begin;'];
+    for (const key of COLLECTION_KEYS) {
+      const json = JSON.stringify(payloads[key] ?? null);
+      parts.push(`insert into state_snapshots (collection_key, payload_json, updated_at)
+        values (${sqlLiteral(key)}, ${sqlLiteral(json)}::jsonb, now())
+        on conflict (collection_key)
+        do update set payload_json = excluded.payload_json, updated_at = now();`);
+    }
+    parts.push('commit;');
+    await execPsql(databaseUrl, parts.join('\n'), logger);
+  }
+
   async function writeDbSnapshot(db) {
     if (!enabled) return;
-    for (const key of COLLECTION_KEYS) {
-      await writeCollection(key, db[key]);
-    }
+    await writeCollections(db || {});
     await replaceOrders(db.orders || []);
     await replacePaymentEvents(db.paymentEvents || []);
     await replaceWebhookInbox(db.webhookInbox || []);

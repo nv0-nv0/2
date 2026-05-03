@@ -1,6 +1,6 @@
 {
   "name": "nv0-veridion-cleanroom",
-  "version": "1.0.0-commercial-final-100-score-phase160-evidence-first-diagnosis-phase161-zero-cost-max-coverage-phase162-free-auto-disclosure-phase163-remote-backup-security-phase164-zero-cost-hardening-50-phase165-route-security-validation-fix-phase165-final-consolidation-phase166-native-route-split-phase167-native-http-load-security-phase168-zero-risk-best-unified-delivery-phase171-healthz-readyz-backup-final-hotfix-phase172-runtime-permission-route-hardening-phase173-rootless-entrypoint-runtime-phase174-ephemeral-runtime-coolify-hardening-phase175-quiet-runtime-normalization-phase176-access-log-scan-hygiene-phase177-result-ui-cta-search-optimization",
+  "version": "1.0.0-commercial-final-100-score-phase181-zero-blocker-phase182-98-plus-phase183-closure",
   "private": true,
   "type": "module",
   "scripts": {
@@ -188,6 +188,16 @@
     "validate:phase176": "node scripts/validate-phase176-access-log-hygiene.mjs",
     "phase176:final": "npm run check:syntax && npm run test:all && npm run test:e2e && npm run test:routes && npm run smoke && npm run validate:deploy && npm run check:env-examples && npm run validate:phase167 && npm run validate:phase173 && npm run validate:phase174 && npm run validate:phase175 && npm run validate:phase176",
     "validate:phase177": "node scripts/validate-phase177-result-ui-cta-search.mjs",
-    "phase177:final": "npm run check:syntax && npm run test:all && npm run test:e2e && npm run test:routes && npm run smoke && npm run validate:deploy && npm run check:env-examples && npm run validate:phase167 && npm run validate:phase173 && npm run validate:phase174 && npm run validate:phase175 && npm run validate:phase176 && npm run validate:phase177"
+    "phase177:final": "npm run check:syntax && npm run test:all && npm run test:e2e && npm run test:routes && npm run smoke && npm run validate:deploy && npm run check:env-examples && npm run validate:phase167 && npm run validate:phase173 && npm run validate:phase174 && npm run validate:phase175 && npm run validate:phase176 && npm run validate:phase177",
+    "validate:phase179": "node scripts/validate-phase179-unified-design-system.mjs",
+    "phase179:final": "npm run check:syntax && npm run test:all && npm run test:e2e && npm run test:routes && npm run check:links -- --summary && npm run smoke && npm run validate:phase179",
+    "validate:phase180": "node scripts/validate-phase180-quality-max.mjs",
+    "phase180:final": "npm run check:syntax && npm run test:all && npm run test:e2e && npm run test:routes && npm run check:links -- --summary && npm run smoke && npm run validate:deploy && npm run check:env-examples && npm run validate:phase179 && npm run validate:phase180",
+    "validate:phase181": "node scripts/validate-phase181-zero-blocker-closeout.mjs",
+    "phase181:final": "npm run check:syntax && npm run test:all && npm run test:e2e && npm run test:routes && npm run check:links -- --summary && npm run smoke && npm run validate:deploy && npm run check:env-examples && npm run audit:global && npm run validate:commercial && npm run validate:pipeline && npm run check:pages && npm run verify:prod && npm run ci:strict && npm run validate:phase179 && npm run validate:phase180 && npm run validate:phase181",
+    "validate:phase182": "node scripts/validate-phase182-ux-performance-98.mjs",
+    "phase182:final": "node scripts/run-phase182-final.mjs",
+    "validate:phase183": "node scripts/validate-phase183-100-closure.mjs",
+    "phase183:final": "node scripts/run-phase183-final.mjs"
   }
 }

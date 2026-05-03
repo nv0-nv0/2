@@ -12,12 +12,24 @@ const params = new URLSearchParams(location.search);
 if (params.get('target') && targetInput) targetInput.value = params.get('target');
 
 const FREE_LIMIT = 3;
-const REQUEST_TIMEOUT_MS = 30000;
+const REQUEST_TIMEOUT_MS = 18000;
+const DEMO_CACHE_TTL_MS = 5 * 60 * 1000;
+const PROGRESS_TICK_MS = 900;
+const PROGRESS_STEPS = [
+  '주소 형식과 공개 접근 가능 여부를 확인합니다.',
+  '홈·내부 링크·robots.txt·sitemap.xml 후보를 수집합니다.',
+  '사업자·환불·개인정보·결제 전 안내 신호를 분류합니다.',
+  '자동 확정 가능 항목과 수동 확인 항목을 분리합니다.',
+  '지금 고칠 3가지와 리포트 전환 동선을 정리합니다.'
+];
 const usageKey = `veridion:instantDemoUsage:${new Date().toISOString().slice(0, 10)}`;
 let session = { authenticated: false, customer: null };
 let lastScan = null;
 let isScanning = false;
 let guard = { enabled: false, ready: false, getToken: () => '', reset: () => {} };
+let progressTimer = null;
+let progressStartedAt = 0;
+let progressIndex = 0;
 
 function setState(message, mode = 'muted') {
   if (!state) return;
@@ -25,6 +37,43 @@ function setState(message, mode = 'muted') {
   state.textContent = message;
 }
 function setResultHtml(html) { if (result) result.innerHTML = html; }
+
+function stopProgress() {
+  if (progressTimer) clearInterval(progressTimer);
+  progressTimer = null;
+}
+function demoCacheKey(target) { return `veridion:instantDemoCache:${String(target || '').toLowerCase()}`; }
+function getCachedDemoResult(target) {
+  try {
+    const cached = JSON.parse(localStorage.getItem(demoCacheKey(target)) || 'null');
+    if (!cached?.result || Date.now() - Number(cached.savedAt || 0) > DEMO_CACHE_TTL_MS) return null;
+    return cached.result;
+  } catch { return null; }
+}
+function setCachedDemoResult(target, scan) {
+  try { localStorage.setItem(demoCacheKey(target), JSON.stringify({ savedAt: Date.now(), result: scan })); } catch {}
+}
+function renderProgress(index = 0) {
+  const elapsed = progressStartedAt ? Math.max(0, Math.round((Date.now() - progressStartedAt) / 1000)) : 0;
+  const active = Math.max(0, Math.min(PROGRESS_STEPS.length - 1, index));
+  return `<section class="demo-progress-panel" aria-live="polite">
+    <div class="demo-progress-head"><span class="pill brand">실시간 예비 점검</span><b>${elapsed}초 경과</b></div>
+    <h3>결과 화면을 먼저 준비하면서 공개 페이지를 확인하고 있습니다</h3>
+    <p class="muted">응답이 느린 사이트도 빈 화면으로 기다리게 하지 않고, 현재 처리 단계를 계속 보여줍니다.</p>
+    <ol class="demo-progress-steps">${PROGRESS_STEPS.map((step, stepIndex) => `<li class="${stepIndex < active ? 'done' : stepIndex === active ? 'active' : ''}"><span>${stepIndex + 1}</span><p>${escapeHtml(step)}</p></li>`).join('')}</ol>
+    <div class="demo-progress-note">반복 실행 시 최근 5분 이내 동일 URL 결과는 즉시 재사용해 체감 대기시간을 줄입니다.</div>
+  </section>`;
+}
+function startProgress() {
+  stopProgress();
+  progressStartedAt = Date.now();
+  progressIndex = 0;
+  setResultHtml(renderProgress(progressIndex));
+  progressTimer = setInterval(() => {
+    progressIndex = Math.min(PROGRESS_STEPS.length - 1, progressIndex + 1);
+    setResultHtml(renderProgress(progressIndex));
+  }, PROGRESS_TICK_MS);
+}
 function getUsage() { return Number(localStorage.getItem(usageKey) || '0'); }
 function setUsage(n) { localStorage.setItem(usageKey, String(n)); updateBadge(); }
 function updateBadge() {
@@ -468,17 +517,28 @@ async function runScan() {
     setBusy(false);
     return;
   }
+  const cachedResult = getCachedDemoResult(normalizedTarget);
+  if (cachedResult) {
+    saveScan(cachedResult);
+    setState('최근 5분 이내 동일 URL 진단 결과를 즉시 불러왔습니다. 다시 점검을 누르면 새로 검사합니다.', 'success');
+    renderResult(cachedResult);
+    setBusy(false);
+    return;
+  }
   setState('공개 페이지·내부 링크·robots.txt·sitemap.xml을 자동 수집하고 확인 근거를 정리하고 있습니다.', 'muted');
-  setResultHtml('<div class="demo-skeleton"><div></div><div></div><div></div></div><div class="loading-steps"><div>홈, 내부 링크, robots.txt, sitemap.xml 후보를 자동 수집합니다.</div><div>자동 확인 가능한 정책·결제·문의 페이지를 우선 검사합니다.</div><div>자동 확정 불가 영역은 수동확인 필요로 명확히 고지합니다.</div></div>');
+  startProgress();
   try {
     const token = guard.enabled ? guard.getToken() : '';
     const data = await jsonFetch('/api/public/diagnose', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ target: normalizedTarget, turnstileToken: token }), timeoutMs: REQUEST_TIMEOUT_MS });
+    stopProgress();
     if (!session.authenticated) setUsage(getUsage() + 1);
+    setCachedDemoResult(normalizedTarget, data.result || {});
     saveScan(data.result || {});
     if (session.authenticated && data.result) { try { await saveCurrentSite(data.result); } catch {} }
     setState(session.authenticated ? '예비 점검 완료 · 전체 근거와 내 사이트 저장이 활성화되었습니다.' : '예비 점검 완료 · 확인 근거와 한계를 먼저 보여드립니다. 전체 결과는 회원가입 후 바로 확인하세요.', 'success');
     renderResult(data.result || {});
   } catch (err) {
+    stopProgress();
     const message = err?.message || '알 수 없는 오류';
     const isTurnstile = /turnstile|보안|검증/i.test(message);
     const isServer = /500|502|503|서버|timeout|초과/i.test(message);
@@ -838,13 +898,13 @@ function renderUnifiedDashboard(view) {
   return `<section class="unified-trust-dashboard ${escapeAttr(view.health.tone)}">
     <div class="utd-header">
       <div class="utd-title-wrap"><h2>URL 신뢰도 진단 결과</h2><p>${escapeHtml(view.target)}</p></div>
-      <div class="utd-header-meta"><span>검사 시간 ${escapeHtml(formatDate(view.generatedAt))}</span><div class="utd-header-buttons"><a class="btn secondary" href="/portal?siteId=${escapeAttr(view.siteId)}">결과 공유</a><a class="btn secondary" href="/plans?siteId=${escapeAttr(view.siteId)}">PDF 다운로드</a></div></div>
+      <div class="utd-header-meta"><span>검사 시간 ${escapeHtml(formatDate(view.generatedAt))}</span><div class="utd-header-buttons"><a class="btn secondary" href="/portal?siteId=${escapeAttr(view.siteId)}">결과 공유</a><a class="btn secondary" href="/documents?siteId=${escapeAttr(view.siteId)}&type=report">리포트 초안 보기</a></div></div>
     </div>
     <div class="utd-warning-bar"><div><b>${escapeHtml(warningText)}</b><small>모든 항목의 검사가 완료되었으며 현재 결과를 확인할 수 있습니다.</small></div><button class="btn secondary" type="button" id="dashboardRetryBtn">다시 점검</button></div>
     <div class="utd-top-grid">
       <article class="utd-score-card">
-        <div class="utd-gauge" style="--score:${escapeAttr(view.riskScore ?? 0)}"><div class="utd-gauge-ring"></div><div class="utd-gauge-value"><span>신뢰도 점수</span><strong>${escapeHtml(view.riskScore ?? '-')}</strong><em>/100</em></div></div>
-        <div class="utd-score-copy"><b>${escapeHtml(view.riskLevel || view.health.label)}</b><p>${escapeHtml(view.health.headline)}</p><small>권장 점수 90점 이상</small></div>
+        <div class="utd-gauge" style="--score:${escapeAttr(view.riskScore ?? 0)}"><div class="utd-gauge-ring"></div><div class="utd-gauge-value"><span>보완 우선도</span><strong>${escapeHtml(view.riskScore ?? '-')}</strong><em>/100</em></div></div>
+        <div class="utd-score-copy"><b>${escapeHtml(view.riskLevel || view.health.label)}</b><p>${escapeHtml(view.health.headline)}</p><small>권장: 보완 우선도 40점 이하</small></div>
       </article>
       <article class="utd-kpi green"><span>확인된 요소</span><strong>${escapeHtml(stats.confirmed)}</strong><small>안심하고 유지하세요</small></article>
       <article class="utd-kpi amber"><span>누락 의심</span><strong>${escapeHtml(stats.suspected)}</strong><small>즉시 보완 필요</small></article>
@@ -873,10 +933,39 @@ function renderUnifiedDashboard(view) {
   </section>`;
 }
 
+
+function renderResultTabs(view, scan) {
+  const paywall = session.authenticated ? renderFullResult(scan) : renderPaywall(scan);
+  const panels = [
+    ['summary', '요약', `${renderDiscoverySummary(view)}${renderMetricStrip(view)}${renderSmartNextAction(view)}`],
+    ['evidence', '근거', `${renderEvidenceMatrix(view)}${renderVerifiedPages(view)}${renderEvidenceFindings(view)}`],
+    ['fix', '수정안', `${renderAutomatedActionPlan(view)}${renderRecommendedActions(view.recommendedActions)}${renderFixPreview(view.recommendedActions)}`],
+    ['offer', '상품', `${renderValueComparison(view)}${renderPremiumUpgradePanel(view)}${paywall}`],
+    ['limits', '한계', `${renderAutomationDisclosure(view)}${renderExternalToolPlan(view)}${renderQualityNotice(view)}`]
+  ];
+  return `<section class="result-tabbed-ia" aria-label="진단 결과 단계별 보기">
+    <div class="result-tab-nav" role="tablist">${panels.map(([id, label], index) => `<button type="button" role="tab" class="result-tab-button ${index === 0 ? 'active' : ''}" aria-selected="${index === 0 ? 'true' : 'false'}" data-result-tab="${escapeAttr(id)}">${escapeHtml(label)}</button>`).join('')}</div>
+    <div class="result-tab-panels">${panels.map(([id, , html], index) => `<div class="result-tab-panel ${index === 0 ? 'active' : ''}" role="tabpanel" data-result-panel="${escapeAttr(id)}">${html}</div>`).join('')}</div>
+  </section>`;
+}
+function bindResultTabs() {
+  document.querySelectorAll('[data-result-tab]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const id = button.getAttribute('data-result-tab');
+      document.querySelectorAll('[data-result-tab]').forEach(item => {
+        const active = item.getAttribute('data-result-tab') === id;
+        item.classList.toggle('active', active);
+        item.setAttribute('aria-selected', active ? 'true' : 'false');
+      });
+      document.querySelectorAll('[data-result-panel]').forEach(panel => panel.classList.toggle('active', panel.getAttribute('data-result-panel') === id));
+    });
+  });
+}
 function renderResult(scan) {
   const view = normalizeScan(scan);
-  setResultHtml(`${renderUnifiedDashboard(view)}${session.authenticated ? renderFullResult(scan) : renderPaywall(scan)}`);
+  setResultHtml(`${renderUnifiedDashboard(view)}${renderResultTabs(view, scan)}`);
   document.getElementById('dashboardRetryBtn')?.addEventListener('click', runScan);
   document.getElementById('dashboardRetryBtnBottom')?.addEventListener('click', runScan);
+  bindResultTabs();
 }
 

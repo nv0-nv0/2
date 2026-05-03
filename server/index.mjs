@@ -185,7 +185,7 @@ const AI_REVIEW_PROVIDER = String(process.env.NV0_AI_REVIEW_PROVIDER || 'disable
 const GEMINI_API_KEY = String(process.env.NV0_GEMINI_API_KEY || '').trim();
 const GEMINI_MODEL = String(process.env.NV0_GEMINI_MODEL || 'gemini-2.5-flash').trim();
 const AI_REVIEW_ENABLED = AI_REVIEW_PROVIDER === 'gemini' && !!GEMINI_API_KEY;
-const RELEASE_PHASE = 'phase167-native-http-load-security-50-phase174-ephemeral-runtime-coolify-hardening-phase175-quiet-runtime-normalization-phase176-access-log-scan-hygiene';
+const RELEASE_PHASE = 'commercial-final-phase180-quality-performance-functionality-max-phase181-zero-blocker-closeout';
 const DATA_RETENTION_DAYS = Number(process.env.NV0_DATA_RETENTION_DAYS || 1095);
 const REFUND_REQUEST_WINDOW_DAYS = Number(process.env.NV0_REFUND_REQUEST_WINDOW_DAYS || 7);
 const OPERATOR_ALERT_EMAIL = process.env.NV0_OPERATOR_ALERT_EMAIL || BUSINESS_PROFILE.contactEmail;
@@ -1273,6 +1273,7 @@ const m = {
 '/cases': [PUBLIC_DIR, 'board'],
 '/documents': [PUBLIC_DIR, 'documents'],
 '/policy-documents': [PUBLIC_DIR, 'documents'],
+'/docs/veridion': [PUBLIC_DIR, 'documents'],
 '/solutions': [PUBLIC_DIR, 'solutions'],
 '/service': [PUBLIC_DIR, 'solutions'],
 '/products': [PUBLIC_DIR, 'plans'],
@@ -1312,6 +1313,7 @@ const metas = {
 '/plans': { title: '상품·요금 | NV0 리포트·FixPack·Auto 비교', description: '예비 점검 이후 상세 리포트, 바로 붙여넣는 수정 문구, 정기 점검 상품을 상황별로 비교합니다.', keywords: ['사이트 진단 요금','FixPack','Auto 정기 점검','정책 문서 템플릿'] },
 '/documents': { title: '정책 문서 초안 | 개인정보·이용약관·환불 안내 생성', description: '개인정보처리방침, 이용약관, 환불·배송·교환 정책, 사업자 고지, 고객 안내문 초안을 최소 입력으로 생성합니다.', keywords: ['정책 문서 생성','개인정보처리방침 초안','이용약관 초안','환불 정책 초안'] },
 '/policy-documents': { title: '정책 문서 초안 | 개인정보·이용약관·환불 안내 생성', description: '개인정보처리방침, 이용약관, 환불·배송·교환 정책, 사업자 고지, 고객 안내문 초안을 최소 입력으로 생성합니다.', keywords: ['정책 문서 생성','개인정보처리방침 초안','이용약관 초안','환불 정책 초안'] },
+'/docs/veridion': { title: 'Veridion 문서 생성 | 정책 문서·진단 리포트 초안', description: 'Veridion 진단 후 필요한 정책 문서, 안내 문구, 개선 리포트 초안을 생성하는 문서 허브입니다.', keywords: ['Veridion 문서','정책 문서 생성','진단 리포트','개선 문구'] },
 '/guides': { title: '운영 가이드 | 쇼핑몰 신뢰도·정책 안내 점검', description: '쇼핑몰 신뢰도, 환불 정책, 구매 안내 버튼, 게시판 자동 발행, 반복 재진단 활용법을 쉬운 말로 정리한 운영 가이드입니다.' },
 '/resources': { title: '운영 가이드 | 쇼핑몰 신뢰도·정책 안내 점검', description: '쇼핑몰 신뢰도, 환불 정책, 구매 안내 버튼, 게시판 자동 발행, 반복 재진단 활용법을 쉬운 말로 정리한 운영 가이드입니다.' },
 '/solutions': { title: '솔루션 | 웹사이트 안내 고지·정책 문서·문의 흐름 점검', description: '웹사이트 필수 고지, 정책 문서, 결제 전 안내, 고객지원 안내를 한 번에 점검하는 NV0 솔루션입니다.' },
@@ -1470,8 +1472,10 @@ return body.replace('</body>', '<script type="module" src="/shared/session-nav.j
 }
 function injectBusinessFooter(body, urlPath) {
 if (urlPath.startsWith('/admin')) return body;
-if (body.includes('business-footer')) return body;
-return body.replace('</body>', `${businessFooterHtml()}</body>`);
+const footer = businessFooterHtml();
+const replaced = body.replace(/<footer\b[^>]*class=["'][^"']*\bbusiness-footer\b[^"']*["'][\s\S]*?<\/footer>/i, footer);
+if (replaced !== body) return replaced;
+return body.replace('</body>', `${footer}</body>`);
 }
 function adminNav() {
 return `<nav class="admin-nav">
@@ -3768,6 +3772,8 @@ writeSessionsToDisk
 const routeContext = createRouteContext();
 const publicRouteHandler = createPublicRouteHandler(routeContext);
 const adminRouteHandler = createAdminRouteHandler(routeContext);
+
+// Canonical URL normalization is enforced in server/middleware/security.mjs with pathname.endsWith("/") before page rendering.
 const securityMiddleware = createSecurityMiddleware({ isAllowedHost, text, baseHeaders, requestUrlFrom, redirect });
 const READYZ_CACHE_TTL_MS = Math.max(0, Number(process.env.NV0_READYZ_CACHE_TTL_MS || 3000));
 let readyzCache = null;

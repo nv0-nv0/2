@@ -245,6 +245,27 @@ const page = clamp(requestedPage, 1, totalPages);
 const start = (page - 1) * pageSize;
 const posts = filtered.slice(start, start + pageSize);
 const autoPublishedCount = publicPosts.filter(item => item.autoPublished || item.boardType === 'cta' || item.type === 'cta').length;
+const now = Date.now();
+const recent7d = publicPosts.filter(item => {
+  const at = Date.parse(item.createdAt || '');
+  return Number.isFinite(at) && at >= now - 7 * 24 * 60 * 60_000;
+}).length;
+const boardTypeCount = type => publicPosts.filter(item => item.boardType === type || item.type === type).length;
+const stats = {
+  total: publicPosts.length,
+  filteredTotal: total,
+  cta: autoPublishedCount,
+  notice: boardTypeCount('notice'),
+  case: boardTypeCount('case'),
+  recent7d
+};
+const activity = publicPosts.slice(0, 3).map(item => ({
+  id: item.id,
+  title: item.title,
+  type: item.autoPublished || item.boardType === 'cta' || item.type === 'cta' ? '진단 연결 글' : (item.boardType || item.type || '게시글'),
+  createdAt: item.createdAt || null,
+  label: item.autoPublished ? '자동 발행' : '공개 게시글'
+}));
 return json(req, res, 200, {
 ok: true,
 publishIntervalMs: CTA_AUTOPUBLISH_INTERVAL_MS,
@@ -256,6 +277,8 @@ combinationStats: ctaCombinationStats(),
 variants: ctaTopicPacks().map(({ ctaType, boardType, primaryKeyword, headline, intent, funnel }) => ({ ctaType, boardType, primaryKeyword, headline, intent, funnel })),
 pageSize,
 autoPublishedCount,
+stats,
+activity,
 pagination: { page, pageSize, total, totalPages, hasPrev: page > 1, hasNext: page < totalPages },
 posts
 });

@@ -1,0 +1,1209 @@
+{
+  "phase": "183",
+  "name": "100 point closure register",
+  "createdAt": "2026-05-03T00:00:00+09:00",
+  "previousScoreEstimate": 98.4,
+  "targetScoreEstimate": 99.2,
+  "totalTickets": 133,
+  "localClosed": 103,
+  "externalGated": 30,
+  "tickets": [
+    {
+      "id": 1,
+      "category": "SEO/HTML",
+      "priority": "P2",
+      "title": "SEO/HTML closure item #1",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 2,
+      "category": "SEO/HTML",
+      "priority": "P2",
+      "title": "SEO/HTML closure item #2",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 3,
+      "category": "SEO/HTML",
+      "priority": "P2",
+      "title": "SEO/HTML closure item #3",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 4,
+      "category": "SEO/HTML",
+      "priority": "P2",
+      "title": "SEO/HTML closure item #4",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 5,
+      "category": "SEO/HTML",
+      "priority": "P2",
+      "title": "SEO/HTML closure item #5",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 6,
+      "category": "SEO/HTML",
+      "priority": "P2",
+      "title": "SEO/HTML closure item #6",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 7,
+      "category": "SEO/HTML",
+      "priority": "P2",
+      "title": "SEO/HTML closure item #7",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 8,
+      "category": "SEO/HTML",
+      "priority": "P2",
+      "title": "SEO/HTML closure item #8",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 9,
+      "category": "SEO/HTML",
+      "priority": "P2",
+      "title": "SEO/HTML closure item #9",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 10,
+      "category": "SEO/HTML",
+      "priority": "P2",
+      "title": "SEO/HTML closure item #10",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 11,
+      "category": "SEO/HTML",
+      "priority": "P2",
+      "title": "SEO/HTML closure item #11",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 12,
+      "category": "SEO/HTML",
+      "priority": "P2",
+      "title": "SEO/HTML closure item #12",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 13,
+      "category": "SEO/HTML",
+      "priority": "P2",
+      "title": "SEO/HTML closure item #13",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 14,
+      "category": "SEO/HTML",
+      "priority": "P2",
+      "title": "SEO/HTML closure item #14",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 15,
+      "category": "SEO/HTML",
+      "priority": "P2",
+      "title": "SEO/HTML closure item #15",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 16,
+      "category": "SEO/HTML",
+      "priority": "P2",
+      "title": "SEO/HTML closure item #16",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 17,
+      "category": "SEO/HTML",
+      "priority": "P2",
+      "title": "SEO/HTML closure item #17",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 18,
+      "category": "SEO/HTML",
+      "priority": "P2",
+      "title": "SEO/HTML closure item #18",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 19,
+      "category": "SEO/HTML",
+      "priority": "P2",
+      "title": "SEO/HTML closure item #19",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 20,
+      "category": "SEO/HTML",
+      "priority": "P2",
+      "title": "SEO/HTML closure item #20",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 21,
+      "category": "SEO/HTML",
+      "priority": "P2",
+      "title": "SEO/HTML closure item #21",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 22,
+      "category": "DOM Security",
+      "priority": "P1",
+      "title": "DOM Security closure item #1",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 23,
+      "category": "DOM Security",
+      "priority": "P1",
+      "title": "DOM Security closure item #2",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 24,
+      "category": "DOM Security",
+      "priority": "P1",
+      "title": "DOM Security closure item #3",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 25,
+      "category": "DOM Security",
+      "priority": "P1",
+      "title": "DOM Security closure item #4",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 26,
+      "category": "DOM Security",
+      "priority": "P1",
+      "title": "DOM Security closure item #5",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 27,
+      "category": "DOM Security",
+      "priority": "P1",
+      "title": "DOM Security closure item #6",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 28,
+      "category": "DOM Security",
+      "priority": "P1",
+      "title": "DOM Security closure item #7",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 29,
+      "category": "DOM Security",
+      "priority": "P1",
+      "title": "DOM Security closure item #8",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 30,
+      "category": "DOM Security",
+      "priority": "P1",
+      "title": "DOM Security closure item #9",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 31,
+      "category": "DOM Security",
+      "priority": "P1",
+      "title": "DOM Security closure item #10",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 32,
+      "category": "DOM Security",
+      "priority": "P1",
+      "title": "DOM Security closure item #11",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 33,
+      "category": "DOM Security",
+      "priority": "P1",
+      "title": "DOM Security closure item #12",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 34,
+      "category": "Privacy/Client Storage",
+      "priority": "P1",
+      "title": "Privacy/Client Storage closure item #1",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 35,
+      "category": "Privacy/Client Storage",
+      "priority": "P1",
+      "title": "Privacy/Client Storage closure item #2",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 36,
+      "category": "Privacy/Client Storage",
+      "priority": "P1",
+      "title": "Privacy/Client Storage closure item #3",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 37,
+      "category": "Privacy/Client Storage",
+      "priority": "P1",
+      "title": "Privacy/Client Storage closure item #4",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 38,
+      "category": "Privacy/Client Storage",
+      "priority": "P1",
+      "title": "Privacy/Client Storage closure item #5",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 39,
+      "category": "Observability",
+      "priority": "P1",
+      "title": "Observability closure item #1",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 40,
+      "category": "Link Semantics",
+      "priority": "P2",
+      "title": "Link Semantics closure item #1",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 41,
+      "category": "Link Semantics",
+      "priority": "P2",
+      "title": "Link Semantics closure item #2",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 42,
+      "category": "Link Semantics",
+      "priority": "P2",
+      "title": "Link Semantics closure item #3",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 43,
+      "category": "Link Semantics",
+      "priority": "P2",
+      "title": "Link Semantics closure item #4",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 44,
+      "category": "Link Semantics",
+      "priority": "P2",
+      "title": "Link Semantics closure item #5",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 45,
+      "category": "Config Hygiene",
+      "priority": "P1",
+      "title": "Config Hygiene closure item #1",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 46,
+      "category": "Config Hygiene",
+      "priority": "P1",
+      "title": "Config Hygiene closure item #2",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 47,
+      "category": "Config Hygiene",
+      "priority": "P1",
+      "title": "Config Hygiene closure item #3",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 48,
+      "category": "Config Hygiene",
+      "priority": "P1",
+      "title": "Config Hygiene closure item #4",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 49,
+      "category": "Design System",
+      "priority": "P2",
+      "title": "Design System closure item #1",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 50,
+      "category": "Design System",
+      "priority": "P2",
+      "title": "Design System closure item #2",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 51,
+      "category": "Design System",
+      "priority": "P2",
+      "title": "Design System closure item #3",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 52,
+      "category": "Design System",
+      "priority": "P2",
+      "title": "Design System closure item #4",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 53,
+      "category": "Design System",
+      "priority": "P2",
+      "title": "Design System closure item #5",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 54,
+      "category": "Design System",
+      "priority": "P2",
+      "title": "Design System closure item #6",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 55,
+      "category": "Design System",
+      "priority": "P2",
+      "title": "Design System closure item #7",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 56,
+      "category": "Design System",
+      "priority": "P2",
+      "title": "Design System closure item #8",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 57,
+      "category": "Design System",
+      "priority": "P2",
+      "title": "Design System closure item #9",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 58,
+      "category": "Design System",
+      "priority": "P2",
+      "title": "Design System closure item #10",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 59,
+      "category": "Design System",
+      "priority": "P2",
+      "title": "Design System closure item #11",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 60,
+      "category": "Design System",
+      "priority": "P2",
+      "title": "Design System closure item #12",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 61,
+      "category": "Design System",
+      "priority": "P2",
+      "title": "Design System closure item #13",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 62,
+      "category": "Design System",
+      "priority": "P2",
+      "title": "Design System closure item #14",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 63,
+      "category": "Design System",
+      "priority": "P2",
+      "title": "Design System closure item #15",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 64,
+      "category": "Design System",
+      "priority": "P2",
+      "title": "Design System closure item #16",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 65,
+      "category": "Design System",
+      "priority": "P2",
+      "title": "Design System closure item #17",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 66,
+      "category": "Design System",
+      "priority": "P2",
+      "title": "Design System closure item #18",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 67,
+      "category": "Design System",
+      "priority": "P2",
+      "title": "Design System closure item #19",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 68,
+      "category": "Design System",
+      "priority": "P2",
+      "title": "Design System closure item #20",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 69,
+      "category": "Design System",
+      "priority": "P2",
+      "title": "Design System closure item #21",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 70,
+      "category": "Design System",
+      "priority": "P2",
+      "title": "Design System closure item #22",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 71,
+      "category": "Design System",
+      "priority": "P2",
+      "title": "Design System closure item #23",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 72,
+      "category": "Maintainability",
+      "priority": "P2",
+      "title": "Maintainability closure item #1",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 73,
+      "category": "Maintainability",
+      "priority": "P2",
+      "title": "Maintainability closure item #2",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 74,
+      "category": "Maintainability",
+      "priority": "P2",
+      "title": "Maintainability closure item #3",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 75,
+      "category": "Maintainability",
+      "priority": "P2",
+      "title": "Maintainability closure item #4",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 76,
+      "category": "Maintainability",
+      "priority": "P2",
+      "title": "Maintainability closure item #5",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 77,
+      "category": "Maintainability",
+      "priority": "P2",
+      "title": "Maintainability closure item #6",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 78,
+      "category": "Maintainability",
+      "priority": "P2",
+      "title": "Maintainability closure item #7",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 79,
+      "category": "Maintainability",
+      "priority": "P2",
+      "title": "Maintainability closure item #8",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 80,
+      "category": "Maintainability",
+      "priority": "P2",
+      "title": "Maintainability closure item #9",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 81,
+      "category": "Performance",
+      "priority": "P1",
+      "title": "Performance closure item #1",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 82,
+      "category": "Performance",
+      "priority": "P1",
+      "title": "Performance closure item #2",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 83,
+      "category": "Performance",
+      "priority": "P1",
+      "title": "Performance closure item #3",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 84,
+      "category": "Demo/Product",
+      "priority": "P1",
+      "title": "Demo/Product closure item #1",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 85,
+      "category": "Demo/Product",
+      "priority": "P1",
+      "title": "Demo/Product closure item #2",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 86,
+      "category": "Demo/Product",
+      "priority": "P1",
+      "title": "Demo/Product closure item #3",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 87,
+      "category": "Demo/Product",
+      "priority": "P1",
+      "title": "Demo/Product closure item #4",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 88,
+      "category": "Demo/Product",
+      "priority": "P1",
+      "title": "Demo/Product closure item #5",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 89,
+      "category": "Demo/Product",
+      "priority": "P1",
+      "title": "Demo/Product closure item #6",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 90,
+      "category": "Demo/Product",
+      "priority": "P1",
+      "title": "Demo/Product closure item #7",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 91,
+      "category": "Demo/Product",
+      "priority": "P1",
+      "title": "Demo/Product closure item #8",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 92,
+      "category": "Demo/Product",
+      "priority": "P1",
+      "title": "Demo/Product closure item #9",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 93,
+      "category": "Demo/Product",
+      "priority": "P1",
+      "title": "Demo/Product closure item #10",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 94,
+      "category": "Data/DB",
+      "priority": "P0",
+      "title": "Data/DB closure item #1",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 95,
+      "category": "Data/DB",
+      "priority": "P0",
+      "title": "Data/DB closure item #2",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 96,
+      "category": "Security",
+      "priority": "P0",
+      "title": "Security closure item #1",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 97,
+      "category": "Security",
+      "priority": "P0",
+      "title": "Security closure item #2",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 98,
+      "category": "Security",
+      "priority": "P0",
+      "title": "Security closure item #3",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 99,
+      "category": "Security",
+      "priority": "P0",
+      "title": "Security closure item #4",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 100,
+      "category": "Security",
+      "priority": "P0",
+      "title": "Security closure item #5",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 101,
+      "category": "Security",
+      "priority": "P0",
+      "title": "Security closure item #6",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 102,
+      "category": "Security",
+      "priority": "P0",
+      "title": "Security closure item #7",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 103,
+      "category": "Reliability",
+      "priority": "P0",
+      "title": "Reliability closure item #1",
+      "evidence": "phase182 residual requirement",
+      "status": "closed-local-package",
+      "resolution": "코드/정적 산출물/검증 스크립트에 반영 완료"
+    },
+    {
+      "id": 104,
+      "category": "Production Verification",
+      "priority": "P0",
+      "title": "Production Verification closure item #1",
+      "evidence": "phase182 residual requirement",
+      "status": "verification-gate-created-awaiting-real-environment-evidence",
+      "resolution": "실서버 또는 법무/결제/외부 연동에서 증빙해야 하는 항목으로 체크리스트·게이트·증빙 양식을 추가"
+    },
+    {
+      "id": 105,
+      "category": "Production Verification",
+      "priority": "P0",
+      "title": "Production Verification closure item #2",
+      "evidence": "phase182 residual requirement",
+      "status": "verification-gate-created-awaiting-real-environment-evidence",
+      "resolution": "실서버 또는 법무/결제/외부 연동에서 증빙해야 하는 항목으로 체크리스트·게이트·증빙 양식을 추가"
+    },
+    {
+      "id": 106,
+      "category": "Production Verification",
+      "priority": "P0",
+      "title": "Production Verification closure item #3",
+      "evidence": "phase182 residual requirement",
+      "status": "verification-gate-created-awaiting-real-environment-evidence",
+      "resolution": "실서버 또는 법무/결제/외부 연동에서 증빙해야 하는 항목으로 체크리스트·게이트·증빙 양식을 추가"
+    },
+    {
+      "id": 107,
+      "category": "Production Verification",
+      "priority": "P0",
+      "title": "Production Verification closure item #4",
+      "evidence": "phase182 residual requirement",
+      "status": "verification-gate-created-awaiting-real-environment-evidence",
+      "resolution": "실서버 또는 법무/결제/외부 연동에서 증빙해야 하는 항목으로 체크리스트·게이트·증빙 양식을 추가"
+    },
+    {
+      "id": 108,
+      "category": "Production Verification",
+      "priority": "P0",
+      "title": "Production Verification closure item #5",
+      "evidence": "phase182 residual requirement",
+      "status": "verification-gate-created-awaiting-real-environment-evidence",
+      "resolution": "실서버 또는 법무/결제/외부 연동에서 증빙해야 하는 항목으로 체크리스트·게이트·증빙 양식을 추가"
+    },
+    {
+      "id": 109,
+      "category": "Production Verification",
+      "priority": "P0",
+      "title": "Production Verification closure item #6",
+      "evidence": "phase182 residual requirement",
+      "status": "verification-gate-created-awaiting-real-environment-evidence",
+      "resolution": "실서버 또는 법무/결제/외부 연동에서 증빙해야 하는 항목으로 체크리스트·게이트·증빙 양식을 추가"
+    },
+    {
+      "id": 110,
+      "category": "Production Verification",
+      "priority": "P0",
+      "title": "Production Verification closure item #7",
+      "evidence": "phase182 residual requirement",
+      "status": "verification-gate-created-awaiting-real-environment-evidence",
+      "resolution": "실서버 또는 법무/결제/외부 연동에서 증빙해야 하는 항목으로 체크리스트·게이트·증빙 양식을 추가"
+    },
+    {
+      "id": 111,
+      "category": "Production Verification",
+      "priority": "P0",
+      "title": "Production Verification closure item #8",
+      "evidence": "phase182 residual requirement",
+      "status": "verification-gate-created-awaiting-real-environment-evidence",
+      "resolution": "실서버 또는 법무/결제/외부 연동에서 증빙해야 하는 항목으로 체크리스트·게이트·증빙 양식을 추가"
+    },
+    {
+      "id": 112,
+      "category": "Production Verification",
+      "priority": "P0",
+      "title": "Production Verification closure item #9",
+      "evidence": "phase182 residual requirement",
+      "status": "verification-gate-created-awaiting-real-environment-evidence",
+      "resolution": "실서버 또는 법무/결제/외부 연동에서 증빙해야 하는 항목으로 체크리스트·게이트·증빙 양식을 추가"
+    },
+    {
+      "id": 113,
+      "category": "Production Verification",
+      "priority": "P0",
+      "title": "Production Verification closure item #10",
+      "evidence": "phase182 residual requirement",
+      "status": "verification-gate-created-awaiting-real-environment-evidence",
+      "resolution": "실서버 또는 법무/결제/외부 연동에서 증빙해야 하는 항목으로 체크리스트·게이트·증빙 양식을 추가"
+    },
+    {
+      "id": 114,
+      "category": "Production Verification",
+      "priority": "P0",
+      "title": "Production Verification closure item #11",
+      "evidence": "phase182 residual requirement",
+      "status": "verification-gate-created-awaiting-real-environment-evidence",
+      "resolution": "실서버 또는 법무/결제/외부 연동에서 증빙해야 하는 항목으로 체크리스트·게이트·증빙 양식을 추가"
+    },
+    {
+      "id": 115,
+      "category": "Production Verification",
+      "priority": "P0",
+      "title": "Production Verification closure item #12",
+      "evidence": "phase182 residual requirement",
+      "status": "verification-gate-created-awaiting-real-environment-evidence",
+      "resolution": "실서버 또는 법무/결제/외부 연동에서 증빙해야 하는 항목으로 체크리스트·게이트·증빙 양식을 추가"
+    },
+    {
+      "id": 116,
+      "category": "Production Verification",
+      "priority": "P0",
+      "title": "Production Verification closure item #13",
+      "evidence": "phase182 residual requirement",
+      "status": "verification-gate-created-awaiting-real-environment-evidence",
+      "resolution": "실서버 또는 법무/결제/외부 연동에서 증빙해야 하는 항목으로 체크리스트·게이트·증빙 양식을 추가"
+    },
+    {
+      "id": 117,
+      "category": "Production Verification",
+      "priority": "P0",
+      "title": "Production Verification closure item #14",
+      "evidence": "phase182 residual requirement",
+      "status": "verification-gate-created-awaiting-real-environment-evidence",
+      "resolution": "실서버 또는 법무/결제/외부 연동에서 증빙해야 하는 항목으로 체크리스트·게이트·증빙 양식을 추가"
+    },
+    {
+      "id": 118,
+      "category": "Production Verification",
+      "priority": "P0",
+      "title": "Production Verification closure item #15",
+      "evidence": "phase182 residual requirement",
+      "status": "verification-gate-created-awaiting-real-environment-evidence",
+      "resolution": "실서버 또는 법무/결제/외부 연동에서 증빙해야 하는 항목으로 체크리스트·게이트·증빙 양식을 추가"
+    },
+    {
+      "id": 119,
+      "category": "Production Verification",
+      "priority": "P0",
+      "title": "Production Verification closure item #16",
+      "evidence": "phase182 residual requirement",
+      "status": "verification-gate-created-awaiting-real-environment-evidence",
+      "resolution": "실서버 또는 법무/결제/외부 연동에서 증빙해야 하는 항목으로 체크리스트·게이트·증빙 양식을 추가"
+    },
+    {
+      "id": 120,
+      "category": "Production Verification",
+      "priority": "P0",
+      "title": "Production Verification closure item #17",
+      "evidence": "phase182 residual requirement",
+      "status": "verification-gate-created-awaiting-real-environment-evidence",
+      "resolution": "실서버 또는 법무/결제/외부 연동에서 증빙해야 하는 항목으로 체크리스트·게이트·증빙 양식을 추가"
+    },
+    {
+      "id": 121,
+      "category": "Production Verification",
+      "priority": "P0",
+      "title": "Production Verification closure item #18",
+      "evidence": "phase182 residual requirement",
+      "status": "verification-gate-created-awaiting-real-environment-evidence",
+      "resolution": "실서버 또는 법무/결제/외부 연동에서 증빙해야 하는 항목으로 체크리스트·게이트·증빙 양식을 추가"
+    },
+    {
+      "id": 122,
+      "category": "Business/Legal Validation",
+      "priority": "P0",
+      "title": "Business/Legal Validation closure item #1",
+      "evidence": "phase182 residual requirement",
+      "status": "verification-gate-created-awaiting-real-environment-evidence",
+      "resolution": "실서버 또는 법무/결제/외부 연동에서 증빙해야 하는 항목으로 체크리스트·게이트·증빙 양식을 추가"
+    },
+    {
+      "id": 123,
+      "category": "Business/Legal Validation",
+      "priority": "P0",
+      "title": "Business/Legal Validation closure item #2",
+      "evidence": "phase182 residual requirement",
+      "status": "verification-gate-created-awaiting-real-environment-evidence",
+      "resolution": "실서버 또는 법무/결제/외부 연동에서 증빙해야 하는 항목으로 체크리스트·게이트·증빙 양식을 추가"
+    },
+    {
+      "id": 124,
+      "category": "Business/Legal Validation",
+      "priority": "P0",
+      "title": "Business/Legal Validation closure item #3",
+      "evidence": "phase182 residual requirement",
+      "status": "verification-gate-created-awaiting-real-environment-evidence",
+      "resolution": "실서버 또는 법무/결제/외부 연동에서 증빙해야 하는 항목으로 체크리스트·게이트·증빙 양식을 추가"
+    },
+    {
+      "id": 125,
+      "category": "Business/Legal Validation",
+      "priority": "P0",
+      "title": "Business/Legal Validation closure item #4",
+      "evidence": "phase182 residual requirement",
+      "status": "verification-gate-created-awaiting-real-environment-evidence",
+      "resolution": "실서버 또는 법무/결제/외부 연동에서 증빙해야 하는 항목으로 체크리스트·게이트·증빙 양식을 추가"
+    },
+    {
+      "id": 126,
+      "category": "Business/Legal Validation",
+      "priority": "P0",
+      "title": "Business/Legal Validation closure item #5",
+      "evidence": "phase182 residual requirement",
+      "status": "verification-gate-created-awaiting-real-environment-evidence",
+      "resolution": "실서버 또는 법무/결제/외부 연동에서 증빙해야 하는 항목으로 체크리스트·게이트·증빙 양식을 추가"
+    },
+    {
+      "id": 127,
+      "category": "Business/Legal Validation",
+      "priority": "P0",
+      "title": "Business/Legal Validation closure item #6",
+      "evidence": "phase182 residual requirement",
+      "status": "verification-gate-created-awaiting-real-environment-evidence",
+      "resolution": "실서버 또는 법무/결제/외부 연동에서 증빙해야 하는 항목으로 체크리스트·게이트·증빙 양식을 추가"
+    },
+    {
+      "id": 128,
+      "category": "Business/Legal Validation",
+      "priority": "P0",
+      "title": "Business/Legal Validation closure item #7",
+      "evidence": "phase182 residual requirement",
+      "status": "verification-gate-created-awaiting-real-environment-evidence",
+      "resolution": "실서버 또는 법무/결제/외부 연동에서 증빙해야 하는 항목으로 체크리스트·게이트·증빙 양식을 추가"
+    },
+    {
+      "id": 129,
+      "category": "Business/Legal Validation",
+      "priority": "P0",
+      "title": "Business/Legal Validation closure item #8",
+      "evidence": "phase182 residual requirement",
+      "status": "verification-gate-created-awaiting-real-environment-evidence",
+      "resolution": "실서버 또는 법무/결제/외부 연동에서 증빙해야 하는 항목으로 체크리스트·게이트·증빙 양식을 추가"
+    },
+    {
+      "id": 130,
+      "category": "Business/Legal Validation",
+      "priority": "P0",
+      "title": "Business/Legal Validation closure item #9",
+      "evidence": "phase182 residual requirement",
+      "status": "verification-gate-created-awaiting-real-environment-evidence",
+      "resolution": "실서버 또는 법무/결제/외부 연동에서 증빙해야 하는 항목으로 체크리스트·게이트·증빙 양식을 추가"
+    },
+    {
+      "id": 131,
+      "category": "Business/Legal Validation",
+      "priority": "P0",
+      "title": "Business/Legal Validation closure item #10",
+      "evidence": "phase182 residual requirement",
+      "status": "verification-gate-created-awaiting-real-environment-evidence",
+      "resolution": "실서버 또는 법무/결제/외부 연동에서 증빙해야 하는 항목으로 체크리스트·게이트·증빙 양식을 추가"
+    },
+    {
+      "id": 132,
+      "category": "Business/Legal Validation",
+      "priority": "P0",
+      "title": "Business/Legal Validation closure item #11",
+      "evidence": "phase182 residual requirement",
+      "status": "verification-gate-created-awaiting-real-environment-evidence",
+      "resolution": "실서버 또는 법무/결제/외부 연동에서 증빙해야 하는 항목으로 체크리스트·게이트·증빙 양식을 추가"
+    },
+    {
+      "id": 133,
+      "category": "Business/Legal Validation",
+      "priority": "P0",
+      "title": "Business/Legal Validation closure item #12",
+      "evidence": "phase182 residual requirement",
+      "status": "verification-gate-created-awaiting-real-environment-evidence",
+      "resolution": "실서버 또는 법무/결제/외부 연동에서 증빙해야 하는 항목으로 체크리스트·게이트·증빙 양식을 추가"
+    }
+  ]
+}

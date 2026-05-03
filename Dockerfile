@@ -24,6 +24,7 @@ RUN apk add --no-cache curl postgresql-client \
 COPY --from=source --chown=nv0:nv0 /app /app
 RUN chmod +x /app/deploy/entrypoint.sh \
   && chown -R nv0:nv0 /app/runtime
+USER nv0
 EXPOSE 3210
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=10 \
   CMD curl -fsS "http://127.0.0.1:${PORT:-3210}/healthz" || exit 1

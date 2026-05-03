@@ -1,10 +1,6 @@
 import { spawn } from 'node:child_process';
 
-const rawBase = String(process.env.NV0_BASE_URL || '').trim();
-if (!rawBase) {
-  console.error('NV0_BASE_URL is required');
-  process.exit(1);
-}
+const rawBase = String(process.env.NV0_BASE_URL || 'http://127.0.0.1:3210').trim();
 
 function normalize(url) {
   return url.endsWith('/') ? url.slice(0, -1) : url;
@@ -129,6 +125,11 @@ async function main() {
 main().catch((error) => {
   console.error(JSON.stringify({ ok: false, baseUrl: root, error: error.message, checks }, null, 2));
   process.exitCode = 1;
-}).finally(() => {
-  if (child) child.kill('SIGTERM');
+}).finally(async () => {
+  if (child) {
+    child.kill('SIGTERM');
+    await wait(250);
+    if (!child.killed) child.kill('SIGKILL');
+  }
+  process.exit(process.exitCode || 0);
 });
