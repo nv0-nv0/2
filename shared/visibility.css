@@ -119,3 +119,12 @@ pre,code,.document-preview pre,#consoleState{background:#0B1220;color:var(--nv77
 .green,.success,.success-text,.comparison-table .yes,.nv74-score-card p b{color:var(--nv100-blue-pale);}.green:is(i,.blue,.purple,.orange),.nv74-metrics i.green,.nv74-task i.green,.nv74-quick-item.green,.nv74-quick-item.blue{background:linear-gradient(135deg,var(--nv100-blue),var(--nv100-blue-2));color:#fff;}.status.ok,.notice-success,.alert-success,.status-success{background:rgba(37,99,235,.20);border-color:var(--nv100-border-strong);color:#fff;}
 .board-hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#0F1B33,#101827 58%,#0B1220);border:1px solid rgba(147,197,253,.32);}.board-hero:before{content:"";position:absolute;inset:-40% -20% auto auto;width:420px;height:420px;background:radial-gradient(circle,rgba(96,165,250,.22),transparent 64%);pointer-events:none;}.board-hero .pill,.board-hero .pill.brand{min-height:36px;padding:8px 14px;border-radius:999px;font-size:13px;letter-spacing:-.01em;background:linear-gradient(135deg,rgba(37,99,235,.34),rgba(29,78,216,.20));color:#fff;}.board-hero h2{font-size:clamp(30px,5vw,58px);line-height:1.05;letter-spacing:-.07em;color:#fff;margin-top:20px;}.board-hero p{font-size:clamp(15px,1.5vw,18px);color:#CBD5E1;max-width:760px;}
 .btn.primary,button.primary,#scanBtn,#checkoutBtn,#loginBtn,.topnav a.primary,.site-menu a.cta{background:linear-gradient(135deg,var(--nv100-blue),var(--nv100-blue-2));color:#fff;border-color:var(--nv100-blue-soft);box-shadow:0 18px 38px rgba(37,99,235,.26);}@media(max-width:760px){.board-hero h2{font-size:34px}.board-hero .pill{font-size:12px}.nv74-quick-grid{grid-template-columns:1fr}}
+
+/* PHASE184 final contrast/spacing lock */
+body{line-height:1.62;letter-spacing:-.012em;}
+p,li,td,th,.notice,.muted{line-height:1.68;}
+.site-menu a.login-link,.site-menu .login-link{background:#0B1220!important;border:1px solid rgba(96,165,250,.62)!important;color:#fff!important;}
+.site-menu a.login-link:hover,.site-menu .login-link:hover{background:linear-gradient(135deg,#2563EB,#1D4ED8)!important;color:#fff!important;}
+.board-post .post-body,.board-post .post-paragraph,.board-post .post-section p{color:#E5EDF8!important;line-height:1.82!important;}
+label{line-height:1.45!important;}
+.checkline,.check-row{line-height:1.55!important;}

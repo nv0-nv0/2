@@ -4,6 +4,7 @@ import { escapeAttr, escapeHtml, formatWon, renderList } from '/shared/html.js';
 const state = document.getElementById('demoState');
 const result = document.getElementById('demoResult');
 const badge = document.getElementById('freeUsageBadge');
+const badgeLead = document.getElementById('freeUsageLead');
 const targetInput = document.getElementById('targetUrl');
 const scanBtn = document.getElementById('scanBtn');
 const retryBtn = document.getElementById('retryBtn');
@@ -78,7 +79,13 @@ function getUsage() { return Number(localStorage.getItem(usageKey) || '0'); }
 function setUsage(n) { localStorage.setItem(usageKey, String(n)); updateBadge(); }
 function updateBadge() {
   const freeUsage = Math.max(0, FREE_LIMIT - getUsage());
-  if (badge) badge.textContent = session.authenticated ? '회원 전용 전체 결과 활성' : `비회원 요약 결과 ${freeUsage}회 남음`;
+  if (session.authenticated) {
+    if (badgeLead) badgeLead.innerHTML = '<strong>회원 전용 전체 결과 활성</strong>';
+    if (badge) badge.textContent = '저장, 재검사, 전체 결과 확인을 계속 이용할 수 있습니다.';
+    return;
+  }
+  if (badgeLead) badgeLead.innerHTML = `<strong>오늘 남은 비회원 무료 진단 ${freeUsage}회</strong>`;
+  if (badge) badge.textContent = `비회원은 하루 최대 ${FREE_LIMIT}회까지 이용할 수 있습니다.`;
 }
 function setBusy(flag) {
   isScanning = flag;

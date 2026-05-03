@@ -1,1 +1,10 @@
-.document-preview h3{font-size:22px;}
+
+.document-preview h3{font-size:22px;line-height:1.35;}
+#docForm{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:18px;}
+#docForm label{display:grid;gap:8px;font-weight:850;color:#E2E8F0;line-height:1.45;}
+#docForm input{min-height:50px;background:#0B1220;color:#fff;border:1px solid rgba(51,65,85,.9);border-radius:14px;padding:13px 15px;}
+#docForm .notice,#docForm .checkline,#docForm button{grid-column:1/-1;}
+#docForm .checkline{display:flex;align-items:flex-start;gap:10px;line-height:1.55;}
+#docForm .checkline input{width:auto;min-height:auto;margin-top:4px;flex:0 0 auto;}
+.nv0-doc-item,.nv0-summary-box{line-height:1.6;}
+@media(max-width:760px){#docForm{grid-template-columns:1fr;}}

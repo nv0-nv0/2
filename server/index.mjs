@@ -1426,10 +1426,10 @@ return `<a class="skip-link" href="#main">본문 바로가기</a><nav class="sit
 <a class="brand" href="/"><span class="brand-mark">N</span><span>NV0<small>웹사이트 안내·정책 점검</small></span></a>
 <div class="site-menu">
 <a href="/products/veridion/demo"${navAttrs(urlPath, '/products/veridion/demo')}>무료 진단</a>
+<a href="/plans"${navAttrs(urlPath, '/plans')}>플랜 비교</a>
+<a href="/board"${navAttrs(urlPath, '/board')}>콘텐츠 보드</a>
+<a href="/documents"${navAttrs(urlPath, '/documents')}>문서 작성</a>
 <a href="/portal"${navAttrs(urlPath, '/portal')}>내 사이트</a>
-<a href="/board"${navAttrs(urlPath, '/board')}>운영 게시판</a>
-<a href="/plans"${navAttrs(urlPath, '/plans')}>요금제</a>
-<a href="/documents"${navAttrs(urlPath, '/documents')}>문서 생성</a>
 <a href="/business-info"${navAttrs(urlPath, '/business-info')}>고객지원</a>
 <a href="/auth"${navAttrs(urlPath, '/auth', 'login-link')}>로그인</a>
 </div>
@@ -1445,8 +1445,10 @@ return body.replace('<body>', '<body><noscript><div class="noscript-banner">진�
 }
 function injectPublicTopMenu(body, urlPath) {
 if (urlPath.startsWith('/admin')) return body;
-if (body.includes('site-topbar')) return body;
-return body.replace('<body>', `<body>${publicTopMenuHtml(urlPath)}`);
+let nextBody = body;
+nextBody = nextBody.replace(/<header class="nv0-topbar">[\s\S]*?<\/header>/, '');
+if (nextBody.includes('site-topbar')) return nextBody;
+return nextBody.replace('<body>', `<body>${publicTopMenuHtml(urlPath)}`);
 }
 function businessFooterHtml() {
 const types = BUSINESS_PROFILE.businessTypes.join(' · ');

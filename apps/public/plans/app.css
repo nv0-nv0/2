@@ -1,2 +1,11 @@
-.price-cell{white-space:nowrap;}
+
+.price-cell{white-space:nowrap;font-weight:900;color:#fff;}
 .section-title h2{font-size:clamp(28px,3.3vw,44px);}
+.table-wrap{border:1px solid rgba(51,65,85,.85);border-radius:24px;overflow:auto;background:linear-gradient(180deg,#0f1724,#0b1220);}
+.comparison-table col:nth-child(1){width:22%;}
+.comparison-table col:nth-child(2){width:16%;}
+.comparison-table col:nth-child(3){width:34%;}
+.comparison-table col:nth-child(4){width:28%;}
+.comparison-table td:nth-child(3),.comparison-table td:nth-child(4){font-size:15px;line-height:1.72;color:#e2e8f0;}
+.comparison-table td:nth-child(1){font-size:15px;}
+.comparison-table thead th{font-size:15px;line-height:1.35;}
