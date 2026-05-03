@@ -1,0 +1,383 @@
+{
+  "package": "phase188_rebuild_from_uploaded_phase184",
+  "generatedAt": "2026-05-03T08:11:32Z",
+  "sourceBase": "user_uploaded_nv0_phase184_full_ui_polish_20260503(1).zip",
+  "scope": [
+    "paid access boundary for scan-detail endpoints",
+    "demo result tabs lock paid evidence/fix details before purchase",
+    "portal login-only summary cleanup",
+    "checkout offer select and fallback price summary cleanup",
+    "common topbar/body injection restore for body attributes",
+    "deprecated /demo app removal with 301 redirect preserved",
+    "customer-facing forbidden placeholder/legacy wording cleanup"
+  ],
+  "checks": {
+    "node_check_direct": {
+      "ok": true,
+      "files": [
+        "server/index.mjs",
+        "server/routes/account.mjs",
+        "server/routes/public.mjs",
+        "apps/public/veridion-demo/app.js",
+        "apps/public/portal/app.js",
+        "apps/public/checkout/app.js"
+      ]
+    },
+    "scripts/check-source-syntax.mjs": {
+      "ok": true,
+      "checkedCount": 207,
+      "failures": []
+    },
+    "scripts/check-page-integrity.mjs": {
+      "ok": true,
+      "mappedRouteCount": 33,
+      "checked": [
+        {
+          "route": "/",
+          "area": "public",
+          "slug": "home",
+          "ok": true
+        },
+        {
+          "route": "/guides",
+          "area": "public",
+          "slug": "guides",
+          "ok": true
+        },
+        {
+          "route": "/resources",
+          "area": "public",
+          "slug": "guides",
+          "ok": true
+        },
+        {
+          "route": "/board",
+          "area": "public",
+          "slug": "board",
+          "ok": true
+        },
+        {
+          "route": "/board/post",
+          "area": "public",
+          "slug": "board",
+          "ok": true
+        },
+        {
+          "route": "/cases",
+          "area": "public",
+          "slug": "board",
+          "ok": true
+        },
+        {
+          "route": "/documents",
+          "area": "public",
+          "slug": "documents",
+          "ok": true
+        },
+        {
+          "route": "/policy-documents",
+          "area": "public",
+          "slug": "documents",
+          "ok": true
+        },
+        {
+          "route": "/docs/veridion",
+          "area": "public",
+          "slug": "documents",
+          "ok": true
+        },
+        {
+          "route": "/solutions",
+          "area": "public",
+          "slug": "solutions",
+          "ok": true
+        },
+        {
+          "route": "/service",
+          "area": "public",
+          "slug": "solutions",
+          "ok": true
+        },
+        {
+          "route": "/products",
+          "area": "public",
+          "slug": "plans",
+          "ok": true
+        },
+        {
+          "route": "/products/veridion/demo",
+          "area": "public",
+          "slug": "veridion-demo",
+          "ok": true
+        },
+        {
+          "route": "/plans",
+          "area": "public",
+          "slug": "plans",
+          "ok": true
+        },
+        {
+          "route": "/checkout",
+          "area": "public",
+          "slug": "checkout",
+          "ok": true
+        },
+        {
+          "route": "/portal",
+          "area": "public",
+          "slug": "portal",
+          "ok": true
+        },
+        {
+          "route": "/auth",
+          "area": "public",
+          "slug": "auth",
+          "ok": true
+        },
+        {
+          "route": "/terms",
+          "area": "public",
+          "slug": "terms",
+          "ok": true
+        },
+        {
+          "route": "/privacy",
+          "area": "public",
+          "slug": "privacy",
+          "ok": true
+        },
+        {
+          "route": "/refund",
+          "area": "public",
+          "slug": "refund",
+          "ok": true
+        },
+        {
+          "route": "/business-info",
+          "area": "public",
+          "slug": "business-info",
+          "ok": true
+        },
+        {
+          "route": "/admin",
+          "area": "admin",
+          "slug": "gate",
+          "ok": true
+        },
+        {
+          "route": "/admin/console",
+          "area": "admin",
+          "slug": "console",
+          "ok": true
+        },
+        {
+          "route": "/admin/orders",
+          "area": "admin",
+          "slug": "orders",
+          "ok": true
+        },
+        {
+          "route": "/admin/publications",
+          "area": "admin",
+          "slug": "publications",
+          "ok": true
+        },
+        {
+          "route": "/admin/library",
+          "area": "admin",
+          "slug": "library",
+          "ok": true
+        },
+        {
+          "route": "/admin/settings",
+          "area": "admin",
+          "slug": "settings",
+          "ok": true
+        },
+        {
+          "route": "/admin/diagnostics",
+          "area": "admin",
+          "slug": "diagnostics",
+          "ok": true
+        },
+        {
+          "route": "/admin/console/orders",
+          "area": "admin",
+          "slug": "orders",
+          "ok": true
+        },
+        {
+          "route": "/admin/console/publications",
+          "area": "admin",
+          "slug": "publications",
+          "ok": true
+        },
+        {
+          "route": "/admin/console/library",
+          "area": "admin",
+          "slug": "library",
+          "ok": true
+        },
+        {
+          "route": "/admin/console/settings",
+          "area": "admin",
+          "slug": "settings",
+          "ok": true
+        },
+        {
+          "route": "/admin/console/diagnostics",
+          "area": "admin",
+          "slug": "diagnostics",
+          "ok": true
+        }
+      ],
+      "errors": []
+    },
+    "scripts/check-client-render-safety.mjs": {
+      "ok": true,
+      "checkedCount": 21,
+      "checked": [
+        {
+          "file": "apps/admin/console/app.js",
+          "hasUnsafeSink": true,
+          "hasEscaper": true,
+          "hasLiteralOnHandler": false
+        },
+        {
+          "file": "apps/admin/diagnostics/app.js",
+          "hasUnsafeSink": true,
+          "hasEscaper": true,
+          "hasLiteralOnHandler": false
+        },
+        {
+          "file": "apps/admin/gate/app.js",
+          "hasUnsafeSink": false,
+          "hasEscaper": false,
+          "hasLiteralOnHandler": false
+        },
+        {
+          "file": "apps/admin/library/app.js",
+          "hasUnsafeSink": true,
+          "hasEscaper": true,
+          "hasLiteralOnHandler": false
+        },
+        {
+          "file": "apps/admin/orders/app.js",
+          "hasUnsafeSink": true,
+          "hasEscaper": true,
+          "hasLiteralOnHandler": false
+        },
+        {
+          "file": "apps/admin/publications/app.js",
+          "hasUnsafeSink": true,
+          "hasEscaper": true,
+          "hasLiteralOnHandler": false
+        },
+        {
+          "file": "apps/admin/settings/app.js",
+          "hasUnsafeSink": false,
+          "hasEscaper": false,
+          "hasLiteralOnHandler": false
+        },
+        {
+          "file": "apps/public/auth/app.js",
+          "hasUnsafeSink": false,
+          "hasEscaper": false,
+          "hasLiteralOnHandler": false
+        },
+        {
+          "file": "apps/public/board/app.js",
+          "hasUnsafeSink": true,
+          "hasEscaper": true,
+          "hasLiteralOnHandler": false
+        },
+        {
+          "file": "apps/public/business-info/app.js",
+          "hasUnsafeSink": false,
+          "hasEscaper": false,
+          "hasLiteralOnHandler": false
+        },
+        {
+          "file": "apps/public/checkout/app.js",
+          "hasUnsafeSink": true,
+          "hasEscaper": true,
+          "hasLiteralOnHandler": false
+        },
+        {
+          "file": "apps/public/documents/app.js",
+          "hasUnsafeSink": true,
+          "hasEscaper": true,
+          "hasLiteralOnHandler": false
+        },
+        {
+          "file": "apps/public/guides/app.js",
+          "hasUnsafeSink": true,
+          "hasEscaper": true,
+          "hasLiteralOnHandler": false
+        },
+        {
+          "file": "apps/public/home/app.js",
+          "hasUnsafeSink": false,
+          "hasEscaper": false,
+          "hasLiteralOnHandler": false
+        },
+        {
+          "file": "apps/public/plans/app.js",
+          "hasUnsafeSink": true,
+          "hasEscaper": true,
+          "hasLiteralOnHandler": false
+        },
+        {
+          "file": "apps/public/portal/app.js",
+          "hasUnsafeSink": true,
+          "hasEscaper": true,
+          "hasLiteralOnHandler": false
+        },
+        {
+          "file": "apps/public/privacy/app.js",
+          "hasUnsafeSink": false,
+          "hasEscaper": false,
+          "hasLiteralOnHandler": false
+        },
+        {
+          "file": "apps/public/refund/app.js",
+          "hasUnsafeSink": false,
+          "hasEscaper": false,
+          "hasLiteralOnHandler": false
+        },
+        {
+          "file": "apps/public/solutions/app.js",
+          "hasUnsafeSink": false,
+          "hasEscaper": false,
+          "hasLiteralOnHandler": false
+        },
+        {
+          "file": "apps/public/terms/app.js",
+          "hasUnsafeSink": false,
+          "hasEscaper": false,
+          "hasLiteralOnHandler": false
+        },
+        {
+          "file": "apps/public/veridion-demo/app.js",
+          "hasUnsafeSink": true,
+          "hasEscaper": true,
+          "hasLiteralOnHandler": false
+        }
+      ],
+      "failures": []
+    },
+    "active_forbidden_phrase_scan": {
+      "ok": true,
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    "malformed_demo_url_scan": {
+      "ok": true,
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": ""
+    }
+  },
+  "ok": true
+}

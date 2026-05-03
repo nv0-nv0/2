@@ -119,7 +119,7 @@ businessTypes: ['정보통신업', '소프트웨어 개발 및 공급업', '전�
 contactEmail: process.env.NV0_SUPPORT_EMAIL || 'ct@nv0.kr',
 domain: process.env.NV0_PUBLIC_BASE_URL || 'https://nv0.kr',
 mailOrderRegistrationNumber: process.env.NV0_MAIL_ORDER_REGISTRATION_NUMBER || '',
-hostingProvider: process.env.NV0_HOSTING_PROVIDER || 'Contabo GmbH',
+hostingProvider: process.env.NV0_HOSTING_PROVIDER || '',
 customerServicePhone: process.env.NV0_CUSTOMER_SERVICE_PHONE || '',
 privacyOfficerEmail: process.env.NV0_PRIVACY_OFFICER_EMAIL || process.env.NV0_SUPPORT_EMAIL || 'ct@nv0.kr'
 });
@@ -1277,7 +1277,6 @@ const m = {
 '/solutions': [PUBLIC_DIR, 'solutions'],
 '/service': [PUBLIC_DIR, 'solutions'],
 '/products': [PUBLIC_DIR, 'plans'],
-'/demo': [PUBLIC_DIR, 'demo'],
 '/products/veridion/demo': [PUBLIC_DIR, 'veridion-demo'],
 '/plans': [PUBLIC_DIR, 'plans'],
 '/checkout': [PUBLIC_DIR, 'checkout'],
@@ -1309,8 +1308,8 @@ function routeMeta(urlPath) {
 const base = seoBaseUrl();
 const metas = {
 '/': { title: '웹사이트 안내·정책 무료 점검 | NV0', description: '쇼핑몰과 서비스 페이지에서 고객이 꼭 확인하는 사업자 정보, 개인정보 안내, 환불 기준, 문의 버튼, 가격 안내를 쉽게 점검합니다.', keywords: ['웹사이트 무료 점검','쇼핑몰 신뢰도 점검','환불 안내 점검','개인정보 안내 점검','문의 버튼 개선'] },
-'/products/veridion/demo': { title: 'NV0 예비 점검 | 웹사이트 신뢰 안내 점검', description: '사이트 주소로 고객이 결제나 문의 전에 헷갈릴 수 있는 안내 공백을 확인하고, 먼저 고칠 부분을 쉽게 정리합니다.', keywords: ['무료 사이트 진단','웹사이트 신뢰 점검','문의 구매 흐름 점검','쇼핑몰 안내 점검'] },
-'/plans': { title: '상품·요금 | NV0 리포트·FixPack·Auto 비교', description: '예비 점검 이후 상세 리포트, 바로 붙여넣는 수정 문구, 정기 점검 상품을 상황별로 비교합니다.', keywords: ['사이트 진단 요금','FixPack','Auto 정기 점검','정책 문서 템플릿'] },
+'/products/veridion/demo': { title: 'NV0 무료진단 | 웹사이트 신뢰 안내 점검', description: '사이트 주소로 고객이 결제나 문의 전에 헷갈릴 수 있는 안내 공백을 무료 요약으로 확인하고, 먼저 고칠 부분을 쉽게 정리합니다.', keywords: ['무료 사이트 진단','웹사이트 신뢰 점검','문의 구매 흐름 점검','쇼핑몰 안내 점검'] },
+'/plans': { title: '상품·요금 | NV0 리포트·FixPack·Auto 비교', description: '무료진단 이후 상세 리포트, 바로 붙여넣는 수정 문구안, 정기 점검 상품을 상황별로 비교합니다.', keywords: ['사이트 진단 요금','FixPack','Auto 정기 점검','정책 문서 템플릿'] },
 '/documents': { title: '정책 문서 초안 | 개인정보·이용약관·환불 안내 생성', description: '개인정보처리방침, 이용약관, 환불·배송·교환 정책, 사업자 고지, 고객 안내문 초안을 최소 입력으로 생성합니다.', keywords: ['정책 문서 생성','개인정보처리방침 초안','이용약관 초안','환불 정책 초안'] },
 '/policy-documents': { title: '정책 문서 초안 | 개인정보·이용약관·환불 안내 생성', description: '개인정보처리방침, 이용약관, 환불·배송·교환 정책, 사업자 고지, 고객 안내문 초안을 최소 입력으로 생성합니다.', keywords: ['정책 문서 생성','개인정보처리방침 초안','이용약관 초안','환불 정책 초안'] },
 '/docs/veridion': { title: 'Veridion 문서 생성 | 정책 문서·진단 리포트 초안', description: 'Veridion 진단 후 필요한 정책 문서, 안내 문구, 개선 리포트 초안을 생성하는 문서 허브입니다.', keywords: ['Veridion 문서','정책 문서 생성','진단 리포트','개선 문구'] },
@@ -1322,7 +1321,7 @@ const metas = {
 '/terms': { title: '이용약관 | NV0', description: 'NV0 서비스 이용약관과 서비스 범위 기준입니다.' },
 '/privacy': { title: '개인정보처리방침 | NV0', description: 'NV0 서비스의 개인정보 처리 기준과 입력 정보 최소화 원칙입니다.' },
 '/refund': { title: '환불·배송·교환 정책 | NV0', description: '디지털 산출물 제공 시점, 환불 요청 기준, 배송·교환 비대상 안내를 확인하세요.' },
-'/auth': { title: '로그인·회원가입 | NV0', description: '진단 결과 저장, 전체 결과 확인, 내 사이트 재진단을 위한 로그인·회원가입 페이지입니다.' },
+'/auth': { title: '로그인·회원가입 | NV0', description: '무료진단 횟수 관리, 내 사이트 저장, 원클릭 재검사, 최근 진단 이력 확인을 위한 로그인·회원가입 페이지입니다.' },
 '/portal': { title: '내 사이트 관리 | NV0', description: '저장한 사이트의 진단 결과, 재검사, 개선 이력, 게시판 발행 상태를 확인합니다.' },
 '/checkout': { title: '신청·결제 확인 | NV0', description: '상품 신청 전 제공 범위, 디지털 산출물 환불 제한, 정책 동의 항목을 확인합니다.' }
 };
@@ -1372,14 +1371,14 @@ function pageFaqStructuredData(urlPath) {
 const faqMap = {
 '/': [
 ['NV0는 무엇을 점검하나요?', '고객이 문의하거나 결제하기 전에 확인하는 사업자 정보, 개인정보 안내, 환불 기준, 문의 버튼, 가격 안내를 쉽게 점검합니다.'],
-['예비 점검 후 무엇을 보면 되나요?', '탐지 점수가 높은 항목과 먼저 고칠 안내 문구를 확인한 뒤 필요한 상품을 비교하면 됩니다.']
+['무료진단 후 무엇을 보면 되나요?', '탐지 점수가 높은 항목과 먼저 고칠 안내 문구를 확인한 뒤 필요한 상품을 비교하면 됩니다.']
 ],
 '/products/veridion/demo': [
-['예비 점검은 무엇을 보여주나요?', '사이트의 신뢰 안내 공백과 먼저 고칠 부분을 요약해서 보여줍니다.'],
-['로그인하면 무엇이 달라지나요?', '전체 결과 저장, 내 사이트 관리, 재검사 흐름을 이용할 수 있습니다.']
+['무료진단은 무엇을 보여주나요?', '사이트의 신뢰 안내 공백과 먼저 고칠 부분을 요약해서 보여줍니다.'],
+['로그인하면 무엇이 달라지나요?', '무료진단 횟수 관리, 내 사이트 저장, 원클릭 재검사, 최근 진단 이력 확인을 이용할 수 있습니다.']
 ],
 '/plans': [
-['어떤 상품을 먼저 선택해야 하나요?', '먼저 예비 점검을 보고, 근거가 필요하면 상세 리포트, 바로 붙여넣을 문구가 필요하면 FixPack, 반복 관리가 필요하면 Auto를 비교하면 됩니다.'],
+['어떤 상품을 먼저 선택해야 하나요?', '먼저 무료진단을 보고, 근거가 필요하면 상세 리포트, 바로 붙여넣을 문구가 필요하면 FixPack, 반복 관리가 필요하면 Auto를 비교하면 됩니다.'],
 ['결제 전 어떤 내용을 확인해야 하나요?', '제공 범위, 디지털 산출물 제공 시점, 환불 제한, 고객지원 경로를 확인해야 합니다.']
 ],
 '/board': [
@@ -1441,20 +1440,21 @@ return body.replace('<main ', '<main id="main" tabindex="-1" ');
 }
 function injectNoScriptNotice(body, urlPath) {
 if (urlPath.startsWith('/admin') || body.includes('<noscript>')) return body;
-return body.replace('<body>', '<body><noscript><div class="noscript-banner">진단·결제 흐름에 JavaScript가 필요합니다.</div></noscript>');
+if (!['/products/veridion/demo','/checkout'].includes(urlPath)) return body;
+return body.replace(/<body\b([^>]*)>/i, '<body$1><noscript><div class="noscript-banner">진단·결제 흐름에 JavaScript가 필요합니다.</div></noscript>');
 }
 function injectPublicTopMenu(body, urlPath) {
 if (urlPath.startsWith('/admin')) return body;
 let nextBody = body;
 nextBody = nextBody.replace(/<header class="nv0-topbar">[\s\S]*?<\/header>/, '');
 if (nextBody.includes('site-topbar')) return nextBody;
-return nextBody.replace('<body>', `<body>${publicTopMenuHtml(urlPath)}`);
+return nextBody.replace(/<body\b([^>]*)>/i, `<body$1>${publicTopMenuHtml(urlPath)}`);
 }
 function businessFooterHtml() {
 const types = BUSINESS_PROFILE.businessTypes.join(' · ');
 const unfinishedToken = ['TO', 'DO'].join('');
 const legalFieldBlockPattern = new RegExp(`예정|확인|상용|입력|${unfinishedToken}|TBD`, 'i');
-const hostingBlockPattern = new RegExp(`예정|확인|상용|입력|${unfinishedToken}|TBD|Coolify`, 'i');
+const hostingBlockPattern = new RegExp(`예정|확인|상용|입력|${unfinishedToken}|TBD|운영 인프라`, 'i');
 return '<footer class="business-footer" aria-label="사업자 정보">'
 + `<strong>${BUSINESS_PROFILE.tradeName}</strong>`
 + `<span>대표자: ${BUSINESS_PROFILE.representative}</span>`
@@ -1463,7 +1463,6 @@ return '<footer class="business-footer" aria-label="사업자 정보">'
 + `<span>주소: ${BUSINESS_PROFILE.address}</span>`
 + `<span>업태·종목: ${types}</span>`
 + `<span>고객지원: ${BUSINESS_PROFILE.contactEmail}${BUSINESS_PROFILE.customerServicePhone ? ' · ' + BUSINESS_PROFILE.customerServicePhone : ' · 이메일 전용 고객지원'}</span>`
-+ (BUSINESS_PROFILE.hostingProvider && !hostingBlockPattern.test(BUSINESS_PROFILE.hostingProvider) ? `<span>호스팅 제공자: ${BUSINESS_PROFILE.hostingProvider}</span>` : '')
 + `<span class="legal-disclaimer">본 서비스는 운영 점검 보조도구이며 법률 자문을 제공하지 않습니다.</span>`
 + '<nav><a href="/terms">이용약관</a><a href="/privacy">개인정보처리방침</a><a href="/refund">환불·배송·교환 정책</a><a href="/business-info">사업자 정보</a></nav>'
 + '</footer>';
@@ -1491,6 +1490,7 @@ return `<nav class="admin-nav">
 </nav>`;
 }
 async function renderPage(urlPath, req, res) {
+if (urlPath === '/demo') { redirect(req, res, 301, '/products/veridion/demo'); return true; }
 const mapped = pageMap(urlPath);
 if (!mapped) return false;
 const [baseDir, slug] = mapped;
@@ -1887,9 +1887,9 @@ settings.autoFixMode === 'approval_required'
 : '- 수정 후보는 제한적으로 사용하고, 되돌릴 수 있도록 변경 이력을 저장',
 '',
 '## 고객 안내 콘텐츠 기준',
-'- 예비 점검 → 상세 결과 확인 → 수정 후보 검토 흐름 유지',
+'- 무료진단 → 상세 결과 확인 → 수정 후보 검토 흐름 유지',
 '- 과태료 공포 과장 금지, 근거 조항과 조치 문구를 함께 노출',
-'- 게시글 말미에 예비 점검 버튼 1개만 배치'
+'- 게시글 말미에 무료진단 버튼 1개만 배치'
 ];
 return lines.join('\n');
 }
@@ -1938,7 +1938,7 @@ return {
 buyerEmail: asTrimmedString(body.buyerEmail, { field: 'buyerEmail', max: 120, pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/i }),
 siteId: asTrimmedString(body.siteId, { field: 'siteId', max: 64 }),
 domain: asTrimmedString(body.domain, { field: 'domain', max: 255 }),
-plan: asTrimmedString(body.plan, { field: 'plan', required: true, enumValues: ['Report','FixPack','TemplatePack','IndustryGuide','Basic','Pro','Auto','Certified','Agency'] }),
+plan: asTrimmedString(body.plan, { field: 'plan', required: true, enumValues: ['Report','FixPack','Basic','Pro','Auto','Agency'] }),
 payMethod: asTrimmedString(body.payMethod, { field: 'payMethod', max: 40 }),
 privacyConsent: asBoolean(body.privacyConsent, false),
 termsConsent: asBoolean(body.termsConsent, false),
@@ -2174,25 +2174,21 @@ if (riskScore >= 50) return 'Pro';
 return 'Basic';
 }
 function buildCommercialOfferCatalog() {
-const commonAssurance = ['법률 자문이 아닌 운영 참고용 점검 결과입니다.', '결제 후 내 사이트 관리에서 결과 확인', '가격의 3배 구성 가치 기준으로 제공합니다.', 'ct@nv0.kr 문의 연결'];
-const kpi = ['신뢰 안내 보강률', '문의·구매 흐름 개선 항목 수', '재점검 시 남은 고발견 항목 수'];
+const commonAssurance = ['법률 자문이 아닌 운영 참고용 점검 결과입니다.', '결제 후 구매 산출물 영역에서 확인합니다.', '제공 범위와 환불 기준은 결제 전에 다시 확인합니다.', 'ct@nv0.kr 문의 연결'];
 return [
-{ code: 'Report', group: 'one_time', title: '상세 리포트', price: 69000, period: '1회', priority: 1, summary: '무료 예비 점검 결과를 더 자세한 리포트로 확장합니다. 확인 URL, 근거, 신뢰도, 수동 검토 항목, 개선 순서를 한 번에 확인할 수 있습니다.', targetCustomer: '쇼핑몰·랜딩페이지 담당자, 1인 사업자, 외주 제작 완료 후 점검이 필요한 고객', deliverables: ['탐지 점수 해설', '전체 확인 근거', '페이지별 우선 조치 목록', '공유용 리포트 본문', '재점검 체크리스트', 'FAQ·CTA 요약'], operations: ['결제 확인 후 내 사이트 관리에서 결과 확인', '진단 이력이 없을 경우 기본 점검 양식으로 제공', ...commonAssurance], benefits: ['발견 항목의 근거와 우선순위를 더 명확하게 확인', '개선 순서를 정리해 바로 조치 가능'], cta: '상세 리포트 신청', referencePrice: 100000, valuePackWorth: 207000 },
-{ code: 'FixPack', group: 'one_time', title: '수정 문구안', price: 99000, period: '1회', priority: 2, summary: '탐지 항목별로 사이트에 바로 반영 가능한 고지·약관·환불·광고 문구 초안을 제공합니다.', targetCustomer: '사이트 안내 문구를 먼저 정리해야 하는 소상공인·마케터', deliverables: ['푸터 사업자 고지 문안', '환불·교환 안내 문구', '개인정보/약관 노출 가이드', '광고 표현 보완 후보 완화안', '수정 전/후 예시', 'FAQ·CTA 문구'], operations: ['우선순위가 높은 문구안부터 제공', '주의가 필요한 표현은 별도 표시', ...commonAssurance], benefits: ['사이트에 반영하기 쉬운 문구 예시 제공', '고객 오해 가능성이 있는 표현을 완화'], cta: '수정 문구안 받기', referencePrice: 150000, valuePackWorth: 297000 },
-{ code: 'TemplatePack', group: 'one_time', title: '법률 문서 템플릿 팩', price: 69000, period: '1회', priority: 3, summary: '이용약관, 개인정보처리방침, 환불 정책 기본 템플릿을 묶어 제공합니다.', targetCustomer: '신규 사이트 오픈 전 필수 문서가 필요한 고객', deliverables: ['이용약관 템플릿', '개인정보처리방침 템플릿', '환불·배송·교환 정책', '필수 고지 체크리스트', '정기결제 고지 문구', '정책 섹션'], operations: ['문서 화면에서 입력한 정보 활용', '입력한 사업자 정보 기준으로 기본 문안 제공', ...commonAssurance], benefits: ['필수 문서를 빠르게 준비', '신규 사이트 오픈 전 기본 안내 정리'], cta: '템플릿 팩 구매', referencePrice: 100000, valuePackWorth: 207000 },
-{ code: 'IndustryGuide', group: 'one_time', title: '업종별 규제 가이드', price: 99000, period: '1회', priority: 4, summary: '쇼핑몰·건기식·화장품·교육·의료 광고 등 업종별 표현 보완 후보와 필수 고지를 정리합니다.', targetCustomer: '광고 문구와 상세페이지 표현 보완 후보가 큰 업종 고객', deliverables: ['업종별 금지·주의 표현', '필수 고지 위치', '상세페이지 체크리스트', '광고 문구 점검표', '사전 검수 기준', 'FAQ·CTA 표현'], operations: ['업종 정보에 맞춰 주요 항목 제공', '업종이 정해지지 않은 경우 공통 가이드 제공', ...commonAssurance], benefits: ['업종별 주의 표현을 사전에 확인', '상세페이지와 광고 문구 점검에 활용'], cta: '업종 가이드 받기', referencePrice: 150000, valuePackWorth: 297000 },
-{ code: 'Basic', group: 'subscription', title: 'Basic 모니터링', price: 99000, period: '월', priority: 5, summary: '소규모 사이트의 월 1회 보완 후보 재점검과 기본 이력 확인을 제공합니다.', targetCustomer: '월 1회 정기 점검만 필요한 소규모 사이트 고객', deliverables: ['월 1회 재점검', '전체 탐지 항목 해금', '기본 정책 초안', '이력 저장', '이메일 알림', '월간 요약 리포트'], operations: ['신청 후 사이트 이력 확인 가능', '월간 점검 알림 제공', ...commonAssurance], benefits: ['월 1회 정기 점검으로 변경 사항 확인', '이력 저장으로 이전 결과와 비교 가능'], cta: 'Basic 시작', referencePrice: 140000, valuePackWorth: 297000 },
-{ code: 'Pro', group: 'subscription', title: 'Pro 정기 개선', price: 199000, period: '월', priority: 6, summary: '정밀 리포트, 수정 문구안, 법령 변경 알림을 포함한 추천 플랜입니다.', targetCustomer: '사이트 주문·문의가 발생하고 반복 점검이 필요한 고객', deliverables: ['Basic 전체 포함', '정밀 리포트 포함', '수정 문구안', '법령 변경 알림', '재점검 및 개선 추적', '전환용 CTA 포스팅 초안'], operations: ['결제 확인 후 Pro 결과 제공', '다음 조치 항목을 우선순위로 표시', ...commonAssurance], benefits: ['정밀 리포트와 수정 문구안을 함께 확인', '다음 조치 항목을 우선순위로 정리'], cta: 'Pro 시작', referencePrice: 290000, valuePackWorth: 597000 },
-{ code: 'Auto', group: 'subscription', title: 'Auto 정기 케어', price: 299000, period: '월', priority: 7, summary: '반복 점검, 고객 안내 인사이트, 게시판 자동 발행으로 사이트 신뢰 관리를 돕습니다.', targetCustomer: '여러 캠페인·랜딩페이지를 꾸준히 점검해야 하는 팀', deliverables: ['Pro 전체 포함', '정기 고객 안내 인사이트', '게시판 자동 발행 상태', '승인 후 반영할 수 있는 수정 후보', '고발견 항목 우선 알림', '내 사이트 관리 대시보드', 'CTA 포스팅'], operations: ['정기 점검 결과 제공', '수정 후보는 확인 후 사용할 수 있도록 제공', ...commonAssurance], benefits: ['반복 점검 부담 완화', '게시판이 비어 보이지 않도록 운영감 유지', '여러 랜딩페이지의 고발견 항목을 우선 확인'], cta: 'Auto 시작', referencePrice: 450000, valuePackWorth: 897000 },
-{ code: 'Certified', group: 'annual', title: 'NV0 Certified', price: 199000, period: '연', priority: 8, summary: '점검 완료 사이트에 신뢰 인증 마크와 공개 인증 페이지를 제공합니다.', targetCustomer: '구매 전 신뢰 표시가 필요한 쇼핑몰·B2B 랜딩페이지', deliverables: ['인증 마크 스니펫', '공개 인증 페이지', '연 1회 재검토', '인증 만료일 표기', '고객 신뢰 요소', '인증 안내 FAQ·CTA 문구'], operations: ['인증 검토 진행 상태 제공', '검토 완료 후 사용할 수 있는 표시 제공', ...commonAssurance], benefits: ['구매 전 신뢰 요소로 활용', '점검 완료 여부를 외부에 명확히 표시'], cta: '인증 신청', referencePrice: 290000, valuePackWorth: 597000 },
-{ code: 'Agency', group: 'b2b', title: '대행사 리포트 패키지', price: 399000, period: '월', priority: 9, summary: '광고대행사·웹에이전시가 고객사 보완 후보 리포트를 반복 생성할 수 있는 패키지입니다.', targetCustomer: '고객사 사이트를 제작·지원하는 에이전시와 퍼포먼스 마케팅사', deliverables: ['고객사별 리포트', '고객사 제출용 문구 영역', '월 10개 도메인 기준', '고객 안내 인사이트 제공', '대행사 맞춤 안내 문구', '고객사 CTA 포스팅'], operations: ['서비스 신청 후 고객사별 리포트 구성 지원', '고객사별 결과를 구분해 확인 가능', ...commonAssurance], benefits: ['고객사별 리포트 제공에 활용', '여러 도메인의 점검 결과를 구분해 관리'], cta: '대행사 패키지 시작', referencePrice: 600000, valuePackWorth: 1197000 }
+{ code: 'Report', group: 'one_time', title: '상세 리포트', price: 69000, period: '1회', priority: 1, summary: '무료진단 결과를 확인 URL, 근거, 신뢰도, 수동 검토 항목, 개선 순서가 있는 상세 리포트로 확장합니다.', targetCustomer: '쇼핑몰·랜딩페이지 담당자, 1인 사업자, 외주 제작 완료 후 점검이 필요한 고객', deliverables: ['탐지 점수 해설', '확인 근거', '페이지별 우선 조치 목록', '공유용 리포트 본문', '재점검 체크리스트', 'FAQ·CTA 요약'], operations: ['결제 확인 후 구매 산출물 영역에서 결과 확인', '진단 이력이 없을 경우 기본 점검 양식으로 제공', ...commonAssurance], benefits: ['발견 항목의 근거와 우선순위를 더 명확하게 확인', '개선 순서를 정리해 바로 조치 가능'], cta: '상세 리포트 신청' },
+{ code: 'FixPack', group: 'one_time', title: '수정 문구안', price: 99000, period: '1회', priority: 2, summary: '탐지 항목별로 사이트에 바로 반영 가능한 고지·약관·환불·광고 문구 초안을 제공합니다.', targetCustomer: '사이트 안내 문구를 먼저 정리해야 하는 소상공인·마케터', deliverables: ['푸터 사업자 고지 문안', '환불·교환 안내 문구', '개인정보/약관 노출 가이드', '광고 표현 보완 후보 완화안', '수정 전/후 예시', 'FAQ·CTA 문구'], operations: ['우선순위가 높은 문구안부터 제공', '주의가 필요한 표현은 별도 표시', ...commonAssurance], benefits: ['사이트에 반영하기 쉬운 문구 예시 제공', '고객 오해 가능성이 있는 표현을 완화'], cta: '수정 문구안 받기' },
+{ code: 'Basic', group: 'subscription', title: 'Basic 모니터링', price: 99000, period: '월', priority: 3, summary: '소규모 사이트의 월 1회 보완 후보 재점검과 기본 이력 확인을 제공합니다.', targetCustomer: '월 1회 정기 점검만 필요한 소규모 사이트 고객', deliverables: ['월 1회 재점검', '상세 탐지 항목 확인', '기본 정책 초안', '이력 저장', '이메일 알림', '월간 요약 리포트'], operations: ['신청 후 사이트 이력 확인 가능', '월간 점검 알림 제공', ...commonAssurance], benefits: ['월 1회 정기 점검으로 변경 사항 확인', '이력 저장으로 이전 결과와 비교 가능'], cta: 'Basic 시작' },
+{ code: 'Pro', group: 'subscription', title: 'Pro 정기 개선', price: 199000, period: '월', priority: 4, summary: '정밀 리포트, 수정 문구안, 변경 알림을 포함한 추천 플랜입니다.', targetCustomer: '사이트 주문·문의가 발생하고 반복 점검이 필요한 고객', deliverables: ['Basic 제공 범위 포함', '정밀 리포트 포함', '수정 문구안', '변경 알림', '재점검 및 개선 추적', '전환용 CTA 포스팅 초안'], operations: ['결제 확인 후 Pro 결과 제공', '다음 조치 항목을 우선순위로 표시', ...commonAssurance], benefits: ['정밀 리포트와 수정 문구안을 함께 확인', '다음 조치 항목을 우선순위로 정리'], cta: 'Pro 시작' },
+{ code: 'Auto', group: 'subscription', title: 'Auto 정기 케어', price: 299000, period: '월', priority: 5, summary: '반복 점검, 고객 안내 인사이트, 게시판 운영 보조로 사이트 신뢰 관리를 돕습니다.', targetCustomer: '여러 캠페인·랜딩페이지를 꾸준히 점검해야 하는 팀', deliverables: ['Pro 제공 범위 포함', '정기 고객 안내 인사이트', '게시판 운영 상태', '승인 후 반영할 수 있는 수정 후보', '고발견 항목 우선 알림', '내 사이트 관리 대시보드', 'CTA 포스팅'], operations: ['정기 점검 결과 제공', '수정 후보는 확인 후 사용할 수 있도록 제공', ...commonAssurance], benefits: ['반복 점검 부담 완화', '게시판이 비어 보이지 않도록 운영감 유지', '여러 랜딩페이지의 고발견 항목을 우선 확인'], cta: 'Auto 시작' },
+{ code: 'Agency', group: 'b2b', title: '대행사 리포트 패키지', price: 399000, period: '월', priority: 6, summary: '광고대행사·웹에이전시가 고객사 보완 후보 리포트를 반복 생성할 수 있는 패키지입니다.', targetCustomer: '고객사 사이트를 제작·지원하는 에이전시와 퍼포먼스 마케팅사', deliverables: ['고객사별 리포트', '고객사 제출용 문구 영역', '월 10개 도메인 기준', '고객 안내 인사이트 제공', '대행사 맞춤 안내 문구', '고객사 CTA 포스팅'], operations: ['서비스 신청 후 고객사별 리포트 구성 지원', '고객사별 결과를 구분해 확인 가능', ...commonAssurance], benefits: ['고객사별 리포트 제공에 활용', '여러 도메인의 점검 결과를 구분해 관리'], cta: '대행사 패키지 시작' }
 ].sort((a, b) => a.priority - b.priority);
 }
 function getCommercialOffer(code) { return buildCommercialOfferCatalog().find(item => item.code === code) || null; }
 function buildPlanCatalog(recommendedPlan = 'Pro') {
 const offers = buildCommercialOfferCatalog();
-const free = { code: 'Free', monthlyPrice: 0, period: '무료', title: 'Free', group: 'free', summary: '체험용 무료 예비 점검. 탐지 점수와 확인 근거 일부를 간단히 확인합니다.', features: ['URL 1개 즉시 예비 점검', '탐지 점수', '상위 발견 항목 2개 요약', '상세 근거·페이지별 조치안 잠금', '일일 무료 3회 제한'], recommended: false };
-const paid = offers.map(offer => ({ code: offer.code, monthlyPrice: offer.price, period: offer.period, title: offer.title, group: offer.group, summary: offer.summary, features: offer.deliverables, targetCustomer: offer.targetCustomer, referencePrice: offer.referencePrice, valuePackWorth: offer.valuePackWorth, marketPosition: '약 30% 낮은 경쟁가와 실무 산출물 구성 기준', dailyPrice: offer.period === '월' ? Math.ceil(offer.price / 30) : 0, recommended: offer.code === recommendedPlan || (recommendedPlan === 'Pro' && offer.code === 'Pro') }));
+const free = { code: 'Free', monthlyPrice: 0, period: '무료', title: 'Free', group: 'free', summary: '하루 3회 무료 요약 진단. 탐지 점수와 상위 발견 항목을 간단히 확인합니다.', features: ['하루 3회 무료 요약 진단', '탐지 점수', '상위 발견 항목 2개 요약', '상세 근거·페이지별 조치안 결제 후 공개', '비회원 일일 3회 제한'], recommended: false };
+const paid = offers.map(offer => ({ code: offer.code, monthlyPrice: offer.price, period: offer.period, title: offer.title, group: offer.group, summary: offer.summary, features: offer.deliverables, targetCustomer: offer.targetCustomer, referencePrice: offer.referencePrice, valuePackWorth: offer.valuePackWorth, dailyPrice: offer.period === '월' ? Math.ceil(offer.price / 30) : 0, recommended: offer.code === recommendedPlan || (recommendedPlan === 'Pro' && offer.code === 'Pro') }));
 return [free, ...paid];
 }
 function planPrice(plan) {
@@ -2269,7 +2265,7 @@ probeCount: Number(payload?.probeCount || (Array.isArray(payload?.scannedPages) 
 categoryScores,
 ruleVersion: payload?.ruleVersion || RULES_VERSION,
 scanMode: payload?.scanMode || 'evidence_first_external',
-scanScopeLabel: payload?.scanScopeLabel || '외부 제공자 기반 예비 점검',
+scanScopeLabel: payload?.scanScopeLabel || '외부 제공자 기반 무료진단',
 cached: payload?.cached === true,
 riskScore,
 riskLevel,
@@ -2308,7 +2304,7 @@ sourcePages: item.sourcePages || [],
 recommendation: item.recommendation
 }));
 const prompt = [
-'당신은 웹사이트 공개 페이지 예비 점검 결과를 검수하는 보조 분석기입니다.',
+'당신은 웹사이트 공개 페이지 무료진단 결과를 검수하는 보조 분석기입니다.',
 '법률 위반, 과태료, 성과를 확정하지 마세요.',
 '제공된 근거만 사용하고, 확인되지 않은 내용은 수동확인 필요로 분리하세요.',
 JSON.stringify({ target: scan.target, scoreModel: scan.scoreModel, evidenceSummary: scan.evidenceSummary, findings }, null, 2)
@@ -2455,7 +2451,7 @@ requestId: uid('scan'),
 provider: 'builtin',
 target: String(input).trim(),
 normalizedTarget: fetched.finalUrl || input,
-summary: `${String(input).trim()} 무료 전자동 예비 점검이 완료되었습니다. 자동 확인 근거와 수동확인 한계를 함께 표시합니다.`,
+summary: `${String(input).trim()} 무료 무료진단이 완료되었습니다. 자동 확인 근거와 수동확인 한계를 함께 표시합니다.`,
 fetched: fetched.fetched,
 fetchStatus: fetched.status,
 fetchError: fetched.error || null,
@@ -2464,7 +2460,7 @@ siteProfile,
 categoryScores,
 ruleVersion: RULES_VERSION,
 scanMode: 'zero_cost_full_auto_disclosure',
-scanScopeLabel: '무료 전자동 공개 페이지 최대 커버리지 예비 점검',
+scanScopeLabel: '무료 공개 페이지 최대 커버리지 무료진단',
 cached: false,
 riskScore,
 detectionScore: riskScore,
@@ -2533,29 +2529,22 @@ if (!findings.length) return [
 ];
 return findings.map(item => ({ title: item.title, before: item.evidence || '페이지 내 근거 문구 확인 필요', after: item.recommendation || '필수 고지 문구를 명확한 위치에 추가하세요.', priority: item.priority || 'P2' }));
 }
-function buildIndustryGuide(industry = '일반 이커머스') {
+function buildIndustryChecklist(industry = '일반 이커머스') {
 const normalized = String(industry || '').trim() || '일반 이커머스';
 const common = ['상품·서비스의 핵심 조건은 결제 전 확인 가능한 위치에 배치합니다.', '환불·교환·취소 제한은 버튼 주변 또는 결제 전 단계에 반복 노출합니다.', '후기·성과·효능 표현은 객관적 근거 또는 제한 문구와 함께 사용합니다.', '개인정보 수집 입력폼에는 수집 목적, 항목, 보유기간, 동의 여부를 명확히 표시합니다.'];
 const vertical = normalized.includes('건강') || normalized.includes('의료') ? ['질병 예방·치료 효과를 직접 단정하는 표현은 고위험 문구로 분류합니다.', '개인 체험 후기는 일반적 효능처럼 오인되지 않도록 제한 문구를 병기합니다.'] : normalized.includes('교육') ? ['합격률·수익·성과 보장은 근거와 산정 기준을 함께 고지합니다.', '기간 한정 할인은 실제 기간과 조건을 명확히 표시합니다.'] : ['배송비, 추가 비용, 청약철회 제한 조건을 상품 상세와 결제 단계에 모두 표시합니다.', '할인율·정가·비교가 표시는 기준 가격의 산정 근거를 보관합니다.'];
 return { industry: normalized, checklist: [...vertical, ...common] };
 }
-function buildCertificationSnippet(order) {
-const domain = order.domain || BUSINESS_PROFILE.domain;
-return `<a href="${BUSINESS_PROFILE.domain}/portal?orderId=${order.id}" rel="nofollow noopener" style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid #D0D5DD;border-radius:999px;font:600 13px system-ui;color:#101828;text-decoration:none;background:#fff">NV0 Certified · ${domain}</a>`;
-}
 function buildPurchasedAsset(db, order) {
 const offer = getCommercialOffer(order.plan) || { title: order.plan, deliverables: [], price: order.amount };
 const site = findSiteByAny(db, order.siteId, order.domain);
 const scan = (db.scans || []).find(item => item.siteId === order.siteId) || (db.scans || [])[0] || null;
-const industryGuide = buildIndustryGuide(scan?.industry || site?.industry || '일반 이커머스');
+const industryGuide = buildIndustryChecklist(scan?.industry || site?.industry || '일반 이커머스');
 const policyDocuments = buildPolicyDocumentPreview({}, db.settings || {}).documents;
 const premium = buildPremiumPurchasedAsset({ order, offer, scan, site, businessProfile: BUSINESS_PROFILE, policyDocuments, industryGuide });
 const isReportPlan = order.plan === 'Report';
 const isFixPackPlan = order.plan === 'FixPack';
-const isTemplatePackPlan = order.plan === 'TemplatePack';
-const isIndustryGuidePlan = order.plan === 'IndustryGuide';
-const isCertifiedPlan = order.plan === 'Certified';
-const assetKind = isFixPackPlan ? 'fix_pack' : isTemplatePackPlan ? 'template_pack' : isIndustryGuidePlan ? 'industry_guide' : isCertifiedPlan ? 'certification' : ['Basic','Pro','Auto','Agency'].includes(order.plan) ? 'subscription_entitlement' : isReportPlan ? 'report' : 'report';
+const assetKind = isFixPackPlan ? 'fix_pack' : ['Basic','Pro','Auto','Agency'].includes(order.plan) ? 'subscription_entitlement' : isReportPlan ? 'report' : 'report';
 const base = {
 id: uid('asset'),
 assetKind,
@@ -2569,9 +2558,6 @@ createdAt: nowIso(),
 supportEmail: BUSINESS_PROFILE.contactEmail,
 legalDisclaimer: premium.legalDisclaimer || '본 산출물은 웹사이트 안내 보완 후보 점검 및 문구 개선 참고 자료이며, 개별 사건에 대한 법률 자문이 아닙니다.'
 };
-if (isCertifiedPlan) {
-return { ...base, ...premium, badgeSnippet: buildCertificationSnippet(order) };
-}
 return { ...base, ...premium };
 }
 function pdfEscape(value) { return String(value || '').replace(/[\\()]/g, '\\$&').replace(/[\r\n]+/g, ' '); }
@@ -2605,7 +2591,7 @@ return asset;
 async function createCheckoutOrder(db, payload = {}) {
 db.orders ||= [];
 db.paymentSessions ||= [];
-const plan = ['Report','FixPack','TemplatePack','IndustryGuide','Basic','Pro','Auto','Certified','Agency'].includes(payload.plan) ? payload.plan : 'Pro';
+const plan = ['Report','FixPack','Basic','Pro','Auto','Agency'].includes(payload.plan) ? payload.plan : 'Pro';
 const site = findSiteByAny(db, payload.siteId, payload.domain);
 const email = normalizeEmail(payload.email || payload.buyerEmail || '');
 const customer = email ? '이메일 고객' : '비회원 고객';
@@ -2845,7 +2831,7 @@ const siteId = params.siteId ? String(params.siteId) : '';
 const order = orderId ? (db.orders || []).find(item => item.id === orderId) : null;
 const site = findSiteByAny(db, siteId || order?.siteId, order?.domain);
 const subscription = site ? (db.subscriptions || []).find(item => item.siteId === site.id) || null : null;
-const scan = site ? (db.scans || []).find(item => item.siteId === site.id) || null : (db.scans || [])[0] || null;
+const scan = site ? (db.scans || []).find(item => item.siteId === site.id) || null : null;
 const guidance = site ? findLatestGuidanceForSite(db, site.id) : null;
 const autoFixJobs = site ? (db.autoFixJobs || []).filter(item => item.siteId === site.id).slice(0, 10) : [];
 return {

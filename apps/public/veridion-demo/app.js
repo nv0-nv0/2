@@ -23,7 +23,8 @@ const PROGRESS_STEPS = [
   '자동 확정 가능 항목과 수동 확인 항목을 분리합니다.',
   '지금 고칠 3가지와 리포트 전환 동선을 정리합니다.'
 ];
-const usageKey = `veridion:instantDemoUsage:${new Date().toISOString().slice(0, 10)}`;
+const usageKey = `veridion:instantDemoUsage:v2:${new Date().toISOString().slice(0, 10)}`;
+const legacyUsageKey = `veridion:instantDemoUsage:${new Date().toISOString().slice(0, 10)}`;
 let session = { authenticated: false, customer: null };
 let lastScan = null;
 let isScanning = false;
@@ -58,7 +59,7 @@ function renderProgress(index = 0) {
   const elapsed = progressStartedAt ? Math.max(0, Math.round((Date.now() - progressStartedAt) / 1000)) : 0;
   const active = Math.max(0, Math.min(PROGRESS_STEPS.length - 1, index));
   return `<section class="demo-progress-panel" aria-live="polite">
-    <div class="demo-progress-head"><span class="pill brand">실시간 예비 점검</span><b>${elapsed}초 경과</b></div>
+    <div class="demo-progress-head"><span class="pill brand">실시간 무료진단</span><b>${elapsed}초 경과</b></div>
     <h3>결과 화면을 먼저 준비하면서 공개 페이지를 확인하고 있습니다</h3>
     <p class="muted">응답이 느린 사이트도 빈 화면으로 기다리게 하지 않고, 현재 처리 단계를 계속 보여줍니다.</p>
     <ol class="demo-progress-steps">${PROGRESS_STEPS.map((step, stepIndex) => `<li class="${stepIndex < active ? 'done' : stepIndex === active ? 'active' : ''}"><span>${stepIndex + 1}</span><p>${escapeHtml(step)}</p></li>`).join('')}</ol>
@@ -75,13 +76,18 @@ function startProgress() {
     setResultHtml(renderProgress(progressIndex));
   }, PROGRESS_TICK_MS);
 }
-function getUsage() { return Number(localStorage.getItem(usageKey) || '0'); }
-function setUsage(n) { localStorage.setItem(usageKey, String(n)); updateBadge(); }
+function getUsage() {
+  const legacy = localStorage.getItem(legacyUsageKey);
+  if (legacy !== null && localStorage.getItem(usageKey) === null) localStorage.setItem(usageKey, '0');
+  const n = Number(localStorage.getItem(usageKey) || '0');
+  return Math.max(0, Math.min(FREE_LIMIT, Number.isFinite(n) ? n : 0));
+}
+function setUsage(n) { localStorage.setItem(usageKey, String(Math.max(0, Math.min(FREE_LIMIT, Number(n) || 0)))); updateBadge(); }
 function updateBadge() {
   const freeUsage = Math.max(0, FREE_LIMIT - getUsage());
   if (session.authenticated) {
-    if (badgeLead) badgeLead.innerHTML = '<strong>회원 전용 전체 결과 활성</strong>';
-    if (badge) badge.textContent = '저장, 재검사, 전체 결과 확인을 계속 이용할 수 있습니다.';
+    if (badgeLead) badgeLead.innerHTML = '<strong>회원 기능 활성</strong>';
+    if (badge) badge.textContent = '무료진단 횟수 관리, 내 사이트 저장, 원클릭 재검사, 최근 진단 이력 확인을 이용할 수 있습니다.';
     return;
   }
   if (badgeLead) badgeLead.innerHTML = `<strong>오늘 남은 비회원 무료 진단 ${freeUsage}회</strong>`;
@@ -181,7 +187,7 @@ function normalizeRiskItem(item, index) {
     priority: item?.priority || (index === 0 ? 'P0' : index === 1 ? 'P1' : 'P2'),
     impact: item?.impact || item?.description || '수집된 공개 화면에서 고객 안내 보완 후보로 분류된 항목입니다.',
     action: item?.recommendation || item?.fixTemplate || '확인 URL과 근거를 보고 수정 우선순위와 적용 문구를 검토하세요.',
-    category: item?.category || item?.code || '신뢰 예비 점검',
+    category: item?.category || item?.code || '신뢰 무료진단',
     evidence: item?.evidence || '',
     certainty: item?.certainty || '확인 필요',
     sourcePages: Array.isArray(item?.sourcePages) ? item.sourcePages : [],
@@ -254,7 +260,7 @@ function normalizeScan(scan = {}) {
     aiReview: scan.aiReview || {},
     automationDisclosure: scan.automationDisclosure || scan.evidenceSummary?.automationDisclosure || {},
     automatedActionPlan: scan.automatedActionPlan || {},
-    scanScopeLabel: scan.scanScopeLabel || '공개 페이지 기준 예비 점검',
+    scanScopeLabel: scan.scanScopeLabel || '공개 페이지 기준 무료진단',
     recommendedPlan: scan.intelligence?.recommendedPlan || scan.recommendedPlan || (riskScore !== null && riskScore >= 75 ? 'Auto' : 'Pro'),
     intelligence: scan.intelligence || scan.diagnosis?.intelligence || null,
     journey: scan.journey || scan.orchestration || scan.diagnosis?.journey || null,
@@ -490,15 +496,18 @@ function renderEvidenceChecklist(view) {
   return `<section class="evidence-checklist"><div class="section-title"><span class="pill">검증 근거</span><h3>무료 결과에서 확인한 신뢰 체크라인</h3></div><div class="evidence-grid">${items.map(([title, text], index) => `<article><span>${escapeHtml(index + 1)}</span><div><b>${escapeHtml(title)}</b><p>${escapeHtml(text)}</p></div></article>`).join('')}</div><p class="evidence-note">실제 법정 정보·운영키·외부 스캔 결과는 운영 환경에서 확인해야 하며, 확인되지 않은 값은 단정하지 않습니다.</p></section>`;
 }
 
+function hasPaidAccess(scan) {
+  return scan?.paidAccess === true || scan?.entitlement?.paid === true || scan?.access === 'paid' || scan?.orderStatus === 'paid' || scan?.subscriptionStatus === 'active';
+}
 function renderFullResult(scan) {
   const view = normalizeScan(scan);
   const findings = detailRows(scan);
   const pages = view.pages;
-  return `<div class="card stack full-result"><div class="meta-row"><strong>전체 결과 열람 가능</strong><span class="pill brand">회원 전용</span></div><div class="notice"><strong>${escapeHtml(session.customer?.email || '로그인 계정')}</strong>에 저장되었습니다. 내 사이트 관리에서 원클릭 재검사와 최근 검사 내역 확인이 가능합니다.</div><h3>전체 발견 항목 ${findings.length}개</h3><div class="result-grid">${renderList(findings, '<div class="muted">상세 발견 항목 없음</div>', item => `<div class="result-card"><div class="meta-row"><strong>${escapeHtml(item.title || item.code || '점검 항목')}</strong><span class="pill ${item.priority === 'P0' ? 'gold' : ''}">${escapeHtml(item.priority || '확인')}</span></div><p>${escapeHtml(item.recommendation || item.fixTemplate || '권장 조치 확인')}</p><small class="muted">${escapeHtml(item.category || '')} · ${escapeHtml(item.code || '')}</small></div>`)}</div><div class="notice muted">스캔 페이지: ${pages.length ? pages.map(p => escapeHtml(p.finalUrl || p.url || p)).join(' · ') : '기본 URL 중심 분석'}</div><div class="topnav"><a class="btn primary" href="/portal?siteId=${escapeAttr(view.siteId)}">내 사이트 관리</a><a class="btn secondary" href="/plans?riskScore=${escapeAttr(view.riskScore ?? '')}&siteId=${escapeAttr(view.siteId)}">상품 비교</a><a class="btn secondary" href="/checkout?plan=${escapeAttr(view.recommendedPlan)}&siteId=${escapeAttr(view.siteId)}">상세 리포트 신청</a></div></div>`;
+  return `<div class="card stack full-result"><div class="meta-row"><strong>상세 결과 열람 가능</strong><span class="pill brand">결제 완료</span></div><div class="notice"><strong>${escapeHtml(session.customer?.email || '로그인 계정')}</strong>에 저장되었습니다. 구매 산출물 영역에서 상세 근거와 수정 문구안을 확인할 수 있습니다.</div><h3>전체 발견 항목 ${findings.length}개</h3><div class="result-grid">${renderList(findings, '<div class="muted">상세 발견 항목 없음</div>', item => `<div class="result-card"><div class="meta-row"><strong>${escapeHtml(item.title || item.code || '점검 항목')}</strong><span class="pill ${item.priority === 'P0' ? 'gold' : ''}">${escapeHtml(item.priority || '확인')}</span></div><p>${escapeHtml(item.recommendation || item.fixTemplate || '권장 조치 확인')}</p><small class="muted">${escapeHtml(item.category || '')} · ${escapeHtml(item.code || '')}</small></div>`)}</div><div class="notice muted">스캔 페이지: ${pages.length ? pages.map(p => escapeHtml(p.finalUrl || p.url || p)).join(' · ') : '기본 URL 중심 분석'}</div><div class="topnav"><a class="btn primary" href="/portal?siteId=${escapeAttr(view.siteId)}">내 사이트 관리</a><a class="btn secondary" href="/plans?riskScore=${escapeAttr(view.riskScore ?? '')}&siteId=${escapeAttr(view.siteId)}">상품 비교</a><a class="btn secondary" href="/checkout?plan=${escapeAttr(view.recommendedPlan)}&siteId=${escapeAttr(view.siteId)}">상세 리포트 신청</a></div></div>`;
 }
 function renderLockedResult(scan) {
   const view = normalizeScan(scan);
-  return `<div class="result-locked pro-lock"><div class="locked-content"><div class="lock-preview-grid"><span>페이지별 근거</span><span>수정 문구안</span><span>우선순위 로드맵</span><span>재검사 내역</span></div></div><div class="lock-box"><div class="lock-card"><div class="pill">회원가입 후 전체 공개</div><h3>전체 결과 ${escapeHtml(view.lockedCount)}개는 로그인 후 바로 열립니다.</h3><p class="muted">먼저 무료 요약을 확인하고, 전체 발견 항목·수정 문구·내 사이트 저장·원클릭 재검사는 회원 계정에서 이어갑니다.</p><div class="topnav"><a class="primary" href="${escapeAttr(loginUrl(scan))}">로그인·회원가입하고 전체 보기</a><a class="secondary" href="/plans?riskScore=${escapeAttr(view.riskScore ?? '')}&siteId=${escapeAttr(view.siteId)}">상품 비교</a></div></div></div></div>`;
+  return `<div class="result-locked pro-lock"><div class="locked-content"><div class="lock-preview-grid"><span>페이지별 근거</span><span>수정 문구안</span><span>우선순위 로드맵</span><span>리포트·템플릿 산출물</span></div></div><div class="lock-box"><div class="lock-card"><div class="pill">결제 후 상세 결과 공개</div><h3>상세 결과 ${escapeHtml(view.lockedCount)}개는 결제 후 열립니다.</h3><p class="muted">로그인 회원은 무료진단 횟수 관리, 내 사이트 저장, 원클릭 재검사, 최근 진단 이력 확인까지만 이용할 수 있습니다. 상세 근거·수정 문구안·로드맵은 구매 산출물입니다.</p><div class="topnav"><a class="primary" href="/checkout?plan=${escapeAttr(view.recommendedPlan)}&siteId=${escapeAttr(view.siteId)}">상세 리포트 결제</a><a class="secondary" href="/portal?siteId=${escapeAttr(view.siteId)}">내 사이트 저장/재검사</a></div></div></div></div>`;
 }
 function renderPaywall(scan) { return renderLockedResult(scan); }
 
@@ -507,10 +516,7 @@ async function saveCurrentSite(scan) {
 }
 async function unlockSavedScan() {
   const scan = lastScan || getSavedScanFromStorage();
-  if (!scan?.siteId && !scan?.requestId) return;
-  const detail = await jsonFetch(`/api/public/account/scan-detail?siteId=${encodeURIComponent(scan.siteId || '')}&requestId=${encodeURIComponent(scan.requestId || '')}`);
-  saveScan(detail.result || scan);
-  renderResult(detail.result || scan);
+  if (scan) renderResult(scan);
 }
 async function runScan() {
   if (isScanning) return;
@@ -520,7 +526,7 @@ async function runScan() {
   if (!isValidTarget(normalizedTarget)) { setState('유효한 사이트 주소를 입력하세요. 예: https://your-store.kr', 'warn'); setBusy(false); return; }
   if (!session.authenticated && getUsage() >= FREE_LIMIT) {
     state.innerHTML = `오늘 비회원 요약 결과 횟수를 모두 사용했습니다. <a href="${escapeAttr(loginUrl())}">로그인·회원가입하면 계속 이용할 수 있습니다.</a>`;
-    setResultHtml('<div class="upgrade-box"><strong>비회원 이용 한도 초과</strong><p class="muted">회원가입 후 전체 결과, 저장, 재검사를 계속 사용할 수 있습니다.</p></div>');
+    setResultHtml('<div class="upgrade-box"><strong>비회원 이용 한도 초과</strong><p class="muted">로그인하면 무료진단 횟수 관리, 저장, 재검사를 계속 사용할 수 있습니다. 상세 결과는 결제 후 공개됩니다.</p></div>');
     setBusy(false);
     return;
   }
@@ -542,7 +548,7 @@ async function runScan() {
     setCachedDemoResult(normalizedTarget, data.result || {});
     saveScan(data.result || {});
     if (session.authenticated && data.result) { try { await saveCurrentSite(data.result); } catch {} }
-    setState(session.authenticated ? '예비 점검 완료 · 전체 근거와 내 사이트 저장이 활성화되었습니다.' : '예비 점검 완료 · 확인 근거와 한계를 먼저 보여드립니다. 전체 결과는 회원가입 후 바로 확인하세요.', 'success');
+    setState(session.authenticated ? '무료진단 완료 · 내 사이트 저장과 최근 이력 관리가 활성화되었습니다. 상세 결과는 결제 후 공개됩니다.' : '무료진단 완료 · 확인 근거와 한계를 먼저 보여드립니다. 상세 결과는 결제 후 공개됩니다.', 'success');
     renderResult(data.result || {});
   } catch (err) {
     stopProgress();
@@ -592,7 +598,7 @@ mountTurnstile({ containerId: 'turnstileBox', tokenInputId: 'turnstileToken', no
     if (notice) notice.textContent = `보안 확인을 불러오지 못했습니다. 설정 확인이 필요하지만 버튼은 계속 동작합니다. (${error.message})`;
   });
 loadSession();
-window.addEventListener('pageshow', async () => { await loadSession(); if (session.authenticated) unlockSavedScan().catch(() => {}); });
+window.addEventListener('pageshow', async () => { await loadSession(); });
 
 /* PHASE129: result information architecture + infographic cleanup
    Goal: remove crowded / overlapping copy, reorganize the diagnosis into a
@@ -816,8 +822,8 @@ function renderAutomatedActionPlan(view) {
   const fixes = Array.isArray(plan.automaticFixes) ? plan.automaticFixes : [];
   const reviews = Array.isArray(plan.manualReviews) ? plan.manualReviews : [];
   if (!fixes.length && !reviews.length) return '';
-  return `<section class="automated-action-plan" aria-label="자동 산출물과 수동확인 분리">
-    <div class="section-title"><span class="pill gold">자동 산출물</span><h3>자동 초안과 수동확인 항목을 분리했습니다</h3></div>
+  return `<section class="automated-action-plan" aria-label="자동 요약 항목과 수동확인 분리">
+    <div class="section-title"><span class="pill gold">자동 요약 항목</span><h3>자동 초안과 수동확인 항목을 분리했습니다</h3></div>
     <div class="fix-preview-grid">
       ${fixes.slice(0, 4).map(item => `<article><span class="fix-step">AUTO ${escapeHtml(item.order)}</span><h4>${escapeHtml(item.title)}</h4><p>${escapeHtml(item.patchSummary)}</p><small>${escapeHtml(item.operatorNotice || '운영자 확인 후 적용하세요.')}</small></article>`).join('')}
       ${reviews.slice(0, 4).map(item => `<article><span class="fix-step">CHECK ${escapeHtml(item.order)}</span><h4>${escapeHtml(item.title)}</h4><p>${escapeHtml(item.reason)}</p><small>자동 단정 금지 · 수동확인 필요</small></article>`).join('')}
@@ -932,8 +938,8 @@ function renderUnifiedDashboard(view) {
       <div class="utd-action-roadmap">${topActions.map((item, index) => `<article><span>${index + 1}</span><div><b>${escapeHtml(item.title)}</b><small>${escapeHtml(item.nextStep || item.reason)}</small></div></article>`).join('')}</div>
     </div>
     <div class="utd-footer-actions">
-      <a class="btn primary" href="/plans?riskScore=${escapeAttr(view.riskScore ?? '')}&siteId=${escapeAttr(view.siteId)}">상세 리포트 보기</a>
-      <a class="btn secondary" href="/documents?siteId=${escapeAttr(view.siteId)}">문구 바로 수정</a>
+      <a class="btn primary" href="/plans?riskScore=${escapeAttr(view.riskScore ?? '')}&siteId=${escapeAttr(view.siteId)}">상세 리포트 결제</a>
+      <a class="btn secondary" href="/documents?siteId=${escapeAttr(view.siteId)}">수정 문구안 결제</a>
       <button class="btn primary" type="button" id="dashboardRetryBtnBottom">다시 점검</button>
     </div>
     <div class="utd-evidence-line"><span>실제 확인 페이지 ${escapeHtml(successful)}/${escapeHtml(attempted)}개</span><span>수집 신뢰도 ${escapeHtml(confidenceBadge(view.evidenceSummary?.confidenceScore, view.evidenceSummary?.confidenceLabel))}</span><span>자동 초안 ${escapeHtml(stats.autoDrafts)}개</span></div>
@@ -942,11 +948,11 @@ function renderUnifiedDashboard(view) {
 
 
 function renderResultTabs(view, scan) {
-  const paywall = session.authenticated ? renderFullResult(scan) : renderPaywall(scan);
+  const paywall = hasPaidAccess(scan) ? renderFullResult(scan) : renderPaywall(scan);
   const panels = [
     ['summary', '요약', `${renderDiscoverySummary(view)}${renderMetricStrip(view)}${renderSmartNextAction(view)}`],
-    ['evidence', '근거', `${renderEvidenceMatrix(view)}${renderVerifiedPages(view)}${renderEvidenceFindings(view)}`],
-    ['fix', '수정안', `${renderAutomatedActionPlan(view)}${renderRecommendedActions(view.recommendedActions)}${renderFixPreview(view.recommendedActions)}`],
+    ['evidence', '근거', hasPaidAccess(scan) ? `${renderEvidenceMatrix(view)}${renderVerifiedPages(view)}${renderEvidenceFindings(view)}` : renderPaywall(scan)],
+    ['fix', '수정안', hasPaidAccess(scan) ? `${renderAutomatedActionPlan(view)}${renderRecommendedActions(view.recommendedActions)}${renderFixPreview(view.recommendedActions)}` : renderPaywall(scan)],
     ['offer', '상품', `${renderValueComparison(view)}${renderPremiumUpgradePanel(view)}${paywall}`],
     ['limits', '한계', `${renderAutomationDisclosure(view)}${renderExternalToolPlan(view)}${renderQualityNotice(view)}`]
   ];

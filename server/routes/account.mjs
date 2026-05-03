@@ -133,6 +133,21 @@ export function createAccountRouteHandler(ctx) {
   verifyTurnstile,
   writeDb
   } = ctx;
+
+function hasPaidScanAccess(db, customer, scan) {
+if (!customer || !scan) return false;
+const sameSite = (order) => !!order?.siteId && !!scan.siteId && order.siteId === scan.siteId;
+const sameDomain = (order) => order?.domain && scan?.target && normalizeDomainInput(order.domain) === normalizeDomainInput(scan.target);
+const ownsPaidOrder = (db.orders || []).some(order => order.status === 'paid' && ownsOrder(customer, order) && (sameSite(order) || sameDomain(order)));
+const activeSubscription = (db.subscriptions || []).some(sub => sub.status === 'active' && !!scan.siteId && sub.siteId === scan.siteId);
+return ownsPaidOrder || activeSubscription;
+}
+function summarizeScanForLoginMember(scan) {
+const topFindings = Array.isArray(scan?.topFindings) ? scan.topFindings.slice(0, 3) : [];
+const detailFindings = Array.isArray(scan?.detailFindings) ? scan.detailFindings.slice(0, 2).map(item => ({ title: item.title || item.code || '점검 항목', priority: item.priority || '확인', category: item.category || '요약', recommendation: '상세 근거와 수정 문구안은 결제 후 구매 산출물 영역에서 확인할 수 있습니다.' })) : [];
+return { requestId: scan?.requestId || null, siteId: scan?.siteId || null, target: scan?.target || '', riskScore: scan?.riskScore ?? null, riskLevel: scan?.riskLevel || null, totalFindings: scan?.totalFindings ?? detailFindings.length, topFindings, detailFindings, diagnosis: { summary: scan?.summary || '무료진단 요약 결과입니다.', locked: true, lockedReason: 'paid_required' }, savedToAccount: true, paidAccess: false, locked: true };
+}
+
   return async function handleAccountRoutes(req, res, state = {}) {
     const routeState = state.requestUrl ? state : req._nv0RouteState;
     if (!routeState || !routeState.requestUrl) return false;
@@ -301,7 +316,8 @@ const scan = (db.scans || []).find(item => (requestId && item.requestId === requ
 if (!scan) return json(req, res, 404, { ok: false, error: '검사 결과를 찾을 수 없습니다.' });
 const ownsLinkedSite = (db.customerSiteLinks || []).some(item => item.customerId === session.customer.id && item.siteId === scan.siteId);
 if (scan.customerId !== session.customer.id && !ownsLinkedSite) return json(req, res, 403, { ok: false, error: '검사 결과 접근 권한이 없습니다.' });
-return json(req, res, 200, { ok: true, result: { ...scan, diagnosis: buildPublicDiagnosisPackage(scan), savedToAccount: true } });
+if (!hasPaidScanAccess(db, session.customer, scan)) return json(req, res, 200, { ok: true, result: summarizeScanForLoginMember(scan), locked: true });
+return json(req, res, 200, { ok: true, result: { ...scan, diagnosis: buildPublicDiagnosisPackage(scan), savedToAccount: true, paidAccess: true }, locked: false });
 }
 if (pathname === '/api/public/account/sites' && req.method === 'POST') {
 const body = normalizeSavedSitePayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});

@@ -21,6 +21,16 @@ let isCreatingSession = false;
 let isCompletingPayment = false;
 let offerMap = new Map();
 
+const fallbackOffers = [
+  { code: 'Report', title: '상세 리포트', price: 69000, period: '1회', summary: '근거와 우선순위를 정리한 상세 리포트', targetCustomer: '무엇부터 고칠지 판단해야 하는 운영자' },
+  { code: 'FixPack', title: '수정 문구안', price: 99000, period: '1회', summary: '바로 붙여넣기 쉬운 수정 문구 패키지', targetCustomer: '오늘 바로 문구를 정리해야 하는 운영자' },
+  { code: 'Basic', title: 'Basic 모니터링', price: 99000, period: '월', summary: '기본 재점검과 결과 이력 확인', targetCustomer: '월 단위 점검이 필요한 운영자' },
+  { code: 'Pro', title: 'Pro 정기 개선', price: 199000, period: '월', summary: '정기 점검과 문서·수정 지원을 함께 제공', targetCustomer: '운영 구조를 꾸준히 개선하려는 팀' },
+  { code: 'Auto', title: 'Auto 정기 케어', price: 299000, period: '월', summary: '반복 점검과 자동 운영 지원', targetCustomer: '변경이 잦은 팀' },
+  { code: 'Agency', title: '대행사 리포트 패키지', price: 399000, period: '월', summary: '여러 고객사 사이트를 반복 점검', targetCustomer: '고객사 운영을 맡는 대행사' }
+];
+offerMap = new Map(fallbackOffers.map(item => [item.code, item]));
+
 function getSavedScan() {
   try { return JSON.parse(localStorage.getItem('nv0:lastScan') || 'null'); } catch { return null; }
 }
@@ -213,15 +223,6 @@ async function loadOffers() {
     if (!res.ok || !data?.ok || !Array.isArray(data.offers)) throw new Error('상품 정보를 불러오지 못했습니다.');
     offerMap = new Map(data.offers.map(item => [item.code, item]));
   } catch {
-    const fallbackOffers = [
-      { code: 'Report', title: '상세 리포트', price: 69000, period: '1회', summary: '근거와 우선순위를 정리한 상세 리포트', targetCustomer: '무엇부터 고칠지 판단해야 하는 운영자' },
-      { code: 'FixPack', title: '수정 문구안', price: 99000, period: '1회', summary: '바로 붙여넣기 쉬운 수정 문구 패키지', targetCustomer: '오늘 바로 문구를 정리해야 하는 운영자' },
-      { code: 'Basic', title: '기본 모니터링', price: 99000, period: '월', summary: '기본 재점검과 결과 이력 확인', targetCustomer: '월 단위 점검이 필요한 운영자' },
-      { code: 'Pro', title: 'Pro 정기 개선', price: 199000, period: '월', summary: '정기 점검과 문서·수정 지원을 함께 제공', targetCustomer: '운영 구조를 꾸준히 개선하려는 팀' },
-      { code: 'Auto', title: 'Auto 정기 케어', price: 299000, period: '월', summary: '반복 점검과 자동 운영 지원', targetCustomer: '변경이 잦은 팀' },
-      { code: 'Certified', title: 'NV0 Certified', price: 199000, period: '연', summary: '외부 공개용 인증 표기 제공', targetCustomer: '대외 신뢰 표기가 필요한 운영자' },
-      { code: 'Agency', title: '대행사 리포트 패키지', price: 399000, period: '월', summary: '여러 고객사 사이트를 반복 점검', targetCustomer: '고객사 운영을 맡는 대행사' }
-    ];
     offerMap = new Map(fallbackOffers.map(item => [item.code, item]));
   }
   renderPriceSummary();
@@ -234,5 +235,6 @@ checkoutBtn?.addEventListener('click', createSession);
 completeBtn?.addEventListener('click', completePayment);
 
 updateCheckoutButtonState();
+renderPriceSummary();
 loadOffers();
 maybeFinalizeRedirectResult();
