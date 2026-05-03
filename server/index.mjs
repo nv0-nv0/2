@@ -45,6 +45,25 @@ function externalDurableRuntimeMode(env = process.env) {
   const storageMode = String(env.NV0_STORAGE_MODE || (platformTarget === 'commercial' ? 's3' : 'local_fs')).trim().toLowerCase();
   return platformTarget === 'commercial' && persistenceMode === 'postgres_primary' && storageMode !== 'local_fs';
 }
+function persistentRuntimeRequired(env = process.env) {
+  const value = String(env.NV0_REQUIRE_PERSISTENT_RUNTIME || 'auto').trim().toLowerCase();
+  if (value === 'true') return true;
+  if (value === 'false') return false;
+  return !externalDurableRuntimeMode(env);
+}
+function isLegacyRuntimeDir(dir) {
+  const normalized = path.resolve(dir || '/app/runtime');
+  return normalized === '/app/runtime';
+}
+function shouldBypassLegacyRuntimeDir(env = process.env, requested) {
+  return externalDurableRuntimeMode(env)
+    && !persistentRuntimeRequired(env)
+    && String(env.NV0_FORCE_RUNTIME_DIR || 'false').trim().toLowerCase() !== 'true'
+    && isLegacyRuntimeDir(requested);
+}
+function runtimeVerbose(env = process.env) {
+  return String(env.NV0_RUNTIME_VERBOSE || env.NV0_ENTRYPOINT_VERBOSE || 'false').trim().toLowerCase() === 'true';
+}
 function tryPrepareRuntimeDirSync(dir) {
   try {
     const reportsDir = path.join(dir, 'reports');
@@ -61,18 +80,27 @@ function tryPrepareRuntimeDirSync(dir) {
   }
 }
 function resolveRuntimeDir(root, env = process.env) {
+  const fallback = path.resolve(env.NV0_FALLBACK_RUNTIME_DIR || '/tmp/nv0-runtime');
   const requested = path.resolve(env.NV0_RUNTIME_DIR || path.join(root, 'runtime'));
-  if (tryPrepareRuntimeDirSync(requested)) return requested;
+  const initial = shouldBypassLegacyRuntimeDir(env, requested) ? fallback : requested;
+  if (tryPrepareRuntimeDirSync(initial)) {
+    if (externalDurableRuntimeMode(env) && initial === fallback) {
+      env.NV0_RUNTIME_DIR = fallback;
+      env.NV0_RUNTIME_EPHEMERAL = 'true';
+    }
+    return initial;
+  }
   if (externalDurableRuntimeMode(env)) {
-    const fallback = path.resolve(env.NV0_FALLBACK_RUNTIME_DIR || '/tmp/nv0-runtime');
     if (tryPrepareRuntimeDirSync(fallback)) {
       env.NV0_RUNTIME_DIR = fallback;
       env.NV0_RUNTIME_EPHEMERAL = 'true';
-      console.info(`nv0 runtime: using ephemeral scratch runtime '${fallback}' because requested runtime '${requested}' is not writable and durable state is external.`);
+      if (runtimeVerbose(env) && initial !== fallback) {
+        console.info(`nv0 runtime: using ephemeral scratch runtime '${fallback}' because requested runtime '${initial}' is not writable and durable state is external.`);
+      }
       return fallback;
     }
   }
-  return requested;
+  return initial;
 }
 const RUNTIME_DIR = resolveRuntimeDir(ROOT);
 const DATA_DIR = path.join(RUNTIME_DIR, 'data');
@@ -157,7 +185,7 @@ const AI_REVIEW_PROVIDER = String(process.env.NV0_AI_REVIEW_PROVIDER || 'disable
 const GEMINI_API_KEY = String(process.env.NV0_GEMINI_API_KEY || '').trim();
 const GEMINI_MODEL = String(process.env.NV0_GEMINI_MODEL || 'gemini-2.5-flash').trim();
 const AI_REVIEW_ENABLED = AI_REVIEW_PROVIDER === 'gemini' && !!GEMINI_API_KEY;
-const RELEASE_PHASE = 'phase167-native-http-load-security-50-phase174-ephemeral-runtime-coolify-hardening';
+const RELEASE_PHASE = 'phase167-native-http-load-security-50-phase174-ephemeral-runtime-coolify-hardening-phase175-quiet-runtime-normalization';
 const DATA_RETENTION_DAYS = Number(process.env.NV0_DATA_RETENTION_DAYS || 1095);
 const REFUND_REQUEST_WINDOW_DAYS = Number(process.env.NV0_REFUND_REQUEST_WINDOW_DAYS || 7);
 const OPERATOR_ALERT_EMAIL = process.env.NV0_OPERATOR_ALERT_EMAIL || BUSINESS_PROFILE.contactEmail;

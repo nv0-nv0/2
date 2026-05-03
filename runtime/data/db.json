@@ -41,8 +41,42 @@
     "pricingSourceNote": "Premium launch ladder benchmarked against LawForm, public Korean expert-service listings, international privacy-compliance SaaS, and PortOne/Galaxia fee structure. Verify live prices before launch.",
     "pricingStandard": "phase132-30-percent-competitive-3x-value"
   },
-  "orders": [],
-  "subscriptions": [],
+  "orders": [
+    {
+      "id": "ord-1001",
+      "customer": "Acme Co",
+      "status": "paid",
+      "stage": "scan_requested",
+      "amount": 199000,
+      "createdAt": "2026-04-26T02:33:02.683Z"
+    },
+    {
+      "id": "ord-1002",
+      "customer": "Beta Labs",
+      "status": "pending",
+      "stage": "draft",
+      "amount": 69000,
+      "createdAt": "2026-04-26T02:33:02.684Z"
+    }
+  ],
+  "subscriptions": [
+    {
+      "id": "sub-8806a1ed",
+      "siteId": "site-f14be122",
+      "plan": "Auto",
+      "status": "trial",
+      "monthlyPrice": 299000,
+      "createdAt": "2026-04-26T07:56:53.863Z"
+    },
+    {
+      "id": "sub-1001",
+      "siteId": "site-seed-001",
+      "plan": "Auto",
+      "status": "active",
+      "monthlyPrice": 299000,
+      "createdAt": "2026-04-26T02:33:02.684Z"
+    }
+  ],
   "publications": [
     {
       "id": "pub-p159-001",
@@ -528,8 +562,769 @@
     }
   ],
   "library": [],
-  "scans": [],
-  "sites": [],
+  "scans": [
+    {
+      "siteId": "site-f14be122",
+      "subscriptionId": "sub-8806a1ed",
+      "customerId": null,
+      "createdAt": "2026-04-26T07:56:53.893Z",
+      "requestId": "scan-93a5ace4",
+      "provider": "builtin",
+      "target": "https://example.com",
+      "normalizedTarget": "https://example.com",
+      "summary": "https://example.com/ 최근 분석 결과를 재사용했습니다.",
+      "fetched": false,
+      "fetchStatus": 0,
+      "fetchError": "target fetch disabled",
+      "industry": "일반 이커머스",
+      "siteProfile": {
+        "industry": "일반 이커머스",
+        "siteType": "일반 웹사이트",
+        "likelyHighRegulation": false,
+        "signals": {
+          "hasSignup": false,
+          "hasCheckout": false,
+          "hasProductDetail": false,
+          "hasPrivacyPolicy": false,
+          "hasTerms": false,
+          "hasRefundPolicy": false,
+          "hasContactInfo": false
+        },
+        "keyPages": [
+          "홈",
+          "푸터"
+        ]
+      },
+      "categoryScores": {
+        "전자상거래": 93,
+        "개인정보": 91,
+        "환불·청약철회": 43,
+        "고객지원": 21
+      },
+      "ruleVersion": "2026.04.25-phase68-auto-diagnosis",
+      "scanMode": "focused_key_pages",
+      "cached": true,
+      "riskScore": 100,
+      "riskLevel": "매우 높음",
+      "totalFindings": 6,
+      "categoryCounts": {
+        "전자상거래": 2,
+        "개인정보": 2,
+        "환불·청약철회": 1,
+        "고객지원": 1
+      },
+      "estimatedMaxPenalty": 27000000,
+      "topFindings": [
+        "개인정보처리방침 링크 또는 본문 (P0)",
+        "사업자 정보 고지 (P0)",
+        "환불·교환·청약철회 안내 (P1)",
+        "이용약관 링크 또는 본문 (P2)",
+        "고객센터 연락수단 (P2)"
+      ],
+      "detailFindings": [
+        {
+          "id": "finding-3ca68fbb",
+          "code": "PRIVACY-POLICY",
+          "category": "개인정보",
+          "title": "개인정보처리방침 링크 또는 본문",
+          "severity": 26,
+          "priority": "P0",
+          "estimatedPenaltyMax": 10000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "푸터와 회원가입 영역에 개인정보처리방침 링크를 노출합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-71de0814",
+          "code": "ECOM-BUSINESS-INFO",
+          "category": "전자상거래",
+          "title": "사업자 정보 고지",
+          "severity": 24,
+          "priority": "P0",
+          "estimatedPenaltyMax": 5000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "푸터에 상호/대표자/사업자등록번호/통신판매신고번호/주소/연락처를 추가합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-02bd388f",
+          "code": "REFUND-POLICY",
+          "category": "환불·청약철회",
+          "title": "환불·교환·청약철회 안내",
+          "severity": 18,
+          "priority": "P1",
+          "estimatedPenaltyMax": 5000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "상품상세·푸터·정책 페이지에 환불/교환/청약철회 기준을 분리 표기합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-45119e96",
+          "code": "TERMS-OF-USE",
+          "category": "전자상거래",
+          "title": "이용약관 링크 또는 본문",
+          "severity": 12,
+          "priority": "P2",
+          "estimatedPenaltyMax": 3000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "푸터와 가입/결제 구간에 이용약관 링크를 배치합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-2595bef5",
+          "code": "CONTACT-CHANNEL",
+          "category": "고객지원",
+          "title": "고객센터 연락수단",
+          "severity": 10,
+          "priority": "P2",
+          "estimatedPenaltyMax": 2000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "대표 이메일 또는 전화번호를 푸터와 문의영역에 추가합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-39d51245",
+          "code": "TRACKING-CONSENT",
+          "category": "개인정보",
+          "title": "쿠키/추적 고지 부족",
+          "severity": 8,
+          "priority": "P2",
+          "estimatedPenaltyMax": 2000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "분석·광고 쿠키 사용 시 배너 또는 정책 내 고지 항목을 추가합니다.",
+          "autoFixEligible": true
+        }
+      ],
+      "autoFixCandidates": [
+        {
+          "findingCode": "PRIVACY-POLICY",
+          "title": "개인정보처리방침 링크 또는 본문",
+          "patchSummary": "푸터와 회원가입 영역에 개인정보처리방침 링크를 노출합니다."
+        },
+        {
+          "findingCode": "ECOM-BUSINESS-INFO",
+          "title": "사업자 정보 고지",
+          "patchSummary": "푸터에 상호/대표자/사업자등록번호/통신판매신고번호/주소/연락처를 추가합니다."
+        },
+        {
+          "findingCode": "REFUND-POLICY",
+          "title": "환불·교환·청약철회 안내",
+          "patchSummary": "상품상세·푸터·정책 페이지에 환불/교환/청약철회 기준을 분리 표기합니다."
+        },
+        {
+          "findingCode": "TERMS-OF-USE",
+          "title": "이용약관 링크 또는 본문",
+          "patchSummary": "푸터와 가입/결제 구간에 이용약관 링크를 배치합니다."
+        },
+        {
+          "findingCode": "CONTACT-CHANNEL",
+          "title": "고객센터 연락수단",
+          "patchSummary": "대표 이메일 또는 전화번호를 푸터와 문의영역에 추가합니다."
+        }
+      ],
+      "recommendedPlan": "Auto",
+      "lockedPreviewCount": 3,
+      "generatedAt": "2026-04-26T07:56:53.924Z",
+      "elapsedMs": 1,
+      "findings": [
+        {
+          "key": "PRIVACY-POLICY",
+          "label": "개인정보처리방침 링크 또는 본문",
+          "status": "P0"
+        },
+        {
+          "key": "ECOM-BUSINESS-INFO",
+          "label": "사업자 정보 고지",
+          "status": "P0"
+        },
+        {
+          "key": "REFUND-POLICY",
+          "label": "환불·교환·청약철회 안내",
+          "status": "P1"
+        }
+      ],
+      "nextActions": [
+        "/plans",
+        "/checkout",
+        "/portal"
+      ],
+      "cachedFromRequestId": "scan-3ddd17b5"
+    },
+    {
+      "siteId": "site-f14be122",
+      "subscriptionId": "sub-8806a1ed",
+      "customerId": null,
+      "createdAt": "2026-04-26T07:56:53.893Z",
+      "requestId": "scan-3ddd17b5",
+      "provider": "builtin",
+      "target": "https://example.com",
+      "normalizedTarget": "https://example.com",
+      "summary": "https://example.com/ 최근 분석 결과를 재사용했습니다.",
+      "fetched": false,
+      "fetchStatus": 0,
+      "fetchError": "target fetch disabled",
+      "industry": "일반 이커머스",
+      "siteProfile": {
+        "industry": "일반 이커머스",
+        "siteType": "일반 웹사이트",
+        "likelyHighRegulation": false,
+        "signals": {
+          "hasSignup": false,
+          "hasCheckout": false,
+          "hasProductDetail": false,
+          "hasPrivacyPolicy": false,
+          "hasTerms": false,
+          "hasRefundPolicy": false,
+          "hasContactInfo": false
+        },
+        "keyPages": [
+          "홈",
+          "푸터"
+        ]
+      },
+      "categoryScores": {
+        "전자상거래": 93,
+        "개인정보": 91,
+        "환불·청약철회": 43,
+        "고객지원": 21
+      },
+      "ruleVersion": "2026.04.25-phase68-auto-diagnosis",
+      "scanMode": "focused_key_pages",
+      "cached": true,
+      "riskScore": 100,
+      "riskLevel": "매우 높음",
+      "totalFindings": 6,
+      "categoryCounts": {
+        "전자상거래": 2,
+        "개인정보": 2,
+        "환불·청약철회": 1,
+        "고객지원": 1
+      },
+      "estimatedMaxPenalty": 27000000,
+      "topFindings": [
+        "개인정보처리방침 링크 또는 본문 (P0)",
+        "사업자 정보 고지 (P0)",
+        "환불·교환·청약철회 안내 (P1)",
+        "이용약관 링크 또는 본문 (P2)",
+        "고객센터 연락수단 (P2)"
+      ],
+      "detailFindings": [
+        {
+          "id": "finding-3ca68fbb",
+          "code": "PRIVACY-POLICY",
+          "category": "개인정보",
+          "title": "개인정보처리방침 링크 또는 본문",
+          "severity": 26,
+          "priority": "P0",
+          "estimatedPenaltyMax": 10000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "푸터와 회원가입 영역에 개인정보처리방침 링크를 노출합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-71de0814",
+          "code": "ECOM-BUSINESS-INFO",
+          "category": "전자상거래",
+          "title": "사업자 정보 고지",
+          "severity": 24,
+          "priority": "P0",
+          "estimatedPenaltyMax": 5000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "푸터에 상호/대표자/사업자등록번호/통신판매신고번호/주소/연락처를 추가합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-02bd388f",
+          "code": "REFUND-POLICY",
+          "category": "환불·청약철회",
+          "title": "환불·교환·청약철회 안내",
+          "severity": 18,
+          "priority": "P1",
+          "estimatedPenaltyMax": 5000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "상품상세·푸터·정책 페이지에 환불/교환/청약철회 기준을 분리 표기합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-45119e96",
+          "code": "TERMS-OF-USE",
+          "category": "전자상거래",
+          "title": "이용약관 링크 또는 본문",
+          "severity": 12,
+          "priority": "P2",
+          "estimatedPenaltyMax": 3000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "푸터와 가입/결제 구간에 이용약관 링크를 배치합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-2595bef5",
+          "code": "CONTACT-CHANNEL",
+          "category": "고객지원",
+          "title": "고객센터 연락수단",
+          "severity": 10,
+          "priority": "P2",
+          "estimatedPenaltyMax": 2000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "대표 이메일 또는 전화번호를 푸터와 문의영역에 추가합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-39d51245",
+          "code": "TRACKING-CONSENT",
+          "category": "개인정보",
+          "title": "쿠키/추적 고지 부족",
+          "severity": 8,
+          "priority": "P2",
+          "estimatedPenaltyMax": 2000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "분석·광고 쿠키 사용 시 배너 또는 정책 내 고지 항목을 추가합니다.",
+          "autoFixEligible": true
+        }
+      ],
+      "autoFixCandidates": [
+        {
+          "findingCode": "PRIVACY-POLICY",
+          "title": "개인정보처리방침 링크 또는 본문",
+          "patchSummary": "푸터와 회원가입 영역에 개인정보처리방침 링크를 노출합니다."
+        },
+        {
+          "findingCode": "ECOM-BUSINESS-INFO",
+          "title": "사업자 정보 고지",
+          "patchSummary": "푸터에 상호/대표자/사업자등록번호/통신판매신고번호/주소/연락처를 추가합니다."
+        },
+        {
+          "findingCode": "REFUND-POLICY",
+          "title": "환불·교환·청약철회 안내",
+          "patchSummary": "상품상세·푸터·정책 페이지에 환불/교환/청약철회 기준을 분리 표기합니다."
+        },
+        {
+          "findingCode": "TERMS-OF-USE",
+          "title": "이용약관 링크 또는 본문",
+          "patchSummary": "푸터와 가입/결제 구간에 이용약관 링크를 배치합니다."
+        },
+        {
+          "findingCode": "CONTACT-CHANNEL",
+          "title": "고객센터 연락수단",
+          "patchSummary": "대표 이메일 또는 전화번호를 푸터와 문의영역에 추가합니다."
+        }
+      ],
+      "recommendedPlan": "Auto",
+      "lockedPreviewCount": 3,
+      "generatedAt": "2026-04-26T07:56:53.915Z",
+      "elapsedMs": 1,
+      "findings": [
+        {
+          "key": "PRIVACY-POLICY",
+          "label": "개인정보처리방침 링크 또는 본문",
+          "status": "P0"
+        },
+        {
+          "key": "ECOM-BUSINESS-INFO",
+          "label": "사업자 정보 고지",
+          "status": "P0"
+        },
+        {
+          "key": "REFUND-POLICY",
+          "label": "환불·교환·청약철회 안내",
+          "status": "P1"
+        }
+      ],
+      "nextActions": [
+        "/plans",
+        "/checkout",
+        "/portal"
+      ],
+      "cachedFromRequestId": "scan-732eadec"
+    },
+    {
+      "siteId": "site-f14be122",
+      "subscriptionId": "sub-8806a1ed",
+      "customerId": null,
+      "createdAt": "2026-04-26T07:56:53.893Z",
+      "requestId": "scan-732eadec",
+      "provider": "builtin",
+      "target": "https://example.com",
+      "normalizedTarget": "https://example.com",
+      "summary": "https://example.com/ 최근 분석 결과를 재사용했습니다.",
+      "fetched": false,
+      "fetchStatus": 0,
+      "fetchError": "target fetch disabled",
+      "industry": "일반 이커머스",
+      "siteProfile": {
+        "industry": "일반 이커머스",
+        "siteType": "일반 웹사이트",
+        "likelyHighRegulation": false,
+        "signals": {
+          "hasSignup": false,
+          "hasCheckout": false,
+          "hasProductDetail": false,
+          "hasPrivacyPolicy": false,
+          "hasTerms": false,
+          "hasRefundPolicy": false,
+          "hasContactInfo": false
+        },
+        "keyPages": [
+          "홈",
+          "푸터"
+        ]
+      },
+      "categoryScores": {
+        "전자상거래": 93,
+        "개인정보": 91,
+        "환불·청약철회": 43,
+        "고객지원": 21
+      },
+      "ruleVersion": "2026.04.25-phase68-auto-diagnosis",
+      "scanMode": "focused_key_pages",
+      "cached": true,
+      "riskScore": 100,
+      "riskLevel": "매우 높음",
+      "totalFindings": 6,
+      "categoryCounts": {
+        "전자상거래": 2,
+        "개인정보": 2,
+        "환불·청약철회": 1,
+        "고객지원": 1
+      },
+      "estimatedMaxPenalty": 27000000,
+      "topFindings": [
+        "개인정보처리방침 링크 또는 본문 (P0)",
+        "사업자 정보 고지 (P0)",
+        "환불·교환·청약철회 안내 (P1)",
+        "이용약관 링크 또는 본문 (P2)",
+        "고객센터 연락수단 (P2)"
+      ],
+      "detailFindings": [
+        {
+          "id": "finding-3ca68fbb",
+          "code": "PRIVACY-POLICY",
+          "category": "개인정보",
+          "title": "개인정보처리방침 링크 또는 본문",
+          "severity": 26,
+          "priority": "P0",
+          "estimatedPenaltyMax": 10000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "푸터와 회원가입 영역에 개인정보처리방침 링크를 노출합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-71de0814",
+          "code": "ECOM-BUSINESS-INFO",
+          "category": "전자상거래",
+          "title": "사업자 정보 고지",
+          "severity": 24,
+          "priority": "P0",
+          "estimatedPenaltyMax": 5000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "푸터에 상호/대표자/사업자등록번호/통신판매신고번호/주소/연락처를 추가합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-02bd388f",
+          "code": "REFUND-POLICY",
+          "category": "환불·청약철회",
+          "title": "환불·교환·청약철회 안내",
+          "severity": 18,
+          "priority": "P1",
+          "estimatedPenaltyMax": 5000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "상품상세·푸터·정책 페이지에 환불/교환/청약철회 기준을 분리 표기합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-45119e96",
+          "code": "TERMS-OF-USE",
+          "category": "전자상거래",
+          "title": "이용약관 링크 또는 본문",
+          "severity": 12,
+          "priority": "P2",
+          "estimatedPenaltyMax": 3000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "푸터와 가입/결제 구간에 이용약관 링크를 배치합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-2595bef5",
+          "code": "CONTACT-CHANNEL",
+          "category": "고객지원",
+          "title": "고객센터 연락수단",
+          "severity": 10,
+          "priority": "P2",
+          "estimatedPenaltyMax": 2000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "대표 이메일 또는 전화번호를 푸터와 문의영역에 추가합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-39d51245",
+          "code": "TRACKING-CONSENT",
+          "category": "개인정보",
+          "title": "쿠키/추적 고지 부족",
+          "severity": 8,
+          "priority": "P2",
+          "estimatedPenaltyMax": 2000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "분석·광고 쿠키 사용 시 배너 또는 정책 내 고지 항목을 추가합니다.",
+          "autoFixEligible": true
+        }
+      ],
+      "autoFixCandidates": [
+        {
+          "findingCode": "PRIVACY-POLICY",
+          "title": "개인정보처리방침 링크 또는 본문",
+          "patchSummary": "푸터와 회원가입 영역에 개인정보처리방침 링크를 노출합니다."
+        },
+        {
+          "findingCode": "ECOM-BUSINESS-INFO",
+          "title": "사업자 정보 고지",
+          "patchSummary": "푸터에 상호/대표자/사업자등록번호/통신판매신고번호/주소/연락처를 추가합니다."
+        },
+        {
+          "findingCode": "REFUND-POLICY",
+          "title": "환불·교환·청약철회 안내",
+          "patchSummary": "상품상세·푸터·정책 페이지에 환불/교환/청약철회 기준을 분리 표기합니다."
+        },
+        {
+          "findingCode": "TERMS-OF-USE",
+          "title": "이용약관 링크 또는 본문",
+          "patchSummary": "푸터와 가입/결제 구간에 이용약관 링크를 배치합니다."
+        },
+        {
+          "findingCode": "CONTACT-CHANNEL",
+          "title": "고객센터 연락수단",
+          "patchSummary": "대표 이메일 또는 전화번호를 푸터와 문의영역에 추가합니다."
+        }
+      ],
+      "recommendedPlan": "Auto",
+      "lockedPreviewCount": 3,
+      "generatedAt": "2026-04-26T07:56:53.905Z",
+      "elapsedMs": 1,
+      "findings": [
+        {
+          "key": "PRIVACY-POLICY",
+          "label": "개인정보처리방침 링크 또는 본문",
+          "status": "P0"
+        },
+        {
+          "key": "ECOM-BUSINESS-INFO",
+          "label": "사업자 정보 고지",
+          "status": "P0"
+        },
+        {
+          "key": "REFUND-POLICY",
+          "label": "환불·교환·청약철회 안내",
+          "status": "P1"
+        }
+      ],
+      "nextActions": [
+        "/plans",
+        "/checkout",
+        "/portal"
+      ],
+      "cachedFromRequestId": "scan-41194fb9"
+    },
+    {
+      "siteId": "site-f14be122",
+      "subscriptionId": "sub-8806a1ed",
+      "customerId": null,
+      "createdAt": "2026-04-26T07:56:53.893Z",
+      "requestId": "scan-41194fb9",
+      "provider": "builtin",
+      "target": "https://example.com",
+      "normalizedTarget": "https://example.com",
+      "summary": "https://example.com 핵심 페이지 중심 분석이 완료되었습니다.",
+      "fetched": false,
+      "fetchStatus": 0,
+      "fetchError": "target fetch disabled",
+      "industry": "일반 이커머스",
+      "siteProfile": {
+        "industry": "일반 이커머스",
+        "siteType": "일반 웹사이트",
+        "likelyHighRegulation": false,
+        "signals": {
+          "hasSignup": false,
+          "hasCheckout": false,
+          "hasProductDetail": false,
+          "hasPrivacyPolicy": false,
+          "hasTerms": false,
+          "hasRefundPolicy": false,
+          "hasContactInfo": false
+        },
+        "keyPages": [
+          "홈",
+          "푸터"
+        ]
+      },
+      "categoryScores": {
+        "전자상거래": 93,
+        "개인정보": 91,
+        "환불·청약철회": 43,
+        "고객지원": 21
+      },
+      "ruleVersion": "2026.04.25-phase68-auto-diagnosis",
+      "scanMode": "focused_key_pages",
+      "cached": false,
+      "riskScore": 100,
+      "riskLevel": "매우 높음",
+      "totalFindings": 6,
+      "categoryCounts": {
+        "전자상거래": 2,
+        "개인정보": 2,
+        "환불·청약철회": 1,
+        "고객지원": 1
+      },
+      "estimatedMaxPenalty": 27000000,
+      "topFindings": [
+        "개인정보처리방침 링크 또는 본문 (P0)",
+        "사업자 정보 고지 (P0)",
+        "환불·교환·청약철회 안내 (P1)",
+        "이용약관 링크 또는 본문 (P2)",
+        "고객센터 연락수단 (P2)"
+      ],
+      "detailFindings": [
+        {
+          "id": "finding-3ca68fbb",
+          "code": "PRIVACY-POLICY",
+          "category": "개인정보",
+          "title": "개인정보처리방침 링크 또는 본문",
+          "severity": 26,
+          "priority": "P0",
+          "estimatedPenaltyMax": 10000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "푸터와 회원가입 영역에 개인정보처리방침 링크를 노출합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-71de0814",
+          "code": "ECOM-BUSINESS-INFO",
+          "category": "전자상거래",
+          "title": "사업자 정보 고지",
+          "severity": 24,
+          "priority": "P0",
+          "estimatedPenaltyMax": 5000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "푸터에 상호/대표자/사업자등록번호/통신판매신고번호/주소/연락처를 추가합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-02bd388f",
+          "code": "REFUND-POLICY",
+          "category": "환불·청약철회",
+          "title": "환불·교환·청약철회 안내",
+          "severity": 18,
+          "priority": "P1",
+          "estimatedPenaltyMax": 5000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "상품상세·푸터·정책 페이지에 환불/교환/청약철회 기준을 분리 표기합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-45119e96",
+          "code": "TERMS-OF-USE",
+          "category": "전자상거래",
+          "title": "이용약관 링크 또는 본문",
+          "severity": 12,
+          "priority": "P2",
+          "estimatedPenaltyMax": 3000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "푸터와 가입/결제 구간에 이용약관 링크를 배치합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-2595bef5",
+          "code": "CONTACT-CHANNEL",
+          "category": "고객지원",
+          "title": "고객센터 연락수단",
+          "severity": 10,
+          "priority": "P2",
+          "estimatedPenaltyMax": 2000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "대표 이메일 또는 전화번호를 푸터와 문의영역에 추가합니다.",
+          "autoFixEligible": true
+        },
+        {
+          "id": "finding-39d51245",
+          "code": "TRACKING-CONSENT",
+          "category": "개인정보",
+          "title": "쿠키/추적 고지 부족",
+          "severity": 8,
+          "priority": "P2",
+          "estimatedPenaltyMax": 2000000,
+          "evidence": "페이지 본문 미수집",
+          "recommendation": "분석·광고 쿠키 사용 시 배너 또는 정책 내 고지 항목을 추가합니다.",
+          "autoFixEligible": true
+        }
+      ],
+      "autoFixCandidates": [
+        {
+          "findingCode": "PRIVACY-POLICY",
+          "title": "개인정보처리방침 링크 또는 본문",
+          "patchSummary": "푸터와 회원가입 영역에 개인정보처리방침 링크를 노출합니다."
+        },
+        {
+          "findingCode": "ECOM-BUSINESS-INFO",
+          "title": "사업자 정보 고지",
+          "patchSummary": "푸터에 상호/대표자/사업자등록번호/통신판매신고번호/주소/연락처를 추가합니다."
+        },
+        {
+          "findingCode": "REFUND-POLICY",
+          "title": "환불·교환·청약철회 안내",
+          "patchSummary": "상품상세·푸터·정책 페이지에 환불/교환/청약철회 기준을 분리 표기합니다."
+        },
+        {
+          "findingCode": "TERMS-OF-USE",
+          "title": "이용약관 링크 또는 본문",
+          "patchSummary": "푸터와 가입/결제 구간에 이용약관 링크를 배치합니다."
+        },
+        {
+          "findingCode": "CONTACT-CHANNEL",
+          "title": "고객센터 연락수단",
+          "patchSummary": "대표 이메일 또는 전화번호를 푸터와 문의영역에 추가합니다."
+        }
+      ],
+      "recommendedPlan": "Auto",
+      "lockedPreviewCount": 3,
+      "generatedAt": "2026-04-26T07:56:53.862Z",
+      "elapsedMs": 4,
+      "findings": [
+        {
+          "key": "PRIVACY-POLICY",
+          "label": "개인정보처리방침 링크 또는 본문",
+          "status": "P0"
+        },
+        {
+          "key": "ECOM-BUSINESS-INFO",
+          "label": "사업자 정보 고지",
+          "status": "P0"
+        },
+        {
+          "key": "REFUND-POLICY",
+          "label": "환불·교환·청약철회 안내",
+          "status": "P1"
+        }
+      ],
+      "nextActions": [
+        "/plans",
+        "/checkout",
+        "/portal"
+      ]
+    }
+  ],
+  "sites": [
+    {
+      "id": "site-f14be122",
+      "domain": "https://example.com",
+      "industry": "일반 이커머스",
+      "jurisdiction": "KR",
+      "latestRiskScore": 100,
+      "latestRiskLevel": "매우 높음",
+      "latestEstimatedMaxPenalty": 27000000,
+      "lastScanAt": "2026-04-26T07:56:53.924Z",
+      "createdAt": "2026-04-26T07:56:53.862Z",
+      "status": "active"
+    }
+  ],
   "legalUpdates": [
     {
       "id": "law-1001",
@@ -648,21 +1443,5 @@
   "auditLogs": [],
   "refundRequests": [],
   "operationalEvents": [],
-  "idempotencyKeys": [],
-  "securityStorage": {
-    "secureCollections": [
-      "customers",
-      "orders",
-      "subscriptions",
-      "sites",
-      "scans",
-      "purchasedAssets",
-      "paymentSessions",
-      "paymentEvents",
-      "webhookInbox",
-      "auditLogs"
-    ],
-    "separatedAt": "2026-05-02T14:49:21.004Z",
-    "mode": "secure-record-store"
-  }
+  "idempotencyKeys": []
 }

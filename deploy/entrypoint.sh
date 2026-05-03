@@ -3,7 +3,7 @@ set -eu
 
 log() { printf '%s\n' "$*" >&2; }
 warn() { log "nv0 entrypoint warning: $*"; }
-info() { log "nv0 entrypoint: $*"; }
+info() { [ "${NV0_ENTRYPOINT_VERBOSE:-false}" = "true" ] && log "nv0 entrypoint: $*" || true; }
 
 PLATFORM_TARGET="${NV0_PLATFORM_TARGET:-commercial}"
 PERSISTENCE_MODE="${NV0_PERSISTENCE_MODE:-postgres_primary}"
@@ -11,6 +11,15 @@ STORAGE_MODE="${NV0_STORAGE_MODE:-s3}"
 FALLBACK_RUNTIME_DIR="${NV0_FALLBACK_RUNTIME_DIR:-/tmp/nv0-runtime}"
 APP_USER="${NV0_APP_USER:-nv0}"
 APP_GROUP="${NV0_APP_GROUP:-nv0}"
+FORCE_RUNTIME_DIR="${NV0_FORCE_RUNTIME_DIR:-false}"
+
+normalize_mode_value() {
+  printf '%s' "$1" | tr '[:upper:]' '[:lower:]'
+}
+
+PLATFORM_TARGET="$(normalize_mode_value "$PLATFORM_TARGET")"
+PERSISTENCE_MODE="$(normalize_mode_value "$PERSISTENCE_MODE")"
+STORAGE_MODE="$(normalize_mode_value "$STORAGE_MODE")"
 
 external_durable_mode() {
   [ "$PLATFORM_TARGET" = "commercial" ] && [ "$PERSISTENCE_MODE" = "postgres_primary" ] && [ "$STORAGE_MODE" != "local_fs" ]
@@ -23,12 +32,29 @@ persistent_runtime_required() {
   return 0
 }
 
-if [ -n "${NV0_RUNTIME_DIR:-}" ]; then
+is_legacy_runtime_dir() {
+  [ "$1" = "/app/runtime" ] || [ "$1" = "/app/runtime/" ]
+}
+
+runtime_env_is_set() {
+  [ "${NV0_RUNTIME_DIR+x}" = "x" ] && [ -n "${NV0_RUNTIME_DIR:-}" ]
+}
+
+if runtime_env_is_set; then
   RUNTIME_DIR="$NV0_RUNTIME_DIR"
-elif external_durable_mode; then
-  RUNTIME_DIR="$FALLBACK_RUNTIME_DIR"
 else
   RUNTIME_DIR="/app/runtime"
+fi
+
+# Coolify can preserve an older NV0_RUNTIME_DIR=/app/runtime override even after the
+# image and env examples changed. In commercial postgres+s3 mode the durable state is
+# already external, so treat that legacy override as scratch-runtime auto mode unless
+# the operator explicitly forces it.
+if external_durable_mode && ! persistent_runtime_required && [ "$FORCE_RUNTIME_DIR" != "true" ] && is_legacy_runtime_dir "$RUNTIME_DIR"; then
+  RUNTIME_DIR="$FALLBACK_RUNTIME_DIR"
+  info "using ephemeral scratch runtime '$RUNTIME_DIR' for external durable mode; legacy /app/runtime override ignored."
+elif ! runtime_env_is_set && external_durable_mode; then
+  RUNTIME_DIR="$FALLBACK_RUNTIME_DIR"
 fi
 
 prepare_runtime_tree() {
