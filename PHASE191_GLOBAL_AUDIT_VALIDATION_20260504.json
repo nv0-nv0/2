@@ -1,0 +1,37 @@
+{
+  "phase": "PHASE191_GLOBAL_AUDIT_REPAIR_DELIVERY",
+  "date": "2026-05-04",
+  "source_package": "nv0_phase190_global_ux_copy_infographic_complete_20260503.zip",
+  "delivery_package": "nv0_phase191_global_audit_repaired_delivery_20260504.zip",
+  "diagnosed_items_total": 34,
+  "fixed_in_package": 32,
+  "operator_evidence_required": 2,
+  "validation": {
+    "check_syntax": { "ok": true, "checkedCount": 208 },
+    "test_all": { "ok": true, "passed": 88, "failed": 0 },
+    "test_e2e": { "ok": true },
+    "test_routes": { "ok": true, "checked": 24 },
+    "check_links": { "ok": true, "checkedCount": 381, "errorCount": 0 },
+    "smoke": { "ok": true },
+    "validate_deploy": { "ok": true },
+    "check_env_examples": { "ok": true },
+    "audit_global": { "ok": true, "score": 100 },
+    "validate_commercial": { "ok": true },
+    "validate_pipeline": { "ok": true },
+    "check_pages": { "ok": true, "mappedRouteCount": 34 },
+    "verify_prod": { "ok": true },
+    "ci_strict": { "ok": true },
+    "validate_phase179": { "ok": true, "passed": 100, "failed": 0 },
+    "validate_phase180": { "ok": true, "passed": 30, "failed": 0 },
+    "validate_phase181": { "ok": true, "passed": 24, "failed": 0 },
+    "validate_phase182": { "ok": true, "passed": 14, "failed": 0, "scoreEstimate": 98.4 },
+    "validate_phase183": { "ok": true, "passed": 18, "failed": 0, "scoreEstimate": 99.2 },
+    "phase183_final": { "ok": true, "passed": 2, "failed": 0, "scoreEstimate": 99.2 },
+    "placeholder_runtime_check": { "ok": true, "replaceWithNumberCount": 0, "mailOrderLabelCount": 0 }
+  },
+  "notes": [
+    "Live nv0.kr was inspected through web-rendered text. Direct production file modification was not possible from this environment.",
+    "Package-level fixes are complete and require deployment to affect the live site.",
+    "30 external evidence items remain gated for real production proof according to the package validator."
+  ]
+}

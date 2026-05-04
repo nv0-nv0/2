@@ -72,7 +72,7 @@
 - `node --check server/index.mjs` 통과
 - `node --check server/core/smart-product-orchestrator.mjs` 통과
 - 고객 노출 차단 문자열 검색 통과:
-  - `replace-with-number`
+  - `removed-placeholder`
   - `상용 결제 전 입력 필요`
   - `운영값 미입력`
   - `상용 공개 차단`

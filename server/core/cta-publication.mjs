@@ -52,7 +52,7 @@ function bodyWordEstimate(topic = {}, faqSet = []) {
 function tagsFor(industry, topic = {}, seed = '') {
   const compact = String(industry || '온라인사업').replace(/\s+/g, '');
   const keywordTags = keywordBase(industry, topic).map(item => `#${item.replace(/[\s·/]+/g, '')}`);
-  const base = [`#${compact}`, '#사이트점검', '#무료진단', '#고객안내', '#CTA', '#SEO', `#${String(topic.ctaType || '운영').replace(/_/g, '')}`];
+  const base = [`#${compact}`, '#사이트점검', '#무료 진단', '#고객안내', '#CTA', '#SEO', `#${String(topic.ctaType || '운영').replace(/_/g, '')}`];
   const extra = pick([
     ['#전환율개선', '#문의전환', '#상세페이지'],
     ['#쇼핑몰운영', '#정책점검', '#신뢰도개선'],

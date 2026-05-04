@@ -157,10 +157,10 @@ body{background:radial-gradient(circle at 18% -10%,rgba(30,105,255,.24),transpar
 .nv74-nav a{line-height:1.45;gap:8px;}
 .nv74-main p,.nv74-task small,.nv74-metrics span,.nv74-card footer,.portal-empty{line-height:1.62;}
 .save-site-form label{display:grid;gap:8px;line-height:1.45;color:#E2E8F0;font-weight:850;}
-.save-site-form input{min-height:50px;background:#0B1220!important;color:#fff!important;border:1px solid rgba(51,65,85,.9)!important;border-radius:14px;padding:13px 15px;}
-.site-kpi div{line-height:1.55;background:#0B1220!important;border-color:rgba(51,65,85,.8)!important;}
-.site-kpi b{color:#fff!important;}
-.site-kpi span{color:#A8B3C4!important;}
+.save-site-form input{min-height:50px;background:#0B1220;color:#fff;border:1px solid rgba(51,65,85,.9);border-radius:14px;padding:13px 15px;}
+.site-kpi div{line-height:1.55;background:#0B1220;border-color:rgba(51,65,85,.8);}
+.site-kpi b{color:#fff;}
+.site-kpi span{color:#A8B3C4;}
 @media(max-width:900px){.nv74-dashboard-shell{display:block}.nv74-sidebar{position:relative;width:auto}.nv74-main{min-width:0}.nv74-topbar{gap:16px;flex-direction:column;align-items:stretch}.nv74-top-actions{display:grid;grid-template-columns:1fr}.nv74-task{grid-template-columns:auto 1fr;}.nv74-task progress,.nv74-task .status{grid-column:2}}
 
 

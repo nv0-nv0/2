@@ -48,7 +48,7 @@ function priceLabel(offer) {
   return `${formatWon(Number(offer.price || 0))}원${offer.period ? ` / ${offer.period}` : ''}`;
 }
 function renderPriceSummary() {
-  const code = planInput?.value || 'Pro';
+  const code = planInput?.value || 'Report';
   const offer = offerMap.get(code) || null;
   if (!offer) {
     summaryPlanName.textContent = '선택한 상품 정보를 확인하는 중입니다.';
@@ -79,7 +79,7 @@ function getPrefill() {
   const saved = getSavedScan();
   return {
     siteId: url.searchParams.get('siteId') || saved?.siteId || '',
-    plan: url.searchParams.get('plan') || saved?.recommendedPlan || 'Pro',
+    plan: url.searchParams.get('plan') || saved?.recommendedPlan || 'Report',
     domain: url.searchParams.get('domain') || saved?.target || ''
   };
 }
@@ -118,7 +118,7 @@ async function createSession() {
     buyerEmail: document.getElementById('buyerEmail')?.value.trim() || '',
     siteId: prefill.siteId,
     domain: prefill.domain,
-    plan: planInput?.value || 'Pro',
+    plan: planInput?.value || 'Report',
     privacyConsent: !!document.getElementById('privacyConsent')?.checked,
     termsConsent: !!document.getElementById('termsConsent')?.checked,
     refundConsent: !!document.getElementById('refundConsent')?.checked,
@@ -211,7 +211,7 @@ async function maybeFinalizeRedirectResult() {
     state.textContent = message || '결제가 완료되지 않았습니다.';
     return;
   }
-  currentOrder = { id: paymentId, amount: 0, plan: prefill.plan || 'Pro', status: 'pending', domain: prefill.domain || '', siteId: prefill.siteId || '' };
+  currentOrder = { id: paymentId, amount: 0, plan: prefill.plan || 'Report', status: 'pending', domain: prefill.domain || '', siteId: prefill.siteId || '' };
   currentPaymentSession = { provider: 'portone_v2', providerPaymentId: paymentId };
   state.textContent = '리디렉트 결제 결과를 검증 중입니다.';
   await completePayment();

@@ -168,7 +168,7 @@ export function buildSmartProductOrchestration({ scan = {}, site = null, intelli
       '무료 진단으로 신뢰 공백 확인',
       '결과에 맞춰 Report/FixPack/Auto 자동 추천',
       '내 사이트 관리에서 저장·재검사',
-      '콘텐츠 보드으로 재유입 콘텐츠 발행'
+      '콘텐츠 보드로 재유입 콘텐츠 발행'
     ],
     productFit: {
       recommendedPlan,
