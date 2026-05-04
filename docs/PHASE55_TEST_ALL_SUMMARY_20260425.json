@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-05-04T00:22:35.184Z",
+  "generatedAt": "2026-05-04T10:12:33.806Z",
   "ok": true,
   "phase": "commercial-final",
-  "total": 88,
-  "passed": 88,
+  "total": 85,
+  "passed": 85,
   "failed": 0,
   "checks": [
     {
@@ -344,18 +344,6 @@
     },
     {
       "name": "client:no-inline-handler",
-      "ok": true
-    },
-    {
-      "name": "runtime:runtime/uploads:empty",
-      "ok": true
-    },
-    {
-      "name": "runtime:runtime/backups:empty",
-      "ok": true
-    },
-    {
-      "name": "runtime:runtime/reports:empty",
       "ok": true
     }
   ]

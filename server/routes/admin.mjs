@@ -46,6 +46,8 @@ export function createAdminRouteHandler(ctx) {
   backupSecurityConfigSummary,
   bodyBuffer,
   bodyJson,
+  buildAdminOperatingProfile,
+  buildDiagnosisAccuracyProfile,
   buildCommercialFinalGate,
   buildHardeningMatrix,
   buildOpsReport,
@@ -277,6 +279,14 @@ recentAuditLogs: db.auditLogs.slice(0, 10),
 recentScans: db.scans.slice(0, 5),
 pendingAutoFixJobs: db.autoFixJobs.filter(item => item.status === 'pending').slice(0, 10)
 });
+}
+
+if (pathname === '/api/admin/product-quality' && req.method === 'GET') {
+if (!requireAdminPermission(req, res, session, 'ops.read')) return;
+const profile = buildAdminOperatingProfile(db);
+appendAudit(db, req, 'admin.product_quality.checked', { score: profile.score, blockers: profile.blockers.length });
+await writeDb(db);
+return json(req, res, profile.ok ? 200 : 207, { ok: profile.ok, profile });
 }
 if (pathname === '/api/admin/audit-logs' && req.method === 'GET') {
 return json(req, res, 200, { ok: true, auditLogs: db.auditLogs.slice(0, 100) });

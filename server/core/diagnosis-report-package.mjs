@@ -1,3 +1,4 @@
+import { buildDiagnosisAccuracyProfile, buildReportQualityProfile } from './product-quality-engine.mjs';
 export function buildPublicDiagnosisPackage(result = {}, options = {}) {
   const detail = Array.isArray(result.detailFindings) ? result.detailFindings : [];
   const scoreValue = Number(result.riskScore || 0) || 0;
@@ -27,6 +28,16 @@ export function buildPublicDiagnosisPackage(result = {}, options = {}) {
     /약관|정책|책임|분쟁/i.test(joined) && '운영 정책 해석 차이로 인한 분쟁 가능성',
     /광고|최고|무조건|보장|표현/i.test(joined) && '과장 표현으로 인한 신뢰 저하 가능성'
   ].filter(Boolean);
+  const accuracyProfile = buildDiagnosisAccuracyProfile(result);
+  const reportQualityPreview = buildReportQualityProfile({
+    summary: result.summary || '공개 페이지 기준 예비 점검이 완료되었습니다.',
+    scoreModel: result.scoreModel || { scoreDisclaimer: '점수는 법적 결론이 아니라 발견 항목의 우선순위입니다.' },
+    topIssues,
+    reportExample: { majorIssues: topIssues },
+    fixPlan: (detail.filter((item) => item.autoFixEligible).length ? detail.filter((item) => item.autoFixEligible) : detail).slice(0, 5).map((item, index) => ({ step: index + 1, target: item.title, action: item.recommendation })),
+    deliverableBundle: { requiredSections: ['확인 범위', '확인 URL', '발견 근거', '신뢰도', '한계', '수동 검토 필요', '개선 순서', '재점검 기준'], faq: ['이 결과는 법률 자문인가요?', '결제 후 무엇을 받나요?', '바로 적용 가능한가요?'] },
+    disclaimer: '실제 법령 위반 여부와 공식 정책·가격·일정은 공식 원문 또는 운영 자료 확인이 필요합니다.'
+  }, result);
   return {
     engine: 'NV0 Evidence-first Preliminary Check Engine',
     version: rulesVersion,
@@ -36,6 +47,14 @@ export function buildPublicDiagnosisPackage(result = {}, options = {}) {
     evidenceSummary: result.evidenceSummary || {},
     scoreModel: result.scoreModel || {},
     qualityAssurance: result.qualityAssurance || {},
+    accuracyProfile,
+    reportQualityPreview,
+    productQualityGate: {
+      ok: accuracyProfile.score >= 55 && reportQualityPreview.score >= 70,
+      accuracyScore: accuracyProfile.score,
+      reportQualityScore: reportQualityPreview.score,
+      blockers: [...accuracyProfile.blockers, ...reportQualityPreview.blockers]
+    },
     probeCount: result.probeCount || 0,
     mainChecks,
     topIssues,

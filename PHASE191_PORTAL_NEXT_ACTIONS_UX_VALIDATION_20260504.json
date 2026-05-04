@@ -1,0 +1,59 @@
+{
+  "generatedAt": "2026-05-04T09:50:50.357Z",
+  "ok": true,
+  "phase": 191,
+  "title": "Portal next-action visibility and unified content board validation",
+  "total": 12,
+  "passed": 12,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "sidebar:new-site-registration-above-menu",
+      "ok": true
+    },
+    {
+      "name": "portal:title-next-action",
+      "ok": true
+    },
+    {
+      "name": "portal:action-grid-mounted",
+      "ok": true
+    },
+    {
+      "name": "portal:content-board-unified",
+      "ok": true
+    },
+    {
+      "name": "portal:removed-custom-guidance-render",
+      "ok": true
+    },
+    {
+      "name": "portal:removed-paid-output-check-card",
+      "ok": true
+    },
+    {
+      "name": "css:two-column-action-grid",
+      "ok": true
+    },
+    {
+      "name": "css:content-board-two-column",
+      "ok": true
+    },
+    {
+      "name": "css:purple-upgrade-hidden",
+      "ok": true
+    },
+    {
+      "name": "js:dynamic-next-actions",
+      "ok": true
+    },
+    {
+      "name": "js:syntax-safe-template-anchors",
+      "ok": true
+    },
+    {
+      "name": "legacy:phase74-compatibility-tokens",
+      "ok": true
+    }
+  ]
+}

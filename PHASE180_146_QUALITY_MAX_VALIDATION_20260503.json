@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-04T00:22:36.021Z",
+  "generatedAt": "2026-05-03T05:04:24.039Z",
   "ok": true,
   "total": 30,
   "passed": 30,
@@ -123,7 +123,7 @@
     {
       "name": "static-public-footers-canonicalized",
       "ok": true,
-      "detail": "canonical footers 17/15"
+      "detail": "canonical footers 8/6"
     },
     {
       "name": "phase180-delivery-doc-exists",

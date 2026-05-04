@@ -16,6 +16,7 @@ const workCard = document.querySelector('.nv74-work-card');
 const scoreDesc = document.querySelector('.nv74-score-desc');
 const scoreBars = document.getElementById('portalScoreBars');
 const scoreMetrics = document.getElementById('portalScoreMetrics');
+const nextActionCards = document.getElementById('portalNextActions');
 
 function getSavedScan() {
   try { return JSON.parse(localStorage.getItem('nv0:lastScan') || 'null'); } catch { return null; }
@@ -88,44 +89,66 @@ function renderScoreSummary(latest, account, summary) {
       : '진단을 실행하면 최근 점수와 보완 우선순위가 이곳에 정리됩니다.';
   }
 }
-function renderPortalActionFeed(account, summary) {
-  const latest = latestScanFrom(account, summary);
+
+function renderNextActionCards(latest, account, summary) {
+  if (!nextActionCards) return;
+  const target = readableDomain(latest?.target || summary?.site?.domain || '');
   const findings = findCountFromScan(latest);
   const urgent = urgentCountFromScan(latest);
   const nextAction = nextActionFromScan(latest);
-  const items = [
+  const sitesCount = account?.savedSites?.length || 0;
+  const recentCount = account?.recentScans?.length || (latest ? 1 : 0);
+  const recentLabel = latest ? `${formatDate(latest.createdAt || latest.generatedAt)} · 발견 ${findings}개` : '검사 이력 없음';
+  const targetParam = latest?.target ? `?target=${encodeURIComponent(latest.target)}` : '';
+  const siteIdParam = latest?.siteId ? `?siteId=${encodeURIComponent(latest.siteId)}` : '';
+  const cards = [
     {
-      title: latest?.target ? `${readableDomain(latest.target)} 최근 진단` : '최근 진단 대기',
-      meta: latest ? `${formatDate(latest.createdAt || latest.generatedAt)} · 발견 ${findings}개` : '아직 실행 전',
-      body: latest ? nextAction.note : '무료 진단을 먼저 실행하면 이 영역에 점수, 발견 항목, 재검사 동선만 정리됩니다.',
-      href: '/products/veridion/demo',
-      cta: latest ? '다시 진단' : '무료 진단 시작'
+      no: '01',
+      title: '최근 진단',
+      pill: recentLabel,
+      body: target ? `${target} 기준으로 ${nextAction.note}` : '진단을 실행하면 최근 점수와 발견 항목이 이곳에 표시됩니다.',
+      href: `/products/veridion/demo${targetParam}`,
+      cta: latest ? '다시 진단' : '새 진단 시작'
     },
     {
+      no: '02',
       title: '우선 보완 항목',
-      meta: `${urgent}개`,
-      body: urgent ? '결제·문의 직전 안내처럼 고객이 멈출 수 있는 항목부터 확인하세요.' : '최근 결과 기준으로 긴급 보완 항목은 적습니다.',
-      href: latest?.siteId ? `/checkout?plan=Report&siteId=${encodeURIComponent(latest.siteId)}` : '/plans',
-      cta: '상세 리포트'
+      pill: `${urgent}개`,
+      body: urgent ? `우선 처리할 보완 후보가 ${urgent}개 있습니다. 상세 리포트에서 수정 방향을 확인하세요.` : '최근 결과 기준으로 긴급 보완 항목은 적습니다.',
+      href: `/plans${siteIdParam}`,
+      cta: '상세 리포트 보기'
     },
     {
+      no: '03',
       title: '저장 사이트 관리',
-      meta: `${account?.savedSites?.length || 0}개`,
-      body: '저장한 URL은 내 사이트 화면에서 재검사와 최근 결과 비교만 간단하게 관리합니다.',
-      href: '#saveSiteForm',
-      cta: '사이트 등록'
+      pill: `${sitesCount}개`,
+      body: sitesCount ? '저장한 URL을 재검사하고 최근 결과와 비교해 관리합니다.' : '자주 점검할 URL을 저장하면 다음부터 빠르게 재검사할 수 있습니다.',
+      href: sitesCount ? '#portalPrimary' : '#saveSiteForm',
+      cta: sitesCount ? '사이트 관리' : '사이트 등록'
+    },
+    {
+      no: '04',
+      title: '성과 모니터링',
+      pill: `${recentCount}건`,
+      body: recentCount ? '진단 기록과 개선 추이를 한눈에 확인하고 다음 작업을 정리합니다.' : '검사 기록이 쌓이면 개선 추이를 카드에서 바로 확인할 수 있습니다.',
+      href: '#portalPrimary',
+      cta: '성과 확인'
     }
   ];
-  return items.map(item => `<div class="result-card stack"><div class="meta-row"><strong>${escapeHtml(item.title)}</strong><span class="pill">${escapeHtml(item.meta)}</span></div><p>${escapeHtml(item.body)}</p><div class="topnav"><a class="btn secondary" href="${escapeAttr(item.href)}">${escapeHtml(item.cta)}</a></div></div>`).join('');
+  nextActionCards.innerHTML = cards.map(item => `<article class="nv191-action-card"><div class="nv191-action-icon">${escapeHtml(item.no)}</div><div class="nv191-action-body"><div class="nv191-action-head"><h2>${escapeHtml(item.title)}</h2><span class="nv191-pill">${escapeHtml(item.pill)}</span></div><p>${escapeHtml(item.body)}</p><a class="btn secondary" href="${escapeAttr(item.href)}">${escapeHtml(item.cta)}</a></div></article>`).join('');
 }
-function renderPortalNoticeFeed(account, summary) {
-  const latest = latestScanFrom(account, summary);
-  const rows = [
-    { title: '내 사이트 화면 정리', body: '이 화면은 사이트 저장, 최근 검사, 재검사, 구매 산출물 확인만 보여줍니다.' },
-    { title: '결제 전 확인', body: '상세 리포트나 수정 문구안이 필요할 때만 플랜 비교와 결제로 이동하세요.' },
-    { title: '검사 한계 안내', body: latest ? '로그인 후 화면과 외부 결제창은 자동 단정하지 않고 별도 확인 항목으로 분리합니다.' : '무료 진단 결과는 공개 접근 가능한 페이지 기준으로 먼저 생성됩니다.' }
-  ];
-  return rows.map(item => `<div class="result-card"><strong>${escapeHtml(item.title)}</strong><p class="muted">${escapeHtml(item.body)}</p></div>`).join('');
+function renderBoardHighlights(boards = []) {
+  const items = (boards || []).filter(item => item && (item.boardType === 'cta' || item.autoPublished || item.type === 'cta')).slice(0, 3);
+  if (!items.length) return '<div class="muted">게시판 연결 글 없음</div>';
+  return items.map(item => {
+    const tags = Array.isArray(item.tags) ? item.tags.slice(0, 5) : [];
+    return `<div class="result-card stack"><div class="meta-row"><strong>${escapeHtml(item.title || '게시글')}</strong><span class="pill">진단 연결</span></div><div class="muted">${escapeHtml(formatDate(item.createdAt || '-'))}</div><p>${escapeHtml(clampText(item.summary || item.body || '', 170))}</p>${tags.length ? `<div class="asset-tags">${tags.map(tag => `<span>#${escapeHtml(String(tag).replace(/^#/, ''))}</span>`).join('')}</div>` : ''}<div class="topnav"><a class="btn secondary" href="/board">보드에서 보기</a><a class="btn secondary" href="/products/veridion/demo">무료 진단</a></div></div>`;
+  }).join('');
+}
+function renderInsightFeed(boards = []) {
+  const items = (boards || []).filter(item => item && item.boardType !== 'cta').slice(0, 4);
+  if (!items.length) return '<div class="muted">공지 없음</div>';
+  return items.map(item => `<div class="result-card"><div>${escapeHtml(item.title || '공지')}</div><div class="muted">${escapeHtml(formatDate(item.createdAt || '-'))}</div><p>${escapeHtml(clampText(item.summary || item.body || '', 120))}</p></div>`).join('');
 }
 function renderAsset(asset, order, accessToken) {
   if (!asset) return '';
@@ -153,7 +176,7 @@ function renderAsset(asset, order, accessToken) {
 }
 function renderSavedSites(sites = []) {
   if (!sites.length) {
-    return `<div class="portal-empty"><strong>아직 저장된 사이트가 없습니다.</strong><p>무료 진단을 실행하거나 아래 입력창에서 사이트를 저장하면 재검사와 최근 내역 관리가 시작됩니다.</p><a class="btn primary" href="/products/veridion/demo">무료 진단 시작</a></div>`;
+    return `<div class="portal-empty"><strong>아직 저장된 사이트가 없습니다.</strong><p>무료진단을 실행하거나 아래 입력창에서 사이트를 저장하면 재검사와 최근 내역 관리가 시작됩니다.</p><a class="btn primary" href="/products/veridion/demo">무료진단 시작</a></div>`;
   }
   const rows = sites.map(site => `<tr>
     <td><div class="nv74-site-title"><span class="nv74-thumb"></span><div><b>${escapeHtml(site.label || site.domain)}</b><small>${escapeHtml(site.domain || '-')} · ${escapeHtml(site.industry || '업종 미지정')}</small></div></div></td>
@@ -188,7 +211,7 @@ function renderPaidPortalDiagnosisReport(scan) {
   const checks = ['개인정보 관리','전자상거래 정책','운영 관리 구조','보안 관리'].map((label, index) => ({ label, score: Math.max(25, Math.min(95, Number(scan.riskScore || 0) - index * 7)) }));
   const projected = reportProjectedScore(scan.riskScore, findings.length);
   const riskCopy = reportRiskCopy(scan.riskScore);
-  return `<div class="card stack portal-report-example portal-report-clean portal-unified-report"><div class="meta-row"><strong>URL 신뢰도 진단 결과</strong><span class="pill brand">실제 검사 결과</span></div><div class="portal-unified-top"><article class="portal-unified-score"><span>신뢰도 점수</span><strong>${escapeHtml(scan.riskScore ?? '-')}<em>/100</em></strong><small>${escapeHtml(riskCopy)}</small></article><article class="portal-unified-kpi"><span>개선 목표 점수</span><b>${escapeHtml(projected ?? '확인 필요')}</b><small>우선순위 항목 반영 기준</small></article><article class="portal-unified-kpi warn"><span>즉시 확인 필요</span><b>${escapeHtml(findings.length)}</b><small>결제 후 산출물에서 확인</small></article></div><div class="portal-unified-grid"><section class="portal-unified-box danger"><h4>핵심 문제</h4>${renderList(findings, '<p class="muted">세부 발견 항목 없음</p>', item => `<article><b>${escapeHtml(item.title || item.code || '점검 항목')}</b><small>${escapeHtml(item.recommendation || item.fixTemplate || '수정 방향 확인 필요')}</small></article>`)}</section><section class="portal-unified-box"><h4>항목별 분석</h4>${checks.map(item => `<article><b>${escapeHtml(item.label)}</b><small>${escapeHtml(item.score)}점 · ${escapeHtml(reportBars(item.score))}</small></article>`).join('')}</section></div><div class="portal-report-cta-row"><a class="btn primary" href="/checkout?plan=Pro&siteId=${escapeAttr(scan.siteId || '')}">상세 리포트 결제</a><a class="btn secondary" href="/plans?siteId=${escapeAttr(scan.siteId || '')}">플랜 비교</a><a class="btn secondary" href="/products/veridion/demo?target=${escapeAttr(encodeURIComponent(scan.target || ''))}">다시 진단</a></div><p class="muted">점수와 개선 목표는 내부 진단 모델 기준이며 실제 법적 안전성이나 성과를 보장하지 않습니다.</p></div>`;
+  return `<div class="card stack portal-report-example portal-report-clean portal-unified-report"><div class="meta-row"><strong>URL 신뢰도 진단 결과</strong><span class="pill brand">실제 검사 결과</span></div><div class="portal-unified-top"><article class="portal-unified-score"><span>신뢰도 점수</span><strong>${escapeHtml(scan.riskScore ?? '-')}<em>/100</em></strong><small>${escapeHtml(riskCopy)}</small></article><article class="portal-unified-kpi"><span>개선 목표 점수</span><b>${escapeHtml(projected ?? '확인 필요')}</b><small>우선순위 항목 반영 기준</small></article><article class="portal-unified-kpi warn"><span>즉시 확인 필요</span><b>${escapeHtml(findings.length)}</b><small>상세 리포트에서 확인</small></article></div><div class="portal-unified-grid"><section class="portal-unified-box danger"><h4>핵심 문제</h4>${renderList(findings, '<p class="muted">세부 발견 항목 없음</p>', item => `<article><b>${escapeHtml(item.title || item.code || '점검 항목')}</b><small>${escapeHtml(item.recommendation || item.fixTemplate || '수정 방향 확인 필요')}</small></article>`)}</section><section class="portal-unified-box"><h4>항목별 분석</h4>${checks.map(item => `<article><b>${escapeHtml(item.label)}</b><small>${escapeHtml(item.score)}점 · ${escapeHtml(reportBars(item.score))}</small></article>`).join('')}</section></div><div class="portal-report-cta-row"><a class="btn primary" href="/checkout?plan=Pro&siteId=${escapeAttr(scan.siteId || '')}">상세 리포트 결제</a><a class="btn secondary" href="/plans?siteId=${escapeAttr(scan.siteId || '')}">플랜 비교</a><a class="btn secondary" href="/products/veridion/demo?target=${escapeAttr(encodeURIComponent(scan.target || ''))}">다시 진단</a></div><p class="muted">점수와 개선 목표는 내부 진단 모델 기준이며 실제 법적 안전성이나 성과를 보장하지 않습니다.</p></div>`;
 }
 function renderRecentScans(scans = []) {
   if (!scans.length) return '<div class="portal-empty"><strong>지난 검사 내역이 없습니다.</strong><p>검사를 완료하면 최근 5개 결과가 이곳에 저장됩니다.</p></div>';
@@ -207,12 +230,13 @@ function updateStaticDashboard(session, account, summary) {
   const sitesCount = account?.savedSites?.length || 0;
   if (sidebarAccount) sidebarAccount.textContent = authenticated ? (account?.customer?.email || session.customer?.email || '로그인 계정') : '비회원 · 저장 기능 비활성';
   if (planCard) planCard.innerHTML = `<div><b>${authenticated ? '회원 전용 관리' : '무료 계정 필요'}</b><small><span>사이트 ${sitesCount}개</span><span>최근 검사 ${account?.recentScans?.length || 0}개</span></small></div><a class="btn secondary" href="${authenticated ? '/plans' : '/auth?next=/portal'}">${authenticated ? '상품 보기' : '로그인·회원가입'}</a>`;
-  if (topbarTitle) topbarTitle.textContent = authenticated ? '내 사이트 관리' : '검사 결과를 저장하려면 로그인하세요';
+  if (topbarTitle) topbarTitle.textContent = '내 사이트 다음 조치';
   if (topbarCopy) topbarCopy.textContent = authenticated ? '저장한 사이트를 다시 검사하고 최근 결과를 한곳에서 확인하세요.' : '회원가입하면 내 사이트 저장, 원클릭 재검사, 지난 검사 내역 확인을 사용할 수 있습니다.';
   if (scoreNumber) scoreNumber.textContent = latest?.riskScore ?? '-';
   if (scoreStatus) scoreStatus.textContent = latest?.riskLevel || '검사 전';
   if (scoreFooter) scoreFooter.textContent = `최근 진단일: ${formatDate(latest?.createdAt || latest?.generatedAt)}`;
   renderScoreSummary(latest, account, summary);
+  renderNextActionCards(latest, account, summary);
   if (workCard) workCard.innerHTML = `<div class="nv74-card-head"><h2>바로 할 수 있는 일</h2><a href="#saveSiteForm">사이트 등록 ›</a></div><div class="nv74-task-list"><div class="nv74-task"><i class="blue">01</i><div><b>내 사이트 저장</b><small>검사할 URL을 계정에 보관합니다.</small></div><progress value="100" max="100"></progress><span class="status ok">기본</span></div><div class="nv74-task"><i class="purple">02</i><div><b>다시 검사하기</b><small>저장된 URL을 바로 재검사합니다.</small></div><progress value="100" max="100"></progress><span class="status ok">기본</span></div><div class="nv74-task"><i class="orange">03</i><div><b>최근 결과 비교</b><small>최근 5개 검사를 한곳에서 확인합니다.</small></div><progress value="100" max="100"></progress><span class="status ok">기본</span></div></div>`;
 }
 async function loadPortal() {
@@ -242,13 +266,13 @@ async function loadPortal() {
     ${renderRecentScans(account?.recentScans || [])}
     ${renderMemberValueBox(session, account)}
     ${summary?.order ? `<div class="nv74-state"><strong>최근 주문</strong> · ${escapeHtml(summary.order.plan)} · ${escapeHtml(summary.order.status)}</div>` : ''}
-    ${fulfillment?.locked ? `<div class="nv74-state"><strong>산출물 잠금</strong> · 결제 완료 후 리포트·수정안·템플릿 등 구매 산출물이 표시됩니다.</div>` : ''}
+    ${fulfillment?.locked ? `<div class="nv74-state"><strong>산출물 잠금</strong> · 구매한 리포트·수정안·템플릿은 이 영역에 표시됩니다.</div>` : ''}
     ${renderAsset(fulfillment?.asset, fulfillment?.order || summary?.order, accessToken)}
     ${summary?.site ? `<div class="nv74-state"><strong>현재 선택 사이트</strong> · ${escapeHtml(summary.site.domain)} · ${escapeHtml(summary.site.latestRiskLevel || '검사 전')} · 최근 발견 ${escapeHtml(summary.site.latestFindings ?? summary.latestScan?.totalFindings ?? '-')}개</div>` : ''}
-    ${summary?.guidance ? `<div class="nv74-state"><strong>맞춤 지침</strong><pre class="pre-wrap">${escapeHtml(summary.guidance.content)}</pre></div>` : ''}`;
+`;
   feed.innerHTML = `
-    <div class="card stack"><div class="meta-row"><strong>내 사이트 다음 조치</strong><a class="btn secondary" href="/products/veridion/demo">새 진단</a></div>${renderPortalActionFeed(account, summary)}</div>
-    <div class="card stack"><strong>운영 알림</strong>${renderPortalNoticeFeed(account, summary)}</div>`;
+    <div class="card stack"><div class="meta-row"><strong>게시판 연결 글</strong><a class="btn secondary" href="/board">게시판 보기</a></div>${renderBoardHighlights(summary?.boards || [])}</div>
+    <div class="card stack"><strong>공지·인사이트</strong>${renderInsightFeed(summary?.boards || [])}</div>`;
 }
 
 saveForm?.addEventListener('submit', async (event) => {

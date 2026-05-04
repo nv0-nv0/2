@@ -1,0 +1,21 @@
+{
+  "ok": true,
+  "zipPath": "/mnt/data/nv0_phase200_work/nv0_phase200_secure_release_internal_20260504.zip",
+  "zipName": "nv0_phase200_secure_release_internal_20260504.zip",
+  "sha256": "ed7a60ec29d37878975630a50f3aa7419554793cf33356e6ddc5611e5c599817",
+  "fileCount": 712,
+  "excluded": [
+    ".git",
+    "node_modules",
+    ".env",
+    ".env.local",
+    ".env.production",
+    "runtime/data",
+    "runtime/uploads",
+    "runtime/backups",
+    "runtime/reports",
+    "coverage",
+    ".DS_Store"
+  ],
+  "generatedAt": "2026-05-04T09:51:30.341Z"
+}

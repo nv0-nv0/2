@@ -1,6 +1,6 @@
 {
   "name": "nv0-veridion-cleanroom",
-  "version": "1.0.0-commercial-final-100-score-phase181-zero-blocker-phase182-98-plus-phase183-closure",
+  "version": "1.0.0-commercial-final-100-score-phase201-product-quality-hardening",
   "private": true,
   "type": "module",
   "scripts": {
@@ -198,6 +198,16 @@
     "validate:phase182": "node scripts/validate-phase182-ux-performance-98.mjs",
     "phase182:final": "node scripts/run-phase182-final.mjs",
     "validate:phase183": "node scripts/validate-phase183-100-closure.mjs",
-    "phase183:final": "node scripts/run-phase183-final.mjs"
+    "phase183:final": "node scripts/run-phase183-final.mjs",
+    "validate:phase191": "node scripts/validate-phase191-portal-next-actions-ux.mjs",
+    "phase191:final": "npm run check:syntax && node scripts/validate-phase74-dashboard-ui.mjs && npm run validate:phase191",
+    "validate:phase192": "node scripts/validate-phase192-design-system.mjs",
+    "phase192:final": "npm run check:syntax && npm run test:all && npm run check:pages && npm run test:routes && npm run check:links -- --summary && npm run smoke && npm run validate:phase191 && npm run validate:phase192",
+    "test:phase193-200": "node tests/phase193-200-services.mjs",
+    "validate:phase193-200": "node scripts/validate-phase193-200-commercial-system.mjs",
+    "release:secure-package": "node scripts/create-secure-release.mjs",
+    "phase200:final": "npm run check:syntax && npm run test:all && npm run check:pages && npm run test:routes && npm run check:links -- --summary && npm run smoke && npm run validate:phase191 && npm run validate:phase192 && npm run test:phase193-200 && npm run validate:phase193-200",
+    "test:phase201": "node tests/phase201-product-quality.mjs",
+    "phase201:final": "npm run check:syntax && npm run test:all && npm run test:phase201"
   }
 }

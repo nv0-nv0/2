@@ -1,0 +1,23 @@
+{
+  "phase": 191,
+  "delivery": "nv0_phase191_portal_next_actions_visibility_complete_20260504.zip",
+  "applied": [
+    "sidebar_new_site_registration_prioritized",
+    "portal_custom_guidance_removed",
+    "paid_output_check_upgrade_card_removed",
+    "next_actions_compact_2x2_cards",
+    "content_board_color_unified_visibility_enhanced",
+    "legacy_demo_page_integrity_fixed",
+    "aggregate_smoke_gate_compatibility_restored"
+  ],
+  "validation": {
+    "syntax": "passed",
+    "test_all": "88/88 passed",
+    "phase74_dashboard_ui": "passed",
+    "phase191_ux": "12/12 passed",
+    "page_integrity": "passed",
+    "route_smoke": "passed",
+    "link_check": "366 checked, 0 errors",
+    "smoke": "passed"
+  }
+}

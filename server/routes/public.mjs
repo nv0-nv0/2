@@ -46,6 +46,7 @@ export function createPublicRouteHandler(ctx) {
   bodyJson,
   bodyText,
   buildAssetPdfBuffer,
+  buildDiagnosisAccuracyProfile,
   buildCommercialFinalGate,
   buildCommercialOfferCatalog,
   buildFeedXml,
@@ -149,7 +150,7 @@ return ownsPaidOrder || activeSubscription;
 function summarizeScanForLoginMember(scan) {
 const topFindings = Array.isArray(scan?.topFindings) ? scan.topFindings.slice(0, 3) : [];
 const detailFindings = Array.isArray(scan?.detailFindings) ? scan.detailFindings.slice(0, 2).map(item => ({ title: item.title || item.code || '점검 항목', priority: item.priority || '확인', category: item.category || '요약', recommendation: '상세 근거와 수정 문구안은 결제 후 구매 산출물 영역에서 확인할 수 있습니다.' })) : [];
-return { requestId: scan?.requestId || null, siteId: scan?.siteId || null, target: scan?.target || '', riskScore: scan?.riskScore ?? null, riskLevel: scan?.riskLevel || null, totalFindings: scan?.totalFindings ?? detailFindings.length, topFindings, detailFindings, diagnosis: { summary: scan?.summary || '무료 진단 요약 결과입니다.', locked: true, lockedReason: 'paid_required' }, savedToAccount: true, paidAccess: false, locked: true };
+return { requestId: scan?.requestId || null, siteId: scan?.siteId || null, target: scan?.target || '', riskScore: scan?.riskScore ?? null, riskLevel: scan?.riskLevel || null, totalFindings: scan?.totalFindings ?? detailFindings.length, topFindings, detailFindings, diagnosis: { summary: scan?.summary || '무료진단 요약 결과입니다.', locked: true, lockedReason: 'paid_required' }, savedToAccount: true, paidAccess: false, locked: true };
 }
 
   return async function handlePublicRoutes(req, res, state = {}) {
@@ -163,7 +164,7 @@ return { requestId: scan?.requestId || null, siteId: scan?.siteId || null, targe
   const paymentHandled = await paymentRouteHandler(req, res, { requestUrl: url, pathname });
   if (paymentHandled !== false) return paymentHandled;
 if (pathname === '/api/public/diagnosis-engine' && req.method === 'GET') {
-return json(req, res, 200, { ok: true, phase: RELEASE_PHASE, engine: 'NV0 Public Evidence Summary Check Engine', rulesVersion: RULES_VERSION, targetFetchEnabled: TARGET_FETCH_ENABLED, scanProvider: SCAN_PROVIDER, aiReviewProvider: AI_REVIEW_PROVIDER, geminiConfigured: AI_REVIEW_ENABLED, resultContract: { resultType: 'preliminary_check', legalConclusion: false, includesEvidenceSummary: true, includesConfidenceScore: true, includesManualReviewFlags: true, includesAutomationDisclosure: true, includesAutomatedActionPlan: true }, endpoints: { scan: 'POST /api/public/scan', diagnose: 'POST /api/public/diagnose', board: 'GET /api/public/system-items', engine: 'GET /api/public/diagnosis-engine', productIntelligence: 'GET /api/public/product-intelligence' }, smartProduct: { version: 'p153-smart-ops-v1', nextBestAction: true, planFitScoring: true, journeyOrchestration: true, smartProductEndpoint: '/api/public/smart-product', userPath: ['무료 요약','요금제 선택','내 사이트 관리','게시판 재유입'] }, autoPublish: { boardName: '게시판', intervalMs: CTA_AUTOPUBLISH_INTERVAL_MS, intervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000), topicPackCount: ctaTopicPacks().length, combinationStats: ctaCombinationStats(), variants: ctaTopicPacks().map(item => item.headline) }, automation: { mode: TARGET_FETCH_AUTOMATION_LEVEL, robotsEnabled: TARGET_FETCH_ROBOTS_ENABLED, sitemapEnabled: TARGET_FETCH_SITEMAP_ENABLED, maxPages: TARGET_FETCH_MAX_PAGES, maxDiscoveryResources: TARGET_FETCH_MAX_DISCOVERY_RESOURCES, notice: '자동 확인 가능한 공개 항목은 모두 처리하고 자동 확정 불가 영역은 수동확인으로 고지합니다.' }, checks: buildRuleCatalog().map(({ code, category, title, severity, penaltyMax }) => ({ code, category, title, severity, penaltyMax })) });
+return json(req, res, 200, { ok: true, phase: RELEASE_PHASE, engine: 'NV0 Public Evidence Summary Check Engine', rulesVersion: RULES_VERSION, targetFetchEnabled: TARGET_FETCH_ENABLED, scanProvider: SCAN_PROVIDER, aiReviewProvider: AI_REVIEW_PROVIDER, geminiConfigured: AI_REVIEW_ENABLED, resultContract: { resultType: 'preliminary_check', legalConclusion: false, includesEvidenceSummary: true, includesConfidenceScore: true, includesManualReviewFlags: true, includesAutomationDisclosure: true, includesAutomatedActionPlan: true, includesAccuracyProfile: true, includesReportQualityGate: true }, endpoints: { scan: 'POST /api/public/scan', diagnose: 'POST /api/public/diagnose', board: 'GET /api/public/system-items', engine: 'GET /api/public/diagnosis-engine', productIntelligence: 'GET /api/public/product-intelligence', productQuality: 'GET /api/public/product-quality' }, smartProduct: { version: 'p153-smart-ops-v1', nextBestAction: true, planFitScoring: true, journeyOrchestration: true, smartProductEndpoint: '/api/public/smart-product', userPath: ['무료 요약','요금제 선택','내 사이트 관리','게시판 재유입'] }, autoPublish: { boardName: '게시판', intervalMs: CTA_AUTOPUBLISH_INTERVAL_MS, intervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000), topicPackCount: ctaTopicPacks().length, combinationStats: ctaCombinationStats(), variants: ctaTopicPacks().map(item => item.headline) }, automation: { mode: TARGET_FETCH_AUTOMATION_LEVEL, robotsEnabled: TARGET_FETCH_ROBOTS_ENABLED, sitemapEnabled: TARGET_FETCH_SITEMAP_ENABLED, maxPages: TARGET_FETCH_MAX_PAGES, maxDiscoveryResources: TARGET_FETCH_MAX_DISCOVERY_RESOURCES, notice: '자동 확인 가능한 공개 항목은 모두 처리하고 자동 확정 불가 영역은 수동확인으로 고지합니다.' }, checks: buildRuleCatalog().map(({ code, category, title, severity, penaltyMax }) => ({ code, category, title, severity, penaltyMax })) });
 }
 if (pathname === '/api/public/config' && req.method === 'GET') {
 return json(req, res, 200, { ok: true, turnstileEnabled: TURNSTILE_PUBLIC_ENABLED, turnstileConfigured: TURNSTILE_CONFIGURED, prelaunchMode: PRELAUNCH_MODE, turnstileSiteKey: TURNSTILE_PUBLIC_ENABLED ? TURNSTILE_SITE_KEY : '' });
@@ -217,6 +218,16 @@ const intelligence = buildProductIntelligence({ scan, site, riskScore: requested
 const dashboard = buildProductDashboard(db);
 const orchestration = buildSmartProductOrchestration({ scan, site, intelligence, offers, dashboard, source: 'public-api' });
 return json(req, res, 200, { ok: true, intelligence, dashboard, orchestration });
+}
+
+if (pathname === '/api/public/product-quality' && req.method === 'GET') {
+const db = await readDb();
+const siteId = url.searchParams.get('siteId') || '';
+const domain = String(url.searchParams.get('domain') || '').trim();
+const site = siteId || domain ? findSiteByAny(db, siteId, domain) : null;
+const scan = site ? (db.scans || []).find(item => item.siteId === site.id) || db.scans[0] || null : db.scans[0] || null;
+const diagnosisAccuracy = scan ? buildDiagnosisAccuracyProfile(scan) : null;
+return json(req, res, 200, { ok: true, productQuality: { version: diagnosisAccuracy?.version || 'phase201-product-quality-v1', siteId: site?.id || scan?.siteId || null, requestId: scan?.requestId || null, diagnosisAccuracy, publicContract: { diagnosisIsPreliminary: true, scoreMeansPriorityNotLegalConclusion: true, paidDeliverablesRequireReportQualityGate: true, manualReviewItemsRemainVisible: true }, notice: '진단 정확도는 공개 수집 커버리지·근거 신뢰도·수동검토 비율을 함께 반영한 운영 품질 지표입니다.' } });
 }
 if (pathname === '/api/public/products' && req.method === 'GET') {
 const riskScore = Number(url.searchParams.get('riskScore') || 55);

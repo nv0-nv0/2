@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-03T23:25:46.323Z",
+  "generatedAt": "2026-05-03T05:04:25.240Z",
   "ok": true,
   "phase": "phase182-final-runner",
   "scoreEstimate": 98.4,
@@ -12,7 +12,7 @@
       "ok": true,
       "status": 0,
       "signal": null,
-      "elapsedMs": 1015,
+      "elapsedMs": 501,
       "error": null
     },
     {
@@ -20,7 +20,7 @@
       "ok": true,
       "status": 0,
       "signal": null,
-      "elapsedMs": 586,
+      "elapsedMs": 499,
       "error": null
     },
     {
@@ -28,7 +28,7 @@
       "ok": true,
       "status": 0,
       "signal": null,
-      "elapsedMs": 515,
+      "elapsedMs": 713,
       "error": null
     },
     {
@@ -36,7 +36,7 @@
       "ok": true,
       "status": 0,
       "signal": null,
-      "elapsedMs": 496,
+      "elapsedMs": 1187,
       "error": null
     },
     {
@@ -44,7 +44,7 @@
       "ok": true,
       "status": 0,
       "signal": null,
-      "elapsedMs": 511,
+      "elapsedMs": 507,
       "error": null
     },
     {
@@ -52,7 +52,7 @@
       "ok": true,
       "status": 0,
       "signal": null,
-      "elapsedMs": 1991,
+      "elapsedMs": 2398,
       "error": null
     },
     {
@@ -60,7 +60,7 @@
       "ok": true,
       "status": 0,
       "signal": null,
-      "elapsedMs": 510,
+      "elapsedMs": 496,
       "error": null
     },
     {
@@ -68,7 +68,7 @@
       "ok": true,
       "status": 0,
       "signal": null,
-      "elapsedMs": 311,
+      "elapsedMs": 412,
       "error": null
     },
     {
@@ -76,7 +76,7 @@
       "ok": true,
       "status": 0,
       "signal": null,
-      "elapsedMs": 294,
+      "elapsedMs": 397,
       "error": null
     },
     {
@@ -84,7 +84,7 @@
       "ok": true,
       "status": 0,
       "signal": null,
-      "elapsedMs": 595,
+      "elapsedMs": 385,
       "error": null
     },
     {
@@ -92,7 +92,7 @@
       "ok": true,
       "status": 0,
       "signal": null,
-      "elapsedMs": 412,
+      "elapsedMs": 692,
       "error": null
     },
     {
@@ -100,7 +100,7 @@
       "ok": true,
       "status": 0,
       "signal": null,
-      "elapsedMs": 882,
+      "elapsedMs": 805,
       "error": null
     },
     {
@@ -108,7 +108,7 @@
       "ok": true,
       "status": 0,
       "signal": null,
-      "elapsedMs": 2503,
+      "elapsedMs": 3202,
       "error": null
     },
     {
@@ -116,7 +116,7 @@
       "ok": true,
       "status": 0,
       "signal": null,
-      "elapsedMs": 1587,
+      "elapsedMs": 2288,
       "error": null
     },
     {
@@ -124,7 +124,7 @@
       "ok": true,
       "status": 0,
       "signal": null,
-      "elapsedMs": 308,
+      "elapsedMs": 413,
       "error": null
     },
     {
@@ -132,7 +132,7 @@
       "ok": true,
       "status": 0,
       "signal": null,
-      "elapsedMs": 893,
+      "elapsedMs": 601,
       "error": null
     },
     {
@@ -148,7 +148,7 @@
       "ok": true,
       "status": 0,
       "signal": null,
-      "elapsedMs": 323,
+      "elapsedMs": 404,
       "error": null
     }
   ],

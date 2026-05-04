@@ -1,0 +1,25 @@
+{
+  "generatedAt": "2026-05-04T09:38:35.910032Z",
+  "phase": 192,
+  "title": "Global design system unification delivery manifest",
+  "changedFiles": [
+    "shared/design-system.css",
+    "scripts/validate-phase192-design-system.mjs",
+    "package.json",
+    "apps/**/index.html",
+    "PHASE192_GLOBAL_DESIGN_SYSTEM_UNIFICATION_20260504_KO.md",
+    "PHASE192_GLOBAL_DESIGN_SYSTEM_UNIFICATION_VALIDATION_20260504.json"
+  ],
+  "validation": {
+    "check:syntax": "pass",
+    "test:all": "pass 88/88",
+    "check:pages": "pass 34 routes",
+    "test:routes": "pass 24 routes",
+    "check:links -- --summary": "pass 388 checked / 0 errors",
+    "smoke": "pass",
+    "validate:phase191": "pass 12/12",
+    "validate:phase192": "pass 146/146",
+    "phase192:final": "pass"
+  },
+  "fileCount": 702
+}

@@ -59,7 +59,7 @@ function renderProgress(index = 0) {
   const elapsed = progressStartedAt ? Math.max(0, Math.round((Date.now() - progressStartedAt) / 1000)) : 0;
   const active = Math.max(0, Math.min(PROGRESS_STEPS.length - 1, index));
   return `<section class="demo-progress-panel" aria-live="polite">
-    <div class="demo-progress-head"><span class="pill brand">실시간 무료 진단</span><b>${elapsed}초 경과</b></div>
+    <div class="demo-progress-head"><span class="pill brand">실시간 무료진단</span><b>${elapsed}초 경과</b></div>
     <h3>결과 화면을 먼저 준비하면서 공개 페이지를 확인하고 있습니다</h3>
     <p class="muted">응답이 느린 사이트도 빈 화면으로 기다리게 하지 않고, 현재 처리 단계를 계속 보여줍니다.</p>
     <ol class="demo-progress-steps">${PROGRESS_STEPS.map((step, stepIndex) => `<li class="${stepIndex < active ? 'done' : stepIndex === active ? 'active' : ''}"><span>${stepIndex + 1}</span><p>${escapeHtml(step)}</p></li>`).join('')}</ol>
@@ -87,7 +87,7 @@ function updateBadge() {
   const freeUsage = Math.max(0, FREE_LIMIT - getUsage());
   if (session.authenticated) {
     if (badgeLead) badgeLead.innerHTML = '<strong>회원 기능 활성</strong>';
-    if (badge) badge.textContent = '무료 진단 횟수 관리, 내 사이트 저장, 원클릭 재검사, 최근 진단 이력 확인을 이용할 수 있습니다.';
+    if (badge) badge.textContent = '무료진단 횟수 관리, 내 사이트 저장, 원클릭 재검사, 최근 진단 이력 확인을 이용할 수 있습니다.';
     return;
   }
   if (badgeLead) badgeLead.innerHTML = `<strong>오늘 남은 비회원 무료 진단 ${freeUsage}회</strong>`;
@@ -187,7 +187,7 @@ function normalizeRiskItem(item, index) {
     priority: item?.priority || (index === 0 ? 'P0' : index === 1 ? 'P1' : 'P2'),
     impact: item?.impact || item?.description || '수집된 공개 화면에서 고객 안내 보완 후보로 분류된 항목입니다.',
     action: item?.recommendation || item?.fixTemplate || '확인 URL과 근거를 보고 수정 우선순위와 적용 문구를 검토하세요.',
-    category: item?.category || item?.code || '신뢰 무료 진단',
+    category: item?.category || item?.code || '신뢰 무료진단',
     evidence: item?.evidence || '',
     certainty: item?.certainty || '확인 필요',
     sourcePages: Array.isArray(item?.sourcePages) ? item.sourcePages : [],
@@ -260,7 +260,7 @@ function normalizeScan(scan = {}) {
     aiReview: scan.aiReview || {},
     automationDisclosure: scan.automationDisclosure || scan.evidenceSummary?.automationDisclosure || {},
     automatedActionPlan: scan.automatedActionPlan || {},
-    scanScopeLabel: scan.scanScopeLabel || '공개 페이지 기준 무료 진단',
+    scanScopeLabel: scan.scanScopeLabel || '공개 페이지 기준 무료진단',
     recommendedPlan: scan.intelligence?.recommendedPlan || scan.recommendedPlan || (riskScore !== null && riskScore >= 75 ? 'Auto' : 'Pro'),
     intelligence: scan.intelligence || scan.diagnosis?.intelligence || null,
     journey: scan.journey || scan.orchestration || scan.diagnosis?.journey || null,
@@ -507,7 +507,7 @@ function renderFullResult(scan) {
 }
 function renderLockedResult(scan) {
   const view = normalizeScan(scan);
-  return `<div class="result-locked pro-lock"><div class="locked-content"><div class="lock-preview-grid"><span>페이지별 근거</span><span>수정 문구안</span><span>우선순위 로드맵</span><span>리포트·템플릿 산출물</span></div></div><div class="lock-box"><div class="lock-card"><div class="pill">결제 후 상세 결과 공개</div><h3>상세 결과 ${escapeHtml(view.lockedCount)}개는 결제 후 열립니다.</h3><p class="muted">로그인 회원은 무료 진단 횟수 관리, 내 사이트 저장, 원클릭 재검사, 최근 진단 이력 확인까지만 이용할 수 있습니다. 상세 근거·수정 문구안·로드맵은 구매 산출물입니다.</p><div class="topnav"><a class="primary" href="/checkout?plan=${escapeAttr(view.recommendedPlan)}&siteId=${escapeAttr(view.siteId)}">상세 리포트 결제</a><a class="secondary" href="/portal?siteId=${escapeAttr(view.siteId)}">내 사이트 저장/재검사</a></div></div></div></div>`;
+  return `<div class="result-locked pro-lock"><div class="locked-content"><div class="lock-preview-grid"><span>페이지별 근거</span><span>수정 문구안</span><span>우선순위 로드맵</span><span>리포트·템플릿 산출물</span></div></div><div class="lock-box"><div class="lock-card"><div class="pill">결제 후 상세 결과 공개</div><h3>상세 결과 ${escapeHtml(view.lockedCount)}개는 결제 후 열립니다.</h3><p class="muted">로그인 회원은 무료진단 횟수 관리, 내 사이트 저장, 원클릭 재검사, 최근 진단 이력 확인까지만 이용할 수 있습니다. 상세 근거·수정 문구안·로드맵은 구매 산출물입니다.</p><div class="topnav"><a class="primary" href="/checkout?plan=${escapeAttr(view.recommendedPlan)}&siteId=${escapeAttr(view.siteId)}">상세 리포트 결제</a><a class="secondary" href="/portal?siteId=${escapeAttr(view.siteId)}">내 사이트 저장/재검사</a></div></div></div></div>`;
 }
 function renderPaywall(scan) { return renderLockedResult(scan); }
 
@@ -526,7 +526,7 @@ async function runScan() {
   if (!isValidTarget(normalizedTarget)) { setState('유효한 사이트 주소를 입력하세요. 예: https://your-store.kr', 'warn'); setBusy(false); return; }
   if (!session.authenticated && getUsage() >= FREE_LIMIT) {
     state.innerHTML = `오늘 비회원 요약 결과 횟수를 모두 사용했습니다. <a href="${escapeAttr(loginUrl())}">로그인·회원가입하면 계속 이용할 수 있습니다.</a>`;
-    setResultHtml('<div class="upgrade-box"><strong>비회원 이용 한도 초과</strong><p class="muted">로그인하면 무료 진단 횟수 관리, 저장, 재검사를 계속 사용할 수 있습니다. 상세 결과는 결제 후 공개됩니다.</p></div>');
+    setResultHtml('<div class="upgrade-box"><strong>비회원 이용 한도 초과</strong><p class="muted">로그인하면 무료진단 횟수 관리, 저장, 재검사를 계속 사용할 수 있습니다. 상세 결과는 결제 후 공개됩니다.</p></div>');
     setBusy(false);
     return;
   }
@@ -548,7 +548,7 @@ async function runScan() {
     setCachedDemoResult(normalizedTarget, data.result || {});
     saveScan(data.result || {});
     if (session.authenticated && data.result) { try { await saveCurrentSite(data.result); } catch {} }
-    setState(session.authenticated ? '무료 진단 완료 · 내 사이트 저장과 최근 이력 관리가 활성화되었습니다. 상세 결과는 결제 후 공개됩니다.' : '무료 진단 완료 · 확인 근거와 한계를 먼저 보여드립니다. 상세 결과는 결제 후 공개됩니다.', 'success');
+    setState(session.authenticated ? '무료진단 완료 · 내 사이트 저장과 최근 이력 관리가 활성화되었습니다. 상세 결과는 결제 후 공개됩니다.' : '무료진단 완료 · 확인 근거와 한계를 먼저 보여드립니다. 상세 결과는 결제 후 공개됩니다.', 'success');
     renderResult(data.result || {});
   } catch (err) {
     stopProgress();
@@ -896,37 +896,6 @@ function buildDangerItems(view) {
   }));
 }
 
-function executiveRiskCopy(view) {
-  const score = Number(view.riskScore);
-  if (!Number.isFinite(score)) return { level: '확인 필요', headline: '공개 데이터가 부족해 사람 확인이 필요한 상태입니다.', note: '자동으로 보이는 화면만으로는 고객 신뢰 공백을 단정할 수 없습니다.', tone: 'warn' };
-  if (score >= 75) return { level: '위험', headline: '고객이 결제 직전에 멈출 가능성이 큰 상태입니다.', note: '정책·문의·환불 안내가 약하면 광고 유입이 결제로 이어지기 전에 이탈합니다.', tone: 'danger' };
-  if (score >= 55) return { level: '주의', headline: '구매 전 확인 단계에서 신뢰 누수가 생길 수 있습니다.', note: '운영 자체가 막힌 것은 아니지만, 고지 위치와 문구를 정리하지 않으면 문의와 이탈이 늘 수 있습니다.', tone: 'warn' };
-  return { level: '관리 가능', headline: '기본 구조는 안정적이지만 정기 재점검이 필요합니다.', note: '새 상품, 이벤트, 결제 흐름이 추가될 때 다시 공백이 생길 수 있습니다.', tone: 'success' };
-}
-function heatStage(score) {
-  const n = Number(score);
-  if (!Number.isFinite(n)) return 2;
-  if (n >= 80) return 5;
-  if (n >= 65) return 4;
-  if (n >= 45) return 3;
-  if (n >= 25) return 2;
-  return 1;
-}
-function renderImpactTiles(view, stats) {
-  const risks = expectedRiskList(view);
-  const tiles = [
-    { label: '전환 리스크', value: `${Math.max(1, stats.suspected + stats.manual)}곳`, copy: risks[0] || '구매 전 신뢰 확인 지연 가능성' },
-    { label: '분쟁 리스크', value: `${Math.max(1, stats.suspected)}개`, copy: risks[1] || '환불·문의 기준 해석 차이 가능성' },
-    { label: '운영 리스크', value: `${Math.max(1, stats.manual)}개`, copy: '로그인·외부 결제·업종별 고지는 사람 확인 필요' }
-  ];
-  return tiles.map(item => `<article class="exec-impact-tile"><span>${escapeHtml(item.label)}</span><strong>${escapeHtml(item.value)}</strong><p>${escapeHtml(item.copy)}</p></article>`).join('');
-}
-function renderHeatMap(view) {
-  const active = heatStage(view.riskScore);
-  const labels = ['안정', '관찰', '주의', '위험', '즉시 보완'];
-  return `<div class="exec-heat-map" aria-label="위험 단계 ${active}단계">${labels.map((label, index) => `<div class="${index + 1 <= active ? 'active' : ''}"><span>${index + 1}</span><b>${escapeHtml(label)}</b></div>`).join('')}</div>`;
-}
-
 function renderUnifiedDashboard(view) {
   const stats = resultStats(view);
   const confirmed = buildConfirmedItems(view);
@@ -936,72 +905,44 @@ function renderUnifiedDashboard(view) {
   const attempted = view.evidenceSummary?.attemptedPageCount ?? Math.max((view.pages || []).length, 1);
   const successful = view.evidenceSummary?.successfulPageCount ?? (view.pages || []).length;
   const topActions = (view.recommendedActions || []).slice(0, 3);
-  const exec = executiveRiskCopy(view);
   const warningText = successful < attempted
-    ? `일부 URL 응답 지연 ${Math.max(1, attempted - successful)}건 · 결과는 생성되었지만 재점검이 필요합니다.`
-    : `${stats.suspected + stats.manual}개 신뢰 공백 후보가 고객 행동에 영향을 줄 수 있습니다.`;
-  const actionRows = topActions.length ? topActions : [
-    { title: '환불·취소 안내 위치 정리', nextStep: '결제 버튼 주변에서 바로 확인되게 배치' },
-    { title: '문의 응답 기준 명확화', nextStep: '고객지원 이메일과 처리 시간을 함께 표시' },
-    { title: '사업자·정책 정보 연결', nextStep: '푸터와 결제 전 화면의 안내를 일치시킴' }
-  ];
-  return `<section class="unified-trust-dashboard executive-risk-dashboard ${escapeAttr(exec.tone)}">
-    <div class="exec-topline">
-      <div>
-        <span class="pill gold">경영진용 리스크 브리핑</span>
-        <h2>무료 진단 결과</h2>
-        <p>${escapeHtml(view.target)}</p>
-      </div>
-      <div class="exec-time"><span>검사 시각</span><b>${escapeHtml(formatDate(view.generatedAt))}</b><a class="btn secondary" href="/documents?siteId=${escapeAttr(view.siteId)}&type=report">리포트 초안 보기</a></div>
+    ? `일부 URL 응답 지연 ${Math.max(1, attempted - successful)}건 · 결과는 생성되었으며 재시도 권장`
+    : `${stats.manual}개 항목은 자동 단정하지 않고 수동 확인으로 분리했습니다.`;
+  return `<section class="unified-trust-dashboard ${escapeAttr(view.health.tone)}">
+    <div class="utd-header">
+      <div class="utd-title-wrap"><h2>URL 신뢰도 진단 결과</h2><p>${escapeHtml(view.target)}</p></div>
+      <div class="utd-header-meta"><span>검사 시간 ${escapeHtml(formatDate(view.generatedAt))}</span><div class="utd-header-buttons"><a class="btn secondary" href="/portal?siteId=${escapeAttr(view.siteId)}">결과 공유</a><a class="btn secondary" href="/documents?siteId=${escapeAttr(view.siteId)}&type=report">리포트 초안 보기</a></div></div>
     </div>
-
-    <section class="exec-hero-panel">
-      <div class="exec-copy">
-        <span class="exec-risk-label">${escapeHtml(exec.level)}</span>
-        <h3>${escapeHtml(exec.headline)}</h3>
-        <p>${escapeHtml(exec.note)}</p>
-        <div class="exec-warning-line"><b>${escapeHtml(warningText)}</b><small>무료 진단은 공개 페이지 기준입니다. 단정 불가 항목은 별도 확인으로 분리합니다.</small></div>
-      </div>
-      <div class="exec-score-plate">
+    <div class="utd-warning-bar"><div><b>${escapeHtml(warningText)}</b><small>모든 항목의 검사가 완료되었으며 현재 결과를 확인할 수 있습니다.</small></div><button class="btn secondary" type="button" id="dashboardRetryBtn">다시 점검</button></div>
+    <div class="utd-top-grid">
+      <article class="utd-score-card">
         <div class="utd-gauge" style="--score:${escapeAttr(view.riskScore ?? 0)}"><div class="utd-gauge-ring"></div><div class="utd-gauge-value"><span>보완 우선도</span><strong>${escapeHtml(view.riskScore ?? '-')}</strong><em>/100</em></div></div>
-        <b>${escapeHtml(view.riskLevel || view.health.label)}</b>
-        <small>권장: 보완 우선도 40점 이하</small>
-      </div>
-    </section>
-
-    ${renderHeatMap(view)}
-
-    <section class="exec-impact-grid" aria-label="위험 영향 요약">
-      ${renderImpactTiles(view, stats)}
-      <article class="exec-impact-tile positive"><span>확인된 안전장치</span><strong>${escapeHtml(stats.confirmed)}개</strong><p>확인된 요소는 유지하고, 보이지 않는 공백을 먼저 메우는 방식이 효율적입니다.</p></article>
-    </section>
-
-    <section class="exec-crisis-strip">
-      <div><b>방치하면 생기는 문제</b><small>고객은 법률 용어보다 “결제 후 내가 보호받는지”를 먼저 확인합니다.</small></div>
-      <ul>
-        <li>환불·문의 기준을 못 찾으면 결제 전 이탈</li>
-        <li>사업자·정책 정보가 약하면 신뢰도 하락</li>
-        <li>로그인/외부 결제 영역은 자동 검사만으로 확정 불가</li>
-      </ul>
-    </section>
-
-    <div class="utd-columns exec-columns">
-      <section class="utd-column danger"><div class="utd-column-head"><h3>즉시 경보</h3><p>고객 신뢰와 전환에 바로 닿는 항목입니다.</p></div>${urgent.map((item, index) => `<article class="utd-list-card"><div><b>${escapeHtml(item.title)}</b><small>${escapeHtml(item.desc)}</small></div><span class="utd-badge danger">${escapeHtml(item.severity || (index < 2 ? '높음' : '중간'))}</span></article>`).join('') || '<article class="utd-list-card"><div><b>긴급 항목 없음</b><small>현재 공개 결과 기준입니다.</small></div><span class="utd-badge success">확인</span></article>'}</section>
-      <section class="utd-column success"><div class="utd-column-head"><h3>확인된 요소</h3><p>유지해야 할 기본 신뢰 장치입니다.</p></div>${confirmed.map((item) => `<article class="utd-list-card"><div><b>${escapeHtml(item.title)}</b><small>${escapeHtml(item.desc)}</small></div><span class="utd-badge success">${escapeHtml(item.badge)}</span></article>`).join('')}</section>
-      <section class="utd-column warn"><div class="utd-column-head"><h3>사람 확인 필요</h3><p>자동으로 단정하면 안 되는 구간입니다.</p></div>${manual.map((item) => `<article class="utd-list-card"><div><b>${escapeHtml(item.title)}</b><small>${escapeHtml(item.desc)}</small></div><span class="utd-badge warn">검토</span></article>`).join('')}</section>
+        <div class="utd-score-copy"><b>${escapeHtml(view.riskLevel || view.health.label)}</b><p>${escapeHtml(view.health.headline)}</p><small>권장: 보완 우선도 40점 이하</small></div>
+      </article>
+      <article class="utd-kpi green"><span>확인된 요소</span><strong>${escapeHtml(stats.confirmed)}</strong><small>안심하고 유지하세요</small></article>
+      <article class="utd-kpi amber"><span>누락 의심</span><strong>${escapeHtml(stats.suspected)}</strong><small>즉시 보완 필요</small></article>
+      <article class="utd-kpi orange"><span>검토 필요</span><strong>${escapeHtml(stats.manual)}</strong><small>내용 확인 후 보완</small></article>
+      <article class="utd-kpi blue"><span>수동 확인</span><strong>${escapeHtml(view.scoreModel?.manualReviewCount ?? stats.manual)}</strong><small>사람 확인이 필요</small></article>
     </div>
-
-    <section class="exec-action-panel">
-      <div class="exec-action-title"><span class="pill green">오늘 처리할 순서</span><h3>고객이 불안해하는 지점부터 막으세요</h3><p>전체를 한 번에 고치기보다 결제·문의·정책 연결부부터 정리하는 것이 체감 개선이 큽니다.</p></div>
-      <div class="utd-action-roadmap">${actionRows.map((item, index) => `<article><span>${index + 1}</span><div><b>${escapeHtml(item.title)}</b><small>${escapeHtml(item.nextStep || item.reason || item.action || '적용 위치와 검수 기준을 확인하세요.')}</small></div></article>`).join('')}</div>
-    </section>
-
-    <div class="utd-footer-actions exec-footer-actions">
+    <div class="utd-urgent-strip">
+      <div class="utd-urgent-title"><b>지금 바로 보완해야 할 핵심 문제</b><small>고객 신뢰와 전환율에 직접적인 영향을 줄 수 있는 항목입니다.</small></div>
+      <div class="utd-urgent-items">${urgent.map((item, index) => `<article><span>${index + 1}</span><b>${escapeHtml(item.title)}</b><small>${escapeHtml(item.desc)}</small></article>`).join('')}</div>
+    </div>
+    <div class="utd-columns">
+      <section class="utd-column danger"><div class="utd-column-head"><h3>지금 위험한 항목</h3></div>${dangerItems.map((item) => `<article class="utd-list-card"><div><b>${escapeHtml(item.title)}</b><small>${escapeHtml(item.desc)}</small></div><span class="utd-badge danger">${escapeHtml(item.severity)}</span></article>`).join('')}</section>
+      <section class="utd-column success"><div class="utd-column-head"><h3>자동으로 확인된 요소</h3></div>${confirmed.map((item) => `<article class="utd-list-card"><div><b>${escapeHtml(item.title)}</b><small>${escapeHtml(item.desc)}</small></div><span class="utd-badge success">${escapeHtml(item.badge)}</span></article>`).join('')}</section>
+      <section class="utd-column warn"><div class="utd-column-head"><h3>수동 확인 필요</h3></div>${manual.map((item) => `<article class="utd-list-card"><div><b>${escapeHtml(item.title)}</b><small>${escapeHtml(item.desc)}</small></div><span class="utd-badge warn">검토 필요</span></article>`).join('')}</section>
+    </div>
+    <div class="utd-bottom-band">
+      <div class="utd-bottom-intro"><b>오늘 바로 고칠 것</b><small>우선순위 높은 3가지만 먼저 개선하세요.</small></div>
+      <div class="utd-action-roadmap">${topActions.map((item, index) => `<article><span>${index + 1}</span><div><b>${escapeHtml(item.title)}</b><small>${escapeHtml(item.nextStep || item.reason)}</small></div></article>`).join('')}</div>
+    </div>
+    <div class="utd-footer-actions">
       <a class="btn primary" href="/plans?riskScore=${escapeAttr(view.riskScore ?? '')}&siteId=${escapeAttr(view.siteId)}">상세 리포트 결제</a>
       <a class="btn secondary" href="/documents?siteId=${escapeAttr(view.siteId)}">수정 문구안 결제</a>
       <button class="btn primary" type="button" id="dashboardRetryBtnBottom">다시 점검</button>
     </div>
-    <div class="utd-evidence-line"><span>실제 확인 페이지 ${escapeHtml(successful)}/${escapeHtml(attempted)}개</span><span>수집 신뢰도 ${escapeHtml(confidenceBadge(view.evidenceSummary?.confidenceScore, view.evidenceSummary?.confidenceLabel))}</span><span>자동 초안 ${escapeHtml(stats.autoDrafts)}개</span><span>수동 확인 ${escapeHtml(stats.manual)}개</span></div>
+    <div class="utd-evidence-line"><span>실제 확인 페이지 ${escapeHtml(successful)}/${escapeHtml(attempted)}개</span><span>수집 신뢰도 ${escapeHtml(confidenceBadge(view.evidenceSummary?.confidenceScore, view.evidenceSummary?.confidenceLabel))}</span><span>자동 초안 ${escapeHtml(stats.autoDrafts)}개</span></div>
   </section>`;
 }
 

@@ -1,0 +1,347 @@
+{
+  "generatedAt": "2026-05-04T09:51:48.348Z",
+  "ok": true,
+  "phase": "193-200",
+  "title": "Commercial system completion validation",
+  "total": 80,
+  "passed": 80,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "file:server/bootstrap/commercial-env.mjs",
+      "ok": true
+    },
+    {
+      "name": "file:server/core/api-response.mjs",
+      "ok": true
+    },
+    {
+      "name": "file:server/services/diagnosis-trust.mjs",
+      "ok": true
+    },
+    {
+      "name": "file:server/services/order-fulfillment.mjs",
+      "ok": true
+    },
+    {
+      "name": "file:server/services/audit-log.mjs",
+      "ok": true
+    },
+    {
+      "name": "file:server/services/observability.mjs",
+      "ok": true
+    },
+    {
+      "name": "file:shared/render-policy.js",
+      "ok": true
+    },
+    {
+      "name": "file:tests/phase193-200-services.mjs",
+      "ok": true
+    },
+    {
+      "name": "file:scripts/create-secure-release.mjs",
+      "ok": true
+    },
+    {
+      "name": "file:docs/current/COMMERCIAL_SYSTEM_HANDOFF_20260504_KO.md",
+      "ok": true
+    },
+    {
+      "name": "file:PHASE193_200_COMMERCIAL_SYSTEM_COMPLETION_20260504_KO.md",
+      "ok": true
+    },
+    {
+      "name": "env:COMMERCIAL_ENV_SPEC",
+      "ok": true
+    },
+    {
+      "name": "env:validateCommercialEnv",
+      "ok": true
+    },
+    {
+      "name": "env:assertCommercialEnv",
+      "ok": true
+    },
+    {
+      "name": "env:NV0_PORTONE_WEBHOOK_SECRET",
+      "ok": true
+    },
+    {
+      "name": "env:NV0_BACKUP_ENCRYPTION_SECRET",
+      "ok": true
+    },
+    {
+      "name": "api:apiOk",
+      "ok": true
+    },
+    {
+      "name": "api:apiFail",
+      "ok": true
+    },
+    {
+      "name": "api:withRequestId",
+      "ok": true
+    },
+    {
+      "name": "api:normalizeApiError",
+      "ok": true
+    },
+    {
+      "name": "api:x-request-id",
+      "ok": true
+    },
+    {
+      "name": "diagnosis-trust:DIAGNOSIS_RULES_VERSION",
+      "ok": true
+    },
+    {
+      "name": "diagnosis-trust:createEvidenceSnapshot",
+      "ok": true
+    },
+    {
+      "name": "diagnosis-trust:scoreDiagnosisConfidence",
+      "ok": true
+    },
+    {
+      "name": "diagnosis-trust:attachTrustLayer",
+      "ok": true
+    },
+    {
+      "name": "diagnosis-trust:compareDiagnosisResults",
+      "ok": true
+    },
+    {
+      "name": "diagnosis-trust:snapshotHash",
+      "ok": true
+    },
+    {
+      "name": "fulfillment:ORDER_FULFILLMENT_TRANSITIONS",
+      "ok": true
+    },
+    {
+      "name": "fulfillment:moveOrderStatus",
+      "ok": true
+    },
+    {
+      "name": "fulfillment:createIdempotencyKey",
+      "ok": true
+    },
+    {
+      "name": "fulfillment:verifyWebhookIdempotency",
+      "ok": true
+    },
+    {
+      "name": "fulfillment:buildFulfillmentChecklist",
+      "ok": true
+    },
+    {
+      "name": "audit:redactAuditValue",
+      "ok": true
+    },
+    {
+      "name": "audit:createAuditEvent",
+      "ok": true
+    },
+    {
+      "name": "audit:appendAuditJsonl",
+      "ok": true
+    },
+    {
+      "name": "audit:[REDACTED]",
+      "ok": true
+    },
+    {
+      "name": "observability:logEvent",
+      "ok": true
+    },
+    {
+      "name": "observability:buildHealthDetails",
+      "ok": true
+    },
+    {
+      "name": "observability:classifyIncident",
+      "ok": true
+    },
+    {
+      "name": "observability:shouldNotify",
+      "ok": true
+    },
+    {
+      "name": "server:index-imports-commercial-env",
+      "ok": true
+    },
+    {
+      "name": "server:index-imports-observability",
+      "ok": true
+    },
+    {
+      "name": "server:readyz-has-commercial-env",
+      "ok": true
+    },
+    {
+      "name": "server:healthz-uses-health-details",
+      "ok": true
+    },
+    {
+      "name": "server:catch-classifies-incident",
+      "ok": true
+    },
+    {
+      "name": "html:index-count>=20",
+      "ok": true,
+      "detail": {
+        "count": 22
+      }
+    },
+    {
+      "name": "apps/admin/console/index.html:render-policy-after-safe-dom",
+      "ok": true
+    },
+    {
+      "name": "apps/admin/diagnostics/index.html:render-policy-after-safe-dom",
+      "ok": true
+    },
+    {
+      "name": "apps/admin/gate/index.html:render-policy-after-safe-dom",
+      "ok": true
+    },
+    {
+      "name": "apps/admin/library/index.html:render-policy-after-safe-dom",
+      "ok": true
+    },
+    {
+      "name": "apps/admin/orders/index.html:render-policy-after-safe-dom",
+      "ok": true
+    },
+    {
+      "name": "apps/admin/publications/index.html:render-policy-after-safe-dom",
+      "ok": true
+    },
+    {
+      "name": "apps/admin/settings/index.html:render-policy-after-safe-dom",
+      "ok": true
+    },
+    {
+      "name": "apps/public/auth/index.html:render-policy-after-safe-dom",
+      "ok": true
+    },
+    {
+      "name": "apps/public/board/index.html:render-policy-after-safe-dom",
+      "ok": true
+    },
+    {
+      "name": "apps/public/business-info/index.html:render-policy-after-safe-dom",
+      "ok": true
+    },
+    {
+      "name": "apps/public/checkout/index.html:render-policy-after-safe-dom",
+      "ok": true
+    },
+    {
+      "name": "apps/public/demo/index.html:render-policy-after-safe-dom",
+      "ok": true
+    },
+    {
+      "name": "apps/public/documents/index.html:render-policy-after-safe-dom",
+      "ok": true
+    },
+    {
+      "name": "apps/public/guides/index.html:render-policy-after-safe-dom",
+      "ok": true
+    },
+    {
+      "name": "apps/public/home/index.html:render-policy-after-safe-dom",
+      "ok": true
+    },
+    {
+      "name": "apps/public/plans/index.html:render-policy-after-safe-dom",
+      "ok": true
+    },
+    {
+      "name": "apps/public/portal/index.html:render-policy-after-safe-dom",
+      "ok": true
+    },
+    {
+      "name": "apps/public/privacy/index.html:render-policy-after-safe-dom",
+      "ok": true
+    },
+    {
+      "name": "apps/public/refund/index.html:render-policy-after-safe-dom",
+      "ok": true
+    },
+    {
+      "name": "apps/public/solutions/index.html:render-policy-after-safe-dom",
+      "ok": true
+    },
+    {
+      "name": "apps/public/terms/index.html:render-policy-after-safe-dom",
+      "ok": true
+    },
+    {
+      "name": "apps/public/veridion-demo/index.html:render-policy-after-safe-dom",
+      "ok": true
+    },
+    {
+      "name": "env-example:NV0_COMMERCIAL_ENV_STRICT",
+      "ok": true
+    },
+    {
+      "name": "env-example:NV0_OPERATOR_ALERT_EMAIL",
+      "ok": true
+    },
+    {
+      "name": "env-example:NV0_ORDER_WEBHOOK_REPLAY_ENABLED",
+      "ok": true
+    },
+    {
+      "name": "env-example:NV0_DIAGNOSIS_RULES_VERSION",
+      "ok": true
+    },
+    {
+      "name": "package:test:phase193-200",
+      "ok": true,
+      "detail": {
+        "actual": "node tests/phase193-200-services.mjs"
+      }
+    },
+    {
+      "name": "package:validate:phase193-200",
+      "ok": true,
+      "detail": {
+        "actual": "node scripts/validate-phase193-200-commercial-system.mjs"
+      }
+    },
+    {
+      "name": "package:release:secure-package",
+      "ok": true,
+      "detail": {
+        "actual": "node scripts/create-secure-release.mjs"
+      }
+    },
+    {
+      "name": "package:phase200:final",
+      "ok": true
+    },
+    {
+      "name": "package:version-phase200",
+      "ok": true
+    },
+    {
+      "name": "release-script:excludes-runtime-data",
+      "ok": true
+    },
+    {
+      "name": "release-script:excludes-env-and-node-modules",
+      "ok": true
+    },
+    {
+      "name": "tests:phase193-200-services-exec",
+      "ok": true,
+      "detail": {
+        "stdout": "{\n  \"ok\": true,\n  \"tests\": 24,\n  \"phase\": \"193-200-services\"\n}",
+        "stderr": ""
+      }
+    }
+  ]
+}
