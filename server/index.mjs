@@ -177,6 +177,7 @@ const PORTONE_WEBHOOK_VERIFY_MODE = process.env.NV0_PORTONE_WEBHOOK_VERIFY_MODE 
 const RULES_VERSION = process.env.NV0_RULES_VERSION || '2026.05.02-phase164-zero-cost-hardening-50';
 const SCAN_CACHE_TTL_MS = Number(process.env.NV0_SCAN_CACHE_TTL_MS || 10 * 60_000);
 const TARGET_FETCH_TIMEOUT_MS = Number(process.env.NV0_TARGET_FETCH_TIMEOUT_MS || 3000);
+const SCAN_SOFT_TIMEOUT_MS = Math.max(2500, Math.min(15000, Number(process.env.NV0_SCAN_SOFT_TIMEOUT_MS || 6500)));
 const TARGET_FETCH_MAX_PAGES = Math.max(4, Math.min(24, Number(process.env.NV0_TARGET_FETCH_MAX_PAGES || 12)));
 const TARGET_FETCH_CONCURRENCY = Math.max(1, Math.min(6, Number(process.env.NV0_TARGET_FETCH_CONCURRENCY || 4)));
 const TARGET_FETCH_ROBOTS_ENABLED = process.env.NV0_TARGET_FETCH_ROBOTS_ENABLED !== 'false';
@@ -3105,6 +3106,38 @@ resourceFetches: discovery.resources
 }
 };
 }
+async function buildBuiltinScanResultWithFetchBudget(input, startedAt, provider = 'builtin', upstreamError = '') {
+const url = safeUrl(String(input).trim());
+let timeoutId = null;
+let fetched;
+if (!TARGET_FETCH_ENABLED || !url) {
+fetched = { fetched: false, html: '', error: TARGET_FETCH_ENABLED ? 'invalid url' : 'target fetch disabled', finalUrl: input, status: 0, pages: [], probeCount: 0 };
+} else {
+const fetchTask = fetchTargetHtmlBundle(url.toString())
+.then(value => ({ ok: true, value }))
+.catch(error => ({ ok: false, error }));
+const timeoutTask = new Promise(resolve => { timeoutId = setTimeout(() => resolve({ timedOut: true }), SCAN_SOFT_TIMEOUT_MS); });
+const settled = await Promise.race([fetchTask, timeoutTask]);
+if (timeoutId) clearTimeout(timeoutId);
+if (settled?.timedOut) {
+fetched = { fetched: false, html: '', error: `scan soft timeout after ${SCAN_SOFT_TIMEOUT_MS}ms`, finalUrl: input, status: 0, pages: [], probeCount: 0, coverageStrategy: 'soft_timeout_safe_fallback' };
+} else if (settled?.ok) {
+fetched = settled.value;
+} else {
+fetched = { fetched: false, html: '', error: settled?.error?.message || 'target fetch failed', finalUrl: input, status: 0, pages: [], probeCount: 0, coverageStrategy: 'fetch_error_safe_fallback' };
+}
+}
+const scan = buildBuiltinScanResult(input, fetched, startedAt);
+scan.provider = provider;
+if (upstreamError) scan.fetchError = upstreamError;
+if (fetched?.error) scan.fetchError = scan.fetchError || fetched.error;
+if (fetched?.coverageStrategy === 'soft_timeout_safe_fallback') {
+scan.summary = `${String(input).trim()} 응답이 지연되어 안전 요약 결과를 먼저 생성했습니다. 다시 실행하면 서버 수집 결과로 갱신됩니다.`;
+scan.scoreModel = { ...(scan.scoreModel || {}), confidenceLabel: '시간 제한 안전 결과', manualReviewCount: Math.max(1, Number(scan.scoreModel?.manualReviewCount || 0)) };
+}
+return scan;
+}
+
 async function scanResultFor(input, db = null) {
 const startedAt = Date.now();
 const cached = findReusableScan(db, input);
@@ -3118,10 +3151,7 @@ return await enhanceScanWithAiReview(external);
 if (!SCAN_PROVIDER_FALLBACK) throw error;
 const url = safeUrl(String(input).trim());
 if (url && isBlockedTargetUrl(url)) throw new Error('blocked target url');
-const fetched = (TARGET_FETCH_ENABLED && url) ? await fetchTargetHtmlBundle(url.toString()) : { fetched: false, html: '', error: TARGET_FETCH_ENABLED ? 'invalid url' : 'target fetch disabled', finalUrl: input, status: 0 };
-const fallback = buildBuiltinScanResult(input, fetched, startedAt);
-fallback.provider = 'builtin_fallback';
-fallback.fetchError = error.message;
+const fallback = await buildBuiltinScanResultWithFetchBudget(input, startedAt, 'builtin_fallback', error.message);
 fallback.summary = `${String(input).trim()} 외부 스캔 실패로 내장 엔진으로 분석했습니다.`;
 return await enhanceScanWithAiReview(fallback);
 }
@@ -3130,10 +3160,8 @@ const url = safeUrl(String(input).trim());
 if (url && isBlockedTargetUrl(url)) {
 return await enhanceScanWithAiReview(buildBuiltinScanResult(input, { fetched: false, html: '', error: 'blocked target url', finalUrl: input, status: 0 }, startedAt));
 }
-const fetched = (TARGET_FETCH_ENABLED && url)
-? await fetchTargetHtmlBundle(url.toString())
-: { fetched: false, html: '', error: TARGET_FETCH_ENABLED ? 'invalid url' : 'target fetch disabled', finalUrl: input, status: 0 };
-return await enhanceScanWithAiReview(buildBuiltinScanResult(input, fetched, startedAt));
+const builtin = await buildBuiltinScanResultWithFetchBudget(input, startedAt, 'builtin');
+return await enhanceScanWithAiReview(builtin);
 }
 function backupSecurityConfigSummary() {
 return backupOps.securitySummary();

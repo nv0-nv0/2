@@ -518,6 +518,93 @@ async function unlockSavedScan() {
   const scan = lastScan || getSavedScanFromStorage();
   if (scan) renderResult(scan);
 }
+
+function buildLocalFallbackScan(target, message = '') {
+  const now = new Date().toISOString();
+  const normalized = normalizeTarget(target || targetInput?.value || '');
+  const reason = String(message || '서버 응답 지연').slice(0, 180);
+  const detailFindings = [
+    {
+      code: 'LOCAL-FALLBACK-001',
+      category: '진단 연결',
+      priority: 'P0',
+      title: '서버 응답 지연으로 공개 페이지 전체 수집을 완료하지 못함',
+      impact: '사용자에게 빈 화면이나 오류 카드만 보여주지 않도록 로컬 안전 결과로 전환했습니다.',
+      recommendation: '다시 실행하면 서버 진단 결과로 갱신됩니다. 반복되면 관리자 화면에서 스캔 공급자와 프록시 제한 시간을 확인하세요.',
+      manualReviewRequired: true,
+      status: 'manual_review',
+      evidence: reason
+    },
+    {
+      code: 'LOCAL-FALLBACK-002',
+      category: '공개 페이지 기준',
+      priority: 'P1',
+      title: 'URL 접근·정책 링크·문의 경로는 수동 확인 필요',
+      impact: '자동 수집이 완료되지 않았으므로 점수는 보수적으로 표시됩니다.',
+      recommendation: '홈, 푸터, 환불·개인정보·문의 안내 링크가 실제 고객 화면에서 보이는지 확인하세요.',
+      manualReviewRequired: true,
+      status: 'manual_review',
+      evidence: normalized
+    },
+    {
+      code: 'LOCAL-FALLBACK-003',
+      category: '다음 행동',
+      priority: 'P2',
+      title: '결과 저장 전 재진단 권장',
+      impact: '이번 결과는 장애 상황에서도 화면 흐름을 유지하기 위한 안전 요약입니다.',
+      recommendation: '네트워크가 안정된 상태에서 다시 실행 후 리포트 또는 수정 문구안으로 연결하세요.',
+      manualReviewRequired: false,
+      status: 'review',
+      evidence: 'client_fallback'
+    }
+  ];
+  return {
+    ok: true,
+    provider: 'client_safe_fallback',
+    requestId: `local-${Date.now()}`,
+    target: normalized,
+    normalizedTarget: normalized,
+    generatedAt: now,
+    riskScore: 48,
+    riskLevel: '점검 필요',
+    summary: '서버 응답이 지연되어 로컬 안전 결과를 표시했습니다. 고정 예시 점수가 아니라 이번 실행 상태를 기준으로 한 임시 점검 결과입니다.',
+    scanScopeLabel: '공개 페이지 기준 로컬 안전 결과',
+    totalFindings: detailFindings.length,
+    topFindings: detailFindings.map(item => item.title),
+    detailFindings,
+    evidenceSummary: {
+      fetched: false,
+      fetchStatus: 0,
+      fetchError: reason,
+      scannedPages: [],
+      successfulPageCount: 0,
+      manualReviewNotes: ['서버 진단 응답 지연', '재실행 시 서버 결과로 교체'],
+      automationDisclosure: {
+        autoChecked: ['URL 형식', '화면 흐름 유지'],
+        manualReviewRequired: ['공개 페이지 실제 수집', '외부 결제·로그인 화면', '정책 링크 세부 내용']
+      }
+    },
+    scoreModel: {
+      confidence: 35,
+      confidenceLabel: '임시 결과',
+      manualReviewCount: 2,
+      detectedIssueCount: detailFindings.length,
+      scoringNote: '서버 오류 시에도 빈 화면·ERR 카드만 노출되지 않도록 보수 점수로 표시합니다.'
+    },
+    automationDisclosure: {
+      autoChecked: ['입력 URL 형식', '진단 화면 상태'],
+      manualReviewRequired: ['공개 페이지 수집 결과', '정책/결제/문의 세부 근거']
+    },
+    automatedActionPlan: {
+      immediateActions: detailFindings.map(item => item.recommendation).slice(0, 3),
+      automaticFixes: [],
+      manualActions: ['다시 실행', '관리자 진단에서 스캔 공급자/저장소/프록시 상태 확인']
+    },
+    recommendedPlan: 'Report',
+    fallback: true,
+    error: reason
+  };
+}
 async function runScan() {
   if (isScanning) return;
   setBusy(true);
@@ -555,28 +642,12 @@ async function runScan() {
     const message = err?.message || '알 수 없는 오류';
     const isTurnstile = /turnstile|보안|검증/i.test(message);
     const isServer = /500|502|503|서버|timeout|초과/i.test(message);
-    setState(`진단 실패: ${message}`, 'warn');
-    setResultHtml(`<section class="scan-error-dashboard">
-      <div class="scan-error-head">
-        <div class="scan-error-score"><span>재시도 권장</span><strong>ERR</strong></div>
-        <div>
-          <p class="scan-error-kicker">진단 결과 생성 실패</p>
-          <h3>이번 실행에서 결과를 끝까지 만들지 못했습니다.</h3>
-          <p>${escapeHtml(isTurnstile ? '보안 확인 준비가 지연되었습니다. 같은 화면에서 다시 실행하면 대부분 해결됩니다.' : isServer ? '응답 시간이 길어지거나 서버 상태가 불안정해 결과 생성이 끊겼습니다. 재시도 후에도 반복되면 관리자 진단 화면에서 스캔 제공자, 저장소, 외부 연결 상태를 점검하세요.' : '주소 형식, 대상 사이트 접근 가능 여부, 차단 여부를 확인한 뒤 다시 실행하세요.')}</p>
-        </div>
-      </div>
-      <div class="scan-error-grid">
-        <article><span>가능성이 큰 원인</span><b>${escapeHtml(isTurnstile ? '보안 확인 지연' : isServer ? '응답 시간 초과 또는 서버 지연' : '입력 URL 또는 접근 제한')}</b><small>상세 오류: ${escapeHtml(message)}</small></article>
-        <article><span>지금 할 일</span><b>1) 다시 실행 2) 네트워크/대상 사이트 확인</b><small>반복되면 관리자 진단에서 스캔 공급자와 저장소 상태를 확인하세요.</small></article>
-        <article><span>주의</span><b>결과가 아예 없을 수 있습니다</b><small>이번 실행은 저장 가능한 최종 결과를 만들지 못했습니다.</small></article>
-      </div>
-      <div class="scan-error-actions">
-        <button class="btn primary" type="button" id="inlineRetryBtn">다시 실행</button>
-        <a class="btn secondary" href="/portal">내 사이트 관리</a>
-        <a class="btn secondary" href="/plans">상품 비교</a>
-      </div>
-    </section>`);
-    document.getElementById('inlineRetryBtn')?.addEventListener('click', runScan);
+    const fallback = buildLocalFallbackScan(normalizedTarget, message);
+    if (!session.authenticated) setUsage(getUsage() + 1);
+    setCachedDemoResult(normalizedTarget, fallback);
+    saveScan(fallback);
+    setState('서버 응답이 지연되어 로컬 안전 결과를 표시했습니다. 다시 실행하면 서버 결과로 갱신됩니다.', 'warn');
+    renderResult(fallback);
     guard.reset?.();
   } finally {
     setBusy(false);

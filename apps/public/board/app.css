@@ -22,3 +22,14 @@
 .post-section p{margin:0;color:#e5edf8;line-height:1.82;}
 .post-cta{display:flex;flex-wrap:wrap;gap:10px;padding-top:4px;}
 @media(max-width:720px){.post-summary{font-size:15px}.post-tags span{font-size:12px;padding:7px 10px;}}
+
+/* PHASE203: make sidebar controls real controls, not dead labels */
+.nv0-clickable-filter-list{list-style:none;margin:0;padding:0;display:grid;gap:10px;}
+.nv0-clickable-filter-list li{margin:0;padding:0;}
+.nv0-filter-item{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:48px;padding:12px 14px;text-align:left;cursor:pointer;border-radius:16px;}
+button.nv0-filter-item{background:linear-gradient(180deg,rgba(17,28,49,.98),rgba(11,23,41,.98)) !important;border:1px solid rgba(96,165,250,.20) !important;color:#fff !important;box-shadow:none !important;}
+button.nv0-filter-item:hover,button.nv0-filter-item.active{background:rgba(37,99,235,.18) !important;border-color:rgba(147,197,253,.48) !important;transform:none;}
+button.nv0-filter-item strong{color:#fff !important;white-space:nowrap;}
+.nv0-side-layout{align-items:start;}
+.nv0-sidebar{display:grid;gap:16px;align-content:start;}
+@media(max-width:900px){.nv0-side-layout{grid-template-columns:1fr !important}.nv0-sidebar{position:static !important;}}

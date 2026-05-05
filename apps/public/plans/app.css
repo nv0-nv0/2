@@ -9,3 +9,10 @@
 .comparison-table td:nth-child(3),.comparison-table td:nth-child(4){font-size:15px;line-height:1.72;color:#e2e8f0;}
 .comparison-table td:nth-child(1){font-size:15px;}
 .comparison-table thead th{font-size:15px;line-height:1.35;}
+
+/* PHASE203: prevent recommended badge and period chip overlap */
+.offer-card{position:relative;min-width:0;overflow:hidden;display:grid;gap:16px;align-content:start;}
+.offer-card .recommended-badge,.offer-card .recommended-ribbon{position:static !important;justify-self:start;width:max-content;max-width:100%;margin:0 0 2px 0;z-index:1;}
+.offer-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;min-width:0;}
+.offer-head>div{min-width:0;}.offer-head h3{word-break:keep-all;overflow-wrap:anywhere;}.offer-head .pill{flex:0 0 auto;white-space:nowrap;}
+@media(max-width:720px){.offer-head{display:grid;grid-template-columns:1fr;}.offer-head .pill{justify-self:start;white-space:normal;}}

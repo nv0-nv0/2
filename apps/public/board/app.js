@@ -5,12 +5,83 @@ const pager = document.getElementById('boardPagination');
 const activity = document.getElementById('boardActivity');
 const statNodes = Array.from(document.querySelectorAll('[data-board-stat]'));
 const tabs = Array.from(document.querySelectorAll('[data-filter]'));
+const topicButtons = Array.from(document.querySelectorAll('[data-topic]'));
 let posts = [];
 let filter = new URLSearchParams(location.search).get('filter') || 'all';
+let topic = new URLSearchParams(location.search).get('topic') || '';
 let page = Math.max(1, Number(new URLSearchParams(location.search).get('page') || '1'));
 let pagination = { page: 1, pageSize: 5, total: 0, totalPages: 1 };
 let stats = { total: 0, cta: 0, notice: 0, case: 0, recent7d: 0, filteredTotal: 0 };
 let activities = [];
+
+const FALLBACK_POSTS = [
+  {
+    id: 'fallback-case-footer',
+    boardType: 'case',
+    title: '쇼핑몰 푸터 고지 정리 사례',
+    summary: '사업자 정보, 고객지원 이메일, 환불 안내 링크를 결제 전 확인 위치에 배치한 예시입니다.',
+    body: '사례
+사업자 정보는 있었지만 환불·청약철회 안내와 고객지원 이메일이 결제 전 화면에서 분리되어 있었습니다.
+
+바로 고칠 수 있는 것
+푸터, 결제 전 확인 박스, 환불·청약철회 정책 링크를 같은 흐름으로 연결하면 고객이 결제 전에 확인할 정보를 놓치지 않습니다.',
+    primaryKeyword: '사업자 정보',
+    tags: ['사업자정보', '환불안내', '푸터고지'],
+    visibility: 'public',
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: 'fallback-notice-reading',
+    boardType: 'notice',
+    title: '무료 진단 결과 해석 기준',
+    summary: '자동 확인 가능한 항목과 수동확인 필요 항목을 분리해 과장 없이 표시합니다.',
+    body: '공지
+무료 진단은 공개 접근 가능한 페이지 기준으로 확인합니다. 로그인 후 화면, 외부 결제창, 행정기관 진위 확인은 자동 단정하지 않습니다.
+
+오늘 바로 확인할 체크리스트
+개인정보처리방침, 이용약관, 환불·청약철회 정책, 고객지원 이메일, 사업자 정보를 결제 전 위치에서 확인하세요.',
+    primaryKeyword: '무료 진단',
+    tags: ['무료진단', '수동확인', '신뢰점검'],
+    visibility: 'public',
+    createdAt: new Date(Date.now() - 86400000).toISOString()
+  },
+  {
+    id: 'fallback-cta-priority',
+    boardType: 'cta',
+    autoPublished: true,
+    title: '상세 리포트로 이어지는 수정 우선순위',
+    summary: '확인 URL과 수정 문구안을 함께 제공해 운영자가 바로 조치할 수 있도록 정리합니다.',
+    body: '한눈에 보는 핵심 요약
+무료 진단에서 확인된 문제는 중요도 순서로 정리되어야 합니다. 단순 목록보다 P0·P1·P2로 나누면 실제 수정이 빨라집니다.
+
+다음에 할 일
+먼저 무료 진단을 실행하고, 확인 URL이 있는 항목부터 수정하세요. 자동 단정이 어려운 항목은 별도 확인으로 남겨야 합니다.',
+    primaryKeyword: '상세 리포트',
+    tags: ['상세리포트', '우선순위', '수정문구'],
+    visibility: 'public',
+    createdAt: new Date(Date.now() - 2 * 86400000).toISOString()
+  }
+];
+const FALLBACK_ACTIVITIES = FALLBACK_POSTS.slice(0, 3).map((item) => ({
+  label: item.autoPublished ? '자동 발행' : '기본 콘텐츠',
+  title: item.title,
+  type: item.boardType,
+  createdAt: item.createdAt
+}));
+const FALLBACK_STATS = { total: 3, cta: 1, notice: 1, case: 1, recent7d: 3, filteredTotal: 3 };
+
+function fallbackForFilter(value = 'all') {
+  return FALLBACK_POSTS.filter((item) => value === 'all' || item.boardType === value || (value === 'cta' && item.autoPublished));
+}
+function applyBoardFallback(reason = '') {
+  posts = fallbackForFilter(filter);
+  stats = { ...FALLBACK_STATS, filteredTotal: posts.length };
+  activities = FALLBACK_ACTIVITIES;
+  pagination = { page: 1, pageSize: 5, total: posts.length, totalPages: 1 };
+  page = 1;
+  render();
+  if (state) state.textContent = `게시판 API 연결이 지연되어 기본 콘텐츠 ${posts.length}건을 먼저 표시합니다.${reason ? ` (${reason})` : ''}`;
+}
 
 
 function formatRelativeTime(value) {
@@ -67,6 +138,22 @@ function renderPostTags(tags = []) {
   return `<div class="post-tags">${items.map(tag => `<span>#${escapeHtml(tag)}</span>`).join('')}</div>`;
 }
 
+function postMatchesTopic(item = {}, topicValue = '') {
+  const query = String(topicValue || '').trim().toLowerCase();
+  if (!query) return true;
+  const haystack = [item.title, item.summary, item.body, item.primaryKeyword, item.boardType, ...(Array.isArray(item.tags) ? item.tags : [])]
+    .map(value => String(value || '').toLowerCase())
+    .join(' ');
+  return query.split(/\s+/).filter(Boolean).some(token => haystack.includes(token));
+}
+function updateUrlState() {
+  const next = new URLSearchParams();
+  if (filter && filter !== 'all') next.set('filter', filter);
+  if (topic) next.set('topic', topic);
+  if (page > 1) next.set('page', String(page));
+  history.replaceState(null, '', `${location.pathname}${next.toString() ? `?${next.toString()}` : ''}`);
+}
+
 function renderPagination() {
   if (!pager) return;
   const totalPages = Math.max(1, Number(pagination.totalPages || 1));
@@ -84,16 +171,20 @@ function renderPagination() {
 
 function render(){
   tabs.forEach(btn => btn.classList.toggle('active', btn.dataset.filter === filter));
+  topicButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.topic === topic));
   renderStats();
   renderActivity();
   const autoCount = Number(stats.cta || window.__NV0_BOARD_AUTO_COUNT__ || 0);
-  state.textContent = `공개 게시글 ${pagination.total}건 · ${pagination.page}/${pagination.totalPages}페이지 · 한 페이지 5개 · 진단 연결 ${autoCount}건`;
-  list.innerHTML = renderList(posts, '<div class="empty-state stack"><strong>조건에 맞는 게시글이 없습니다.</strong><p>전체 탭으로 이동하거나 무료 진단 후 새 글을 발행하세요.</p><a class="btn secondary" href="/products/veridion/demo">무료 진단 시작</a></div>', item => `<article class="result-card stack board-post ${item.boardType === 'cta' || item.autoPublished ? 'cta' : ''}"><div class="meta-row"><strong>${escapeHtml(item.title)}</strong><span class="pill">${escapeHtml(item.boardType || item.type || 'post')}</span></div><div class="post-meta"><span>${item.autoPublished ? '자동 발행' : '운영 글'}</span><span>${escapeHtml(item.createdAt || '-')}</span><span>${escapeHtml(item.primaryKeyword || '고객 안내')}</span></div>${item.summary ? `<p class="post-summary">${escapeHtml(item.summary)}</p>` : ''}${renderPostBody(item.body || item.summary || '')}${renderPostTags(item.tags || [])}<div class="post-cta"><a class="btn primary" href="/products/veridion/demo">내 사이트도 무료 진단</a><a class="btn secondary" href="/plans">플랜 비교</a><a class="btn secondary" href="/portal">내 사이트 관리</a></div></article>`);
+  const visiblePosts = posts.filter(item => postMatchesTopic(item, topic));
+  const topicText = topic ? ` · 주제 ${topic}` : '';
+  state.textContent = `공개 게시글 ${visiblePosts.length}건${topicText} · ${pagination.page}/${pagination.totalPages}페이지 · 한 페이지 5개 · 진단 연결 ${autoCount}건`;
+  list.innerHTML = renderList(visiblePosts, '<div class="empty-state stack"><strong>조건에 맞는 게시글이 없습니다.</strong><p>필터를 초기화하거나 무료 진단 후 새 글을 발행하세요.</p><a class="btn secondary" href="/board">필터 초기화</a><a class="btn secondary" href="/products/veridion/demo">무료 진단 시작</a></div>', item => `<article class="result-card stack board-post ${item.boardType === 'cta' || item.autoPublished ? 'cta' : ''}"><div class="meta-row"><strong>${escapeHtml(item.title)}</strong><span class="pill">${escapeHtml(item.boardType || item.type || 'post')}</span></div><div class="post-meta"><span>${item.autoPublished ? '자동 발행' : '운영 글'}</span><span>${escapeHtml(item.createdAt || '-')}</span><span>${escapeHtml(item.primaryKeyword || '고객 안내')}</span></div>${item.summary ? `<p class="post-summary">${escapeHtml(item.summary)}</p>` : ''}${renderPostBody(item.body || item.summary || '')}${renderPostTags(item.tags || [])}<div class="post-cta"><a class="btn primary" href="/products/veridion/demo">내 사이트도 무료 진단</a><a class="btn secondary" href="/plans">플랜 비교</a><a class="btn secondary" href="/portal">내 사이트 관리</a></div></article>`);
   renderPagination();
 }
 
 async function loadBoard() {
   state.textContent = '게시글을 불러오는 중입니다.';
+  updateUrlState();
   const params = new URLSearchParams({ page: String(page), pageSize: '5', filter });
   try {
     const res = await fetch(`/api/public/board?${params.toString()}`);
@@ -107,15 +198,20 @@ async function loadBoard() {
     page = pagination.page;
     render();
   } catch (error) {
-    state.textContent = `게시판을 불러오지 못했습니다: ${error.message}`;
-    list.innerHTML = '<div class="muted">잠시 후 다시 시도하세요.</div>';
-    if (pager) pager.innerHTML = '';
+    applyBoardFallback(error.message || '연결 지연');
   }
 }
 
 tabs.forEach(btn => btn.addEventListener('click', () => {
-  filter = btn.dataset.filter;
+  filter = btn.dataset.filter || 'all';
+  topic = '';
   page = 1;
   loadBoard();
+}));
+topicButtons.forEach(btn => btn.addEventListener('click', () => {
+  topic = btn.dataset.topic === topic ? '' : (btn.dataset.topic || '');
+  page = 1;
+  render();
+  updateUrlState();
 }));
 loadBoard();

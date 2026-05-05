@@ -398,3 +398,51 @@ label > span,label > b,label > small{display:block !important;line-height:1.45 !
 .loading-steps{display:grid !important;gap:10px !important;}
 .nv0-filter-item strong:empty,.nv0-filter-item strong[data-board-stat]{min-width:1.5em;text-align:right;}
 @media(max-width:520px){.site-menu a,.nv0-nav a,.nv0-icon-link{width:100% !important;}.business-footer nav{display:grid !important;grid-template-columns:1fr !important;}.checkout-footer-links{display:grid !important;grid-template-columns:1fr !important;}}
+
+/* PHASE203: final global guardrails for live overlap/visibility regressions */
+*,*::before,*::after{box-sizing:border-box;}
+.nv0-topbar{overflow:visible !important;}
+.nv0-topbar-inner{min-width:0;}
+.nv0-nav{min-width:0;display:flex;flex-wrap:wrap;align-items:center;}
+.nv0-nav a{min-width:0;color:#e6f0ff !important;border:1px solid transparent !important;background:rgba(8,18,33,.22) !important;}
+.nv0-nav a:hover,.nv0-nav a[aria-current="page"]{background:linear-gradient(135deg,rgba(37,99,235,.96),rgba(29,78,216,.96)) !important;color:#fff !important;border-color:rgba(147,197,253,.48) !important;}
+.nv0-top-actions{min-width:0;display:flex;flex-wrap:wrap;align-items:center;}
+.nv0-icon-link{color:#fff !important;border-color:rgba(147,197,253,.42) !important;background:rgba(8,18,33,.72) !important;}
+.nv0-shell,.demo-shell,.app-shell{min-width:0;}
+.nv0-section,.card,.panel,.result-card,.offer-card,.nv0-panel,.nv74-card{min-width:0;overflow:hidden;}
+.nv0-grid-4,.nv0-feature-grid,.nv0-benefit-grid,.nv0-report-grid,.nv0-side-layout,.nv191-action-grid,.nv74-save-form{min-width:0;}
+.nv0-filter-item{min-width:0;}
+.nv0-filter-item span{min-width:0;overflow-wrap:anywhere;}
+[data-board-stat]{font-variant-numeric:tabular-nums;}
+@media(max-width:860px){.nv0-top-actions,.nv0-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%;}.nv0-nav a,.nv0-top-actions a{width:100%;}.nv0-topbar-inner{gap:12px;}}
+@media(max-width:520px){.nv0-top-actions,.nv0-nav{grid-template-columns:1fr;}}
+
+/* PHASE205: live-site visual closeout guardrails
+   - remove stale sample-score feel
+   - prevent card/chip overlap at 1180~1365px
+   - keep fallback content visible when APIs lag */
+html,body{max-width:100%;overflow-x:hidden;}
+:is(.nv0-shell,.app-shell,.demo-shell,.nv74-main,.nv0-section,.card,.panel,.nv0-panel,.result-panel,.scan-card,.offer-card,.nv74-card,.board-post,.activity-item) > *{min-width:0;}
+:is(h1,h2,h3,h4,p,span,strong,b,small,li,dd,dt,a,button){overflow-wrap:anywhere;}
+:is(.nv0-nav,.nv0-top-actions,.topnav,.offer-actions,.result-actions,.segment-tabs){row-gap:10px;}
+.nv0-metrics-ready .nv0-metric-chip{min-height:112px;align-content:center;}
+.nv0-metrics-ready .nv0-metric-chip strong{font-size:clamp(20px,2vw,28px) !important;line-height:1.15;letter-spacing:-.045em;}
+.phase190-demo-summary .card{min-height:118px;align-content:start;}
+.demo-grid{grid-template-columns:minmax(340px,.9fr) minmax(0,1.1fr) !important;gap:18px !important;align-items:start !important;}
+.result-panel{min-height:420px !important;align-content:start !important;}
+.demo-result-surface{min-height:0 !important;display:grid;align-content:start;}
+.empty-result,.demo-progress-panel{min-height:0 !important;}
+.scan-card{min-height:0 !important;}
+.nv0-side-layout{grid-template-columns:248px minmax(0,1fr) 248px !important;gap:16px !important;}
+.nv0-sidebar .nv0-panel,.nv0-rightbar .nv0-panel{padding:18px !important;}
+.nv0-filter-item{min-height:46px !important;padding:11px 13px !important;}
+.nv0-filter-item span{line-height:1.3;}
+.nv0-filter-item strong{font-variant-numeric:tabular-nums;}
+.nv74-topbar{padding-bottom:2px;}
+.nv74-save-site{order:-10 !important;}
+.nv74-save-site .nv74-state{margin-top:12px;}
+.nv74-card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.nv191-action-grid{order:0;}
+.business-footer span{min-width:0;overflow-wrap:anywhere;}
+@media(max-width:1280px){.nv0-side-layout{grid-template-columns:240px minmax(0,1fr) !important;}.nv0-rightbar{grid-column:1 / -1;grid-template-columns:repeat(2,minmax(0,1fr));}.demo-grid{grid-template-columns:1fr !important}.result-panel{min-height:360px !important;}}
+@media(max-width:860px){.nv0-side-layout,.nv0-rightbar{grid-template-columns:1fr !important}.result-panel{min-height:0 !important}.phase190-demo-summary .card{min-height:0}.business-footer{gap:10px !important;}}

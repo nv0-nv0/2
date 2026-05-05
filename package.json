@@ -1,6 +1,6 @@
 {
   "name": "nv0-veridion-cleanroom",
-  "version": "1.0.0-commercial-final-phase203-structure-system-engine-100",
+  "version": "1.0.0-commercial-final-phase205-live-ux-closeout-100",
   "private": true,
   "type": "module",
   "scripts": {
@@ -214,6 +214,10 @@
     "test:phase203": "node tests/phase203-intent-firewall.mjs",
     "validate:phase203": "node scripts/validate-phase203-global-engine-100.mjs",
     "phase203:final": "node scripts/run-phase203-final.mjs",
-    "run:all": "./RUN_ALL_TESTS.sh"
+    "run:all": "./RUN_ALL_TESTS.sh",
+    "validate:phase204": "node scripts/validate-phase204-ux-demo-fixes.mjs",
+    "phase204:final": "npm run check:syntax && npm run check:pages && npm run test:routes && npm run validate:phase204",
+    "validate:phase205": "node scripts/validate-phase205-live-ux-closeout.mjs",
+    "phase205:final": "npm run check:syntax && npm run check:pages && npm run test:routes && npm run validate:phase204 && npm run validate:phase205"
   }
 }
