@@ -1,0 +1,1 @@
+.cases-grid,.nv0-grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.cases-grid .nv0-panel{display:grid;gap:12px}@media(max-width:860px){.cases-grid,.nv0-grid-3{grid-template-columns:1fr}}

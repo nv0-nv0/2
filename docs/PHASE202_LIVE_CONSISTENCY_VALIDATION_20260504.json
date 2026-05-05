@@ -1,0 +1,108 @@
+{
+  "ok": true,
+  "phase": "phase202-live-consistency-hardening",
+  "checkedAt": "2026-05-04T10:58:00+09:00",
+  "coreFixes": {
+    "productPricingUnified": true,
+    "checkoutPlanNormalization": true,
+    "footerPlaceholderHidden": true,
+    "policyLabelUnified": "환불·청약철회 정책",
+    "supportCopyUnified": "ct@nv0.kr · 이메일 전용 고객지원 · 평일 09:00–18:00 접수 확인",
+    "boardSsrFallback": true,
+    "casesDedicatedPage": true,
+    "serviceDedicatedPage": true,
+    "visualSpacingCssHardening": true
+  },
+  "publicProducts": [
+    {
+      "code": "Report",
+      "title": "상세 리포트",
+      "price": 69000,
+      "period": "1회"
+    },
+    {
+      "code": "FixPack",
+      "title": "수정 문구안 패키지",
+      "price": 99000,
+      "period": "1회"
+    },
+    {
+      "code": "Auto",
+      "title": "Auto 정기 케어",
+      "price": 299000,
+      "period": "월"
+    }
+  ],
+  "legacyPlanAliases": {
+    "Pro": "Report",
+    "Basic": "Report",
+    "Agency": "Auto"
+  },
+  "commands": [
+    {
+      "command": "npm run check:syntax",
+      "ok": true,
+      "summary": "225 files checked"
+    },
+    {
+      "command": "npm run test:all",
+      "ok": true,
+      "summary": "85 passed / 0 failed"
+    },
+    {
+      "command": "npm run test:routes",
+      "ok": true,
+      "summary": "24 checked"
+    },
+    {
+      "command": "npm run test:phase201",
+      "ok": true,
+      "summary": "20 tests"
+    },
+    {
+      "command": "npm run test:phase202",
+      "ok": true,
+      "summary": "20 gates"
+    },
+    {
+      "command": "npm run phase202:final",
+      "ok": true
+    },
+    {
+      "command": "npm run check:pages",
+      "ok": true,
+      "summary": "34 route mappings"
+    },
+    {
+      "command": "npm run check:links -- --summary",
+      "ok": true,
+      "summary": "455 links checked"
+    },
+    {
+      "command": "npm run smoke",
+      "ok": true
+    },
+    {
+      "command": "local render audit on PORT=3211",
+      "ok": true,
+      "summary": "15 public routes / 0 banned-token failures"
+    }
+  ],
+  "renderCheckedRoutes": [
+    "/",
+    "/products/veridion/demo",
+    "/plans",
+    "/checkout?plan=Report",
+    "/checkout?plan=Pro",
+    "/documents",
+    "/board",
+    "/cases",
+    "/service",
+    "/solutions",
+    "/portal",
+    "/business-info",
+    "/privacy",
+    "/terms",
+    "/refund"
+  ]
+}

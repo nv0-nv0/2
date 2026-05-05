@@ -23,14 +23,17 @@ let offerMap = new Map();
 
 const fallbackOffers = [
   { code: 'Report', title: '상세 리포트', price: 69000, period: '1회', summary: '근거와 우선순위를 정리한 상세 리포트', targetCustomer: '무엇부터 고칠지 판단해야 하는 운영자' },
-  { code: 'FixPack', title: '수정 문구안', price: 99000, period: '1회', summary: '바로 붙여넣기 쉬운 수정 문구 패키지', targetCustomer: '오늘 바로 문구를 정리해야 하는 운영자' },
-  { code: 'Basic', title: 'Basic 모니터링', price: 99000, period: '월', summary: '기본 재점검과 결과 이력 확인', targetCustomer: '월 단위 점검이 필요한 운영자' },
-  { code: 'Pro', title: 'Pro 정기 개선', price: 199000, period: '월', summary: '정기 점검과 문서·수정 지원을 함께 제공', targetCustomer: '운영 구조를 꾸준히 개선하려는 팀' },
-  { code: 'Auto', title: 'Auto 정기 케어', price: 299000, period: '월', summary: '반복 점검과 자동 운영 지원', targetCustomer: '변경이 잦은 팀' },
-  { code: 'Agency', title: '대행사 리포트 패키지', price: 399000, period: '월', summary: '여러 고객사 사이트를 반복 점검', targetCustomer: '고객사 운영을 맡는 대행사' }
+  { code: 'FixPack', title: '수정 문구안 패키지', price: 99000, period: '1회', summary: '바로 붙여넣기 쉬운 수정 문구 패키지', targetCustomer: '오늘 바로 문구를 정리해야 하는 운영자' },
+  { code: 'Auto', title: 'Auto 정기 케어', price: 299000, period: '월', summary: '반복 점검과 운영 지원', targetCustomer: '변경이 잦은 팀' }
 ];
 offerMap = new Map(fallbackOffers.map(item => [item.code, item]));
 
+
+function normalizePlanCode(value) {
+  const key = String(value || '').trim().toLowerCase().replace(/[\s_-]+/g, '');
+  const aliases = { report: 'Report', detailedreport: 'Report', proreport: 'Report', pro: 'Report', basic: 'Report', fixpack: 'FixPack', fix: 'FixPack', templatepack: 'FixPack', industryguide: 'FixPack', auto: 'Auto', agency: 'Auto', subscription: 'Auto' };
+  return aliases[key] || 'Report';
+}
 function getSavedScan() {
   try { return JSON.parse(localStorage.getItem('nv0:lastScan') || 'null'); } catch { return null; }
 }
@@ -48,7 +51,8 @@ function priceLabel(offer) {
   return `${formatWon(Number(offer.price || 0))}원${offer.period ? ` / ${offer.period}` : ''}`;
 }
 function renderPriceSummary() {
-  const code = planInput?.value || 'Report';
+  const code = normalizePlanCode(planInput?.value || 'Report');
+  if (planInput && planInput.value !== code) planInput.value = code;
   const offer = offerMap.get(code) || null;
   if (!offer) {
     summaryPlanName.textContent = '선택한 상품 정보를 확인하는 중입니다.';
@@ -62,7 +66,7 @@ function renderPriceSummary() {
   summaryPlanName.textContent = offer.title || code;
   summaryPlanPeriod.textContent = offer.summary || `${offer.period || '1회'} 제공 상품`;
   summaryBasePrice.textContent = priceLabel(offer);
-  summaryDelivery.textContent = ['Auto','Agency'].includes(code) ? '결제 후 구독 활성화 및 내 사이트 관리 연결' : '결제 후 내 사이트 관리에서 산출물 확인';
+  summaryDelivery.textContent = code === 'Auto' ? '결제 후 구독 활성화 및 내 사이트 관리 연결' : '결제 후 내 사이트 관리에서 산출물 확인';
   summaryTargetCustomer.textContent = offer.targetCustomer || '운영 상황에 맞는 사용자를 위한 상품';
   summaryTotal.textContent = priceLabel(offer);
 }
@@ -79,12 +83,12 @@ function getPrefill() {
   const saved = getSavedScan();
   return {
     siteId: url.searchParams.get('siteId') || saved?.siteId || '',
-    plan: url.searchParams.get('plan') || saved?.recommendedPlan || 'Report',
+    plan: normalizePlanCode(url.searchParams.get('plan') || saved?.recommendedPlan || 'Report'),
     domain: url.searchParams.get('domain') || saved?.target || ''
   };
 }
 const prefill = getPrefill();
-if (prefill.plan && planInput) planInput.value = prefill.plan;
+if (prefill.plan && planInput) planInput.value = normalizePlanCode(prefill.plan);
 targetBox.textContent = prefill.domain ? `대상 사이트: ${prefill.domain}` : '최근 진단 이력이 없으면 일반 신청으로 진행됩니다.';
 
 function renderOrder(order, paymentSession) {
@@ -118,7 +122,7 @@ async function createSession() {
     buyerEmail: document.getElementById('buyerEmail')?.value.trim() || '',
     siteId: prefill.siteId,
     domain: prefill.domain,
-    plan: planInput?.value || 'Report',
+    plan: normalizePlanCode(planInput?.value || 'Report'),
     privacyConsent: !!document.getElementById('privacyConsent')?.checked,
     termsConsent: !!document.getElementById('termsConsent')?.checked,
     refundConsent: !!document.getElementById('refundConsent')?.checked,
@@ -211,7 +215,7 @@ async function maybeFinalizeRedirectResult() {
     state.textContent = message || '결제가 완료되지 않았습니다.';
     return;
   }
-  currentOrder = { id: paymentId, amount: 0, plan: prefill.plan || 'Report', status: 'pending', domain: prefill.domain || '', siteId: prefill.siteId || '' };
+  currentOrder = { id: paymentId, amount: 0, plan: normalizePlanCode(prefill.plan || 'Report'), status: 'pending', domain: prefill.domain || '', siteId: prefill.siteId || '' };
   currentPaymentSession = { provider: 'portone_v2', providerPaymentId: paymentId };
   state.textContent = '리디렉트 결제 결과를 검증 중입니다.';
   await completePayment();
@@ -221,7 +225,7 @@ async function loadOffers() {
     const res = await fetch('/api/public/products');
     const data = await res.json().catch(() => ({}));
     if (!res.ok || !data?.ok || !Array.isArray(data.offers)) throw new Error('상품 정보를 불러오지 못했습니다.');
-    offerMap = new Map(data.offers.map(item => [item.code, item]));
+    offerMap = new Map(data.offers.map(item => [normalizePlanCode(item.code), { ...item, code: normalizePlanCode(item.code) }]));
   } catch {
     offerMap = new Map(fallbackOffers.map(item => [item.code, item]));
   }

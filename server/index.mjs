@@ -1274,12 +1274,12 @@ const m = {
 '/resources': [PUBLIC_DIR, 'guides'],
 '/board': [PUBLIC_DIR, 'board'],
 '/board/post': [PUBLIC_DIR, 'board'],
-'/cases': [PUBLIC_DIR, 'board'],
+'/cases': [PUBLIC_DIR, 'cases'],
 '/documents': [PUBLIC_DIR, 'documents'],
 '/policy-documents': [PUBLIC_DIR, 'documents'],
 '/docs/veridion': [PUBLIC_DIR, 'documents'],
 '/solutions': [PUBLIC_DIR, 'solutions'],
-'/service': [PUBLIC_DIR, 'solutions'],
+'/service': [PUBLIC_DIR, 'service'],
 '/products': [PUBLIC_DIR, 'plans'],
 '/demo': [PUBLIC_DIR, 'demo'],
 '/products/veridion/demo': [PUBLIC_DIR, 'veridion-demo'],
@@ -1315,17 +1315,19 @@ const metas = {
 '/': { title: '웹사이트 안내·정책 무료 점검 | NV0', description: '쇼핑몰과 서비스 페이지에서 고객이 꼭 확인하는 사업자 정보, 개인정보 안내, 환불 기준, 문의 버튼, 가격 안내를 쉽게 점검합니다.', keywords: ['웹사이트 무료 점검','쇼핑몰 신뢰도 점검','환불 안내 점검','개인정보 안내 점검','문의 버튼 개선'] },
 '/products/veridion/demo': { title: 'NV0 무료진단 | 웹사이트 신뢰 안내 점검', description: '사이트 주소로 고객이 결제나 문의 전에 헷갈릴 수 있는 안내 공백을 무료 요약으로 확인하고, 먼저 고칠 부분을 쉽게 정리합니다.', keywords: ['무료 사이트 진단','웹사이트 신뢰 점검','문의 구매 흐름 점검','쇼핑몰 안내 점검'] },
 '/plans': { title: '상품·요금 | NV0 리포트·FixPack·Auto 비교', description: '무료진단 이후 상세 리포트, 바로 붙여넣는 수정 문구안, 정기 점검 상품을 상황별로 비교합니다.', keywords: ['사이트 진단 요금','FixPack','Auto 정기 점검','정책 문서 템플릿'] },
-'/documents': { title: '정책 문서 초안 | 개인정보·이용약관·환불 안내 생성', description: '개인정보처리방침, 이용약관, 환불·배송·교환 정책, 사업자 고지, 고객 안내문 초안을 최소 입력으로 생성합니다.', keywords: ['정책 문서 생성','개인정보처리방침 초안','이용약관 초안','환불 정책 초안'] },
-'/policy-documents': { title: '정책 문서 초안 | 개인정보·이용약관·환불 안내 생성', description: '개인정보처리방침, 이용약관, 환불·배송·교환 정책, 사업자 고지, 고객 안내문 초안을 최소 입력으로 생성합니다.', keywords: ['정책 문서 생성','개인정보처리방침 초안','이용약관 초안','환불 정책 초안'] },
+'/documents': { title: '정책 문서 초안 | 개인정보·이용약관·환불 안내 생성', description: '개인정보처리방침, 이용약관, 환불·청약철회 정책, 사업자 고지, 고객 안내문 초안을 최소 입력으로 생성합니다.', keywords: ['정책 문서 생성','개인정보처리방침 초안','이용약관 초안','환불 정책 초안'] },
+'/policy-documents': { title: '정책 문서 초안 | 개인정보·이용약관·환불 안내 생성', description: '개인정보처리방침, 이용약관, 환불·청약철회 정책, 사업자 고지, 고객 안내문 초안을 최소 입력으로 생성합니다.', keywords: ['정책 문서 생성','개인정보처리방침 초안','이용약관 초안','환불 정책 초안'] },
 '/docs/veridion': { title: 'Veridion 문서 생성 | 정책 문서·진단 리포트 초안', description: 'Veridion 진단 후 필요한 정책 문서, 안내 문구, 개선 리포트 초안을 생성하는 문서 허브입니다.', keywords: ['Veridion 문서','정책 문서 생성','진단 리포트','개선 문구'] },
 '/guides': { title: '운영 가이드 | 쇼핑몰 신뢰도·정책 안내 점검', description: '쇼핑몰 신뢰도, 환불 정책, 구매 안내 버튼, 게시판 자동 발행, 반복 재진단 활용법을 쉬운 말로 정리한 운영 가이드입니다.' },
 '/resources': { title: '운영 가이드 | 쇼핑몰 신뢰도·정책 안내 점검', description: '쇼핑몰 신뢰도, 환불 정책, 구매 안내 버튼, 게시판 자동 발행, 반복 재진단 활용법을 쉬운 말로 정리한 운영 가이드입니다.' },
 '/solutions': { title: '솔루션 | 웹사이트 안내 고지·정책 문서·문의 흐름 점검', description: '웹사이트 필수 고지, 정책 문서, 결제 전 안내, 고객지원 안내를 한 번에 점검하는 NV0 솔루션입니다.' },
+'/service': { title: '서비스 작동 방식 | NV0 무료진단·리포트 산출 흐름', description: 'NV0가 공개 페이지를 수집하고 근거 신뢰도, 수동확인 항목, 결제 산출물로 이어지는 과정을 설명합니다.' },
+'/cases': { title: '적용 사례 | NV0 신뢰 공백 개선 사례', description: '쇼핑몰과 랜딩페이지가 사업자 고지, 환불 안내, 문의 흐름을 어떻게 정리하는지 사례로 확인합니다.' },
 '/board': { title: '운영 게시판 | 쉬운 사이트 점검 글 자동 발행', description: '진단 결과를 자주 묻는 질문, 체크리스트, 사례, 정책 안내, 관련 링크형 글로 쉽게 풀어 재방문과 상품 비교 흐름을 돕습니다.' },
 '/business-info': { title: '사업자 정보·고객지원 | NV0', description: 'NV0 서비스 운영자의 사업자 정보, 고객지원 이메일, 서비스 범위, 법률 자문 아님 고지를 확인하세요.' },
 '/terms': { title: '이용약관 | NV0', description: 'NV0 서비스 이용약관과 서비스 범위 기준입니다.' },
 '/privacy': { title: '개인정보처리방침 | NV0', description: 'NV0 서비스의 개인정보 처리 기준과 입력 정보 최소화 원칙입니다.' },
-'/refund': { title: '환불·배송·교환 정책 | NV0', description: '디지털 산출물 제공 시점, 환불 요청 기준, 배송·교환 비대상 안내를 확인하세요.' },
+'/refund': { title: '환불·청약철회 정책 | NV0', description: '디지털 산출물 제공 시점, 환불 요청 기준, 청약철회 제한 안내를 확인하세요.' },
 '/auth': { title: '로그인·회원가입 | NV0', description: '무료진단 횟수 관리, 내 사이트 저장, 원클릭 재검사, 최근 진단 이력 확인을 위한 로그인·회원가입 페이지입니다.' },
 '/portal': { title: '내 사이트 관리 | NV0', description: '저장한 사이트의 진단 결과, 재검사, 개선 이력, 게시판 발행 상태를 확인합니다.' },
 '/checkout': { title: '신청·결제 확인 | NV0', description: '상품 신청 전 제공 범위, 디지털 산출물 환불 제한, 정책 동의 항목을 확인합니다.' }
@@ -1432,7 +1434,7 @@ return `<a class="skip-link" href="#main">본문 바로가기</a><nav class="sit
 <a href="/products/veridion/demo"${navAttrs(urlPath, '/products/veridion/demo')}>무료 진단</a>
 <a href="/plans"${navAttrs(urlPath, '/plans')}>플랜 비교</a>
 <a href="/board"${navAttrs(urlPath, '/board')}>콘텐츠 보드</a>
-<a href="/documents"${navAttrs(urlPath, '/documents')}>문서 작성</a>
+<a href="/documents"${navAttrs(urlPath, '/documents')}>문서 생성</a>
 <a href="/portal"${navAttrs(urlPath, '/portal')}>내 사이트</a>
 <a href="/business-info"${navAttrs(urlPath, '/business-info')}>고객지원</a>
 <a href="/auth"${navAttrs(urlPath, '/auth', 'login-link')}>로그인</a>
@@ -1467,9 +1469,9 @@ return '<footer class="business-footer" aria-label="사업자 정보">'
 + (BUSINESS_PROFILE.mailOrderRegistrationNumber && !legalFieldBlockPattern.test(BUSINESS_PROFILE.mailOrderRegistrationNumber) ? `<span>통신판매업 신고번호: ${BUSINESS_PROFILE.mailOrderRegistrationNumber}</span>` : '')
 + `<span>주소: ${BUSINESS_PROFILE.address}</span>`
 + `<span>업태·종목: ${types}</span>`
-+ `<span>고객지원: ${BUSINESS_PROFILE.contactEmail}${BUSINESS_PROFILE.customerServicePhone ? ' · ' + BUSINESS_PROFILE.customerServicePhone : ' · 이메일 전용 고객지원'}</span>`
++ `<span>고객지원: ${BUSINESS_PROFILE.contactEmail}${BUSINESS_PROFILE.customerServicePhone ? ' · ' + BUSINESS_PROFILE.customerServicePhone : ' · 이메일 전용 고객지원'} · 평일 09:00–18:00 접수 확인</span>`
 + `<span class="legal-disclaimer">본 서비스는 운영 점검 보조도구이며 법률 자문을 제공하지 않습니다.</span>`
-+ '<nav><a href="/terms">이용약관</a><a href="/privacy">개인정보처리방침</a><a href="/refund">환불·배송·교환 정책</a><a href="/business-info">사업자 정보</a></nav>'
++ '<nav><a href="/terms">이용약관</a><a href="/privacy">개인정보처리방침</a><a href="/refund">환불·청약철회 정책</a><a href="/business-info">사업자 정보</a></nav>'
 + '</footer>';
 }
 function injectSessionNavScript(body, urlPath) {
@@ -1854,7 +1856,7 @@ const target = String(item.target || item.normalizedTarget || '사이트').repla
 const keyword = item.primaryKeyword || topic.keyword;
 const source = [topic.title, keyword, topic.issue, item.body, item.summary].join(' ').toLowerCase();
 const theme = (() => {
-if (/환불|취소|교환|청약/.test(source)) return { label: '환불·취소 안내', elements: ['환불 가능 조건', '취소 접수 위치', '처리 기간', '예외 기준', '문의 경로'], buttonCopy: '환불 가능 조건 먼저 확인', example: '예를 들어 결제 버튼 가까이에 “결제 후 7일 이내 취소 가능 / 제작이 시작된 주문은 예외”처럼 핵심 기준이 바로 보이면 고객이 다시 문의하지 않아도 됩니다.', cta: '환불 기준이 페이지마다 다르다면 무료 진단으로 먼저 공백을 확인해 보세요.' };
+if (/환불|취소|교환|청약/.test(source)) return { label: '환불·청약철회 안내', elements: ['환불 가능 조건', '취소 접수 위치', '처리 기간', '예외 기준', '문의 경로'], buttonCopy: '환불 가능 조건 먼저 확인', example: '예를 들어 결제 버튼 가까이에 “결제 후 7일 이내 취소 가능 / 제작이 시작된 주문은 예외”처럼 핵심 기준이 바로 보이면 고객이 다시 문의하지 않아도 됩니다.', cta: '환불 기준이 페이지마다 다르다면 무료 진단으로 먼저 공백을 확인해 보세요.' };
 if (/개인정보|동의|보관|파기|privacy/.test(source)) return { label: '개인정보 안내', elements: ['수집 항목', '수집 목적', '보관 기간', '파기 기준', '문의 이메일'], buttonCopy: '수집 목적과 보관 기간 확인', example: '문의폼 아래에 “상담 답변을 위해 이름과 연락처를 수집하며, 접수 후 1년 보관합니다.”처럼 바로 읽히는 문장이 있으면 입력 이탈이 줄어듭니다.', cta: '개인정보 안내가 입력 화면과 멀리 떨어져 있다면 먼저 위치부터 점검해 보세요.' };
 if (/사업자|문의|고객센터|푸터|대표자/.test(source)) return { label: '사업자 정보와 문의 경로', elements: ['상호', '대표자', '사업자번호', '고객지원 이메일', '답변 기준'], buttonCopy: '운영자 정보와 문의 방법 보기', example: '푸터에 상호와 고객지원 메일만 있고 답변 기준이 없다면 고객은 “문의해도 답이 올까?”를 걱정하기 쉽습니다. “평일 기준 1영업일 내 답변” 한 줄만 더해도 인상이 달라집니다.', cta: '사업자 정보와 문의 경로가 흩어져 있다면 푸터와 문의 버튼 주변부터 먼저 정리하세요.' };
 if (/결제|구매|주문|가격/.test(source)) return { label: '결제 전 안내', elements: ['제공 범위', '가격 포함 항목', '환불 기준', '결제 후 제공 시점', '고객지원 경로'], buttonCopy: '결제 전 제공 범위 확인', example: '가격표 아래에 “결제 후 제공 시점 / 환불 가능 여부 / 문의 경로”가 함께 보이면 고객이 마지막 단계에서 멈추는 일이 줄어듭니다.', cta: '결제 직전 이탈이 많다면 버튼 바로 위·아래 안내부터 무료 진단으로 확인해 보세요.' };
@@ -2012,7 +2014,7 @@ return {
 buyerEmail: asTrimmedString(body.buyerEmail, { field: 'buyerEmail', max: 120, pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/i }),
 siteId: asTrimmedString(body.siteId, { field: 'siteId', max: 64 }),
 domain: asTrimmedString(body.domain, { field: 'domain', max: 255 }),
-plan: asTrimmedString(body.plan, { field: 'plan', required: true, enumValues: ['Report','FixPack','Basic','Pro','Auto','Agency'] }),
+plan: normalizePlanCode(asTrimmedString(body.plan, { field: 'plan', required: true, max: 40 })),
 payMethod: asTrimmedString(body.payMethod, { field: 'payMethod', max: 40 }),
 privacyConsent: asBoolean(body.privacyConsent, false),
 termsConsent: asBoolean(body.termsConsent, false),
@@ -2100,7 +2102,7 @@ return out;
 function normalizeSubscriptionPayload(body = {}) {
 return {
 siteId: asTrimmedString(body.siteId, { field: 'siteId', required: true, max: 64 }),
-plan: asTrimmedString(body.plan || 'Pro', { field: 'plan', enumValues: ['Basic', 'Pro', 'Auto'] }),
+plan: normalizePlanCode(asTrimmedString(body.plan || 'Auto', { field: 'plan', max: 40 }), 'Auto'),
 status: asTrimmedString(body.status || 'active', { field: 'status', enumValues: ['active', 'paused', 'cancelled'] })
 };
 }
@@ -2201,7 +2203,7 @@ subscriptionBilling ? `- 정기결제 상품은 결제 주기와 해지 방법�
 `- 표시·광고 또는 계약 내용과 다르게 제공된 경우에는 관련 법령상 권리를 안내합니다.`
 ].join('\n');
 const policy = [
-`# 환불·배송·교환 정책`,
+`# 환불·청약철회 정책`,
 '',
 `## 배송`,
 `- 평균 출고 기간: 결제 후 ${shippingLeadDays}영업일 이내`,
@@ -2226,7 +2228,7 @@ const notices = [
 address ? `- 주소: ${address}` : `- 주소: 미수집`,
 `- 이메일: ${contactEmail}`,
 phone ? `- 연락처: ${phone}` : `- 연락처: 미수집`,
-`- 개인정보처리방침 / 이용약관 / 환불·배송·교환 정책 링크를 홈·결제·회원가입 영역에 노출`,
+`- 개인정보처리방침 / 이용약관 / 환불·청약철회 정책 링크를 홈·결제·회원가입 영역에 노출`,
 `- 디지털 산출물 즉시 제공 및 청약철회 제한 가능성은 결제 전 별도 체크박스로 확인`,
 subscriptionBilling ? `- 정기결제 및 해지 방법 고지 필수` : `- 정기결제 고지 비대상`
 ].join('\n');
@@ -2237,38 +2239,45 @@ generatedAt: nowIso(),
 documents: [
 { type: 'privacy_policy', title: '개인정보처리방침', content: privacy },
 { type: 'terms_of_service', title: '이용약관', content: terms },
-{ type: 'refund_shipping_exchange', title: '환불·배송·교환 정책', content: policy },
+{ type: 'refund_withdrawal_policy', title: '환불·청약철회 정책', content: policy },
 { type: 'required_notices', title: '필수 고지 문구', content: notices }
 ]
 };
 }
 function pickRecommendedPlan(riskScore) {
 if (riskScore >= 75) return 'Auto';
-if (riskScore >= 50) return 'Pro';
-return 'Basic';
+if (riskScore >= 45) return 'FixPack';
+return 'Report';
+}
+function normalizePlanCode(value, fallback = 'Report') {
+const raw = String(value || '').trim();
+const key = raw.toLowerCase().replace(/[\s_-]+/g, '');
+const aliases = {
+report: 'Report', detailedreport: 'Report', proreport: 'Report', pro: 'Report', basic: 'Report',
+fixpack: 'FixPack', fix: 'FixPack', copypack: 'FixPack', templatepack: 'FixPack', industryguide: 'FixPack',
+auto: 'Auto', agency: 'Auto', subscription: 'Auto'
+};
+return aliases[key] || (['Report','FixPack','Auto'].includes(raw) ? raw : fallback);
 }
 function buildCommercialOfferCatalog() {
 const commonAssurance = ['법률 자문이 아닌 운영 참고용 점검 결과입니다.', '결제 후 구매 산출물 영역에서 확인합니다.', '제공 범위와 환불 기준은 결제 전에 다시 확인합니다.', 'ct@nv0.kr 문의 연결'];
 return [
-{ code: 'Report', group: 'one_time', title: '상세 리포트', price: 69000, period: '1회', priority: 1, summary: '무료진단 결과를 확인 URL, 근거, 신뢰도, 수동 검토 항목, 개선 순서가 있는 상세 리포트로 확장합니다.', targetCustomer: '쇼핑몰·랜딩페이지 담당자, 1인 사업자, 외주 제작 완료 후 점검이 필요한 고객', deliverables: ['탐지 점수 해설', '확인 근거', '페이지별 우선 조치 목록', '공유용 리포트 본문', '재점검 체크리스트', 'FAQ·CTA 요약'], operations: ['결제 확인 후 구매 산출물 영역에서 결과 확인', '진단 이력이 없을 경우 기본 점검 양식으로 제공', ...commonAssurance], benefits: ['발견 항목의 근거와 우선순위를 더 명확하게 확인', '개선 순서를 정리해 바로 조치 가능'], cta: '상세 리포트 신청' },
-{ code: 'FixPack', group: 'one_time', title: '수정 문구안', price: 99000, period: '1회', priority: 2, summary: '탐지 항목별로 사이트에 바로 반영 가능한 고지·약관·환불·광고 문구 초안을 제공합니다.', targetCustomer: '사이트 안내 문구를 먼저 정리해야 하는 소상공인·마케터', deliverables: ['푸터 사업자 고지 문안', '환불·교환 안내 문구', '개인정보/약관 노출 가이드', '광고 표현 보완 후보 완화안', '수정 전/후 예시', 'FAQ·CTA 문구'], operations: ['우선순위가 높은 문구안부터 제공', '주의가 필요한 표현은 별도 표시', ...commonAssurance], benefits: ['사이트에 반영하기 쉬운 문구 예시 제공', '고객 오해 가능성이 있는 표현을 완화'], cta: '수정 문구안 받기' },
-{ code: 'Basic', group: 'subscription', title: 'Basic 모니터링', price: 99000, period: '월', priority: 3, summary: '소규모 사이트의 월 1회 보완 후보 재점검과 기본 이력 확인을 제공합니다.', targetCustomer: '월 1회 정기 점검만 필요한 소규모 사이트 고객', deliverables: ['월 1회 재점검', '상세 탐지 항목 확인', '기본 정책 초안', '이력 저장', '이메일 알림', '월간 요약 리포트'], operations: ['신청 후 사이트 이력 확인 가능', '월간 점검 알림 제공', ...commonAssurance], benefits: ['월 1회 정기 점검으로 변경 사항 확인', '이력 저장으로 이전 결과와 비교 가능'], cta: 'Basic 시작' },
-{ code: 'Pro', group: 'subscription', title: 'Pro 정기 개선', price: 199000, period: '월', priority: 4, summary: '정밀 리포트, 수정 문구안, 변경 알림을 포함한 추천 플랜입니다.', targetCustomer: '사이트 주문·문의가 발생하고 반복 점검이 필요한 고객', deliverables: ['Basic 제공 범위 포함', '정밀 리포트 포함', '수정 문구안', '변경 알림', '재점검 및 개선 추적', '전환용 CTA 포스팅 초안'], operations: ['결제 확인 후 Pro 결과 제공', '다음 조치 항목을 우선순위로 표시', ...commonAssurance], benefits: ['정밀 리포트와 수정 문구안을 함께 확인', '다음 조치 항목을 우선순위로 정리'], cta: 'Pro 시작' },
-{ code: 'Auto', group: 'subscription', title: 'Auto 정기 케어', price: 299000, period: '월', priority: 5, summary: '반복 점검, 고객 안내 인사이트, 게시판 운영 보조로 사이트 신뢰 관리를 돕습니다.', targetCustomer: '여러 캠페인·랜딩페이지를 꾸준히 점검해야 하는 팀', deliverables: ['Pro 제공 범위 포함', '정기 고객 안내 인사이트', '게시판 운영 상태', '승인 후 반영할 수 있는 수정 후보', '고발견 항목 우선 알림', '내 사이트 관리 대시보드', 'CTA 포스팅'], operations: ['정기 점검 결과 제공', '수정 후보는 확인 후 사용할 수 있도록 제공', ...commonAssurance], benefits: ['반복 점검 부담 완화', '게시판이 비어 보이지 않도록 운영감 유지', '여러 랜딩페이지의 고발견 항목을 우선 확인'], cta: 'Auto 시작' },
-{ code: 'Agency', group: 'b2b', title: '대행사 리포트 패키지', price: 399000, period: '월', priority: 6, summary: '광고대행사·웹에이전시가 고객사 보완 후보 리포트를 반복 생성할 수 있는 패키지입니다.', targetCustomer: '고객사 사이트를 제작·지원하는 에이전시와 퍼포먼스 마케팅사', deliverables: ['고객사별 리포트', '고객사 제출용 문구 영역', '월 10개 도메인 기준', '고객 안내 인사이트 제공', '대행사 맞춤 안내 문구', '고객사 CTA 포스팅'], operations: ['서비스 신청 후 고객사별 리포트 구성 지원', '고객사별 결과를 구분해 확인 가능', ...commonAssurance], benefits: ['고객사별 리포트 제공에 활용', '여러 도메인의 점검 결과를 구분해 관리'], cta: '대행사 패키지 시작' }
+{ code: 'Report', group: 'one_time', title: '상세 리포트', price: 69000, period: '1회', priority: 1, summary: '무료진단 결과를 확인 URL, 근거 신뢰도, 수동검토 항목, 개선 순서가 있는 상세 리포트로 확장합니다.', targetCustomer: '무엇부터 고칠지 판단해야 하는 쇼핑몰·랜딩페이지 운영자', deliverables: ['탐지 점수 해설', '확인 URL·근거', '페이지별 우선 조치 목록', '공유용 리포트 본문', '재점검 체크리스트', 'FAQ·CTA 요약'], operations: ['결제 확인 후 구매 산출물 영역에서 결과 확인', '진단 이력이 없을 경우 기본 점검 양식으로 제공', ...commonAssurance], benefits: ['발견 항목의 근거와 우선순위를 더 명확하게 확인', '개선 순서를 정리해 바로 조치 가능'], cta: '상세 리포트 신청', referencePrice: 120000, valuePackWorth: 207000 },
+{ code: 'FixPack', group: 'one_time', title: '수정 문구안 패키지', price: 99000, period: '1회', priority: 2, summary: '탐지 항목별로 사이트에 바로 반영 가능한 고지·약관·환불·광고 문구 초안을 제공합니다.', targetCustomer: '오늘 바로 문구를 정리해야 하는 소상공인·마케터', deliverables: ['푸터 사업자 고지 문안', '환불·청약철회 안내 문구', '개인정보/약관 노출 가이드', '광고 표현 보완 후보 완화안', '수정 전/후 예시', 'FAQ·CTA 문구'], operations: ['우선순위가 높은 문구안부터 제공', '주의가 필요한 표현은 별도 표시', ...commonAssurance], benefits: ['사이트에 반영하기 쉬운 문구 예시 제공', '고객 오해 가능성이 있는 표현을 완화'], cta: '수정 문구안 받기', referencePrice: 160000, valuePackWorth: 297000 },
+{ code: 'Auto', group: 'subscription', title: 'Auto 정기 케어', price: 299000, period: '월', priority: 3, summary: '반복 점검, 고객 안내 인사이트, 게시판 운영 보조로 사이트 신뢰 관리를 돕습니다.', targetCustomer: '광고·이벤트·상세페이지 변경이 잦아 정기 점검이 필요한 팀', deliverables: ['정기 재진단', '고객 안내 인사이트', '게시판 운영 상태', '승인 후 반영 가능한 수정 후보', '고위험 항목 우선 알림', '내 사이트 관리 대시보드', 'CTA 포스팅'], operations: ['정기 점검 결과 제공', '수정 후보는 확인 후 사용할 수 있도록 제공', ...commonAssurance], benefits: ['반복 점검 부담 완화', '게시판이 비어 보이지 않도록 운영감 유지', '여러 랜딩페이지의 고위험 항목을 우선 확인'], cta: 'Auto 시작', referencePrice: 450000, valuePackWorth: 897000 }
 ].sort((a, b) => a.priority - b.priority);
 }
-function getCommercialOffer(code) { return buildCommercialOfferCatalog().find(item => item.code === code) || null; }
-function buildPlanCatalog(recommendedPlan = 'Pro') {
+function getCommercialOffer(code) { const normalized = normalizePlanCode(code); return buildCommercialOfferCatalog().find(item => item.code === normalized) || null; }
+function buildPlanCatalog(recommendedPlan = 'Report') {
 const offers = buildCommercialOfferCatalog();
 const free = { code: 'Free', monthlyPrice: 0, period: '무료', title: 'Free', group: 'free', summary: '하루 3회 무료 요약 진단. 탐지 점수와 상위 발견 항목을 간단히 확인합니다.', features: ['하루 3회 무료 요약 진단', '탐지 점수', '상위 발견 항목 2개 요약', '상세 근거·페이지별 조치안 결제 후 공개', '비회원 일일 3회 제한'], recommended: false };
-const paid = offers.map(offer => ({ code: offer.code, monthlyPrice: offer.price, period: offer.period, title: offer.title, group: offer.group, summary: offer.summary, features: offer.deliverables, targetCustomer: offer.targetCustomer, referencePrice: offer.referencePrice, valuePackWorth: offer.valuePackWorth, dailyPrice: offer.period === '월' ? Math.ceil(offer.price / 30) : 0, recommended: offer.code === recommendedPlan || (recommendedPlan === 'Pro' && offer.code === 'Pro') }));
+const paid = offers.map(offer => ({ code: offer.code, monthlyPrice: offer.price, period: offer.period, title: offer.title, group: offer.group, summary: offer.summary, features: offer.deliverables, targetCustomer: offer.targetCustomer, referencePrice: offer.referencePrice, valuePackWorth: offer.valuePackWorth, dailyPrice: offer.period === '월' ? Math.ceil(offer.price / 30) : 0, recommended: offer.code === normalizePlanCode(recommendedPlan) }));
 return [free, ...paid];
 }
 function planPrice(plan) {
 const offer = getCommercialOffer(plan);
 if (offer) return offer.price;
-return buildPlanCatalog(plan).find(item => item.code === plan)?.monthlyPrice || 69000;
+return buildPlanCatalog(plan).find(item => item.code === normalizePlanCode(plan))?.monthlyPrice || 69000;
 }
 function findLatestGuidanceForSite(db, siteId) {
 return (db.guidanceDocuments || []).find(item => item.siteId === siteId) || null;
@@ -2625,7 +2634,7 @@ const policyDocuments = buildPolicyDocumentPreview({}, db.settings || {}).docume
 const premium = buildPremiumPurchasedAsset({ order, offer, scan, site, businessProfile: BUSINESS_PROFILE, policyDocuments, industryGuide });
 const isReportPlan = order.plan === 'Report';
 const isFixPackPlan = order.plan === 'FixPack';
-const assetKind = isFixPackPlan ? 'fix_pack' : ['Basic','Pro','Auto','Agency'].includes(order.plan) ? 'subscription_entitlement' : isReportPlan ? 'report' : 'report';
+const assetKind = isFixPackPlan ? 'fix_pack' : order.plan === 'Auto' ? 'subscription_entitlement' : isReportPlan ? 'report' : 'report';
 const base = {
 id: uid('asset'),
 assetKind,
@@ -2672,7 +2681,7 @@ return asset;
 async function createCheckoutOrder(db, payload = {}) {
 db.orders ||= [];
 db.paymentSessions ||= [];
-const plan = ['Report','FixPack','Basic','Pro','Auto','Agency'].includes(payload.plan) ? payload.plan : 'Pro';
+const plan = normalizePlanCode(payload.plan, 'Report');
 const site = findSiteByAny(db, payload.siteId, payload.domain);
 const email = normalizeEmail(payload.email || payload.buyerEmail || '');
 const customer = email ? '이메일 고객' : '비회원 고객';
@@ -2773,7 +2782,7 @@ paymentSession.completedAt = nowIso();
 if (order.siteId) {
 const site = findSiteByAny(db, order.siteId);
 if (site) {
-const sub = ensureSubscriptionForSite(db, site, order.plan || 'Pro');
+const sub = ensureSubscriptionForSite(db, site, normalizePlanCode(order.plan, 'Auto'));
 sub.status = 'active';
 sub.plan = order.plan || sub.plan;
 sub.monthlyPrice = planPrice(sub.plan);
@@ -2841,7 +2850,7 @@ order.paidAt = payment?.paidAt || nowIso();
 if (order.siteId) {
 const site = findSiteByAny(db, order.siteId);
 if (site) {
-const sub = ensureSubscriptionForSite(db, site, order.plan || 'Pro');
+const sub = ensureSubscriptionForSite(db, site, normalizePlanCode(order.plan, 'Auto'));
 sub.status = 'active';
 sub.plan = order.plan || sub.plan;
 sub.monthlyPrice = planPrice(sub.plan);
@@ -2924,7 +2933,7 @@ guidance,
 autoFixJobs,
 boards: (db.boards || []).slice(0, 10),
 legalUpdates: (db.legalUpdates || []).slice(0, 10),
-plans: buildPlanCatalog(scan?.recommendedPlan || subscription?.plan || 'Pro')
+plans: buildPlanCatalog(scan?.recommendedPlan || subscription?.plan || 'Report')
 };
 }
 async function fetchTargetHtml(target) {
@@ -3552,7 +3561,7 @@ function ensureSubscriptionForSite(db, site, plan) {
 db.subscriptions ||= [];
 let sub = db.subscriptions.find(item => item.siteId === site.id);
 if (!sub) {
-sub = { id: uid('sub'), siteId: site.id, plan, status: 'trial', monthlyPrice: plan === 'Auto' ? 299000 : plan === 'Pro' ? 199000 : 99000, createdAt: nowIso() };
+sub = { id: uid('sub'), siteId: site.id, plan, status: 'trial', monthlyPrice: plan === 'Auto' ? 299000 : plan === 'FixPack' ? 99000 : 69000, createdAt: nowIso() };
 db.subscriptions.unshift(sub);
 } else {
 sub.plan = plan || sub.plan;

@@ -1,0 +1,69 @@
+{
+  "ok": true,
+  "phase": "203",
+  "title": "structure-system-engine-global-hardening-100",
+  "score": 100,
+  "baselineScore": 76,
+  "targetScore": 100,
+  "strengthenedItems": 37,
+  "scorecard": [
+    {
+      "area": "요구사항 정합성",
+      "before": 17,
+      "after": 25,
+      "max": 25
+    },
+    {
+      "area": "기능 안정성",
+      "before": 16,
+      "after": 20,
+      "max": 20
+    },
+    {
+      "area": "보안/렌더링",
+      "before": 18,
+      "after": 20,
+      "max": 20
+    },
+    {
+      "area": "사용성",
+      "before": 15,
+      "after": 20,
+      "max": 20
+    },
+    {
+      "area": "문서/납품",
+      "before": 10,
+      "after": 15,
+      "max": 15
+    }
+  ],
+  "requiredGates": [
+    "GOLDEN_CORE",
+    "STATIC_UI",
+    "phase203:final"
+  ],
+  "checkedAt": "2026-05-05T03:16:34.300Z",
+  "finalRun": {
+    "ok": true,
+    "score": 100,
+    "passedSteps": 13,
+    "totalSteps": 13
+  },
+  "fileCount": 738,
+  "changedFiles": [
+    "package.json",
+    "README.md",
+    ".env.example",
+    "tests/e2e.mjs",
+    "server/core/intent-firewall.mjs",
+    "tests/phase203-intent-firewall.mjs",
+    "scripts/validate-phase203-global-engine-100.mjs",
+    "scripts/run-phase203-final.mjs",
+    "RUN_ALL_TESTS.sh",
+    "PHASE203_STRUCTURE_SYSTEM_ENGINE_100_REPORT_20260505_KO.md",
+    "PHASE203_STRUCTURE_SYSTEM_ENGINE_100_VALIDATION_20260505.json",
+    "MANIFEST_PHASE203_20260505.txt",
+    "SHA256SUMS_PHASE203_20260505.txt"
+  ]
+}

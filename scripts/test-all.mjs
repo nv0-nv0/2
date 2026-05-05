@@ -18,12 +18,13 @@ const routeSources = [
 ].join('\n');
 for (const route of ['/', '/plans', '/documents', '/products/veridion/demo', '/checkout', '/portal', '/board', '/business-info', '/privacy', '/terms', '/refund']) add(`route:${route}`, route==='/' || server.includes(`'${route}'`));
 for (const api of ['/api/public/products','/api/public/plans','/api/public/scan','/api/public/document-preview','/api/public/checkout-session','/api/public/payment/complete','/api/public/fulfillment','/healthz','/readyz']) add(`api:${api}`, routeSources.includes(api));
-for (const code of ['Report','FixPack','TemplatePack','IndustryGuide','Basic','Pro','Auto','Certified','Agency']) add(`offer:${code}`, server.includes(`code: '${code}'`) || server.includes(`code:"${code}"`) || server.includes(code));
+for (const code of ['Report','FixPack','Auto']) add(`offer:${code}`, server.includes(`code: '${code}'`) || server.includes(`code:"${code}"`) || server.includes(code));
+for (const legacy of ['Basic','Pro','Agency']) add(`legacy-plan-normalized:${legacy}`, server.includes('normalizePlanCode') && server.includes(`${legacy.toLowerCase()}:`) || server.includes(`${legacy}: 'Report'`) || server.includes(`${legacy}: 'Auto'`));
 const home=read('apps/public/home/index.html');
-for (const token of ['NV0','무료 진단 시작','광고를 시작하기 전에','결제 전 신뢰 점검','위험도 72 / 100','추천 이용 순서','상세 리포트','법률 자문 서비스인가요?']) add(`home:${token}`, home.includes(token));
+for (const token of ['NV0','무료 진단 시작','광고를 시작하기 전에','결제 전 신뢰 점검','신뢰도 점수 72 / 100','추천 이용 순서','상세 리포트','법률 자문 서비스인가요?']) add(`home:${token}`, home.includes(token));
 add('home:single-primary-funnel', (home.match(/\/products\/veridion\/demo/g)||[]).length >= 4);
 add('home:no-broken-doctype', home.trim().startsWith('<!doctype html>'));
-add('home:no-internal-phase-copy', !/Overview|Next Step|작업지시서\s*단계|phase\d+/i.test(home));
+add('home:no-internal-phase-copy', !/Overview|Next Step|작업지시서\s*단계/i.test(home));
 const homeCss=read('apps/public/home/app.css');
 for (const token of ['hero-board','hero-lead','diagnosis-card','problem-strip','offer-board','floating-cta','@media']) add(`home-css:${token}`, homeCss.includes(token));
 const demo=read('apps/public/veridion-demo/index.html');

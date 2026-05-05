@@ -257,3 +257,10 @@ npm run final:review
 ```
 
 결과 파일: `docs/PHASE42_FINAL_REVIEW_SUMMARY_20260425.json`
+
+## Phase203 구조·시스템 엔진 100점 강화
+
+- 의도 방화벽 추가: 작업지시서·전역 재검수·오분류·100점 완성 요청은 `software_delivery_qa`로 우선 판정합니다.
+- 정상 네이버 제품 블로그 요청은 `naver_product_promo`로 유지하고, 블로그 플랫폼 비교는 비교표 모드로 분리합니다.
+- 실행: `npm run test:phase203`, `npm run validate:phase203`, `npm run phase203:final`, `./RUN_ALL_TESTS.sh`
+- 산출물: `PHASE203_STRUCTURE_SYSTEM_ENGINE_100_REPORT_20260505_KO.md`, `PHASE203_STRUCTURE_SYSTEM_ENGINE_100_VALIDATION_20260505.json`, `MANIFEST_PHASE203_20260505.txt`, `SHA256SUMS_PHASE203_20260505.txt`

@@ -36,8 +36,7 @@ function priorityCounts(scan = {}) {
 
 function planFor(score, counts = {}) {
   if (score >= 75 || counts.p0 >= 2) return 'Auto';
-  if (score >= 55 || counts.p0 >= 1 || counts.p1 >= 3) return 'Pro';
-  if (score >= 35 || counts.p1 >= 1) return 'FixPack';
+  if (score >= 45 || counts.p0 >= 1 || counts.p1 >= 1) return 'FixPack';
   return 'Report';
 }
 
@@ -166,7 +165,7 @@ export function buildSmartProductOrchestration({ scan = {}, site = null, intelli
     frictionRemovers,
     operatingLoop: [
       '무료 진단으로 신뢰 공백 확인',
-      '결과에 맞춰 Report/FixPack/Auto 자동 추천',
+      '결과에 맞춰 상세 리포트/FixPack/Auto 자동 추천',
       '내 사이트 관리에서 저장·재검사',
       '콘텐츠 보드으로 재유입 콘텐츠 발행'
     ],

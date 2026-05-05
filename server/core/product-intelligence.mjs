@@ -45,8 +45,7 @@ function topFindingTitles(scan = {}, limit = 3) {
 function recommendedPlanFor(score, scan = {}) {
   const counts = findPriorityCounts(scan);
   if (score >= 75 || counts.p0 >= 2) return 'Auto';
-  if (score >= 55 || counts.p0 >= 1 || counts.p1 >= 3) return 'Pro';
-  if (score >= 35 || counts.p1 >= 1) return 'FixPack';
+  if (score >= 45 || counts.p0 >= 1 || counts.p1 >= 1) return 'FixPack';
   return 'Report';
 }
 
@@ -59,12 +58,6 @@ function actionCopy(plan, scan = {}) {
       reason: `${problemText} 항목이 전환 직전 신뢰 판단에 영향을 줄 수 있어 정기 재진단과 발행 루틴까지 묶어 관리하는 편이 효율적입니다.`,
       primaryCta: 'Auto 정기 케어 보기',
       nextPath: ['/plans', '/portal', '/board']
-    },
-    Pro: {
-      headline: '근거와 우선순위를 먼저 확정해야 합니다.',
-      reason: `${problemText} 항목의 영향도가 높아, 상세 리포트로 페이지별 근거와 수정 순서를 정리한 뒤 반영하는 흐름이 적합합니다.`,
-      primaryCta: 'Pro 추천 기준 보기',
-      nextPath: ['/plans', '/checkout', '/portal']
     },
     FixPack: {
       headline: '바로 바꿀 문구가 필요한 상태입니다.',
@@ -89,7 +82,6 @@ function planFitReason(offer = {}, intelligence = {}) {
   if (plan === recommended) return intelligence.reason;
   if (plan === 'Report') return '전체 수정 전에 근거와 우선순위를 한 번 정리해야 할 때 적합합니다.';
   if (plan === 'FixPack') return '오늘 바로 교체할 고지·환불·개인정보·광고 문구가 필요할 때 적합합니다.';
-  if (plan === 'Pro') return score >= 50 ? '고위험 항목의 근거와 수정 순서를 함께 확인할 때 적합합니다.' : '정기 관리 전 한 번 정밀 점검이 필요할 때 적합합니다.';
   if (plan === 'Auto') return score >= 65 ? '반복 변경이 잦거나 고위험 항목을 계속 추적해야 할 때 적합합니다.' : '광고·이벤트·상세페이지 변경이 잦은 팀에 적합합니다.';
   if (plan === 'Certified') return '진단 후 외부에 보여줄 신뢰 표시가 필요할 때 적합합니다.';
   if (plan === 'Agency') return '여러 고객사 도메인을 반복 점검해야 하는 조직에 적합합니다.';
@@ -97,15 +89,14 @@ function planFitReason(offer = {}, intelligence = {}) {
 }
 
 export function annotateOffersWithIntelligence(offers = [], intelligence = {}) {
-  const recommendedPlan = intelligence.recommendedPlan || 'Pro';
+  const recommendedPlan = intelligence.recommendedPlan || 'Report';
   const score = intelligence.riskScore ?? 55;
   return list(offers).map((offer) => {
     let fitScore = 55;
     if (offer.code === recommendedPlan) fitScore = 98;
-    else if (recommendedPlan === 'Auto' && offer.code === 'Pro') fitScore = 86;
-    else if (recommendedPlan === 'Pro' && ['FixPack', 'Report', 'Auto'].includes(offer.code)) fitScore = offer.code === 'Auto' ? 80 : 76;
-    else if (recommendedPlan === 'FixPack' && ['Report', 'Pro'].includes(offer.code)) fitScore = offer.code === 'Report' ? 78 : 74;
-    else if (recommendedPlan === 'Report' && ['FixPack', 'Basic'].includes(offer.code)) fitScore = 72;
+    else if (recommendedPlan === 'Auto' && offer.code === 'FixPack') fitScore = 86;
+    else if (recommendedPlan === 'FixPack' && ['Report','Auto'].includes(offer.code)) fitScore = offer.code === 'Report' ? 78 : 74;
+    else if (recommendedPlan === 'Report' && ['FixPack'].includes(offer.code)) fitScore = 72;
     else if (offer.group === 'b2b' || offer.group === 'annual') fitScore = score >= 60 ? 64 : 58;
     return {
       ...offer,

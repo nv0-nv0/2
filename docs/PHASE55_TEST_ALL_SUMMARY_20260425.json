@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-04T10:12:33.806Z",
+  "generatedAt": "2026-05-05T03:16:09.044Z",
   "ok": true,
   "phase": "commercial-final",
   "total": 85,
@@ -143,31 +143,19 @@
       "ok": true
     },
     {
-      "name": "offer:TemplatePack",
-      "ok": true
-    },
-    {
-      "name": "offer:IndustryGuide",
-      "ok": true
-    },
-    {
-      "name": "offer:Basic",
-      "ok": true
-    },
-    {
-      "name": "offer:Pro",
-      "ok": true
-    },
-    {
       "name": "offer:Auto",
       "ok": true
     },
     {
-      "name": "offer:Certified",
+      "name": "legacy-plan-normalized:Basic",
       "ok": true
     },
     {
-      "name": "offer:Agency",
+      "name": "legacy-plan-normalized:Pro",
+      "ok": true
+    },
+    {
+      "name": "legacy-plan-normalized:Agency",
       "ok": true
     },
     {
@@ -187,7 +175,7 @@
       "ok": true
     },
     {
-      "name": "home:위험도 72 / 100",
+      "name": "home:신뢰도 점수 72 / 100",
       "ok": true
     },
     {
@@ -344,6 +332,18 @@
     },
     {
       "name": "client:no-inline-handler",
+      "ok": true
+    },
+    {
+      "name": "runtime:runtime/uploads:empty",
+      "ok": true
+    },
+    {
+      "name": "runtime:runtime/backups:empty",
+      "ok": true
+    },
+    {
+      "name": "runtime:runtime/reports:empty",
       "ok": true
     }
   ]
