@@ -185,7 +185,7 @@ const TARGET_FETCH_SITEMAP_ENABLED = process.env.NV0_TARGET_FETCH_SITEMAP_ENABLE
 const TARGET_FETCH_MAX_SITEMAP_URLS = Math.max(0, Math.min(80, Number(process.env.NV0_TARGET_FETCH_MAX_SITEMAP_URLS || 40)));
 const TARGET_FETCH_MAX_DISCOVERY_RESOURCES = Math.max(1, Math.min(6, Number(process.env.NV0_TARGET_FETCH_MAX_DISCOVERY_RESOURCES || 4)));
 const TARGET_FETCH_AUTOMATION_LEVEL = process.env.NV0_TARGET_FETCH_AUTOMATION_LEVEL || 'maximum_free_safe';
-const CTA_AUTOPUBLISH_INTERVAL_MS = Number(process.env.NV0_CTA_AUTOPUBLISH_INTERVAL_MS || 30 * 60_000);
+const CTA_AUTOPUBLISH_INTERVAL_MS = Number(process.env.NV0_CTA_AUTOPUBLISH_INTERVAL_MS || 20 * 60_000);
 const AI_REVIEW_PROVIDER = String(process.env.NV0_AI_REVIEW_PROVIDER || 'disabled').trim().toLowerCase();
 const GEMINI_API_KEY = String(process.env.NV0_GEMINI_API_KEY || '').trim();
 const GEMINI_MODEL = String(process.env.NV0_GEMINI_MODEL || 'gemini-2.5-flash').trim();
@@ -1461,8 +1461,8 @@ return nextBody.replace(/<body\b([^>]*)>/i, `<body$1>${publicTopMenuHtml(urlPath
 function businessFooterHtml() {
 const types = BUSINESS_PROFILE.businessTypes.join(' · ');
 const unfinishedToken = ['TO', 'DO'].join('');
-const legalFieldBlockPattern = new RegExp(`예정|확인|상용|입력|${unfinishedToken}|TBD`, 'i');
-const hostingBlockPattern = new RegExp(`예정|확인|상용|입력|${unfinishedToken}|TBD|운영 인프라`, 'i');
+const legalFieldBlockPattern = new RegExp(`예정|확인|상용|입력|replace|placeholder|sample|example|dummy|xxx|미정|${unfinishedToken}|TBD`, 'i');
+const hostingBlockPattern = new RegExp(`예정|확인|상용|입력|replace|placeholder|sample|example|dummy|xxx|미정|${unfinishedToken}|TBD|운영 인프라`, 'i');
 return '<footer class="business-footer" aria-label="사업자 정보">'
 + `<strong>${BUSINESS_PROFILE.tradeName}</strong>`
 + `<span>대표자: ${BUSINESS_PROFILE.representative}</span>`
@@ -1857,33 +1857,37 @@ const target = String(item.target || item.normalizedTarget || '사이트').repla
 const keyword = item.primaryKeyword || topic.keyword;
 const source = [topic.title, keyword, topic.issue, item.body, item.summary].join(' ').toLowerCase();
 const theme = (() => {
-if (/환불|취소|교환|청약/.test(source)) return { label: '환불·청약철회 안내', elements: ['환불 가능 조건', '취소 접수 위치', '처리 기간', '예외 기준', '문의 경로'], buttonCopy: '환불 가능 조건 먼저 확인', example: '예를 들어 결제 버튼 가까이에 “결제 후 7일 이내 취소 가능 / 제작이 시작된 주문은 예외”처럼 핵심 기준이 바로 보이면 고객이 다시 문의하지 않아도 됩니다.', cta: '환불 기준이 페이지마다 다르다면 무료 진단으로 먼저 공백을 확인해 보세요.' };
-if (/개인정보|동의|보관|파기|privacy/.test(source)) return { label: '개인정보 안내', elements: ['수집 항목', '수집 목적', '보관 기간', '파기 기준', '문의 이메일'], buttonCopy: '수집 목적과 보관 기간 확인', example: '문의폼 아래에 “상담 답변을 위해 이름과 연락처를 수집하며, 접수 후 1년 보관합니다.”처럼 바로 읽히는 문장이 있으면 입력 이탈이 줄어듭니다.', cta: '개인정보 안내가 입력 화면과 멀리 떨어져 있다면 먼저 위치부터 점검해 보세요.' };
-if (/사업자|문의|고객센터|푸터|대표자/.test(source)) return { label: '사업자 정보와 문의 경로', elements: ['상호', '대표자', '사업자번호', '고객지원 이메일', '답변 기준'], buttonCopy: '운영자 정보와 문의 방법 보기', example: '푸터에 상호와 고객지원 메일만 있고 답변 기준이 없다면 고객은 “문의해도 답이 올까?”를 걱정하기 쉽습니다. “평일 기준 1영업일 내 답변” 한 줄만 더해도 인상이 달라집니다.', cta: '사업자 정보와 문의 경로가 흩어져 있다면 푸터와 문의 버튼 주변부터 먼저 정리하세요.' };
-if (/결제|구매|주문|가격/.test(source)) return { label: '결제 전 안내', elements: ['제공 범위', '가격 포함 항목', '환불 기준', '결제 후 제공 시점', '고객지원 경로'], buttonCopy: '결제 전 제공 범위 확인', example: '가격표 아래에 “결제 후 제공 시점 / 환불 가능 여부 / 문의 경로”가 함께 보이면 고객이 마지막 단계에서 멈추는 일이 줄어듭니다.', cta: '결제 직전 이탈이 많다면 버튼 바로 위·아래 안내부터 무료 진단으로 확인해 보세요.' };
-return { label: '사이트 신뢰 안내', elements: ['운영자 정보', '문의 경로', '환불 기준', '개인정보 안내', '모바일 표시 상태'], buttonCopy: '필수 안내 먼저 확인', example: '처음 방문한 고객은 긴 소개글보다 “누가 운영하는지, 문의는 어디로 하는지, 문제가 생기면 어떻게 처리되는지”를 먼저 찾습니다.', cta: '사이트 첫인상을 더 안정적으로 만들고 싶다면 무료 진단으로 주요 공백부터 확인해 보세요.' };
+if (/환불|취소|교환|청약/.test(source)) return { label: '환불·청약철회 안내', elements: ['환불 가능 조건', '취소 접수 위치', '처리 기간', '예외 기준', '문의 경로'], buttonCopy: '환불 가능 조건 먼저 확인', example: '예를 들어 결제 버튼 가까이에 “결제 후 7일 이내 취소 가능 / 제작이 시작된 주문은 예외”처럼 핵심 기준이 바로 보이면 고객이 다시 문의하지 않아도 됩니다.', risk: '환불 기준이 흐릿하면 고객은 결제보다 분쟁 가능성을 먼저 떠올립니다.', cta: '환불 기준이 페이지마다 다르다면 무료 진단으로 먼저 공백을 확인해 보세요.' };
+if (/개인정보|동의|보관|파기|privacy/.test(source)) return { label: '개인정보 안내', elements: ['수집 항목', '수집 목적', '보관 기간', '파기 기준', '문의 이메일'], buttonCopy: '수집 목적과 보관 기간 확인', example: '문의폼 아래에 “상담 답변을 위해 이름과 연락처를 수집하며, 접수 후 1년 보관합니다.”처럼 바로 읽히는 문장이 있으면 입력 이탈이 줄어듭니다.', risk: '개인정보 안내가 입력 화면과 떨어져 있으면 고객은 정보를 남기기 전에 멈춥니다.', cta: '개인정보 안내가 입력 화면과 멀리 떨어져 있다면 먼저 위치부터 점검해 보세요.' };
+if (/사업자|문의|고객센터|푸터|대표자/.test(source)) return { label: '사업자 정보와 문의 경로', elements: ['상호', '대표자', '사업자번호', '고객지원 이메일', '답변 기준'], buttonCopy: '운영자 정보와 문의 방법 보기', example: '푸터에 상호와 고객지원 메일만 있고 답변 기준이 없다면 고객은 “문의해도 답이 올까?”를 걱정하기 쉽습니다. “평일 기준 1영업일 내 답변” 한 줄만 더해도 인상이 달라집니다.', risk: '운영자 정보가 모호하면 상품보다 사이트 자체의 신뢰가 먼저 흔들립니다.', cta: '사업자 정보와 문의 경로가 흩어져 있다면 푸터와 문의 버튼 주변부터 먼저 정리하세요.' };
+if (/결제|구매|주문|가격/.test(source)) return { label: '결제 전 안내', elements: ['제공 범위', '가격 포함 항목', '환불 기준', '결제 후 제공 시점', '고객지원 경로'], buttonCopy: '결제 전 제공 범위 확인', example: '가격표 아래에 “결제 후 제공 시점 / 환불 가능 여부 / 문의 경로”가 함께 보이면 고객이 마지막 단계에서 멈추는 일이 줄어듭니다.', risk: '가격은 보이는데 제공 범위가 안 보이면 고객은 결제 직전에 뒤로 갑니다.', cta: '결제 직전 이탈이 많다면 버튼 바로 위·아래 안내부터 무료 진단으로 확인해 보세요.' };
+return { label: '사이트 신뢰 안내', elements: ['운영자 정보', '문의 경로', '환불 기준', '개인정보 안내', '모바일 표시 상태'], buttonCopy: '필수 안내 먼저 확인', example: '처음 방문한 고객은 긴 소개글보다 “누가 운영하는지, 문의는 어디로 하는지, 문제가 생기면 어떻게 처리되는지”를 먼저 찾습니다.', risk: '첫 방문자가 신뢰 확인에 실패하면 좋은 상품 설명도 제대로 읽히지 않습니다.', cta: '사이트 첫인상을 더 안정적으로 만들고 싶다면 무료 진단으로 주요 공백부터 확인해 보세요.' };
 })();
 const useCases = [
 `${theme.label} 안내가 여러 페이지에 흩어져 있어 고객이 한 번에 찾기 어려운 경우`,
 '문의나 결제 버튼은 있는데 바로 옆에 필요한 설명이 부족한 경우',
-'운영자는 익숙하지만 처음 방문한 고객 기준으로는 설명이 부족해 보이는 경우'
+'운영자는 익숙하지만 처음 방문한 고객 기준으로는 설명이 부족해 보이는 경우',
+'광고나 검색으로 들어온 고객이 상세 설명보다 신뢰 정보부터 확인하는 경우'
 ];
 const checklist = [
 `첫 화면, 가격표, 문의 버튼, 결제 버튼, 푸터 중 어디에서 ${theme.label}을 바로 확인할 수 있는지 점검합니다.`,
 `고객이 가장 먼저 묻게 되는 ${theme.elements.slice(0, 3).join(', ')} 항목이 한 화면 안에서 이어지는지 확인합니다.`,
 '모바일 화면에서 안내 문구가 접히거나 버튼 아래로 너무 멀리 밀리지 않는지 확인합니다.',
+'동일한 기준이 약관, 푸터, 결제 안내, 문의 안내에서 서로 충돌하지 않는지 비교합니다.',
 '수정 후 같은 주소로 다시 점검해 남은 항목이 줄었는지 비교합니다.'
 ];
 const copyExamples = [
 ['문의하기', '문의하기 · 평일 기준 1영업일 안에 답변드립니다.'],
 ['자세히 보기', `${theme.buttonCopy}.`],
 ['무료', '무료 진단: 요약 결과까지 무료로 확인'],
-['개인정보 동의', '입력한 정보의 수집 목적과 보관 기간 확인']
+['개인정보 동의', '입력한 정보의 수집 목적과 보관 기간 확인'],
+['서비스 신청', '제공 범위와 처리 기준 확인 후 신청하기']
 ];
 const faqs = [
 ['이 글은 어떤 상황에서 가장 도움이 되나요?', `처음 방문한 고객이 ${theme.label} 때문에 멈추는 장면을 줄이고 싶을 때 가장 도움이 됩니다.`],
 ['가장 먼저 고칠 위치는 어디인가요?', '결제, 문의, 회원가입처럼 고객이 행동을 결정하는 바로 직전 화면을 먼저 확인하는 것이 좋습니다.'],
-['무료 진단만으로도 방향을 잡을 수 있나요?', '네. 무료 진단으로 현재 공백을 먼저 보고, 더 자세한 수정 방향이 필요할 때만 리포트나 수정 문구안을 이어서 확인하면 됩니다.']
+['무료 진단만으로도 방향을 잡을 수 있나요?', '네. 무료 진단으로 현재 공백을 먼저 보고, 더 자세한 수정 방향이 필요할 때만 리포트나 수정 문구안을 이어서 확인하면 됩니다.'],
+['왜 일반 주제 글처럼 써야 하나요?', '독자는 홍보 문구보다 자신의 문제를 먼저 해결해 주는 글을 오래 읽습니다. 그래서 문제, 예시, 체크리스트, FAQ를 먼저 배치하고 마지막에 자연스럽게 다음 행동을 안내합니다.']
 ];
 const tags = [
 `#${String(keyword || theme.label).replace(/[\s·/]+/g, '')}`,
@@ -1896,28 +1900,20 @@ const tags = [
 '#모바일가독성'
 ].join(' ');
 return [
-`도입
-${target} 사이트를 처음 보는 고객은 상품 설명보다 먼저 “여기서 안심하고 문의하거나 결제해도 될까?”를 확인합니다. 이 글은 ${theme.label}을 자연스럽게 보여 주는 방법을 쉬운 말로 정리한 안내 글입니다.`,
-`이 글이 도움이 되는 경우
-${useCases.map((line, idx) => `${idx + 1}. ${line}`).join('\n')}`,
-`연관 예시
-${theme.example}`,
-`고객이 실제로 확인하는 포인트
-${theme.elements.map((name, idx) => `${idx + 1}. ${name}`).join('\n')}`,
-`바로 적용할 체크리스트
-${checklist.map((line, idx) => `${idx + 1}. ${line}`).join('\n')}`,
-`문구 예시
-${copyExamples.map(([before, after], idx) => `${idx + 1}. 바꾸기 전: “${before}”\n   바꾼 뒤: “${after}”`).join('\n')}`,
-`FAQ
-${faqs.map(([q, a], idx) => `Q${idx + 1}. ${q}\nA. ${a}`).join('\n\n')}`,
-`자연스러운 CTA
-${theme.cta} 비슷한 유형의 페이지를 운영 중이라면 내 사이트도 무료 진단으로 먼저 확인하고, 필요하면 상세 리포트에서 수정 우선순위를 이어서 보세요.`,
-`관련 링크
-무료 진단: /products/veridion/demo
-플랜 비교: /plans
-내 사이트 관리: /portal`,
-`해시태그
-${tags}`
+`왜 이 글을 썼나요?\n${target} 사이트를 처음 보는 고객은 상품 설명보다 먼저 “여기서 안심하고 문의하거나 결제해도 될까?”를 확인합니다. 이 글은 ${theme.label}을 자연스럽게 보여 주는 방법을 쉬운 말로 정리한 안내 글입니다. 단순히 버튼을 크게 만들거나 할인 문구를 추가하는 방식만으로는 부족합니다. 고객이 불안해하는 지점에 답이 없으면, 아무리 좋은 상품과 서비스라도 마지막 행동으로 이어지지 않습니다.`,
+`문제 인식과 위기감\n${theme.risk} 특히 모바일 화면에서는 고객이 몇 초 안에 신뢰 여부를 판단합니다. 안내 문구가 아래로 밀려 있거나, 필수 정보가 푸터에만 숨어 있거나, 문의 기준이 보이지 않으면 고객은 확인을 미루지 않고 이탈합니다. 더 큰 문제는 운영자가 이탈 원인을 가격, 디자인, 광고 효율 문제로만 오해할 수 있다는 점입니다. 실제로는 버튼 주변의 한 줄 안내, 입력폼 아래의 개인정보 설명, 결제 전 제공 범위가 없어서 멈추는 경우가 많습니다. 이 상태를 오래 방치하면 광고비는 계속 쓰지만 전환은 쌓이지 않고, 문의가 들어와도 같은 질문만 반복됩니다.`,
+`독자가 관심 있어할 일반 주제\n온라인에서 물건을 사거나 서비스를 신청하는 사람은 세 가지를 확인합니다. 첫째, 누가 운영하는지입니다. 둘째, 문제가 생겼을 때 어디로 연락하는지입니다. 셋째, 결제나 신청 후 어떤 기준으로 처리되는지입니다. 이 세 가지가 한 화면 안에서 자연스럽게 연결되면 고객은 “조금 더 살펴봐도 되겠다”는 신호를 받습니다. 반대로 ${theme.elements.slice(0, 3).join(', ')} 정보가 따로 흩어져 있으면 고객은 스스로 위험을 계산해야 합니다. 좋은 콘텐츠는 상품 자랑으로 시작하지 않습니다. 고객이 이미 마음속으로 하고 있는 질문을 먼저 꺼내고, 그 질문에 짧고 명확하게 답한 뒤, 더 자세한 행동으로 안내합니다.`,
+`이 글이 도움이 되는 경우\n${useCases.map((line, idx) => `${idx + 1}. ${line}`).join('\n')}`,
+`연관 예시\n${theme.example} 이 예시는 특정 업종에만 해당하지 않습니다. 쇼핑몰, 상담 서비스, 예약 서비스, 디지털 파일 판매, B2B 문의형 사이트 모두 고객이 행동 직전에 확인하는 정보가 있습니다. 핵심은 모든 설명을 길게 늘리는 것이 아니라, 고객이 멈추는 위치에 필요한 답을 짧게 놓는 것입니다.`,
+`고객이 실제로 확인하는 포인트\n${theme.elements.map((name, idx) => `${idx + 1}. ${name}`).join('\n')}`,
+`바로 적용할 체크리스트\n${checklist.map((line, idx) => `${idx + 1}. ${line}`).join('\n')}`,
+`문구 예시\n${copyExamples.map(([before, after], idx) => `${idx + 1}. 바꾸기 전: “${before}”\n   바꾼 뒤: “${after}”`).join('\n')}`,
+`검색에 잘 읽히게 정리하는 방법\n제목에는 고객이 실제로 검색할 만한 말을 넣는 것이 좋습니다. 예를 들어 ${theme.label}처럼 운영자가 쓰는 내부 표현보다 고객이 이해하기 쉬운 표현을 앞에 둡니다. 첫 문단에는 문제 상황을 설명하고, 중간에는 예시와 체크리스트를 배치하고, 마지막에는 무료 진단이나 상세 리포트처럼 다음 행동을 하나만 안내합니다. 같은 키워드를 억지로 반복하기보다 질문과 답변, 사례, 점검 포인트를 자연스럽게 이어야 검색 로봇과 실제 독자 모두가 내용을 이해하기 쉽습니다.`,
+`지금 놓치면 생길 수 있는 일\n안내가 부족한 상태에서 광고나 이벤트를 먼저 키우면 이탈 지점도 같이 커집니다. 방문자가 늘어도 결제 전 불안이 해소되지 않으면 문의만 늘거나 장바구니 이탈이 늘 수 있습니다. 더 늦게 발견하면 문구 수정, 정책 정리, 디자인 수정, 고객 응대 기준 정리를 한 번에 처리해야 하므로 운영 부담이 커집니다. 지금은 작은 문장 하나로 막을 수 있는 문제도, 시간이 지나면 신뢰 회복 비용으로 돌아올 수 있습니다.`,
+`자주 묻는 질문\n${faqs.map(([q, a], idx) => `Q${idx + 1}. ${q}\nA. ${a}`).join('\n\n')}`,
+`마지막 섹션: 자연스러운 안내\n${theme.cta} 비슷한 유형의 페이지를 운영 중이라면 내 사이트도 무료 진단으로 먼저 확인하고, 필요하면 상세 리포트에서 수정 우선순위를 이어서 보세요. 중요한 것은 지금 당장 모든 것을 바꾸는 것이 아니라, 고객이 멈추는 위치를 정확히 찾는 것입니다. 무료 진단은 현재 화면에서 빠진 안내, 모호한 문구, 버튼 주변의 불안 요소를 먼저 보여 주고, 이후 필요한 산출물만 선택해 이어갈 수 있도록 돕습니다.`,
+`관련 링크\n무료 진단: /products/veridion/demo\n플랜 비교: /plans\n내 사이트 관리: /portal`,
+`해시태그\n${tags}`
 ].join('\n\n');
 }
 
@@ -1930,7 +1926,7 @@ return {
 ...item,
 title: topic.title,
 body: publicBoardBodyFor(item, index),
-summary: `${topic.keyword}과 관련된 고객 질문을 쉬운 예시와 체크리스트로 정리한 공개 안내 글입니다.`,
+summary: `${topic.keyword}과 관련된 문제 인식, 위기감, 쉬운 예시, 체크리스트, 자연스러운 CTA를 정리한 4천자 내외 공개 안내 글입니다.`,
 primaryKeyword: topic.keyword,
 tags,
 searchIntent: '고객 도움형',
@@ -3649,7 +3645,7 @@ if (!article) {
 const variant = chooseCtaVariant(db, { ...options, sequenceOffset: Date.now() % 144 });
 article = buildCtaBoardArticle(scan || {}, variant, { ...options, title: `${variant.headline} · ${new Date().toLocaleDateString('ko-KR')}` });
 }
-const base = { ctaType: article.ctaType, titleCandidates: article.titleCandidates, tags: article.tags, qualityStandard:'cta-v8-unbounded-seo', seoQualityStandard:'cta-v8-unbounded-seo', wordRangeKo: '900-1500', sections: ['제목 후보', '도입', '문제 제기', '해결 과정', '신뢰 근거', 'FAQ', '자연스러운 CTA', '태그'], diversityKey: article.diversityKey, contentFingerprint: article.contentFingerprint, searchIntent: article.seo?.searchIntent || null, funnelStage: article.seo?.funnelStage || null, primaryKeyword: article.seo?.primaryKeyword || null, secondaryKeywords: article.seo?.secondaryKeywords || [], metaDescription: article.seo?.metaDescription || null, baseCtaType: article.baseCtaType || null, combinationMode: article.combinationMode || null, combinationKey: article.combinationKey || null, contentArchetype: article.contentArchetype || article.seo?.contentArchetype || null, audienceSegment: article.audienceSegment || article.seo?.audienceSegment || null };
+const base = { ctaType: article.ctaType, titleCandidates: article.titleCandidates, tags: article.tags, qualityStandard:'cta-v8-unbounded-seo', seoQualityStandard:'cta-v8-unbounded-seo', wordRangeKo: '3800-4500', sections: ['제목 후보', '도입', '문제 제기', '해결 과정', '신뢰 근거', 'FAQ', '자연스러운 CTA', '태그'], diversityKey: article.diversityKey, contentFingerprint: article.contentFingerprint, searchIntent: article.seo?.searchIntent || null, funnelStage: article.seo?.funnelStage || null, primaryKeyword: article.seo?.primaryKeyword || null, secondaryKeywords: article.seo?.secondaryKeywords || [], metaDescription: article.seo?.metaDescription || null, baseCtaType: article.baseCtaType || null, combinationMode: article.combinationMode || null, combinationKey: article.combinationKey || null, contentArchetype: article.contentArchetype || article.seo?.contentArchetype || null, audienceSegment: article.audienceSegment || article.seo?.audienceSegment || null };
 const publication = { id: uid('pub'), title: article.title, status: 'published', type: 'cta', boardType: article.boardType, ...base, relatedRequestId: scan?.requestId || null, body: article.body, createdAt: nowIso(), autoPublished: options.autoPublished === true };
 db.publications.unshift(publication);
 db.boards.unshift({ id: uid('board'), title: article.title, boardType: article.boardType, type: 'cta', ...base, body: article.body, createdAt: nowIso(), visibility: 'public', autoPublished: options.autoPublished === true, publishIntervalMs: CTA_AUTOPUBLISH_INTERVAL_MS });

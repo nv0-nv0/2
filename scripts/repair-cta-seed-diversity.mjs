@@ -13,7 +13,7 @@ for (const file of files) {
   const keepPubs = (db.publications || []).filter(item => !(item.autoPublished || item.type === 'cta'));
   const posts = ctaTopicPacks().map((pack, index) => {
     const article = buildCtaBoardArticle(scan, pack, {});
-    const base = { ctaType: article.ctaType, titleCandidates: article.titleCandidates, tags: article.tags, qualityStandard: 'cta-board-v6.7-encyclopedic-router-diverse', wordRangeKo: '900-1500', sections: ['제목 후보', '도입', '문제 제기', '해결 과정', '신뢰 근거', 'FAQ', '자연스러운 CTA', '태그'], diversityKey: article.diversityKey, contentFingerprint: article.contentFingerprint, autoPublished: true, createdAt: stamp(index) };
+    const base = { ctaType: article.ctaType, titleCandidates: article.titleCandidates, tags: article.tags, qualityStandard: 'cta-board-v6.7-encyclopedic-router-diverse', wordRangeKo: '3800-4500', sections: ['제목 후보', '문제 인식과 위기감', '제품과 연관된 일반 주제', '체크리스트', 'FAQ', '자연스러운 CTA', '태그'], diversityKey: article.diversityKey, contentFingerprint: article.contentFingerprint, autoPublished: true, createdAt: stamp(index) };
     return { article, base, index };
   });
   db.boards = [

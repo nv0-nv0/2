@@ -67,7 +67,7 @@ function buildFaqs(plan) {
     { q: '어디부터 적용하면 되나요?', a: 'P0/P1로 표시된 항목부터 적용하고, 결제 버튼 주변·푸터·정책 페이지·입력폼 순서로 재점검하는 것을 권장합니다.' }
   ];
   if (plan === 'Auto' || plan === 'Agency') {
-    common.push({ q: '자동 발행 글은 어떤 기준으로 생성되나요?', a: '한 줄 홍보가 아니라 제목 후보, 도입, 문제 제기, 해결 과정, 신뢰 근거, FAQ, 자연스러운 CTA, 태그를 포함하는 900~1,500자 포스팅 구조를 기준으로 생성합니다.' });
+    common.push({ q: '자동 발행 글은 어떤 기준으로 생성되나요?', a: '한 줄 홍보가 아니라 제목 후보, 도입, 문제 제기, 해결 과정, 신뢰 근거, FAQ, 자연스러운 CTA, 태그를 포함하는 3,800~4,500자 포스팅 구조를 기준으로 생성합니다.' });
   }
   return common;
 }
@@ -255,7 +255,7 @@ function buildAutoPublishingPlan(order, scan) {
     qualityStandard: 'cta-board-v6.7-encyclopedic-router',
     purpose: '방치된 사이트 인상을 줄이고 문의 또는 체험 신청으로 연결하는 운영 콘텐츠를 자동 생성합니다.',
     postStructure: ['제목 후보 3~5개', '도입 2문단', '문제 제기', '해결 과정', '신뢰 근거', 'FAQ 2~3개', '자연스러운 CTA', '태그'],
-    lengthKo: '900~1,500자',
+    lengthKo: '3,800~4,500자',
     sampleTitles: titleCandidates(order, scan).slice(0, 4),
     sampleCta: '현재 사이트의 신뢰 공백을 먼저 확인하고, 필요한 경우 상세 리포트 또는 수정 문구안을 선택하세요.',
     tags,
@@ -266,7 +266,7 @@ function buildImplementationPlan(order, scan) {
   return [
     { step: 1, title: '핵심 리스크 확인', output: '상위 P0/P1 항목과 영향 정리', owner: '운영자', done: '문제 위치와 수정 방향이 확인됨' },
     { step: 2, title: '문구 적용', output: '환불·개인정보·고객지원 문구 보완', owner: '운영/개발', done: '결제 전 화면에서 문구 확인 가능' },
-    { step: 3, title: '콘텐츠 보강', output: 'FAQ·CTA·태그·자동 발행 글 적용', owner: '마케팅', done: '게시판 또는 랜딩에 900자 이상 포스팅 반영' },
+    { step: 3, title: '콘텐츠 보강', output: 'FAQ·CTA·태그·자동 발행 글 적용', owner: '마케팅', done: '게시판 또는 랜딩에 3,800자 이상 포스팅 반영' },
     { step: 4, title: '재진단', output: '동일 URL 재검사 및 잔여 항목 관리', owner: '운영자', done: '점수와 발견 항목 변동 확인' }
   ];
 }
@@ -313,7 +313,7 @@ function buildPurposeOptimization(order, offer, scan) {
     Auto: {
       productIntent: '정기 진단 + 자동 발행 운영',
       optimizedFor: ['자동 CTA 포스팅', '운영 리듬', '콘텐츠 품질', '반복 전환'],
-      successCriteria: ['900~1,500자 포스팅 구조 준수', '과장 표현이 배제됨', '문의 또는 체험 신청 CTA가 자연스러움']
+      successCriteria: ['3,800~4,500자 포스팅 구조 준수', '과장 표현이 배제됨', '문의 또는 체험 신청 CTA가 자연스러움']
     },
     Agency: {
       productIntent: '복수 도메인 대행사 운영 패키지',
@@ -337,7 +337,7 @@ function buildDeliverableIndex(order, scan) {
     { name: '수정 문구안', purpose: '바로 적용 가능한 문구 제공', included: ['FixPack','Pro','Auto','Agency','Certified'].includes(plan), depth: '수정 전/후 + 적용 위치 + 검수 기준' },
     { name: '정책 템플릿', purpose: '운영 문서 초안 제공', included: ['TemplatePack','Pro','Auto','Agency'].includes(plan), depth: '목적 + 본문 + 사용 전 확인' },
     { name: '업종별 SOP', purpose: '반복 운영 절차화', included: ['IndustryGuide','Pro','Auto','Agency'].includes(plan), depth: '체크리스트 + 금지 표현 + 위험 매트릭스' },
-    { name: 'CTA 포스팅', purpose: '문의·체험 신청 전환 보조', included: ['Auto','Agency'].includes(plan), depth: '900~1,500자 구조 + FAQ + 태그' },
+    { name: 'CTA 포스팅', purpose: '문의·체험 신청 전환 보조', included: ['Auto','Agency'].includes(plan), depth: '3,800~4,500자 구조 + FAQ + 태그' },
     { name: '재점검 기준', purpose: '수정 후 효과 확인', included: true, depth: '수용 기준 + 재진단 루틴' }
   ];
 }
@@ -373,7 +373,7 @@ function buildAcceptanceChecklist(order, scan) {
     '법률 자문 또는 성과 보장처럼 읽히는 표현이 없는가'
   ];
   if (['FixPack','Pro','Auto','Agency'].includes(plan)) base.push('수정 전/후 문구와 적용 위치가 포함되어 있는가');
-  if (['Auto','Agency'].includes(plan)) base.push('자동 발행 CTA가 900~1,500자 포스팅 구조를 유지하는가');
+  if (['Auto','Agency'].includes(plan)) base.push('자동 발행 CTA가 3,800~4,500자 포스팅 구조를 유지하는가');
   return base;
 }
 function buildMeasurementPlan(scan) {

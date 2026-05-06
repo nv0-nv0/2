@@ -21,7 +21,8 @@ for (const api of ['/api/public/products','/api/public/plans','/api/public/scan'
 for (const code of ['Report','FixPack','Auto']) add(`offer:${code}`, server.includes(`code: '${code}'`) || server.includes(`code:"${code}"`) || server.includes(code));
 for (const legacy of ['Basic','Pro','Agency']) add(`legacy-plan-normalized:${legacy}`, server.includes('normalizePlanCode') && server.includes(`${legacy.toLowerCase()}:`) || server.includes(`${legacy}: 'Report'`) || server.includes(`${legacy}: 'Auto'`));
 const home=read('apps/public/home/index.html');
-for (const token of ['NV0','무료 진단 시작','광고를 시작하기 전에','결제 전 신뢰 점검','신뢰도 점수 72 / 100','추천 이용 순서','상세 리포트','법률 자문 서비스인가요?']) add(`home:${token}`, home.includes(token));
+for (const token of ['NV0','무료 진단 시작','광고를 시작하기 전에','결제 전 신뢰 점검','검사 후 표시','고정 점수 예시는 제거했습니다','추천 이용 순서','상세 리포트','법률 자문 서비스인가요?']) add(`home:${token}`, home.includes(token));
+add('home:no-fixed-sample-score-72', !/신뢰도 점수\s*72|72\s*\/\s*100|위험도\s*72/.test(home));
 add('home:single-primary-funnel', (home.match(/\/products\/veridion\/demo/g)||[]).length >= 4);
 add('home:no-broken-doctype', home.trim().startsWith('<!doctype html>'));
 add('home:no-internal-phase-copy', !/Overview|Next Step|작업지시서\s*단계/i.test(home));

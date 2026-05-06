@@ -263,7 +263,15 @@ const filter = String(url.searchParams.get('filter') || 'all').trim();
 const rawPosts = (db.boards || [])
 .filter(item => item && item.visibility !== 'private')
 .sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
-const publicPosts = rawPosts.map((item, index) => toPublicBoardPost(item, index));
+const seedBoardPosts = [
+  { id: 'board-seed-checkout-4000', title: '결제 버튼 앞에서 고객이 멈추는 이유', boardType: 'cta', type: 'cta', ctaType: 'checkout_friction', primaryKeyword: '결제 전 안내', target: 'nv0.kr', visibility: 'public', autoPublished: true, createdAt: nowIso(), summary: '결제 직전 불안을 줄이는 4천자 내외 공개 안내 글입니다.' },
+  { id: 'board-seed-privacy-4000', title: '문의폼 이탈을 줄이는 개인정보 안내', boardType: 'notice', type: 'cta', ctaType: 'privacy_form', primaryKeyword: '개인정보 안내', target: 'nv0.kr', visibility: 'public', autoPublished: true, createdAt: nowIso(), summary: '입력폼 주변 안내를 쉽게 정리한 4천자 내외 공개 안내 글입니다.' },
+  { id: 'board-seed-footer-4000', title: '푸터 사업자 정보만 정리해도 신뢰가 달라지는 이유', boardType: 'case', type: 'cta', ctaType: 'footer_trust', primaryKeyword: '사업자 정보와 문의 경로', target: 'nv0.kr', visibility: 'public', autoPublished: true, createdAt: nowIso(), summary: '사이트 신뢰를 만드는 사업자 정보 배치 안내 글입니다.' },
+  { id: 'board-seed-mobile-4000', title: '모바일 화면에서 CTA와 정책 링크가 밀리지 않게 정리하는 방법', boardType: 'cta', type: 'cta', ctaType: 'mobile_readability', primaryKeyword: '모바일 안내 가독성', target: 'nv0.kr', visibility: 'public', autoPublished: true, createdAt: nowIso(), summary: '모바일 화면 여백과 CTA 위치를 정리하는 4천자 내외 안내 글입니다.' },
+  { id: 'board-seed-adcopy-4000', title: '광고 유입 랜딩페이지에서 위기감을 만들고도 신뢰를 잃지 않는 문구 구조', boardType: 'case', type: 'cta', ctaType: 'ad_copy_risk', primaryKeyword: '광고 랜딩 신뢰 안내', target: 'nv0.kr', visibility: 'public', autoPublished: true, createdAt: nowIso(), summary: '문제 인식과 자연스러운 CTA 흐름을 정리한 공개 안내 글입니다.' }
+];
+const sourcePosts = rawPosts.length ? rawPosts : seedBoardPosts;
+const publicPosts = sourcePosts.map((item, index) => toPublicBoardPost(item, index));
 const filtered = publicPosts.filter(item => filter === 'all' || (item.boardType || item.type) === filter || (filter === 'cta' && (item.autoPublished || item.boardType === 'cta' || item.type === 'cta')));
 const total = filtered.length;
 const totalPages = Math.max(1, Math.ceil(total / pageSize));
@@ -299,6 +307,7 @@ publishIntervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000),
 variantCount: ctaTopicPacks().length,
 topicPackCount: ctaTopicPacks().length,
 combinationMode: 'reader_helpful_paginated_board',
+fallbackSeeded: rawPosts.length === 0,
 combinationStats: ctaCombinationStats(),
 variants: ctaTopicPacks().map(({ ctaType, boardType, primaryKeyword, headline, intent, funnel }) => ({ ctaType, boardType, primaryKeyword, headline, intent, funnel })),
 pageSize,

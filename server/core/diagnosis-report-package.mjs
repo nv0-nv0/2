@@ -3,7 +3,7 @@ export function buildPublicDiagnosisPackage(result = {}, options = {}) {
   const detail = Array.isArray(result.detailFindings) ? result.detailFindings : [];
   const scoreValue = Number(result.riskScore || 0) || 0;
   const rulesVersion = options.rulesVersion || 'internal';
-  const ctaIntervalMs = Number(options.ctaIntervalMs || 30 * 60_000);
+  const ctaIntervalMs = Number(options.ctaIntervalMs || 20 * 60_000);
   const mainChecks = ['사업자 정보','개인정보','환불 기준','이용약관','광고 표현'].map((label, index) => {
     const matched = detail.find((item) => String(item.title || '').includes(label.slice(0, 2)) || String(item.category || '').includes(label.slice(0, 2)));
     const derivedScore = Math.max(20, Math.min(95, scoreValue - index * 7));
@@ -61,7 +61,7 @@ export function buildPublicDiagnosisPackage(result = {}, options = {}) {
     issueStats: { totalIssues, criticalIssues, autoFixableIssues },
     deliverableBundle: {
       standard: 'evidence-first-preliminary-output-v7.0',
-      targetLengthKo: '900-1500',
+      targetLengthKo: '3800-4500',
       valueStandard: '근거·확인범위·수동검토 항목을 분리하는 실무 점검 기준이며 실제 매출·법률 안전성을 보장하지 않습니다.',
       requiredSections: ['확인 범위', '확인 URL', '발견 근거', '신뢰도', '한계', '수동 검토 필요', '개선 순서', '재점검 기준'],
       titleCandidates: ['사이트 신뢰 공백을 줄이는 실무 점검법', '결제 전 고객이 확인하는 안내 문구 정리', '운영 리스크를 낮추는 리포트 활용법'],

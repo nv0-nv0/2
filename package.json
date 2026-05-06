@@ -1,6 +1,6 @@
 {
   "name": "nv0-veridion-cleanroom",
-  "version": "1.0.0-commercial-final-phase205-live-ux-closeout-100",
+  "version": "1.0.0-commercial-final-phase207-layout-board-20min-4000cta",
   "private": true,
   "type": "module",
   "scripts": {
@@ -218,6 +218,10 @@
     "validate:phase204": "node scripts/validate-phase204-ux-demo-fixes.mjs",
     "phase204:final": "npm run check:syntax && npm run check:pages && npm run test:routes && npm run validate:phase204",
     "validate:phase205": "node scripts/validate-phase205-live-ux-closeout.mjs",
-    "phase205:final": "npm run check:syntax && npm run check:pages && npm run test:routes && npm run validate:phase204 && npm run validate:phase205"
+    "phase205:final": "npm run check:syntax && npm run check:pages && npm run test:routes && npm run validate:phase204 && npm run validate:phase205",
+    "validate:phase206": "node scripts/validate-phase206-live-readable-nav.mjs",
+    "phase206:final": "npm run check:syntax && npm run check:pages && npm run test:routes && npm run validate:phase204 && npm run validate:phase205 && npm run validate:phase206",
+    "validate:phase207": "node scripts/validate-phase207-layout-board-cadence.mjs",
+    "phase207:final": "npm run check:syntax && npm run check:pages && npm run test:routes && npm run validate:phase204 && npm run validate:phase205 && npm run validate:phase206 && npm run validate:phase207"
   }
 }

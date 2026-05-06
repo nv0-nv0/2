@@ -1,0 +1,329 @@
+{
+  "ok": true,
+  "total": 54,
+  "passed": 54,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "PHASE207 layout block exists",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop demo grid keeps two columns until tablet width",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "scan and result cards align to top",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "narrow mobile breakpoint only collapses under 980px",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "board fallback has 5 posts",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "board fallback states 20 minute cadence",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "board fallback states 4k article standard",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "board empty API falls back instead of blank loading",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "static board has 5 article cards",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "static board stat cards are not dash placeholders",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "static board copy states 20 minute cadence",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "static board includes problem awareness section",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "static board includes natural CTA links",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "server default autopublish interval is 20 minutes",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "server CTA word range is 3800-4500",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "server public board body includes problem awareness",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "server public board body includes reader interest section",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "server public board body includes natural final CTA",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "public board API has seeded fallback posts",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "public board seeded fallback has 5 items",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "CTA generator version is phase207",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "CTA generator includes problem awareness",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "CTA generator includes product related general topic",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "CTA generator includes urgency section",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "CTA generator final section is natural CTA",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "diagnosis package interval default is 20 minutes",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "diagnosis package target length is 3800-4500",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": ".env.coolify.example uses 20 minute autopublish default",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": ".env.example uses 20 minute autopublish default",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "docker-compose.yml uses 20 minute autopublish default",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "deploy/coolify.env.bulk.txt uses 20 minute autopublish default",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "deploy/coolify.env.example uses 20 minute autopublish default",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "deploy/docker-compose.coolify.yml uses 20 minute autopublish default",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "deploy/env.commercial.template uses 20 minute autopublish default",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "deploy/env.production.nv0.kr.example uses 20 minute autopublish default",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "deploy/env.production.template uses 20 minute autopublish default",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "scripts/generate-r2-coolify-env.mjs uses 20 minute autopublish default",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "runtime board seed has 5 posts",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "runtime publications have 5 posts",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "runtime board 1 body near 4k chars",
+      "pass": true,
+      "detail": "length=3879"
+    },
+    {
+      "name": "runtime board 1 interval is 20min",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "runtime board 1 has natural CTA",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "runtime board 2 body near 4k chars",
+      "pass": true,
+      "detail": "length=3913"
+    },
+    {
+      "name": "runtime board 2 interval is 20min",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "runtime board 2 has natural CTA",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "runtime board 3 body near 4k chars",
+      "pass": true,
+      "detail": "length=3903"
+    },
+    {
+      "name": "runtime board 3 interval is 20min",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "runtime board 3 has natural CTA",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "runtime board 4 body near 4k chars",
+      "pass": true,
+      "detail": "length=3904"
+    },
+    {
+      "name": "runtime board 4 interval is 20min",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "runtime board 4 has natural CTA",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "runtime board 5 body near 4k chars",
+      "pass": true,
+      "detail": "length=3862"
+    },
+    {
+      "name": "runtime board 5 interval is 20min",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "runtime board 5 has natural CTA",
+      "pass": true,
+      "detail": ""
+    }
+  ],
+  "executedCommands": [
+    {
+      "command": "npm run check:syntax",
+      "ok": true,
+      "result": "233 source files checked, 0 failures"
+    },
+    {
+      "command": "npm run check:pages",
+      "ok": true,
+      "result": "34 routes checked, 0 errors"
+    },
+    {
+      "command": "npm run test:routes",
+      "ok": true,
+      "result": "24 routes checked"
+    },
+    {
+      "command": "npm run test:all",
+      "ok": true,
+      "result": "87 passed, 0 failed"
+    },
+    {
+      "command": "npm run validate:phase204",
+      "ok": true,
+      "result": "11/11 passed"
+    },
+    {
+      "command": "npm run validate:phase205",
+      "ok": true,
+      "result": "12/12 passed"
+    },
+    {
+      "command": "npm run validate:phase206",
+      "ok": true,
+      "result": "8/8 passed"
+    },
+    {
+      "command": "npm run validate:phase207",
+      "ok": true,
+      "result": "54/54 passed"
+    },
+    {
+      "command": "npm run phase207:final",
+      "ok": true,
+      "result": "final gate passed"
+    }
+  ],
+  "artifacts": {
+    "zip": "nv0_phase207_layout_board_20min_4000cta_20260506.zip",
+    "workOrder": "PHASE207_LAYOUT_BOARD_20MIN_WORK_ORDER_20260506_KO.md"
+  }
+}

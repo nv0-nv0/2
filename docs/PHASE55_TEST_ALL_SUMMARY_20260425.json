@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-05-05T03:16:09.044Z",
+  "generatedAt": "2026-05-05T23:58:05.432Z",
   "ok": true,
   "phase": "commercial-final",
-  "total": 85,
-  "passed": 85,
+  "total": 87,
+  "passed": 87,
   "failed": 0,
   "checks": [
     {
@@ -175,7 +175,11 @@
       "ok": true
     },
     {
-      "name": "home:신뢰도 점수 72 / 100",
+      "name": "home:검사 후 표시",
+      "ok": true
+    },
+    {
+      "name": "home:고정 점수 예시는 제거했습니다",
       "ok": true
     },
     {
@@ -188,6 +192,10 @@
     },
     {
       "name": "home:법률 자문 서비스인가요?",
+      "ok": true
+    },
+    {
+      "name": "home:no-fixed-sample-score-72",
       "ok": true
     },
     {
