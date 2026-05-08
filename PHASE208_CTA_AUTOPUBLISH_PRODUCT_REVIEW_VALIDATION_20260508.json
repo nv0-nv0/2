@@ -118,12 +118,12 @@
     {
       "name": "샘플 CTA 본문 3600자 이상",
       "pass": true,
-      "detail": "length=4159"
+      "detail": "length=4239"
     },
     {
       "name": "샘플 CTA 본문 감사 통과",
       "pass": true,
-      "detail": "{\"ok\":true,\"banned\":[],\"missingSections\":[],\"longSentenceCount\":0,\"bodyLength\":4159,\"readabilityTarget\":\"middle_school_korean\"}"
+      "detail": "{\"ok\":true,\"banned\":[],\"missingSections\":[],\"longSentenceCount\":0,\"bodyLength\":4239,\"readabilityTarget\":\"middle_school_korean\"}"
     },
     {
       "name": "샘플 CTA 마지막 문단에 무료 진단 유도",
@@ -221,5 +221,5 @@
       "detail": ""
     }
   ],
-  "checkedAt": "2026-05-08T08:09:04.110Z"
+  "checkedAt": "2026-05-08T08:54:05.706Z"
 }

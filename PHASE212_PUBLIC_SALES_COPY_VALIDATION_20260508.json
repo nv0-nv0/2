@@ -1,0 +1,65 @@
+{
+  "ok": true,
+  "name": "phase212-public-sales-copy-reset",
+  "scoreTarget": 100,
+  "checks": [
+    {
+      "name": "plans:sales-first-hero",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "plans:buyer-pain-grid",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "plans:fixpack-primary-cta",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "plans:buyer-value-section",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "plans:no-visible-internal-ops-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "checkout:buyer-first-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "checkout:no-visible-internal-payment-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "payment:wiring-preserved",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:commercial-catalog-sales-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "scripts:phase212-registered",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "appliedScope": [
+    "/plans hero and buyer pain copy",
+    "/plans product cards and comparison copy",
+    "/plans payment readiness public wording",
+    "/checkout buyer-facing purchase copy",
+    "server commercial offer catalog copy"
+  ],
+  "limitation": "로컬 패키지는 코드·정적 게이트·테스트 기준 검증입니다. 실제 운영 결제 승인과 정산 정보는 운영 환경에서 직접 확인해야 하며 이 정보는 확인되지 않았습니다."
+}

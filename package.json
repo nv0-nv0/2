@@ -236,6 +236,9 @@
     "phase210:final": "npm run check:syntax && npm run test:phase210 && npm run validate:phase210-cta && npm run phase209:final",
     "test:phase211": "node tests/phase211-plans-checkout-payment.mjs",
     "validate:phase211-plans-payment": "node scripts/validate-phase211-plans-payment.mjs",
-    "phase211:final": "npm run check:syntax && npm run test:phase211 && npm run validate:phase211-plans-payment && npm run phase210:final"
+    "phase211:final": "npm run check:syntax && npm run test:phase211 && npm run validate:phase211-plans-payment && npm run phase210:final",
+    "test:phase212": "node tests/phase212-sales-copy-checkout.mjs",
+    "validate:phase212-sales-copy": "node scripts/validate-phase212-sales-copy.mjs",
+    "phase212:final": "npm run check:syntax && npm run test:phase212 && npm run validate:phase212-sales-copy && npm run phase211:final"
   }
 }
