@@ -1,6 +1,6 @@
 {
   "name": "nv0-veridion-cleanroom",
-  "version": "1.0.0-commercial-final-phase211-plans-payment-100",
+  "version": "1.0.0-commercial-final-phase213-expert-marketing-copy",
   "private": true,
   "type": "module",
   "scripts": {
@@ -239,6 +239,9 @@
     "phase211:final": "npm run check:syntax && npm run test:phase211 && npm run validate:phase211-plans-payment && npm run phase210:final",
     "test:phase212": "node tests/phase212-sales-copy-checkout.mjs",
     "validate:phase212-sales-copy": "node scripts/validate-phase212-sales-copy.mjs",
-    "phase212:final": "npm run check:syntax && npm run test:phase212 && npm run validate:phase212-sales-copy && npm run phase211:final"
+    "phase212:final": "npm run check:syntax && npm run test:phase212 && npm run validate:phase212-sales-copy && npm run phase211:final",
+    "test:phase213": "node tests/phase213-marketing-copy.mjs",
+    "validate:phase213-marketing-copy": "node scripts/validate-phase213-marketing-copy.mjs",
+    "phase213:final": "npm run check:syntax && npm run test:phase213 && npm run validate:phase213-marketing-copy && npm run test:all"
   }
 }

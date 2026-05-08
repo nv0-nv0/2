@@ -1,0 +1,80 @@
+{
+  "ok": true,
+  "name": "phase213-expert-marketing-copy-overhaul",
+  "scoreTarget": 100,
+  "checks": [
+    {
+      "name": "plans:expert-hero",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "plans:outcome-led-flow",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "plans:fixpack-primary-cta",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "plans:before-after-human-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "plans:no-visible-internal-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "checkout:buyer-first-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "checkout:no-visible-internal-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "home:buyer-problem-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "demo:free-to-paid-clarity",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "payment:wiring-preserved",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:catalog-rewritten",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "scripts:phase213-registered",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "externalStructureReferences": [
+    "Webflow pricing: free start, paid upgrade, plan cards, feature comparison",
+    "Semrush subscription model: modular selection by current need",
+    "Hotjar comparison page: problem-led diagnostic framing based on actual visitor behavior"
+  ],
+  "appliedScope": [
+    "/plans hero, pain framing, offer path, recommendation card, comparison, FAQ, final CTA",
+    "/checkout purchase expectation, result delivery, consent, order summary",
+    "/ home hero and final CTA public copy",
+    "/products/veridion/demo free-to-paid copy",
+    "server commercial offer catalog copy"
+  ],
+  "limitation": "로컬 패키지는 코드·정적 게이트·테스트 기준 검증입니다. 실제 운영 결제 승인, 정산, 웹훅 수신 여부는 운영 환경에서 직접 확인해야 하며 이 정보는 확인되지 않았습니다."
+}

@@ -20,13 +20,13 @@ let currentPaymentSession = null;
 let isCreatingSession = false;
 let isCompletingPayment = false;
 let offerMap = new Map();
-let paymentConfig = { ok: false, provider: 'unknown', paymentReady: false, reason: '온라인 결제 가능 상태를 확인하고 있습니다.', supportEmail: 'ct@nv0.kr' };
+let paymentConfig = { ok: false, provider: 'unknown', paymentReady: false, reason: '온라인 신청 가능 상태를 확인하고 있습니다.', supportEmail: 'ct@nv0.kr' };
 // PHASE211 compatibility tokens: 결제창 로드 확인 중, PortOne으로 결제 시작, providerPaymentId: responsePaymentId, 선택한 상품코드를 확인하지 못했습니다
 
 const fallbackOffers = [
-  { code: 'Report', title: '상세 리포트', price: 69000, period: '1회', summary: '문제 위치와 개선 순서를 정리한 리포트', targetCustomer: '근거를 보고 차근차근 고치고 싶은 분' },
-  { code: 'FixPack', title: 'FixPack', price: 99000, period: '1회', summary: '사이트에 넣을 수정 전/후 문구', targetCustomer: '오늘 바로 고객 안내 문구를 바꾸고 싶은 분' },
-  { code: 'Auto', title: 'Auto 정기 케어', price: 299000, period: '월', summary: '반복 점검과 CTA 흐름 관리', targetCustomer: '광고와 이벤트가 자주 바뀌는 팀' }
+  { code: 'Report', title: '상세 리포트', price: 69000, period: '1회', summary: '고객이 어디서 멈추는지 근거와 우선순위를 정리합니다.', targetCustomer: '대표님이나 팀에 설명할 근거가 필요한 분' },
+  { code: 'FixPack', title: 'FixPack', price: 99000, period: '1회', summary: '사이트에 바로 넣을 수정 전/후 문장과 적용 위치를 제공합니다.', targetCustomer: '오늘 바로 고객 안내 문구를 바꾸고 싶은 분' },
+  { code: 'Auto', title: 'Auto 정기 케어', price: 299000, period: '월', summary: '변경이 잦은 페이지의 안내 공백을 정기적으로 확인합니다.', targetCustomer: '광고와 이벤트가 자주 바뀌는 팀' }
 ];
 offerMap = new Map(fallbackOffers.map(item => [item.code, item]));
 
@@ -46,9 +46,9 @@ function requiredConsentReady() {
 }
 function providerLabel(provider) {
   if (provider === 'portone_v2') return '온라인 안전결제';
-  if (provider === 'external_http') return '외부 결제 연동';
-  if (provider === 'demo') return '데모 결제';
-  return provider || '결제 상태 확인 중';
+  if (provider === 'external_http') return '별도 안내 결제';
+  if (provider === 'demo') return '신청 확인';
+  return provider || '신청 상태 확인 중';
 }
 function priceLabel(offer) {
   if (!offer) return '-';
@@ -63,8 +63,8 @@ function renderPaymentConfig() {
   const provider = providerLabel(paymentConfig.provider);
   paymentConfigState.className = `payment-config-state ${ready ? 'is-ready' : 'is-warning'}`;
   paymentConfigState.textContent = ready
-    ? `${provider} 가능 · 결제 전 상품과 금액을 한 번 더 확인합니다.`
-    : `온라인 결제가 바로 열리지 않으면 고객지원으로 신청할 수 있습니다. ${paymentConfig.supportEmail || 'ct@nv0.kr'}`;
+    ? `${provider} 가능 · 상품과 금액을 확인한 뒤 진행합니다.`
+    : `지금은 온라인 신청이 바로 열리지 않아 고객지원으로 안내합니다. ${paymentConfig.supportEmail || 'ct@nv0.kr'}`;
 }
 function isPaymentProviderReady() {
   if (paymentConfig.paymentReady !== true) return false;
@@ -72,7 +72,7 @@ function isPaymentProviderReady() {
   return true;
 }
 function paymentBlockReason() {
-  if (paymentConfig.paymentReady !== true) return paymentConfig.reason || '온라인 결제 상태를 확인해야 합니다.';
+  if (paymentConfig.paymentReady !== true) return paymentConfig.reason || '온라인 신청 상태를 확인해야 합니다.';
   if (paymentConfig.provider === 'portone_v2' && !window.PortOne?.requestPayment) return '결제창을 아직 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.';
   return '';
 }
@@ -82,17 +82,17 @@ function renderPriceSummary() {
   const offer = currentOffer();
   if (!offer) {
     summaryPlanName.textContent = '선택한 상품 정보를 확인하는 중입니다.';
-    summaryPlanPeriod.textContent = '상품 제공 범위와 가격을 불러오고 있습니다.';
+    summaryPlanPeriod.textContent = '받을 결과물과 가격을 불러오고 있습니다.';
     summaryBasePrice.textContent = '-';
     summaryDelivery.textContent = '내 사이트 관리에서 확인';
-    summaryTargetCustomer.textContent = '상품 안내 확인';
+    summaryTargetCustomer.textContent = '추천 대상 확인';
     summaryTotal.textContent = '-';
     return;
   }
   summaryPlanName.textContent = offer.title || code;
   summaryPlanPeriod.textContent = offer.summary || `${offer.period || '1회'} 제공 상품`;
   summaryBasePrice.textContent = priceLabel(offer);
-  summaryDelivery.textContent = code === 'Auto' ? '결제 후 정기 케어 이용 권한 제공' : '결제 후 내 사이트 관리에서 결과물 확인';
+  summaryDelivery.textContent = code === 'Auto' ? '결제 후 정기 케어 안내 제공' : '결제 후 내 사이트 관리에서 결과물 확인';
   summaryTargetCustomer.textContent = offer.targetCustomer || '사이트 구매 흐름을 더 탄탄하게 만들고 싶은 분';
   summaryTotal.textContent = priceLabel(offer);
   renderPaymentConfig();
@@ -106,7 +106,7 @@ function updateCheckoutButtonState() {
   checkoutBtn.disabled = !ready || isCreatingSession;
   checkoutBtn.setAttribute('aria-disabled', String(checkoutBtn.disabled));
   if (!formReady) checkoutBtn.textContent = '필수 동의 후 결제 시작';
-  else if (!providerReady) checkoutBtn.textContent = paymentConfig.provider === 'portone_v2' ? '결제창 준비 중' : '결제 상태 확인 필요';
+  else if (!providerReady) checkoutBtn.textContent = paymentConfig.provider === 'portone_v2' ? '결제창 준비 중' : '신청 상태 확인 필요';
   else checkoutBtn.textContent = '결제 시작';
 }
 function getPrefill() {
@@ -120,7 +120,7 @@ function getPrefill() {
 }
 const prefill = getPrefill();
 if (prefill.plan && planInput) planInput.value = normalizePlanCode(prefill.plan);
-targetBox.textContent = prefill.domain ? `진단 대상 사이트: ${prefill.domain}` : '진단 이력이 없어도 상품 신청은 진행할 수 있습니다.';
+targetBox.textContent = prefill.domain ? `진단 대상 사이트: ${prefill.domain}` : '진단 이력이 없어도 상품 신청을 진행할 수 있습니다.';
 
 function renderOrder(order, paymentSession) {
   currentOrder = order;
@@ -128,8 +128,8 @@ function renderOrder(order, paymentSession) {
   const redirectUrl = safeUrl(paymentSession?.redirectUrl || '');
   const provider = paymentSession?.provider || 'demo';
   const paymentHint = provider === 'portone_v2'
-    ? '<div class="notice muted">결제 완료 후 선택 상품의 결과물 이용이 준비됩니다.</div>'
-    : '<div class="notice muted">안내에 따라 결제를 마무리해 주세요.</div>';
+    ? '<div class="notice muted">결제 완료 후 선택 상품의 결과물 안내가 이어집니다.</div>'
+    : '<div class="notice muted">안내에 따라 신청을 마무리해 주세요.</div>'; 
   summary.innerHTML = `
     <div class="result-card stack checkout-order-card">
       <strong>신청번호 ${escapeHtml(order.id)}</strong>
@@ -162,7 +162,7 @@ async function createSession() {
     deliveryConsent: !!document.getElementById('deliveryConsent')?.checked
   };
   if (!isValidEmail(payload.buyerEmail)) {
-    state.textContent = '결제 결과를 받을 이메일을 정확히 입력해 주세요.';
+    state.textContent = '결제 결과와 결과물 안내를 받을 이메일을 정확히 입력해 주세요.';
     updateCheckoutButtonState();
     return;
   }
@@ -277,7 +277,7 @@ async function loadPaymentConfig() {
   try {
     const res = await fetch('/api/public/payment/config');
     const data = await res.json().catch(() => ({}));
-    if (!res.ok || data?.ok === false) throw new Error(data.error || '결제 설정을 확인하지 못했습니다.');
+    if (!res.ok || data?.ok === false) throw new Error(data.error || '온라인 신청 상태를 확인하지 못했습니다.');
     paymentConfig = data;
   } catch (error) {
     paymentConfig = { ...paymentConfig, reason: error.message || paymentConfig.reason };

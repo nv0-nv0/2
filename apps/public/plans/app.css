@@ -107,3 +107,28 @@
 .value-stack .score-grid strong{font-size:1.15rem;line-height:1.35;letter-spacing:-.03em;}
 .value-stack .score-grid article:nth-child(2),.value-stack .score-grid article:nth-child(4){border-color:rgba(34,197,94,.32);background:linear-gradient(180deg,rgba(20,83,45,.18),rgba(15,23,42,.72));}
 @media(max-width:980px){.conversion-hero{grid-template-columns:1fr}.hero-choice-card{max-width:none}.buyer-pain-grid{grid-template-columns:1fr}}
+
+/* PHASE213: expert public sales copy and cleaner purchase persuasion */
+.phase213-sales-page{--sales-gold:rgba(245,158,11,.92);--sales-blue:rgba(96,165,250,.94);--sales-green:rgba(34,197,94,.88);}
+.phase213-hero{position:relative;overflow:hidden;border-radius:34px;background:radial-gradient(circle at 78% 12%,rgba(245,158,11,.18),transparent 34%),linear-gradient(135deg,rgba(15,23,42,.82),rgba(2,6,23,.94));padding:clamp(28px,5vw,58px);border:1px solid rgba(148,163,184,.18);}
+.phase213-hero h1{max-width:920px;}
+.phase213-hero p{color:#d8e2f0;max-width:850px;}
+.phase213-hero-offer{border-color:rgba(245,158,11,.38);box-shadow:0 26px 90px rgba(245,158,11,.08),0 24px 80px rgba(0,0,0,.3);}
+.hero-mini-price{display:flex;justify-content:space-between;gap:12px;align-items:center;border:1px solid rgba(148,163,184,.18);border-radius:18px;padding:12px 14px;background:rgba(2,6,23,.32);}
+.hero-mini-price b{color:#fff}.hero-mini-price span{color:#cbd5e1;font-size:13px;font-weight:800;}
+.phase213-pain-grid article{min-height:170px;}
+.phase213-pain-grid b{font-size:20px;letter-spacing:-.02em;}
+.phase213-outcome-map .plan-path article{transition:transform .18s ease,border-color .18s ease;background:linear-gradient(180deg,rgba(15,23,42,.78),rgba(2,6,23,.72));}
+.phase213-outcome-map .plan-path article:hover{transform:translateY(-2px);border-color:rgba(96,165,250,.36);}
+.phase213-confidence-card{background:radial-gradient(circle at 90% 16%,rgba(96,165,250,.17),transparent 30%),linear-gradient(135deg,rgba(15,23,42,.92),rgba(2,6,23,.96));}
+.phase213-offer-snapshot article{background:linear-gradient(180deg,rgba(15,23,42,.9),rgba(2,6,23,.72));}
+.phase213-choice-note{background:linear-gradient(180deg,rgba(15,23,42,.94),rgba(2,6,23,.92));}
+.phase213-choice-guide .guide-grid article{background:linear-gradient(180deg,rgba(15,23,42,.74),rgba(2,6,23,.7));}
+.phase213-before-after .score-grid article{min-height:190px;}
+.phase213-trust-stack{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;}
+.phase213-trust-stack article{border:1px solid rgba(148,163,184,.2);border-radius:24px;background:linear-gradient(180deg,rgba(15,23,42,.76),rgba(2,6,23,.72));padding:20px;display:grid;gap:10px;}
+.phase213-trust-stack h3{margin:0;color:#fff;font-size:20px;letter-spacing:-.03em;}
+.phase213-trust-stack p{margin:0;color:#cbd5e1;line-height:1.65;font-size:14px;}
+.phase213-final-cta{background:radial-gradient(circle at 84% 8%,rgba(245,158,11,.24),transparent 34%),linear-gradient(135deg,rgba(15,23,42,.92),rgba(2,6,23,.96));border:1px solid rgba(245,158,11,.28);}
+.phase213-final-cta h2{letter-spacing:-.05em;}
+@media(max-width:980px){.phase213-trust-stack{grid-template-columns:1fr}.phase213-hero{padding:24px;border-radius:26px}}
