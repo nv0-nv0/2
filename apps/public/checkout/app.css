@@ -12,3 +12,9 @@
 .checkout-method.is-active{border-color:#2563eb;box-shadow:0 0 0 1px rgba(37,99,235,.55) inset;}
 .checkout-alert ul{margin:10px 0 0;padding-left:18px;}
 @media(max-width:780px){.checkout-methods{grid-template-columns:1fr}.summary-total strong{font-size:42px}}
+
+/* PHASE211 payment readiness */
+.payment-config-state{margin-top:16px;border:1px solid rgba(148,163,184,.24);border-radius:18px;background:rgba(15,23,42,.64);padding:14px 16px;color:#cbd5e1;line-height:1.6;}
+.payment-config-state.is-ready{border-color:rgba(34,197,94,.38);box-shadow:0 0 0 1px rgba(34,197,94,.12) inset;}
+.payment-config-state.is-warning{border-color:rgba(245,158,11,.45);box-shadow:0 0 0 1px rgba(245,158,11,.12) inset;}
+.checkout-order-card .notice{margin-top:10px;}

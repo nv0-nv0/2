@@ -1,22 +1,94 @@
 
-.price-cell{white-space:nowrap;font-weight:900;color:#fff;}
-.section-title h2{font-size:clamp(28px,3.3vw,44px);}
+/* PHASE211: clean, decision-first plan comparison */
+.plan-compare-page{--plan-line:rgba(148,163,184,.22);--plan-card:linear-gradient(180deg,rgba(15,23,42,.96),rgba(2,6,23,.94));--plan-soft:rgba(15,23,42,.72);}
+.plan-hero{display:flex;align-items:end;justify-content:space-between;gap:24px;}
+.plan-hero h1{font-size:clamp(34px,5vw,64px);line-height:1.06;letter-spacing:-.06em;margin:14px 0 14px;}
+.plan-hero p{max-width:760px;color:var(--muted,#9aa4b2);font-size:18px;line-height:1.75;margin:0;}
+.compact-title h2{font-size:clamp(28px,3.3vw,44px);margin:.35rem 0 .4rem;letter-spacing:-.04em;}
+.compact-title p{max-width:780px;line-height:1.7;}
+.plan-path{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;}
+.plan-path article{border:1px solid var(--plan-line);border-radius:22px;background:var(--plan-soft);padding:18px;display:grid;gap:8px;min-height:150px;}
+.plan-path b{width:34px;height:34px;border-radius:999px;background:#fff;color:#020617;display:grid;place-items:center;font-weight:900;}
+.plan-path strong{font-size:19px;color:#fff;}
+.plan-path span{color:var(--muted,#9aa4b2);line-height:1.6;font-size:14px;}
+.recommended-layout{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(280px,.65fr);gap:18px;align-items:stretch;}
+.recommended-plan-card,.plan-note-card{border:1px solid var(--plan-line);border-radius:30px;background:var(--plan-card);box-shadow:0 22px 70px rgba(0,0,0,.22);padding:28px;}
+.recommended-plan-card{position:relative;overflow:hidden;}
+.recommended-plan-card:before{content:"";position:absolute;inset:-35% -10% auto 42%;height:240px;background:radial-gradient(circle,rgba(251,191,36,.26),transparent 68%);pointer-events:none;}
+.recommended-plan-card h2{font-size:clamp(36px,5vw,60px);margin:14px 0 8px;letter-spacing:-.06em;}
+.recommended-plan-card p,.plan-note-card p{color:#dbeafe;line-height:1.75;font-size:17px;}
+.recommended-plan-card ul{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:0;margin:22px 0;list-style:none;}
+.recommended-plan-card li{border:1px solid rgba(251,191,36,.25);background:rgba(251,191,36,.08);border-radius:16px;padding:12px;color:#fff;line-height:1.55;font-size:14px;}
+.plan-note-card{display:grid;gap:14px;align-content:start;}
+.plan-note-card h3{font-size:24px;line-height:1.25;margin:0;color:#fff;letter-spacing:-.03em;}
+.smart-advice:empty{display:none;}
+.smart-advice-card{margin-top:8px;border:1px solid var(--plan-line);}
+.smart-action-grid{display:flex;flex-wrap:wrap;gap:8px;}
+.smart-action-grid span{border:1px solid var(--plan-line);border-radius:999px;padding:7px 10px;color:#e2e8f0;font-size:13px;}
+.plan-card-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;align-items:stretch;}
+.clean-plan-card{position:relative;display:grid;grid-template-rows:auto auto 1fr auto;gap:16px;min-width:0;overflow:hidden;border:1px solid var(--plan-line);border-radius:26px;background:var(--plan-card);padding:22px;}
+.clean-plan-card.recommended{border-color:rgba(251,191,36,.62);box-shadow:0 24px 80px rgba(251,191,36,.08);}
+.plan-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+.plan-card-top h3{margin:9px 0 0;font-size:24px;line-height:1.15;letter-spacing:-.04em;word-break:keep-all;}
+.plan-card-top .pill{white-space:nowrap;}
+.plan-one-line{min-height:54px;color:#cbd5e1;line-height:1.65;margin:0;}
+.plan-price{font-size:31px;font-weight:950;letter-spacing:-.06em;color:#fff;}
+.plan-price span{font-size:14px;color:var(--muted,#9aa4b2);font-weight:700;letter-spacing:0;}
+.plan-fit{border:1px solid rgba(148,163,184,.18);background:rgba(15,23,42,.68);border-radius:18px;padding:14px;display:grid;gap:10px;}
+.plan-fit b{font-size:13px;color:#f8fafc;}
+.plan-fit p{margin:0;color:#cbd5e1;font-size:14px;line-height:1.65;}
+.plan-deliverables{display:grid;gap:8px;margin:0;padding:0;list-style:none;}
+.plan-deliverables li{display:flex;gap:8px;color:#e2e8f0;line-height:1.45;font-size:14px;}
+.plan-deliverables li:before{content:"✓";font-weight:900;color:#fff;}
+.clean-plan-card .offer-actions{display:grid;gap:8px;margin-top:4px;}
+.clean-plan-card .btn{width:100%;justify-content:center;}
 .table-wrap{border:1px solid rgba(51,65,85,.85);border-radius:24px;overflow:auto;background:linear-gradient(180deg,#0f1724,#0b1220);}
-.comparison-table col:nth-child(1){width:22%;}
-.comparison-table col:nth-child(2){width:16%;}
-.comparison-table col:nth-child(3){width:34%;}
-.comparison-table col:nth-child(4){width:28%;}
-.comparison-table td:nth-child(3),.comparison-table td:nth-child(4){font-size:15px;line-height:1.72;color:#e2e8f0;}
-.comparison-table td:nth-child(1){font-size:15px;}
-.comparison-table thead th{font-size:15px;line-height:1.35;}
-
-/* PHASE203: prevent recommended badge and period chip overlap */
+.comparison-panel{padding:24px;}
+.comparison-head{align-items:end;gap:18px;}
+.comparison-table{width:100%;border-collapse:collapse;min-width:820px;}
+.comparison-table col:nth-child(1){width:17%;}.comparison-table col:nth-child(2),.comparison-table col:nth-child(3),.comparison-table col:nth-child(4),.comparison-table col:nth-child(5){width:20.75%;}
+.comparison-table th,.comparison-table td{border-bottom:1px solid rgba(148,163,184,.16);padding:17px 16px;text-align:left;vertical-align:top;}
+.comparison-table thead th{font-size:14px;line-height:1.35;color:#f8fafc;background:rgba(15,23,42,.78);}
+.comparison-table tbody tr:last-child td{border-bottom:0;}
+.comparison-table td{font-size:15px;line-height:1.68;color:#e2e8f0;}
+.comparison-table td:first-child strong{display:block;color:#fff;font-size:16px;}
+.comparison-table .muted{font-size:13px;}
+.guide-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;}
+.guide-grid article,.score-grid article{border:1px solid var(--plan-line);border-radius:22px;background:rgba(15,23,42,.66);padding:18px;}
+.guide-grid strong{display:block;color:#fff;font-size:17px;margin-bottom:8px;}
+.guide-grid p{color:#cbd5e1;line-height:1.65;margin:0;font-size:14px;}
+.score-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;}
+.score-grid article{display:grid;gap:8px;}
+.score-grid b{color:#fff}.score-grid strong{color:#fff;font-size:2rem;letter-spacing:-.05em}.score-grid p{margin:0;color:var(--muted,#9aa4b2);line-height:1.65;font-size:14px;}
+.clean-faq .nv0-faq-card{border-radius:22px;}
+.final-plan-cta{align-items:center;}
+.price-cell{white-space:nowrap;font-weight:900;color:#fff;}
 .offer-card{position:relative;min-width:0;overflow:hidden;display:grid;gap:16px;align-content:start;}
 .offer-card .recommended-badge,.offer-card .recommended-ribbon{position:static !important;justify-self:start;width:max-content;max-width:100%;margin:0 0 2px 0;z-index:1;}
 .offer-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;min-width:0;}
 .offer-head>div{min-width:0;}.offer-head h3{word-break:keep-all;overflow-wrap:anywhere;}.offer-head .pill{flex:0 0 auto;white-space:nowrap;}
-@media(max-width:720px){.offer-head{display:grid;grid-template-columns:1fr;}.offer-head .pill{justify-self:start;white-space:normal;}}
+@media(max-width:1120px){.plan-card-grid,.plan-path,.guide-grid,.score-grid{grid-template-columns:repeat(2,minmax(0,1fr));}.recommended-layout{grid-template-columns:1fr;}.recommended-plan-card ul{grid-template-columns:1fr 1fr 1fr;}}
+@media(max-width:760px){.plan-hero{display:grid;align-items:start;}.plan-hero .btn{width:100%;justify-content:center;}.plan-path,.plan-card-grid,.guide-grid,.score-grid{grid-template-columns:1fr;}.recommended-plan-card,.plan-note-card{padding:22px;border-radius:24px;}.recommended-plan-card ul{grid-template-columns:1fr;}.plan-card-top{display:grid;}.plan-card-top .pill{justify-self:start;white-space:normal;}.clean-plan-card{border-radius:22px;padding:18px;}.comparison-panel{padding:16px;}.comparison-head{display:grid;align-items:start;}.final-plan-cta .offer-actions{width:100%;}.final-plan-cta .btn{width:100%;justify-content:center;}}
 
-
-/* PHASE209: plan score matrix */
-.phase209-plan-score-matrix .nv0-panel{display:grid;gap:8px}.phase209-plan-score-matrix b{color:#fff}.phase209-plan-score-matrix strong{color:#fff;font-size:2rem;letter-spacing:-.05em}.phase209-plan-score-matrix p{margin:0;color:var(--muted,#9aa4b2);line-height:1.65}
+/* PHASE211 payment-aware plan comparison */
+.payment-readiness-panel{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(280px,.75fr);gap:16px;align-items:stretch;}
+.payment-readiness-card{border:1px solid var(--plan-line);border-radius:28px;padding:24px;background:linear-gradient(135deg,rgba(30,41,59,.94),rgba(2,6,23,.96));display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,.65fr);gap:18px;align-items:center;}
+.payment-readiness-card h2{font-size:clamp(26px,3.2vw,40px);line-height:1.12;letter-spacing:-.04em;margin:.45rem 0;}
+.payment-readiness-card p{color:var(--muted,#9aa4b2);line-height:1.7;margin:0;}
+.payment-readiness-status{border-radius:22px;border:1px solid rgba(148,163,184,.24);background:rgba(15,23,42,.72);padding:18px;display:grid;gap:8px;align-content:center;min-height:150px;}
+.payment-readiness-status strong{font-size:20px;color:#fff;}
+.payment-readiness-status span,.payment-readiness-status small{color:var(--muted,#9aa4b2);line-height:1.55;}
+.payment-readiness-status.is-ready{border-color:rgba(34,197,94,.42);box-shadow:0 0 0 1px rgba(34,197,94,.12) inset;}
+.payment-readiness-status.is-warning{border-color:rgba(245,158,11,.48);box-shadow:0 0 0 1px rgba(245,158,11,.14) inset;}
+.payment-code-grid{display:grid;grid-template-columns:1fr;gap:10px;}
+.payment-code-grid article{border:1px solid var(--plan-line);border-radius:20px;background:rgba(15,23,42,.76);padding:14px 16px;display:grid;gap:3px;}
+.payment-code-grid b{color:#93c5fd;letter-spacing:.08em;font-size:12px;}
+.payment-code-grid strong{color:#fff;font-size:15px;}
+.payment-code-grid span{font-weight:800;color:#f8fafc;}
+.payment-code-grid small{color:var(--muted,#9aa4b2);line-height:1.45;}
+.plan-badges{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;}
+.payment-microcopy{border:1px dashed rgba(148,163,184,.28);border-radius:16px;padding:12px 14px;color:#cbd5e1;background:rgba(15,23,42,.48);font-size:13px;line-height:1.55;}
+.clean-plan-card[data-plan-code="FixPack"]{position:relative;}
+.clean-plan-card[data-plan-code="FixPack"]::before{content:"";position:absolute;inset:-1px;border-radius:28px;pointer-events:none;background:linear-gradient(135deg,rgba(245,158,11,.35),transparent 45%,rgba(96,165,250,.16));opacity:.75;z-index:-1;}
+@media(max-width:980px){.payment-readiness-panel,.payment-readiness-card{grid-template-columns:1fr}.payment-code-grid{grid-template-columns:repeat(3,minmax(0,1fr));}}
+@media(max-width:720px){.payment-code-grid{grid-template-columns:1fr}.plan-badges{justify-content:flex-start}.payment-readiness-card{padding:20px}}

@@ -1,0 +1,17 @@
+{
+  "ok": true,
+  "name": "phase210-cta-diversity-professional-4000",
+  "engineVersion": "cta-board-v9.0-phase210-diverse-professional-4000",
+  "finiteTemplateFloor": 353894400,
+  "checks": {
+    "sourceGuards": 9,
+    "generatedArticles": 80,
+    "generatedUniqueTitles": 80,
+    "generatedUniqueBodies": 80,
+    "rewrittenArticles": 80,
+    "rewrittenUniqueTitles": 80,
+    "rewrittenUniqueBodies": 80,
+    "targetLengthKo": "3800-4500",
+    "readabilityTarget": "middle_school_korean"
+  }
+}

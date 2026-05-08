@@ -182,7 +182,7 @@ function legacyBuildCtaBoardArticle(scan = {}, variant = {}, options = {}) {
     boardType: topic.boardType,
     ctaType: topic.ctaType,
     diversityKey: `${topic.ctaType}:${topic.intent}:${topic.funnel}:${fingerprint(titleSeed)}`,
-    contentFingerprint: fingerprint(body),
+    contentFingerprint: fingerprint(`${title}\n${body}`),
     seo: {
       primaryKeyword: topic.primaryKeyword,
       secondaryKeywords: topic.secondaryKeywords || [],
@@ -223,7 +223,7 @@ function legacyChooseCtaVariant(db = {}, options = {}) {
 }
 
 
-const COMBINATORIAL_ENGINE_VERSION = 'cta-board-v8.0-unbounded-combinatorial-seo';
+const COMBINATORIAL_ENGINE_VERSION = 'cta-board-v9.0-phase210-diverse-professional-4000';
 const COMBO_ANGLES = [
   ['첫 방문자 신뢰 확보', '정보 탐색형', '인지', '첫 방문 신뢰도'],
   ['구매 직전 불안 제거', '전환 개선형', '결정', '구매 직전 이탈 방지'],
@@ -305,7 +305,8 @@ function comboContext(scan = {}, variant = {}, options = {}) {
 }
 
 
-const HUMAN_TONE_VERSION = 'p208-20min-reader-interest-final-cta-v1';
+const HUMAN_TONE_VERSION = 'phase210-diverse-professional-middle-school-4000-v1';
+const HUMAN_TONE_LEGACY_VERSION = 'p208-20min-reader-interest-final-cta-v1';
 const HARD_WORDS = [
   ['CTA', '안내 버튼'],
   ['SEO', '검색 노출'],
@@ -561,11 +562,13 @@ function humanizeBody({ ctx, legacy, title, titleCandidates, findingCount, top, 
   const titleText = titleCandidates.slice(0, 5).map((item, index) => `${index + 1}. ${item}`).join('\n');
   const detectedText = detected.map((item, index) => `${index + 1}. ${item}`).join('\n');
   const body = [
-    `왜 이 글을 썼나요?\n${target} 사이트를 처음 보는 고객은 상품 설명보다 먼저 “믿고 문의해도 되는 곳인가?”를 확인합니다. 이 글은 ${industry} 운영자가 ${theme.label} 항목을 고객 눈높이로 다시 배치할 때 바로 참고할 수 있는 실무 안내입니다. ${memo}`,
+    `왜 이 글을 썼나요?\n이 글의 핵심 제목은 “${title}”입니다. ${target} 사이트를 처음 보는 고객은 상품 설명보다 먼저 “믿고 문의해도 되는 곳인가?”를 확인합니다. 이 글은 ${industry} 운영자가 ${theme.label} 항목을 고객 눈높이로 다시 배치할 때 바로 참고할 수 있는 실무 안내입니다. ${memo}`,
     `한눈에 보는 핵심 요약\n확인 주제: ${theme.label}\n주요 발견 후보: ${issue}\n확인할 요소: ${detected.slice(0, 5).join(', ')}\n우선 위치: 가격표, 문의 버튼, 결제 버튼, 입력 화면, 푸터`,
     `지금 보이는 문제\n${theme.weakPoint}라면 고객은 ${theme.customerQuestion}라는 질문을 해결하지 못한 채 페이지를 떠날 수 있습니다. ${micro}. ${example} 문제는 페이지를 떠나는 일이 조용히 일어난다는 점입니다. 고객은 불편하다고 말하지 않고, 문의를 남기지 않고, 그대로 다른 사이트로 이동합니다. 운영자는 광고 소재, 가격, 디자인만 문제라고 생각하기 쉽지만 실제로는 버튼 주변의 한 줄 안내가 부족해서 멈추는 경우도 많습니다. 이런 공백이 반복되면 광고비와 운영 시간은 계속 들어가는데 문의나 구매로 이어지는 흐름은 쌓이지 않습니다.`,
     `독자가 관심 있어 할 부분\n${industry} 사이트를 보는 사람은 상품 기능만 비교하지 않습니다. 누가 운영하는지, 문제가 생기면 어디로 연락하는지, 결제 후 무엇을 받는지, 개인정보는 어떻게 쓰이는지까지 함께 확인합니다. 그래서 ${theme.label}은 단순한 정책 문구가 아니라 구매 판단을 돕는 콘텐츠입니다. 독자가 계속 읽게 되는 지점은 “이 제품이 좋은가”에서 끝나지 않습니다. “내가 신청해도 안전한가”, “취소나 문의가 가능한가”, “이 설명이 과장되지 않았는가”처럼 실제 걱정을 풀어 주는 부분입니다.`,
     `고객 입장에서 보면\n고객은 긴 설명을 모두 읽기보다 필요한 답을 먼저 찾습니다. 환불 가능 여부, 문의 응답 기준, 개인정보 사용 목적, 결제 후 제공 범위가 버튼 가까이에 있으면 다음 행동으로 넘어가기 쉽습니다. 반대로 답이 숨어 있으면 다시 검색하거나 경쟁 사이트로 이동할 가능성이 커집니다. 고객이 멈추는 위치를 찾고 그 주변에 짧은 답을 두는 것만으로도 화면의 신뢰감은 달라집니다.`,
+    `중학생도 이해할 수 있게 말하면\n사이트 안내는 학교 복도에 붙은 안내문과 비슷합니다. 급식실 위치, 준비물, 신청 마감일이 잘 보이면 학생은 선생님을 계속 찾아가지 않아도 됩니다. 반대로 안내문이 여러 곳에 흩어져 있으면 같은 질문이 반복됩니다. 사이트도 같습니다. 고객이 결제, 문의, 회원가입을 하기 전에 필요한 답을 바로 보면 덜 불안하고, 운영자는 같은 설명을 반복하는 시간을 줄일 수 있습니다.`,
+    `전문적으로 보면\n${theme.label}은 단순 문장 문제가 아니라 고객 행동 직전의 정보 설계 문제입니다. 중요한 기준은 세 가지입니다. 첫째, 필요한 정보가 행동 버튼 가까이에 있는가입니다. 둘째, 푸터와 약관, 상세 페이지, 입력 화면의 설명이 서로 충돌하지 않는가입니다. 셋째, 고객이 더 자세히 알고 싶을 때 이동할 링크가 자연스럽게 이어지는가입니다. 이 세 가지가 맞으면 글은 홍보성 문구가 아니라 운영 신뢰를 높이는 안내 콘텐츠가 됩니다.`,
     `실제로 확인할 요소\n${detectedText}`,
     `바로 고칠 수 있는 것\n${checklist.map((item, index) => `${index + 1}. ${item}.`).join('\n')}`,
     `문구를 쉽게 바꾸는 방법\n${phraseBeforeAfter.map(([before, after], index) => `${index + 1}. 바꾸기 전: “${before}”\n   바꾼 뒤: “${after}”`).join('\n')}`,
@@ -589,8 +592,8 @@ export function ctaCombinationStats() {
     topicPackCount: legacyCtaTopicPacks().length,
     finiteTemplateFloor: comboStatsFloor(),
     theoreticalCombinations: 'unbounded_by_seed_time_scan_target_findings_and_history',
-    displayLabel: '24개 기본 글감에 업종, 고객 질문, 글 구성, 제목 방식, 자주 묻는 질문을 섞어 쉬운 글을 만듭니다.',
-    duplicateDefense: ['본문 중복 확인', '제목 중복 확인', '최근 글감 반복 방지', '고객 질문 다양화']
+    displayLabel: '글감, 업종, 고객 질문, 문체, 어투, 구조, 사례, 제목, FAQ, CTA를 조합해 4천자 안팎의 쉬운 전문 글을 만듭니다.',
+    duplicateDefense: ['본문 중복 확인', '제목 중복 확인', '최근 글감 반복 방지', '고객 질문 다양화', '공개 게시판 재작성 시드 고정', '기존 중복글 마이그레이션']
   };
 }
 
@@ -642,10 +645,11 @@ export function buildCtaBoardArticle(scan = {}, variant = {}, options = {}) {
     audienceSegment: ctx.audience,
     toneProfile: 'human_reader_friendly_middle_school',
     readabilityTarget: 'middle_school_korean',
+    targetLengthKo: '3800-4500',
     searchFriendlyVersion: 'p177-result-copy-and-search-friendly-board-v1',
     publicDisplayVersion: 'phase177-helpful-search-friendly-board',
     diversityKey: `${ctx.baseVariant.ctaType}:${ctx.angle[1]}:${ctx.angle[2]}:${ctx.angle[0]}:${ctx.archetype[0]}:${fingerprint(body)}`,
-    contentFingerprint: fingerprint(body),
+    contentFingerprint: fingerprint(`${title}\n${body}`),
     seo: {
       ...(legacy.seo || {}),
       primaryKeyword: keyword,
@@ -655,7 +659,7 @@ export function buildCtaBoardArticle(scan = {}, variant = {}, options = {}) {
       persona: `${ctx.audience} / 일반 독자`,
       metaDescription,
       internalLinks,
-      readingTimeMinutes: Math.max(3, Math.ceil(body.length / 850)),
+      readingTimeMinutes: Math.max(4, Math.ceil(body.length / 850)),
       contentGoal: '독자가 어려운 말 없이 현재 사이트 문제와 다음 행동을 이해하게 만들기',
       combinationMode: 'unbounded_seeded_combinatorial',
       combinationKey,
@@ -663,6 +667,8 @@ export function buildCtaBoardArticle(scan = {}, variant = {}, options = {}) {
       audienceSegment: ctx.audience,
       toneProfile: 'human_reader_friendly_middle_school',
       humanToneVersion: HUMAN_TONE_VERSION,
+      legacyHumanToneVersion: HUMAN_TONE_LEGACY_VERSION,
+      legacyHumanToneVersion: HUMAN_TONE_LEGACY_VERSION,
       searchFriendlyVersion: 'p177-result-copy-and-search-friendly-board-v1'
     }
   };
@@ -755,7 +761,7 @@ export function rewriteExistingCtaPublication(item = {}, options = {}) {
     rewrittenAt: options.rewrittenAt || new Date().toISOString(),
     rewrittenBy: 'phase155_existing_cta_humanizer',
     originalContentFingerprint: item.originalContentFingerprint || fingerprint(oldBody),
-    contentFingerprint: fingerprint(rewritten.body),
+    contentFingerprint: fingerprint(`${rewritten.title}\n${rewritten.body}`),
     migrationNote: '기존 자동 발행 글을 독자가 이해하기 쉬운 말투로 다시 정리했습니다.'
   };
 }
@@ -764,13 +770,14 @@ export function auditHumanFriendlyCtaArticle(item = {}) {
   const text = [item.title, item.body, item.summary, (item.tags || []).join(' ')].join('\n');
   const banned = HARD_WORDS.map(([from]) => from).filter(word => new RegExp(String(word).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i').test(text));
   const longSentences = String(item.body || '').split(/[.!?\n]/).map(s => s.trim()).filter(s => s.length > 95);
-  const requiredSections = ['왜 이 글을 썼나요?', '지금 보이는 문제', '독자가 관심 있어 할 부분', '고객 입장에서 보면', '바로 고칠 수 있는 것', '문구를 쉽게 바꾸는 방법', '독자가 계속 읽는 구성', '자주 묻는 질문', '다음에 할 일'];
+  const requiredSections = ['왜 이 글을 썼나요?', '지금 보이는 문제', '독자가 관심 있어 할 부분', '고객 입장에서 보면', '중학생도 이해할 수 있게 말하면', '전문적으로 보면', '바로 고칠 수 있는 것', '문구를 쉽게 바꾸는 방법', '독자가 계속 읽는 구성', '자주 묻는 질문', '다음에 할 일'];
   const missingSections = requiredSections.filter(section => !String(item.body || '').includes(section));
   return {
-    ok: banned.length === 0 && missingSections.length === 0 && longSentences.length <= 3,
+    ok: banned.length === 0 && missingSections.length === 0 && longSentences.length <= 3 && String(item.body || '').length >= 3800,
     banned,
     missingSections,
     longSentenceCount: longSentences.length,
+    bodyLength: String(item.body || '').length,
     readabilityTarget: item.readabilityTarget || item.seo?.readabilityTarget || 'unknown'
   };
 }

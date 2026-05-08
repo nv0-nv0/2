@@ -24,7 +24,7 @@ const server = http.createServer(async (req, res) => {
   if (req.method === 'GET' && /\/payments\/[^/]+$/.test(req.url || '')) {
     const paymentId = decodeURIComponent(String(req.url).split('/').pop());
     res.writeHead(200, { 'content-type': 'application/json' });
-    return res.end(JSON.stringify({ id: paymentId, status: paid ? 'PAID' : 'READY', amount: { total: 49000 }, customData: { orderId: paymentId, plan: 'Basic' }, paidAt: new Date().toISOString() }));
+    return res.end(JSON.stringify({ id: paymentId, status: paid ? 'PAID' : 'READY', amount: { total: 69000 }, customData: { orderId: paymentId, plan: 'Report' }, paidAt: new Date().toISOString() }));
   }
   res.writeHead(404, { 'content-type': 'application/json' });
   res.end(JSON.stringify({ message: 'not found' }));
@@ -35,7 +35,7 @@ async function waitUntilReady() { for (let i=0;i<50;i+=1) { try { const res = aw
 await waitUntilReady();
 async function j(url, options={}) { const res=await fetch(`http://127.0.0.1:${appPort}${url}`, options); const data=await res.json(); return {res,data}; }
 try {
-  const created = await j('/api/public/checkout-session', { method:'POST', headers:{ 'content-type':'application/json' }, body: JSON.stringify({ plan:'Basic', buyerEmail:'event@example.com', privacyConsent:true, termsConsent:true, refundConsent:true, deliveryConsent:true }) });
+  const created = await j('/api/public/checkout-session', { method:'POST', headers:{ 'content-type':'application/json' }, body: JSON.stringify({ plan:'Report', buyerEmail:'event@example.com', privacyConsent:true, termsConsent:true, refundConsent:true, deliveryConsent:true }) });
   assert.equal(created.res.status, 200);
   const orderId = created.data.order.id;
   const completed = await j('/api/public/payment/complete', { method:'POST', headers:{ 'content-type':'application/json' }, body: JSON.stringify({ orderId, paymentId: orderId }) });

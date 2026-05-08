@@ -11,7 +11,7 @@ import { PAYMENT_SESSION_TRANSITIONS, ORDER_STATUS_TRANSITIONS, canTransition } 
 import { handleAccountRescan, customerRecentScans } from './core/account-rescan.mjs';
 import { buildPublicDiagnosisPackage } from './core/diagnosis-report-package.mjs';
 import { buildPremiumPurchasedAsset, buildPremiumAssetPdfLines } from './core/premium-asset-builder.mjs';
-import { buildCtaBoardArticle, chooseCtaVariant, ctaTopicPacks, ctaCombinationStats } from './core/cta-publication.mjs';
+import { buildCtaBoardArticle, chooseCtaVariant, ctaTopicPacks, ctaCombinationStats, rewriteExistingCtaPublication, auditHumanFriendlyCtaArticle, ctaFingerprint } from './core/cta-publication.mjs';
 import { buildProductIntelligence, annotateOffersWithIntelligence, buildProductDashboard } from './core/product-intelligence.mjs';
 import { buildSmartProductOrchestration, buildSmartPublicSnapshot } from './core/smart-product-orchestrator.mjs';
 import { discoverTargetAutomationLinks } from './core/free-auto-discovery.mjs';
@@ -1930,20 +1930,41 @@ return [
 function toPublicBoardPost(item = {}, index = 0) {
 const ctaLike = item.boardType === 'cta' || item.autoPublished || item.type === 'cta' || item.ctaType || /제목 후보|검색 의도|퍼널|contentFingerprint|CTA|SEO|https:\/\/example\.com/i.test(String(item.body || ''));
 if (!ctaLike) return item;
-const topic = boardTopicFromItem(item, index);
-const tags = Array.isArray(item.tags) && item.tags.length ? item.tags : [topic.keyword, '사이트 점검', '고객 안내', '무료 진단', '전환 개선', '모바일 가독성'];
+const stableKey = String(item.id || item.contentFingerprint || item.createdAt || item.title || `board-${index}`);
+const stableOffset = Number.parseInt(ctaFingerprint(stableKey).slice(0, 6), 16) % 997;
+const rewritten = rewriteExistingCtaPublication(item, {
+  force: true,
+  seed: `phase210-public-board:${stableKey}:${index}`,
+  sequenceOffset: stableOffset,
+  target: item.target || item.normalizedTarget || 'nv0.kr',
+  industry: item.industry || '온라인 사업',
+  rewrittenAt: item.rewrittenAt || item.createdAt || nowIso()
+});
+const audit = auditHumanFriendlyCtaArticle(rewritten);
+const bodyText = String(rewritten.body || item.body || '');
 return {
 ...item,
-title: topic.title,
-body: publicBoardBodyFor(item, index),
-summary: `${topic.keyword}과 관련된 문제 인식, 쉬운 예시, 체크리스트, 마지막 행동 유도를 정리한 4천자 내외 공개 안내 글입니다.`,
-primaryKeyword: topic.keyword,
-tags,
-searchIntent: '고객 도움형',
-funnelStage: '읽고 바로 확인',
-contentArchetype: 'reader_helpful_public_article',
-readabilityTarget: 'general_public_korean',
-publicDisplayVersion: 'phase177-helpful-search-friendly-board'
+...rewritten,
+id: item.id || rewritten.id,
+createdAt: item.createdAt || rewritten.createdAt || nowIso(),
+visibility: item.visibility || 'public',
+boardType: item.boardType || rewritten.boardType || 'cta',
+type: 'cta',
+autoPublished: item.autoPublished !== false,
+summary: `${rewritten.seo?.primaryKeyword || rewritten.primaryKeyword || '사이트 점검'}을 중학생도 이해할 수 있는 쉬운 말로 풀어 쓴 4천자 안팎의 전문 CTA 게시글입니다.`,
+searchIntent: rewritten.seo?.searchIntent || '고객 도움형',
+funnelStage: rewritten.seo?.funnelStage || '읽고 바로 확인',
+contentArchetype: rewritten.contentArchetype || 'phase210_diverse_professional_article',
+readabilityTarget: 'middle_school_korean',
+publicDisplayVersion: 'phase210-diverse-professional-4000-board',
+phase210Audit: {
+  ok: audit.ok,
+  banned: audit.banned,
+  missingSections: audit.missingSections,
+  longSentenceCount: audit.longSentenceCount,
+  bodyLength: bodyText.length,
+  stableOffset
+}
 };
 }
 
@@ -3649,7 +3670,7 @@ const variant = chooseCtaVariant(db, { ...options, sequenceOffset: offset });
 const triedKey = variant.combinationKey || variant.ctaType;
 if (tried.includes(triedKey)) continue;
 tried.push(triedKey);
-const draft = buildCtaBoardArticle(scan || {}, variant, options);
+const draft = buildCtaBoardArticle(scan || {}, variant, { ...options, sequenceOffset: offset });
 const duplicate = [...db.publications, ...db.boards].some(item => item.contentFingerprint === draft.contentFingerprint || (item.title && item.title === draft.title));
 if (!duplicate) { article = draft; break; }
 }
@@ -3657,7 +3678,7 @@ if (!article) {
 const variant = chooseCtaVariant(db, { ...options, sequenceOffset: Date.now() % 144 });
 article = buildCtaBoardArticle(scan || {}, variant, { ...options, title: `${variant.headline} · ${new Date().toLocaleDateString('ko-KR')}` });
 }
-const base = { ctaType: article.ctaType, titleCandidates: article.titleCandidates, tags: article.tags, qualityStandard:'cta-v8-unbounded-seo', seoQualityStandard:'cta-v8-unbounded-seo', wordRangeKo: '3800-4500', sections: ['제목 후보', '도입', '지금 보이는 문제', '독자가 관심 있어 할 부분', '체크리스트', 'FAQ', '다음에 할 일', '태그'], diversityKey: article.diversityKey, contentFingerprint: article.contentFingerprint, searchIntent: article.seo?.searchIntent || null, funnelStage: article.seo?.funnelStage || null, primaryKeyword: article.seo?.primaryKeyword || null, secondaryKeywords: article.seo?.secondaryKeywords || [], metaDescription: article.seo?.metaDescription || null, baseCtaType: article.baseCtaType || null, combinationMode: article.combinationMode || null, combinationKey: article.combinationKey || null, contentArchetype: article.contentArchetype || article.seo?.contentArchetype || null, audienceSegment: article.audienceSegment || article.seo?.audienceSegment || null };
+const base = { ctaType: article.ctaType, titleCandidates: article.titleCandidates, tags: article.tags, qualityStandard:'cta-v9-phase210-diverse-professional-4000', seoQualityStandard:'cta-v9-phase210-diverse-professional-4000', wordRangeKo: '3800-4500', sections: ['왜 이 글을 썼나요?', '지금 보이는 문제', '독자가 관심 있어 할 부분', '고객 입장에서 보면', '중학생도 이해할 수 있게 말하면', '전문적으로 보면', '바로 고칠 수 있는 것', '문구를 쉽게 바꾸는 방법', '자주 묻는 질문', '다음에 할 일'], diversityKey: article.diversityKey, contentFingerprint: article.contentFingerprint, searchIntent: article.seo?.searchIntent || null, funnelStage: article.seo?.funnelStage || null, primaryKeyword: article.seo?.primaryKeyword || null, secondaryKeywords: article.seo?.secondaryKeywords || [], metaDescription: article.seo?.metaDescription || null, baseCtaType: article.baseCtaType || null, combinationMode: article.combinationMode || null, combinationKey: article.combinationKey || null, contentArchetype: article.contentArchetype || article.seo?.contentArchetype || null, audienceSegment: article.audienceSegment || article.seo?.audienceSegment || null };
 const publication = { id: uid('pub'), title: article.title, status: 'published', type: 'cta', boardType: article.boardType, ...base, relatedRequestId: scan?.requestId || null, body: article.body, createdAt: nowIso(), autoPublished: options.autoPublished === true };
 db.publications.unshift(publication);
 const publishIntervalMs = normalizeCtaAutopublishIntervalMs(options.publishIntervalMs, CTA_AUTOPUBLISH_INTERVAL_MS);

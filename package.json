@@ -1,6 +1,6 @@
 {
   "name": "nv0-veridion-cleanroom",
-  "version": "1.0.0-commercial-final-phase209-product-output-100",
+  "version": "1.0.0-commercial-final-phase211-plans-payment-100",
   "private": true,
   "type": "module",
   "scripts": {
@@ -229,6 +229,13 @@
     "validate:phase208-cta": "node scripts/validate-phase208-cta-autopublish-product-review.mjs",
     "test:phase209": "node tests/phase209-product-output-100.mjs",
     "validate:phase209-product-100": "node scripts/validate-phase209-product-output-100.mjs",
-    "phase209:final": "npm run check:syntax && npm run test:phase209 && npm run validate:phase209-product-100 && npm run phase208:final"
+    "phase209:final": "npm run check:syntax && npm run test:phase209 && npm run validate:phase209-product-100 && npm run phase208:final",
+    "test:phase210": "node tests/phase210-cta-diversity-4000.mjs",
+    "migrate:phase210-cta": "node scripts/migrate-phase210-cta-board-diversity.mjs",
+    "validate:phase210-cta": "node scripts/validate-phase210-cta-diversity.mjs",
+    "phase210:final": "npm run check:syntax && npm run test:phase210 && npm run validate:phase210-cta && npm run phase209:final",
+    "test:phase211": "node tests/phase211-plans-checkout-payment.mjs",
+    "validate:phase211-plans-payment": "node scripts/validate-phase211-plans-payment.mjs",
+    "phase211:final": "npm run check:syntax && npm run test:phase211 && npm run validate:phase211-plans-payment && npm run phase210:final"
   }
 }
