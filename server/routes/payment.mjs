@@ -162,7 +162,6 @@ return json(req, res, 200, {
   prelaunchMode: PRELAUNCH_MODE,
   deploymentStage: DEPLOYMENT_STAGE,
   commercialLaunchReady: COMMERCIAL_LAUNCH_READY,
-  supportEmail: BUSINESS_PROFILE.contactEmail,
   endpoints: { checkoutSession: 'POST /api/public/checkout-session', complete: 'POST /api/public/payment/complete', webhook: 'POST /api/public/payment/portone/webhook' },
   productCodes,
   portone: {
@@ -288,10 +287,10 @@ return json(req, res, 200, { ok: true, result: { ...result, siteId: site.id, gui
 }
 if (pathname === '/api/public/checkout-session' && req.method === 'POST') {
 if (PRELAUNCH_MODE || PAYMENT_PROVIDER === 'disabled') {
-return json(req, res, 503, { ok: false, error: '현재는 고객지원 이메일로 신청을 접수합니다. 결제창 이용이 필요한 경우 고객지원으로 문의해 주세요.', stage: DEPLOYMENT_STAGE, supportEmail: BUSINESS_PROFILE.contactEmail });
+return json(req, res, 503, { ok: false, error: '온라인 결제 환경이 아직 활성화되지 않았습니다. NV0_PAYMENT_PROVIDER와 PortOne 환경값을 확인해 주세요.', stage: DEPLOYMENT_STAGE, paymentOnly: true });
 }
 if (PAYMENT_PROVIDER === 'portone_v2' && !PORTONE_CLIENT?.enabled) {
-return json(req, res, 503, { ok: false, error: 'PortOne 결제 환경값이 완성되지 않았습니다. storeId, channelKey, apiSecret 설정을 확인해 주세요.', stage: DEPLOYMENT_STAGE, supportEmail: BUSINESS_PROFILE.contactEmail });
+return json(req, res, 503, { ok: false, error: 'PortOne 결제 환경값이 완성되지 않았습니다. storeId, channelKey, apiSecret 설정을 확인해 주세요.', stage: DEPLOYMENT_STAGE, paymentOnly: true });
 }
 const rate = await hitRateLimit('checkout-session', clientIp(req), { windowMs: PUBLIC_SCAN_WINDOW_MS, limit: Math.max(5, Math.floor(PUBLIC_SCAN_LIMIT / 2)) });
 if (rate.blocked) {

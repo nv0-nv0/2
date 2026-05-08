@@ -44,7 +44,7 @@ ${problem} 고객은 불편하다고 말하지 않고 조용히 이탈하는 경
 1. “문의하기” → “문의하기 · 평일 기준 1영업일 안에 답변드립니다”
 2. “무료” → “무료 진단: 요약 결과까지 무료로 확인”
 3. “서비스 신청” → “제공 범위 확인 후 신청하기”
-4. “개인정보 동의” → “상담 답변을 위한 수집 목적과 보관 기간 확인”
+4. “개인정보 동의” → “문의 답변을 위한 수집 목적과 보관 기간 확인”
 5. “자세히 보기” → “결제 전 제공 범위와 문의 경로 확인”
 
 독자가 계속 읽는 구성
@@ -140,10 +140,10 @@ const FALLBACK_ACTIVITIES = FALLBACK_POSTS.slice(0, 3).map((item) => ({
   type: item.boardType,
   createdAt: item.createdAt
 }));
-const FALLBACK_STATS = { total: 5, cta: 5, notice: 1, case: 2, recent7d: 5, filteredTotal: 5 };
+const FALLBACK_STATS = { total: 5, cta: 2, notice: 1, case: 2, autoPublished: 5, recent7d: 5, filteredTotal: 5 };
 
 function fallbackForFilter(value = 'all') {
-  return FALLBACK_POSTS.filter((item) => value === 'all' || item.boardType === value || (value === 'cta' && item.autoPublished));
+  return FALLBACK_POSTS.filter((item) => value === 'all' || item.boardType === value);
 }
 function applyBoardFallback(reason = '') {
   posts = fallbackForFilter(filter);
@@ -246,10 +246,13 @@ function render(){
   topicButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.topic === topic));
   renderStats();
   renderActivity();
-  const autoCount = Number(stats.cta || window.__NV0_BOARD_AUTO_COUNT__ || 0);
+  const autoCount = Number(stats.autoPublished || window.__NV0_BOARD_AUTO_COUNT__ || 0);
   const visiblePosts = posts.filter(item => postMatchesTopic(item, topic));
-  const topicText = topic ? ` · 주제 ${topic}` : '';
-  state.textContent = `공개 게시글 ${visiblePosts.length}건${topicText} · ${pagination.page}/${pagination.totalPages}페이지 · 한 페이지 5개 · 진단 연결 ${autoCount}건 · 자동 발행 20분 주기`;
+  const totalForFilter = Number(pagination.total || stats.filteredTotal || visiblePosts.length || 0);
+  const totalPages = Math.max(1, Number(pagination.totalPages || 1));
+  const currentCount = visiblePosts.length;
+  const topicText = topic ? ` · 현재 페이지 주제 일치 ${currentCount}건` : '';
+  state.textContent = `전체 ${Number(stats.total || totalForFilter).toLocaleString('ko-KR')}건 중 현재 ${currentCount.toLocaleString('ko-KR')}건 표시${topicText} · ${pagination.page}/${totalPages}페이지 · 필터 대상 ${totalForFilter.toLocaleString('ko-KR')}건 · 자동 발행 ${autoCount.toLocaleString('ko-KR')}건 · 20분 주기`;
   list.innerHTML = renderList(visiblePosts, '<div class="empty-state stack"><strong>조건에 맞는 게시글이 없습니다.</strong><p>필터를 초기화하거나 무료 진단 후 새 글을 발행하세요.</p><a class="btn secondary" href="/board">필터 초기화</a><a class="btn secondary" href="/products/veridion/demo">무료 진단 시작</a></div>', item => `<article class="result-card stack board-post ${item.boardType === 'cta' || item.autoPublished ? 'cta' : ''}"><div class="meta-row"><strong>${escapeHtml(item.title)}</strong><span class="pill">${escapeHtml(item.boardType || item.type || 'post')}</span></div><div class="post-meta"><span>${item.autoPublished ? '자동 발행' : '운영 글'}</span><span>${escapeHtml(item.createdAt || '-')}</span><span>${escapeHtml(item.primaryKeyword || '고객 안내')}</span></div>${item.summary ? `<p class="post-summary">${escapeHtml(item.summary)}</p>` : ''}${renderPostBody(item.body || item.summary || '')}${renderPostTags(item.tags || [])}<div class="post-cta"><a class="btn primary" href="/products/veridion/demo">내 사이트도 무료 진단</a><a class="btn secondary" href="/plans">플랜 비교</a><a class="btn secondary" href="/portal">내 사이트 관리</a></div></article>`);
   renderPagination();
 }
@@ -262,7 +265,7 @@ async function loadBoard() {
     const res = await fetch(`/api/public/board?${params.toString()}`);
     const data = await res.json();
     if (!res.ok || !data?.ok) throw new Error(data?.error || `게시판 요청 실패 (${res.status})`);
-    window.__NV0_BOARD_AUTO_COUNT__ = data.autoPublishedCount || 0;
+    window.__NV0_BOARD_AUTO_COUNT__ = data.autoPublishedCount || data.stats?.autoPublished || 0;
     stats = { ...stats, ...(data.stats || {}), filteredTotal: data.pagination?.total ?? data.stats?.filteredTotal ?? 0 };
     activities = Array.isArray(data.activity) ? data.activity : [];
     posts = (data.posts || []).filter(item => item.visibility !== 'private');

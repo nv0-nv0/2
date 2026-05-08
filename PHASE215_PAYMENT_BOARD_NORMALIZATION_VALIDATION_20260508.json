@@ -1,0 +1,49 @@
+{
+  "phase": "PHASE215_PAYMENT_BOARD_NORMALIZATION",
+  "checkedAt": "2026-05-08T11:11:29.400Z",
+  "total": 8,
+  "passed": 8,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "plans-paid-action-is-checkout-not-support",
+      "ok": true,
+      "note": "유료 플랜 클릭이 고객지원/상담 우회로 빠지지 않아야 함"
+    },
+    {
+      "name": "plans-payment-labels",
+      "ok": true,
+      "note": "구매 행동 문구는 결제 중심이어야 함"
+    },
+    {
+      "name": "checkout-public-copy-payment-first",
+      "ok": true,
+      "note": "체크아웃은 결제 중심 공개 문구여야 함"
+    },
+    {
+      "name": "checkout-no-consultation-fallback",
+      "ok": true,
+      "note": "체크아웃에 상담 fallback 문구 금지"
+    },
+    {
+      "name": "server-payment-only-errors",
+      "ok": true,
+      "note": "결제 미설정 오류도 고객지원 접수 전환이 아니라 결제 환경 오류로 반환"
+    },
+    {
+      "name": "board-api-category-counts-by-boardType",
+      "ok": true,
+      "note": "type=cta가 모든 글을 CTA 카운트로 오염시키면 안 됨"
+    },
+    {
+      "name": "board-api-filter-by-boardType",
+      "ok": true,
+      "note": "CTA/공지/사례 필터는 boardType 기준이어야 함"
+    },
+    {
+      "name": "board-client-count-message",
+      "ok": true,
+      "note": "목록 5개와 전체/필터/자동발행 수를 분리 표시"
+    }
+  ]
+}

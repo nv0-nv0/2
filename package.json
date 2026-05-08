@@ -1,6 +1,6 @@
 {
   "name": "nv0-veridion-cleanroom",
-  "version": "1.0.0-commercial-final-phase214-public-site-copy-ux",
+  "version": "1.0.0-commercial-final-phase215-payment-board-normalization",
   "private": true,
   "type": "module",
   "scripts": {
@@ -245,6 +245,9 @@
     "phase213:final": "npm run check:syntax && npm run test:phase213 && npm run validate:phase213-marketing-copy && npm run test:all",
     "test:phase214": "node tests/phase214-ux-copy-quality.mjs",
     "validate:phase214-public-site": "node scripts/validate-phase214-public-site-overhaul.mjs",
-    "phase214:final": "npm run check:syntax && npm run test:phase214 && npm run validate:phase214-public-site && npm run check:pages && npm run test:routes && npm run test:all"
+    "phase214:final": "npm run check:syntax && npm run test:phase214 && npm run validate:phase214-public-site && npm run check:pages && npm run test:routes && npm run test:all",
+    "test:phase215": "node tests/phase215-payment-board-normalization.mjs",
+    "validate:phase215-payment-board": "node scripts/validate-phase215-payment-board-normalization.mjs",
+    "phase215:final": "npm run check:syntax && npm run test:phase215 && npm run validate:phase215-payment-board && npm run check:pages && npm run test:routes && npm run test:all"
   }
 }

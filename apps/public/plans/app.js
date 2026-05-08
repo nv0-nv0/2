@@ -7,9 +7,8 @@ const state = document.getElementById('plansState');
 const paymentFallback = {
   ok: false,
   paymentReady: false,
-  provider: 'demo',
-  reason: '온라인 결제 상태 확인 전입니다.',
-  supportEmail: 'ct@nv0.kr'
+  provider: 'unknown',
+  reason: '온라인 결제 환경을 확인하고 있습니다.'
 };
 
 function normalizeCode(value) {
@@ -48,22 +47,17 @@ function groupLabel(plan) {
   if (plan.code === 'Auto') return '정기 점검';
   return plan.group === 'subscription' ? '정기 관리' : '1회 제공';
 }
-function ctaLabel(plan, paymentConfig) {
+function ctaLabel(plan) {
   if (plan.code === 'Free') return '무료 진단 시작';
-  if (paymentConfig.paymentReady !== true) return '상담으로 신청';
-  if (plan.code === 'Report') return '상세 리포트 신청';
-  if (plan.code === 'FixPack') return 'FixPack 신청';
-  if (plan.code === 'Auto') return 'Auto 정기 케어 신청';
-  return '신청하기';
+  if (plan.code === 'Report') return '상세 리포트 결제';
+  if (plan.code === 'FixPack') return 'FixPack 바로 결제';
+  if (plan.code === 'Auto') return 'Auto 정기 케어 결제';
+  return '온라인 결제';
 }
-function checkoutHref(plan, siteId, paymentConfig) {
+function checkoutHref(plan, siteId) {
   if (plan.code === 'Free') return '/products/veridion/demo';
   const params = new URLSearchParams({ plan: plan.code });
   if (siteId) params.set('siteId', siteId);
-  if (paymentConfig.paymentReady !== true) {
-    params.set('intent', 'support');
-    return `/business-info?${params.toString()}`;
-  }
   return `/checkout?${params.toString()}`;
 }
 function planTone(code) {
@@ -75,8 +69,8 @@ function planTone(code) {
 function paymentBadge(plan, paymentConfig) {
   if (plan.code === 'Free') return '<span class="pill gray">결제 없음</span>';
   return paymentConfig.paymentReady
-    ? '<span class="pill green">온라인 신청</span>'
-    : '<span class="pill gold">상담 신청</span>';
+    ? '<span class="pill green">온라인 결제 가능</span>'
+    : '<span class="pill gold">결제 환경 확인 중</span>';
 }
 function strengthenSalesCopy(plan) {
   const override = {
@@ -123,16 +117,16 @@ function getSavedScan() {
 }
 function card(plan, recommended, siteId, paymentConfig) {
   const deliverables = list(plan.deliverables).slice(0, 3);
-  const href = checkoutHref(plan, siteId, paymentConfig);
+  const href = checkoutHref(plan, siteId);
   const microcopy = plan.code === 'Free'
     ? '결제 없이 바로 확인합니다.'
-    : '결제 전 상품명, 금액, 받을 결과물을 다시 확인합니다.';
+    : '기다림 없이 결제 화면에서 상품명, 금액, 받을 결과물을 다시 확인합니다.';
   return `<article class="clean-plan-card ${recommended ? 'recommended' : ''}" data-plan-code="${escapeAttr(plan.code)}" data-price="${escapeAttr(String(plan.price || 0))}" data-checkout-href="${escapeAttr(href)}">
     <div class="plan-card-top"><div><span class="pill ${planTone(plan.code)}">${escapeHtml(groupLabel(plan))}</span><h3>${escapeHtml(plan.title)}</h3></div><div class="plan-badges">${recommended ? '<span class="pill gold">추천</span>' : ''}${paymentBadge(plan, paymentConfig)}</div></div>
     <div><div class="plan-price">${priceLabel(plan)}</div><p class="plan-one-line">${escapeHtml(plan.summary)}</p></div>
     <div class="plan-fit"><b>이런 분께 추천</b><p>${escapeHtml(plan.targetCustomer || '구매 흐름을 더 탄탄하게 만들고 싶은 분')}</p><b>받는 것</b><ul class="plan-deliverables">${deliverables.map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul></div>
     <div class="payment-microcopy">${escapeHtml(microcopy)}</div>
-    <div class="offer-actions"><a class="btn primary" href="${escapeAttr(href)}">${escapeHtml(ctaLabel(plan, paymentConfig))}</a>${plan.code !== 'Free' ? '<a class="btn secondary" href="/products/veridion/demo">먼저 무료 진단</a>' : ''}</div>
+    <div class="offer-actions"><a class="btn primary" href="${escapeAttr(href)}">${escapeHtml(ctaLabel(plan))}</a>${plan.code !== 'Free' ? '<a class="btn secondary" href="/products/veridion/demo">먼저 무료 진단</a>' : ''}</div>
   </article>`;
 }
 function comparison(plan, paymentConfig) {
@@ -147,19 +141,19 @@ function comparison(plan, paymentConfig) {
       when: '대표님·팀에 설명할 근거가 필요할 때',
       get: '문제 위치, 원인, 우선순위가 담긴 리포트',
       reason: '무엇부터 고칠지 회의 없이 정리됩니다.',
-      action: '상세 리포트 신청'
+      action: '상세 리포트 결제'
     },
     FixPack: {
       when: '오늘 바로 문구를 고쳐야 할 때',
       get: '수정 전/후 문장과 적용 위치',
       reason: '사이트에 바로 반영할 수 있습니다.',
-      action: 'FixPack 신청'
+      action: 'FixPack 바로 결제'
     },
     Auto: {
       when: '페이지가 계속 바뀌어 관리가 필요할 때',
       get: '정기 재진단과 CTA 흐름 관리',
       reason: '새로 생기는 안내 공백을 줄입니다.',
-      action: 'Auto 정기 케어 신청'
+      action: 'Auto 정기 케어 결제'
     }
   }[plan.code] || {};
   return `<article class="decision-card" data-decision-plan="${escapeAttr(plan.code)}">
@@ -169,14 +163,14 @@ function comparison(plan, paymentConfig) {
       <div><dt>받는 것</dt><dd>${escapeHtml(rows.get || '상황에 맞는 결과물')}</dd></div>
       <div><dt>구매 이유</dt><dd>${escapeHtml(rows.reason || '다음 행동이 명확해집니다.')}</dd></div>
     </dl>
-    <a class="btn secondary" href="${escapeAttr(checkoutHref(plan, '', paymentConfig))}">${escapeHtml(rows.action || ctaLabel(plan, paymentConfig))}</a>
+    <a class="btn secondary" href="${escapeAttr(checkoutHref(plan, ''))}">${escapeHtml(rows.action || ctaLabel(plan))}</a>
   </article>`;
 }
 async function fetchPaymentConfig() {
   try {
     const res = await fetch('/api/public/payment/config');
     const data = await res.json().catch(() => ({}));
-    if (!res.ok || data?.ok === false) throw new Error(data.error || '신청 상태를 확인하지 못했습니다.');
+    if (!res.ok || data?.ok === false) throw new Error(data.error || '온라인 결제 상태를 확인하지 못했습니다.');
     return { ...paymentFallback, ...data };
   } catch (error) {
     return { ...paymentFallback, reason: error.message || paymentFallback.reason };
@@ -210,7 +204,7 @@ async function fetchPlans(qs) {
   const recommendedCode = ['Report', 'FixPack', 'Auto'].includes(fetched.recommended) ? fetched.recommended : 'FixPack';
   const recommendedPlan = allPlans.find(item => item.code === recommendedCode) || allPlans.find(item => item.code === 'FixPack');
   if (state) {
-    const readiness = paymentConfig.paymentReady ? '온라인 신청 가능' : '상담 신청 가능';
+    const readiness = paymentConfig.paymentReady ? '온라인 결제 가능' : '온라인 결제 환경 확인 중';
     state.textContent = `무료 확인부터 바로 수정까지 ${allPlans.length}가지 선택지를 정리했습니다${riskScore ? ` · 최근 진단 점수 ${riskScore}점 반영` : ''}. ${readiness}`;
   }
   if (planCards) planCards.innerHTML = allPlans.map(item => card(item, item.code === recommendedPlan.code, siteId, paymentConfig)).join('');

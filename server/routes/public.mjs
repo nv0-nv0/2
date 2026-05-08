@@ -276,23 +276,25 @@ const seedBoardPosts = [
 ];
 const sourcePosts = rawPosts.length ? rawPosts : seedBoardPosts;
 const publicPosts = sourcePosts.map((item, index) => toPublicBoardPost(item, index));
-const filtered = publicPosts.filter(item => filter === 'all' || (item.boardType || item.type) === filter || (filter === 'cta' && (item.autoPublished || item.boardType === 'cta' || item.type === 'cta')));
+const normalizedFilter = ['all', 'cta', 'notice', 'case'].includes(filter) ? filter : 'all';
+const filtered = publicPosts.filter(item => normalizedFilter === 'all' || item.boardType === normalizedFilter);
 const total = filtered.length;
 const totalPages = Math.max(1, Math.ceil(total / pageSize));
 const page = clamp(requestedPage, 1, totalPages);
 const start = (page - 1) * pageSize;
 const posts = filtered.slice(start, start + pageSize);
-const autoPublishedCount = publicPosts.filter(item => item.autoPublished || item.boardType === 'cta' || item.type === 'cta').length;
+const autoPublishedCount = publicPosts.filter(item => !!item.autoPublished).length;
 const now = Date.now();
 const recent7d = publicPosts.filter(item => {
   const at = Date.parse(item.createdAt || '');
   return Number.isFinite(at) && at >= now - 7 * 24 * 60 * 60_000;
 }).length;
-const boardTypeCount = type => publicPosts.filter(item => item.boardType === type || item.type === type).length;
+const boardTypeCount = type => publicPosts.filter(item => item.boardType === type).length;
 const stats = {
   total: publicPosts.length,
   filteredTotal: total,
-  cta: autoPublishedCount,
+  cta: boardTypeCount('cta'),
+  autoPublished: autoPublishedCount,
   notice: boardTypeCount('notice'),
   case: boardTypeCount('case'),
   recent7d
@@ -300,7 +302,7 @@ const stats = {
 const activity = publicPosts.slice(0, 3).map(item => ({
   id: item.id,
   title: item.title,
-  type: item.autoPublished || item.boardType === 'cta' || item.type === 'cta' ? '진단 연결 글' : (item.boardType || item.type || '게시글'),
+  type: item.boardType === 'cta' ? 'CTA 글' : (item.boardType || '게시글'),
   createdAt: item.createdAt || null,
   label: item.autoPublished ? '자동 발행' : '공개 게시글'
 }));
@@ -635,7 +637,7 @@ return json(req, res, 200, { ok: true, result: { ...result, siteId: site.id, gui
 }
 if (pathname === '/api/public/checkout-session' && req.method === 'POST') {
 if (PRELAUNCH_MODE || PAYMENT_PROVIDER === 'disabled') {
-return json(req, res, 503, { ok: false, error: '현재는 고객지원 이메일로 신청을 접수합니다. 결제창 이용이 필요한 경우 고객지원으로 문의해 주세요.', stage: DEPLOYMENT_STAGE, supportEmail: BUSINESS_PROFILE.contactEmail });
+return json(req, res, 503, { ok: false, error: '온라인 결제 환경이 아직 활성화되지 않았습니다. NV0_PAYMENT_PROVIDER와 PortOne 환경값을 확인해 주세요.', stage: DEPLOYMENT_STAGE, paymentOnly: true });
 }
 const rate = await hitRateLimit('checkout-session', clientIp(req), { windowMs: PUBLIC_SCAN_WINDOW_MS, limit: Math.max(5, Math.floor(PUBLIC_SCAN_LIMIT / 2)) });
 if (rate.blocked) {
