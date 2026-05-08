@@ -1,6 +1,6 @@
 {
   "name": "nv0-veridion-cleanroom",
-  "version": "1.0.0-commercial-final-phase207-layout-board-20min-4000cta",
+  "version": "1.0.0-commercial-final-phase209-product-output-100",
   "private": true,
   "type": "module",
   "scripts": {
@@ -222,6 +222,13 @@
     "validate:phase206": "node scripts/validate-phase206-live-readable-nav.mjs",
     "phase206:final": "npm run check:syntax && npm run check:pages && npm run test:routes && npm run validate:phase204 && npm run validate:phase205 && npm run validate:phase206",
     "validate:phase207": "node scripts/validate-phase207-layout-board-cadence.mjs",
-    "phase207:final": "npm run check:syntax && npm run check:pages && npm run test:routes && npm run validate:phase204 && npm run validate:phase205 && npm run validate:phase206 && npm run validate:phase207"
+    "phase207:final": "npm run check:syntax && npm run check:pages && npm run test:routes && npm run validate:phase204 && npm run validate:phase205 && npm run validate:phase206 && npm run validate:phase207",
+    "test:phase208": "node tests/phase208-work-order-generator.mjs",
+    "validate:phase208": "node scripts/validate-phase208-work-order-product.mjs",
+    "phase208:final": "npm run check:syntax && npm run test:phase208 && npm run validate:phase208 && npm run check:pages && npm run test:routes && npm run validate:phase208-cta",
+    "validate:phase208-cta": "node scripts/validate-phase208-cta-autopublish-product-review.mjs",
+    "test:phase209": "node tests/phase209-product-output-100.mjs",
+    "validate:phase209-product-100": "node scripts/validate-phase209-product-output-100.mjs",
+    "phase209:final": "npm run check:syntax && npm run test:phase209 && npm run validate:phase209-product-100 && npm run phase208:final"
   }
 }

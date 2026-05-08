@@ -69,6 +69,7 @@ export function createPaymentRouteHandler(ctx) {
   completeCheckoutOrder,
   createCheckoutOrder,
   createCtaPublication,
+  createCtaPublicationIfDue,
   createGuidanceDocument,
   createPasswordResetToken,
   crypto,
@@ -250,7 +251,7 @@ const offers = buildCommercialOfferCatalog();
 const intelligence = buildProductIntelligence({ scan: result, site, offers, source: 'scan' });
 const journey = buildSmartProductOrchestration({ scan: result, site, intelligence, offers, source: 'scan' });
 let ctaPublication = null;
-if (db.settings.ctaAutopublishEnabled) ctaPublication = createCtaPublication(db, result, { autoPublished: true });
+ctaPublication = createCtaPublicationIfDue(db, result, { reason: 'scan' });
 db.scans.unshift({ siteId: site.id, subscriptionId: subscription.id, customerId: customerSession?.customer?.id || null, createdAt: nowIso(), intelligence, journey, ...result });
 db.scans = db.scans.slice(0, 100);
 appendAudit(db, req, 'public.scan.created', { requestId: result.requestId, target: result.target, siteId: site.id, provider: result.provider || SCAN_PROVIDER, linkedCustomer: !!customerSession?.customer, ctaPublicationId: ctaPublication?.id || null, recommendedPlan: intelligence.recommendedPlan });

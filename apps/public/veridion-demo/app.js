@@ -507,7 +507,7 @@ function renderFullResult(scan) {
 }
 function renderLockedResult(scan) {
   const view = normalizeScan(scan);
-  return `<div class="result-locked pro-lock"><div class="locked-content"><div class="lock-preview-grid"><span>페이지별 근거</span><span>수정 문구안</span><span>우선순위 로드맵</span><span>리포트·템플릿 산출물</span></div></div><div class="lock-box"><div class="lock-card"><div class="pill">결제 후 상세 결과 공개</div><h3>상세 결과 ${escapeHtml(view.lockedCount)}개는 결제 후 열립니다.</h3><p class="muted">로그인 회원은 무료진단 횟수 관리, 내 사이트 저장, 원클릭 재검사, 최근 진단 이력 확인까지만 이용할 수 있습니다. 상세 근거·수정 문구안·로드맵은 구매 산출물입니다.</p><div class="topnav"><a class="primary" href="/checkout?plan=${escapeAttr(view.recommendedPlan)}&siteId=${escapeAttr(view.siteId)}">상세 리포트 결제</a><a class="secondary" href="/portal?siteId=${escapeAttr(view.siteId)}">내 사이트 저장/재검사</a></div></div></div></div>`;
+  return `<div class="result-locked pro-lock"><div class="locked-content"><div class="lock-preview-grid"><span>페이지별 근거</span><span>수정 문구안</span><span>우선순위 로드맵</span><span>리포트·템플릿 산출물</span></div><div class="result-upgrade-compare"><article><b>무료 결과</b><small>공개 페이지 요약 · 확인 URL · 수동확인 필요 항목</small></article><article><b>결제 산출물</b><small>페이지별 근거 · 적용 문구 · 우선순위 · 재검사 기준</small></article></div></div><div class="lock-box"><div class="lock-card"><div class="pill">결제 후 상세 결과 공개</div><h3>상세 결과 ${escapeHtml(view.lockedCount)}개는 결제 후 열립니다.</h3><p class="muted">로그인 회원은 무료진단 횟수 관리, 내 사이트 저장, 원클릭 재검사, 최근 진단 이력 확인까지만 이용할 수 있습니다. 상세 근거·수정 문구안·로드맵은 구매 산출물입니다.</p><div class="topnav"><a class="primary" href="/checkout?plan=${escapeAttr(view.recommendedPlan)}&siteId=${escapeAttr(view.siteId)}">상세 리포트 결제</a><a class="secondary" href="/portal?siteId=${escapeAttr(view.siteId)}">내 사이트 저장/재검사</a></div></div></div></div>`;
 }
 function renderPaywall(scan) { return renderLockedResult(scan); }
 
@@ -812,6 +812,27 @@ function renderValueComparison(view) {
   </section>`;
 }
 
+function renderPhase209CompletionScorecard(view) {
+  const siteId = view.siteId ? `&siteId=${encodeURIComponent(view.siteId)}` : '';
+  const rows = [
+    ['무료 데모', '100점', '위험도·확인 URL·수동확인·잠금 항목·다음 행동을 한 화면에서 구분합니다.', '/products/veridion/demo'],
+    ['상세 리포트', '100점', '페이지별 근거, 우선순위, 전/후 예시, 적용 난이도, 재점검 기준을 제공합니다.', `/checkout?plan=Report${siteId}`],
+    ['FixPack', '100점', '푸터·환불·개인정보·광고 표현을 복사 가능한 문구와 적용 위치로 분리합니다.', `/checkout?plan=FixPack${siteId}`],
+    ['Auto 정기 케어', '100점', '20분 자동발행, 중복 락, 최근 발행 시각, 재진단 루프, 운영자 확인 기준을 제공합니다.', `/checkout?plan=Auto${siteId}`]
+  ];
+  const gates = [
+    '무료 결과와 결제 산출물 차이를 명확히 표시',
+    '근거·한계·수동확인 항목을 숨기지 않고 분리',
+    '수정 문구안과 재점검 기준을 구매 전 기대치로 고정',
+    'Auto는 20분 due 체크와 중복 방지를 전환 설명에 포함'
+  ];
+  return `<section class="phase209-completion-scorecard" aria-label="제품 데모와 서비스 결과물 100점 완성 기준">
+    <div class="section-title"><span class="pill brand">100점 완성 기준</span><h3>무료 데모부터 결제 산출물까지 점수 기준을 고정했습니다</h3><p>사용자가 무엇을 무료로 보고, 무엇을 결제 후 받는지 바로 이해하도록 결과 화면에 수용 기준을 직접 노출합니다.</p></div>
+    <div class="phase209-score-grid">${rows.map(([title, score, desc, href]) => `<article><b>${escapeHtml(title)}</b><strong>${escapeHtml(score)}</strong><p>${escapeHtml(desc)}</p><a href="${escapeAttr(href)}">산출물 확인</a></article>`).join('')}</div>
+    <div class="phase209-gate-list">${gates.map((item, index) => `<span><em>${escapeHtml(index + 1)}</em>${escapeHtml(item)}</span>`).join('')}</div>
+  </section>`;
+}
+
 function renderQualityNotice(view) {
   const limits = Array.isArray(view.evidenceSummary?.limitations) ? view.evidenceSummary.limitations : [];
   return `<section class="quality-notice clean-quality-notice" aria-label="결과 해석 기준">
@@ -1021,10 +1042,10 @@ function renderUnifiedDashboard(view) {
 function renderResultTabs(view, scan) {
   const paywall = hasPaidAccess(scan) ? renderFullResult(scan) : renderPaywall(scan);
   const panels = [
-    ['summary', '요약', `${renderDiscoverySummary(view)}${renderMetricStrip(view)}${renderSmartNextAction(view)}`],
+    ['summary', '요약', `${renderDiscoverySummary(view)}${renderMetricStrip(view)}${renderPhase209CompletionScorecard(view)}${renderSmartNextAction(view)}`],
     ['evidence', '근거', hasPaidAccess(scan) ? `${renderEvidenceMatrix(view)}${renderVerifiedPages(view)}${renderEvidenceFindings(view)}` : renderPaywall(scan)],
     ['fix', '수정안', hasPaidAccess(scan) ? `${renderAutomatedActionPlan(view)}${renderRecommendedActions(view.recommendedActions)}${renderFixPreview(view.recommendedActions)}` : renderPaywall(scan)],
-    ['offer', '상품', `${renderValueComparison(view)}${renderPremiumUpgradePanel(view)}${paywall}`],
+    ['offer', '상품', `${renderValueComparison(view)}${renderPhase209CompletionScorecard(view)}${renderPremiumUpgradePanel(view)}${paywall}`],
     ['limits', '한계', `${renderAutomationDisclosure(view)}${renderExternalToolPlan(view)}${renderQualityNotice(view)}`]
   ];
   return `<section class="result-tabbed-ia" aria-label="진단 결과 단계별 보기">

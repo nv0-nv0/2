@@ -35,6 +35,7 @@ import { validateRuntimeConfig } from './config/validation.mjs';
 import { readEnvConfig } from './config/env.mjs';
 import { createSecurityMiddleware } from './middleware/security.mjs';
 import { resolveNativeRouteState } from './core/native-route-state.mjs';
+import { buildWorkOrderPreview } from './core/work-order-generator.mjs';
 import { validateCommercialEnv } from './bootstrap/commercial-env.mjs';
 import { buildHealthDetails, classifyIncident } from './services/observability.mjs';
 import { putObjectToS3Compatible } from './infrastructure/storage/s3-compatible.mjs';
@@ -185,7 +186,13 @@ const TARGET_FETCH_SITEMAP_ENABLED = process.env.NV0_TARGET_FETCH_SITEMAP_ENABLE
 const TARGET_FETCH_MAX_SITEMAP_URLS = Math.max(0, Math.min(80, Number(process.env.NV0_TARGET_FETCH_MAX_SITEMAP_URLS || 40)));
 const TARGET_FETCH_MAX_DISCOVERY_RESOURCES = Math.max(1, Math.min(6, Number(process.env.NV0_TARGET_FETCH_MAX_DISCOVERY_RESOURCES || 4)));
 const TARGET_FETCH_AUTOMATION_LEVEL = process.env.NV0_TARGET_FETCH_AUTOMATION_LEVEL || 'maximum_free_safe';
-const CTA_AUTOPUBLISH_INTERVAL_MS = Number(process.env.NV0_CTA_AUTOPUBLISH_INTERVAL_MS || 20 * 60_000);
+const CTA_AUTOPUBLISH_DEFAULT_INTERVAL_MS = 20 * 60_000;
+function normalizeCtaAutopublishIntervalMs(value, fallback = CTA_AUTOPUBLISH_DEFAULT_INTERVAL_MS) {
+const n = Number(value);
+if (!Number.isFinite(n) || n <= 0) return fallback;
+return Math.max(60_000, Math.min(86_400_000, Math.round(n)));
+}
+const CTA_AUTOPUBLISH_INTERVAL_MS = normalizeCtaAutopublishIntervalMs(process.env.NV0_CTA_AUTOPUBLISH_INTERVAL_MS, CTA_AUTOPUBLISH_DEFAULT_INTERVAL_MS);
 const AI_REVIEW_PROVIDER = String(process.env.NV0_AI_REVIEW_PROVIDER || 'disabled').trim().toLowerCase();
 const GEMINI_API_KEY = String(process.env.NV0_GEMINI_API_KEY || '').trim();
 const GEMINI_MODEL = String(process.env.NV0_GEMINI_MODEL || 'gemini-2.5-flash').trim();
@@ -242,7 +249,9 @@ storageMode: STORAGE_MODE,
 releasePhase: RELEASE_PHASE,
 dataRetentionDays: DATA_RETENTION_DAYS,
 refundRequestWindowDays: REFUND_REQUEST_WINDOW_DAYS,
-operatorAlertEmail: OPERATOR_ALERT_EMAIL
+operatorAlertEmail: OPERATOR_ALERT_EMAIL,
+ctaAutopublishIntervalMs: CTA_AUTOPUBLISH_INTERVAL_MS,
+ctaTargetLengthKo: '3800-4500'
 },
 orders: [
 { id: 'ord-1001', customer: 'Acme Co', status: 'paid', stage: 'scan_requested', amount: 129000, createdAt: nowIso() },
@@ -1901,17 +1910,18 @@ const tags = [
 ].join(' ');
 return [
 `왜 이 글을 썼나요?\n${target} 사이트를 처음 보는 고객은 상품 설명보다 먼저 “여기서 안심하고 문의하거나 결제해도 될까?”를 확인합니다. 이 글은 ${theme.label}을 자연스럽게 보여 주는 방법을 쉬운 말로 정리한 안내 글입니다. 단순히 버튼을 크게 만들거나 할인 문구를 추가하는 방식만으로는 부족합니다. 고객이 불안해하는 지점에 답이 없으면, 아무리 좋은 상품과 서비스라도 마지막 행동으로 이어지지 않습니다.`,
-`문제 인식과 위기감\n${theme.risk} 특히 모바일 화면에서는 고객이 몇 초 안에 신뢰 여부를 판단합니다. 안내 문구가 아래로 밀려 있거나, 필수 정보가 푸터에만 숨어 있거나, 문의 기준이 보이지 않으면 고객은 확인을 미루지 않고 이탈합니다. 더 큰 문제는 운영자가 이탈 원인을 가격, 디자인, 광고 효율 문제로만 오해할 수 있다는 점입니다. 실제로는 버튼 주변의 한 줄 안내, 입력폼 아래의 개인정보 설명, 결제 전 제공 범위가 없어서 멈추는 경우가 많습니다. 이 상태를 오래 방치하면 광고비는 계속 쓰지만 전환은 쌓이지 않고, 문의가 들어와도 같은 질문만 반복됩니다.`,
-`독자가 관심 있어할 일반 주제\n온라인에서 물건을 사거나 서비스를 신청하는 사람은 세 가지를 확인합니다. 첫째, 누가 운영하는지입니다. 둘째, 문제가 생겼을 때 어디로 연락하는지입니다. 셋째, 결제나 신청 후 어떤 기준으로 처리되는지입니다. 이 세 가지가 한 화면 안에서 자연스럽게 연결되면 고객은 “조금 더 살펴봐도 되겠다”는 신호를 받습니다. 반대로 ${theme.elements.slice(0, 3).join(', ')} 정보가 따로 흩어져 있으면 고객은 스스로 위험을 계산해야 합니다. 좋은 콘텐츠는 상품 자랑으로 시작하지 않습니다. 고객이 이미 마음속으로 하고 있는 질문을 먼저 꺼내고, 그 질문에 짧고 명확하게 답한 뒤, 더 자세한 행동으로 안내합니다.`,
+`지금 보이는 문제\n${theme.risk} 특히 모바일 화면에서는 고객이 몇 초 안에 신뢰 여부를 판단합니다. 안내 문구가 아래로 밀려 있거나, 필수 정보가 푸터에만 숨어 있거나, 문의 기준이 보이지 않으면 고객은 확인을 미루지 않고 이탈합니다. 더 큰 문제는 운영자가 이탈 원인을 가격, 디자인, 광고 효율 문제로만 오해할 수 있다는 점입니다. 실제로는 버튼 주변의 한 줄 안내, 입력폼 아래의 개인정보 설명, 결제 전 제공 범위가 없어서 멈추는 경우가 많습니다. 이 상태를 오래 방치하면 광고비는 계속 쓰지만 전환은 쌓이지 않고, 문의가 들어와도 같은 질문만 반복됩니다.`,
+`독자가 관심 있어 할 부분\n온라인에서 물건을 사거나 서비스를 신청하는 사람은 세 가지를 확인합니다. 첫째, 누가 운영하는지입니다. 둘째, 문제가 생겼을 때 어디로 연락하는지입니다. 셋째, 결제나 신청 후 어떤 기준으로 처리되는지입니다. 이 세 가지가 한 화면 안에서 자연스럽게 연결되면 고객은 “조금 더 살펴봐도 되겠다”는 신호를 받습니다. 반대로 ${theme.elements.slice(0, 3).join(', ')} 정보가 따로 흩어져 있으면 고객은 스스로 위험을 계산해야 합니다. 좋은 콘텐츠는 상품 자랑으로 시작하지 않습니다. 고객이 이미 마음속으로 하고 있는 질문을 먼저 꺼내고, 그 질문에 짧고 명확하게 답한 뒤, 더 자세한 행동으로 안내합니다.`,
 `이 글이 도움이 되는 경우\n${useCases.map((line, idx) => `${idx + 1}. ${line}`).join('\n')}`,
 `연관 예시\n${theme.example} 이 예시는 특정 업종에만 해당하지 않습니다. 쇼핑몰, 상담 서비스, 예약 서비스, 디지털 파일 판매, B2B 문의형 사이트 모두 고객이 행동 직전에 확인하는 정보가 있습니다. 핵심은 모든 설명을 길게 늘리는 것이 아니라, 고객이 멈추는 위치에 필요한 답을 짧게 놓는 것입니다.`,
 `고객이 실제로 확인하는 포인트\n${theme.elements.map((name, idx) => `${idx + 1}. ${name}`).join('\n')}`,
 `바로 적용할 체크리스트\n${checklist.map((line, idx) => `${idx + 1}. ${line}`).join('\n')}`,
 `문구 예시\n${copyExamples.map(([before, after], idx) => `${idx + 1}. 바꾸기 전: “${before}”\n   바꾼 뒤: “${after}”`).join('\n')}`,
+`독자가 계속 읽는 구성\n좋은 유도 글은 처음부터 구매를 강요하지 않습니다. 먼저 독자가 겪는 불편을 보여 주고, 왜 문제가 되는지 설명하고, 바로 확인할 체크리스트를 둡니다. 마지막에는 무료 진단처럼 부담이 낮은 첫 행동을 제안하고, 필요할 때 상세 리포트나 수정 문구안으로 이어 주는 순서가 자연스럽습니다.`,
 `검색에 잘 읽히게 정리하는 방법\n제목에는 고객이 실제로 검색할 만한 말을 넣는 것이 좋습니다. 예를 들어 ${theme.label}처럼 운영자가 쓰는 내부 표현보다 고객이 이해하기 쉬운 표현을 앞에 둡니다. 첫 문단에는 문제 상황을 설명하고, 중간에는 예시와 체크리스트를 배치하고, 마지막에는 무료 진단이나 상세 리포트처럼 다음 행동을 하나만 안내합니다. 같은 키워드를 억지로 반복하기보다 질문과 답변, 사례, 점검 포인트를 자연스럽게 이어야 검색 로봇과 실제 독자 모두가 내용을 이해하기 쉽습니다.`,
 `지금 놓치면 생길 수 있는 일\n안내가 부족한 상태에서 광고나 이벤트를 먼저 키우면 이탈 지점도 같이 커집니다. 방문자가 늘어도 결제 전 불안이 해소되지 않으면 문의만 늘거나 장바구니 이탈이 늘 수 있습니다. 더 늦게 발견하면 문구 수정, 정책 정리, 디자인 수정, 고객 응대 기준 정리를 한 번에 처리해야 하므로 운영 부담이 커집니다. 지금은 작은 문장 하나로 막을 수 있는 문제도, 시간이 지나면 신뢰 회복 비용으로 돌아올 수 있습니다.`,
 `자주 묻는 질문\n${faqs.map(([q, a], idx) => `Q${idx + 1}. ${q}\nA. ${a}`).join('\n\n')}`,
-`마지막 섹션: 자연스러운 안내\n${theme.cta} 비슷한 유형의 페이지를 운영 중이라면 내 사이트도 무료 진단으로 먼저 확인하고, 필요하면 상세 리포트에서 수정 우선순위를 이어서 보세요. 중요한 것은 지금 당장 모든 것을 바꾸는 것이 아니라, 고객이 멈추는 위치를 정확히 찾는 것입니다. 무료 진단은 현재 화면에서 빠진 안내, 모호한 문구, 버튼 주변의 불안 요소를 먼저 보여 주고, 이후 필요한 산출물만 선택해 이어갈 수 있도록 돕습니다.`,
+`다음에 할 일\n${theme.cta} 비슷한 유형의 페이지를 운영 중이라면 내 사이트도 무료 진단으로 먼저 확인하세요. 결과를 저장하면 상세 리포트에서 수정 우선순위를 보고, FixPack으로 실제 문구안을 받아 적용할 수 있습니다. 반복 관리가 필요하면 Auto 정기 케어로 20분 주기 게시판 발행과 재진단 흐름까지 이어가세요. 중요한 것은 지금 당장 모든 것을 바꾸는 것이 아니라, 고객이 멈추는 위치를 정확히 찾는 것입니다.`,
 `관련 링크\n무료 진단: /products/veridion/demo\n플랜 비교: /plans\n내 사이트 관리: /portal`,
 `해시태그\n${tags}`
 ].join('\n\n');
@@ -1926,7 +1936,7 @@ return {
 ...item,
 title: topic.title,
 body: publicBoardBodyFor(item, index),
-summary: `${topic.keyword}과 관련된 문제 인식, 위기감, 쉬운 예시, 체크리스트, 자연스러운 CTA를 정리한 4천자 내외 공개 안내 글입니다.`,
+summary: `${topic.keyword}과 관련된 문제 인식, 쉬운 예시, 체크리스트, 마지막 행동 유도를 정리한 4천자 내외 공개 안내 글입니다.`,
 primaryKeyword: topic.keyword,
 tags,
 searchIntent: '고객 도움형',
@@ -2038,6 +2048,8 @@ error: asTrimmedString(body.error, { field: 'error', max: 500 })
 }
 function normalizeDocumentPreviewPayload(body = {}) {
 return {
+documentKind: asTrimmedString(body.documentKind || body.kind || 'policy', { field: 'documentKind', enumValues: ['policy', 'work_order'] }),
+sourceInput: asTrimmedString(body.sourceInput || body.input || body.prompt || body.request || body.workOrderInput, { field: 'sourceInput', max: 24000 }),
 businessName: asTrimmedString(body.businessName || body.siteName || body.companyName, { field: 'businessName', max: 120 }),
 representative: asTrimmedString(body.representative || body.ownerName, { field: 'representative', max: 80 }),
 domain: asTrimmedString(body.domain || body.target, { field: 'domain', max: 255 }),
@@ -3645,22 +3657,67 @@ if (!article) {
 const variant = chooseCtaVariant(db, { ...options, sequenceOffset: Date.now() % 144 });
 article = buildCtaBoardArticle(scan || {}, variant, { ...options, title: `${variant.headline} · ${new Date().toLocaleDateString('ko-KR')}` });
 }
-const base = { ctaType: article.ctaType, titleCandidates: article.titleCandidates, tags: article.tags, qualityStandard:'cta-v8-unbounded-seo', seoQualityStandard:'cta-v8-unbounded-seo', wordRangeKo: '3800-4500', sections: ['제목 후보', '도입', '문제 제기', '해결 과정', '신뢰 근거', 'FAQ', '자연스러운 CTA', '태그'], diversityKey: article.diversityKey, contentFingerprint: article.contentFingerprint, searchIntent: article.seo?.searchIntent || null, funnelStage: article.seo?.funnelStage || null, primaryKeyword: article.seo?.primaryKeyword || null, secondaryKeywords: article.seo?.secondaryKeywords || [], metaDescription: article.seo?.metaDescription || null, baseCtaType: article.baseCtaType || null, combinationMode: article.combinationMode || null, combinationKey: article.combinationKey || null, contentArchetype: article.contentArchetype || article.seo?.contentArchetype || null, audienceSegment: article.audienceSegment || article.seo?.audienceSegment || null };
+const base = { ctaType: article.ctaType, titleCandidates: article.titleCandidates, tags: article.tags, qualityStandard:'cta-v8-unbounded-seo', seoQualityStandard:'cta-v8-unbounded-seo', wordRangeKo: '3800-4500', sections: ['제목 후보', '도입', '지금 보이는 문제', '독자가 관심 있어 할 부분', '체크리스트', 'FAQ', '다음에 할 일', '태그'], diversityKey: article.diversityKey, contentFingerprint: article.contentFingerprint, searchIntent: article.seo?.searchIntent || null, funnelStage: article.seo?.funnelStage || null, primaryKeyword: article.seo?.primaryKeyword || null, secondaryKeywords: article.seo?.secondaryKeywords || [], metaDescription: article.seo?.metaDescription || null, baseCtaType: article.baseCtaType || null, combinationMode: article.combinationMode || null, combinationKey: article.combinationKey || null, contentArchetype: article.contentArchetype || article.seo?.contentArchetype || null, audienceSegment: article.audienceSegment || article.seo?.audienceSegment || null };
 const publication = { id: uid('pub'), title: article.title, status: 'published', type: 'cta', boardType: article.boardType, ...base, relatedRequestId: scan?.requestId || null, body: article.body, createdAt: nowIso(), autoPublished: options.autoPublished === true };
 db.publications.unshift(publication);
-db.boards.unshift({ id: uid('board'), title: article.title, boardType: article.boardType, type: 'cta', ...base, body: article.body, createdAt: nowIso(), visibility: 'public', autoPublished: options.autoPublished === true, publishIntervalMs: CTA_AUTOPUBLISH_INTERVAL_MS });
+const publishIntervalMs = normalizeCtaAutopublishIntervalMs(options.publishIntervalMs, CTA_AUTOPUBLISH_INTERVAL_MS);
+db.boards.unshift({ id: uid('board'), title: article.title, boardType: article.boardType, type: 'cta', ...base, body: article.body, createdAt: nowIso(), visibility: 'public', autoPublished: options.autoPublished === true, publishIntervalMs });
 db.publications = db.publications.slice(0, 200);
 db.boards = db.boards.slice(0, 200);
 return publication;
 }
 
+function syncCtaAutopublishSettings(db = {}) {
+db.settings ||= {};
+let changed = false;
+if (db.settings.ctaAutopublishIntervalMs !== CTA_AUTOPUBLISH_INTERVAL_MS) {
+db.settings.ctaAutopublishIntervalMs = CTA_AUTOPUBLISH_INTERVAL_MS;
+changed = true;
+}
+if (!db.settings.ctaTargetLengthKo) {
+db.settings.ctaTargetLengthKo = '3800-4500';
+changed = true;
+}
+return { changed, intervalMs: CTA_AUTOPUBLISH_INTERVAL_MS };
+}
+function latestAutoCtaPublication(db = {}) {
+return [...(db.publications || []), ...(db.boards || [])]
+.filter(item => item && item.autoPublished && (item.type === 'cta' || item.boardType === 'cta' || item.ctaType))
+.sort((a, b) => Date.parse(b.createdAt || 0) - Date.parse(a.createdAt || 0))[0] || null;
+}
+function ctaAutopublishDueStatus(db = {}, intervalMs = CTA_AUTOPUBLISH_INTERVAL_MS) {
+const last = latestAutoCtaPublication(db);
+const lastTime = Date.parse(last?.createdAt || 0);
+if (!last || !Number.isFinite(lastTime)) return { due: true, last: null, remainingMs: 0, elapsedMs: null, intervalMs };
+const elapsedMs = Date.now() - lastTime;
+const remainingMs = Math.max(0, intervalMs - elapsedMs);
+return { due: elapsedMs >= intervalMs, last, remainingMs, elapsedMs, intervalMs };
+}
+function createCtaPublicationIfDue(db, scan, options = {}) {
+const settings = db.settings || {};
+const { intervalMs } = syncCtaAutopublishSettings(db);
+if (settings.ctaAutopublishEnabled === false && options.force !== true) return null;
+const due = ctaAutopublishDueStatus(db, intervalMs);
+if (!due.due && options.force !== true) return null;
+return createCtaPublication(db, scan, { ...options, autoPublished: true, publishIntervalMs: intervalMs });
+}
+
 async function runCtaAutopublish(reason = 'interval') {
+const lockKey = 'cta-autopublish-20min';
+const locked = await distributedLock.acquire(lockKey, Math.max(30, Math.ceil(CTA_AUTOPUBLISH_INTERVAL_MS / 1000)));
+if (!locked) return { ok: true, skipped: 'locked' };
+try {
 const db = await readDb();
 const settings = db.settings || {};
-if (settings.ctaAutopublishEnabled === false) return { ok: true, skipped: 'disabled' };
-const last = (db.publications || []).find(item => item.type === 'cta' && item.autoPublished);
-if (last && Date.now() - Date.parse(last.createdAt || 0) < CTA_AUTOPUBLISH_INTERVAL_MS) {
-return { ok: true, skipped: 'interval' };
+const synced = syncCtaAutopublishSettings(db);
+if (settings.ctaAutopublishEnabled === false) {
+if (synced.changed) await writeDb(db);
+return { ok: true, skipped: 'disabled' };
+}
+const due = ctaAutopublishDueStatus(db, synced.intervalMs);
+if (!due.due) {
+if (synced.changed) await writeDb(db);
+return { ok: true, skipped: 'interval', remainingMs: due.remainingMs, intervalMs: synced.intervalMs };
 }
 const scan = (db.scans || [])[0] || {
 requestId: uid('scan'),
@@ -3670,10 +3727,13 @@ riskScore: 55,
 totalFindings: 3,
 topFindings: ['지원 고지', '환불 정책 표시', '개인정보 처리방침 위치']
 };
-const item = createCtaPublication(db, scan, { autoPublished: true });
-appendAudit(db, { headers: {}, socket: {} }, 'system.cta.autopublished', { id: item.id, reason });
+const item = createCtaPublication(db, scan, { autoPublished: true, publishIntervalMs: synced.intervalMs });
+appendAudit(db, { headers: {}, socket: {} }, 'system.cta.autopublished', { id: item.id, reason, intervalMs: synced.intervalMs });
 await writeDb(db);
-return { ok: true, publication: item };
+return { ok: true, publication: item, intervalMs: synced.intervalMs };
+} finally {
+await distributedLock.release(lockKey);
+}
 }
 
 function createRouteContext() {
@@ -3756,6 +3816,7 @@ buildOpenApiSpec,
 buildOpsReport,
 buildPlanCatalog,
 buildPolicyDocumentPreview,
+buildWorkOrderPreview,
 buildPortalSummary,
 buildProductDashboard,
 buildProductIntelligence,
@@ -3777,6 +3838,7 @@ completeCheckoutOrder,
 createBackupSnapshot,
 createCheckoutOrder,
 createCtaPublication,
+createCtaPublicationIfDue,
 createGuidanceDocument,
 createPasswordResetToken,
 crypto,
@@ -4036,6 +4098,10 @@ const ctaAutopublishInterval = setInterval(() => {
 runCtaAutopublish('interval').catch(error => console.error('cta autopublish failed', error));
 }, CTA_AUTOPUBLISH_INTERVAL_MS);
 ctaAutopublishInterval.unref();
+const ctaAutopublishStartupTimer = setTimeout(() => {
+runCtaAutopublish('startup_due_check').catch(error => console.error('cta startup autopublish failed', error));
+}, 5_000);
+ctaAutopublishStartupTimer.unref();
 const autoBackupInterval = setInterval(() => {
 runAutomaticBackup('scheduled').catch(error => console.error('automatic backup failed', error));
 }, AUTO_BACKUP_INTERVAL_MS);
@@ -4043,6 +4109,7 @@ autoBackupInterval.unref();
 async function shutdown() {
 clearInterval(cleanupInterval);
 clearInterval(ctaAutopublishInterval);
+clearTimeout(ctaAutopublishStartupTimer);
 clearInterval(autoBackupInterval);
 if (sessionsDirty) await writeSessionsToDisk();
 const forceExit = setTimeout(() => process.exit(0), 1500);

@@ -69,6 +69,7 @@ export function createAccountRouteHandler(ctx) {
   completeCheckoutOrder,
   createCheckoutOrder,
   createCtaPublication,
+  createCtaPublicationIfDue,
   createGuidanceDocument,
   createPasswordResetToken,
   crypto,
@@ -348,7 +349,7 @@ appendAudit(db, req, 'public.customer.site_removed', { customerId: session.custo
 await writeDb(db);
 return json(req, res, 200, { ok: true, removed: before !== db.customerSiteLinks.length });
 }
-if (pathname === '/api/public/account/rescan' && req.method === 'POST') return handleAccountRescan([req,res,json,readDb,writeDb,getCustomerSession,bodyJson,MAX_JSON_BODY_BYTES,asTrimmedString,normalizeDomainInput,findSiteByAny,scanResultFor,ensureSiteRecord,ensureSubscriptionForSite,createGuidanceDocument,seedAutoFixJobs,createCtaPublication,buildPublicDiagnosisPackage,customerSavedSites,appendAudit,nowIso]);
+if (pathname === '/api/public/account/rescan' && req.method === 'POST') return handleAccountRescan([req,res,json,readDb,writeDb,getCustomerSession,bodyJson,MAX_JSON_BODY_BYTES,asTrimmedString,normalizeDomainInput,findSiteByAny,scanResultFor,ensureSiteRecord,ensureSubscriptionForSite,createGuidanceDocument,seedAutoFixJobs,createCtaPublicationIfDue,buildPublicDiagnosisPackage,customerSavedSites,appendAudit,nowIso]);
 
     return false;
   };

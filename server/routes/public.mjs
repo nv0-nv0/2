@@ -54,6 +54,7 @@ export function createPublicRouteHandler(ctx) {
   buildOpenApiSpec,
   buildPlanCatalog,
   buildPolicyDocumentPreview,
+  buildWorkOrderPreview,
   buildPortalSummary,
   buildProductDashboard,
   buildProductIntelligence,
@@ -72,6 +73,7 @@ export function createPublicRouteHandler(ctx) {
   completeCheckoutOrder,
   createCheckoutOrder,
   createCtaPublication,
+  createCtaPublicationIfDue,
   createGuidanceDocument,
   createPasswordResetToken,
   crypto,
@@ -252,7 +254,9 @@ return json(req, res, 200, { ok: true, recommendedPlan, plans: buildPlanCatalog(
 if (pathname === '/api/public/document-preview' && req.method === 'POST') {
 const body = normalizeDocumentPreviewPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
 const db = await readDb();
-const preview = buildPolicyDocumentPreview(body, db.settings || {});
+const preview = body.documentKind === 'work_order'
+  ? buildWorkOrderPreview(body, { nowIso })
+  : buildPolicyDocumentPreview(body, db.settings || {});
 return json(req, res, 200, { ok: true, preview });
 }
 if (pathname === '/api/public/board' && req.method === 'GET') {
@@ -519,7 +523,7 @@ appendAudit(db, req, 'public.customer.site_removed', { customerId: session.custo
 await writeDb(db);
 return json(req, res, 200, { ok: true, removed: before !== db.customerSiteLinks.length });
 }
-if (pathname === '/api/public/account/rescan' && req.method === 'POST') return handleAccountRescan([req,res,json,readDb,writeDb,getCustomerSession,bodyJson,MAX_JSON_BODY_BYTES,asTrimmedString,normalizeDomainInput,findSiteByAny,scanResultFor,ensureSiteRecord,ensureSubscriptionForSite,createGuidanceDocument,seedAutoFixJobs,createCtaPublication,buildPublicDiagnosisPackage,customerSavedSites,appendAudit,nowIso]);
+if (pathname === '/api/public/account/rescan' && req.method === 'POST') return handleAccountRescan([req,res,json,readDb,writeDb,getCustomerSession,bodyJson,MAX_JSON_BODY_BYTES,asTrimmedString,normalizeDomainInput,findSiteByAny,scanResultFor,ensureSiteRecord,ensureSubscriptionForSite,createGuidanceDocument,seedAutoFixJobs,createCtaPublicationIfDue,buildPublicDiagnosisPackage,customerSavedSites,appendAudit,nowIso]);
 if (pathname === '/api/public/refund-request' && req.method === 'POST') {
 const body = normalizeRefundRequestPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
 const db = await readDb();
@@ -622,7 +626,7 @@ const offers = buildCommercialOfferCatalog();
 const intelligence = buildProductIntelligence({ scan: result, site, offers, source: 'scan' });
 const journey = buildSmartProductOrchestration({ scan: result, site, intelligence, offers, source: 'scan' });
 let ctaPublication = null;
-if (db.settings.ctaAutopublishEnabled) ctaPublication = createCtaPublication(db, result, { autoPublished: true });
+ctaPublication = createCtaPublicationIfDue(db, result, { reason: 'scan' });
 db.scans.unshift({ siteId: site.id, subscriptionId: subscription.id, customerId: customerSession?.customer?.id || null, createdAt: nowIso(), intelligence, journey, ...result });
 db.scans = db.scans.slice(0, 100);
 appendAudit(db, req, 'public.scan.created', { requestId: result.requestId, target: result.target, siteId: site.id, provider: result.provider || SCAN_PROVIDER, linkedCustomer: !!customerSession?.customer, ctaPublicationId: ctaPublication?.id || null, recommendedPlan: intelligence.recommendedPlan });

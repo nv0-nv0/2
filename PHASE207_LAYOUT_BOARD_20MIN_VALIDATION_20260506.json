@@ -60,7 +60,7 @@
       "detail": ""
     },
     {
-      "name": "static board includes problem awareness section",
+      "name": "static board includes readable problem section",
       "pass": true,
       "detail": ""
     },
@@ -80,7 +80,7 @@
       "detail": ""
     },
     {
-      "name": "server public board body includes problem awareness",
+      "name": "server public board body includes problem section",
       "pass": true,
       "detail": ""
     },
@@ -90,7 +90,7 @@
       "detail": ""
     },
     {
-      "name": "server public board body includes natural final CTA",
+      "name": "server public board body includes final next-action CTA",
       "pass": true,
       "detail": ""
     },
@@ -105,17 +105,17 @@
       "detail": ""
     },
     {
-      "name": "CTA generator version is phase207",
+      "name": "CTA generator version is phase207 or later",
       "pass": true,
       "detail": ""
     },
     {
-      "name": "CTA generator includes problem awareness",
+      "name": "CTA generator includes problem section",
       "pass": true,
       "detail": ""
     },
     {
-      "name": "CTA generator includes product related general topic",
+      "name": "CTA generator includes reader interest topic",
       "pass": true,
       "detail": ""
     },
@@ -125,7 +125,7 @@
       "detail": ""
     },
     {
-      "name": "CTA generator final section is natural CTA",
+      "name": "CTA generator final section is next-action CTA",
       "pass": true,
       "detail": ""
     },
@@ -202,7 +202,7 @@
     {
       "name": "runtime board 1 body near 4k chars",
       "pass": true,
-      "detail": "length=3879"
+      "detail": "length=3913"
     },
     {
       "name": "runtime board 1 interval is 20min",
@@ -210,14 +210,14 @@
       "detail": ""
     },
     {
-      "name": "runtime board 1 has natural CTA",
+      "name": "runtime board 1 has final CTA",
       "pass": true,
       "detail": ""
     },
     {
       "name": "runtime board 2 body near 4k chars",
       "pass": true,
-      "detail": "length=3913"
+      "detail": "length=3947"
     },
     {
       "name": "runtime board 2 interval is 20min",
@@ -225,14 +225,14 @@
       "detail": ""
     },
     {
-      "name": "runtime board 2 has natural CTA",
+      "name": "runtime board 2 has final CTA",
       "pass": true,
       "detail": ""
     },
     {
       "name": "runtime board 3 body near 4k chars",
       "pass": true,
-      "detail": "length=3903"
+      "detail": "length=3937"
     },
     {
       "name": "runtime board 3 interval is 20min",
@@ -240,14 +240,14 @@
       "detail": ""
     },
     {
-      "name": "runtime board 3 has natural CTA",
+      "name": "runtime board 3 has final CTA",
       "pass": true,
       "detail": ""
     },
     {
       "name": "runtime board 4 body near 4k chars",
       "pass": true,
-      "detail": "length=3904"
+      "detail": "length=3938"
     },
     {
       "name": "runtime board 4 interval is 20min",
@@ -255,14 +255,14 @@
       "detail": ""
     },
     {
-      "name": "runtime board 4 has natural CTA",
+      "name": "runtime board 4 has final CTA",
       "pass": true,
       "detail": ""
     },
     {
       "name": "runtime board 5 body near 4k chars",
       "pass": true,
-      "detail": "length=3862"
+      "detail": "length=3896"
     },
     {
       "name": "runtime board 5 interval is 20min",
@@ -270,60 +270,9 @@
       "detail": ""
     },
     {
-      "name": "runtime board 5 has natural CTA",
+      "name": "runtime board 5 has final CTA",
       "pass": true,
       "detail": ""
     }
-  ],
-  "executedCommands": [
-    {
-      "command": "npm run check:syntax",
-      "ok": true,
-      "result": "233 source files checked, 0 failures"
-    },
-    {
-      "command": "npm run check:pages",
-      "ok": true,
-      "result": "34 routes checked, 0 errors"
-    },
-    {
-      "command": "npm run test:routes",
-      "ok": true,
-      "result": "24 routes checked"
-    },
-    {
-      "command": "npm run test:all",
-      "ok": true,
-      "result": "87 passed, 0 failed"
-    },
-    {
-      "command": "npm run validate:phase204",
-      "ok": true,
-      "result": "11/11 passed"
-    },
-    {
-      "command": "npm run validate:phase205",
-      "ok": true,
-      "result": "12/12 passed"
-    },
-    {
-      "command": "npm run validate:phase206",
-      "ok": true,
-      "result": "8/8 passed"
-    },
-    {
-      "command": "npm run validate:phase207",
-      "ok": true,
-      "result": "54/54 passed"
-    },
-    {
-      "command": "npm run phase207:final",
-      "ok": true,
-      "result": "final gate passed"
-    }
-  ],
-  "artifacts": {
-    "zip": "nv0_phase207_layout_board_20min_4000cta_20260506.zip",
-    "workOrder": "PHASE207_LAYOUT_BOARD_20MIN_WORK_ORDER_20260506_KO.md"
-  }
+  ]
 }

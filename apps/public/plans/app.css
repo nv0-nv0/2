@@ -16,3 +16,7 @@
 .offer-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;min-width:0;}
 .offer-head>div{min-width:0;}.offer-head h3{word-break:keep-all;overflow-wrap:anywhere;}.offer-head .pill{flex:0 0 auto;white-space:nowrap;}
 @media(max-width:720px){.offer-head{display:grid;grid-template-columns:1fr;}.offer-head .pill{justify-self:start;white-space:normal;}}
+
+
+/* PHASE209: plan score matrix */
+.phase209-plan-score-matrix .nv0-panel{display:grid;gap:8px}.phase209-plan-score-matrix b{color:#fff}.phase209-plan-score-matrix strong{color:#fff;font-size:2rem;letter-spacing:-.05em}.phase209-plan-score-matrix p{margin:0;color:var(--muted,#9aa4b2);line-height:1.65}
