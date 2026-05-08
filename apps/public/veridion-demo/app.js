@@ -815,20 +815,20 @@ function renderValueComparison(view) {
 function renderPhase209CompletionScorecard(view) {
   const siteId = view.siteId ? `&siteId=${encodeURIComponent(view.siteId)}` : '';
   const rows = [
-    ['무료 데모', '100점', '위험도·확인 URL·수동확인·잠금 항목·다음 행동을 한 화면에서 구분합니다.', '/products/veridion/demo'],
-    ['상세 리포트', '100점', '페이지별 근거, 우선순위, 전/후 예시, 적용 난이도, 재점검 기준을 제공합니다.', `/checkout?plan=Report${siteId}`],
-    ['FixPack', '100점', '푸터·환불·개인정보·광고 표현을 복사 가능한 문구와 적용 위치로 분리합니다.', `/checkout?plan=FixPack${siteId}`],
-    ['Auto 정기 케어', '100점', '20분 자동발행, 중복 락, 최근 발행 시각, 재진단 루프, 운영자 확인 기준을 제공합니다.', `/checkout?plan=Auto${siteId}`]
+    ['무료 진단', '먼저 확인', '고객이 결제 전 확인하는 기본 안내와 불안 요소를 빠르게 파악합니다.', '/products/veridion/demo'],
+    ['상세 리포트', '원인 정리', '문제 위치, 이유, 우선순위를 내부 공유가 쉬운 형태로 정리합니다.', `/checkout?plan=Report${siteId}`],
+    ['FixPack', '바로 수정', '푸터·환불·문의·CTA 문장을 전/후 형태로 받아 사이트에 반영합니다.', `/checkout?plan=FixPack${siteId}`],
+    ['Auto 정기 케어', '계속 관리', '자주 바뀌는 페이지의 안내 공백과 CTA 흐름을 정기적으로 살핍니다.', `/checkout?plan=Auto${siteId}`]
   ];
   const gates = [
-    '무료 결과와 결제 산출물 차이를 명확히 표시',
-    '근거·한계·수동확인 항목을 숨기지 않고 분리',
-    '수정 문구안과 재점검 기준을 구매 전 기대치로 고정',
-    'Auto는 20분 due 체크와 중복 방지를 전환 설명에 포함'
+    '무료로 먼저 확인하고 필요한 결과물만 선택',
+    '근거와 추가 확인이 필요한 항목을 분리',
+    '바로 반영할 문장과 적용 위치 제공',
+    '자주 바뀌는 페이지의 안내 공백을 꾸준히 점검'
   ];
-  return `<section class="phase209-completion-scorecard" aria-label="제품 데모와 서비스 결과물 100점 완성 기준">
-    <div class="section-title"><span class="pill brand">100점 완성 기준</span><h3>무료 데모부터 결제 산출물까지 점수 기준을 고정했습니다</h3><p>사용자가 무엇을 무료로 보고, 무엇을 결제 후 받는지 바로 이해하도록 결과 화면에 수용 기준을 직접 노출합니다.</p></div>
-    <div class="phase209-score-grid">${rows.map(([title, score, desc, href]) => `<article><b>${escapeHtml(title)}</b><strong>${escapeHtml(score)}</strong><p>${escapeHtml(desc)}</p><a href="${escapeAttr(href)}">산출물 확인</a></article>`).join('')}</div>
+  return `<section class="phase209-completion-scorecard phase214-result-path" aria-label="무료 진단 이후 선택 가능한 결과물">
+    <div class="section-title"><span class="pill brand">다음 단계</span><h3>문제가 보이면, 필요한 결과물만 선택하세요</h3><p>무료 결과로 현재 상태를 먼저 보고, 고칠 필요가 보일 때만 리포트·수정 문장·정기 케어를 선택하면 됩니다.</p></div>
+    <div class="phase209-score-grid">${rows.map(([title, score, desc, href]) => `<article><b>${escapeHtml(title)}</b><strong>${escapeHtml(score)}</strong><p>${escapeHtml(desc)}</p><a href="${escapeAttr(href)}">자세히 보기</a></article>`).join('')}</div>
     <div class="phase209-gate-list">${gates.map((item, index) => `<span><em>${escapeHtml(index + 1)}</em>${escapeHtml(item)}</span>`).join('')}</div>
   </section>`;
 }
