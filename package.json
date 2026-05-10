@@ -266,6 +266,12 @@
     "phase220:final": "npm run check:syntax && npm run check:pages && npm run test:routes && npm run check:links -- --summary && npm run test:phase217 && npm run validate:phase217-cta && npm run test:phase216 && npm run validate:phase216 && npm run validate:phase218 && npm run validate:phase219 && npm run test:phase220 && npm run validate:phase220",
     "test:phase221": "node tests/phase221-page-copy-consistency.mjs",
     "validate:phase221": "node scripts/validate-phase221-page-copy-consistency.mjs",
-    "phase221:final": "npm run phase220:final && npm run test:phase221 && npm run validate:phase221"
+    "phase221:final": "npm run phase220:final && npm run test:phase221 && npm run validate:phase221",
+    "test:phase222": "node tests/phase222-redirect-loop-guard.mjs",
+    "validate:phase222": "node scripts/validate-phase222-redirect-loop-guard.mjs",
+    "phase222:final": "npm run phase221:final && npm run test:phase222 && npm run validate:phase222",
+    "test:phase223": "node tests/phase223-global-risk-guard.mjs",
+    "validate:phase223": "node scripts/validate-phase223-global-risk-guard.mjs",
+    "phase223:final": "npm run phase222:final && npm run test:phase223 && npm run validate:phase223"
   }
 }

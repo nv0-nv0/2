@@ -38,6 +38,7 @@ import { resolveNativeRouteState } from './core/native-route-state.mjs';
 import { buildWorkOrderPreview } from './core/work-order-generator.mjs';
 import { validateCommercialEnv } from './bootstrap/commercial-env.mjs';
 import { buildHealthDetails, classifyIncident } from './services/observability.mjs';
+import { buildDeploymentRiskGuard, PHASE223_RISK_GUARD_VERSION } from './core/deployment-risk-guard.mjs';
 import { putObjectToS3Compatible } from './infrastructure/storage/s3-compatible.mjs';
 const COMMERCIAL_OFFER_COMPATIBILITY_MARKERS = ['TemplatePack', 'IndustryGuide', 'Certified'];
 const ENV_CONFIG = readEnvConfig(process.env);
@@ -217,6 +218,10 @@ const LOG_HEALTHCHECK_REQUESTS = Boolean(ENV_CONFIG.logHealthcheckRequests) || A
 const LOG_FAVICON_REQUESTS = Boolean(ENV_CONFIG.logFaviconRequests) || ACCESS_LOG_MODE === 'verbose';
 const DATA_DESTRUCTION_GRACE_DAYS = Number(process.env.NV0_DATA_DESTRUCTION_GRACE_DAYS || 30);
 const SECURITY_POSTURE_VERSION = 'phase164-hardening-matrix-v1';
+const DEPLOYMENT_RISK_GUARD = buildDeploymentRiskGuard(process.env, { businessProfile: BUSINESS_PROFILE, publicBaseUrl: BUSINESS_PROFILE.domain });
+if (String(process.env.NV0_DEPLOYMENT_RISK_STRICT || 'false').trim().toLowerCase() === 'true' && !DEPLOYMENT_RISK_GUARD.ok) {
+throw new Error(`Deployment risk guard blocked startup: ${DEPLOYMENT_RISK_GUARD.blockers.map(item => item.key).join(', ')}`);
+}
 function assertFiniteConfigNumber(name, value, { min = 0, max = Number.MAX_SAFE_INTEGER } = {}) {
 if (!Number.isFinite(value) || value < min || value > max) {
 throw new Error(`${name} must be a finite number between ${min} and ${max}.`);
@@ -251,7 +256,7 @@ dataRetentionDays: DATA_RETENTION_DAYS,
 refundRequestWindowDays: REFUND_REQUEST_WINDOW_DAYS,
 operatorAlertEmail: OPERATOR_ALERT_EMAIL,
 ctaAutopublishIntervalMs: CTA_AUTOPUBLISH_INTERVAL_MS,
-ctaTargetLengthKo: '3800-4500'
+ctaTargetLengthKo: '4200-5200'
 },
 orders: [
 { id: 'ord-1001', customer: 'Acme Co', status: 'paid', stage: 'scan_requested', amount: 129000, createdAt: nowIso() },
@@ -543,6 +548,8 @@ const headers = {
 'x-permitted-cross-domain-policies': 'none',
 'x-download-options': 'noopen',
 'server': SERVER_HEADER,
+'x-nv0-risk-guard': PHASE223_RISK_GUARD_VERSION,
+'x-nv0-redirect-owner': DEPLOYMENT_RISK_GUARD.redirectOwner,
 'content-security-policy': cspParts.join('; '),
 'content-security-policy-report-only': ["trusted-types nv0-default", "require-trusted-types-for 'script'"].join('; ')
 };
@@ -1322,27 +1329,27 @@ return String(value ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;
 function routeMeta(urlPath) {
 const base = seoBaseUrl();
 const metas = {
-'/': { title: '웹사이트 안내·정책 무료 점검 | NV0', description: '쇼핑몰과 서비스 페이지에서 고객이 꼭 확인하는 사업자 정보, 개인정보 안내, 환불 기준, 문의 버튼, 가격 안내를 쉽게 점검합니다.', keywords: ['웹사이트 무료 점검','쇼핑몰 신뢰도 점검','환불 안내 점검','개인정보 안내 점검','문의 버튼 개선'] },
-'/products/veridion/demo': { title: 'NV0 무료진단 | 웹사이트 신뢰 안내 점검', description: '사이트 주소로 고객이 결제나 문의 전에 헷갈릴 수 있는 안내 공백을 무료 요약으로 확인하고, 먼저 고칠 부분을 쉽게 정리합니다.', keywords: ['무료 사이트 진단','웹사이트 신뢰 점검','문의 구매 흐름 점검','쇼핑몰 안내 점검'] },
-'/demo': { title: 'NV0 무료진단 | 웹사이트 신뢰 안내 점검', description: '사이트 주소로 고객이 결제나 문의 전에 헷갈릴 수 있는 안내 공백을 무료 요약으로 확인하고, 먼저 고칠 부분을 쉽게 정리합니다.', keywords: ['무료 사이트 진단','웹사이트 신뢰 점검','문의 구매 흐름 점검','쇼핑몰 안내 점검'] },
-'/plans': { title: '상품·요금 | NV0 상세 리포트·FixPack·Auto 정기 케어 비교', description: '무료 진단 이후 상세 리포트, 바로 붙여넣는 수정 문구안, Auto 정기 케어 상품을 상황별로 비교합니다.', keywords: ['사이트 진단 요금','FixPack','Auto 정기 케어','정책 문서 템플릿'] },
-'/products': { title: '상품·요금 | NV0 상세 리포트·FixPack·Auto 정기 케어 비교', description: '무료 진단 이후 상세 리포트, 바로 붙여넣는 수정 문구안, Auto 정기 케어 상품을 상황별로 비교합니다.', keywords: ['사이트 진단 요금','FixPack','Auto 정기 케어','정책 문서 템플릿'] },
-'/documents': { title: '문서·작업지시서 생성 | 정책 문서 초안·고객 안내문', description: '개인정보처리방침, 이용약관, 환불·청약철회 정책 같은 운영 참고용 초안과 내부 실행용 작업지시서를 최소 입력으로 정리합니다.', keywords: ['정책 문서 생성','개인정보처리방침 초안','이용약관 초안','환불 정책 초안','작업지시서 생성'] },
-'/policy-documents': { title: '문서·작업지시서 생성 | 정책 문서 초안·고객 안내문', description: '개인정보처리방침, 이용약관, 환불·청약철회 정책 같은 운영 참고용 초안과 내부 실행용 작업지시서를 최소 입력으로 정리합니다.', keywords: ['정책 문서 생성','개인정보처리방침 초안','이용약관 초안','환불 정책 초안','작업지시서 생성'] },
+'/': { title: 'NV0 / Veridion | AI 기반 웹사이트 신뢰 진단 & 전환 개선 플랫폼', description: '고객이 결제하기 전에 확인하는 사업자 정보, 개인정보 안내, 환불 기준, 문의 경로, 결제 안내를 근거 기반으로 진단하고 개선 흐름을 제안합니다.', keywords: ['웹사이트 신뢰 진단','전환 개선','무료 진단','FixPack','Auto 정기 케어'] },
+'/products/veridion/demo': { title: '무료 진단 | NV0 / Veridion', description: '주소 하나로 결제 전 신뢰 공백과 수동 확인이 필요한 영역을 분리해 보여주고, 결제 후 산출물 품질 기준까지 안내합니다.', keywords: ['무료 진단','웹사이트 신뢰 진단','오탐 방어','수동 확인','품질 게이트'] },
+'/demo': { title: '무료 진단 | NV0 / Veridion', description: '주소 하나로 결제 전 신뢰 공백과 수동 확인이 필요한 영역을 분리해 보여주고, 결제 후 산출물 품질 기준까지 안내합니다.', keywords: ['무료 진단','웹사이트 신뢰 진단','오탐 방어','수동 확인','품질 게이트'] },
+'/plans': { title: '상품·요금 | NV0 / Veridion', description: '무료 진단 이후 상세 리포트, FixPack, Auto 정기 케어를 제공 범위·가격·추천 상황 기준으로 비교합니다.', keywords: ['상품·요금','상세 리포트','FixPack','Auto 정기 케어','사이트 진단 요금'] },
+'/products': { title: '상품·요금 | NV0 / Veridion', description: '무료 진단 이후 상세 리포트, FixPack, Auto 정기 케어를 제공 범위·가격·추천 상황 기준으로 비교합니다.', keywords: ['상품·요금','상세 리포트','FixPack','Auto 정기 케어','사이트 진단 요금'] },
+'/documents': { title: '문서·작업지시서 생성 | NV0 / Veridion', description: '정책 문서와 내부 실행용 작업지시서를 최소 입력으로 정리하고, 실제 적용 전 확인해야 할 범위와 한계를 함께 표시합니다.', keywords: ['문서 생성','작업지시서 생성','정책 문서 초안','개선 가이드','운영 문구'] },
+'/policy-documents': { title: '문서·작업지시서 생성 | NV0 / Veridion', description: '정책 문서와 내부 실행용 작업지시서를 최소 입력으로 정리하고, 실제 적용 전 확인해야 할 범위와 한계를 함께 표시합니다.', keywords: ['문서 생성','작업지시서 생성','정책 문서 초안','개선 가이드','운영 문구'] },
 '/docs/veridion': { title: 'Veridion 문서 생성 | 정책 문서·진단 리포트 초안', description: 'Veridion 진단 후 필요한 정책 문서, 안내 문구, 개선 리포트 초안을 생성하는 문서 허브입니다.', keywords: ['Veridion 문서','정책 문서 생성','진단 리포트','개선 문구'] },
 '/guides': { title: '운영 가이드 | 쇼핑몰 신뢰도·정책 안내 점검', description: '쇼핑몰 신뢰도, 환불 정책, 구매 안내 버튼, 게시판 자동 발행, 반복 재진단 활용법을 전문가형 실무 가이드로 정리합니다.' },
 '/resources': { title: '운영 가이드 | 쇼핑몰 신뢰도·정책 안내 점검', description: '쇼핑몰 신뢰도, 환불 정책, 구매 안내 버튼, 게시판 자동 발행, 반복 재진단 활용법을 전문가형 실무 가이드로 정리합니다.' },
 '/solutions': { title: '솔루션 | 웹사이트 안내 고지·정책 문서·문의 흐름 점검', description: '웹사이트 필수 고지, 정책 문서, 결제 전 안내, 고객지원 안내를 한 번에 점검하는 NV0 솔루션입니다.' },
 '/service': { title: '서비스 작동 방식 | NV0 무료진단·리포트 산출 흐름', description: 'NV0가 공개 페이지를 수집하고 근거 신뢰도, 수동확인 항목, 결제 산출물로 이어지는 과정을 설명합니다.' },
 '/cases': { title: '적용 사례 | NV0 신뢰 공백 개선 사례', description: '쇼핑몰과 랜딩페이지가 사업자 고지, 환불 안내, 문의 흐름을 어떻게 정리하는지 사례로 확인합니다.' },
-'/board': { title: '콘텐츠 보드 | 전문가형 CTA 자동 발행', description: '진단 결과를 전문가형 CTA 포스팅, 체크리스트, 사례, 정책 안내 글로 정리해 재방문과 상품·요금 비교 흐름을 돕습니다.' },
-'/business-info': { title: '사업자 정보·고객지원 | NV0', description: 'NV0 서비스 운영자의 사업자 정보, 고객지원 이메일, 서비스 범위, 법률 자문 아님 고지를 확인하세요.' },
+'/board': { title: '콘텐츠 보드 | NV0 / Veridion', description: '진단 결과를 전문가형 CTA 포스팅, 체크리스트, 사례, 정책 안내 글로 정리해 재방문과 상품·요금 흐름을 돕습니다.' },
+'/business-info': { title: '사업자 정보 | NV0', description: 'NV0 서비스 운영자의 사업자 정보, 고객지원 이메일, 서비스 범위, 법률 자문 아님 고지를 확인하세요.' },
 '/terms': { title: '이용약관 | NV0', description: 'NV0 서비스 이용약관과 서비스 범위 기준입니다.' },
 '/privacy': { title: '개인정보처리방침 | NV0', description: 'NV0 서비스의 개인정보 처리 기준과 입력 정보 최소화 원칙입니다.' },
 '/refund': { title: '환불·청약철회 정책 | NV0', description: '디지털 산출물 제공 시점, 환불 요청 기준, 청약철회 제한 안내를 확인하세요.' },
 '/auth': { title: '로그인·회원가입 | NV0', description: '무료진단 횟수 관리, 내 사이트 저장, 원클릭 재검사, 최근 진단 이력 확인을 위한 로그인·회원가입 페이지입니다.' },
 '/portal': { title: '내 사이트 관리 | NV0', description: '저장한 사이트의 진단 결과, 재검사, 개선 이력, 게시판 발행 상태를 확인합니다.' },
-'/checkout': { title: '신청·결제 확인 | NV0', description: '상품 신청 전 제공 범위, 디지털 산출물 환불 제한, 정책 동의 항목을 확인합니다.' }
+'/checkout': { title: '결제 확인 | NV0 / Veridion', description: '결제 전 선택한 결과물, 품질 게이트, 디지털 산출물 환불 제한, 정책 동의 항목을 확인합니다.' }
 };
 const meta = metas[urlPath] || metas['/'];
 return { ...meta, canonical: `${base}${urlPath === '/' ? '/' : urlPath}`, locale: 'ko_KR' };
@@ -1380,7 +1387,7 @@ keywords ? `<meta name="keywords" content="${escapeHtml(keywords)}">` : '',
 `<meta name="twitter:card" content="summary">`,
 `<meta name="twitter:title" content="${escapeHtml(meta.title)}">`,
 `<meta name="twitter:description" content="${escapeHtml(meta.description)}">`,
-`<meta name="theme-color" content="#0B0F14">`
+`<meta name="theme-color" content="#0B1D3A">`
 ].filter(Boolean).join('');
 let out = stripManagedSeoTags(body).replace(/<title>[^<]*<\/title>/, `<title>${escapeHtml(meta.title)}</title>`);
 out = out.replace('</head>', `${tags}</head>`);
@@ -1502,12 +1509,29 @@ function injectSessionNavScript(body, urlPath) {
 if (urlPath.startsWith('/admin') || body.includes('/shared/session-nav.js')) return body;
 return body.replace('</body>', '<script type="module" src="/shared/session-nav.js"></script></body>');
 }
+function injectClientRiskGuard(body, urlPath) {
+if (urlPath.startsWith('/admin') || body.includes('/shared/client-risk-guard.js')) return body;
+return body.replace('</body>', '<script src="/shared/client-risk-guard.js" defer></script></body>');
+}
 function injectBusinessFooter(body, urlPath) {
 if (urlPath.startsWith('/admin')) return body;
 const footer = businessFooterHtml();
 const replaced = body.replace(/<footer\b[^>]*class=["'][^"']*\bbusiness-footer\b[^"']*["'][\s\S]*?<\/footer>/i, footer);
 if (replaced !== body) return replaced;
 return body.replace('</body>', `${footer}</body>`);
+}
+
+function wantsHtmlResponse(req) {
+const accept = String(req.headers.accept || '');
+const pathName = req._nv0RouteState?.pathname || '';
+return !pathName.startsWith('/api/') && (accept.includes('text/html') || accept.includes('*/*'));
+}
+function renderPublicErrorPage(req, res, status, title, message, requestId = '') {
+const safeTitle = escapeHtml(title);
+const safeMessage = escapeHtml(message);
+const safeRequestId = requestId ? escapeHtml(requestId) : '';
+const body = `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${safeTitle} | NV0 / Veridion</title><meta name="robots" content="noindex,nofollow,noarchive"><link rel="stylesheet" href="/shared/base.css"><link rel="stylesheet" href="/shared/design-system.css"><link rel="stylesheet" href="/shared/phase218-fresh-premium.css"></head><body>${publicTopMenuHtml('/')}<main id="main" tabindex="-1" class="nv0-error-page"><section class="nv0-error-card"><p class="eyebrow">서비스 안내</p><h1>${safeTitle}</h1><p>${safeMessage}</p>${safeRequestId ? `<p class="nv0-error-request">요청 ID: ${safeRequestId}</p>` : ''}<div class="hero-actions"><a class="btn primary" href="/products/veridion/demo">무료 진단으로 이동</a><a class="btn secondary" href="/">홈으로 이동</a></div></section></main>${businessFooterHtml()}<script src="/shared/client-risk-guard.js" defer></script></body></html>`;
+return html(req, res, status, body, { 'cache-control': 'no-store' }, 'public-page');
 }
 function adminNav() {
 return `<nav class="admin-nav">
@@ -1536,6 +1560,7 @@ body = ensureMainId(body);
 body = injectNoScriptNotice(body, urlPath);
 body = injectPublicTopMenu(body, urlPath);
 body = injectSessionNavScript(body, urlPath);
+body = injectClientRiskGuard(body, urlPath);
 body = injectBusinessFooter(body, urlPath);
 const category = urlPath.startsWith('/admin') ? 'dynamic' : 'public-page';
 html(req, res, 200, body, {}, category);
@@ -3682,7 +3707,7 @@ db.settings.ctaAutopublishIntervalMs = CTA_AUTOPUBLISH_INTERVAL_MS;
 changed = true;
 }
 if (!db.settings.ctaTargetLengthKo) {
-db.settings.ctaTargetLengthKo = '3800-4500';
+db.settings.ctaTargetLengthKo = '4200-5200';
 changed = true;
 }
 return { changed, intervalMs: CTA_AUTOPUBLISH_INTERVAL_MS };
@@ -3761,6 +3786,7 @@ BUSINESS_PROFILE,
 COMMERCIAL_LAUNCH_READY,
 CTA_AUTOPUBLISH_INTERVAL_MS,
 DATA_DIR,
+DEPLOYMENT_RISK_GUARD,
 DEPLOYMENT_STAGE,
 EMAIL_MAX_RETRY_COUNT,
 EMAIL_RETRY_BACKOFF_MS,
@@ -3772,6 +3798,7 @@ OPERATOR_ALERT_EMAIL,
 ORDER_STATUS_TRANSITIONS,
 PAYMENT_PROVIDER,
 PAYMENT_PROVIDER_URL,
+PHASE223_RISK_GUARD_VERSION,
 PERSISTENCE_MODE,
 PLATFORM,
 PORTONE_CLIENT,
@@ -3947,7 +3974,7 @@ const publicRouteHandler = createPublicRouteHandler(routeContext);
 const adminRouteHandler = createAdminRouteHandler(routeContext);
 
 // Canonical URL normalization is enforced in server/middleware/security.mjs with pathname.endsWith("/") before page rendering.
-const securityMiddleware = createSecurityMiddleware({ isAllowedHost, text, baseHeaders, requestUrlFrom, redirect, canonicalBaseUrl: seoBaseUrl(), canonicalHostRedirect: process.env.NV0_CANONICAL_HOST_REDIRECT !== 'false' });
+const securityMiddleware = createSecurityMiddleware({ isAllowedHost, text, baseHeaders, requestUrlFrom, redirect, canonicalBaseUrl: seoBaseUrl(), canonicalHostRedirect: process.env.NV0_CANONICAL_HOST_REDIRECT === 'true' });
 const READYZ_CACHE_TTL_MS = Math.max(0, Number(process.env.NV0_READYZ_CACHE_TTL_MS || 3000));
 let readyzCache = null;
 let publicXmlCache = { sitemap: null, feed: null };
@@ -3988,6 +4015,7 @@ return {
   paymentProvider: PAYMENT_PROVIDER === 'portone_v2' ? PORTONE_CLIENT.configSummary() : { mode: PAYMENT_PROVIDER },
   secureRecordStore: persistence.secureRecordStore || null,
   commercialEnv: validateCommercialEnv(process.env, { strict: false }),
+  deploymentRiskGuard: DEPLOYMENT_RISK_GUARD.public,
   phase200: { commercialSystemLayer: true, observabilityReady: true, fulfillmentHardeningReady: true },
   cachedForMs: READYZ_CACHE_TTL_MS
 };
@@ -4026,7 +4054,7 @@ const { pathname } = routeState;
 if (pathname.startsWith('/api/public/')) return publicRouteHandler(req, res, routeState);
 if (pathname.startsWith('/api/admin/')) return adminRouteHandler(req, res, routeState);
 if (pathname === '/healthz' || pathname === '/health' || pathname === '/livez') {
-return json(req, res, 200, buildHealthDetails({ service: 'nv0-veridion', phase: RELEASE_PHASE, integrations: { process: { ok: true }, commercialEnv: { ok: validateCommercialEnv(process.env, { strict: false }).ok } } }), { 'cache-control': 'no-store' });
+return json(req, res, 200, buildHealthDetails({ service: 'nv0-veridion', phase: RELEASE_PHASE, integrations: { process: { ok: true }, commercialEnv: { ok: validateCommercialEnv(process.env, { strict: false }).ok }, deploymentRiskGuard: { ok: DEPLOYMENT_RISK_GUARD.ok, version: PHASE223_RISK_GUARD_VERSION } } }), { 'cache-control': 'no-store' });
 }
 if (pathname === '/readyz') return handleReadyz(req, res);
 if (pathname === '/favicon.ico' && (req.method === 'GET' || req.method === 'HEAD')) {
@@ -4075,10 +4103,14 @@ const apiHandled = await handleApi(req, res, requestState);
 if (apiHandled !== false) return;
 const rendered = await renderPage(pathname, req, res);
 if (rendered) return;
+if (wantsHtmlResponse(req)) return renderPublicErrorPage(req, res, 404, '페이지를 찾을 수 없습니다', '주소가 바뀌었거나 접근할 수 없는 페이지입니다. 홈 또는 무료 진단으로 이동해 주세요.', requestId);
 text(req, res, 404, 'Not found');
 } catch (error) {
 const status = error?.code === 'PAYLOAD_TOO_LARGE' ? 413 : ['INVALID_JSON', 'INVALID_PAYLOAD'].includes(error?.code) ? 400 : 500;
 console.error(JSON.stringify({ level: 'error', event: 'request_error', requestId, statusCode: status, incident: classifyIncident(error, { requestId, route: req._nv0RouteState?.pathname }), message: error?.message || 'unknown error', code: error?.code || null, stack: NODE_ENV === 'production' ? undefined : error?.stack }));
+if (wantsHtmlResponse(req) && status >= 500) {
+return renderPublicErrorPage(req, res, status, '일시적인 오류가 발생했습니다', '요청을 안전하게 중단했습니다. 잠시 후 다시 시도해 주세요.', requestId);
+}
 json(req, res, status, { ok: false, error: status === 413 ? '요청 크기가 너무 큽니다.' : status === 400 ? (error.message || '잘못된 요청입니다.') : '서버 오류가 발생했습니다.', requestId });
 } finally {
 const pathname = req._nv0RouteState?.pathname || (() => { try { return requestUrlFrom(req).pathname; } catch { return 'invalid-url'; } })();

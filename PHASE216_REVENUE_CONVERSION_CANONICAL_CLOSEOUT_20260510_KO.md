@@ -63,7 +63,7 @@ NV0/VERIDION의 핵심 구조는 유지했다.
 
 ```env
 NV0_PUBLIC_BASE_URL=https://nv0.kr
-NV0_CANONICAL_HOST_REDIRECT=true
+NV0_CANONICAL_HOST_REDIRECT=false
 ```
 
 ### 4.2 통신판매업 신고번호 placeholder 출력 차단
@@ -157,7 +157,7 @@ npm run phase216:final
 
 1. Coolify 환경변수 확인
    - `NV0_PUBLIC_BASE_URL=https://nv0.kr`
-   - `NV0_CANONICAL_HOST_REDIRECT=true`
+   - `NV0_CANONICAL_HOST_REDIRECT=false`
 2. Coolify 도메인 설정
    - 표준 도메인: `nv0.kr`
    - `www.nv0.kr`은 `nv0.kr`로 리다이렉트

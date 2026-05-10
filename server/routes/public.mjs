@@ -12,9 +12,11 @@ export function createPublicRouteHandler(ctx) {
   COMMERCIAL_LAUNCH_READY,
   CTA_AUTOPUBLISH_INTERVAL_MS,
   DATA_DIR,
+  DEPLOYMENT_RISK_GUARD,
   DEPLOYMENT_STAGE,
   MAX_JSON_BODY_BYTES,
   PAYMENT_PROVIDER,
+  PHASE223_RISK_GUARD_VERSION,
   PERSISTENCE_MODE,
   PLATFORM,
   PORTONE_CLIENT,
@@ -167,13 +169,17 @@ return { requestId: scan?.requestId || null, siteId: scan?.siteId || null, targe
   const paymentHandled = await paymentRouteHandler(req, res, { requestUrl: url, pathname });
   if (paymentHandled !== false) return paymentHandled;
 if (pathname === '/api/public/diagnosis-engine' && req.method === 'GET') {
-return json(req, res, 200, { ok: true, phase: RELEASE_PHASE, engine: 'NV0 Public Evidence Summary Check Engine', rulesVersion: RULES_VERSION, targetFetchEnabled: TARGET_FETCH_ENABLED, scanProvider: SCAN_PROVIDER, aiReviewProvider: AI_REVIEW_PROVIDER, geminiConfigured: AI_REVIEW_ENABLED, resultContract: { resultType: 'preliminary_check', legalConclusion: false, includesEvidenceSummary: true, includesConfidenceScore: true, includesManualReviewFlags: true, includesAutomationDisclosure: true, includesAutomatedActionPlan: true, includesAccuracyProfile: true, includesReportQualityGate: true, includesDemoAccuracyContract: true, includesPaidOutputQualityGate: true, phase220ServiceQualityVersion: PHASE220_SERVICE_QUALITY_VERSION }, endpoints: { scan: 'POST /api/public/scan', diagnose: 'POST /api/public/diagnose', board: 'GET /api/public/system-items', engine: 'GET /api/public/diagnosis-engine', productIntelligence: 'GET /api/public/product-intelligence', productQuality: 'GET /api/public/product-quality' }, smartProduct: { version: 'p153-smart-ops-v1', nextBestAction: true, planFitScoring: true, journeyOrchestration: true, smartProductEndpoint: '/api/public/smart-product', userPath: ['무료 요약','요금제 선택','내 사이트 관리','게시판 재유입'] }, autoPublish: { boardName: '게시판', intervalMs: CTA_AUTOPUBLISH_INTERVAL_MS, intervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000), topicPackCount: ctaTopicPacks().length, combinationStats: ctaCombinationStats(), variants: ctaTopicPacks().map(item => item.headline) }, automation: { mode: TARGET_FETCH_AUTOMATION_LEVEL, robotsEnabled: TARGET_FETCH_ROBOTS_ENABLED, sitemapEnabled: TARGET_FETCH_SITEMAP_ENABLED, maxPages: TARGET_FETCH_MAX_PAGES, maxDiscoveryResources: TARGET_FETCH_MAX_DISCOVERY_RESOURCES, notice: '자동 확인 가능한 공개 항목은 모두 처리하고 자동 확정 불가 영역은 수동확인으로 고지합니다.' }, checks: buildRuleCatalog().map(({ code, category, title, severity, penaltyMax }) => ({ code, category, title, severity, penaltyMax })) });
+return json(req, res, 200, { ok: true, phase: RELEASE_PHASE, engine: 'NV0 Public Evidence Summary Check Engine', rulesVersion: RULES_VERSION, targetFetchEnabled: TARGET_FETCH_ENABLED, scanProvider: SCAN_PROVIDER, aiReviewProvider: AI_REVIEW_PROVIDER, geminiConfigured: AI_REVIEW_ENABLED, resultContract: { resultType: 'preliminary_check', legalConclusion: false, includesEvidenceSummary: true, includesConfidenceScore: true, includesManualReviewFlags: true, includesAutomationDisclosure: true, includesAutomatedActionPlan: true, includesAccuracyProfile: true, includesReportQualityGate: true, includesDemoAccuracyContract: true, includesPaidOutputQualityGate: true, phase220ServiceQualityVersion: PHASE220_SERVICE_QUALITY_VERSION, phase223RiskGuardVersion: PHASE223_RISK_GUARD_VERSION }, endpoints: { scan: 'POST /api/public/scan', diagnose: 'POST /api/public/diagnose', board: 'GET /api/public/system-items', engine: 'GET /api/public/diagnosis-engine', productIntelligence: 'GET /api/public/product-intelligence', productQuality: 'GET /api/public/product-quality' }, smartProduct: { version: 'p153-smart-ops-v1', nextBestAction: true, planFitScoring: true, journeyOrchestration: true, smartProductEndpoint: '/api/public/smart-product', userPath: ['무료 요약','요금제 선택','내 사이트 관리','게시판 재유입'] }, autoPublish: { boardName: '게시판', intervalMs: CTA_AUTOPUBLISH_INTERVAL_MS, intervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000), topicPackCount: ctaTopicPacks().length, combinationStats: ctaCombinationStats(), variants: ctaTopicPacks().map(item => item.headline) }, automation: { mode: TARGET_FETCH_AUTOMATION_LEVEL, robotsEnabled: TARGET_FETCH_ROBOTS_ENABLED, sitemapEnabled: TARGET_FETCH_SITEMAP_ENABLED, maxPages: TARGET_FETCH_MAX_PAGES, maxDiscoveryResources: TARGET_FETCH_MAX_DISCOVERY_RESOURCES, notice: '자동 확인 가능한 공개 항목은 모두 처리하고 자동 확정 불가 영역은 수동확인으로 고지합니다.' }, checks: buildRuleCatalog().map(({ code, category, title, severity, penaltyMax }) => ({ code, category, title, severity, penaltyMax })) });
 }
 if (pathname === '/api/public/config' && req.method === 'GET') {
 return json(req, res, 200, { ok: true, turnstileEnabled: TURNSTILE_PUBLIC_ENABLED, turnstileConfigured: TURNSTILE_CONFIGURED, prelaunchMode: PRELAUNCH_MODE, turnstileSiteKey: TURNSTILE_PUBLIC_ENABLED ? TURNSTILE_SITE_KEY : '' });
 }
 if (pathname === '/api/public/health' && req.method === 'GET') {
-return json(req, res, 200, { ok: true, area: 'public', time: nowIso(), phase: RELEASE_PHASE, privacy: 'minimum_required_only' });
+return json(req, res, 200, { ok: true, area: 'public', time: nowIso(), phase: RELEASE_PHASE, privacy: 'minimum_required_only', deploymentRiskGuard: { ok: DEPLOYMENT_RISK_GUARD?.ok !== false, version: PHASE223_RISK_GUARD_VERSION, redirectOwner: DEPLOYMENT_RISK_GUARD?.redirectOwner || 'edge' } });
+}
+if (pathname === '/api/public/risk-guard' && req.method === 'GET') {
+const guard = DEPLOYMENT_RISK_GUARD?.public || { ok: true, version: PHASE223_RISK_GUARD_VERSION };
+return json(req, res, guard.ok ? 200 : 503, { ok: guard.ok, riskGuard: guard }, { 'cache-control': 'no-store' });
 }
 if (pathname === '/api/public/openapi.json' && req.method === 'GET') {
 return json(req, res, 200, buildOpenApiSpec(), { 'cache-control': 'public, max-age=3600' });

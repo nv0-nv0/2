@@ -23,7 +23,7 @@ function shouldCanonicalHostRedirect(requestHost, canonicalHost) {
   return false;
 }
 
-export function createSecurityMiddleware({ isAllowedHost, text, baseHeaders, requestUrlFrom, redirect, canonicalBaseUrl = '', canonicalHostRedirect = true }) {
+export function createSecurityMiddleware({ isAllowedHost, text, baseHeaders, requestUrlFrom, redirect, canonicalBaseUrl = '', canonicalHostRedirect = false }) {
   return function applyHttpSecurityGate(req, res) {
     if (!isAllowedHost(req)) {
       text(req, res, 421, 'Misdirected Request');
@@ -42,10 +42,13 @@ export function createSecurityMiddleware({ isAllowedHost, text, baseHeaders, req
     }
     const canonical = canonicalBaseParts(canonicalBaseUrl);
     const currentHost = normalizeHostHeader(req.headers.host || '');
-    if (canonicalHostRedirect && shouldCanonicalHostRedirect(currentHost, canonical.host)) {
+    // PHASE222: canonical host redirects are opt-in. In production, Cloudflare/Coolify
+    // should own apex/www redirects unless NV0_CANONICAL_HOST_REDIRECT=true is set explicitly.
+    // This prevents nv0.kr <-> www.nv0.kr redirect loops when an edge rule and app rule disagree.
+    if (canonicalHostRedirect === true && shouldCanonicalHostRedirect(currentHost, canonical.host)) {
       const target = `${canonical.origin || `${canonical.protocol}//${canonical.host}`}${requestUrl.pathname}${requestUrl.search}`;
       redirect(req, res, 308, target);
-      return { handled: true, reason: 'canonical_host_redirect', ...routeState };
+      return { handled: true, reason: 'canonical_host_redirect', phase222LoopGuard: 'app_redirect_opt_in', ...routeState };
     }
     if (pathname.length > 1 && pathname.endsWith('/')) {
       requestUrl.pathname = pathname.replace(/\/+$/, '');
