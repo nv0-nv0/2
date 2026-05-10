@@ -1,0 +1,17 @@
+PHASE220 changed files
+
+server/core/service-quality-220.mjs
+server/core/diagnosis-report-package.mjs
+server/core/premium-asset-builder.mjs
+server/routes/public.mjs
+apps/public/veridion-demo/app.js
+apps/public/checkout/index.html
+apps/public/checkout/app.js
+shared/phase218-fresh-premium.css
+tests/phase220-demo-paid-service-quality.mjs
+scripts/validate-phase220-demo-paid-service-quality.mjs
+package.json
+PHASE220_DEMO_PAID_SERVICE_QUALITY_CLOSEOUT_20260510_KO.md
+PHASE220_DEMO_PAID_SERVICE_QUALITY_VALIDATION_20260510.json
+PHASE220_CHANGED_FILES_MANIFEST_20260510.txt
+PHASE220_SHA256SUMS_20260510.txt

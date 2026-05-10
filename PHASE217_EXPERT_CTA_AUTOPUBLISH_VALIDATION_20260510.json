@@ -1,0 +1,61 @@
+{
+  "generatedAt": "2026-05-10T01:27:18+09:00",
+  "package": "nv0_phase217_expert_cta_autopublish_20min_final_20260510.zip",
+  "sourcePackage": "nv0_phase216_revenue_conversion_canonical_final_20260510.zip",
+  "ok": true,
+  "prePatchLiveScore": 73,
+  "postPatchPackageScore": 100,
+  "validationCommand": "npm run phase217:final",
+  "autopublishCadence": "20 minutes preserved",
+  "ctaEngine": {
+    "engineVersion": "cta-board-v10.0-phase217-expert-editorial-revenue-20min",
+    "articleStandard": "expert_editorial_revenue_post",
+    "targetLengthKo": "4200-5200",
+    "readabilityTarget": "expert_but_accessible_korean",
+    "finiteTemplateFloor": 353894400,
+    "requiredSections": [
+      "전문가 관점 요약",
+      "현장에서 자주 생기는 문제",
+      "매출과 신뢰에 영향을 주는 이유",
+      "실무 적용 순서",
+      "문구 개선 예시",
+      "검증 체크리스트",
+      "검색 유입을 고려한 구성",
+      "자주 묻는 질문",
+      "자연스러운 다음 행동"
+    ]
+  },
+  "finalGateResults": {
+    "checkSyntax": { "ok": true, "checkedCount": 257 },
+    "checkPages": { "ok": true, "mappedRouteCount": 34 },
+    "routeSmoke": { "ok": true, "checked": 24 },
+    "checkLinks": { "ok": true, "checkedCount": 472, "errorCount": 0 },
+    "phase217Test": {
+      "ok": true,
+      "generatedCount": 200,
+      "generatedUniqueTitles": 200,
+      "generatedUniqueBodies": 200,
+      "migratedCount": 200,
+      "migratedUniqueTitles": 200,
+      "migratedUniqueBodies": 200
+    },
+    "phase217Validation": {
+      "ok": true,
+      "generatedArticles": 80,
+      "generatedUniqueTitles": 80,
+      "generatedUniqueBodies": 80,
+      "rewrittenArticles": 80,
+      "rewrittenUniqueTitles": 80,
+      "rewrittenUniqueBodies": 80
+    },
+    "phase216Regression": { "ok": true, "passedChecks": 8 }
+  },
+  "runtimeMigration": {
+    "executed": true,
+    "command": "npm run migrate:phase217-cta -- --force",
+    "rewrittenCount": 1,
+    "failedAudits": 0,
+    "backupCreated": "runtime/data/db.json.phase217-expert-backup-1778376407592"
+  },
+  "deploymentLimitation": "Local package has been patched and validated. Live deployment, Cloudflare/Coolify redirects, and cache purge require server-side deployment access."
+}

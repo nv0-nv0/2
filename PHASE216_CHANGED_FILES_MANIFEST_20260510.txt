@@ -1,0 +1,21 @@
+PHASE216 changed/added files
+
+Modified:
+- package.json
+- server/index.mjs
+- server/middleware/security.mjs
+- apps/public/home/index.html
+- apps/public/home/app.css
+- apps/public/plans/index.html
+- apps/public/plans/app.css
+
+Added:
+- tests/phase216-revenue-canonical.mjs
+- scripts/validate-phase216-revenue-canonical.mjs
+- README_PATCH_P216_KO.txt
+- PHASE216_REVENUE_CONVERSION_CANONICAL_CLOSEOUT_20260510_KO.md
+- PHASE216_REVENUE_CONVERSION_VALIDATION_20260510.json
+- PHASE216_CHANGED_FILES_MANIFEST_20260510.txt
+
+Final validation:
+- npm run phase216:final: PASS

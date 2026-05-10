@@ -4,18 +4,18 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="선택한 NV0 상품의 결과물, 금액, 수신 이메일을 확인하고 온라인으로 바로 결제합니다.">
-  <title>온라인 결제 | NV0</title>
+  <title>결제 확인 | NV0 / Veridion</title>
   <link rel="canonical" href="https://nv0.kr/checkout">
   <link rel="stylesheet" href="/shared/base.css">
   <link rel="stylesheet" href="/shared/unified-infographic.css">
   <link rel="stylesheet" href="/apps/public/checkout/app.css">
   <link rel="stylesheet" href="/shared/visibility.css">
-  <link rel="stylesheet" href="/shared/design-system.css">
+  <link rel="stylesheet" href="/shared/design-system.css"><link rel="stylesheet" href="/shared/phase218-fresh-premium.css">
 </head>
-<body class="nv0-dark">
+<body class="nv0-dark phase218-fresh">
 <header class="nv0-topbar">
   <div class="nv0-topbar-inner">
-    <a class="nv0-brand" href="/"><span class="nv0-brand-mark">NV</span><span>NV0</span></a>
+    <a class="nv0-brand" href="/"><span class="nv0-brand-mark">NV</span><span>NV0 / Veridion</span></a>
     <nav class="nv0-nav" aria-label="주요 메뉴">
       <a href="/products/veridion/demo">무료 진단</a>
       <a href="/plans">상품·요금</a>
@@ -35,7 +35,7 @@
   <section class="nv0-section page-head checkout-hero phase213-checkout-hero">
     <div>
       <div class="pill gold">결제 전 마지막 확인</div>
-      <h1>이제 고객이 망설이는 문장을<br>바꿀 준비를 마치세요</h1>
+      <h1>선택한 결과물과 결제 정보를<br>안전하게 확인하세요</h1>
       <p>선택한 상품, 받을 결과물, 금액, 결과물을 받을 이메일을 한 번 더 확인합니다. 결제 후에는 상세 리포트, 수정 문구, 정기 케어 안내가 선택한 상품에 맞게 이어집니다.</p>
     </div>
     <div class="topnav"><a class="btn secondary" href="/plans">다른 상품 보기</a></div>
@@ -46,9 +46,12 @@
       <div class="phase190-steps"><span>1. 결과물 확인</span><span>2. 이메일 입력</span><span>3. 결제 진행</span></div>
       <div id="paymentConfigState" class="payment-config-state" role="status" aria-live="polite">온라인 결제 가능 상태를 확인하고 있습니다.</div>
     </article>
-  </section>
-
-  <section class="nv0-section checkout-layout">
+  </section><section class="nv0-section phase218-secure-strip" aria-label="안전한 결제 확인 기준">
+  <article class="phase218-card"><b>주문 상품 확인</b><span>결제 전 상품명, 금액, 제공 결과물을 다시 보여줍니다.</span></article>
+  <article class="phase218-card"><b>개인정보 최소 입력</b><span>결제·결과물 수신에 필요한 이메일 중심으로 처리합니다.</span></article>
+  <article class="phase218-card"><b>환불 제한 고지</b><span>디지털 결과물 제공 전 확인해야 할 기준을 명확히 안내합니다.</span></article>
+  <article class="phase218-card"><b>결제 후 전달 흐름</b><span>리포트, FixPack, Auto 정기 케어가 어떤 방식으로 이어지는지 설명합니다.</span></article>
+</section><section class="nv0-section checkout-layout">
     <section class="checkout-card">
       <div id="checkoutTarget" role="status" aria-live="polite" class="notice muted">결과물을 받을 이메일과 선택한 상품을 확인해 주세요.</div>
       <article class="checkout-section">
@@ -60,9 +63,10 @@
         <p class="notice muted">전화번호나 주소는 요구하지 않습니다. 주문 확인과 결과물 안내에 필요한 이메일만 사용합니다.</p>
       </article>
 
-      <article class="checkout-section phase213-delivery-expectation">
-        <div class="meta-row"><h2>2. 결제 후 받는 결과물</h2><span class="pill brand">결과물</span></div>
-        <div class="checkout-alert"><strong>결제 완료 후 이렇게 전달됩니다</strong><ul class="result-list"><li>상세 리포트: 고객이 멈추는 위치, 문제 근거, 먼저 고칠 순서를 정리합니다.</li><li>FixPack: 사이트에 바로 넣을 수 있는 수정 전/후 문장과 적용 위치를 제공합니다.</li><li>Auto 정기 케어: 변경이 잦은 페이지의 안내 공백과 CTA 흐름을 정기적으로 확인합니다.</li></ul></div>
+      <article class="checkout-section phase213-delivery-expectation phase220-checkout-quality">
+        <div class="meta-row"><h2>2. 결제 후 받는 결과물</h2><span class="pill brand">품질 게이트</span></div>
+        <div class="checkout-alert"><strong>결제 완료 후 이렇게 전달됩니다</strong><ul class="result-list"><li>상세 리포트: 고객이 멈추는 위치, 문제 근거, 먼저 고칠 순서를 정리합니다.</li><li>FixPack: 사이트에 바로 넣을 수 있는 수정 전/후 문장과 적용 위치를 제공합니다.</li><li>Auto 정기 케어: 변경이 잦은 페이지의 안내 공백과 CTA 흐름을 정기적으로 확인합니다.</li><li>모든 유료 산출물은 요약·근거·수정안·수용 기준·재점검 기준이 포함되어야 납품 가능 상태로 처리합니다.</li></ul></div>
+        <div class="phase220-gate-strip"><span>근거 매트릭스</span><span>수정 전/후 문구</span><span>재점검 기준</span></div>
       </article>
 
       <article class="checkout-section">

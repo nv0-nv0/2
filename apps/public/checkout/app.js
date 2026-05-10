@@ -137,6 +137,7 @@ function renderOrder(order, paymentSession) {
       <div>대상 사이트: ${escapeHtml(order.domain || order.siteId || '미연결')}</div>
       <div>결제 방식: ${escapeHtml(providerLabel(provider))}</div>
       <div>결제 완료 후 결과물 확인 안내가 이어집니다.</div>
+      <div class="phase220-gate-strip"><span>근거 확인</span><span>품질 게이트</span><span>재점검 기준</span></div>
       ${paymentHint}
       ${redirectUrl ? `<a href="${escapeAttr(redirectUrl)}" target="_blank" rel="noreferrer">결제 완료 후 이동 페이지</a>` : ''}
     </div>`;

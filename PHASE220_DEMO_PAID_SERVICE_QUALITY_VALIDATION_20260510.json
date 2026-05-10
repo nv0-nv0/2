@@ -1,0 +1,19 @@
+{
+  "ok": true,
+  "phase": "phase220",
+  "name": "demo-paid-service-quality-accuracy",
+  "target": "demo_and_paid_output_quality_100_point_gate",
+  "checkedAt": "2026-05-10T02:35:48.727Z",
+  "scoreAfterPatch": 100,
+  "totalChecks": 13,
+  "passedChecks": 13,
+  "failedChecks": [],
+  "requirements": {
+    "demoAccuracyContract": "checked",
+    "paidDeliverableBlueprint": "checked",
+    "paidOutputQualityGate": "checked",
+    "falsePositiveControls": "checked",
+    "ctaAutopublishIntervalMinutes": 20,
+    "priorPhaseRegression": "checked"
+  }
+}

@@ -1,0 +1,37 @@
+# PHASE221 변경 파일 목록
+
+- package.json
+- PHASE219_FINAL_QA_UNIFICATION_VALIDATION_20260510.json
+- PHASE220_DEMO_PAID_SERVICE_QUALITY_VALIDATION_20260510.json
+- scripts/validate-phase221-page-copy-consistency.mjs
+- server/index.mjs
+- tests/phase221-page-copy-consistency.mjs
+- apps/public/auth/index.html
+- apps/public/board/app.js
+- apps/public/board/index.html
+- apps/public/business-info/index.html
+- apps/public/checkout/index.html
+- apps/public/documents/index.html
+- apps/public/guides/index.html
+- apps/public/home/index.html
+- apps/public/plans/app.js
+- apps/public/plans/index.html
+- apps/public/portal/app.js
+- apps/public/portal/index.html
+- apps/public/privacy/index.html
+- apps/public/refund/index.html
+- apps/public/solutions/index.html
+- apps/public/terms/index.html
+- apps/public/veridion-demo/index.html
+- apps/public/veridion-demo/app.js
+- apps/public/demo/index.html
+- apps/public/cases/index.html
+- apps/public/service/index.html
+- server/core/cta-publication.mjs
+- server/core/diagnosis-report-package.mjs
+
+## PHASE221 신규/산출 파일
+- PHASE221_PAGE_COPY_CONSISTENCY_CLOSEOUT_20260510_KO.md
+- PHASE221_PAGE_COPY_CONSISTENCY_VALIDATION_20260510.json
+- PHASE221_CHANGED_FILES_MANIFEST_20260510.txt
+- PHASE221_SHA256SUMS_20260510.txt

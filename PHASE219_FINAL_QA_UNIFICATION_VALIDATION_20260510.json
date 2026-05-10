@@ -1,0 +1,100 @@
+{
+  "ok": true,
+  "name": "phase219-final-qa-unification",
+  "scoreAfterPatch": 100,
+  "checkedPublicPages": 16,
+  "checkedAdminPages": 7,
+  "checks": {
+    "typoAndBrokenCopy": "PASS",
+    "sourceFooterCount": "PASS",
+    "finalVisualCssLoaded": "PASS",
+    "responsiveOverlapGuard": "PASS",
+    "cssCollisionGuard": "PASS",
+    "adminTitleUnification": "PASS",
+    "documentsCopyUnification": "PASS",
+    "cta20MinuteCadencePreserved": "PASS",
+    "businessPlaceholderGuardPreserved": "PASS"
+  },
+  "publicPageSummary": [
+    {
+      "name": "home",
+      "title": "NV0 / Veridion | AI 기반 웹사이트 신뢰 진단 & 전환 개선 플랫폼",
+      "h1": "AI 기반 신뢰 진단 & 개선 플랫폼"
+    },
+    {
+      "name": "veridion-demo",
+      "title": "무료 진단 | NV0 / Veridion",
+      "h1": "주소 하나로 고객이 결제 전 망설이는 지점을 먼저 확인합니다."
+    },
+    {
+      "name": "plans",
+      "title": "상품·요금 | NV0 / Veridion",
+      "h1": "방문자가 망설이는 순간, 필요한 건 더 큰 광고가 아니라 더 분명한 안내입니다."
+    },
+    {
+      "name": "board",
+      "title": "콘텐츠 보드 | NV0 / Veridion",
+      "h1": "신뢰도 진단 결과를 바탕으로 개선 흐름과 운영 콘텐츠를 함께 관리하세요"
+    },
+    {
+      "name": "checkout",
+      "title": "결제 확인 | NV0 / Veridion",
+      "h1": "선택한 결과물과 결제 정보를 안전하게 확인하세요"
+    },
+    {
+      "name": "documents",
+      "title": "문서·작업지시서 생성 | NV0 / Veridion",
+      "h1": "정책 문서와 작업지시서를 바로 실행 가능한 초안으로 정리합니다"
+    },
+    {
+      "name": "portal",
+      "title": "내 사이트 관리 | NV0 / Veridion",
+      "h1": "내 사이트 관리와 다음 조치"
+    },
+    {
+      "name": "auth",
+      "title": "로그인·회원가입 | NV0",
+      "h1": "로그인·회원가입"
+    },
+    {
+      "name": "business-info",
+      "title": "사업자 정보 | NV0",
+      "h1": "사업자 정보"
+    },
+    {
+      "name": "terms",
+      "title": "이용약관 | NV0",
+      "h1": "이용약관"
+    },
+    {
+      "name": "privacy",
+      "title": "개인정보처리방침 | NV0",
+      "h1": "개인정보처리방침"
+    },
+    {
+      "name": "refund",
+      "title": "환불·청약철회 정책 | NV0",
+      "h1": "환불·청약철회 정책"
+    },
+    {
+      "name": "cases",
+      "title": "적용 사례 | NV0 / Veridion",
+      "h1": "비슷한 사이트가 먼저 정리한 신뢰 공백과 개선 흐름"
+    },
+    {
+      "name": "service",
+      "title": "서비스 방식 | NV0 / Veridion",
+      "h1": "고객이 망설이는 지점을 찾고 바로 고칠 문장까지 이어집니다"
+    },
+    {
+      "name": "solutions",
+      "title": "솔루션 | NV0 / Veridion",
+      "h1": "진단, 수정, 문서, 게시판 운영을 하나의 문의·구매 흐름으로 연결합니다."
+    },
+    {
+      "name": "guides",
+      "title": "운영 가이드 | NV0 / Veridion",
+      "h1": "신뢰도와 문의·구매 흐름을 높이는 실무 체크리스트를 모았습니다."
+    }
+  ]
+}

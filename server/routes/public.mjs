@@ -1,6 +1,7 @@
 // Phase166 public API dispatcher for native http.createServer routing.
 import { createAccountRouteHandler } from './account.mjs';
 import { createPaymentRouteHandler } from './payment.mjs';
+import { buildDemoAccuracyContract, buildPaidDeliverableBlueprint, buildPaidOutputQualityGate, PHASE220_SERVICE_QUALITY_VERSION } from '../core/service-quality-220.mjs';
 
 export function createPublicRouteHandler(ctx) {
   const {
@@ -166,7 +167,7 @@ return { requestId: scan?.requestId || null, siteId: scan?.siteId || null, targe
   const paymentHandled = await paymentRouteHandler(req, res, { requestUrl: url, pathname });
   if (paymentHandled !== false) return paymentHandled;
 if (pathname === '/api/public/diagnosis-engine' && req.method === 'GET') {
-return json(req, res, 200, { ok: true, phase: RELEASE_PHASE, engine: 'NV0 Public Evidence Summary Check Engine', rulesVersion: RULES_VERSION, targetFetchEnabled: TARGET_FETCH_ENABLED, scanProvider: SCAN_PROVIDER, aiReviewProvider: AI_REVIEW_PROVIDER, geminiConfigured: AI_REVIEW_ENABLED, resultContract: { resultType: 'preliminary_check', legalConclusion: false, includesEvidenceSummary: true, includesConfidenceScore: true, includesManualReviewFlags: true, includesAutomationDisclosure: true, includesAutomatedActionPlan: true, includesAccuracyProfile: true, includesReportQualityGate: true }, endpoints: { scan: 'POST /api/public/scan', diagnose: 'POST /api/public/diagnose', board: 'GET /api/public/system-items', engine: 'GET /api/public/diagnosis-engine', productIntelligence: 'GET /api/public/product-intelligence', productQuality: 'GET /api/public/product-quality' }, smartProduct: { version: 'p153-smart-ops-v1', nextBestAction: true, planFitScoring: true, journeyOrchestration: true, smartProductEndpoint: '/api/public/smart-product', userPath: ['무료 요약','요금제 선택','내 사이트 관리','게시판 재유입'] }, autoPublish: { boardName: '게시판', intervalMs: CTA_AUTOPUBLISH_INTERVAL_MS, intervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000), topicPackCount: ctaTopicPacks().length, combinationStats: ctaCombinationStats(), variants: ctaTopicPacks().map(item => item.headline) }, automation: { mode: TARGET_FETCH_AUTOMATION_LEVEL, robotsEnabled: TARGET_FETCH_ROBOTS_ENABLED, sitemapEnabled: TARGET_FETCH_SITEMAP_ENABLED, maxPages: TARGET_FETCH_MAX_PAGES, maxDiscoveryResources: TARGET_FETCH_MAX_DISCOVERY_RESOURCES, notice: '자동 확인 가능한 공개 항목은 모두 처리하고 자동 확정 불가 영역은 수동확인으로 고지합니다.' }, checks: buildRuleCatalog().map(({ code, category, title, severity, penaltyMax }) => ({ code, category, title, severity, penaltyMax })) });
+return json(req, res, 200, { ok: true, phase: RELEASE_PHASE, engine: 'NV0 Public Evidence Summary Check Engine', rulesVersion: RULES_VERSION, targetFetchEnabled: TARGET_FETCH_ENABLED, scanProvider: SCAN_PROVIDER, aiReviewProvider: AI_REVIEW_PROVIDER, geminiConfigured: AI_REVIEW_ENABLED, resultContract: { resultType: 'preliminary_check', legalConclusion: false, includesEvidenceSummary: true, includesConfidenceScore: true, includesManualReviewFlags: true, includesAutomationDisclosure: true, includesAutomatedActionPlan: true, includesAccuracyProfile: true, includesReportQualityGate: true, includesDemoAccuracyContract: true, includesPaidOutputQualityGate: true, phase220ServiceQualityVersion: PHASE220_SERVICE_QUALITY_VERSION }, endpoints: { scan: 'POST /api/public/scan', diagnose: 'POST /api/public/diagnose', board: 'GET /api/public/system-items', engine: 'GET /api/public/diagnosis-engine', productIntelligence: 'GET /api/public/product-intelligence', productQuality: 'GET /api/public/product-quality' }, smartProduct: { version: 'p153-smart-ops-v1', nextBestAction: true, planFitScoring: true, journeyOrchestration: true, smartProductEndpoint: '/api/public/smart-product', userPath: ['무료 요약','요금제 선택','내 사이트 관리','게시판 재유입'] }, autoPublish: { boardName: '게시판', intervalMs: CTA_AUTOPUBLISH_INTERVAL_MS, intervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000), topicPackCount: ctaTopicPacks().length, combinationStats: ctaCombinationStats(), variants: ctaTopicPacks().map(item => item.headline) }, automation: { mode: TARGET_FETCH_AUTOMATION_LEVEL, robotsEnabled: TARGET_FETCH_ROBOTS_ENABLED, sitemapEnabled: TARGET_FETCH_SITEMAP_ENABLED, maxPages: TARGET_FETCH_MAX_PAGES, maxDiscoveryResources: TARGET_FETCH_MAX_DISCOVERY_RESOURCES, notice: '자동 확인 가능한 공개 항목은 모두 처리하고 자동 확정 불가 영역은 수동확인으로 고지합니다.' }, checks: buildRuleCatalog().map(({ code, category, title, severity, penaltyMax }) => ({ code, category, title, severity, penaltyMax })) });
 }
 if (pathname === '/api/public/config' && req.method === 'GET') {
 return json(req, res, 200, { ok: true, turnstileEnabled: TURNSTILE_PUBLIC_ENABLED, turnstileConfigured: TURNSTILE_CONFIGURED, prelaunchMode: PRELAUNCH_MODE, turnstileSiteKey: TURNSTILE_PUBLIC_ENABLED ? TURNSTILE_SITE_KEY : '' });
@@ -229,7 +230,9 @@ const domain = String(url.searchParams.get('domain') || '').trim();
 const site = siteId || domain ? findSiteByAny(db, siteId, domain) : null;
 const scan = site ? (db.scans || []).find(item => item.siteId === site.id) || db.scans[0] || null : db.scans[0] || null;
 const diagnosisAccuracy = scan ? buildDiagnosisAccuracyProfile(scan) : null;
-return json(req, res, 200, { ok: true, productQuality: { version: diagnosisAccuracy?.version || 'phase201-product-quality-v1', siteId: site?.id || scan?.siteId || null, requestId: scan?.requestId || null, diagnosisAccuracy, publicContract: { diagnosisIsPreliminary: true, scoreMeansPriorityNotLegalConclusion: true, paidDeliverablesRequireReportQualityGate: true, manualReviewItemsRemainVisible: true }, notice: '진단 정확도는 공개 수집 커버리지·근거 신뢰도·수동검토 비율을 함께 반영한 운영 품질 지표입니다.' } });
+const demoAccuracy = scan ? buildDemoAccuracyContract(scan) : null;
+const paidDeliverableBlueprint = scan ? buildPaidDeliverableBlueprint(scan, scan.recommendedPlan || 'Report') : null;
+return json(req, res, 200, { ok: true, productQuality: { version: PHASE220_SERVICE_QUALITY_VERSION, siteId: site?.id || scan?.siteId || null, requestId: scan?.requestId || null, diagnosisAccuracy, demoAccuracy, paidDeliverableBlueprint, publicContract: { diagnosisIsPreliminary: true, scoreMeansPriorityNotLegalConclusion: true, paidDeliverablesRequireReportQualityGate: true, manualReviewItemsRemainVisible: true, paidOutputMustPassAcceptanceGate: true }, notice: '진단 정확도는 공개 수집 커버리지·근거 신뢰도·수동검토 비율·결제 후 산출물 수용 기준을 함께 반영한 운영 품질 지표입니다.' } });
 }
 if (pathname === '/api/public/products' && req.method === 'GET') {
 const riskScore = Number(url.searchParams.get('riskScore') || 55);
@@ -268,11 +271,11 @@ const rawPosts = (db.boards || [])
 .filter(item => item && item.visibility !== 'private')
 .sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
 const seedBoardPosts = [
-  { id: 'board-seed-checkout-4000', title: '결제 버튼 앞에서 고객이 멈추는 이유', boardType: 'cta', type: 'cta', ctaType: 'checkout_friction', primaryKeyword: '결제 전 안내', target: 'nv0.kr', visibility: 'public', autoPublished: true, createdAt: nowIso(), summary: '결제 직전 불안을 줄이는 4천자 내외 공개 안내 글입니다.' },
-  { id: 'board-seed-privacy-4000', title: '문의폼 이탈을 줄이는 개인정보 안내', boardType: 'notice', type: 'cta', ctaType: 'privacy_form', primaryKeyword: '개인정보 안내', target: 'nv0.kr', visibility: 'public', autoPublished: true, createdAt: nowIso(), summary: '입력폼 주변 안내를 쉽게 정리한 4천자 내외 공개 안내 글입니다.' },
+  { id: 'board-seed-checkout-4000', title: '결제 버튼 앞에서 고객이 멈추는 이유와 전환 개선 구조', boardType: 'cta', type: 'cta', ctaType: 'checkout_friction', primaryKeyword: '결제 전 안내', target: 'nv0.kr', visibility: 'public', autoPublished: true, createdAt: nowIso(), summary: '결제 직전 불안을 줄이는 전문가형 공개 포스팅입니다.' },
+  { id: 'board-seed-privacy-4000', title: '문의폼 이탈을 줄이는 개인정보 안내와 응답 기준', boardType: 'notice', type: 'cta', ctaType: 'privacy_form', primaryKeyword: '개인정보 안내', target: 'nv0.kr', visibility: 'public', autoPublished: true, createdAt: nowIso(), summary: '입력폼 주변 안내를 쉽게 정리한 전문가형 공개 포스팅입니다.' },
   { id: 'board-seed-footer-4000', title: '푸터 사업자 정보만 정리해도 신뢰가 달라지는 이유', boardType: 'case', type: 'cta', ctaType: 'footer_trust', primaryKeyword: '사업자 정보와 문의 경로', target: 'nv0.kr', visibility: 'public', autoPublished: true, createdAt: nowIso(), summary: '사이트 신뢰를 만드는 사업자 정보 배치 안내 글입니다.' },
-  { id: 'board-seed-mobile-4000', title: '모바일 화면에서 CTA와 정책 링크가 밀리지 않게 정리하는 방법', boardType: 'cta', type: 'cta', ctaType: 'mobile_readability', primaryKeyword: '모바일 안내 가독성', target: 'nv0.kr', visibility: 'public', autoPublished: true, createdAt: nowIso(), summary: '모바일 화면 여백과 CTA 위치를 정리하는 4천자 내외 안내 글입니다.' },
-  { id: 'board-seed-adcopy-4000', title: '광고 유입 랜딩페이지에서 위기감을 만들고도 신뢰를 잃지 않는 문구 구조', boardType: 'case', type: 'cta', ctaType: 'ad_copy_risk', primaryKeyword: '광고 랜딩 신뢰 안내', target: 'nv0.kr', visibility: 'public', autoPublished: true, createdAt: nowIso(), summary: '문제 인식과 자연스러운 CTA 흐름을 정리한 공개 안내 글입니다.' }
+  { id: 'board-seed-mobile-4000', title: '모바일 화면에서 CTA와 정책 링크를 전문가처럼 배치하는 방법', boardType: 'cta', type: 'cta', ctaType: 'mobile_readability', primaryKeyword: '모바일 안내 가독성', target: 'nv0.kr', visibility: 'public', autoPublished: true, createdAt: nowIso(), summary: '모바일 화면 여백, CTA 위치, 정책 링크를 정리하는 전문가형 안내 포스팅입니다.' },
+  { id: 'board-seed-adcopy-4000', title: '광고 유입 랜딩페이지에서 신뢰를 잃지 않는 문제 제기 구조', boardType: 'case', type: 'cta', ctaType: 'ad_copy_risk', primaryKeyword: '광고 랜딩 신뢰 안내', target: 'nv0.kr', visibility: 'public', autoPublished: true, createdAt: nowIso(), summary: '문제 인식과 자연스러운 CTA 흐름을 정리한 공개 안내 글입니다.' }
 ];
 const sourcePosts = rawPosts.length ? rawPosts : seedBoardPosts;
 const publicPosts = sourcePosts.map((item, index) => toPublicBoardPost(item, index));
@@ -578,7 +581,8 @@ const customerSession = await getCustomerSession(req, db);
 if ((order.customerId || order.status === 'paid') && !canAccessOrder(req, order) && !ownsOrder(customerSession?.customer, order)) return json(req, res, 403, { ok: false, error: '산출물 접근 권한이 없습니다.' });
 const asset = order.status === 'paid' ? ensureFulfillmentForOrder(db, order) : null;
 if (asset || !order.accessToken) await writeDb(db);
-return json(req, res, 200, { ok: true, order: { ...order, accessToken: generateOrderAccessToken(order) }, asset, locked: order.status !== 'paid' });
+const paidOutputQualityGate = asset ? buildPaidOutputQualityGate({ order, asset, scan: (db.scans || []).find(item => item.siteId === order.siteId) || (db.scans || [])[0] || {} }) : null;
+return json(req, res, 200, { ok: true, order: { ...order, accessToken: generateOrderAccessToken(order) }, asset: asset ? { ...asset, paidOutputQualityGate } : asset, locked: order.status !== 'paid' });
 }
 if (pathname === '/api/public/fulfillment-download' && req.method === 'GET') {
 const db = await readDb();

@@ -166,3 +166,11 @@
 .phase214-final-cta h2{letter-spacing:-.05em;}
 @media(max-width:1180px){.plan-decision-grid{grid-template-columns:repeat(2,minmax(0,1fr));}.plan-focus-band{grid-template-columns:1fr;}}
 @media(max-width:760px){.phase214-hero{border-radius:26px;padding:24px;}.phase214-hero .hero-actions,.phase214-final-cta .offer-actions{display:grid;grid-template-columns:1fr;width:100%;}.phase214-hero .btn,.phase214-final-cta .btn{width:100%;justify-content:center;}.plan-decision-grid{grid-template-columns:1fr;}.focus-copy-card,.focus-proof-card{padding:20px;border-radius:22px;}}
+
+/* PHASE216: revenue-first fallback cards visible before JavaScript hydration */
+.revenue-proof-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0 0 16px;}
+.revenue-proof-strip article{border:1px solid rgba(148,163,184,.22);border-radius:18px;background:linear-gradient(180deg,rgba(15,23,42,.78),rgba(2,6,23,.68));padding:14px 16px;display:grid;gap:4px;}
+.revenue-proof-strip b{color:#fff;font-size:14px;letter-spacing:-.01em;}
+.revenue-proof-strip span{color:#cbd5e1;font-size:13px;line-height:1.45;font-weight:800;}
+.clean-plan-card[data-plan-code="FixPack"] .plan-price{color:#fff;}
+@media(max-width:860px){.revenue-proof-strip{grid-template-columns:1fr;}}

@@ -44,7 +44,7 @@ function groupLabel(plan) {
   if (plan.code === 'Free') return '무료 확인';
   if (plan.code === 'Report') return '원인 정리';
   if (plan.code === 'FixPack') return '오늘 수정';
-  if (plan.code === 'Auto') return '정기 점검';
+  if (plan.code === 'Auto') return '정기 케어';
   return plan.group === 'subscription' ? '정기 관리' : '1회 제공';
 }
 function ctaLabel(plan) {
@@ -75,7 +75,7 @@ function paymentBadge(plan, paymentConfig) {
 function strengthenSalesCopy(plan) {
   const override = {
     Free: {
-      title: 'Free Demo',
+      title: '무료 진단',
       summary: '고객이 결제 전 불안해할 수 있는 공개 항목을 무료로 확인합니다.',
       targetCustomer: '문제가 있는지 먼저 보고 싶은 분',
       deliverables: ['신뢰를 낮출 수 있는 요소 요약', '상위 개선 포인트 확인', '다음 상품 추천']
@@ -108,7 +108,7 @@ function basePlans(offers) {
     { code: 'FixPack', title: 'FixPack', price: 99000, period: '1회', group: 'one_time' },
     { code: 'Auto', title: 'Auto 정기 케어', price: 299000, period: '월', group: 'subscription' }
   ].map(strengthenSalesCopy);
-  const free = strengthenSalesCopy({ code: 'Free', title: 'Free Demo', price: 0, period: '무료' });
+  const free = strengthenSalesCopy({ code: 'Free', title: '무료 진단', price: 0, period: '무료' });
   const merged = ['Report', 'FixPack', 'Auto'].map(code => paid.find(item => item.code === code) || fallback.find(item => item.code === code));
   return [free, ...merged];
 }

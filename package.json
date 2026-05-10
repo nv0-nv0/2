@@ -248,6 +248,24 @@
     "phase214:final": "npm run check:syntax && npm run test:phase214 && npm run validate:phase214-public-site && npm run check:pages && npm run test:routes && npm run test:all",
     "test:phase215": "node tests/phase215-payment-board-normalization.mjs",
     "validate:phase215-payment-board": "node scripts/validate-phase215-payment-board-normalization.mjs",
-    "phase215:final": "npm run check:syntax && npm run test:phase215 && npm run validate:phase215-payment-board && npm run check:pages && npm run test:routes && npm run test:all"
+    "phase215:final": "npm run check:syntax && npm run test:phase215 && npm run validate:phase215-payment-board && npm run check:pages && npm run test:routes && npm run test:all",
+    "validate:phase215": "node scripts/validate-phase215-payment-board-normalization.mjs",
+    "test:phase216": "node tests/phase216-revenue-canonical.mjs",
+    "validate:phase216": "node scripts/validate-phase216-revenue-canonical.mjs",
+    "phase216:final": "npm run check:syntax && npm run check:pages && npm run test:routes && npm run check:links -- --summary && npm run validate:phase215 && npm run test:phase216 && npm run validate:phase216",
+    "test:phase217": "node tests/phase217-cta-expert-editorial-20min.mjs",
+    "migrate:phase217-cta": "node scripts/migrate-phase217-cta-expert-editorial.mjs",
+    "validate:phase217-cta": "node scripts/validate-phase217-cta-expert-editorial.mjs",
+    "phase217:final": "npm run check:syntax && npm run check:pages && npm run test:routes && npm run check:links -- --summary && npm run test:phase217 && npm run validate:phase217-cta && npm run test:phase216 && npm run validate:phase216",
+    "validate:phase218": "node scripts/validate-phase218-fresh-premium.mjs",
+    "phase218:final": "npm run check:syntax && npm run check:pages && npm run test:routes && npm run check:links -- --summary && npm run test:phase217 && npm run validate:phase217-cta && npm run test:phase216 && npm run validate:phase216 && npm run validate:phase218",
+    "validate:phase219": "node scripts/validate-phase219-final-qa-unification.mjs",
+    "phase219:final": "npm run check:syntax && npm run check:pages && npm run test:routes && npm run check:links -- --summary && npm run test:phase217 && npm run validate:phase217-cta && npm run test:phase216 && npm run validate:phase216 && npm run validate:phase218 && npm run validate:phase219",
+    "test:phase220": "node tests/phase220-demo-paid-service-quality.mjs",
+    "validate:phase220": "node scripts/validate-phase220-demo-paid-service-quality.mjs",
+    "phase220:final": "npm run check:syntax && npm run check:pages && npm run test:routes && npm run check:links -- --summary && npm run test:phase217 && npm run validate:phase217-cta && npm run test:phase216 && npm run validate:phase216 && npm run validate:phase218 && npm run validate:phase219 && npm run test:phase220 && npm run validate:phase220",
+    "test:phase221": "node tests/phase221-page-copy-consistency.mjs",
+    "validate:phase221": "node scripts/validate-phase221-page-copy-consistency.mjs",
+    "phase221:final": "npm run phase220:final && npm run test:phase221 && npm run validate:phase221"
   }
 }

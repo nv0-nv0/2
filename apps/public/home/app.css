@@ -23,3 +23,18 @@
 .nv0-ready-score span{color:#bfdbfe;font-weight:850;}
 @media(max-width:1180px){.nv0-preview-flow{grid-template-columns:1fr;}.nv0-live-preview-card{padding:24px;}}
 @media(max-width:720px){.nv0-dashboard-clean{align-self:auto}.nv0-live-preview-card{padding:20px;border-radius:22px}.nv0-live-preview-card .btn{width:100%;}}
+
+
+/* PHASE216: make the free-to-paid value ladder visible on the landing page */
+.nv0-revenue-ladder{border:1px solid rgba(148,163,184,.18);border-radius:32px;background:radial-gradient(circle at 82% 8%,rgba(245,158,11,.18),transparent 34%),linear-gradient(135deg,rgba(15,23,42,.82),rgba(2,6,23,.92));padding:clamp(22px,4vw,34px);}
+.nv0-revenue-ladder .section-title{display:flex;justify-content:space-between;gap:18px;align-items:flex-end;margin-bottom:18px;}
+.nv0-revenue-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;}
+.nv0-revenue-grid article{border:1px solid rgba(148,163,184,.22);border-radius:24px;background:linear-gradient(180deg,rgba(15,23,42,.86),rgba(2,6,23,.76));padding:18px;display:grid;gap:9px;min-height:220px;}
+.nv0-revenue-grid article.is-recommended{border-color:rgba(245,158,11,.56);box-shadow:0 24px 80px rgba(245,158,11,.08);}
+.nv0-revenue-grid span{width:max-content;border:1px solid rgba(148,163,184,.24);border-radius:999px;padding:6px 10px;color:#bfdbfe;font-size:12px;font-weight:900;letter-spacing:.04em;}
+.nv0-revenue-grid b{color:#fff;font-size:20px;letter-spacing:-.03em;}
+.nv0-revenue-grid strong{color:#fff;font-size:25px;letter-spacing:-.05em;}
+.nv0-revenue-grid p{margin:0;color:#cbd5e1;line-height:1.62;font-size:14px;}
+.nv0-revenue-grid a{align-self:end;color:#fff;font-weight:900;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.35);width:max-content;}
+@media(max-width:1120px){.nv0-revenue-grid{grid-template-columns:repeat(2,minmax(0,1fr));}.nv0-revenue-ladder .section-title{display:grid;align-items:start;}}
+@media(max-width:720px){.nv0-revenue-grid{grid-template-columns:1fr}.nv0-revenue-ladder{border-radius:24px;padding:20px}.nv0-revenue-ladder .btn{width:100%;justify-content:center;}}

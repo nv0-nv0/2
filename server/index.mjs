@@ -1172,7 +1172,7 @@ const pubDate = new Date(item.createdAt || item.rewrittenAt || Date.now()).toUTC
 const guid = xmlEscape(item.id ? `${base}/board#${item.id}` : `${base}/board#item-${index + 1}`);
 return `<item><title>${title}</title><link>${xmlEscape(base + '/board')}</link><guid isPermaLink="false">${guid}</guid><description>${summary}</description><pubDate>${pubDate}</pubDate></item>`;
 }).join('');
-return `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>NV0 쉬운 사이트 점검 글</title><link>${xmlEscape(base + '/board')}</link><description>고객이 이해하기 쉬운 사이트 점검 글과 운영 가이드입니다.</description><language>ko-KR</language><lastBuildDate>${new Date().toUTCString()}</lastBuildDate>${items}</channel></rss>`;
+return `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>NV0 전문가형 사이트 점검 글</title><link>${xmlEscape(base + '/board')}</link><description>고객 신뢰·구매 전환·운영 문구를 전문가형 포스팅으로 정리한 공개 가이드입니다.</description><language>ko-KR</language><lastBuildDate>${new Date().toUTCString()}</lastBuildDate>${items}</channel></rss>`;
 }
 function createPasswordResetToken(db, customer, req) {
 db.passwordResetTokens ||= [];
@@ -1324,16 +1324,18 @@ const base = seoBaseUrl();
 const metas = {
 '/': { title: '웹사이트 안내·정책 무료 점검 | NV0', description: '쇼핑몰과 서비스 페이지에서 고객이 꼭 확인하는 사업자 정보, 개인정보 안내, 환불 기준, 문의 버튼, 가격 안내를 쉽게 점검합니다.', keywords: ['웹사이트 무료 점검','쇼핑몰 신뢰도 점검','환불 안내 점검','개인정보 안내 점검','문의 버튼 개선'] },
 '/products/veridion/demo': { title: 'NV0 무료진단 | 웹사이트 신뢰 안내 점검', description: '사이트 주소로 고객이 결제나 문의 전에 헷갈릴 수 있는 안내 공백을 무료 요약으로 확인하고, 먼저 고칠 부분을 쉽게 정리합니다.', keywords: ['무료 사이트 진단','웹사이트 신뢰 점검','문의 구매 흐름 점검','쇼핑몰 안내 점검'] },
-'/plans': { title: '상품·요금 | NV0 리포트·FixPack·Auto 비교', description: '무료진단 이후 상세 리포트, 바로 붙여넣는 수정 문구안, 정기 점검 상품을 상황별로 비교합니다.', keywords: ['사이트 진단 요금','FixPack','Auto 정기 점검','정책 문서 템플릿'] },
-'/documents': { title: '정책 문서 초안 | 개인정보·이용약관·환불 안내 생성', description: '개인정보처리방침, 이용약관, 환불·청약철회 정책, 사업자 고지, 고객 안내문 초안을 최소 입력으로 생성합니다.', keywords: ['정책 문서 생성','개인정보처리방침 초안','이용약관 초안','환불 정책 초안'] },
-'/policy-documents': { title: '정책 문서 초안 | 개인정보·이용약관·환불 안내 생성', description: '개인정보처리방침, 이용약관, 환불·청약철회 정책, 사업자 고지, 고객 안내문 초안을 최소 입력으로 생성합니다.', keywords: ['정책 문서 생성','개인정보처리방침 초안','이용약관 초안','환불 정책 초안'] },
+'/demo': { title: 'NV0 무료진단 | 웹사이트 신뢰 안내 점검', description: '사이트 주소로 고객이 결제나 문의 전에 헷갈릴 수 있는 안내 공백을 무료 요약으로 확인하고, 먼저 고칠 부분을 쉽게 정리합니다.', keywords: ['무료 사이트 진단','웹사이트 신뢰 점검','문의 구매 흐름 점검','쇼핑몰 안내 점검'] },
+'/plans': { title: '상품·요금 | NV0 상세 리포트·FixPack·Auto 정기 케어 비교', description: '무료 진단 이후 상세 리포트, 바로 붙여넣는 수정 문구안, Auto 정기 케어 상품을 상황별로 비교합니다.', keywords: ['사이트 진단 요금','FixPack','Auto 정기 케어','정책 문서 템플릿'] },
+'/products': { title: '상품·요금 | NV0 상세 리포트·FixPack·Auto 정기 케어 비교', description: '무료 진단 이후 상세 리포트, 바로 붙여넣는 수정 문구안, Auto 정기 케어 상품을 상황별로 비교합니다.', keywords: ['사이트 진단 요금','FixPack','Auto 정기 케어','정책 문서 템플릿'] },
+'/documents': { title: '문서·작업지시서 생성 | 정책 문서 초안·고객 안내문', description: '개인정보처리방침, 이용약관, 환불·청약철회 정책 같은 운영 참고용 초안과 내부 실행용 작업지시서를 최소 입력으로 정리합니다.', keywords: ['정책 문서 생성','개인정보처리방침 초안','이용약관 초안','환불 정책 초안','작업지시서 생성'] },
+'/policy-documents': { title: '문서·작업지시서 생성 | 정책 문서 초안·고객 안내문', description: '개인정보처리방침, 이용약관, 환불·청약철회 정책 같은 운영 참고용 초안과 내부 실행용 작업지시서를 최소 입력으로 정리합니다.', keywords: ['정책 문서 생성','개인정보처리방침 초안','이용약관 초안','환불 정책 초안','작업지시서 생성'] },
 '/docs/veridion': { title: 'Veridion 문서 생성 | 정책 문서·진단 리포트 초안', description: 'Veridion 진단 후 필요한 정책 문서, 안내 문구, 개선 리포트 초안을 생성하는 문서 허브입니다.', keywords: ['Veridion 문서','정책 문서 생성','진단 리포트','개선 문구'] },
-'/guides': { title: '운영 가이드 | 쇼핑몰 신뢰도·정책 안내 점검', description: '쇼핑몰 신뢰도, 환불 정책, 구매 안내 버튼, 게시판 자동 발행, 반복 재진단 활용법을 쉬운 말로 정리한 운영 가이드입니다.' },
-'/resources': { title: '운영 가이드 | 쇼핑몰 신뢰도·정책 안내 점검', description: '쇼핑몰 신뢰도, 환불 정책, 구매 안내 버튼, 게시판 자동 발행, 반복 재진단 활용법을 쉬운 말로 정리한 운영 가이드입니다.' },
+'/guides': { title: '운영 가이드 | 쇼핑몰 신뢰도·정책 안내 점검', description: '쇼핑몰 신뢰도, 환불 정책, 구매 안내 버튼, 게시판 자동 발행, 반복 재진단 활용법을 전문가형 실무 가이드로 정리합니다.' },
+'/resources': { title: '운영 가이드 | 쇼핑몰 신뢰도·정책 안내 점검', description: '쇼핑몰 신뢰도, 환불 정책, 구매 안내 버튼, 게시판 자동 발행, 반복 재진단 활용법을 전문가형 실무 가이드로 정리합니다.' },
 '/solutions': { title: '솔루션 | 웹사이트 안내 고지·정책 문서·문의 흐름 점검', description: '웹사이트 필수 고지, 정책 문서, 결제 전 안내, 고객지원 안내를 한 번에 점검하는 NV0 솔루션입니다.' },
 '/service': { title: '서비스 작동 방식 | NV0 무료진단·리포트 산출 흐름', description: 'NV0가 공개 페이지를 수집하고 근거 신뢰도, 수동확인 항목, 결제 산출물로 이어지는 과정을 설명합니다.' },
 '/cases': { title: '적용 사례 | NV0 신뢰 공백 개선 사례', description: '쇼핑몰과 랜딩페이지가 사업자 고지, 환불 안내, 문의 흐름을 어떻게 정리하는지 사례로 확인합니다.' },
-'/board': { title: '운영 게시판 | 쉬운 사이트 점검 글 자동 발행', description: '진단 결과를 자주 묻는 질문, 체크리스트, 사례, 정책 안내, 관련 링크형 글로 쉽게 풀어 재방문과 상품 비교 흐름을 돕습니다.' },
+'/board': { title: '콘텐츠 보드 | 전문가형 CTA 자동 발행', description: '진단 결과를 전문가형 CTA 포스팅, 체크리스트, 사례, 정책 안내 글로 정리해 재방문과 상품·요금 비교 흐름을 돕습니다.' },
 '/business-info': { title: '사업자 정보·고객지원 | NV0', description: 'NV0 서비스 운영자의 사업자 정보, 고객지원 이메일, 서비스 범위, 법률 자문 아님 고지를 확인하세요.' },
 '/terms': { title: '이용약관 | NV0', description: 'NV0 서비스 이용약관과 서비스 범위 기준입니다.' },
 '/privacy': { title: '개인정보처리방침 | NV0', description: 'NV0 서비스의 개인정보 처리 기준과 입력 정보 최소화 원칙입니다.' },
@@ -1368,7 +1370,7 @@ keywords ? `<meta name="keywords" content="${escapeHtml(keywords)}">` : '',
 `<meta name="naverbot" content="${robots}">`,
 `<link rel="canonical" href="${escapeHtml(meta.canonical)}">`,
 `<link rel="sitemap" type="application/xml" href="${escapeHtml(seoBaseUrl() + '/sitemap.xml')}">`,
-`<link rel="alternate" type="application/rss+xml" title="NV0 쉬운 사이트 점검 글" href="${escapeHtml(seoBaseUrl() + '/feed.xml')}">`,
+`<link rel="alternate" type="application/rss+xml" title="NV0 전문가형 사이트 점검 글" href="${escapeHtml(seoBaseUrl() + '/feed.xml')}">`,
 `<meta property="og:locale" content="${escapeHtml(meta.locale)}">`,
 `<meta property="og:type" content="website">`,
 `<meta property="og:site_name" content="NV0">`,
@@ -1395,12 +1397,12 @@ const faqMap = {
 ['로그인하면 무엇이 달라지나요?', '무료진단 횟수 관리, 내 사이트 저장, 원클릭 재검사, 최근 진단 이력 확인을 이용할 수 있습니다.']
 ],
 '/plans': [
-['어떤 상품을 먼저 선택해야 하나요?', '먼저 무료진단을 보고, 근거가 필요하면 상세 리포트, 바로 붙여넣을 문구가 필요하면 FixPack, 반복 관리가 필요하면 Auto를 비교하면 됩니다.'],
+['어떤 상품을 먼저 선택해야 하나요?', '먼저 무료진단을 보고, 근거가 필요하면 상세 리포트, 바로 붙여넣을 문구가 필요하면 FixPack, 반복 관리가 필요하면 Auto 정기 케어를 비교하면 됩니다.'],
 ['결제 전 어떤 내용을 확인해야 하나요?', '제공 범위, 디지털 산출물 제공 시점, 환불 제한, 고객지원 경로를 확인해야 합니다.']
 ],
 '/board': [
-['게시판 글은 어떤 역할을 하나요?', '진단 결과를 고객이 이해하기 쉬운 말로 풀어 재방문과 상품 비교를 돕습니다.'],
-['글이 어렵지 않게 작성되나요?', '중학생도 이해할 수 있는 쉬운 문장과 자주 묻는 질문 중심으로 작성됩니다.']
+['게시판 글은 어떤 역할을 하나요?', '진단 결과를 전문가형 포스팅으로 풀어 재방문, 상품·요금, 유료 산출물 검토 흐름을 돕습니다.'],
+['글이 전문가처럼 보이나요?', '문제 진단, 매출 영향, 실무 체크리스트, 문구 개선 예시, 자연스러운 CTA 순서로 작성됩니다.']
 ]
 };
 return faqMap[urlPath] || [];
@@ -1442,7 +1444,7 @@ return `<a class="skip-link" href="#main">본문 바로가기</a><nav class="sit
 <a class="brand" href="/"><span class="brand-mark">N</span><span>NV0<small>웹사이트 안내·정책 점검</small></span></a>
 <div class="site-menu">
 <a href="/products/veridion/demo"${navAttrs(urlPath, '/products/veridion/demo')}>무료 진단</a>
-<a href="/plans"${navAttrs(urlPath, '/plans')}>플랜 비교</a>
+<a href="/plans"${navAttrs(urlPath, '/plans')}>상품·요금</a>
 <a href="/board"${navAttrs(urlPath, '/board')}>콘텐츠 보드</a>
 <a href="/documents"${navAttrs(urlPath, '/documents')}>문서 생성</a>
 <a href="/portal"${navAttrs(urlPath, '/portal')}>내 사이트</a>
@@ -1467,16 +1469,28 @@ nextBody = nextBody.replace(/<header class="nv0-topbar">[\s\S]*?<\/header>/, '')
 if (nextBody.includes('site-topbar')) return nextBody;
 return nextBody.replace(/<body\b([^>]*)>/i, `<body$1>${publicTopMenuHtml(urlPath)}`);
 }
+function isSafePublicOptionalField(value = '', { requireMailOrderShape = false } = {}) {
+const textValue = String(value || '').trim();
+if (!textValue) return false;
+const unfinishedToken = ['TO', 'DO'].join('');
+const blocked = new RegExp(`예정|확인|상용|입력|replace|placeholder|sample|example|dummy|xxx|미정|${unfinishedToken}|TBD|운영 인프라|changeme|your-|test_`, 'i');
+if (blocked.test(textValue)) return false;
+if (/^[\s._\-\/0]+$/.test(textValue)) return false;
+if (requireMailOrderShape) {
+  // Typical KR mail-order registration strings include a year/serial and often end with 호.
+  // This intentionally rejects arbitrary placeholders while allowing real regional formats.
+  return /(?:제\s*)?\d{4}[-\s가-힣A-Za-z0-9]{2,40}\d{2,}\s*호?$/.test(textValue);
+}
+return true;
+}
 function businessFooterHtml() {
 const types = BUSINESS_PROFILE.businessTypes.join(' · ');
-const unfinishedToken = ['TO', 'DO'].join('');
-const legalFieldBlockPattern = new RegExp(`예정|확인|상용|입력|replace|placeholder|sample|example|dummy|xxx|미정|${unfinishedToken}|TBD`, 'i');
-const hostingBlockPattern = new RegExp(`예정|확인|상용|입력|replace|placeholder|sample|example|dummy|xxx|미정|${unfinishedToken}|TBD|운영 인프라`, 'i');
+const mailOrderNumber = isSafePublicOptionalField(BUSINESS_PROFILE.mailOrderRegistrationNumber, { requireMailOrderShape: true }) ? BUSINESS_PROFILE.mailOrderRegistrationNumber : '';
 return '<footer class="business-footer" aria-label="사업자 정보">'
 + `<strong>${BUSINESS_PROFILE.tradeName}</strong>`
 + `<span>대표자: ${BUSINESS_PROFILE.representative}</span>`
 + `<span>사업자등록번호: ${BUSINESS_PROFILE.registrationNumber}</span>`
-+ (BUSINESS_PROFILE.mailOrderRegistrationNumber && !legalFieldBlockPattern.test(BUSINESS_PROFILE.mailOrderRegistrationNumber) ? `<span>통신판매업 신고번호: ${BUSINESS_PROFILE.mailOrderRegistrationNumber}</span>` : '')
++ (mailOrderNumber ? `<span>통신판매업 신고번호: ${mailOrderNumber}</span>` : '')
 + `<span>주소: ${BUSINESS_PROFILE.address}</span>`
 + `<span>업태·종목: ${types}</span>`
 + `<span>고객지원: ${BUSINESS_PROFILE.contactEmail}${BUSINESS_PROFILE.customerServicePhone ? ' · ' + BUSINESS_PROFILE.customerServicePhone : ' · 이메일 전용 고객지원'} · 평일 09:00–18:00 접수 확인</span>`
@@ -1861,68 +1875,40 @@ const fallback = [
 return fallback[index % fallback.length];
 }
 function publicBoardBodyFor(item = {}, index = 0) {
-const topic = boardTopicFromItem(item, index);
-const target = String(item.target || item.normalizedTarget || '사이트').replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0] || '사이트';
-const keyword = item.primaryKeyword || topic.keyword;
-const source = [topic.title, keyword, topic.issue, item.body, item.summary].join(' ').toLowerCase();
+const keyword = item.primaryKeyword || item.seo?.primaryKeyword || item.title || '사이트 신뢰 안내';
+const source = [keyword, item.title, item.summary, item.body].join(' ');
+const target = item.target || item.normalizedTarget || 'nv0.kr';
 const theme = (() => {
-if (/환불|취소|교환|청약/.test(source)) return { label: '환불·청약철회 안내', elements: ['환불 가능 조건', '취소 접수 위치', '처리 기간', '예외 기준', '문의 경로'], buttonCopy: '환불 가능 조건 먼저 확인', example: '예를 들어 결제 버튼 가까이에 “결제 후 7일 이내 취소 가능 / 제작이 시작된 주문은 예외”처럼 핵심 기준이 바로 보이면 고객이 다시 문의하지 않아도 됩니다.', risk: '환불 기준이 흐릿하면 고객은 결제보다 분쟁 가능성을 먼저 떠올립니다.', cta: '환불 기준이 페이지마다 다르다면 무료 진단으로 먼저 공백을 확인해 보세요.' };
-if (/개인정보|동의|보관|파기|privacy/.test(source)) return { label: '개인정보 안내', elements: ['수집 항목', '수집 목적', '보관 기간', '파기 기준', '문의 이메일'], buttonCopy: '수집 목적과 보관 기간 확인', example: '문의폼 아래에 “상담 답변을 위해 이름과 연락처를 수집하며, 접수 후 1년 보관합니다.”처럼 바로 읽히는 문장이 있으면 입력 이탈이 줄어듭니다.', risk: '개인정보 안내가 입력 화면과 떨어져 있으면 고객은 정보를 남기기 전에 멈춥니다.', cta: '개인정보 안내가 입력 화면과 멀리 떨어져 있다면 먼저 위치부터 점검해 보세요.' };
-if (/사업자|문의|고객센터|푸터|대표자/.test(source)) return { label: '사업자 정보와 문의 경로', elements: ['상호', '대표자', '사업자번호', '고객지원 이메일', '답변 기준'], buttonCopy: '운영자 정보와 문의 방법 보기', example: '푸터에 상호와 고객지원 메일만 있고 답변 기준이 없다면 고객은 “문의해도 답이 올까?”를 걱정하기 쉽습니다. “평일 기준 1영업일 내 답변” 한 줄만 더해도 인상이 달라집니다.', risk: '운영자 정보가 모호하면 상품보다 사이트 자체의 신뢰가 먼저 흔들립니다.', cta: '사업자 정보와 문의 경로가 흩어져 있다면 푸터와 문의 버튼 주변부터 먼저 정리하세요.' };
-if (/결제|구매|주문|가격/.test(source)) return { label: '결제 전 안내', elements: ['제공 범위', '가격 포함 항목', '환불 기준', '결제 후 제공 시점', '고객지원 경로'], buttonCopy: '결제 전 제공 범위 확인', example: '가격표 아래에 “결제 후 제공 시점 / 환불 가능 여부 / 문의 경로”가 함께 보이면 고객이 마지막 단계에서 멈추는 일이 줄어듭니다.', risk: '가격은 보이는데 제공 범위가 안 보이면 고객은 결제 직전에 뒤로 갑니다.', cta: '결제 직전 이탈이 많다면 버튼 바로 위·아래 안내부터 무료 진단으로 확인해 보세요.' };
-return { label: '사이트 신뢰 안내', elements: ['운영자 정보', '문의 경로', '환불 기준', '개인정보 안내', '모바일 표시 상태'], buttonCopy: '필수 안내 먼저 확인', example: '처음 방문한 고객은 긴 소개글보다 “누가 운영하는지, 문의는 어디로 하는지, 문제가 생기면 어떻게 처리되는지”를 먼저 찾습니다.', risk: '첫 방문자가 신뢰 확인에 실패하면 좋은 상품 설명도 제대로 읽히지 않습니다.', cta: '사이트 첫인상을 더 안정적으로 만들고 싶다면 무료 진단으로 주요 공백부터 확인해 보세요.' };
+if (/환불|취소|교환|청약/.test(source)) return { label: '환불·청약철회 안내', elements: ['환불 가능 조건', '취소 접수 위치', '처리 기간', '예외 기준', '문의 경로'], buttonCopy: '환불 가능 조건 먼저 확인', risk: '환불 기준이 흐릿하면 고객은 결제보다 분쟁 가능성을 먼저 떠올립니다.', cta: '환불 기준이 페이지마다 다르다면 무료 진단으로 먼저 공백을 확인해 보세요.' };
+if (/개인정보|동의|보관|파기|privacy/.test(source)) return { label: '개인정보 안내', elements: ['수집 항목', '수집 목적', '보관 기간', '파기 기준', '문의 이메일'], buttonCopy: '수집 목적과 보관 기간 확인', risk: '개인정보 안내가 입력 화면과 떨어져 있으면 고객은 정보를 남기기 전에 멈춥니다.', cta: '개인정보 안내가 입력 화면과 멀리 떨어져 있다면 위치부터 점검해 보세요.' };
+if (/사업자|문의|고객센터|푸터|대표자/.test(source)) return { label: '사업자 정보와 문의 경로', elements: ['상호', '대표자', '사업자번호', '고객지원 이메일', '답변 기준'], buttonCopy: '운영자 정보와 문의 방법 보기', risk: '운영자 정보가 모호하면 상품보다 사이트 자체의 신뢰가 먼저 흔들립니다.', cta: '사업자 정보와 문의 경로가 흩어져 있다면 푸터와 문의 버튼 주변부터 정리하세요.' };
+if (/결제|구매|주문|가격/.test(source)) return { label: '결제 전 안내', elements: ['제공 범위', '가격 포함 항목', '환불 기준', '결제 후 제공 시점', '고객지원 경로'], buttonCopy: '결제 전 제공 범위 확인', risk: '가격은 보이는데 제공 범위가 안 보이면 고객은 결제 직전에 뒤로 갑니다.', cta: '결제 직전 이탈이 많다면 버튼 바로 위·아래 안내부터 무료 진단으로 확인해 보세요.' };
+return { label: '사이트 신뢰 안내', elements: ['운영자 정보', '문의 경로', '환불 기준', '개인정보 안내', '모바일 표시 상태'], buttonCopy: '필수 안내 먼저 확인', risk: '첫 방문자가 신뢰 확인에 실패하면 좋은 상품 설명도 제대로 읽히지 않습니다.', cta: '사이트 첫인상을 안정적으로 만들고 싶다면 무료 진단으로 주요 공백부터 확인하세요.' };
 })();
-const useCases = [
-`${theme.label} 안내가 여러 페이지에 흩어져 있어 고객이 한 번에 찾기 어려운 경우`,
-'문의나 결제 버튼은 있는데 바로 옆에 필요한 설명이 부족한 경우',
-'운영자는 익숙하지만 처음 방문한 고객 기준으로는 설명이 부족해 보이는 경우',
-'광고나 검색으로 들어온 고객이 상세 설명보다 신뢰 정보부터 확인하는 경우'
-];
 const checklist = [
-`첫 화면, 가격표, 문의 버튼, 결제 버튼, 푸터 중 어디에서 ${theme.label}을 바로 확인할 수 있는지 점검합니다.`,
-`고객이 가장 먼저 묻게 되는 ${theme.elements.slice(0, 3).join(', ')} 항목이 한 화면 안에서 이어지는지 확인합니다.`,
-'모바일 화면에서 안내 문구가 접히거나 버튼 아래로 너무 멀리 밀리지 않는지 확인합니다.',
-'동일한 기준이 약관, 푸터, 결제 안내, 문의 안내에서 서로 충돌하지 않는지 비교합니다.',
-'수정 후 같은 주소로 다시 점검해 남은 항목이 줄었는지 비교합니다.'
+`고객 행동 버튼과 같은 화면에서 ${theme.label}을 확인할 수 있는지 점검합니다.`,
+`${theme.elements.slice(0, 3).join(', ')} 항목이 약관, 푸터, 결제 화면에서 충돌하지 않는지 비교합니다.`,
+'모바일 화면에서 안내 문구와 버튼이 동시에 보이는지 확인합니다.',
+'수정 후 같은 주소로 다시 진단해 남은 공백을 비교합니다.'
 ];
 const copyExamples = [
 ['문의하기', '문의하기 · 평일 기준 1영업일 안에 답변드립니다.'],
 ['자세히 보기', `${theme.buttonCopy}.`],
-['무료', '무료 진단: 요약 결과까지 무료로 확인'],
-['개인정보 동의', '입력한 정보의 수집 목적과 보관 기간 확인'],
-['서비스 신청', '제공 범위와 처리 기준 확인 후 신청하기']
+['무료 진단', '무료 진단 · 요약 결과까지 바로 확인'],
+['서비스 신청', '제공 범위와 환불 기준 확인 후 신청하기']
 ];
-const faqs = [
-['이 글은 어떤 상황에서 가장 도움이 되나요?', `처음 방문한 고객이 ${theme.label} 때문에 멈추는 장면을 줄이고 싶을 때 가장 도움이 됩니다.`],
-['가장 먼저 고칠 위치는 어디인가요?', '결제, 문의, 회원가입처럼 고객이 행동을 결정하는 바로 직전 화면을 먼저 확인하는 것이 좋습니다.'],
-['무료 진단만으로도 방향을 잡을 수 있나요?', '네. 무료 진단으로 현재 공백을 먼저 보고, 더 자세한 수정 방향이 필요할 때만 리포트나 수정 문구안을 이어서 확인하면 됩니다.'],
-['왜 일반 주제 글처럼 써야 하나요?', '독자는 홍보 문구보다 자신의 문제를 먼저 해결해 주는 글을 오래 읽습니다. 그래서 문제, 예시, 체크리스트, FAQ를 먼저 배치하고 마지막에 자연스럽게 다음 행동을 안내합니다.']
-];
-const tags = [
-`#${String(keyword || theme.label).replace(/[\s·/]+/g, '')}`,
-`#${String(theme.label).replace(/[\s·/]+/g, '')}`,
-'#사이트점검',
-'#고객안내',
-'#무료진단',
-'#전환개선',
-'#문의흐름',
-'#모바일가독성'
-].join(' ');
+const tags = [`#${String(keyword || theme.label).replace(/[\s·/]+/g, '')}`, `#${String(theme.label).replace(/[\s·/]+/g, '')}`, '#전문가포스팅', '#사이트신뢰진단', '#CTA개선', '#무료진단'].join(' ');
 return [
-`왜 이 글을 썼나요?\n${target} 사이트를 처음 보는 고객은 상품 설명보다 먼저 “여기서 안심하고 문의하거나 결제해도 될까?”를 확인합니다. 이 글은 ${theme.label}을 자연스럽게 보여 주는 방법을 쉬운 말로 정리한 안내 글입니다. 단순히 버튼을 크게 만들거나 할인 문구를 추가하는 방식만으로는 부족합니다. 고객이 불안해하는 지점에 답이 없으면, 아무리 좋은 상품과 서비스라도 마지막 행동으로 이어지지 않습니다.`,
-`지금 보이는 문제\n${theme.risk} 특히 모바일 화면에서는 고객이 몇 초 안에 신뢰 여부를 판단합니다. 안내 문구가 아래로 밀려 있거나, 필수 정보가 푸터에만 숨어 있거나, 문의 기준이 보이지 않으면 고객은 확인을 미루지 않고 이탈합니다. 더 큰 문제는 운영자가 이탈 원인을 가격, 디자인, 광고 효율 문제로만 오해할 수 있다는 점입니다. 실제로는 버튼 주변의 한 줄 안내, 입력폼 아래의 개인정보 설명, 결제 전 제공 범위가 없어서 멈추는 경우가 많습니다. 이 상태를 오래 방치하면 광고비는 계속 쓰지만 전환은 쌓이지 않고, 문의가 들어와도 같은 질문만 반복됩니다.`,
-`독자가 관심 있어 할 부분\n온라인에서 물건을 사거나 서비스를 신청하는 사람은 세 가지를 확인합니다. 첫째, 누가 운영하는지입니다. 둘째, 문제가 생겼을 때 어디로 연락하는지입니다. 셋째, 결제나 신청 후 어떤 기준으로 처리되는지입니다. 이 세 가지가 한 화면 안에서 자연스럽게 연결되면 고객은 “조금 더 살펴봐도 되겠다”는 신호를 받습니다. 반대로 ${theme.elements.slice(0, 3).join(', ')} 정보가 따로 흩어져 있으면 고객은 스스로 위험을 계산해야 합니다. 좋은 콘텐츠는 상품 자랑으로 시작하지 않습니다. 고객이 이미 마음속으로 하고 있는 질문을 먼저 꺼내고, 그 질문에 짧고 명확하게 답한 뒤, 더 자세한 행동으로 안내합니다.`,
-`이 글이 도움이 되는 경우\n${useCases.map((line, idx) => `${idx + 1}. ${line}`).join('\n')}`,
-`연관 예시\n${theme.example} 이 예시는 특정 업종에만 해당하지 않습니다. 쇼핑몰, 상담 서비스, 예약 서비스, 디지털 파일 판매, B2B 문의형 사이트 모두 고객이 행동 직전에 확인하는 정보가 있습니다. 핵심은 모든 설명을 길게 늘리는 것이 아니라, 고객이 멈추는 위치에 필요한 답을 짧게 놓는 것입니다.`,
-`고객이 실제로 확인하는 포인트\n${theme.elements.map((name, idx) => `${idx + 1}. ${name}`).join('\n')}`,
-`바로 적용할 체크리스트\n${checklist.map((line, idx) => `${idx + 1}. ${line}`).join('\n')}`,
-`문구 예시\n${copyExamples.map(([before, after], idx) => `${idx + 1}. 바꾸기 전: “${before}”\n   바꾼 뒤: “${after}”`).join('\n')}`,
-`독자가 계속 읽는 구성\n좋은 유도 글은 처음부터 구매를 강요하지 않습니다. 먼저 독자가 겪는 불편을 보여 주고, 왜 문제가 되는지 설명하고, 바로 확인할 체크리스트를 둡니다. 마지막에는 무료 진단처럼 부담이 낮은 첫 행동을 제안하고, 필요할 때 상세 리포트나 수정 문구안으로 이어 주는 순서가 자연스럽습니다.`,
-`검색에 잘 읽히게 정리하는 방법\n제목에는 고객이 실제로 검색할 만한 말을 넣는 것이 좋습니다. 예를 들어 ${theme.label}처럼 운영자가 쓰는 내부 표현보다 고객이 이해하기 쉬운 표현을 앞에 둡니다. 첫 문단에는 문제 상황을 설명하고, 중간에는 예시와 체크리스트를 배치하고, 마지막에는 무료 진단이나 상세 리포트처럼 다음 행동을 하나만 안내합니다. 같은 키워드를 억지로 반복하기보다 질문과 답변, 사례, 점검 포인트를 자연스럽게 이어야 검색 로봇과 실제 독자 모두가 내용을 이해하기 쉽습니다.`,
-`지금 놓치면 생길 수 있는 일\n안내가 부족한 상태에서 광고나 이벤트를 먼저 키우면 이탈 지점도 같이 커집니다. 방문자가 늘어도 결제 전 불안이 해소되지 않으면 문의만 늘거나 장바구니 이탈이 늘 수 있습니다. 더 늦게 발견하면 문구 수정, 정책 정리, 디자인 수정, 고객 응대 기준 정리를 한 번에 처리해야 하므로 운영 부담이 커집니다. 지금은 작은 문장 하나로 막을 수 있는 문제도, 시간이 지나면 신뢰 회복 비용으로 돌아올 수 있습니다.`,
-`자주 묻는 질문\n${faqs.map(([q, a], idx) => `Q${idx + 1}. ${q}\nA. ${a}`).join('\n\n')}`,
-`다음에 할 일\n${theme.cta} 비슷한 유형의 페이지를 운영 중이라면 내 사이트도 무료 진단으로 먼저 확인하세요. 결과를 저장하면 상세 리포트에서 수정 우선순위를 보고, FixPack으로 실제 문구안을 받아 적용할 수 있습니다. 반복 관리가 필요하면 Auto 정기 케어로 20분 주기 게시판 발행과 재진단 흐름까지 이어가세요. 중요한 것은 지금 당장 모든 것을 바꾸는 것이 아니라, 고객이 멈추는 위치를 정확히 찾는 것입니다.`,
-`관련 링크\n무료 진단: /products/veridion/demo\n플랜 비교: /plans\n내 사이트 관리: /portal`,
+`전문가 관점 요약\n${target} 사이트에서 ${theme.label}은 고객 행동 직전의 불확실성을 줄이는 전환 설계입니다. ${theme.risk} 이 글은 단순 홍보가 아니라 실제 화면을 보며 고칠 수 있는 항목을 정리한 전문가형 포스팅입니다.`,
+`현장에서 자주 생기는 문제\n운영자는 푸터나 약관에 이미 적어 두었다고 생각하지만 고객은 결제, 문의, 회원가입, 상담 신청 직전에 답을 찾습니다. 필요한 정보가 그 위치에서 보이지 않으면 상품 설명을 끝까지 읽기 전에 비교 페이지로 이동할 수 있습니다.`,
+`매출과 신뢰에 영향을 주는 이유\n광고 유입이 늘수록 안내 공백은 더 빠르게 비용으로 바뀝니다. 고객이 제공 범위, 문의 경로, 예외 기준, 처리 시간을 예측할 수 있어야 무료 진단에서 상세 리포트, FixPack, Auto 정기 케어로 이어지는 수익화 흐름도 자연스럽게 연결됩니다.`,
+`실무 적용 순서\n1. 결제 버튼, 문의 버튼, 가격표, 회원가입 화면을 먼저 확인합니다.\n2. ${theme.elements.join(', ')} 중 고객 질문과 직접 연결되는 항목을 버튼 주변에 배치합니다.\n3. 푸터에는 전체 기준을 두고 행동 화면에는 요약 문장을 둡니다.\n4. 모바일에서 문장이 접히거나 버튼 아래로 밀리는지 확인합니다.`,
+`문구 개선 예시\n${copyExamples.map(([before, after], idx) => `${idx + 1}. 바꾸기 전: “${before}”\n   바꾼 뒤: “${after}”`).join('\n')}`,
+`검증 체크리스트\n${checklist.map((line, idx) => `${idx + 1}. ${line}`).join('\n')}`,
+`검색 유입을 고려한 구성\n제목에는 고객이 실제로 찾을 표현을 넣고, 본문에는 문제 상황, 실무 체크리스트, 전후 문구 예시, 내부 링크를 순서대로 배치합니다. 키워드 반복보다 독자가 체류할 이유를 만드는 구조가 중요합니다.`,
+`자주 묻는 질문\nQ1. 무료 진단만으로 충분한가요?\nA. 무료 진단은 현재 공백을 빠르게 보는 출발점입니다. 실제 반영 문구와 우선순위가 필요하면 상세 리포트나 FixPack으로 이어가면 됩니다.\n\nQ2. 자동 글이 반복처럼 보이지 않으려면요?\nA. 주제, 고객 질문, 사례, 체크리스트, CTA 위치를 함께 바꿔야 합니다. 제목만 바꾸는 방식은 피해야 합니다.`,
+`자연스러운 다음 행동\n${theme.cta} 결과를 저장하면 상세 리포트에서 수정 우선순위를 보고, FixPack으로 실제 문구안을 받아 적용할 수 있습니다. 반복 관리가 필요하면 Auto 정기 케어로 20분 주기 게시판 발행과 재진단 흐름까지 이어가세요.`,
+`관련 링크\n무료 진단: /products/veridion/demo\n상품·요금: /plans\n내 사이트 관리: /portal`,
 `해시태그\n${tags}`
 ].join('\n\n');
 }
@@ -1934,7 +1920,7 @@ const stableKey = String(item.id || item.contentFingerprint || item.createdAt ||
 const stableOffset = Number.parseInt(ctaFingerprint(stableKey).slice(0, 6), 16) % 997;
 const rewritten = rewriteExistingCtaPublication(item, {
   force: true,
-  seed: `phase210-public-board:${stableKey}:${index}`,
+  seed: `phase217-expert-board:${stableKey}:${index}`,
   sequenceOffset: stableOffset,
   target: item.target || item.normalizedTarget || 'nv0.kr',
   industry: item.industry || '온라인 사업',
@@ -1951,13 +1937,13 @@ visibility: item.visibility || 'public',
 boardType: item.boardType || rewritten.boardType || 'cta',
 type: 'cta',
 autoPublished: item.autoPublished !== false,
-summary: `${rewritten.seo?.primaryKeyword || rewritten.primaryKeyword || '사이트 점검'}을 중학생도 이해할 수 있는 쉬운 말로 풀어 쓴 4천자 안팎의 전문 CTA 게시글입니다.`,
+summary: `${rewritten.seo?.primaryKeyword || rewritten.primaryKeyword || '사이트 점검'}을 전문가형 문제 진단, 실무 체크리스트, 문구 개선 예시, 자연스러운 CTA 흐름으로 정리한 4천~5천자 포스팅입니다.`,
 searchIntent: rewritten.seo?.searchIntent || '고객 도움형',
 funnelStage: rewritten.seo?.funnelStage || '읽고 바로 확인',
-contentArchetype: rewritten.contentArchetype || 'phase210_diverse_professional_article',
-readabilityTarget: 'middle_school_korean',
-publicDisplayVersion: 'phase210-diverse-professional-4000-board',
-phase210Audit: {
+contentArchetype: rewritten.contentArchetype || 'phase217_expert_editorial_article',
+readabilityTarget: 'expert_but_accessible_korean',
+publicDisplayVersion: 'phase217-expert-editorial-board',
+phase217Audit: {
   ok: audit.ok,
   banned: audit.banned,
   missingSections: audit.missingSections,
@@ -2300,7 +2286,7 @@ return [
 function getCommercialOffer(code) { const normalized = normalizePlanCode(code); return buildCommercialOfferCatalog().find(item => item.code === normalized) || null; }
 function buildPlanCatalog(recommendedPlan = 'Report') {
 const offers = buildCommercialOfferCatalog();
-const free = { code: 'Free', monthlyPrice: 0, period: '무료', title: 'Free Demo', group: 'free', summary: '고객이 결제 전 멈출 만한 지점을 무료로 먼저 확인합니다.', features: ['신뢰를 떨어뜨릴 수 있는 요소 요약', '상위 개선 포인트 확인', '내게 맞는 다음 상품 추천', '비회원 일일 3회 제한'], recommended: false };
+const free = { code: 'Free', monthlyPrice: 0, period: '무료', title: '무료 진단', group: 'free', summary: '고객이 결제 전 멈출 만한 지점을 무료로 먼저 확인합니다.', features: ['신뢰를 떨어뜨릴 수 있는 요소 요약', '상위 개선 포인트 확인', '내게 맞는 다음 상품 추천', '비회원 일일 3회 제한'], recommended: false };
 const paid = offers.map(offer => ({ code: offer.code, monthlyPrice: offer.price, period: offer.period, title: offer.title, group: offer.group, summary: offer.summary, features: offer.deliverables, targetCustomer: offer.targetCustomer, referencePrice: offer.referencePrice, valuePackWorth: offer.valuePackWorth, dailyPrice: offer.period === '월' ? Math.ceil(offer.price / 30) : 0, recommended: offer.code === normalizePlanCode(recommendedPlan) }));
 return [free, ...paid];
 }
@@ -3678,7 +3664,7 @@ if (!article) {
 const variant = chooseCtaVariant(db, { ...options, sequenceOffset: Date.now() % 144 });
 article = buildCtaBoardArticle(scan || {}, variant, { ...options, title: `${variant.headline} · ${new Date().toLocaleDateString('ko-KR')}` });
 }
-const base = { ctaType: article.ctaType, titleCandidates: article.titleCandidates, tags: article.tags, qualityStandard:'cta-v9-phase210-diverse-professional-4000', seoQualityStandard:'cta-v9-phase210-diverse-professional-4000', wordRangeKo: '3800-4500', sections: ['왜 이 글을 썼나요?', '지금 보이는 문제', '독자가 관심 있어 할 부분', '고객 입장에서 보면', '중학생도 이해할 수 있게 말하면', '전문적으로 보면', '바로 고칠 수 있는 것', '문구를 쉽게 바꾸는 방법', '자주 묻는 질문', '다음에 할 일'], diversityKey: article.diversityKey, contentFingerprint: article.contentFingerprint, searchIntent: article.seo?.searchIntent || null, funnelStage: article.seo?.funnelStage || null, primaryKeyword: article.seo?.primaryKeyword || null, secondaryKeywords: article.seo?.secondaryKeywords || [], metaDescription: article.seo?.metaDescription || null, baseCtaType: article.baseCtaType || null, combinationMode: article.combinationMode || null, combinationKey: article.combinationKey || null, contentArchetype: article.contentArchetype || article.seo?.contentArchetype || null, audienceSegment: article.audienceSegment || article.seo?.audienceSegment || null };
+const base = { ctaType: article.ctaType, titleCandidates: article.titleCandidates, tags: article.tags, qualityStandard:'cta-v10-phase217-expert-editorial-revenue-20min', seoQualityStandard:'cta-v10-phase217-expert-editorial-revenue-20min', wordRangeKo: '4200-5200', sections: ['전문가 관점 요약', '현장에서 자주 생기는 문제', '매출과 신뢰에 영향을 주는 이유', '실무 적용 순서', '문구 개선 예시', '검증 체크리스트', '검색 유입을 고려한 구성', '자주 묻는 질문', '자연스러운 다음 행동'], diversityKey: article.diversityKey, contentFingerprint: article.contentFingerprint, searchIntent: article.seo?.searchIntent || null, funnelStage: article.seo?.funnelStage || null, primaryKeyword: article.seo?.primaryKeyword || null, secondaryKeywords: article.seo?.secondaryKeywords || [], metaDescription: article.seo?.metaDescription || null, baseCtaType: article.baseCtaType || null, combinationMode: article.combinationMode || null, combinationKey: article.combinationKey || null, contentArchetype: article.contentArchetype || article.seo?.contentArchetype || null, audienceSegment: article.audienceSegment || article.seo?.audienceSegment || null };
 const publication = { id: uid('pub'), title: article.title, status: 'published', type: 'cta', boardType: article.boardType, ...base, relatedRequestId: scan?.requestId || null, body: article.body, createdAt: nowIso(), autoPublished: options.autoPublished === true };
 db.publications.unshift(publication);
 const publishIntervalMs = normalizeCtaAutopublishIntervalMs(options.publishIntervalMs, CTA_AUTOPUBLISH_INTERVAL_MS);
@@ -3724,7 +3710,7 @@ return createCtaPublication(db, scan, { ...options, autoPublished: true, publish
 }
 
 async function runCtaAutopublish(reason = 'interval') {
-const lockKey = 'cta-autopublish-20min';
+const lockKey = 'cta-autopublish-20min-expert-editorial';
 const locked = await distributedLock.acquire(lockKey, Math.max(30, Math.ceil(CTA_AUTOPUBLISH_INTERVAL_MS / 1000)));
 if (!locked) return { ok: true, skipped: 'locked' };
 try {
@@ -3961,7 +3947,7 @@ const publicRouteHandler = createPublicRouteHandler(routeContext);
 const adminRouteHandler = createAdminRouteHandler(routeContext);
 
 // Canonical URL normalization is enforced in server/middleware/security.mjs with pathname.endsWith("/") before page rendering.
-const securityMiddleware = createSecurityMiddleware({ isAllowedHost, text, baseHeaders, requestUrlFrom, redirect });
+const securityMiddleware = createSecurityMiddleware({ isAllowedHost, text, baseHeaders, requestUrlFrom, redirect, canonicalBaseUrl: seoBaseUrl(), canonicalHostRedirect: process.env.NV0_CANONICAL_HOST_REDIRECT !== 'false' });
 const READYZ_CACHE_TTL_MS = Math.max(0, Number(process.env.NV0_READYZ_CACHE_TTL_MS || 3000));
 let readyzCache = null;
 let publicXmlCache = { sitemap: null, feed: null };

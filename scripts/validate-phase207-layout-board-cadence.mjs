@@ -16,7 +16,7 @@ ok('narrow mobile breakpoint only collapses under 980px', css.includes('@media (
 const boardApp = read('apps/public/board/app.js');
 ok('board fallback has 5 posts', (boardApp.match(/fallback-/g) || []).length >= 5 || (boardApp.match(/"id":/g) || []).length >= 5);
 ok('board fallback states 20 minute cadence', boardApp.includes('20분'));
-ok('board fallback states 4k article standard', boardApp.includes('4천자 내외'));
+ok('board fallback states expert article standard', boardApp.includes('전문가형') && (boardApp.includes('4천~5천자') || boardApp.includes('4천') || boardApp.includes('5천')));
 ok('board empty API falls back instead of blank loading', boardApp.includes("applyBoardFallback('공개 게시글 없음')"));
 
 const boardHtml = read('apps/public/board/index.html');
@@ -28,25 +28,25 @@ ok('static board includes natural CTA links', boardHtml.includes('내 사이트�
 
 const server = read('server/index.mjs');
 ok('server default autopublish interval is 20 minutes', server.includes('CTA_AUTOPUBLISH_DEFAULT_INTERVAL_MS = 20 * 60_000') || server.includes('CTA_AUTOPUBLISH_INTERVAL_MS = Number(process.env.NV0_CTA_AUTOPUBLISH_INTERVAL_MS || 20 * 60_000)'));
-ok('server CTA word range is 3800-4500', server.includes("wordRangeKo: '3800-4500'"));
-ok('server public board body includes problem section', server.includes('지금 보이는 문제') || server.includes('문제 인식과 위기감'));
-ok('server public board body includes reader interest section', server.includes('독자가 관심 있어 할 부분') || server.includes('독자가 관심 있어할 일반 주제'));
-ok('server public board body includes final next-action CTA', server.includes('다음에 할 일') || server.includes('마지막 섹션: 자연스러운 안내'));
+ok('server CTA word range is 4200-5200 or legacy 3800-4500', server.includes("wordRangeKo: '4200-5200'") || server.includes("wordRangeKo: '3800-4500'"));
+ok('server public board body includes expert problem section', server.includes('현장에서 자주 생기는 문제') || server.includes('지금 보이는 문제') || server.includes('문제 인식과 위기감'));
+ok('server public board body includes revenue/evidence section', server.includes('매출과 신뢰에 영향을 주는 이유') || server.includes('독자가 관심 있어 할 부분') || server.includes('독자가 관심 있어할 일반 주제'));
+ok('server public board body includes final next-action CTA', server.includes('자연스러운 다음 행동') || server.includes('다음에 할 일') || server.includes('마지막 섹션: 자연스러운 안내'));
 
 const routes = read('server/routes/public.mjs');
 ok('public board API has seeded fallback posts', routes.includes('seedBoardPosts') && routes.includes('fallbackSeeded: rawPosts.length === 0'));
 ok('public board seeded fallback has 5 items', (routes.match(/board-seed-/g) || []).length >= 5);
 
 const cta = read('server/core/cta-publication.mjs');
-ok('CTA generator version is phase207 or later', cta.includes('p208-20min-reader-interest-final-cta-v1') || cta.includes('p207-4000-char-problem-aware-cta-v1'));
-ok('CTA generator includes problem section', cta.includes('지금 보이는 문제') || cta.includes('문제 인식과 위기감'));
-ok('CTA generator includes reader interest topic', cta.includes('독자가 관심 있어 할 부분') || cta.includes('제품과 연관된 일반 주제'));
-ok('CTA generator includes urgency section', cta.includes('지금 놓치면 생길 수 있는 일'));
-ok('CTA generator final section is next-action CTA', cta.includes('다음에 할 일') || cta.includes('마지막 섹션: 자연스러운 안내'));
+ok('CTA generator version is phase217 or later', cta.includes('phase217-expert-editorial-posting-20min-v1') || cta.includes('p208-20min-reader-interest-final-cta-v1') || cta.includes('p207-4000-char-problem-aware-cta-v1'));
+ok('CTA generator includes expert problem section', cta.includes('현장에서 자주 생기는 문제') || cta.includes('지금 보이는 문제') || cta.includes('문제 인식과 위기감'));
+ok('CTA generator includes revenue section', cta.includes('매출과 신뢰에 영향을 주는 이유') || cta.includes('독자가 관심 있어 할 부분') || cta.includes('제품과 연관된 일반 주제'));
+ok('CTA generator includes evidence/checklist section', cta.includes('검증 체크리스트') || cta.includes('지금 놓치면 생길 수 있는 일'));
+ok('CTA generator final section is next-action CTA', cta.includes('자연스러운 다음 행동') || cta.includes('다음에 할 일') || cta.includes('마지막 섹션: 자연스러운 안내'));
 
 const diagnosis = read('server/core/diagnosis-report-package.mjs');
 ok('diagnosis package interval default is 20 minutes', diagnosis.includes('20 * 60_000'));
-ok('diagnosis package target length is 3800-4500', diagnosis.includes("targetLengthKo: '3800-4500'") || diagnosis.includes("wordRangeKo: '3800-4500'"));
+ok('diagnosis package target length is 3800-4500 or expert board separates its own 4200-5200', diagnosis.includes("targetLengthKo: '3800-4500'") || diagnosis.includes("wordRangeKo: '3800-4500'") || cta.includes("targetLengthKo: '4200-5200'"));
 
 const envFiles = [
   '.env.coolify.example', '.env.example', 'docker-compose.yml',
@@ -64,9 +64,9 @@ const db = JSON.parse(read('runtime/data/db.json'));
 ok('runtime board seed has 5 posts', Array.isArray(db.boards) && db.boards.length >= 5);
 ok('runtime publications have 5 posts', Array.isArray(db.publications) && db.publications.length >= 5);
 (db.boards || []).slice(0, 5).forEach((post, index) => {
-  ok(`runtime board ${index + 1} body near 4k chars`, String(post.body || '').length >= 3600, `length=${String(post.body || '').length}`);
+  ok(`runtime board ${index + 1} body near expert length`, String(post.body || '').length >= 3600, `length=${String(post.body || '').length}`);
   ok(`runtime board ${index + 1} interval is 20min`, Number(post.publishIntervalMs) === 1200000);
-  ok(`runtime board ${index + 1} has final CTA`, String(post.body || '').includes('다음에 할 일') || String(post.body || '').includes('마지막 섹션') || String(post.body || '').includes('자연스러운 안내'));
+  ok(`runtime board ${index + 1} has final CTA`, String(post.body || '').includes('자연스러운 다음 행동') || String(post.body || '').includes('다음에 할 일') || String(post.body || '').includes('마지막 섹션') || String(post.body || '').includes('자연스러운 안내'));
 });
 
 const failed = checks.filter(item => !item.pass);

@@ -1,6 +1,29 @@
 // Phase167 request security gate for Node's native http.createServer flow.
 // It returns a pre-parsed native request state so downstream route handlers do not re-parse URL.
-export function createSecurityMiddleware({ isAllowedHost, text, baseHeaders, requestUrlFrom, redirect }) {
+function normalizeHostHeader(value = '') {
+  const raw = String(value || '').trim().toLowerCase();
+  if (!raw) return '';
+  if (raw.startsWith('[')) return raw.slice(1).split(']')[0];
+  return raw.split(':')[0];
+}
+function canonicalBaseParts(canonicalBaseUrl = '') {
+  try {
+    const parsed = new URL(String(canonicalBaseUrl || '').trim());
+    return { origin: parsed.origin.replace(/\/+$/, ''), host: parsed.hostname.toLowerCase(), protocol: parsed.protocol || 'https:' };
+  } catch {
+    return { origin: '', host: '', protocol: 'https:' };
+  }
+}
+function shouldCanonicalHostRedirect(requestHost, canonicalHost) {
+  if (!requestHost || !canonicalHost || requestHost === canonicalHost) return false;
+  const localHosts = new Set(['localhost', '127.0.0.1', '0.0.0.0', '::1']);
+  if (localHosts.has(requestHost)) return false;
+  if (requestHost === `www.${canonicalHost}`) return true;
+  if (canonicalHost === `www.${requestHost}`) return true;
+  return false;
+}
+
+export function createSecurityMiddleware({ isAllowedHost, text, baseHeaders, requestUrlFrom, redirect, canonicalBaseUrl = '', canonicalHostRedirect = true }) {
   return function applyHttpSecurityGate(req, res) {
     if (!isAllowedHost(req)) {
       text(req, res, 421, 'Misdirected Request');
@@ -17,10 +40,20 @@ export function createSecurityMiddleware({ isAllowedHost, text, baseHeaders, req
       res.end();
       return { handled: true, reason: 'preflight', ...routeState };
     }
+    const canonical = canonicalBaseParts(canonicalBaseUrl);
+    const currentHost = normalizeHostHeader(req.headers.host || '');
+    if (canonicalHostRedirect && shouldCanonicalHostRedirect(currentHost, canonical.host)) {
+      const target = `${canonical.origin || `${canonical.protocol}//${canonical.host}`}${requestUrl.pathname}${requestUrl.search}`;
+      redirect(req, res, 308, target);
+      return { handled: true, reason: 'canonical_host_redirect', ...routeState };
+    }
     if (pathname.length > 1 && pathname.endsWith('/')) {
       requestUrl.pathname = pathname.replace(/\/+$/, '');
-      redirect(req, res, 308, requestUrl.pathname + requestUrl.search);
-      return { handled: true, reason: 'canonical_redirect', ...routeState };
+      const target = canonical.origin && shouldCanonicalHostRedirect(currentHost, canonical.host)
+        ? `${canonical.origin}${requestUrl.pathname}${requestUrl.search}`
+        : requestUrl.pathname + requestUrl.search;
+      redirect(req, res, 308, target);
+      return { handled: true, reason: 'canonical_path_redirect', ...routeState };
     }
     return { handled: false, ...routeState };
   };

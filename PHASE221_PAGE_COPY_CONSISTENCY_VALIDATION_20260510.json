@@ -1,0 +1,42 @@
+{
+  "ok": true,
+  "phase": "phase221",
+  "name": "page-copy-consistency-unification",
+  "checkedAt": "2026-05-10T02:35:49.248Z",
+  "scoreAfterPatch": 100,
+  "totalChecks": 92,
+  "failedChecks": [],
+  "canonicalCopySystem": {
+    "nav": [
+      "무료 진단",
+      "상품·요금",
+      "콘텐츠 보드",
+      "문서 생성",
+      "내 사이트",
+      "고객지원"
+    ],
+    "products": {
+      "Report": "상세 리포트 · 69,000원 · 1회",
+      "FixPack": "FixPack · 99,000원 · 1회",
+      "Auto": "Auto 정기 케어 · 299,000원 · 월"
+    },
+    "forbiddenTerms": [
+      "플랜 비교",
+      "Pro 리포트",
+      "Free Demo",
+      "Auto 케어",
+      "Auto 정기 점검",
+      "정기 점검 상품",
+      "상품 비교",
+      "케어으로",
+      "상세 상세",
+      "replace-with-number",
+      "undefined",
+      "NaN",
+      "[object Object]",
+      "TODO",
+      "TBD",
+      "lorem"
+    ]
+  }
+}

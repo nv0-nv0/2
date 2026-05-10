@@ -1,0 +1,16 @@
+Only in nv0_phase217_work: PHASE217_CTA_EXPERT_EDITORIAL_VALIDATION_20260510.json
+Files nv0_phase216_base_cmp/apps/public/board/app.js and nv0_phase217_work/apps/public/board/app.js differ
+Files nv0_phase216_base_cmp/apps/public/board/index.html and nv0_phase217_work/apps/public/board/index.html differ
+Files nv0_phase216_base_cmp/package.json and nv0_phase217_work/package.json differ
+Files nv0_phase216_base_cmp/runtime/data/db.json and nv0_phase217_work/runtime/data/db.json differ
+Only in nv0_phase217_work/runtime/data: db.json.phase217-expert-backup-1778376407592
+Files nv0_phase216_base_cmp/scripts/migrate-phase210-cta-board-diversity.mjs and nv0_phase217_work/scripts/migrate-phase210-cta-board-diversity.mjs differ
+Only in nv0_phase217_work/scripts: migrate-phase217-cta-expert-editorial.mjs
+Files nv0_phase216_base_cmp/scripts/validate-phase207-layout-board-cadence.mjs and nv0_phase217_work/scripts/validate-phase207-layout-board-cadence.mjs differ
+Files nv0_phase216_base_cmp/scripts/validate-phase210-cta-diversity.mjs and nv0_phase217_work/scripts/validate-phase210-cta-diversity.mjs differ
+Only in nv0_phase217_work/scripts: validate-phase217-cta-expert-editorial.mjs
+Files nv0_phase216_base_cmp/server/core/cta-publication.mjs and nv0_phase217_work/server/core/cta-publication.mjs differ
+Files nv0_phase216_base_cmp/server/index.mjs and nv0_phase217_work/server/index.mjs differ
+Files nv0_phase216_base_cmp/server/routes/public.mjs and nv0_phase217_work/server/routes/public.mjs differ
+Files nv0_phase216_base_cmp/tests/phase210-cta-diversity-4000.mjs and nv0_phase217_work/tests/phase210-cta-diversity-4000.mjs differ
+Only in nv0_phase217_work/tests: phase217-cta-expert-editorial-20min.mjs

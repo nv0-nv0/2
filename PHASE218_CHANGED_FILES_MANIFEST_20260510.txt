@@ -1,0 +1,34 @@
+PHASE218 Fresh Premium Redesign changed files
+Generated: 2026-05-10
+
+Only in /mnt/data/nv0_phase218_work: PHASE218_CHANGED_FILES_MANIFEST_20260510.txt
+Only in /mnt/data/nv0_phase218_work: PHASE218_FRESH_PREMIUM_REDESIGN_CLOSEOUT_20260510_KO.md
+Only in /mnt/data/nv0_phase218_work: PHASE218_FRESH_PREMIUM_REDESIGN_VALIDATION_20260510.json
+Files apps/admin/console/index.html and apps/admin/console/index.html differ
+Files apps/admin/diagnostics/index.html and apps/admin/diagnostics/index.html differ
+Files apps/admin/gate/index.html and apps/admin/gate/index.html differ
+Files apps/admin/library/index.html and apps/admin/library/index.html differ
+Files apps/admin/orders/index.html and apps/admin/orders/index.html differ
+Files apps/admin/publications/index.html and apps/admin/publications/index.html differ
+Files apps/admin/settings/index.html and apps/admin/settings/index.html differ
+Files apps/public/auth/index.html and apps/public/auth/index.html differ
+Files apps/public/board/index.html and apps/public/board/index.html differ
+Files apps/public/business-info/index.html and apps/public/business-info/index.html differ
+Files apps/public/cases/index.html and apps/public/cases/index.html differ
+Files apps/public/checkout/index.html and apps/public/checkout/index.html differ
+Files apps/public/demo/index.html and apps/public/demo/index.html differ
+Files apps/public/documents/index.html and apps/public/documents/index.html differ
+Files apps/public/guides/index.html and apps/public/guides/index.html differ
+Files apps/public/home/index.html and apps/public/home/index.html differ
+Files apps/public/plans/index.html and apps/public/plans/index.html differ
+Files apps/public/portal/index.html and apps/public/portal/index.html differ
+Files apps/public/privacy/index.html and apps/public/privacy/index.html differ
+Files apps/public/refund/index.html and apps/public/refund/index.html differ
+Files apps/public/service/index.html and apps/public/service/index.html differ
+Files apps/public/solutions/index.html and apps/public/solutions/index.html differ
+Files apps/public/terms/index.html and apps/public/terms/index.html differ
+Files apps/public/veridion-demo/index.html and apps/public/veridion-demo/index.html differ
+Only in docs: phase218
+Files package.json and package.json differ
+Only in scripts: validate-phase218-fresh-premium.mjs
+Only in shared: phase218-fresh-premium.css

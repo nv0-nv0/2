@@ -1,0 +1,29 @@
+{
+  "ok": true,
+  "name": "phase217-cta-expert-editorial-revenue-20min",
+  "engineVersion": "cta-board-v10.0-phase217-expert-editorial-revenue-20min",
+  "finiteTemplateFloor": 353894400,
+  "checks": {
+    "sourceGuards": 13,
+    "generatedArticles": 80,
+    "generatedUniqueTitles": 80,
+    "generatedUniqueBodies": 80,
+    "rewrittenArticles": 80,
+    "rewrittenUniqueTitles": 80,
+    "rewrittenUniqueBodies": 80,
+    "targetLengthKo": "4200-5200",
+    "readabilityTarget": "expert_but_accessible_korean",
+    "cadence": "20min 유지",
+    "requiredSections": [
+      "전문가 관점 요약",
+      "현장에서 자주 생기는 문제",
+      "매출과 신뢰에 영향을 주는 이유",
+      "실무 적용 순서",
+      "문구 개선 예시",
+      "검증 체크리스트",
+      "검색 유입을 고려한 구성",
+      "자주 묻는 질문",
+      "자연스러운 다음 행동"
+    ]
+  }
+}

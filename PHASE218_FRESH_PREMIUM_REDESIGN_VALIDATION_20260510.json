@@ -1,0 +1,25 @@
+{
+  "ok": true,
+  "name": "phase218-fresh-premium-conversion-redesign",
+  "scoreAfterPatch": 100,
+  "checkedPages": 8,
+  "visualSystem": {
+    "mood": "fresh_airly_professional_saas",
+    "colors": [
+      "deep navy",
+      "teal",
+      "mint",
+      "soft sky blue",
+      "restrained lime",
+      "warm white"
+    ],
+    "infographicComponents": [
+      "trust score donut",
+      "issue priority bars",
+      "3-step process",
+      "before/after cards",
+      "secure checkout strip"
+    ],
+    "cadencePreserved": "CTA 자동발행 20분 1회 유지"
+  }
+}

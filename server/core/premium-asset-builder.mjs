@@ -1,4 +1,5 @@
 import { buildDiagnosisAccuracyProfile, buildReportQualityProfile, buildFulfillmentQualityProfile } from './product-quality-engine.mjs';
+import { buildDemoAccuracyContract, buildPaidDeliverableBlueprint, buildPaidOutputQualityGate } from './service-quality-220.mjs';
 const SAFE_DISCLAIMER = '본 산출물은 운영 사이트 점검과 문구 개선을 돕는 참고 자료이며, 개별 사건에 대한 법률 자문이나 법적 안전성 보장을 의미하지 않습니다. 법률·정책 판단은 공식 원문 또는 전문가 검토가 필요합니다.';
 
 function text(value, fallback = '') {
@@ -403,12 +404,15 @@ function buildStakeholderHandoff(order, scan) {
   };
 }
 function buildOutputPerformanceProfile(order, offer, scan) {
+  const demoAccuracy = buildDemoAccuracyContract(scan || {}, { plan: order?.plan });
   return {
     level: 'phase134-all-service-output-max',
     detailDepth: '결제 후 실행 가능한 문서·문구·FAQ·CTA·태그·재점검 기준까지 포함',
     valueMultiple: '가격의 3배 구성 가치 기준. 실제 성과 보장이 아니라 산출물 구성 기준입니다.',
     renderPerformance: ['카드형 섹션', '긴 문장 자동 줄바꿈', '모바일 1열 재배치', 'PDF 다운로드 라인 확장'],
-    safetyPerformance: ['HTML 실행 렌더링 금지', '법률 단정 차단', '확인 필요 분리', '개인정보·토큰 노출 금지']
+    safetyPerformance: ['HTML 실행 렌더링 금지', '법률 단정 차단', '확인 필요 분리', '개인정보·토큰 노출 금지'],
+    demoAccuracyScore: demoAccuracy.score,
+    outputAccuracyTarget: '근거·한계·수동확인·재점검 기준을 분리해 오탐과 과장 표현을 줄이는 품질 목표'
   };
 }
 export function buildPremiumPurchasedAsset({ order, offer, scan, site, businessProfile, policyDocuments = [], industryGuide }) {
@@ -436,34 +440,43 @@ export function buildPremiumPurchasedAsset({ order, offer, scan, site, businessP
     riskRegister: buildRiskRegister(scan),
     stakeholderHandoff: buildStakeholderHandoff(order, scan),
     outputPerformanceProfile: buildOutputPerformanceProfile(order, offer, scan),
+    demoAccuracyContract: buildDemoAccuracyContract(scan || {}, { plan: order?.plan }),
+    paidDeliverableBlueprint: buildPaidDeliverableBlueprint(scan || {}, text(order?.plan || offer?.code || 'Report')),
     renderedFor: { siteId: order?.siteId || site?.siteId || null, domain: order?.domain || site?.domain || scan?.target || null }
   };
   const enrichedBase = {
     ...base,
     diagnosisAccuracyProfile: buildDiagnosisAccuracyProfile(scan || {}),
     reportQualityProfile: buildReportQualityProfile(base, scan || {}),
-    fulfillmentQualityProfile: buildFulfillmentQualityProfile(order || {}, base, scan || {})
+    fulfillmentQualityProfile: buildFulfillmentQualityProfile(order || {}, base, scan || {}),
+    paidOutputQualityGate: buildPaidOutputQualityGate({ order: order || {}, asset: base, scan: scan || {} })
   };
   const plan = text(order?.plan || 'Report');
+  const withPhase220Gate = (asset) => {
+    const reportQualityProfile = buildReportQualityProfile(asset, scan || {});
+    const fulfillmentQualityProfile = buildFulfillmentQualityProfile(order || {}, asset, scan || {});
+    const paidOutputQualityGate = buildPaidOutputQualityGate({ order: order || {}, asset: { ...asset, reportQualityProfile, fulfillmentQualityProfile }, scan: scan || {} });
+    return { ...asset, reportQualityProfile, fulfillmentQualityProfile, paidOutputQualityGate };
+  };
   if (plan === 'Report') {
     const asset = { ...enrichedBase, type: 'report', title: '정밀 리스크 리포트', downloadable: true, fixes: [], templates: [], guide: null, autoPublishingPlan: null };
-    return { ...asset, reportQualityProfile: buildReportQualityProfile(asset, scan || {}), fulfillmentQualityProfile: buildFulfillmentQualityProfile(order || {}, asset, scan || {}) };
+    return withPhase220Gate(asset);
   }
   if (plan === 'FixPack') {
     const asset = { ...enrichedBase, type: 'fix_pack', title: '수정 문구안 패키지', downloadable: true, templates: [], guide: null, autoPublishingPlan: null };
-    return { ...asset, reportQualityProfile: buildReportQualityProfile(asset, scan || {}), fulfillmentQualityProfile: buildFulfillmentQualityProfile(order || {}, asset, scan || {}) };
+    return withPhase220Gate(asset);
   }
   if (plan === 'TemplatePack') {
     const asset = { ...enrichedBase, type: 'template_pack', title: '법률 문서 템플릿 팩', downloadable: true, fixes: [], guide: null, autoPublishingPlan: null };
-    return { ...asset, reportQualityProfile: buildReportQualityProfile(asset, scan || {}), fulfillmentQualityProfile: buildFulfillmentQualityProfile(order || {}, asset, scan || {}) };
+    return withPhase220Gate(asset);
   }
   if (plan === 'IndustryGuide') {
     const asset = { ...enrichedBase, type: 'industry_guide', title: `${text(industryGuide?.industry || '업종별')} 운영 리스크 가이드`, downloadable: true, fixes: [], templates: [], autoPublishingPlan: null };
-    return { ...asset, reportQualityProfile: buildReportQualityProfile(asset, scan || {}), fulfillmentQualityProfile: buildFulfillmentQualityProfile(order || {}, asset, scan || {}) };
+    return withPhase220Gate(asset);
   }
   if (plan === 'Certified') {
     const asset = { ...enrichedBase, type: 'certification', title: 'NV0 Certified 인증 후보', downloadable: false, certificationStatus: 'pending_operator_review', fixes: buildFixes(scan).slice(0, 3), templates: [], autoPublishingPlan: null };
-    return { ...asset, reportQualityProfile: buildReportQualityProfile(asset, scan || {}), fulfillmentQualityProfile: buildFulfillmentQualityProfile(order || {}, asset, scan || {}) };
+    return withPhase220Gate(asset);
   }
   if (['Basic', 'Pro', 'Auto', 'Agency'].includes(plan)) {
     const isAuto = plan === 'Auto' || plan === 'Agency';
@@ -478,10 +491,10 @@ export function buildPremiumPurchasedAsset({ order, offer, scan, site, businessP
       autoPublishing: isAuto,
       autoPublishingPlan: isAuto ? buildAutoPublishingPlan(order, scan) : null
     };
-    return { ...asset, reportQualityProfile: buildReportQualityProfile(asset, scan || {}), fulfillmentQualityProfile: buildFulfillmentQualityProfile(order || {}, asset, scan || {}) };
+    return withPhase220Gate(asset);
   }
   const asset = { ...enrichedBase, type: 'generic', title: text(offer?.title || plan), downloadable: true };
-  return { ...asset, reportQualityProfile: buildReportQualityProfile(asset, scan || {}), fulfillmentQualityProfile: buildFulfillmentQualityProfile(order || {}, asset, scan || {}) };
+  return withPhase220Gate(asset);
 }
 
 export function buildPremiumAssetPdfLines(asset, order) {
