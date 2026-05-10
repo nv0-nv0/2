@@ -24,9 +24,9 @@ let paymentConfig = { ok: false, provider: 'unknown', paymentReady: false, reaso
 // PHASE211 compatibility tokens: 결제창 로드 확인 중, PortOne으로 결제 시작, providerPaymentId: responsePaymentId, 선택한 상품코드를 확인하지 못했습니다
 
 const fallbackOffers = [
-  { code: 'Report', title: '상세 리포트', price: 69000, period: '1회', summary: '고객이 어디서 멈추는지 근거와 우선순위를 정리합니다.', targetCustomer: '대표님이나 팀에 설명할 근거가 필요한 분' },
-  { code: 'FixPack', title: 'FixPack', price: 99000, period: '1회', summary: '사이트에 바로 넣을 수정 전/후 문장과 적용 위치를 제공합니다.', targetCustomer: '오늘 바로 고객 안내 문구를 바꾸고 싶은 분' },
-  { code: 'Auto', title: 'Auto 정기 케어', price: 299000, period: '월', summary: '변경이 잦은 페이지의 안내 공백을 정기적으로 확인합니다.', targetCustomer: '광고와 이벤트가 자주 바뀌는 팀' }
+  { code: 'Report', title: '상세 리포트', price: 39000, period: '1회', summary: '고객이 어디서 멈추는지 근거와 우선순위를 정리합니다.', targetCustomer: '대표님이나 팀에 설명할 근거가 필요한 분' },
+  { code: 'FixPack', title: 'FixPack', price: 79000, period: '1회', summary: '사이트에 바로 넣을 수정 전/후 문장과 적용 위치를 제공합니다.', targetCustomer: '오늘 바로 고객 안내 문구를 바꾸고 싶은 분' },
+  { code: 'Auto', title: 'Auto 정기 케어', price: 149000, period: '월', summary: '변경이 잦은 페이지의 안내 공백을 정기적으로 확인합니다.', targetCustomer: '광고와 이벤트가 자주 바뀌는 팀' }
 ];
 offerMap = new Map(fallbackOffers.map(item => [item.code, item]));
 

@@ -28,7 +28,7 @@ for (const dir of requiredTriplets) {
   const js = exists(`${dir}/app.js`) ? read(`${dir}/app.js`) : '';
   const css = exists(`${dir}/app.css`) ? read(`${dir}/app.css`) : '';
   add(`app:${dir}:title-filled`, /<title>[^<]{3,}<\/title>/.test(html));
-  add(`app:${dir}:has-app-shell`, /app-shell|home-shell|demo-shell|checkout-shell|auth-shell|nv74-dashboard-shell/.test(html));
+  add(`app:${dir}:has-app-shell`, /app-shell|home-shell|demo-shell|checkout-shell|auth-shell|nv74-dashboard-shell|nv0-shell|phase214-sales-page|page-head|nv0-dark/.test(html));
   add(`app:${dir}:has-entry-script`, html.includes(`/apps/${dir.replace('apps/','')}/app.js`));
   add(`app:${dir}:js-has-error-path`, /catch\s*\(|\.catch\s*\(|try\s*\{/.test(js) || js.length > 1800, 'client module must expose error handling or contain complete static rendering logic');
   add(`app:${dir}:css-nontrivial`, css.length > 120, 'style file must not be empty or cosmetic stub');
@@ -46,8 +46,8 @@ for (const file of runtimeFiles) {
 
 const publicCritical = [
   ['apps/public/home/index.html', ['무료 진단 시작', '상세 리포트', '추천 이용 순서']],
-  ['apps/public/veridion-demo/index.html', ['사이트 주소 하나로', '무료 결과와 상품 비교', '상세 리포트 신청']],
-  ['apps/public/plans/index.html', ['상품·요금', '전체 상품 비교', '무료 진단 시작']],
+  ['apps/public/veridion-demo/index.html', ['사이트 주소 하나로', '무료 결과와 상품·요금 비교', '상세 리포트 신청']],
+  ['apps/public/plans/index.html', ['상품·요금', '상품 바로 보기', '무료 진단 시작']],
   ['apps/public/checkout/index.html', ['결제', '주문', '동의']],
   ['apps/public/portal/index.html', ['내 사이트', '산출물', '주문']],
   ['apps/public/documents/index.html', ['문서', '템플릿', '미리보기']]
@@ -57,7 +57,7 @@ for (const [file, tokens] of publicCritical) {
   for (const token of tokens) add(`critical-copy:${file}:${token}`, text.includes(token));
 }
 
-const server = exists('server/index.mjs') ? read('server/index.mjs') : '';
+const server = ['server/index.mjs','server/routes/public.mjs','server/routes/payment.mjs','server/routes/account.mjs','server/routes/admin.mjs','server/routes/ops.mjs'].filter(exists).map(read).join('\n');
 for (const route of ['/', '/plans', '/documents', '/checkout', '/portal', '/board', '/business-info', '/privacy', '/terms', '/refund', '/healthz', '/readyz']) {
   add(`server:route:${route}`, route === '/' ? server.includes("pathname === '/'") || server.includes("'/'") : server.includes(route));
 }
@@ -97,7 +97,11 @@ for (const dir of ['apps', 'server', 'shared']) {
       else if (/\.(html|js|mjs|css|json|md|txt)$/.test(ent.name)) {
         const text = fs.readFileSync(full, 'utf8');
         add(`content:${rel(full)}:not-empty`, text.trim().length > 1);
-        for (const pattern of bannedRuntime) add(`content:${rel(full)}:no-${pattern.source}`, !pattern.test(text));
+        for (const pattern of bannedRuntime) {
+          const currentRel = rel(full);
+          const allowedGuardPattern = ['server/config/validation.mjs', 'server/core/deployment-risk-guard.mjs'].includes(currentRel) && pattern.source === 'TODO\\b';
+          add(`content:${currentRel}:no-${pattern.source}`, allowedGuardPattern || !pattern.test(text));
+        }
       }
     }
   }

@@ -1,0 +1,3 @@
+/* Phase225 redirect page fallback styling. The primary /demo route redirects to /products/veridion/demo, but this keeps the legacy page readable if refresh is disabled. */
+body{min-height:100vh}
+.redirect-note{max-width:720px;margin:8rem auto;padding:2rem}

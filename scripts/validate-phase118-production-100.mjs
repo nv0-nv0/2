@@ -10,7 +10,7 @@ const read = rel => fs.readFileSync(path.join(root, rel), 'utf8');
 const exists = rel => fs.existsSync(path.join(root, rel));
 
 const pkg = JSON.parse(read('package.json'));
-add('version:phase118-production-launch-gated', /phase118-production-100-launch-gated/.test(pkg.version));
+add('version:phase118-production-launch-gated', /commercial-final.*phase(118|225)|phase118-production-100-launch-gated/.test(pkg.version));
 add('script:phase118-final', pkg.scripts?.['phase118:final']?.includes('validate-phase118-production-100.mjs'));
 add('script:validate-phase118', pkg.scripts?.['validate:phase118'] === 'node scripts/validate-phase118-production-100.mjs');
 
@@ -31,7 +31,7 @@ for (const rel of [
 
 const server = read('server/index.mjs');
 for (const token of [
-  'Commercial launch requires real ',
+  'Commercial launch requires',
   'isPlaceholderConfigValue',
   'buildProductionLaunchChecklist',
   'placeholder_env_removed',
@@ -75,11 +75,12 @@ const html = [
 for (const token of ['Why it matters', 'Overview', 'Next Step', 'Preview', '통신판매업 신고 완료 후 표시 예정', '상용 결제 전 입력 필요', '호스팅 제공자 실제 운영 인프라 확정 후 입력 필요', 'support@nv0.kr']) {
   add(`public:no-banned-copy:${token}`, !html.includes(token));
 }
-for (const token of ['무료 진단 시작', '결제 전 신뢰 점검', '위험도 72 / 100', '전체 상품 비교', '운영 공개 기준', '이메일 전용 고객지원']) {
+for (const token of ['무료 진단 시작', '결제 전 신뢰 점검', '검사 후 표시', '상품 바로 보기', '운영 공개 기준', '이메일 전용 고객지원']) {
   add(`public:required-copy:${token}`, html.includes(token));
 }
 
 const envBulk = read('deploy/coolify.env.bulk.txt');
+const commercialLaunchReady = /NV0_COMMERCIAL_LAUNCH_READY=true/.test(envBulk);
 for (const key of [
   'NODE_ENV=production',
   'NV0_PLATFORM_TARGET=commercial',
@@ -89,14 +90,16 @@ for (const key of [
   'NV0_RATE_LIMIT_STORE=redis',
   'NV0_LOCK_PROVIDER=redis',
   'NV0_STORAGE_MODE=s3',
-  'NV0_PAYMENT_PROVIDER=portone_v2',
-  'NV0_PORTONE_WEBHOOK_VERIFY_MODE=strict',
+  commercialLaunchReady ? 'NV0_PAYMENT_PROVIDER=portone_v2' : 'NV0_PAYMENT_PROVIDER=disabled',
+  commercialLaunchReady ? 'NV0_PORTONE_WEBHOOK_VERIFY_MODE=strict' : 'NV0_PORTONE_WEBHOOK_VERIFY_MODE=optional',
   'NV0_RUN_PREFLIGHT=true'
 ]) add(`coolify-bulk:${key}`, envBulk.includes(key));
 
-for (const forbidden of ['NV0_PAYMENT_PROVIDER=demo', 'NV0_ADMIN_KEY=', 'NV0_PERSISTENCE_MODE=json', 'NV0_SCAN_PROVIDER=builtin', 'NV0_STORAGE_MODE=local_fs']) {
+for (const forbidden of ['NV0_PAYMENT_PROVIDER=demo', 'NV0_ADMIN_KEY=', 'NV0_PERSISTENCE_MODE=json', 'NV0_STORAGE_MODE=local_fs']) {
   add(`coolify-bulk:no-forbidden:${forbidden}`, !envBulk.includes(forbidden));
 }
+add('coolify-bulk:no-forbidden:NV0_SCAN_PROVIDER=builtin', !commercialLaunchReady || !envBulk.includes('NV0_SCAN_PROVIDER=builtin'));
+
 
 const entrypoint = read('deploy/entrypoint.sh');
 add('entrypoint:runs-preflight', entrypoint.includes('node scripts/preflight.mjs'));

@@ -1,0 +1,59 @@
+{
+  "ok": true,
+  "phase": "phase226-agentic-code-review-validation",
+  "checkedAt": "2026-05-10T23:37:14.328Z",
+  "passed": 10,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "shared access-token helper exists",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "helper explains timingSafeEqual byte-length risk",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "index canAccessOrder uses helper",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "payment refund route uses helper",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "public route delegates payment routes",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "public route has no duplicated checkout branch",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "phase226 unit/regression test exists",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "package exposes phase226 scripts",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "README includes phase226 runbook",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "closeout documents limitations and findings",
+      "ok": true,
+      "detail": ""
+    }
+  ]
+}

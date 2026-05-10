@@ -1,5 +1,5 @@
 import { buildDiagnosisAccuracyProfile, buildReportQualityProfile } from './product-quality-engine.mjs';
-import { buildDemoAccuracyContract, buildPaidDeliverableBlueprint, attachPhase220ServiceQuality } from './service-quality-220.mjs';
+import { buildDemoAccuracyContract, buildDemoIssueOverview, buildPaidDeliverableBlueprint, buildConversionUrgencyModel, attachPhase220ServiceQuality } from './service-quality-220.mjs';
 export function buildPublicDiagnosisPackage(result = {}, options = {}) {
   const phase220Scan = attachPhase220ServiceQuality(result, options);
   const detail = Array.isArray(result.detailFindings) ? result.detailFindings : [];
@@ -32,7 +32,9 @@ export function buildPublicDiagnosisPackage(result = {}, options = {}) {
   ].filter(Boolean);
   const accuracyProfile = buildDiagnosisAccuracyProfile(result);
   const demoAccuracyContract = buildDemoAccuracyContract(result, options);
+  const demoIssueOverview = result.demoIssueOverview || buildDemoIssueOverview(result, options);
   const paidDeliverableBlueprint = buildPaidDeliverableBlueprint(result, result.intelligence?.recommendedPlan || result.recommendedPlan || 'Report');
+  const conversionUrgency = buildConversionUrgencyModel(result, { ...options, plan: result.intelligence?.recommendedPlan || result.recommendedPlan || 'Report' });
   const reportQualityPreview = buildReportQualityProfile({
     summary: result.summary || '공개 페이지 기준 예비 점검이 완료되었습니다.',
     scoreModel: result.scoreModel || { scoreDisclaimer: '점수는 법적 결론이 아니라 발견 항목의 우선순위입니다.' },
@@ -61,6 +63,9 @@ export function buildPublicDiagnosisPackage(result = {}, options = {}) {
       blockers: [...accuracyProfile.blockers, ...reportQualityPreview.blockers, ...demoAccuracyContract.blockers]
     },
     serviceQuality: phase220Scan.serviceQuality,
+    conversionUrgency,
+    demoIssueOverview,
+    freeDemoContract: { scope: 'free_demo_problem_area_element_count_only', shows: ['problemAreas','affectedElements','issueCounts','priorityCounts'], locks: ['fullEvidence','fullRecommendation','fullFixTemplate','acceptanceCriteria'] },
     demoAccuracyContract,
     paidDeliverableBlueprint,
     probeCount: result.probeCount || 0,
@@ -87,7 +92,7 @@ export function buildPublicDiagnosisPackage(result = {}, options = {}) {
       disclaimer: '실제 법령 위반 여부와 공식 정책·가격·일정은 공식 원문 또는 운영 자료 확인이 필요합니다.'
     },
     fixPlan: detail.filter((item) => item.autoFixEligible).slice(0, 5).map((item, index) => ({ step: index + 1, target: item.title, action: item.recommendation })),
-    nextCtas: [{ label: '무료 결과 저장', href: '/portal' }, { label: '상세 리포트 보기', href: '/plans' }, { label: '게시판 자동 발행 확인', href: '/board' }],
+    nextCtas: [{ label: '무료 결과 저장', href: '/portal' }, { label: '위기도 상세 리포트 결제', href: `/checkout?plan=${conversionUrgency.recommendedPlan}` }, { label: '게시판 자동 발행 확인', href: '/board' }],
     automation: { boardName: '게시판', enabled: true, intervalMs: ctaIntervalMs, intervalMinutes: Math.round(ctaIntervalMs / 60000), variants: ['진단 요약형','위험 경고형','비교형','개선 전후형','체크리스트형','재진단 유도형'] }
   };
 }

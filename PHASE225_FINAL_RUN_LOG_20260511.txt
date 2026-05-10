@@ -1,0 +1,788 @@
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-phase225-agentic-global-100 phase225:final
+> npm run phase224:final && npm run test:all && npm run test:phase225 && npm run validate:phase225
+
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-phase225-agentic-global-100 phase224:final
+> npm run phase223:final && npm run test:phase224 && npm run validate:phase224
+
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-phase225-agentic-global-100 phase223:final
+> npm run phase222:final && npm run test:phase223 && npm run validate:phase223
+
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-phase225-agentic-global-100 phase222:final
+> npm run phase221:final && npm run test:phase222 && npm run validate:phase222
+
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-phase225-agentic-global-100 phase221:final
+> npm run phase220:final && npm run test:phase221 && npm run validate:phase221
+
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-phase225-agentic-global-100 phase220:final
+> npm run check:syntax && npm run check:pages && npm run test:routes && npm run check:links -- --summary && npm run test:phase217 && npm run validate:phase217-cta && npm run test:phase216 && npm run validate:phase216 && npm run validate:phase218 && npm run validate:phase219 && npm run test:phase220 && npm run validate:phase220
+
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-phase225-agentic-global-100 check:syntax
+> node scripts/check-source-syntax.mjs
+
+{
+  "ok": true,
+  "checkedCount": 274,
+  "failures": []
+}
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-phase225-agentic-global-100 check:pages
+> node scripts/check-page-integrity.mjs
+
+{
+  "ok": true,
+  "mappedRouteCount": 34,
+  "checked": [
+    {
+      "route": "/",
+      "area": "public",
+      "slug": "home",
+      "ok": true
+    },
+    {
+      "route": "/guides",
+      "area": "public",
+      "slug": "guides",
+      "ok": true
+    },
+    {
+      "route": "/resources",
+      "area": "public",
+      "slug": "guides",
+      "ok": true
+    },
+    {
+      "route": "/board",
+      "area": "public",
+      "slug": "board",
+      "ok": true
+    },
+    {
+      "route": "/board/post",
+      "area": "public",
+      "slug": "board",
+      "ok": true
+    },
+    {
+      "route": "/cases",
+      "area": "public",
+      "slug": "cases",
+      "ok": true
+    },
+    {
+      "route": "/documents",
+      "area": "public",
+      "slug": "documents",
+      "ok": true
+    },
+    {
+      "route": "/policy-documents",
+      "area": "public",
+      "slug": "documents",
+      "ok": true
+    },
+    {
+      "route": "/docs/veridion",
+      "area": "public",
+      "slug": "documents",
+      "ok": true
+    },
+    {
+      "route": "/solutions",
+      "area": "public",
+      "slug": "solutions",
+      "ok": true
+    },
+    {
+      "route": "/service",
+      "area": "public",
+      "slug": "service",
+      "ok": true
+    },
+    {
+      "route": "/products",
+      "area": "public",
+      "slug": "plans",
+      "ok": true
+    },
+    {
+      "route": "/demo",
+      "area": "public",
+      "slug": "demo",
+      "ok": true
+    },
+    {
+      "route": "/products/veridion/demo",
+      "area": "public",
+      "slug": "veridion-demo",
+      "ok": true
+    },
+    {
+      "route": "/plans",
+      "area": "public",
+      "slug": "plans",
+      "ok": true
+    },
+    {
+      "route": "/checkout",
+      "area": "public",
+      "slug": "checkout",
+      "ok": true
+    },
+    {
+      "route": "/portal",
+      "area": "public",
+      "slug": "portal",
+      "ok": true
+    },
+    {
+      "route": "/auth",
+      "area": "public",
+      "slug": "auth",
+      "ok": true
+    },
+    {
+      "route": "/terms",
+      "area": "public",
+      "slug": "terms",
+      "ok": true
+    },
+    {
+      "route": "/privacy",
+      "area": "public",
+      "slug": "privacy",
+      "ok": true
+    },
+    {
+      "route": "/refund",
+      "area": "public",
+      "slug": "refund",
+      "ok": true
+    },
+    {
+      "route": "/business-info",
+      "area": "public",
+      "slug": "business-info",
+      "ok": true
+    },
+    {
+      "route": "/admin",
+      "area": "admin",
+      "slug": "gate",
+      "ok": true
+    },
+    {
+      "route": "/admin/console",
+      "area": "admin",
+      "slug": "console",
+      "ok": true
+    },
+    {
+      "route": "/admin/orders",
+      "area": "admin",
+      "slug": "orders",
+      "ok": true
+    },
+    {
+      "route": "/admin/publications",
+      "area": "admin",
+      "slug": "publications",
+      "ok": true
+    },
+    {
+      "route": "/admin/library",
+      "area": "admin",
+      "slug": "library",
+      "ok": true
+    },
+    {
+      "route": "/admin/settings",
+      "area": "admin",
+      "slug": "settings",
+      "ok": true
+    },
+    {
+      "route": "/admin/diagnostics",
+      "area": "admin",
+      "slug": "diagnostics",
+      "ok": true
+    },
+    {
+      "route": "/admin/console/orders",
+      "area": "admin",
+      "slug": "orders",
+      "ok": true
+    },
+    {
+      "route": "/admin/console/publications",
+      "area": "admin",
+      "slug": "publications",
+      "ok": true
+    },
+    {
+      "route": "/admin/console/library",
+      "area": "admin",
+      "slug": "library",
+      "ok": true
+    },
+    {
+      "route": "/admin/console/settings",
+      "area": "admin",
+      "slug": "settings",
+      "ok": true
+    },
+    {
+      "route": "/admin/console/diagnostics",
+      "area": "admin",
+      "slug": "diagnostics",
+      "ok": true
+    }
+  ],
+  "errors": []
+}
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-phase225-agentic-global-100 test:routes
+> node tests/routes-smoke.mjs
+
+{
+  "ok": true,
+  "checked": 24
+}
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-phase225-agentic-global-100 check:links
+> node scripts/check-links.mjs --summary --summary
+
+{
+  "ok": true,
+  "checkedCount": 520,
+  "errorCount": 0,
+  "errors": []
+}
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-phase225-agentic-global-100 test:phase217
+> node tests/phase217-cta-expert-editorial-20min.mjs
+
+{
+  "ok": true,
+  "test": "phase217-cta-expert-editorial-20min",
+  "generated": {
+    "count": 200,
+    "uniqueTitles": 200,
+    "uniqueBodies": 200
+  },
+  "migrated": {
+    "count": 200,
+    "uniqueTitles": 200,
+    "uniqueBodies": 200
+  },
+  "engineVersion": "cta-board-v10.0-phase217-expert-editorial-revenue-20min",
+  "finiteTemplateFloor": 353894400,
+  "cadence": "20min 유지",
+  "targetLengthKo": "4200-5200",
+  "articleStandard": "expert_editorial_revenue_post"
+}
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-phase225-agentic-global-100 validate:phase217-cta
+> node scripts/validate-phase217-cta-expert-editorial.mjs
+
+{
+  "ok": true,
+  "name": "phase217-cta-expert-editorial-revenue-20min",
+  "engineVersion": "cta-board-v10.0-phase217-expert-editorial-revenue-20min",
+  "finiteTemplateFloor": 353894400,
+  "checks": {
+    "sourceGuards": 13,
+    "generatedArticles": 80,
+    "generatedUniqueTitles": 80,
+    "generatedUniqueBodies": 80,
+    "rewrittenArticles": 80,
+    "rewrittenUniqueTitles": 80,
+    "rewrittenUniqueBodies": 80,
+    "targetLengthKo": "4200-5200",
+    "readabilityTarget": "expert_but_accessible_korean",
+    "cadence": "20min 유지",
+    "requiredSections": [
+      "전문가 관점 요약",
+      "현장에서 자주 생기는 문제",
+      "매출과 신뢰에 영향을 주는 이유",
+      "실무 적용 순서",
+      "문구 개선 예시",
+      "검증 체크리스트",
+      "검색 유입을 고려한 구성",
+      "자주 묻는 질문",
+      "자연스러운 다음 행동"
+    ]
+  }
+}
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-phase225-agentic-global-100 test:phase216
+> node tests/phase216-revenue-canonical.mjs
+
+PASS home shows free-to-paid revenue ladder
+PASS plans has no-js product cards for crawlers and slow JS
+PASS plans keeps direct paid checkout links
+PASS plans emphasizes FixPack as fastest action
+PASS canonical host redirect implemented at app layer
+PASS canonical redirect skips local development hosts
+PASS mail-order placeholder is blocked before footer output
+PASS phase216 scripts are registered
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-phase225-agentic-global-100 validate:phase216
+> node scripts/validate-phase216-revenue-canonical.mjs
+
+{
+  "generatedAt": "2026-05-10T22:56:09.669Z",
+  "ok": true,
+  "scoreAfterPatch": 100,
+  "checks": [
+    {
+      "name": "landing-page-visible-value-ladder",
+      "ok": true,
+      "detail": "홈에서 무료→유료 상품 흐름이 JS 없이 보여야 한다."
+    },
+    {
+      "name": "paid-offer-prices-visible-in-html",
+      "ok": true,
+      "detail": "가격이 JS API 실패 시에도 노출되어야 한다."
+    },
+    {
+      "name": "direct-checkout-links-visible-in-html",
+      "ok": true,
+      "detail": "유료 상품은 고객지원 우회 없이 체크아웃으로 연결해야 한다."
+    },
+    {
+      "name": "fixpack-recommended-in-static-and-js",
+      "ok": true,
+      "detail": "가장 실행형 상품인 FixPack이 기본 추천으로 보여야 한다."
+    },
+    {
+      "name": "canonical-host-redirect-app-layer",
+      "ok": true,
+      "detail": "앱 계층에서도 www/apex 표준화를 보정해야 한다."
+    },
+    {
+      "name": "canonical-host-redirect-can-be-disabled",
+      "ok": true,
+      "detail": "프록시 정책 충돌 시 환경변수로 비활성화할 수 있어야 한다."
+    },
+    {
+      "name": "mail-order-placeholder-guard",
+      "ok": true,
+      "detail": "통신판매업 신고번호 placeholder를 푸터 출력 전에 차단해야 한다."
+    },
+    {
+      "name": "package-phase216-final-script",
+      "ok": true,
+      "detail": "최종 게이트 스크립트가 등록되어야 한다."
+    },
+    {
+      "name": "security-middleware-syntax",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "failed": [],
+  "limitation": "운영 서버의 Cloudflare/Coolify 리다이렉트와 캐시 정책은 이 로컬 패키지 검증만으로 직접 변경할 수 없으므로, 배포 후 엣지 리다이렉트 규칙을 별도 확인해야 한다."
+}
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-phase225-agentic-global-100 validate:phase218
+> node scripts/validate-phase218-fresh-premium.mjs
+
+{
+  "ok": true,
+  "name": "phase218-fresh-premium-conversion-redesign",
+  "scoreAfterPatch": 100,
+  "checkedPages": 8,
+  "visualSystem": {
+    "mood": "fresh_airly_professional_saas",
+    "colors": [
+      "deep navy",
+      "teal",
+      "mint",
+      "soft sky blue",
+      "restrained lime",
+      "warm white"
+    ],
+    "infographicComponents": [
+      "trust score donut",
+      "issue priority bars",
+      "3-step process",
+      "before/after cards",
+      "secure checkout strip"
+    ],
+    "cadencePreserved": "CTA 자동발행 20분 1회 유지"
+  }
+}
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-phase225-agentic-global-100 validate:phase219
+> node scripts/validate-phase219-final-qa-unification.mjs
+
+{
+  "ok": true,
+  "name": "phase219-final-qa-unification",
+  "scoreAfterPatch": 100,
+  "checkedPublicPages": 16,
+  "checkedAdminPages": 7,
+  "checks": {
+    "typoAndBrokenCopy": "PASS",
+    "sourceFooterCount": "PASS",
+    "finalVisualCssLoaded": "PASS",
+    "responsiveOverlapGuard": "PASS",
+    "cssCollisionGuard": "PASS",
+    "adminTitleUnification": "PASS",
+    "documentsCopyUnification": "PASS",
+    "cta20MinuteCadencePreserved": "PASS",
+    "businessPlaceholderGuardPreserved": "PASS"
+  },
+  "publicPageSummary": [
+    {
+      "name": "home",
+      "title": "NV0 / Veridion | AI 기반 웹사이트 신뢰 진단 & 전환 개선 플랫폼",
+      "h1": "결제 전 신뢰 공백을 찾고, 바로 고칠 문장까지 제안합니다"
+    },
+    {
+      "name": "veridion-demo",
+      "title": "무료 진단 | NV0 / Veridion",
+      "h1": "주소 하나로 결제 전 신뢰 요소를 먼저 확인합니다."
+    },
+    {
+      "name": "plans",
+      "title": "상품·요금 | NV0 / Veridion",
+      "h1": "먼저 무료로 확인하고, 고칠 때만 필요한 결과물을 선택하세요."
+    },
+    {
+      "name": "board",
+      "title": "콘텐츠 보드 | NV0 / Veridion",
+      "h1": "진단 결과를 바탕으로 전문가형 운영 콘텐츠를 관리하세요"
+    },
+    {
+      "name": "checkout",
+      "title": "결제 확인 | NV0 / Veridion",
+      "h1": "결제 전에 결과물과 금액을 한 번 더 확인하세요"
+    },
+    {
+      "name": "documents",
+      "title": "문서·작업지시서 생성 | NV0 / Veridion",
+      "h1": "고객 안내문과 작업지시서를 바로 검토할 수 있는 초안으로 정리합니다"
+    },
+    {
+      "name": "portal",
+      "title": "내 사이트 관리 | NV0 / Veridion",
+      "h1": "내 사이트 상태와 다음 작업을 한눈에 관리하세요"
+    },
+    {
+      "name": "auth",
+      "title": "로그인·회원가입 | NV0",
+      "h1": "로그인·회원가입"
+    },
+    {
+      "name": "business-info",
+      "title": "사업자 정보와 고객지원 안내 | NV0",
+      "h1": "사업자 정보와 고객지원 안내"
+    },
+    {
+      "name": "terms",
+      "title": "이용약관 | NV0",
+      "h1": "이용약관"
+    },
+    {
+      "name": "privacy",
+      "title": "개인정보처리방침 | NV0",
+      "h1": "개인정보처리방침"
+    },
+    {
+      "name": "refund",
+      "title": "환불·청약철회 정책 | NV0",
+      "h1": "환불·청약철회 정책"
+    },
+    {
+      "name": "cases",
+      "title": "적용 사례 | NV0 / Veridion",
+      "h1": "비슷한 사이트가 먼저 정리한 결제 전 신뢰 공백"
+    },
+    {
+      "name": "service",
+      "title": "서비스 방식 | NV0 / Veridion",
+      "h1": "고객이 멈추는 지점을 찾고 바로 고칠 문장까지 이어집니다"
+    },
+    {
+      "name": "solutions",
+      "title": "솔루션 | NV0 / Veridion",
+      "h1": "진단, 수정 문구, 문서, 콘텐츠 운영을 하나의 구매 흐름으로 연결합니다."
+    },
+    {
+      "name": "guides",
+      "title": "운영 가이드 | NV0 / Veridion",
+      "h1": "결제 전 신뢰를 높이는 실무 체크리스트를 모았습니다."
+    }
+  ]
+}
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-phase225-agentic-global-100 test:phase220
+> node tests/phase220-demo-paid-service-quality.mjs
+
+{
+  "ok": true,
+  "test": "phase220-demo-paid-service-quality",
+  "version": "phase220-demo-paid-output-precision-v1",
+  "demoScore": 76,
+  "paidGateScore": 94,
+  "acceptanceChecks": 11,
+  "measurementItems": 5,
+  "ctaIntervalMinutes": 20,
+  "target": "demo_and_paid_output_quality_100_point_gate"
+}
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-phase225-agentic-global-100 validate:phase220
+> node scripts/validate-phase220-demo-paid-service-quality.mjs
+
+{
+  "ok": true,
+  "phase": "phase220",
+  "name": "demo-paid-service-quality-accuracy",
+  "target": "demo_and_paid_output_quality_100_point_gate",
+  "checkedAt": "2026-05-10T22:56:11.228Z",
+  "scoreAfterPatch": 100,
+  "totalChecks": 13,
+  "passedChecks": 13,
+  "failedChecks": [],
+  "requirements": {
+    "demoAccuracyContract": "checked",
+    "paidDeliverableBlueprint": "checked",
+    "paidOutputQualityGate": "checked",
+    "falsePositiveControls": "checked",
+    "ctaAutopublishIntervalMinutes": 20,
+    "priorPhaseRegression": "checked"
+  }
+}
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-phase225-agentic-global-100 test:phase221
+> node tests/phase221-page-copy-consistency.mjs
+
+{
+  "ok": true,
+  "phase": "phase221",
+  "name": "page-copy-consistency-unification",
+  "checkedAt": "2026-05-10T22:56:11.643Z",
+  "scoreAfterPatch": 100,
+  "totalChecks": 92,
+  "failedChecks": [],
+  "canonicalCopySystem": {
+    "nav": [
+      "무료 진단",
+      "상품·요금",
+      "콘텐츠 보드",
+      "문서 생성",
+      "내 사이트",
+      "고객지원"
+    ],
+    "products": {
+      "Report": "상세 리포트 · 69,000원 · 1회",
+      "FixPack": "FixPack · 99,000원 · 1회",
+      "Auto": "Auto 정기 케어 · 299,000원 · 월"
+    },
+    "forbiddenTerms": [
+      "플랜 비교",
+      "Pro 리포트",
+      "Free Demo",
+      "Auto 케어",
+      "Auto 정기 점검",
+      "정기 점검 상품",
+      "상품 비교",
+      "케어으로",
+      "상세 상세",
+      "replace-with-number",
+      "undefined",
+      "NaN",
+      "[object Object]",
+      "TODO",
+      "TBD",
+      "lorem"
+    ]
+  }
+}
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-phase225-agentic-global-100 validate:phase221
+> node scripts/validate-phase221-page-copy-consistency.mjs
+
+{
+  "ok": true,
+  "phase": "phase221",
+  "name": "page-copy-consistency-unification",
+  "checkedAt": "2026-05-10T22:56:12.048Z",
+  "scoreAfterPatch": 100,
+  "totalChecks": 92,
+  "failedChecks": [],
+  "canonicalCopySystem": {
+    "nav": [
+      "무료 진단",
+      "상품·요금",
+      "콘텐츠 보드",
+      "문서 생성",
+      "내 사이트",
+      "고객지원"
+    ],
+    "products": {
+      "Report": "상세 리포트 · 69,000원 · 1회",
+      "FixPack": "FixPack · 99,000원 · 1회",
+      "Auto": "Auto 정기 케어 · 299,000원 · 월"
+    },
+    "forbiddenTerms": [
+      "플랜 비교",
+      "Pro 리포트",
+      "Free Demo",
+      "Auto 케어",
+      "Auto 정기 점검",
+      "정기 점검 상품",
+      "상품 비교",
+      "케어으로",
+      "상세 상세",
+      "replace-with-number",
+      "undefined",
+      "NaN",
+      "[object Object]",
+      "TODO",
+      "TBD",
+      "lorem"
+    ]
+  }
+}
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-phase225-agentic-global-100 test:phase222
+> node tests/phase222-redirect-loop-guard.mjs
+
+{
+  "ok": true,
+  "test": "phase222-redirect-loop-guard",
+  "appCanonicalRedirectDefault": "off",
+  "explicitOptInRedirect": "pass",
+  "edgeRedirectOwner": "cloudflare_or_coolify_only"
+}
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-phase225-agentic-global-100 validate:phase222
+> node scripts/validate-phase222-redirect-loop-guard.mjs
+
+{
+  "ok": true,
+  "phase": "phase222",
+  "name": "redirect-loop-guard-apex-www",
+  "checkedAt": "2026-05-10T22:56:12.790Z",
+  "scoreAfterPatch": 100,
+  "totalChecks": 14,
+  "failures": [],
+  "emergencyRuntimeSetting": {
+    "setImmediately": "NV0_CANONICAL_HOST_REDIRECT=false",
+    "chooseOneRedirectOwnerOnly": [
+      "Cloudflare",
+      "Coolify",
+      "NV0 app"
+    ],
+    "currentRecommendedOwner": "Cloudflare/Coolify edge rule"
+  }
+}
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-phase225-agentic-global-100 test:phase223
+> node tests/phase223-global-risk-guard.mjs
+
+{
+  "ok": true,
+  "test": "phase223-global-risk-guard",
+  "version": "phase223-deployment-risk-guard-v1",
+  "checks": {
+    "safeRedirectOwner": true,
+    "redirectLoopDetected": true,
+    "placeholderDetected": true,
+    "clientFallbackGuard": true,
+    "ctaIntervalMinutes": 20
+  }
+}
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-phase225-agentic-global-100 validate:phase223
+> node scripts/validate-phase223-global-risk-guard.mjs
+
+{
+  "ok": true,
+  "phase": "phase223",
+  "name": "global-error-collision-risk-guard",
+  "checkedAt": "2026-05-10T22:56:13.563Z",
+  "scoreAfterPatch": 100,
+  "totalChecks": 28,
+  "failedChecks": [],
+  "improvements": {
+    "redirectLoopGuard": "deployment risk endpoint and response header",
+    "staleCacheGuard": "client static-load failure banner",
+    "brokenPageGuard": "friendly public 404/500 page",
+    "copySeoConsistency": "routeMeta title and theme color synchronized",
+    "ctaCadence": "20min preserved"
+  }
+}
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-phase225-agentic-global-100 test:phase224
+> node tests/phase224-readability-human-copy.mjs
+
+{
+  "ok": true,
+  "test": "phase224-readability-human-copy",
+  "htmlFiles": 17,
+  "bannedTermsChecked": 15,
+  "requiredPageCopyChecks": 13,
+  "ctaIntervalMinutes": 20,
+  "focus": "visibility_readability_human_marketing_copy"
+}
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-phase225-agentic-global-100 validate:phase224
+> node scripts/validate-phase224-readability-human-copy.mjs
+
+{
+  "ok": true,
+  "phase": "phase224",
+  "name": "readability-human-copy-visual-clarity",
+  "checkedAt": "2026-05-10T22:56:14.308Z",
+  "scoreAfterPatch": 100,
+  "totalChecks": 18,
+  "passedChecks": 18,
+  "failedChecks": [],
+  "focus": [
+    "visibility",
+    "human expert copy",
+    "page consistency",
+    "premium SaaS tone",
+    "CTA 20 minute cadence preserved"
+  ]
+}
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-phase225-agentic-global-100 test:all
+> node scripts/test-all.mjs
+
+{
+  "ok": true,
+  "passed": 87,
+  "failed": 0,
+  "report": "docs/PHASE55_TEST_ALL_SUMMARY_20260425.json"
+}
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-phase225-agentic-global-100 test:phase225
+> node tests/phase225-agentic-global-100.mjs
+
+{
+  "ok": true,
+  "passedChecks": 247,
+  "failedChecks": 0,
+  "report": "PHASE225_AGENTIC_GLOBAL_100_VALIDATION_20260511.json"
+}
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-phase225-agentic-global-100 validate:phase225
+> node scripts/validate-phase225-agentic-global-100.mjs
+
+{
+  "ok": true,
+  "passedChecks": 247,
+  "failedChecks": 0,
+  "report": "PHASE225_AGENTIC_GLOBAL_100_VALIDATION_20260511.json"
+}

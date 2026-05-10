@@ -1,5 +1,13 @@
 // Phase166 payment/commerce route split for the native http.createServer dispatcher.
 // Framework-free: the parent public dispatcher calls this handler directly.
+/**
+ * Builds the commerce route handler used by the public API dispatcher.
+ *
+ * The handler owns checkout sessions, order lookups, guest fulfillment, refunds,
+ * and payment provider callbacks. Keeping these branches in one module avoids
+ * duplicated payment logic in the general public route file and makes audit
+ * coverage easier to reason about.
+ */
 export function createPaymentRouteHandler(ctx) {
   const {
   ADMIN_AUTH_WINDOW_MS,
@@ -98,6 +106,7 @@ export function createPaymentRouteHandler(ctx) {
   hashPassword,
   hashPasswordResetToken,
   hashRequestPayload,
+  timingSafeStringEqual,
   hitRateLimit,
   isRefundRequestAllowed,
   isValidEmail,
@@ -183,7 +192,7 @@ db.refundRequests ||= [];
 const order = (db.orders || []).find(item => item.id === body.orderId);
 if (!order) return json(req, res, 404, { ok: false, error: '주문을 찾을 수 없습니다.' });
 const customerSession = await getCustomerSession(req, db);
-const tokenAllowed = body.accessToken && order.accessToken && body.accessToken.length === order.accessToken.length && crypto.timingSafeEqual(Buffer.from(String(body.accessToken)), Buffer.from(String(order.accessToken)));
+const tokenAllowed = timingSafeStringEqual(order.accessToken, body.accessToken);
 if (!tokenAllowed && !ownsOrder(customerSession?.customer, order)) return json(req, res, 403, { ok: false, error: '환불 요청 권한이 없습니다.' });
 if (!isRefundRequestAllowed(order)) return json(req, res, 400, { ok: false, error: '환불 요청 가능 기간이 지났거나 결제 완료 주문이 아닙니다.' });
 const existing = db.refundRequests.find(item => item.orderId === order.id && ['requested','reviewing'].includes(item.status));

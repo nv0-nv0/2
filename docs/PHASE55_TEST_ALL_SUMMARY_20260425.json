@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-05-08T11:11:31.922Z",
+  "generatedAt": "2026-05-10T23:37:50.737Z",
   "ok": true,
   "phase": "commercial-final",
-  "total": 87,
-  "passed": 87,
+  "total": 84,
+  "passed": 84,
   "failed": 0,
   "checks": [
     {
@@ -179,7 +179,7 @@
       "ok": true
     },
     {
-      "name": "home:고정 점수 예시는 제거했습니다",
+      "name": "home:고정 예시 점수 없음",
       "ok": true
     },
     {
@@ -251,7 +251,7 @@
       "ok": true
     },
     {
-      "name": "demo:무료 결과와 상품 비교",
+      "name": "demo:무료 결과와 상품·요금 비교",
       "ok": true
     },
     {
@@ -287,11 +287,11 @@
       "ok": true
     },
     {
-      "name": "plans:정기 점검",
+      "name": "plans:Auto 정기 케어",
       "ok": true
     },
     {
-      "name": "plans:전체 상품 비교",
+      "name": "plans:상품 바로 보기",
       "ok": true
     },
     {
@@ -340,18 +340,6 @@
     },
     {
       "name": "client:no-inline-handler",
-      "ok": true
-    },
-    {
-      "name": "runtime:runtime/uploads:empty",
-      "ok": true
-    },
-    {
-      "name": "runtime:runtime/backups:empty",
-      "ok": true
-    },
-    {
-      "name": "runtime:runtime/reports:empty",
       "ok": true
     }
   ]

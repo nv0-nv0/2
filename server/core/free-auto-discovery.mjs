@@ -173,7 +173,7 @@ export async function discoverTargetAutomationLinks(target, primaryFetch = {}, o
       'robots.txt sitemap 자동 탐색',
       'sitemap.xml 주요 URL 자동 선별',
       '정책·결제·문의 후보 페이지 자동 우선순위화',
-      '실패 URL 수동확인 항목 자동 고지'
+      '실패 URL 직접 확인 항목 자동 고지'
     ]
   };
 }

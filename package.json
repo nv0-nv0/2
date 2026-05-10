@@ -1,6 +1,6 @@
 {
   "name": "nv0-veridion-cleanroom",
-  "version": "1.0.0-commercial-final-phase215-payment-board-normalization",
+  "version": "1.0.0-commercial-final-phase229-value-priced-quality-lock",
   "private": true,
   "type": "module",
   "scripts": {
@@ -272,6 +272,24 @@
     "phase222:final": "npm run phase221:final && npm run test:phase222 && npm run validate:phase222",
     "test:phase223": "node tests/phase223-global-risk-guard.mjs",
     "validate:phase223": "node scripts/validate-phase223-global-risk-guard.mjs",
-    "phase223:final": "npm run phase222:final && npm run test:phase223 && npm run validate:phase223"
+    "phase223:final": "npm run phase222:final && npm run test:phase223 && npm run validate:phase223",
+    "test:phase224": "node tests/phase224-readability-human-copy.mjs",
+    "validate:phase224": "node scripts/validate-phase224-readability-human-copy.mjs",
+    "phase224:final": "npm run phase223:final && npm run test:phase224 && npm run validate:phase224",
+    "test:phase225": "node tests/phase225-agentic-global-100.mjs",
+    "validate:phase225": "node scripts/validate-phase225-agentic-global-100.mjs",
+    "phase225:final": "npm run phase224:final && npm run test:all && npm run test:phase225 && npm run validate:phase225",
+    "test:phase226": "node tests/phase226-agentic-code-review.mjs",
+    "validate:phase226-review": "node scripts/validate-phase226-agentic-code-review.mjs",
+    "phase226:final": "npm run check:syntax && npm run test:phase226 && npm run validate:phase226-review && npm run test:all && npm run test:routes && npm run test:e2e",
+    "test:phase227": "node tests/phase227-demo-paid-guidance.mjs",
+    "validate:phase227": "node scripts/validate-phase227-demo-paid-guidance.mjs",
+    "phase227:final": "npm run check:syntax && npm run test:phase227 && npm run validate:phase227 && npm run test:routes && npm run test:e2e",
+    "test:phase228": "node tests/phase228-conversion-risk-score.mjs",
+    "validate:phase228": "node scripts/validate-phase228-conversion-risk-score.mjs",
+    "phase228:final": "npm run check:syntax && npm run test:phase228 && npm run validate:phase228 && npm run test:phase227 && npm run validate:phase227 && npm run test:routes && npm run test:e2e",
+    "test:phase229": "node tests/phase229-value-priced-quality-lock.mjs",
+    "validate:phase229": "node scripts/validate-phase229-value-priced-quality-lock.mjs",
+    "phase229:final": "npm run check:syntax && npm run test:phase229 && npm run validate:phase229 && npm run test:phase228 && npm run validate:phase228 && npm run test:routes && npm run test:e2e"
   }
 }

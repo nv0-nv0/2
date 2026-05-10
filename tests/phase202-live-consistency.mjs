@@ -15,13 +15,13 @@ for (const token of ['replace-with-number','상용 결제 전 입력 필요','�
 assert(publicText.includes('환불·청약철회 정책'), 'unified refund policy label is visible');
 assert(publicText.includes('평일 09:00–18:00 접수 확인'), 'support hours are visible');
 assert(server.includes("{ code: 'Report'"), 'Report offer exists');
-assert(server.includes("price: 69000"), 'Report 69000 exists');
+assert(server.includes("price: 39000"), 'Report 39000 exists');
 assert(server.includes("{ code: 'FixPack'"), 'FixPack offer exists');
-assert(server.includes("price: 99000"), 'FixPack 99000 exists');
+assert(server.includes("price: 79000"), 'FixPack 79000 exists');
 assert(server.includes("{ code: 'Auto'"), 'Auto offer exists');
-assert(server.includes("price: 299000"), 'Auto 299000 exists');
+assert(server.includes("price: 149000"), 'Auto 149000 exists');
 assert(server.includes('function normalizePlanCode'), 'legacy plan normalization exists');
-assert(read('apps/public/checkout/index.html').includes('상세 리포트 · 69,000원 · 1회'), 'checkout default report option is explicit');
+assert(read('apps/public/checkout/index.html').includes('상세 리포트 · 39,000원 · 1회'), 'checkout default report option is explicit');
 assert(read('apps/public/board/index.html').includes('쇼핑몰 푸터 고지 정리 사례'), 'board SSR fallback samples exist');
 assert(read('apps/public/cases/index.html').includes('적용 사례'), 'cases page is dedicated');
 assert(read('apps/public/service/index.html').includes('서비스 구조'), 'service page is dedicated');

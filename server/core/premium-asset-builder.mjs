@@ -1,5 +1,5 @@
 import { buildDiagnosisAccuracyProfile, buildReportQualityProfile, buildFulfillmentQualityProfile } from './product-quality-engine.mjs';
-import { buildDemoAccuracyContract, buildPaidDeliverableBlueprint, buildPaidOutputQualityGate } from './service-quality-220.mjs';
+import { buildDemoAccuracyContract, buildDemoIssueOverview, buildPaidDeliverableBlueprint, buildPaidOutputQualityGate, buildPaidFullDetailContract, buildSiteOperationsDocument, buildConversionUrgencyModel, buildPhase229OutputQualityLock } from './service-quality-220.mjs';
 const SAFE_DISCLAIMER = '본 산출물은 운영 사이트 점검과 문구 개선을 돕는 참고 자료이며, 개별 사건에 대한 법률 자문이나 법적 안전성 보장을 의미하지 않습니다. 법률·정책 판단은 공식 원문 또는 전문가 검토가 필요합니다.';
 
 function text(value, fallback = '') {
@@ -43,13 +43,18 @@ function findingRecommendation(item) {
   return text(item?.recommendation || item?.fixTemplate || '문제 위치와 고객에게 보이는 문구를 확인한 뒤 명확한 안내 문구로 보완합니다.', '문제 위치와 고객에게 보이는 문구를 확인한 뒤 명확한 안내 문구로 보완합니다.');
 }
 function topFindings(scan, limit = 5) {
-  const rows = Array.isArray(scan?.detailFindings) ? scan.detailFindings : [];
-  if (rows.length) return rows.slice(0, limit);
-  return [
+  const rows = Array.isArray(scan?.detailFindings) ? scan.detailFindings.filter(Boolean) : [];
+  const fallbackRows = [
     { priority: 'P1', category: '정책 고지', title: '환불·교환 기준 안내 보완', evidence: '현재 입력만으로 세부 기준 확인 필요', recommendation: '결제 전 단계와 상품 상세 영역에 환불·교환 기준, 제한 조건, 문의 경로를 함께 표시합니다.', code: 'DEFAULT-REFUND' },
     { priority: 'P1', category: '개인정보', title: '개인정보 수집·보관 기준 보완', evidence: '현재 입력만으로 보유기간 확인 필요', recommendation: '입력폼 주변에 수집 목적, 수집 항목, 보유기간, 동의 여부를 명확히 안내합니다.', code: 'DEFAULT-PRIVACY' },
-    { priority: 'P2', category: '전환 UX', title: '결제 전 신뢰 요소 정리', evidence: '사업자 정보와 고객지원 경로 확인 필요', recommendation: '푸터와 결제 버튼 주변에 사업자 정보, 문의 이메일, 약관 링크를 반복 노출합니다.', code: 'DEFAULT-TRUST' }
-  ].slice(0, limit);
+    { priority: 'P2', category: '전환 UX', title: '결제 전 신뢰 요소 정리', evidence: '사업자 정보와 고객지원 경로 확인 필요', recommendation: '푸터와 결제 버튼 주변에 사업자 정보, 문의 이메일, 약관 링크를 반복 노출합니다.', code: 'DEFAULT-TRUST' },
+    { priority: 'P2', category: '결제 전 안내', title: '제공 범위와 결제 후 제공 시점 확인', evidence: '가격, 포함 항목, 산출물 제공 시점 확인 필요', recommendation: '가격 포함 항목, 산출물 제공 시점, 환불 제한 조건을 결제 전 요약합니다.', code: 'DEFAULT-SCOPE' },
+    { priority: 'P2', category: '모바일 UX·CTA', title: '모바일 CTA 주변 정책 링크 확인', evidence: '모바일 화면에서 긴 문구와 정책 링크 가독성 확인 필요', recommendation: '버튼 주변 문구를 짧게 나누고 정책 링크가 접히지 않게 배치합니다.', code: 'DEFAULT-MOBILE-CTA' },
+    { priority: 'P2', category: '광고·표현 리스크', title: '성과 보장형 표현 완화 확인', evidence: '혜택 문구와 조건·예외 기준 확인 필요', recommendation: '성과 보장처럼 보이는 문장은 조건형 설명과 확인 필요 고지로 바꿉니다.', code: 'DEFAULT-CLAIM' }
+  ];
+  const seen = new Set(rows.map((item) => text(item?.code || item?.title || '')));
+  const padded = rows.concat(fallbackRows.filter((item) => !seen.has(text(item.code || item.title))));
+  return padded.slice(0, limit);
 }
 function titleCandidates(order, scan) {
   const domain = text(scan?.target || order?.domain || '운영 사이트', '운영 사이트');
@@ -292,7 +297,7 @@ function buildPurposeOptimization(order, offer, scan) {
       successCriteria: ['문구를 바로 복사해 적용할 수 있음', '적용 위치가 페이지 단위로 구분됨', '재진단 기준이 포함됨']
     },
     TemplatePack: {
-      productIntent: '운영 정책 문서 초안 패키지',
+      productIntent: '운영 운영 문서 초안 패키지',
       optimizedFor: ['정책 문서 기본 구조', '확인 필요 변수 분리', '사용 전 검수', '운영자 맞춤 수정'],
       successCriteria: ['확인 필요 항목이 명확함', '문서별 목적과 사용 위치가 구분됨', '공식 원문 확인 필요 고지가 유지됨']
     },
@@ -408,14 +413,18 @@ function buildOutputPerformanceProfile(order, offer, scan) {
   return {
     level: 'phase134-all-service-output-max',
     detailDepth: '결제 후 실행 가능한 문서·문구·FAQ·CTA·태그·재점검 기준까지 포함',
-    valueMultiple: '가격의 3배 구성 가치 기준. 실제 성과 보장이 아니라 산출물 구성 기준입니다.',
+    valueMultiple: '가격 대비 4배 전후 구성 가치 기준. 실제 성과 보장이 아니라 산출물 구성 기준입니다.',
     renderPerformance: ['카드형 섹션', '긴 문장 자동 줄바꿈', '모바일 1열 재배치', 'PDF 다운로드 라인 확장'],
     safetyPerformance: ['HTML 실행 렌더링 금지', '법률 단정 차단', '확인 필요 분리', '개인정보·토큰 노출 금지'],
     demoAccuracyScore: demoAccuracy.score,
-    outputAccuracyTarget: '근거·한계·수동확인·재점검 기준을 분리해 오탐과 과장 표현을 줄이는 품질 목표'
+    outputAccuracyTarget: '근거·한계·직접 확인·재점검 기준을 분리해 오탐과 과장 표현을 줄이는 품질 목표'
   };
 }
 export function buildPremiumPurchasedAsset({ order, offer, scan, site, businessProfile, policyDocuments = [], industryGuide }) {
+  const demoIssueOverview = buildDemoIssueOverview(scan || {}, { plan: order?.plan });
+  const paidFullDetailContract = buildPaidFullDetailContract({ scan: scan || {}, order: order || {}, asset: { plan: order?.plan || offer?.code || 'Report' } });
+  const siteOperationsDocument = buildSiteOperationsDocument(scan || {}, { site, order, industry: industryGuide?.industry, settings: businessProfile || {}, asset: { plan: order?.plan || offer?.code || 'Report' } });
+  const conversionUrgency = buildConversionUrgencyModel(scan || {}, { plan: order?.plan || offer?.code || 'Report' });
   const base = {
     qualityContract: buildQualityContract(order),
     titleCandidates: titleCandidates(order, scan),
@@ -430,7 +439,8 @@ export function buildPremiumPurchasedAsset({ order, offer, scan, site, businessP
     implementationPlan: buildImplementationPlan(order, scan),
     autoPublishingPlan: buildAutoPublishingPlan(order, scan),
     naturalCta: `현재 사이트의 문제를 확인했다면, 다음 단계는 실제 적용 가능한 수정 기준을 받는 것입니다. ${text(offer?.title || order?.plan || '상세 리포트')}에서 우선순위와 문구안을 확인하세요.`,
-    valueStatement: `${currencyWon(planPrice(order, offer))} 가격으로 ${currencyWon(builtValue(order, offer))} 상당의 구성 가치를 목표로 설계했습니다. 이 표현은 산출물 구성 기준이며 성과 보장이 아닙니다.`,
+    customerVisibleConversionCopy: `전환 위기도 ${conversionUrgency.crisisScore}/100 · ${conversionUrgency.crisisLabel}. 무료 요약은 방향 확인, 유료 산출물은 전체 근거와 수정 실행 문서를 제공합니다.`,
+    valueStatement: `${currencyWon(planPrice(order, offer))} 가격으로 ${currencyWon(builtValue(order, offer))} 상당의 구성 가치를 목표로 설계했습니다. 가격은 낮추되 전체 상세, 수정 문구, 운영 문서 품질은 잠급니다. 이 표현은 산출물 구성 기준이며 성과 보장이 아닙니다.`,
     legalDisclaimer: SAFE_DISCLAIMER,
     purposeOptimization: buildPurposeOptimization(order, offer, scan),
     deliverableIndex: buildDeliverableIndex(order, scan),
@@ -440,6 +450,10 @@ export function buildPremiumPurchasedAsset({ order, offer, scan, site, businessP
     riskRegister: buildRiskRegister(scan),
     stakeholderHandoff: buildStakeholderHandoff(order, scan),
     outputPerformanceProfile: buildOutputPerformanceProfile(order, offer, scan),
+    demoIssueOverview,
+    paidFullDetailContract,
+    siteOperationsDocument,
+    conversionUrgency,
     demoAccuracyContract: buildDemoAccuracyContract(scan || {}, { plan: order?.plan }),
     paidDeliverableBlueprint: buildPaidDeliverableBlueprint(scan || {}, text(order?.plan || offer?.code || 'Report')),
     renderedFor: { siteId: order?.siteId || site?.siteId || null, domain: order?.domain || site?.domain || scan?.target || null }
@@ -449,14 +463,16 @@ export function buildPremiumPurchasedAsset({ order, offer, scan, site, businessP
     diagnosisAccuracyProfile: buildDiagnosisAccuracyProfile(scan || {}),
     reportQualityProfile: buildReportQualityProfile(base, scan || {}),
     fulfillmentQualityProfile: buildFulfillmentQualityProfile(order || {}, base, scan || {}),
-    paidOutputQualityGate: buildPaidOutputQualityGate({ order: order || {}, asset: base, scan: scan || {} })
+    paidOutputQualityGate: buildPaidOutputQualityGate({ order: order || {}, asset: base, scan: scan || {} }),
+    phase229OutputQualityLock: buildPhase229OutputQualityLock({ order: order || {}, asset: base, scan: scan || {} })
   };
   const plan = text(order?.plan || 'Report');
   const withPhase220Gate = (asset) => {
     const reportQualityProfile = buildReportQualityProfile(asset, scan || {});
     const fulfillmentQualityProfile = buildFulfillmentQualityProfile(order || {}, asset, scan || {});
     const paidOutputQualityGate = buildPaidOutputQualityGate({ order: order || {}, asset: { ...asset, reportQualityProfile, fulfillmentQualityProfile }, scan: scan || {} });
-    return { ...asset, reportQualityProfile, fulfillmentQualityProfile, paidOutputQualityGate };
+    const phase229OutputQualityLock = buildPhase229OutputQualityLock({ order: order || {}, asset: { ...asset, reportQualityProfile, fulfillmentQualityProfile, paidOutputQualityGate }, scan: scan || {} });
+    return { ...asset, reportQualityProfile, fulfillmentQualityProfile, paidOutputQualityGate, phase229OutputQualityLock }; 
   };
   if (plan === 'Report') {
     const asset = { ...enrichedBase, type: 'report', title: '정밀 리스크 리포트', downloadable: true, fixes: [], templates: [], guide: null, autoPublishingPlan: null };
@@ -512,6 +528,11 @@ export function buildPremiumAssetPdfLines(asset, order) {
   if (asset.diagnosisAccuracyProfile) lines.push(`진단 신뢰도: ${asset.diagnosisAccuracyProfile.score}/100 · ${asset.diagnosisAccuracyProfile.label} · 오탐 위험 ${asset.diagnosisAccuracyProfile.falsePositiveRisk}`);
   if (asset.reportQualityProfile) lines.push(`리포트 품질: ${asset.reportQualityProfile.score}/100 · ${asset.reportQualityProfile.label}`);
   if (asset.fulfillmentQualityProfile) lines.push(`납품 게이트: ${asset.fulfillmentQualityProfile.score}/100 · ${asset.fulfillmentQualityProfile.deliveryState}`);
+  if (asset.demoIssueOverview) lines.push(`무료 데모 노출 범위: 문제영역 ${asset.demoIssueOverview.areaCount}개 · 요소 ${asset.demoIssueOverview.elementCount}개 · 발견 ${asset.demoIssueOverview.totalIssueCount}개`);
+  if (asset.conversionUrgency) lines.push(`전환 위기도: ${asset.conversionUrgency.crisisScore}/100 · ${asset.conversionUrgency.crisisLabel} · 예상 개선 후 ${asset.conversionUrgency.projectedAfterFixScore}/100`);
+  if (asset.paidFullDetailContract) lines.push(`유료 전체 공개 게이트: ${asset.paidFullDetailContract.completenessScore}/100 · 전체 상세 ${asset.paidFullDetailContract.allDetailsVisible ? '공개' : '보완 필요'} · ${asset.paidFullDetailContract.issueDetails?.length || 0}개 항목`);
+  if (asset.siteOperationsDocument) lines.push(`맞춤 운영 문서: ${asset.siteOperationsDocument.qualityScore}/100 · ${asset.siteOperationsDocument.sections?.length || 0}개 섹션 · ${asset.siteOperationsDocument.title}`);
+  if (asset.phase229OutputQualityLock) lines.push(`가격 인하 품질 잠금: ${asset.phase229OutputQualityLock.score}/100 · ${asset.phase229OutputQualityLock.ok ? '통과' : '보완 필요'} · 전체 상세/수정 문구/운영 문서 유지`);
   for (const sec of asset.sections || []) lines.push(`${sec.title}: ${sec.body}`);
   for (const fix of asset.fixes || []) lines.push(`${fix.title}: ${fix.after || fix.rationale || ''}`);
   for (const tpl of asset.templates || []) lines.push(`${tpl.title}: ${String(tpl.content || '').slice(0, 700)}`);

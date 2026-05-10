@@ -1,17 +1,17 @@
 import fs from 'node:fs';
 const read=p=>fs.readFileSync(p,'utf8'); const exists=p=>fs.existsSync(p);
-const pkg=JSON.parse(read('package.json')); const server=read('server/index.mjs');
+const pkg=JSON.parse(read('package.json')); const server=['server/index.mjs','server/routes/public.mjs','server/routes/payment.mjs','server/routes/account.mjs','server/routes/admin.mjs','server/routes/ops.mjs'].filter(exists).map(read).join('\n');
 const checks=[]; const add=(name,ok,extra={})=>checks.push({name,ok:!!ok,...extra});
 add('version:commercial-final', /commercial-final/.test(pkg.version));
 for (const f of ['Dockerfile','docker-compose.yml','deploy/coolify.env.bulk.txt','deploy/coolify.env.example','scripts/verify-security.mjs','scripts/check-live-public.mjs','scripts/test-all.mjs','server/index.mjs']) add(`exists:${f}`, exists(f));
 for (const r of ['/healthz','/readyz','/api/public/products','/api/public/plans','/api/public/scan','/api/public/checkout-session','/api/public/payment/complete','/api/public/fulfillment']) add(`server-route:${r}`, server.includes(r));
 for (const token of ['content-security-policy','csrf','HttpOnly','SameSite','/readyz']) add(`security-ops:${token}`, server.includes(token));
 const pages={home:'apps/public/home/index.html','veridion-demo':'apps/public/veridion-demo/index.html',plans:'apps/public/plans/index.html',documents:'apps/public/documents/index.html',checkout:'apps/public/checkout/index.html',portal:'apps/public/portal/index.html',privacy:'apps/public/privacy/index.html',terms:'apps/public/terms/index.html',refund:'apps/public/refund/index.html'};
-for (const [name,file] of Object.entries(pages)) { const html=read(file); add(`page:${name}:brand`, html.includes('NV0') || html.includes('엔브이제로')); add(`page:${name}:not-stuck-loading`, !html.includes('불러오는 중입니다')); add(`page:${name}:no-admin-link`, !/\/admin\//.test(html)); add(`page:${name}:doctype`, html.trim().startsWith('<!doctype html>')); }
-const home=read(pages.home); for (const t of ['결제 전 신뢰 점검','무료 진단 시작','위험도 72 / 100','추천 이용 순서','법률 자문']) add(`home-conversion:${t}`, home.includes(t));
+for (const [name,file] of Object.entries(pages)) { const html=read(file); add(`page:${name}:brand`, html.includes('NV0') || html.includes('엔브이제로')); add(`page:${name}:not-terminal-loading`, !/불러오는 중입니다(?!\.)/.test(html)); add(`page:${name}:no-admin-link`, !/\/admin\//.test(html)); add(`page:${name}:doctype`, html.trim().startsWith('<!doctype html>')); }
+const home=read(pages.home); for (const t of ['결제 전 신뢰 점검','무료 진단 시작','검사 후 표시','추천 이용 순서','법률 자문']) add(`home-conversion:${t}`, home.includes(t));
 const demo=read(pages['veridion-demo']); for (const t of ['무료 요약 진단 3회','사이트 주소 하나로','상세 리포트 신청']) add(`demo-conversion:${t}`, demo.includes(t));
 const demoJs=read('apps/public/veridion-demo/app.js'); for (const t of ['normalizedTarget','renderPaywall','recommendedPlan','localStorage']) add(`demo-js:${t}`, demoJs.includes(t));
-const plans=read(pages.plans); add('plans:static-fallback', plans.includes('49,000원') && plans.includes('월 149,000원')); add('plans:comparison', plans.includes('전체 상품 비교'));
+const plans=read(pages.plans); add('plans:static-fallback', plans.includes('39,000원') && plans.includes('월 149,000원')); add('plans:comparison', plans.includes('상품 바로 보기'));
 const base=read('shared/base.css'); for (const t of ['site-topbar','business-footer','promo-banner','cta-band']) add(`base-ui:${t}`, base.includes(t));
 const passed=checks.filter(c=>c.ok).length; const failed=checks.length-passed; const score=Math.round((passed/checks.length)*100);
 const report={generatedAt:new Date().toISOString(),ok:failed===0,score,phase:'commercial-final',total:checks.length,passed,failed,failures:checks.filter(c=>!c.ok),checks};

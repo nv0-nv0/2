@@ -1,0 +1,16 @@
+server/core/service-quality-220.mjs
+server/core/diagnosis-report-package.mjs
+server/core/premium-asset-builder.mjs
+server/index.mjs
+server/routes/public.mjs
+apps/public/veridion-demo/app.js
+apps/public/veridion-demo/app.css
+apps/public/portal/app.js
+tests/phase227-demo-paid-guidance.mjs
+scripts/validate-phase227-demo-paid-guidance.mjs
+README.md
+package.json
+PHASE227_DEMO_PAID_GUIDANCE_MAX_20260511_KO.md
+PHASE227_FINAL_RUN_LOG_20260511.txt
+PHASE227_CHANGED_FILES_MANIFEST_20260511.txt
+PHASE227_DEMO_PAID_GUIDANCE_VALIDATION_20260511.json

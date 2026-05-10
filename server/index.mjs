@@ -10,6 +10,7 @@ import { assertCommercialRouteAllowed, createPlatformProfile } from './core/plat
 import { PAYMENT_SESSION_TRANSITIONS, ORDER_STATUS_TRANSITIONS, canTransition } from './core/payment-state-machine.mjs';
 import { handleAccountRescan, customerRecentScans } from './core/account-rescan.mjs';
 import { buildPublicDiagnosisPackage } from './core/diagnosis-report-package.mjs';
+import { buildDemoIssueOverview, buildConversionUrgencyModel, buildSiteOperationsDocument } from './core/service-quality-220.mjs';
 import { buildPremiumPurchasedAsset, buildPremiumAssetPdfLines } from './core/premium-asset-builder.mjs';
 import { buildCtaBoardArticle, chooseCtaVariant, ctaTopicPacks, ctaCombinationStats, rewriteExistingCtaPublication, auditHumanFriendlyCtaArticle, ctaFingerprint } from './core/cta-publication.mjs';
 import { buildProductIntelligence, annotateOffersWithIntelligence, buildProductDashboard } from './core/product-intelligence.mjs';
@@ -39,7 +40,9 @@ import { buildWorkOrderPreview } from './core/work-order-generator.mjs';
 import { validateCommercialEnv } from './bootstrap/commercial-env.mjs';
 import { buildHealthDetails, classifyIncident } from './services/observability.mjs';
 import { buildDeploymentRiskGuard, PHASE223_RISK_GUARD_VERSION } from './core/deployment-risk-guard.mjs';
+import { timingSafeStringEqual, hasValidOrderAccessToken } from './core/access-token.mjs';
 import { putObjectToS3Compatible } from './infrastructure/storage/s3-compatible.mjs';
+import { PHASE229_PRICING_VERSION, buildValuePricedOfferCatalog, buildPricingRecalculation } from './core/pricing-conversion-model.mjs';
 const COMMERCIAL_OFFER_COMPATIBILITY_MARKERS = ['TemplatePack', 'IndustryGuide', 'Certified'];
 const ENV_CONFIG = readEnvConfig(process.env);
 const __filename = fileURLToPath(import.meta.url);
@@ -259,11 +262,11 @@ ctaAutopublishIntervalMs: CTA_AUTOPUBLISH_INTERVAL_MS,
 ctaTargetLengthKo: '4200-5200'
 },
 orders: [
-{ id: 'ord-1001', customer: 'Acme Co', status: 'paid', stage: 'scan_requested', amount: 129000, createdAt: nowIso() },
-{ id: 'ord-1002', customer: 'Beta Labs', status: 'pending', stage: 'draft', amount: 69000, createdAt: nowIso() }
+{ id: 'ord-1001', customer: 'Acme Co', status: 'paid', stage: 'scan_requested', amount: 79000, createdAt: nowIso() },
+{ id: 'ord-1002', customer: 'Beta Labs', status: 'pending', stage: 'draft', amount: 39000, createdAt: nowIso() }
 ],
 subscriptions: [
-{ id: 'sub-1001', siteId: 'site-seed-001', plan: 'Auto', status: 'active', monthlyPrice: 299000, createdAt: nowIso() }
+{ id: 'sub-1001', siteId: 'site-seed-001', plan: 'Auto', status: 'active', monthlyPrice: 149000, createdAt: nowIso() }
 ],
 publications: [
 { id: 'pub-1001', title: '전자상거래 사이트 필수 고지 7가지', status: 'published', type: 'cta', createdAt: nowIso(), ctaType: 'free_scan' }
@@ -822,13 +825,22 @@ session.lastSeenAt = nowIso();
 return { sid, session, customer };
 }
 function ownsOrder(customer, order) { return !!customer && !!order && (order.customerId === customer.id || (order.email && normalizeEmail(order.email) === normalizeEmail(customer.email))); }
+/**
+ * Creates a per-order bearer token only when the order does not already have one.
+ * The token gates portal, fulfillment, and refund access for guest checkout flows.
+ */
 function generateOrderAccessToken(order) { if (!order.accessToken) order.accessToken = crypto.randomBytes(18).toString('base64url'); return order.accessToken; }
+
+/**
+ * Authorizes a guest order request using the URL or header token.
+ * The comparison is delegated to a Buffer-length-safe helper so malformed UTF-8
+ * or multibyte input becomes a clean authorization miss, not a process error.
+ */
 function canAccessOrder(req, order) {
 if (!order) return false;
 const url = req._nv0Url || requestUrlFrom(req);
 const token = String(url.searchParams.get('accessToken') || req.headers['x-nv0-order-token'] || '').trim();
-if (!order.accessToken || !token || token.length !== order.accessToken.length) return false;
-return crypto.timingSafeEqual(Buffer.from(order.accessToken), Buffer.from(token));
+return hasValidOrderAccessToken(order, token);
 }
 function sanitizeOrderForPublic(order, { includeAccessToken = false } = {}) {
 if (!order) return null;
@@ -1334,21 +1346,21 @@ const metas = {
 '/demo': { title: '무료 진단 | NV0 / Veridion', description: '주소 하나로 결제 전 신뢰 공백과 수동 확인이 필요한 영역을 분리해 보여주고, 결제 후 산출물 품질 기준까지 안내합니다.', keywords: ['무료 진단','웹사이트 신뢰 진단','오탐 방어','수동 확인','품질 게이트'] },
 '/plans': { title: '상품·요금 | NV0 / Veridion', description: '무료 진단 이후 상세 리포트, FixPack, Auto 정기 케어를 제공 범위·가격·추천 상황 기준으로 비교합니다.', keywords: ['상품·요금','상세 리포트','FixPack','Auto 정기 케어','사이트 진단 요금'] },
 '/products': { title: '상품·요금 | NV0 / Veridion', description: '무료 진단 이후 상세 리포트, FixPack, Auto 정기 케어를 제공 범위·가격·추천 상황 기준으로 비교합니다.', keywords: ['상품·요금','상세 리포트','FixPack','Auto 정기 케어','사이트 진단 요금'] },
-'/documents': { title: '문서·작업지시서 생성 | NV0 / Veridion', description: '정책 문서와 내부 실행용 작업지시서를 최소 입력으로 정리하고, 실제 적용 전 확인해야 할 범위와 한계를 함께 표시합니다.', keywords: ['문서 생성','작업지시서 생성','정책 문서 초안','개선 가이드','운영 문구'] },
-'/policy-documents': { title: '문서·작업지시서 생성 | NV0 / Veridion', description: '정책 문서와 내부 실행용 작업지시서를 최소 입력으로 정리하고, 실제 적용 전 확인해야 할 범위와 한계를 함께 표시합니다.', keywords: ['문서 생성','작업지시서 생성','정책 문서 초안','개선 가이드','운영 문구'] },
+'/documents': { title: '문서·작업지시서 생성 | NV0 / Veridion', description: '정책 문서와 내부 실행용 작업지시서를 최소 입력으로 정리하고, 실제 적용 전 확인해야 할 범위와 한계를 함께 표시합니다.', keywords: ['문서 생성','작업지시서 생성','운영 문서 초안','개선 가이드','운영 문구'] },
+'/policy-documents': { title: '문서·작업지시서 생성 | NV0 / Veridion', description: '정책 문서와 내부 실행용 작업지시서를 최소 입력으로 정리하고, 실제 적용 전 확인해야 할 범위와 한계를 함께 표시합니다.', keywords: ['문서 생성','작업지시서 생성','운영 문서 초안','개선 가이드','운영 문구'] },
 '/docs/veridion': { title: 'Veridion 문서 생성 | 정책 문서·진단 리포트 초안', description: 'Veridion 진단 후 필요한 정책 문서, 안내 문구, 개선 리포트 초안을 생성하는 문서 허브입니다.', keywords: ['Veridion 문서','정책 문서 생성','진단 리포트','개선 문구'] },
 '/guides': { title: '운영 가이드 | 쇼핑몰 신뢰도·정책 안내 점검', description: '쇼핑몰 신뢰도, 환불 정책, 구매 안내 버튼, 게시판 자동 발행, 반복 재진단 활용법을 전문가형 실무 가이드로 정리합니다.' },
 '/resources': { title: '운영 가이드 | 쇼핑몰 신뢰도·정책 안내 점검', description: '쇼핑몰 신뢰도, 환불 정책, 구매 안내 버튼, 게시판 자동 발행, 반복 재진단 활용법을 전문가형 실무 가이드로 정리합니다.' },
 '/solutions': { title: '솔루션 | 웹사이트 안내 고지·정책 문서·문의 흐름 점검', description: '웹사이트 필수 고지, 정책 문서, 결제 전 안내, 고객지원 안내를 한 번에 점검하는 NV0 솔루션입니다.' },
-'/service': { title: '서비스 작동 방식 | NV0 무료진단·리포트 산출 흐름', description: 'NV0가 공개 페이지를 수집하고 근거 신뢰도, 수동확인 항목, 결제 산출물로 이어지는 과정을 설명합니다.' },
+'/service': { title: '서비스 작동 방식 | NV0 무료진단·리포트 산출 흐름', description: 'NV0가 공개 페이지를 수집하고 근거 신뢰도, 직접 확인 항목, 결제 산출물로 이어지는 과정을 설명합니다.' },
 '/cases': { title: '적용 사례 | NV0 신뢰 공백 개선 사례', description: '쇼핑몰과 랜딩페이지가 사업자 고지, 환불 안내, 문의 흐름을 어떻게 정리하는지 사례로 확인합니다.' },
 '/board': { title: '콘텐츠 보드 | NV0 / Veridion', description: '진단 결과를 전문가형 CTA 포스팅, 체크리스트, 사례, 정책 안내 글로 정리해 재방문과 상품·요금 흐름을 돕습니다.' },
-'/business-info': { title: '사업자 정보 | NV0', description: 'NV0 서비스 운영자의 사업자 정보, 고객지원 이메일, 서비스 범위, 법률 자문 아님 고지를 확인하세요.' },
+'/business-info': { title: '사업자 정보와 고객지원 안내 | NV0', description: '결제 전 확인할 수 있는 NV0 사업자 정보와 고객지원 기준입니다.' },
 '/terms': { title: '이용약관 | NV0', description: 'NV0 서비스 이용약관과 서비스 범위 기준입니다.' },
 '/privacy': { title: '개인정보처리방침 | NV0', description: 'NV0 서비스의 개인정보 처리 기준과 입력 정보 최소화 원칙입니다.' },
 '/refund': { title: '환불·청약철회 정책 | NV0', description: '디지털 산출물 제공 시점, 환불 요청 기준, 청약철회 제한 안내를 확인하세요.' },
 '/auth': { title: '로그인·회원가입 | NV0', description: '무료진단 횟수 관리, 내 사이트 저장, 원클릭 재검사, 최근 진단 이력 확인을 위한 로그인·회원가입 페이지입니다.' },
-'/portal': { title: '내 사이트 관리 | NV0', description: '저장한 사이트의 진단 결과, 재검사, 개선 이력, 게시판 발행 상태를 확인합니다.' },
+'/portal': { title: '내 사이트 관리 | NV0 / Veridion', description: '내 사이트 저장, 최근 진단 결과, 보완 항목, 콘텐츠 보드를 한 화면에서 관리합니다.' },
 '/checkout': { title: '결제 확인 | NV0 / Veridion', description: '결제 전 선택한 결과물, 품질 게이트, 디지털 산출물 환불 제한, 정책 동의 항목을 확인합니다.' }
 };
 const meta = metas[urlPath] || metas['/'];
@@ -1814,7 +1826,7 @@ return { relevant, successful, failed };
 }
 function certaintyForRule(rule, fetched = {}, scannedPages = []) {
 if (!fetched.fetched) return '낮음';
-if (['MARKETING-CLAIM', 'YOUTH-RESTRICTED', 'LEGAL-ADVICE-DISCLAIMER'].includes(rule.code)) return '수동확인 필요';
+if (['MARKETING-CLAIM', 'YOUTH-RESTRICTED', 'LEGAL-ADVICE-DISCLAIMER'].includes(rule.code)) return '직접 확인 필요';
 const coverage = pageCoverageForRule(rule, scannedPages);
 if (coverage.successful.length >= 2) return '높음';
 if (coverage.successful.length >= 1) return '보통';
@@ -1926,7 +1938,7 @@ const tags = [`#${String(keyword || theme.label).replace(/[\s·/]+/g, '')}`, `#$
 return [
 `전문가 관점 요약\n${target} 사이트에서 ${theme.label}은 고객 행동 직전의 불확실성을 줄이는 전환 설계입니다. ${theme.risk} 이 글은 단순 홍보가 아니라 실제 화면을 보며 고칠 수 있는 항목을 정리한 전문가형 포스팅입니다.`,
 `현장에서 자주 생기는 문제\n운영자는 푸터나 약관에 이미 적어 두었다고 생각하지만 고객은 결제, 문의, 회원가입, 상담 신청 직전에 답을 찾습니다. 필요한 정보가 그 위치에서 보이지 않으면 상품 설명을 끝까지 읽기 전에 비교 페이지로 이동할 수 있습니다.`,
-`매출과 신뢰에 영향을 주는 이유\n광고 유입이 늘수록 안내 공백은 더 빠르게 비용으로 바뀝니다. 고객이 제공 범위, 문의 경로, 예외 기준, 처리 시간을 예측할 수 있어야 무료 진단에서 상세 리포트, FixPack, Auto 정기 케어로 이어지는 수익화 흐름도 자연스럽게 연결됩니다.`,
+`매출과 신뢰에 영향을 주는 이유\n광고 유입이 늘수록 안내 공백은 더 빠르게 비용으로 바뀝니다. 고객이 제공 범위, 문의 경로, 예외 기준, 처리 시간을 예측할 수 있어야 무료 진단에서 상세 리포트, FixPack, Auto 정기 케어로 이어지는 결과물 선택 흐름도 자연스럽게 연결됩니다.`,
 `실무 적용 순서\n1. 결제 버튼, 문의 버튼, 가격표, 회원가입 화면을 먼저 확인합니다.\n2. ${theme.elements.join(', ')} 중 고객 질문과 직접 연결되는 항목을 버튼 주변에 배치합니다.\n3. 푸터에는 전체 기준을 두고 행동 화면에는 요약 문장을 둡니다.\n4. 모바일에서 문장이 접히거나 버튼 아래로 밀리는지 확인합니다.`,
 `문구 개선 예시\n${copyExamples.map(([before, after], idx) => `${idx + 1}. 바꾸기 전: “${before}”\n   바꾼 뒤: “${after}”`).join('\n')}`,
 `검증 체크리스트\n${checklist.map((line, idx) => `${idx + 1}. ${line}`).join('\n')}`,
@@ -1980,33 +1992,8 @@ phase217Audit: {
 }
 
 function buildGuidanceForSite(site, scan, settings = {}) {
-const mustFix = (scan?.detailFindings || []).filter(item => item.priority === 'P0' || item.priority === 'P1');
-const lines = [
-`# ${site.domain} 운영 지침 및 맞춤 개선 안내`,
-'',
-`- 업종: ${site.industry || '일반 이커머스'}`,
-`- 관할: ${site.jurisdiction || settings.defaultJurisdiction || 'KR'}`,
-`- 최근 탐지 점수: ${scan?.riskScore ?? '-'}점 (${scan?.riskLevel || '-'})`,
-`- 수동 확인 필요 노출: ${toKrw(scan?.estimatedMaxPenalty || 0)}원`,
-'',
-'## 즉시 수정 우선순위',
-...(mustFix.length ? mustFix.map((item, idx) => `${idx + 1}. [${item.priority}] ${item.title} — ${item.recommendation}`) : ['1. 즉시 수정 필요 P0/P1 항목 없음']),
-'',
-'## 이용 체크리스트',
-'- 푸터에 사업자 정보와 고객센터 연락수단 유지',
-'- 개인정보처리방침 / 이용약관 / 환불정책 링크를 홈·결제·회원가입에 동시 노출',
-'- 광고 문구는 확정형 표현 대신 조건형 표현으로 완화',
-'- 법령 변경 알림 수신 시 48시간 안에 재스캔 실행',
-settings.autoFixMode === 'approval_required'
-? '- 수정 후보는 고객 확인 후 사용하고, 반영 전 변경 내용을 확인'
-: '- 수정 후보는 제한적으로 사용하고, 되돌릴 수 있도록 변경 이력을 저장',
-'',
-'## 고객 안내 콘텐츠 기준',
-'- 무료진단 → 상세 결과 확인 → 수정 후보 검토 흐름 유지',
-'- 과태료 공포 과장 금지, 근거 조항과 조치 문구를 함께 노출',
-'- 게시글 말미에 무료진단 버튼 1개만 배치'
-];
-return lines.join('\n');
+const operationsDocument = buildSiteOperationsDocument(scan || {}, { site, settings });
+return operationsDocument.markdown;
 }
 function invalidPayload(message) {
 const error = new Error(message);
@@ -2302,11 +2289,7 @@ return aliases[key] || (['Report','FixPack','Auto'].includes(raw) ? raw : fallba
 }
 function buildCommercialOfferCatalog() {
 const commonAssurance = ['결제 전 받을 결과물과 환불 기준을 다시 확인합니다.', '결과물은 내 사이트 관리에서 확인합니다.', 'ct@nv0.kr 이메일 고객지원으로 문의할 수 있습니다.'];
-return [
-{ code: 'Report', group: 'one_time', title: '상세 리포트', price: 69000, period: '1회', priority: 1, summary: '고객이 어디서 망설이는지, 왜 먼저 고쳐야 하는지 근거와 우선순위로 정리합니다.', targetCustomer: '대표님·팀·외주 담당자에게 설명할 자료가 필요한 분', deliverables: ['고객이 멈추는 위치', '문제 근거와 우선순위', '공유 가능한 개선 리포트', '먼저 고칠 항목', '재확인 체크리스트', '다음 행동 제안'], operations: ['결제 확인 후 결과물 확인', '진단 이력이 없을 경우 기본 점검 양식으로 제공', ...commonAssurance], benefits: ['수정 순서가 명확해집니다.', '팀과 공유하기 쉬운 기준이 생깁니다.'], cta: '상세 리포트 신청', referencePrice: 120000, valuePackWorth: 207000 },
-{ code: 'FixPack', group: 'one_time', title: 'FixPack', price: 99000, period: '1회', priority: 2, summary: '진단에서 끝내지 않고 사이트에 바로 넣을 수정 전/후 문장을 제공합니다.', targetCustomer: '오늘 바로 푸터·환불·문의·CTA 문구를 고치고 싶은 분', deliverables: ['수정 전/후 문장', '붙여넣을 위치 안내', '환불·문의·결제 전 안내 문구', '광고 표현 완화 문구', 'FAQ 문장', 'CTA 문구'], operations: ['우선순위가 높은 문구부터 제공', '고객이 보는 화면 기준으로 정리', ...commonAssurance], benefits: ['바로 반영할 문장이 생깁니다.', '고객 불안을 줄이는 안내 흐름을 만들 수 있습니다.'], cta: 'FixPack 신청', referencePrice: 160000, valuePackWorth: 297000 },
-{ code: 'Auto', group: 'subscription', title: 'Auto 정기 케어', price: 299000, period: '월', priority: 3, summary: '광고·이벤트·상세페이지가 바뀔 때마다 생기는 안내 공백을 정기적으로 확인합니다.', targetCustomer: '랜딩페이지와 이벤트 페이지가 자주 바뀌는 팀', deliverables: ['정기 재진단', 'CTA 콘텐츠 흐름 관리', '변경 후 안내 공백 확인', '고위험 항목 우선 알림', '내 사이트 관리 대시보드', '게시판 콘텐츠 관리'], operations: ['정기 점검 결과 제공', '수정 후보는 확인 후 사용할 수 있도록 제공', ...commonAssurance], benefits: ['변경 때마다 놓치는 공백을 줄입니다.', '방치된 사이트처럼 보이는 인상을 줄입니다.', '여러 랜딩페이지의 문제를 우선순위로 볼 수 있습니다.'], cta: 'Auto 정기 케어 신청', referencePrice: 450000, valuePackWorth: 897000 }
-].sort((a, b) => a.priority - b.priority);
+return buildValuePricedOfferCatalog({ commonAssurance });
 }
 function getCommercialOffer(code) { const normalized = normalizePlanCode(code); return buildCommercialOfferCatalog().find(item => item.code === normalized) || null; }
 function buildPlanCatalog(recommendedPlan = 'Report') {
@@ -2318,7 +2301,7 @@ return [free, ...paid];
 function planPrice(plan) {
 const offer = getCommercialOffer(plan);
 if (offer) return offer.price;
-return buildPlanCatalog(plan).find(item => item.code === normalizePlanCode(plan))?.monthlyPrice || 69000;
+return buildPlanCatalog(plan).find(item => item.code === normalizePlanCode(plan))?.monthlyPrice || 39000;
 }
 function findLatestGuidanceForSite(db, siteId) {
 return (db.guidanceDocuments || []).find(item => item.siteId === siteId) || null;
@@ -2374,6 +2357,9 @@ disclaimer: payload?.disclaimer || '외부 스캔 결과도 법률 자문이나 
 };
 const scoreModel = payload?.scoreModel || buildScoreModel({ riskScore, findings: detailFindings, evidenceSummary });
 const accuracyProfile = payload?.accuracyProfile || buildDiagnosisAccuracyProfile({ ...payload, fetched: payload?.fetched !== false, detailFindings, evidenceSummary, scannedPages: externalPages, riskScore });
+const demoInput = { ...payload, target: String(input).trim(), normalizedTarget: payload?.normalizedTarget || String(input).trim(), detailFindings, evidenceSummary, scoreModel, riskScore, recommendedPlan };
+const demoIssueOverview = buildDemoIssueOverview(demoInput);
+const conversionUrgency = buildConversionUrgencyModel(demoInput, { plan: recommendedPlan });
 return {
 requestId: payload?.requestId || uid('scan'),
 provider: 'external_http',
@@ -2403,6 +2389,8 @@ detailFindings,
 evidenceSummary,
 scoreModel,
 accuracyProfile,
+demoIssueOverview,
+conversionUrgency,
 qualityAssurance: payload?.qualityAssurance || { resultType: 'external_assisted_check', canGuaranteeLegalAccuracy: false, canGuaranteeBusinessOutcome: false, requiresManualReview: true },
 aiReview: payload?.aiReview || { enabled: AI_REVIEW_ENABLED, provider: AI_REVIEW_ENABLED ? 'gemini' : 'disabled', model: AI_REVIEW_ENABLED ? GEMINI_MODEL : null, role: '해석 보조 레이어이며 측정 원천이 아닙니다.' },
 autoFixCandidates,
@@ -2432,7 +2420,7 @@ recommendation: item.recommendation
 const prompt = [
 '당신은 웹사이트 공개 페이지 무료진단 결과를 검수하는 보조 분석기입니다.',
 '법률 위반, 과태료, 성과를 확정하지 마세요.',
-'제공된 근거만 사용하고, 확인되지 않은 내용은 수동확인 필요로 분리하세요.',
+'제공된 근거만 사용하고, 확인되지 않은 내용은 직접 확인 필요로 분리하세요.',
 JSON.stringify({ target: scan.target, scoreModel: scan.scoreModel, evidenceSummary: scan.evidenceSummary, findings }, null, 2)
 ].join('\n\n');
 const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(GEMINI_MODEL)}:generateContent?key=${encodeURIComponent(GEMINI_API_KEY)}`;
@@ -2544,7 +2532,7 @@ sourcePages,
 certainty,
 manualReviewRequired: ['MARKETING-CLAIM', 'YOUTH-RESTRICTED', 'LEGAL-ADVICE-DISCLAIMER'].includes(rule.code) || certainty === '낮음' || coverage.failed.length > 0,
 coverage: { relevantPages: coverage.relevant.length, successfulPages: coverage.successful.length, failedPages: coverage.failed.length },
-limitation: coverage.failed.length ? '일부 후보 페이지는 수동 확인 필요.' : (sourcePages.length ? '표시된 공개 페이지 기준으로 확인했습니다.' : '확인 범위가 제한적입니다.'),
+limitation: coverage.failed.length ? '일부 후보 페이지는 직접 확인 필요.' : (sourcePages.length ? '표시된 공개 페이지 기준으로 확인했습니다.' : '확인 범위가 제한적입니다.'),
 recommendation: rule.fixTemplate || '필요 안내를 보강합니다.',
 autoFixEligible: !['MARKETING-CLAIM', 'YOUTH-RESTRICTED'].includes(rule.code)
 });
@@ -2576,12 +2564,15 @@ const scoreModel = buildScoreModel({ riskScore, findings: detailFindings, eviden
 const accuracyProfile = buildDiagnosisAccuracyProfile({ fetched: fetched.fetched, scannedPages, detailFindings, evidenceSummary, riskScore });
 const automationDisclosure = buildAutomationDisclosure({ fetched: { ...fetched, pages: scannedPages }, findings: detailFindings, scoreModel });
 const automatedActionPlan = buildAutomatedActionPlan({ findings: detailFindings, evidenceSummary, disclosure: automationDisclosure });
+const demoInput = { target: String(input).trim(), normalizedTarget: fetched.finalUrl || input, detailFindings, evidenceSummary, scoreModel, riskScore, recommendedPlan };
+const demoIssueOverview = buildDemoIssueOverview(demoInput);
+const conversionUrgency = buildConversionUrgencyModel(demoInput, { plan: recommendedPlan });
 return {
 requestId: uid('scan'),
 provider: 'builtin',
 target: String(input).trim(),
 normalizedTarget: fetched.finalUrl || input,
-summary: `${String(input).trim()} 무료진단이 완료되었습니다. 자동 확인 근거와 수동확인 한계를 함께 표시합니다.`,
+summary: `${String(input).trim()} 무료진단이 완료되었습니다. 자동 확인 근거와 직접 확인 한계를 함께 표시합니다.`,
 fetched: fetched.fetched,
 fetchStatus: fetched.status,
 fetchError: fetched.error || null,
@@ -2604,6 +2595,8 @@ detailFindings,
 evidenceSummary,
 scoreModel,
 accuracyProfile,
+demoIssueOverview,
+conversionUrgency,
 automationDisclosure,
 automatedActionPlan,
 qualityAssurance: {
@@ -3629,7 +3622,7 @@ function ensureSubscriptionForSite(db, site, plan) {
 db.subscriptions ||= [];
 let sub = db.subscriptions.find(item => item.siteId === site.id);
 if (!sub) {
-sub = { id: uid('sub'), siteId: site.id, plan, status: 'trial', monthlyPrice: plan === 'Auto' ? 299000 : plan === 'FixPack' ? 99000 : 69000, createdAt: nowIso() };
+sub = { id: uid('sub'), siteId: site.id, plan, status: 'trial', monthlyPrice: plan === 'Auto' ? 149000 : plan === 'FixPack' ? 79000 : 39000, createdAt: nowIso() };
 db.subscriptions.unshift(sub);
 } else {
 sub.plan = plan || sub.plan;
@@ -3637,13 +3630,18 @@ sub.plan = plan || sub.plan;
 return sub;
 }
 function createGuidanceDocument(db, site, scan) {
-const content = buildGuidanceForSite(site, scan, db.settings);
+const operationsDocument = buildSiteOperationsDocument(scan || {}, { site, settings: db.settings || {} });
+const content = operationsDocument.markdown;
 const doc = {
 id: uid('guide'),
 siteId: site.id,
 title: `${site.domain} 맞춤 개선 안내`,
 type: 'site_guideline',
 version: `v${Date.now()}`,
+qualityScore: operationsDocument.qualityScore,
+issueAreaCount: operationsDocument.issueAreaCount,
+issueElementCount: operationsDocument.issueElementCount,
+operationsDocument,
 content,
 createdAt: nowIso()
 };
@@ -3844,6 +3842,8 @@ buildAdminOperatingProfile,
 buildDiagnosisAccuracyProfile,
 buildCommercialFinalGate,
 buildCommercialOfferCatalog,
+buildPricingRecalculation,
+phase229PricingVersion: PHASE229_PRICING_VERSION,
 buildFeedXml,
 buildHardeningMatrix,
 buildOpenApiSpec,

@@ -264,3 +264,108 @@ npm run final:review
 - 정상 네이버 제품 블로그 요청은 `naver_product_promo`로 유지하고, 블로그 플랫폼 비교는 비교표 모드로 분리합니다.
 - 실행: `npm run test:phase203`, `npm run validate:phase203`, `npm run phase203:final`, `./RUN_ALL_TESTS.sh`
 - 산출물: `PHASE203_STRUCTURE_SYSTEM_ENGINE_100_REPORT_20260505_KO.md`, `PHASE203_STRUCTURE_SYSTEM_ENGINE_100_VALIDATION_20260505.json`, `MANIFEST_PHASE203_20260505.txt`, `SHA256SUMS_PHASE203_20260505.txt`
+
+## Phase226 Agentic Code Review
+
+이 패키지는 phase226에서 코드 리뷰 에이전트 관점의 보안·성능·테스트·문서화 보강을 추가했다.
+
+### 변경 요약
+
+- 주문 접근 토큰 비교를 `server/core/access-token.mjs`의 `timingSafeStringEqual()`로 통합했다.
+- 같은 JavaScript 문자열 길이지만 UTF-8 바이트 길이가 다른 입력이 들어와도 `crypto.timingSafeEqual()` 예외가 발생하지 않도록 방어했다.
+- `server/routes/public.mjs`에 남아 있던 도달 불가능한 결제·환불·주문 중복 분기를 제거하고, `server/routes/payment.mjs`로 책임을 단일화했다.
+- 함수 의도를 설명하는 JSDoc 주석과 회귀 테스트를 추가했다.
+
+### 주요 함수
+
+#### `timingSafeStringEqual(expected, candidate)`
+
+외부 입력 토큰을 바이트 길이까지 확인한 뒤 constant-time 비교로 판정한다. 비정상·유니코드·공백 입력은 예외가 아니라 `false`로 처리한다.
+
+#### `hasValidOrderAccessToken(order, candidate)`
+
+주문 객체의 `accessToken`과 사용자가 제공한 토큰을 같은 규칙으로 검증한다. 포털, 산출물 다운로드, 환불 요청 같은 게스트 주문 접근 경로에서 사용한다.
+
+#### `canAccessOrder(req, order)`
+
+URL의 `accessToken` 또는 `x-nv0-order-token` 헤더를 읽어 주문 접근 권한을 판단한다. 실제 비교는 `hasValidOrderAccessToken()`에 위임한다.
+
+### 검증 명령
+
+```bash
+npm run phase226:final
+```
+
+부분 검증:
+
+```bash
+npm run test:phase226
+npm run validate:phase226-review
+```
+
+상세 변경 보고서는 `PHASE226_AGENTIC_CODE_REVIEW_CLOSEOUT_20260511_KO.md`를 확인하면 된다.
+
+## Phase227 — 데모/유료/다음 서비스 품질 극대화
+
+Phase227은 무료 데모, 유료 산출물, 다음 단계 운영 문서의 역할을 명확히 분리합니다.
+
+- 무료 데모: 전체 원문급 상세를 열지 않고 `문제 영역`, `영향 요소`, `갯수`, `우선순위`, `직접 확인 필요 수`를 보여줍니다.
+- 유료 서비스: 무료 데모에서 잠긴 항목의 전체 내용을 100% 공개하도록 `paidFullDetailContract`를 생성합니다. 각 항목은 근거, 출처 URL, 한계, 권장 조치, 수정 문구, 수용 기준을 포함합니다.
+- 다음 서비스: 해당 사이트의 업종·도메인·탐지 결과를 반영해 100점 목표의 맞춤형 개선 지침·운영 문서 `siteOperationsDocument`를 생성합니다.
+
+검증 명령:
+
+```bash
+npm run phase227:final
+```
+
+단, 실제 운영 결제 승인, SMTP, 외부 저장소, 제3자 크롤링/검색 콘솔 연동은 운영 키와 인프라 값이 필요합니다. 패키지 내부에서는 외부 키 없이 가능한 데모 표시, 유료 상세 계약, 맞춤 운영 문서 생성, UI 렌더링, 테스트 게이트를 검증합니다.
+
+## Phase228 — 위기도 점수 기반 구매 전환 구조
+
+Phase228은 무료 데모의 목적을 `문제 발견`에서 `개선 필요성 인지 → 유료 구매 전환`으로 확장합니다. 무료 결과에는 문제 영역, 영향 요소, 갯수, 직접 확인 필요 항목과 함께 **위기도 점수**를 시각적으로 보여줍니다. 이 점수는 법률 위반이나 매출 손실을 확정하는 값이 아니라, 공개 화면 기준의 보완 우선순위와 구매 전환 저해 가능성을 보여주는 내부 진단 지표입니다.
+
+핵심 동작:
+
+- 무료 데모: 문제 영역·영향 요소·갯수·위기도 점수·전환 차단 요인을 카드와 게이지로 표시합니다.
+- 유료 상세 리포트: 무료에서 잠긴 전체 근거, 문제 위치, 한계, 수정 문구, 적용 위치, 재검사 기준을 100% 공개합니다.
+- FixPack / 다음 서비스: 해당 사이트에 맞춘 개선 지침, 운영 SOP, 담당자별 액션, 수용 기준, 재검증 게이트를 제공합니다.
+- 구매 전환 UI: “현재 위기도 → 개선 목표 → 상세 리포트 결제 → FixPack 실행” 흐름을 결과 화면과 상품 탭에 반복 노출합니다.
+
+검증 명령:
+
+```bash
+npm run test:phase228
+npm run validate:phase228
+npm run phase228:final
+```
+
+Phase228에서 추가된 주요 파일:
+
+- `server/core/service-quality-220.mjs` — `buildConversionUrgencyModel()` 추가
+- `apps/public/veridion-demo/app.js` — `renderConversionUrgencyPanel()`, `renderPurchasePathPanel()` 추가
+- `apps/public/veridion-demo/app.css` — 위기도 게이지, 전환 차단 요인, 구매 경로 시각화 스타일 추가
+- `tests/phase228-conversion-risk-score.mjs` — 위기도 점수/전환 CTA/유료 산출물 연결 테스트
+- `scripts/validate-phase228-conversion-risk-score.mjs` — 정적 게이트 검증
+
+## Phase229 — 가격 재산정과 유료 품질 잠금
+
+Phase229는 무료 데모에서 확인한 위기도 점수와 문제 영역·요소·갯수를 구매 전환으로 연결하기 위해 가격 장벽을 낮추고, 유료 산출물 품질은 오히려 고정하는 릴리스입니다.
+
+### 권장 가격대
+
+| 상품 | 기존 체감 가격 | Phase229 적용 가격 | 전환 역할 |
+|---|---:|---:|---|
+| 상세 리포트 | 69,000원 | 39,000원 | 전체 근거를 여는 낮은 첫 결제 |
+| FixPack | 99,000원 | 79,000원 | 전환율과 수익률 균형의 주력 상품 |
+| Auto 정기 케어 | 299,000원 / 월 | 149,000원 / 월 | 월 10만 원대 반복 관리 진입 |
+
+### 품질 잠금
+
+가격을 낮춰도 유료 결과물은 축소하지 않습니다. `phase229OutputQualityLock`은 유료 고객에게 전체 문제 상세, 근거·한계·권장 조치, 수정 전/후 문구, 사이트 맞춤 운영 문서, 수용 기준, 재검증 기준이 유지되는지 검증합니다.
+
+검증 명령:
+
+```bash
+npm run phase229:final
+```

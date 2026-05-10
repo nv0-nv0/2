@@ -41,7 +41,7 @@ for (const entry of mappedRoutes) {
     if (!html.includes(`/apps/${entry.area}/${entry.slug}/app.js`)) errors.push({ route: entry.route, slug: entry.slug, error: 'index.html missing app.js reference' });
     if (/\son[a-z]+\s*=/.test(html)) errors.push({ route: entry.route, slug: entry.slug, error: 'inline event handler detected' });
     if (/style="/.test(html)) errors.push({ route: entry.route, slug: entry.slug, error: 'inline style attribute detected' });
-    if (/<script(?![^>]*src=)/.test(html)) errors.push({ route: entry.route, slug: entry.slug, error: 'inline script tag detected' });
+    if (/<script(?![^>]*src=)(?![^>]*type=\"application\/ld\+json\")/.test(html)) errors.push({ route: entry.route, slug: entry.slug, error: 'inline script tag detected' });
     checked.push({ route: entry.route, area: entry.area, slug: entry.slug, ok: true });
   } catch (error) {
     errors.push({ route: entry.route, slug: entry.slug, error: error.message });

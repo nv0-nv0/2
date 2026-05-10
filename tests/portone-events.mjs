@@ -24,7 +24,7 @@ const server = http.createServer(async (req, res) => {
   if (req.method === 'GET' && /\/payments\/[^/]+$/.test(req.url || '')) {
     const paymentId = decodeURIComponent(String(req.url).split('/').pop());
     res.writeHead(200, { 'content-type': 'application/json' });
-    return res.end(JSON.stringify({ id: paymentId, status: paid ? 'PAID' : 'READY', amount: { total: 69000 }, customData: { orderId: paymentId, plan: 'Report' }, paidAt: new Date().toISOString() }));
+    return res.end(JSON.stringify({ id: paymentId, status: paid ? 'PAID' : 'READY', amount: { total: 39000 }, customData: { orderId: paymentId, plan: 'Report' }, paidAt: new Date().toISOString() }));
   }
   res.writeHead(404, { 'content-type': 'application/json' });
   res.end(JSON.stringify({ message: 'not found' }));

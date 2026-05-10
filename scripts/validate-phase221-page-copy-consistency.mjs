@@ -98,9 +98,9 @@ const checkoutJs = read('apps/public/checkout/app.js');
 const serverIndex = read('server/index.mjs');
 
 const productMatrix = [
-  ['상세 리포트', '69,000원', 'Report'],
-  ['FixPack', '99,000원', 'FixPack'],
-  ['Auto 정기 케어', '299,000원', 'Auto'],
+  ['상세 리포트', '39,000원', 'Report'],
+  ['FixPack', '79,000원', 'FixPack'],
+  ['Auto 정기 케어', '149,000원', 'Auto'],
 ];
 
 for (const [title, price, code] of productMatrix) {
@@ -173,9 +173,9 @@ const result = {
   canonicalCopySystem: {
     nav: canonicalNav,
     products: {
-      Report: '상세 리포트 · 69,000원 · 1회',
-      FixPack: 'FixPack · 99,000원 · 1회',
-      Auto: 'Auto 정기 케어 · 299,000원 · 월',
+      Report: '상세 리포트 · 39,000원 · 1회',
+      FixPack: 'FixPack · 79,000원 · 1회',
+      Auto: 'Auto 정기 케어 · 149,000원 · 월',
     },
     forbiddenTerms: [...inconsistentTerms, ...brokenRenderedTokens],
   },

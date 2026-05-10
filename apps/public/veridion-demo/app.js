@@ -188,6 +188,8 @@ function normalizeRiskItem(item, index) {
     impact: item?.impact || item?.description || '수집된 공개 화면에서 고객 안내 보완 후보로 분류된 항목입니다.',
     action: item?.recommendation || item?.fixTemplate || '확인 URL과 근거를 보고 수정 우선순위와 적용 문구를 검토하세요.',
     category: item?.category || item?.code || '신뢰 무료진단',
+    area: item?.area || item?.category || item?.code || '신뢰 무료진단',
+    elements: Array.isArray(item?.elements) ? item.elements : (Array.isArray(item?.affectedElements) ? item.affectedElements : []),
     evidence: item?.evidence || '',
     certainty: item?.certainty || '확인 필요',
     sourcePages: Array.isArray(item?.sourcePages) ? item.sourcePages : [],
@@ -239,6 +241,7 @@ function normalizeActions(scan, risks) {
   }));
 }
 function normalizeScan(scan = {}) {
+  const overviewSource = scan.demoIssueOverview || scan.diagnosis?.demoIssueOverview || scan.diagnosis?.freeDemoContract || null;
   const details = detailRows(scan).slice(0, 6).map(normalizeRiskItem);
   const top = (Array.isArray(scan.topFindings) ? scan.topFindings : []).slice(0, 5).map(normalizeRiskItem);
   const risks = (details.length ? details : top).slice(0, 5);
@@ -246,6 +249,8 @@ function normalizeScan(scan = {}) {
   const health = scoreHealth(riskScore);
   const categories = normalizeChecks(scan);
   const recommendedActions = normalizeActions(scan, risks.length ? risks : [normalizeRiskItem('필수 고지와 정책 링크를 먼저 확인하세요.', 0)]);
+  const fallbackOverview = buildDemoIssueOverviewFromRisks(risks, scan);
+  const demoIssueOverview = overviewSource?.areaBreakdown ? overviewSource : { ...fallbackOverview, ...(overviewSource || {}) };
   return {
     raw: scan,
     target: scan.target || scan.normalizedTarget || targetInput?.value || '입력한 사이트',
@@ -268,15 +273,52 @@ function normalizeScan(scan = {}) {
     requestId: scan.requestId || '',
     summary: scan.intelligence?.headline || scan.summary || health.headline,
     serviceQuality: scan.serviceQuality || scan.diagnosis?.serviceQuality || {},
+    conversionUrgency: scan.conversionUrgency || scan.diagnosis?.conversionUrgency || scan.diagnosis?.serviceQuality?.conversionUrgency || scan.serviceQuality?.conversionUrgency || null,
     demoAccuracyContract: scan.demoAccuracyContract || scan.diagnosis?.demoAccuracyContract || scan.diagnosis?.serviceQuality?.demoAccuracy || scan.serviceQuality?.demoAccuracy || null,
     paidDeliverableBlueprint: scan.paidDeliverableBlueprint || scan.diagnosis?.paidDeliverableBlueprint || scan.diagnosis?.serviceQuality?.paidDeliverableBlueprint || scan.serviceQuality?.paidDeliverableBlueprint || null,
+    demoIssueOverview,
+    paidFullDetailContract: scan.paidFullDetailContract || scan.asset?.paidFullDetailContract || null,
+    siteOperationsDocument: scan.siteOperationsDocument || scan.asset?.siteOperationsDocument || scan.guidance?.operationsDocument || null,
     risks: risks.length ? risks : [normalizeRiskItem('진단 결과가 제한적으로 수신되었습니다. 전체 리포트에서 세부 항목을 확인하세요.', 0)],
     categories,
     recommendedActions,
-    lockedCount: Math.max(0, detailRows(scan).length - 2) || 7,
+    lockedCount: Number(demoIssueOverview.hiddenDetailedIssueCount ?? Math.max(0, detailRows(scan).length - 2)) || 7,
     pages: (scan.evidenceSummary?.scannedPages || scan.diagnosis?.scannedPages || scan.scannedPages || []).slice(0, 12)
   };
 }
+function buildDemoIssueOverviewFromRisks(risks = [], scan = {}) {
+  const areaMap = new Map();
+  (risks || []).forEach((item, index) => {
+    const area = item.area || item.category || '점검 영역';
+    const elements = (Array.isArray(item.elements) && item.elements.length ? item.elements : [item.code, item.title].filter(Boolean)).slice(0, 3);
+    const current = areaMap.get(area) || { area, issueCount: 0, elements: new Set(), previewFindings: [] };
+    current.issueCount += 1;
+    elements.forEach((el) => current.elements.add(String(el)));
+    current.previewFindings.push({ title: item.title, priority: item.priority || (index < 2 ? 'P1' : 'P2'), publicStatus: item.manualReviewRequired ? 'manual_review' : 'detected' });
+    areaMap.set(area, current);
+  });
+  const areaBreakdown = [...areaMap.values()].map((row) => ({
+    area: row.area,
+    issueCount: row.issueCount,
+    elementCount: row.elements.size,
+    elements: [...row.elements].slice(0, 6),
+    previewFindings: row.previewFindings.slice(0, 3)
+  }));
+  const elementCount = areaBreakdown.reduce((sum, row) => sum + Number(row.elementCount || 0), 0);
+  return {
+    scope: 'free_demo_problem_area_element_count_only',
+    totalIssueCount: Number(scan.totalFindings || risks.length || areaBreakdown.reduce((sum, row) => sum + row.issueCount, 0)),
+    visibleIssueCount: areaBreakdown.reduce((sum, row) => sum + row.issueCount, 0),
+    hiddenDetailedIssueCount: Math.max(0, Number(scan.totalFindings || risks.length || 0) - 3),
+    areaCount: areaBreakdown.length,
+    elementCount,
+    manualReviewCount: (risks || []).filter((item) => item.manualReviewRequired).length,
+    priorityCounts: (risks || []).reduce((acc, item) => { const key = item.priority || 'P2'; acc[key] = (acc[key] || 0) + 1; return acc; }, {}),
+    areaBreakdown,
+    paidUnlockFields: ['전체 근거', '상세 권장 조치', '수정 전후 문구', '적용 위치', '재점검 기준']
+  };
+}
+
 function evidencePagesText(pages = []) {
   const list = (pages || []).slice(0, 3).map(page => typeof page === 'string' ? page : (page.finalUrl || page.url || '')).filter(Boolean);
   return list.length ? list.join(' · ') : '수집 페이지 제한';
@@ -319,7 +361,7 @@ function manualReasonFor(item = '') {
   if (/법률|업종|신고|행정/i.test(text)) return `${text} — 자동 판단보다 운영자 확인이 안전합니다.`;
   if (/자바|렌더|스크립트/i.test(text)) return `${text} — 브라우저 렌더링 기준 재확인이 필요합니다.`;
   if (/차단|timeout|접근/i.test(text)) return `${text} — 접근 제한 또는 응답 지연으로 직접 확인이 필요합니다.`;
-  return `${text} — 자동 단정하지 않고 별도 확인 대상으로 분리했습니다.`;
+  return `${text} — 직접 확인이 필요한 항목으로 분리했습니다.`;
 }
 function externalToolStatus(view) {
   const providers = view.evidenceSummary?.externalMeasurementProviders || {};
@@ -330,6 +372,75 @@ function externalToolStatus(view) {
     ['Gemini 보조 검수', view.aiReview?.enabled ? '사용됨' : (view.aiReview?.provider === 'gemini' ? '설정 필요' : '미사용')]
   ];
   return rows;
+}
+
+function fallbackConversionUrgency(view) {
+  const overview = view.demoIssueOverview || {};
+  const base = normalizePercent(view.riskScore, 52);
+  const issue = Number(overview.totalIssueCount || view.risks?.length || 0);
+  const area = Number(overview.areaCount || 0);
+  const elements = Number(overview.elementCount || 0);
+  const manual = Number(overview.manualReviewCount || view.scoreModel?.manualReviewCount || 0);
+  const crisisScore = Math.max(0, Math.min(100, Math.round(base * 0.48 + Math.min(24, issue * 4) + Math.min(14, area * 3) + Math.min(12, elements * 0.55) + Math.min(10, manual * 3))));
+  const projectedAfterFixScore = Math.max(8, crisisScore - Math.max(12, Math.min(30, view.recommendedActions.length * 7 + 10)));
+  const blockers = (view.risks || []).slice(0, 4).map((item) => ({ label: item.area || item.category || item.title, count: 1, customerFeeling: '구매 망설임' }));
+  return {
+    scope: 'free_demo_conversion_crisis_score',
+    crisisScore,
+    crisisLabel: crisisScore >= 82 ? '매우 높음' : crisisScore >= 66 ? '높음' : crisisScore >= 48 ? '주의' : '관리 가능',
+    tone: crisisScore >= 66 ? 'danger' : crisisScore >= 48 ? 'warn' : 'success',
+    headline: crisisScore >= 66 ? '지금 보이는 신뢰 공백이 구매 직전 망설임으로 이어질 수 있습니다.' : '작은 안내 공백도 누적되면 문의와 이탈을 만들 수 있습니다.',
+    reason: `발견 문제 ${issue}개 · 문제 영역 ${area}개 · 영향 요소 ${elements}개 기준`,
+    projectedAfterFixScore,
+    expectedScoreReduction: Math.max(0, crisisScore - projectedAfterFixScore),
+    conversionBlockers: blockers,
+    lostTrustSignals: [`발견 문제 ${issue}개`, `문제 영역 ${area}개`, `영향 요소 ${elements}개`, `직접 확인 필요 ${manual}개`],
+    primaryCta: '상세 리포트 결제하고 원인 확인',
+    secondaryCta: 'FixPack으로 수정 문구까지 받기',
+    recommendedPlan: view.recommendedPlan,
+    disclaimer: '위기도 점수는 법률 위반 또는 매출 손실을 확정하는 값이 아니라 공개 화면 기준 보완 우선순위입니다.'
+  };
+}
+function conversionUrgencyFor(view) {
+  return view.conversionUrgency || fallbackConversionUrgency(view);
+}
+function renderConversionUrgencyPanel(view) {
+  const model = conversionUrgencyFor(view);
+  const score = normalizePercent(model.crisisScore, 0);
+  const projected = model.projectedAfterFixScore ?? '확인 필요';
+  const blockers = Array.isArray(model.conversionBlockers) && model.conversionBlockers.length ? model.conversionBlockers : [{ label: '정책·문의·결제 안내', count: view.risks?.length || 1, customerFeeling: '구매 망설임' }];
+  const signals = Array.isArray(model.lostTrustSignals) ? model.lostTrustSignals.slice(0, 4) : [];
+  const checkoutHref = `/checkout?plan=${encodeURIComponent(model.recommendedPlan || view.recommendedPlan)}&siteId=${encodeURIComponent(view.siteId || '')}&riskScore=${encodeURIComponent(score)}`;
+  return `<section class="conversion-crisis-panel ${escapeAttr(model.tone || 'warn')}" aria-label="구매 전환 위기도">
+    <div class="crisis-copy">
+      <span class="pill red">위기도 점수</span>
+      <h3>${escapeHtml(model.headline || '구매 전환을 막는 신뢰 공백을 시각화했습니다.')}</h3>
+      <p>${escapeHtml(model.reason || '무료 데모에서 확인된 문제 영역과 영향 요소 기준입니다.')}</p>
+      <div class="crisis-signal-row">${signals.map(item => `<span>${escapeHtml(item)}</span>`).join('')}</div>
+      <small>${escapeHtml(model.disclaimer || '점수는 보완 우선순위이며 결과를 보장하지 않습니다.')}</small>
+    </div>
+    <div class="crisis-visual" style="--crisis:${escapeAttr(score)};--target:${escapeAttr(projected === '확인 필요' ? 0 : projected)}">
+      <div class="crisis-ring"><strong>${escapeHtml(score)}</strong><span>/100</span><em>${escapeHtml(model.crisisLabel || '주의')}</em></div>
+      <div class="crisis-before-after"><div><b>현재</b><span>${escapeHtml(score)}</span></div><i aria-hidden="true"></i><div><b>개선 목표</b><span>${escapeHtml(projected)}</span></div></div>
+    </div>
+    <div class="crisis-blocker-grid">${blockers.slice(0, 5).map(item => `<article><b>${escapeHtml(item.label)}</b><strong>${escapeHtml(item.count)}개</strong><small>${escapeHtml(item.customerFeeling || '구매 망설임')}</small></article>`).join('')}</div>
+    <div class="crisis-cta-box">
+      <div><b>요약만 보면 방향만 압니다. 결제 후에는 실제 고칠 문장과 위치까지 열립니다.</b><p>전체 근거 · 수정 전후 문구 · 적용 위치 · 재검사 기준 · 사이트 맞춤 운영 문서를 한 번에 확인하세요.</p></div>
+      <div class="topnav"><a class="btn primary" href="${escapeAttr(checkoutHref)}">${escapeHtml(model.primaryCta || '상세 리포트 결제')}</a><a class="btn secondary" href="/checkout?plan=FixPack&siteId=${escapeAttr(view.siteId)}">${escapeHtml(model.secondaryCta || 'FixPack 보기')}</a></div>
+    </div>
+  </section>`;
+}
+function renderPurchasePathPanel(view) {
+  const model = conversionUrgencyFor(view);
+  const steps = Array.isArray(model.purchasePath) && model.purchasePath.length ? model.purchasePath : [
+    { step: 1, title: '위기도 확인', body: '문제 영역·영향 요소·갯수와 위기도 점수를 확인합니다.' },
+    { step: 2, title: '상세 근거 잠금 해제', body: '결제 후 전체 문제와 수정 기준을 확인합니다.' },
+    { step: 3, title: '맞춤 운영 문서 실행', body: '사이트 상황에 맞춘 SOP와 재검증 기준을 적용합니다.' }
+  ];
+  return `<section class="purchase-path-panel" aria-label="구매 전환 단계">
+    <div class="section-title"><span class="pill gold">구매 전환 구조</span><h3>무료 불안 확인 → 유료 해결 문서 → 재점검까지 이어집니다</h3><p>고객이 “개선해야겠다”고 느끼는 순간에 바로 구매할 수 있도록 단계별 CTA를 고정했습니다.</p></div>
+    <div class="purchase-path-grid">${steps.map((item) => `<article><span>${escapeHtml(item.step || '')}</span><b>${escapeHtml(item.title)}</b><p>${escapeHtml(item.body)}</p></article>`).join('')}</div>
+  </section>`;
 }
 function renderResultHero(view) {
   const scoreText = view.riskScore === null ? '-' : String(view.riskScore);
@@ -351,7 +462,7 @@ function renderMetricStrip(view) {
   return `<section class="metric-strip" aria-label="요약 지표">
     <article><span>추천 상품</span><strong>${escapeHtml(view.recommendedPlan)}</strong><small>현재 탐지 점수 기준</small></article>
     <article><span>잠금 해제 항목</span><strong>${escapeHtml(view.lockedCount)}</strong><small>회원/유료 상세에서 확인</small></article>
-    <article><span>수동 확인 필요</span><strong>${escapeHtml(view.scoreModel?.manualReviewCount ?? 0)}개</strong><small>자동 단정 금지 항목</small></article>
+    <article><span>직접 확인 필요</span><strong>${escapeHtml(view.scoreModel?.manualReviewCount ?? 0)}개</strong><small>직접 확인 필요 항목</small></article>
   </section>`;
 }
 
@@ -499,6 +610,40 @@ function renderEvidenceChecklist(view) {
   return `<section class="evidence-checklist"><div class="section-title"><span class="pill">검증 근거</span><h3>무료 결과에서 확인한 신뢰 체크라인</h3></div><div class="evidence-grid">${items.map(([title, text], index) => `<article><span>${escapeHtml(index + 1)}</span><div><b>${escapeHtml(title)}</b><p>${escapeHtml(text)}</p></div></article>`).join('')}</div><p class="evidence-note">실제 법정 정보·운영키·외부 스캔 결과는 운영 환경에서 확인해야 하며, 확인되지 않은 값은 단정하지 않습니다.</p></section>`;
 }
 
+
+function renderDemoIssueOverview(view, options = {}) {
+  const overview = view.demoIssueOverview || buildDemoIssueOverviewFromRisks(view.risks || [], view.raw || {});
+  const rows = Array.isArray(overview.areaBreakdown) && overview.areaBreakdown.length ? overview.areaBreakdown : buildDemoIssueOverviewFromRisks(view.risks || [], view.raw || {}).areaBreakdown;
+  const compact = options.compact === true;
+  const priorityCounts = overview.priorityCounts || {};
+  const priorityText = Object.entries(priorityCounts).map(([key, value]) => `${key} ${value}`).join(' · ') || '우선순위 계산 중';
+  return `<section class="demo-issue-overview ${compact ? 'compact' : ''}">
+    <div class="section-title"><span class="pill green">무료 데모 공개 범위</span><h3>문제 영역·영향 요소·갯수 요약</h3><p>무료 데모는 전체 세부 근거를 열지 않고, 어떤 영역에서 몇 개의 요소가 문제인지 먼저 보여줍니다.</p></div>
+    <div class="demo-issue-kpis">
+      <article><span>문제 항목</span><strong>${escapeHtml(overview.totalIssueCount ?? rows.reduce((sum, row) => sum + Number(row.issueCount || 0), 0))}</strong><small>${escapeHtml(priorityText)}</small></article>
+      <article><span>문제 영역</span><strong>${escapeHtml(overview.areaCount ?? rows.length)}</strong><small>정책·결제·개인정보·UX 등</small></article>
+      <article><span>영향 요소</span><strong>${escapeHtml(overview.elementCount ?? rows.reduce((sum, row) => sum + Number(row.elementCount || 0), 0))}</strong><small>페이지·문구·버튼·링크 단위</small></article>
+      <article><span>직접 확인</span><strong>${escapeHtml(overview.manualReviewCount ?? 0)}</strong><small>자동 확정 불가 항목</small></article>
+    </div>
+    <div class="demo-area-grid">${rows.slice(0, compact ? 3 : 8).map((row) => `<article class="demo-area-card"><div class="meta-row"><b>${escapeHtml(row.area || '점검 영역')}</b><span class="pill">${escapeHtml(row.issueCount || 0)}개</span></div><p>${escapeHtml(row.reason || `${row.elementCount || 0}개 요소에 영향`)}</p><div class="demo-element-list">${(row.elements || []).slice(0, 6).map((el) => `<span>${escapeHtml(el)}</span>`).join('') || '<span>요소 확인 필요</span>'}</div>${compact ? '' : `<ul>${(row.previewFindings || []).slice(0, 3).map((item) => `<li><b>${escapeHtml(item.priority || 'P2')}</b> ${escapeHtml(item.title || '점검 항목')}</li>`).join('')}</ul>`}</article>`).join('')}</div>
+    <div class="notice muted">유료 산출물에서는 위 항목들의 전체 근거, URL, 상세 권장 조치, 수정 문구, 적용 위치, 재점검 기준을 100% 공개합니다.</div>
+  </section>`;
+}
+
+function renderPaidFullDetailContract(scan) {
+  const contract = scan.paidFullDetailContract || scan.asset?.paidFullDetailContract || null;
+  if (!contract) return '';
+  const rows = Array.isArray(contract.issueDetails) ? contract.issueDetails : [];
+  return `<section class="paid-full-detail-contract"><div class="section-title"><span class="pill brand">유료 전체 공개</span><h3>문제 전체 내용 100% 공개 게이트</h3><p>무료 데모에서 요약된 문제 영역·요소·갯수의 전체 상세 내용을 결제 산출물에서 모두 노출합니다.</p></div><div class="demo-issue-kpis"><article><span>상세 공개율</span><strong>${escapeHtml(contract.completenessScore ?? 0)}</strong><small>/100</small></article><article><span>전체 항목</span><strong>${escapeHtml(contract.totalIssueCount ?? rows.length)}</strong><small>${contract.allDetailsVisible ? '전체 공개' : '보완 필요'}</small></article><article><span>누락 상세</span><strong>${escapeHtml(Number(contract.missingDetailRows || 0))}</strong><small>0이어야 통과</small></article><article><span>필수 필드</span><strong>${escapeHtml((contract.requiredFields || []).length)}</strong><small>근거·조치·검수</small></article></div><div class="paid-detail-grid">${rows.map((item, index) => `<article class="paid-detail-card"><div class="meta-row"><b>${index + 1}. ${escapeHtml(item.title || item.code || '점검 항목')}</b><span class="pill ${priorityTone(item.priority)}">${escapeHtml(item.priority || 'P2')}</span></div><dl><div><dt>영역/요소</dt><dd>${escapeHtml(item.area || item.category || '')} · ${(item.elements || []).map(escapeHtml).join(' / ')}</dd></div><div><dt>근거</dt><dd>${escapeHtml(item.evidence || '확인 필요')}</dd></div><div><dt>권장 조치</dt><dd>${escapeHtml(item.recommendation || '권장 조치 확인')}</dd></div><div><dt>수정 문구</dt><dd>${escapeHtml(item.fixTemplate || '수정 문구 확인')}</dd></div><div><dt>수용 기준</dt><dd>${(item.acceptanceCriteria || []).map(escapeHtml).join(' / ') || '재점검 기준 확인'}</dd></div></dl></article>`).join('')}</div></section>`;
+}
+
+function renderSiteOperationsDocument(scan) {
+  const doc = scan.siteOperationsDocument || scan.asset?.siteOperationsDocument || scan.guidance?.operationsDocument || null;
+  if (!doc) return '';
+  const sections = Array.isArray(doc.sections) ? doc.sections : [];
+  return `<section class="site-operations-document"><div class="section-title"><span class="pill gold">다음 서비스</span><h3>${escapeHtml(doc.title || '사이트 맞춤 운영 지침 문서')}</h3><p>진단 결과를 해당 사이트에 맞춘 개선 지침·운영 SOP·검수 기준으로 전환합니다.</p></div><div class="demo-issue-kpis"><article><span>문서 품질</span><strong>${escapeHtml(doc.qualityScore ?? 100)}</strong><small>/100 목표</small></article><article><span>문제 영역</span><strong>${escapeHtml(doc.issueAreaCount ?? 0)}</strong><small>맞춤 반영</small></article><article><span>영향 요소</span><strong>${escapeHtml(doc.issueElementCount ?? 0)}</strong><small>운영 문서화</small></article><article><span>섹션</span><strong>${escapeHtml(sections.length)}</strong><small>SOP 포함</small></article></div><div class="operations-section-grid">${sections.slice(0, 10).map((section, index) => `<article><b>${index + 1}. ${escapeHtml(section.title || '운영 섹션')}</b><p>${escapeHtml(section.body || section.objective || '')}</p><small>${(section.actions || section.actionItems || []).slice(0, 3).map(escapeHtml).join(' · ')}</small></article>`).join('')}</div></section>`;
+}
+
 function hasPaidAccess(scan) {
   return scan?.paidAccess === true || scan?.entitlement?.paid === true || scan?.access === 'paid' || scan?.orderStatus === 'paid' || scan?.subscriptionStatus === 'active';
 }
@@ -506,11 +651,11 @@ function renderFullResult(scan) {
   const view = normalizeScan(scan);
   const findings = detailRows(scan);
   const pages = view.pages;
-  return `<div class="card stack full-result"><div class="meta-row"><strong>상세 결과 열람 가능</strong><span class="pill brand">결제 완료</span></div><div class="notice"><strong>${escapeHtml(session.customer?.email || '로그인 계정')}</strong>에 저장되었습니다. 구매 산출물 영역에서 상세 근거와 수정 문구안을 확인할 수 있습니다.</div><h3>전체 발견 항목 ${findings.length}개</h3><div class="result-grid">${renderList(findings, '<div class="muted">상세 발견 항목 없음</div>', item => `<div class="result-card"><div class="meta-row"><strong>${escapeHtml(item.title || item.code || '점검 항목')}</strong><span class="pill ${item.priority === 'P0' ? 'gold' : ''}">${escapeHtml(item.priority || '확인')}</span></div><p>${escapeHtml(item.recommendation || item.fixTemplate || '권장 조치 확인')}</p><small class="muted">${escapeHtml(item.category || '')} · ${escapeHtml(item.code || '')}</small></div>`)}</div><div class="notice muted">스캔 페이지: ${pages.length ? pages.map(p => escapeHtml(p.finalUrl || p.url || p)).join(' · ') : '기본 URL 중심 분석'}</div><div class="topnav"><a class="btn primary" href="/portal?siteId=${escapeAttr(view.siteId)}">내 사이트 관리</a><a class="btn secondary" href="/plans?riskScore=${escapeAttr(view.riskScore ?? '')}&siteId=${escapeAttr(view.siteId)}">상품·요금 비교</a><a class="btn secondary" href="/checkout?plan=${escapeAttr(view.recommendedPlan)}&siteId=${escapeAttr(view.siteId)}">상세 리포트 신청</a></div></div>`;
+  return `<div class="card stack full-result"><div class="meta-row"><strong>상세 결과 열람 가능</strong><span class="pill brand">결제 완료</span></div><div class="notice"><strong>${escapeHtml(session.customer?.email || '로그인 계정')}</strong>에 저장되었습니다. 구매 산출물 영역에서 상세 근거와 수정 문구안을 확인할 수 있습니다.</div><h3>전체 발견 항목 ${findings.length}개</h3><div class="result-grid">${renderList(findings, '<div class="muted">상세 발견 항목 없음</div>', item => `<div class="result-card"><div class="meta-row"><strong>${escapeHtml(item.title || item.code || '점검 항목')}</strong><span class="pill ${item.priority === 'P0' ? 'gold' : ''}">${escapeHtml(item.priority || '확인')}</span></div><p>${escapeHtml(item.recommendation || item.fixTemplate || '권장 조치 확인')}</p><small class="muted">${escapeHtml(item.category || '')} · ${escapeHtml(item.code || '')}</small></div>`)}</div><div class="notice muted">스캔 페이지: ${pages.length ? pages.map(p => escapeHtml(p.finalUrl || p.url || p)).join(' · ') : '기본 URL 중심 분석'}</div>${renderPaidFullDetailContract(scan)}${renderSiteOperationsDocument(scan)}<div class="topnav"><a class="btn primary" href="/portal?siteId=${escapeAttr(view.siteId)}">내 사이트 관리</a><a class="btn secondary" href="/plans?riskScore=${escapeAttr(view.riskScore ?? '')}&siteId=${escapeAttr(view.siteId)}">상품·요금 비교</a><a class="btn secondary" href="/checkout?plan=${escapeAttr(view.recommendedPlan)}&siteId=${escapeAttr(view.siteId)}">상세 리포트 신청</a></div></div>`;
 }
 function renderLockedResult(scan) {
   const view = normalizeScan(scan);
-  return `<div class="result-locked pro-lock"><div class="locked-content"><div class="lock-preview-grid"><span>페이지별 근거</span><span>수정 문구안</span><span>우선순위 로드맵</span><span>리포트·템플릿 산출물</span></div><div class="result-upgrade-compare"><article><b>무료 결과</b><small>공개 페이지 요약 · 확인 URL · 수동확인 필요 항목</small></article><article><b>결제 산출물</b><small>페이지별 근거 · 적용 문구 · 우선순위 · 재검사 기준</small></article></div></div><div class="lock-box"><div class="lock-card"><div class="pill">결제 후 상세 결과 공개</div><h3>상세 결과 ${escapeHtml(view.lockedCount)}개는 결제 후 열립니다.</h3><p class="muted">로그인 회원은 무료진단 횟수 관리, 내 사이트 저장, 원클릭 재검사, 최근 진단 이력 확인까지만 이용할 수 있습니다. 상세 근거·수정 문구안·로드맵은 구매 산출물입니다.</p><div class="topnav"><a class="primary" href="/checkout?plan=${escapeAttr(view.recommendedPlan)}&siteId=${escapeAttr(view.siteId)}">상세 리포트 결제</a><a class="secondary" href="/portal?siteId=${escapeAttr(view.siteId)}">내 사이트 저장/재검사</a></div></div></div></div>`;
+  return `<div class="result-locked pro-lock"><div class="locked-content"><div class="lock-preview-grid"><span>페이지별 근거</span><span>수정 문구안</span><span>우선순위 로드맵</span><span>리포트·템플릿 산출물</span></div><div class="result-upgrade-compare"><article><b>무료 결과</b><small>공개 페이지 요약 · 확인 URL · 직접 확인 필요 항목</small></article><article><b>결제 산출물</b><small>페이지별 근거 · 적용 문구 · 우선순위 · 재검사 기준</small></article></div></div><div class="lock-box"><div class="lock-card"><div class="pill">결제 후 상세 결과 공개</div><h3>상세 결과 ${escapeHtml(view.lockedCount)}개는 결제 후 열립니다.</h3><p class="muted">로그인 회원은 무료진단 횟수 관리, 내 사이트 저장, 원클릭 재검사, 최근 진단 이력 확인까지만 이용할 수 있습니다. 상세 근거·수정 문구안·로드맵은 구매 산출물입니다.</p><div class="topnav"><a class="primary" href="/checkout?plan=${escapeAttr(view.recommendedPlan)}&siteId=${escapeAttr(view.siteId)}">상세 리포트 결제</a><a class="secondary" href="/portal?siteId=${escapeAttr(view.siteId)}">내 사이트 저장/재검사</a></div></div></div></div>`;
 }
 function renderPaywall(scan) { return renderLockedResult(scan); }
 
@@ -542,7 +687,7 @@ function buildLocalFallbackScan(target, message = '') {
       code: 'LOCAL-FALLBACK-002',
       category: '공개 페이지 기준',
       priority: 'P1',
-      title: 'URL 접근·정책 링크·문의 경로는 수동 확인 필요',
+      title: 'URL 접근·정책 링크·문의 경로는 직접 확인 필요',
       impact: '자동 수집이 완료되지 않았으므로 점수는 보수적으로 표시됩니다.',
       recommendation: '홈, 푸터, 환불·개인정보·문의 안내 링크가 실제 고객 화면에서 보이는지 확인하세요.',
       manualReviewRequired: true,
@@ -937,11 +1082,11 @@ function renderAutomatedActionPlan(view) {
   const fixes = Array.isArray(plan.automaticFixes) ? plan.automaticFixes : [];
   const reviews = Array.isArray(plan.manualReviews) ? plan.manualReviews : [];
   if (!fixes.length && !reviews.length) return '';
-  return `<section class="automated-action-plan" aria-label="자동 요약 항목과 수동확인 분리">
-    <div class="section-title"><span class="pill gold">자동 요약 항목</span><h3>자동 초안과 수동확인 항목을 분리했습니다</h3></div>
+  return `<section class="automated-action-plan" aria-label="자동 요약 항목과 직접 확인 분리">
+    <div class="section-title"><span class="pill gold">자동 요약 항목</span><h3>자동 초안과 직접 확인 항목을 분리했습니다</h3></div>
     <div class="fix-preview-grid">
       ${fixes.slice(0, 4).map(item => `<article><span class="fix-step">AUTO ${escapeHtml(item.order)}</span><h4>${escapeHtml(item.title)}</h4><p>${escapeHtml(item.patchSummary)}</p><small>${escapeHtml(item.operatorNotice || '운영자 확인 후 적용하세요.')}</small></article>`).join('')}
-      ${reviews.slice(0, 4).map(item => `<article><span class="fix-step">CHECK ${escapeHtml(item.order)}</span><h4>${escapeHtml(item.title)}</h4><p>${escapeHtml(item.reason)}</p><small>자동 단정 금지 · 수동확인 필요</small></article>`).join('')}
+      ${reviews.slice(0, 4).map(item => `<article><span class="fix-step">CHECK ${escapeHtml(item.order)}</span><h4>${escapeHtml(item.title)}</h4><p>${escapeHtml(item.reason)}</p><small>직접 확인 필요 · 직접 확인 필요</small></article>`).join('')}
     </div>
   </section>`;
 }
@@ -1022,7 +1167,7 @@ function renderUnifiedDashboard(view) {
   const topActions = (view.recommendedActions || []).slice(0, 3);
   const warningText = successful < attempted
     ? `일부 URL 응답 지연 ${Math.max(1, attempted - successful)}건 · 결과는 생성되었으며 재시도 권장`
-    : `${stats.manual}개 항목은 자동 단정하지 않고 수동 확인으로 분리했습니다.`;
+    : `${stats.manual}개 항목은 직접 확인이 필요한 항목으로 분리했습니다.`;
   return `<section class="unified-trust-dashboard ${escapeAttr(view.health.tone)}">
     <div class="utd-header">
       <div class="utd-title-wrap"><h2>URL 신뢰도 진단 결과</h2><p>${escapeHtml(view.target)}</p></div>
@@ -1031,8 +1176,8 @@ function renderUnifiedDashboard(view) {
     <div class="utd-warning-bar"><div><b>${escapeHtml(warningText)}</b><small>모든 항목의 검사가 완료되었으며 현재 결과를 확인할 수 있습니다.</small></div><button class="btn secondary" type="button" id="dashboardRetryBtn">다시 점검</button></div>
     <div class="utd-top-grid">
       <article class="utd-score-card">
-        <div class="utd-gauge" style="--score:${escapeAttr(view.riskScore ?? 0)}"><div class="utd-gauge-ring"></div><div class="utd-gauge-value"><span>보완 우선도</span><strong>${escapeHtml(view.riskScore ?? '-')}</strong><em>/100</em></div></div>
-        <div class="utd-score-copy"><b>${escapeHtml(view.riskLevel || view.health.label)}</b><p>${escapeHtml(view.health.headline)}</p><small>권장: 보완 우선도 40점 이하</small></div>
+        <div class="utd-gauge" style="--score:${escapeAttr(conversionUrgencyFor(view).crisisScore ?? view.riskScore ?? 0)}"><div class="utd-gauge-ring"></div><div class="utd-gauge-value"><span>위기도 점수</span><strong>${escapeHtml(conversionUrgencyFor(view).crisisScore ?? view.riskScore ?? '-')}</strong><em>/100</em></div></div>
+        <div class="utd-score-copy"><b>${escapeHtml(conversionUrgencyFor(view).crisisLabel || view.riskLevel || view.health.label)}</b><p>${escapeHtml(conversionUrgencyFor(view).headline || view.health.headline)}</p><small>권장: 위기도 40점 이하</small></div>
       </article>
       <article class="utd-kpi green"><span>확인된 요소</span><strong>${escapeHtml(stats.confirmed)}</strong><small>안심하고 유지하세요</small></article>
       <article class="utd-kpi amber"><span>누락 의심</span><strong>${escapeHtml(stats.suspected)}</strong><small>즉시 보완 필요</small></article>
@@ -1040,13 +1185,13 @@ function renderUnifiedDashboard(view) {
       <article class="utd-kpi blue"><span>수동 확인</span><strong>${escapeHtml(view.scoreModel?.manualReviewCount ?? stats.manual)}</strong><small>사람 확인이 필요</small></article>
     </div>
     <div class="utd-urgent-strip">
-      <div class="utd-urgent-title"><b>지금 바로 보완해야 할 핵심 문제</b><small>고객 신뢰와 전환율에 직접적인 영향을 줄 수 있는 항목입니다.</small></div>
+      <div class="utd-urgent-title"><b>먼저 보완해야 할 핵심 문제</b><small>고객 신뢰와 전환율에 직접적인 영향을 줄 수 있는 항목입니다.</small></div>
       <div class="utd-urgent-items">${urgent.map((item, index) => `<article><span>${index + 1}</span><b>${escapeHtml(item.title)}</b><small>${escapeHtml(item.desc)}</small></article>`).join('')}</div>
     </div>
     <div class="utd-columns">
       <section class="utd-column danger"><div class="utd-column-head"><h3>지금 위험한 항목</h3></div>${dangerItems.map((item) => `<article class="utd-list-card"><div><b>${escapeHtml(item.title)}</b><small>${escapeHtml(item.desc)}</small></div><span class="utd-badge danger">${escapeHtml(item.severity)}</span></article>`).join('')}</section>
       <section class="utd-column success"><div class="utd-column-head"><h3>자동으로 확인된 요소</h3></div>${confirmed.map((item) => `<article class="utd-list-card"><div><b>${escapeHtml(item.title)}</b><small>${escapeHtml(item.desc)}</small></div><span class="utd-badge success">${escapeHtml(item.badge)}</span></article>`).join('')}</section>
-      <section class="utd-column warn"><div class="utd-column-head"><h3>수동 확인 필요</h3></div>${manual.map((item) => `<article class="utd-list-card"><div><b>${escapeHtml(item.title)}</b><small>${escapeHtml(item.desc)}</small></div><span class="utd-badge warn">검토 필요</span></article>`).join('')}</section>
+      <section class="utd-column warn"><div class="utd-column-head"><h3>직접 확인 필요</h3></div>${manual.map((item) => `<article class="utd-list-card"><div><b>${escapeHtml(item.title)}</b><small>${escapeHtml(item.desc)}</small></div><span class="utd-badge warn">검토 필요</span></article>`).join('')}</section>
     </div>
     <div class="utd-bottom-band">
       <div class="utd-bottom-intro"><b>오늘 바로 고칠 것</b><small>우선순위 높은 3가지만 먼저 개선하세요.</small></div>
@@ -1064,11 +1209,12 @@ function renderUnifiedDashboard(view) {
 
 function renderResultTabs(view, scan) {
   const paywall = hasPaidAccess(scan) ? renderFullResult(scan) : renderPaywall(scan);
+  const demoOverview = renderDemoIssueOverview(view);
   const panels = [
-    ['summary', '요약', `${renderDiscoverySummary(view)}${renderMetricStrip(view)}${renderPhase220ServiceQuality(view)}${renderPhase209CompletionScorecard(view)}${renderSmartNextAction(view)}`],
-    ['evidence', '근거', hasPaidAccess(scan) ? `${renderEvidenceMatrix(view)}${renderVerifiedPages(view)}${renderEvidenceFindings(view)}` : renderPaywall(scan)],
-    ['fix', '수정안', hasPaidAccess(scan) ? `${renderAutomatedActionPlan(view)}${renderRecommendedActions(view.recommendedActions)}${renderFixPreview(view.recommendedActions)}` : renderPaywall(scan)],
-    ['offer', '상품', `${renderValueComparison(view)}${renderPhase209CompletionScorecard(view)}${renderPremiumUpgradePanel(view)}${paywall}`],
+    ['summary', '요약', `${renderConversionUrgencyPanel(view)}${renderDiscoverySummary(view)}${renderMetricStrip(view)}${demoOverview}${renderPhase220ServiceQuality(view)}${renderPhase209CompletionScorecard(view)}${renderSmartNextAction(view)}`],
+    ['evidence', '근거', hasPaidAccess(scan) ? `${renderEvidenceMatrix(view)}${renderVerifiedPages(view)}${renderEvidenceFindings(view)}${renderPaidFullDetailContract(scan)}` : `${renderDemoIssueOverview(view, { compact: true })}${renderPaywall(scan)}`],
+    ['fix', '수정안', hasPaidAccess(scan) ? `${renderAutomatedActionPlan(view)}${renderRecommendedActions(view.recommendedActions)}${renderFixPreview(view.recommendedActions)}${renderSiteOperationsDocument(scan)}` : `${renderDemoIssueOverview(view, { compact: true })}${renderPaywall(scan)}`],
+    ['offer', '상품', `${renderConversionUrgencyPanel(view)}${renderPurchasePathPanel(view)}${renderValueComparison(view)}${renderPhase209CompletionScorecard(view)}${renderPremiumUpgradePanel(view)}${paywall}`],
     ['limits', '한계', `${renderPhase220ServiceQuality(view)}${renderAutomationDisclosure(view)}${renderExternalToolPlan(view)}${renderQualityNotice(view)}`]
   ];
   return `<section class="result-tabbed-ia" aria-label="진단 결과 단계별 보기">

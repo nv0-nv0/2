@@ -1,0 +1,1255 @@
+{
+  "ok": true,
+  "phase": "phase225",
+  "name": "agentic-coding-global-100-application",
+  "checkedAt": "2026-05-10T23:37:51.540Z",
+  "totalChecks": 247,
+  "passedChecks": 247,
+  "failedChecks": [],
+  "agentPanels": [
+    "routing-agent",
+    "public-ux-agent",
+    "demo-agent",
+    "paid-flow-agent",
+    "seo-schema-agent",
+    "a11y-agent",
+    "legacy-gate-agent"
+  ],
+  "checks": [
+    {
+      "name": "package:phase225-version",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "package-script:test:phase225",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "package-script:validate:phase225",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "package-script:phase225:final",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "package-script:phase224:final",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "package-script:test:all",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:auth:doctype",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:auth:title",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:auth:description",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:auth:canonical",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:auth:structured-data",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:auth:jsonld-count",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:auth:jsonld-0:valid-json",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:auth:jsonld-0:schema-context",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:auth:jsonld-0:graph",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:auth:no-placeholder-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:auth:no-fixed-72-score",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:board:doctype",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:board:title",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:board:description",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:board:canonical",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:board:structured-data",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:board:jsonld-count",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:board:jsonld-0:valid-json",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:board:jsonld-0:schema-context",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:board:jsonld-0:graph",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:board:no-placeholder-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:board:no-fixed-72-score",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:business-info:doctype",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:business-info:title",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:business-info:description",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:business-info:canonical",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:business-info:structured-data",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:business-info:jsonld-count",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:business-info:jsonld-0:valid-json",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:business-info:jsonld-0:schema-context",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:business-info:jsonld-0:graph",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:business-info:no-placeholder-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:business-info:no-fixed-72-score",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:cases:doctype",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:cases:title",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:cases:description",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:cases:canonical",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:cases:structured-data",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:cases:jsonld-count",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:cases:jsonld-0:valid-json",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:cases:jsonld-0:schema-context",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:cases:jsonld-0:graph",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:cases:no-placeholder-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:cases:no-fixed-72-score",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:checkout:doctype",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:checkout:title",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:checkout:description",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:checkout:canonical",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:checkout:structured-data",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:checkout:jsonld-count",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:checkout:jsonld-0:valid-json",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:checkout:jsonld-0:schema-context",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:checkout:jsonld-0:graph",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:checkout:no-placeholder-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:checkout:no-fixed-72-score",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:demo:doctype",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:demo:title",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:demo:description",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:demo:canonical",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:demo:structured-data",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:demo:jsonld-count",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:demo:jsonld-0:valid-json",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:demo:jsonld-0:schema-context",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:demo:jsonld-0:graph",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:demo:no-placeholder-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:demo:no-fixed-72-score",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:documents:doctype",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:documents:title",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:documents:description",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:documents:canonical",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:documents:structured-data",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:documents:jsonld-count",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:documents:jsonld-0:valid-json",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:documents:jsonld-0:schema-context",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:documents:jsonld-0:graph",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:documents:no-placeholder-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:documents:no-fixed-72-score",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:guides:doctype",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:guides:title",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:guides:description",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:guides:canonical",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:guides:structured-data",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:guides:jsonld-count",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:guides:jsonld-0:valid-json",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:guides:jsonld-0:schema-context",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:guides:jsonld-0:graph",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:guides:no-placeholder-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:guides:no-fixed-72-score",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:home:doctype",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:home:title",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:home:description",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:home:canonical",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:home:structured-data",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:home:jsonld-count",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:home:jsonld-0:valid-json",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:home:jsonld-0:schema-context",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:home:jsonld-0:graph",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:home:no-placeholder-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:home:no-fixed-72-score",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:plans:doctype",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:plans:title",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:plans:description",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:plans:canonical",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:plans:structured-data",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:plans:jsonld-count",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:plans:jsonld-0:valid-json",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:plans:jsonld-0:schema-context",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:plans:jsonld-0:graph",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:plans:no-placeholder-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:plans:no-fixed-72-score",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:portal:doctype",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:portal:title",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:portal:description",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:portal:canonical",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:portal:structured-data",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:portal:jsonld-count",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:portal:jsonld-0:valid-json",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:portal:jsonld-0:schema-context",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:portal:jsonld-0:graph",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:portal:no-placeholder-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:portal:no-fixed-72-score",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:privacy:doctype",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:privacy:title",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:privacy:description",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:privacy:canonical",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:privacy:structured-data",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:privacy:jsonld-count",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:privacy:jsonld-0:valid-json",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:privacy:jsonld-0:schema-context",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:privacy:jsonld-0:graph",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:privacy:no-placeholder-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:privacy:no-fixed-72-score",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:refund:doctype",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:refund:title",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:refund:description",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:refund:canonical",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:refund:structured-data",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:refund:jsonld-count",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:refund:jsonld-0:valid-json",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:refund:jsonld-0:schema-context",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:refund:jsonld-0:graph",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:refund:no-placeholder-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:refund:no-fixed-72-score",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:service:doctype",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:service:title",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:service:description",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:service:canonical",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:service:structured-data",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:service:jsonld-count",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:service:jsonld-0:valid-json",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:service:jsonld-0:schema-context",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:service:jsonld-0:graph",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:service:no-placeholder-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:service:no-fixed-72-score",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:solutions:doctype",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:solutions:title",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:solutions:description",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:solutions:canonical",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:solutions:structured-data",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:solutions:jsonld-count",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:solutions:jsonld-0:valid-json",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:solutions:jsonld-0:schema-context",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:solutions:jsonld-0:graph",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:solutions:no-placeholder-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:solutions:no-fixed-72-score",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:terms:doctype",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:terms:title",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:terms:description",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:terms:canonical",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:terms:structured-data",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:terms:jsonld-count",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:terms:jsonld-0:valid-json",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:terms:jsonld-0:schema-context",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:terms:jsonld-0:graph",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:terms:no-placeholder-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:terms:no-fixed-72-score",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:veridion-demo:doctype",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:veridion-demo:title",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:veridion-demo:description",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:veridion-demo:canonical",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:veridion-demo:structured-data",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:veridion-demo:jsonld-count",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:veridion-demo:jsonld-0:valid-json",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:veridion-demo:jsonld-0:schema-context",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:veridion-demo:jsonld-0:graph",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:veridion-demo:no-placeholder-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page:veridion-demo:no-fixed-72-score",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "a11y:apps/public/veridion-demo/index.html:control-0-input",
+      "ok": true,
+      "detail": " aria-label=\"진단할 웹사이트 URL\" id=\"targetUrl\" placeholder=\"https://your-store.kr\" autocomplete=\"url\""
+    },
+    {
+      "name": "a11y:apps/public/checkout/index.html:control-0-input",
+      "ok": true,
+      "detail": " aria-label=\"결과물 수신 이메일\" id=\"buyerEmail\" type=\"email\" autocomplete=\"email\" placeholder=\"owner@example.com\""
+    },
+    {
+      "name": "a11y:apps/public/checkout/index.html:control-1-select",
+      "ok": true,
+      "detail": " aria-label=\"결제 상품 선택\" id=\"plan\""
+    },
+    {
+      "name": "a11y:apps/public/checkout/index.html:control-2-input",
+      "ok": true,
+      "detail": " aria-label=\"개인정보 처리 동의\" id=\"privacyConsent\" class=\"checkbox-inline\" type=\"checkbox\" required"
+    },
+    {
+      "name": "a11y:apps/public/checkout/index.html:control-3-input",
+      "ok": true,
+      "detail": " aria-label=\"이용약관 동의\" id=\"termsConsent\" class=\"checkbox-inline\" type=\"checkbox\" required"
+    },
+    {
+      "name": "a11y:apps/public/checkout/index.html:control-4-input",
+      "ok": true,
+      "detail": " aria-label=\"환불 정책 확인\" id=\"refundConsent\" class=\"checkbox-inline\" type=\"checkbox\" required"
+    },
+    {
+      "name": "a11y:apps/public/checkout/index.html:control-5-input",
+      "ok": true,
+      "detail": " aria-label=\"결과물 제공 범위 확인\" id=\"deliveryConsent\" class=\"checkbox-inline\" type=\"checkbox\" required"
+    },
+    {
+      "name": "a11y:apps/public/portal/index.html:control-0-input",
+      "ok": true,
+      "detail": " aria-label=\"저장할 사이트 URL\" id=\"saveUrl\" placeholder=\"https://your-store.kr\" autocomplete=\"url\""
+    },
+    {
+      "name": "a11y:apps/public/portal/index.html:control-1-input",
+      "ok": true,
+      "detail": " aria-label=\"저장할 사이트 이름\" id=\"saveName\" placeholder=\"자사몰 / 캠페인 첫 화면\" autocomplete=\"off\""
+    },
+    {
+      "name": "a11y:apps/public/portal/index.html:control-2-input",
+      "ok": true,
+      "detail": " aria-label=\"사이트 메모\" id=\"saveMemo\" placeholder=\"오픈일, 광고 집행 여부 등\" autocomplete=\"off\""
+    },
+    {
+      "name": "a11y:apps/public/documents/index.html:control-1-textarea",
+      "ok": true,
+      "detail": " aria-label=\"정리할 문서 내용\" name=\"sourceInput\" rows=\"14\" placeholder=\"예: 개인정보처리방침, 환불 정책, 이용약관 초안을 정리하고 사이트에 반영할 작업지시서까지 함께 "
+    },
+    {
+      "name": "a11y:apps/public/auth/index.html:control-0-input",
+      "ok": true,
+      "detail": " aria-label=\"로그인 이메일\" id=\"loginEmail\" type=\"email\" autocomplete=\"email\" required"
+    },
+    {
+      "name": "a11y:apps/public/auth/index.html:control-1-input",
+      "ok": true,
+      "detail": " aria-label=\"로그인 비밀번호\" id=\"loginPassword\" type=\"password\" autocomplete=\"current-password\" required"
+    },
+    {
+      "name": "a11y:apps/public/auth/index.html:control-2-input",
+      "ok": true,
+      "detail": " aria-label=\"회원가입 이메일\" id=\"registerEmail\" type=\"email\" autocomplete=\"email\" required"
+    },
+    {
+      "name": "a11y:apps/public/auth/index.html:control-3-input",
+      "ok": true,
+      "detail": " aria-label=\"회원가입 비밀번호\" id=\"registerPassword\" type=\"password\" autocomplete=\"new-password\" minlength=\"12\" required"
+    },
+    {
+      "name": "a11y:apps/public/auth/index.html:control-4-input",
+      "ok": true,
+      "detail": " aria-label=\"개인정보처리방침 동의\" id=\"privacyConsent\" type=\"checkbox\" required"
+    },
+    {
+      "name": "a11y:apps/public/auth/index.html:control-5-input",
+      "ok": true,
+      "detail": " aria-label=\"비밀번호 재설정 이메일\" id=\"resetEmail\" type=\"email\" autocomplete=\"email\" required"
+    },
+    {
+      "name": "a11y:apps/public/auth/index.html:control-6-input",
+      "ok": true,
+      "detail": " aria-label=\"비밀번호 재설정 확인 이메일\" id=\"resetConfirmEmail\" type=\"email\" autocomplete=\"email\" required"
+    },
+    {
+      "name": "a11y:apps/public/auth/index.html:control-7-input",
+      "ok": true,
+      "detail": " aria-label=\"재설정 인증 코드\" id=\"resetToken\" autocomplete=\"one-time-code\" required"
+    },
+    {
+      "name": "a11y:apps/public/auth/index.html:control-8-input",
+      "ok": true,
+      "detail": " aria-label=\"새 비밀번호\" id=\"resetPassword\" type=\"password\" autocomplete=\"new-password\" minlength=\"12\" required"
+    },
+    {
+      "name": "plans:static-paid-flow:39,000원",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "plans:static-paid-flow:79,000원",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "plans:static-paid-flow:월 149,000원",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "plans:static-paid-flow:/checkout?plan=Report",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "plans:static-paid-flow:/checkout?plan=FixPack",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "plans:static-paid-flow:/checkout?plan=Auto",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "plans:static-paid-flow:Auto 정기 케어",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "demo:conversion-copy:사이트 주소 하나로",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "demo:conversion-copy:무료 결과와 상품·요금 비교",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "demo:conversion-copy:상세 리포트 신청",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "demo:conversion-copy:검사 후 결과 표시",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "demo-js:resilience:buildLocalFallbackScan",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "demo-js:resilience:renderPaywall",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "demo-js:resilience:recommendedPlan",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "demo-js:resilience:nv0:lastScan",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "demo-js:resilience:client_safe_fallback",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "route:/",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "route:/products/veridion/demo",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "route:/plans",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "route:/checkout",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "route:/portal",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "route:/board",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "route:/documents",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "route:/business-info",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "route:/healthz",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "route:/readyz",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "api:/api/public/scan",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "api:/api/public/products",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "api:/api/public/plans",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "api:/api/public/checkout-session",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "api:/api/public/payment/complete",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "api:/api/public/fulfillment",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "docs:phase225-work-order",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "docs:phase225-manifest",
+      "ok": true,
+      "detail": ""
+    }
+  ]
+}

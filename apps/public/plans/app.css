@@ -174,3 +174,17 @@
 .revenue-proof-strip span{color:#cbd5e1;font-size:13px;line-height:1.45;font-weight:800;}
 .clean-plan-card[data-plan-code="FixPack"] .plan-price{color:#fff;}
 @media(max-width:860px){.revenue-proof-strip{grid-template-columns:1fr;}}
+
+
+/* PHASE229: value-priced conversion ladder and paid-quality lock */
+.phase229-price-fit{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(340px,.9fr);gap:16px;align-items:stretch;}
+.price-fit-hero,.price-fit-grid article{border:1px solid rgba(148,163,184,.22);border-radius:28px;background:linear-gradient(180deg,rgba(15,23,42,.92),rgba(2,6,23,.92));padding:24px;}
+.price-fit-hero h2{font-size:clamp(28px,4vw,48px);line-height:1.12;letter-spacing:-.055em;margin:12px 0;color:#fff;}
+.price-fit-hero p{color:#cbd5e1;line-height:1.75;margin:0;font-size:16px;}
+.price-fit-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
+.price-fit-grid article{display:grid;gap:8px;align-content:center;min-height:170px;}
+.price-fit-grid article.is-focus{border-color:rgba(245,158,11,.48);box-shadow:0 24px 80px rgba(245,158,11,.08);}
+.price-fit-grid b{color:#93c5fd;font-size:13px;letter-spacing:.08em;text-transform:uppercase;}
+.price-fit-grid strong{color:#fff;font-size:clamp(24px,3.4vw,38px);letter-spacing:-.06em;}
+.price-fit-grid span{color:#cbd5e1;line-height:1.5;font-size:14px;}
+@media(max-width:980px){.phase229-price-fit{grid-template-columns:1fr}.price-fit-grid{grid-template-columns:1fr}}

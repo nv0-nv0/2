@@ -104,9 +104,9 @@ function strengthenSalesCopy(plan) {
 function basePlans(offers) {
   const paid = list(offers).map(item => strengthenSalesCopy({ ...item, code: normalizeCode(item.code || item.planCode) }));
   const fallback = [
-    { code: 'Report', title: '상세 리포트', price: 69000, period: '1회', group: 'one_time' },
-    { code: 'FixPack', title: 'FixPack', price: 99000, period: '1회', group: 'one_time' },
-    { code: 'Auto', title: 'Auto 정기 케어', price: 299000, period: '월', group: 'subscription' }
+    { code: 'Report', title: '상세 리포트', price: 39000, period: '1회', group: 'one_time' },
+    { code: 'FixPack', title: 'FixPack', price: 79000, period: '1회', group: 'one_time' },
+    { code: 'Auto', title: 'Auto 정기 케어', price: 149000, period: '월', group: 'subscription' }
   ].map(strengthenSalesCopy);
   const free = strengthenSalesCopy({ code: 'Free', title: '무료 진단', price: 0, period: '무료' });
   const merged = ['Report', 'FixPack', 'Auto'].map(code => paid.find(item => item.code === code) || fallback.find(item => item.code === code));

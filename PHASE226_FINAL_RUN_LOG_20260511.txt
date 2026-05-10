@@ -1,0 +1,27 @@
+PHASE226 Agentic Code Review Final Run Log — 2026-05-11 Asia/Seoul
+
+Commands executed:
+
+1) node scripts/check-source-syntax.mjs
+Result: OK, checkedCount 277, failures 0
+
+2) npm run phase226:final
+Result: OK
+- check:syntax OK
+- test:phase226 OK, passed 7 / failed 0
+- validate:phase226-review OK, passed 10 / failed 0
+- test:all OK, passed 87 / failed 0
+- test:routes OK, checked 24
+- test:e2e OK, E2E passed
+
+3) npm run phase225:final
+Result: OK
+- phase220 through phase224 prior gates OK
+- test:all OK, passed 87 / failed 0
+- test:phase225 OK, passed 247 / failed 0
+- validate:phase225 OK, passed 247 / failed 0
+
+Primary fix verified:
+- UTF-8 byte-length mismatch accessToken comparison no longer throws.
+- Public route file no longer carries unreachable duplicated commerce branches.
+- README and phase226 closeout included.

@@ -12,7 +12,7 @@ const security = read('server/middleware/security.mjs');
 const server = read('server/index.mjs');
 
 add('landing-page-visible-value-ladder', /nv0-revenue-ladder/.test(homeHtml) && /nv0-revenue-grid/.test(homeCss), '홈에서 무료→유료 상품 흐름이 JS 없이 보여야 한다.');
-add('paid-offer-prices-visible-in-html', ['69,000원','99,000원','299,000원 / 월'].every(v => plansHtml.includes(v)), '가격이 JS API 실패 시에도 노출되어야 한다.');
+add('paid-offer-prices-visible-in-html', ['39,000원','79,000원','149,000원 / 월'].every(v => plansHtml.includes(v)), '가격이 JS API 실패 시에도 노출되어야 한다.');
 add('direct-checkout-links-visible-in-html', ['/checkout?plan=Report','/checkout?plan=FixPack','/checkout?plan=Auto'].every(v => plansHtml.includes(v)), '유료 상품은 고객지원 우회 없이 체크아웃으로 연결해야 한다.');
 add('fixpack-recommended-in-static-and-js', /clean-plan-card recommended[\s\S]*data-plan-code="FixPack"/.test(plansHtml) && /recommended[^\n]+FixPack|FixPack[^\n]+추천/.test(plansHtml + plansCss), '가장 실행형 상품인 FixPack이 기본 추천으로 보여야 한다.');
 add('canonical-host-redirect-app-layer', /canonical_host_redirect/.test(security) && /canonicalBaseUrl: seoBaseUrl\(\)/.test(server), '앱 계층에서도 www/apex 표준화를 보정해야 한다.');

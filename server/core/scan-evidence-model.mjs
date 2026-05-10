@@ -59,7 +59,7 @@ export function buildEvidenceSummary({ fetched = {}, findings = [], text = '' })
   const manualReviewCount = findings.filter(item => item.manualReviewRequired || ['MARKETING-CLAIM', 'YOUTH-RESTRICTED', 'LEGAL-ADVICE-DISCLAIMER'].includes(item.code)).length + (!fetched.fetched ? 2 : 0) + coverageGaps.length;
   return {
     collectionMethod: 'zero_cost_full_auto_public_probe',
-    collectionStrategy: '홈→내부 후보링크→robots.txt→sitemap.xml→무료 HTTP 병렬수집→규칙판정→자동초안/수동확인 분리',
+    collectionStrategy: '홈→내부 후보링크→robots.txt→sitemap.xml→무료 HTTP 병렬수집→규칙판정→자동초안/직접 확인 분리',
     verifiedBy: 'builtin_rules_full_auto_public_probe',
     aiReviewProvider: aiReviewEnabled ? 'gemini' : 'disabled',
     externalMeasurementProviders: { lighthouse: false, searchConsole: false, browserRendering: false },
@@ -76,8 +76,8 @@ export function buildEvidenceSummary({ fetched = {}, findings = [], text = '' })
     manualReviewCount,
     scannedPages,
     coverageGaps,
-    limitations: ['무료 공개 URL·내부 링크·robots.txt·sitemap.xml 기준입니다.', '자동 접근 가능한 공개 화면은 최대한 수집하지만 로그인·외부 결제·차단·JS 전용 화면은 수동확인입니다.', '미연결 외부 측정값은 확정하지 않습니다.', '법률 위반·처분 가능성은 확정하지 않습니다.'],
-    disclaimer: '무료 전자동 공개 페이지 예비 점검입니다. 자동 확정 불가 항목은 수동확인 필요로 분리합니다.'
+    limitations: ['무료 공개 URL·내부 링크·robots.txt·sitemap.xml 기준입니다.', '자동 접근 가능한 공개 화면은 최대한 수집하지만 로그인·외부 결제·차단·JS 전용 화면은 직접 확인입니다.', '미연결 외부 측정값은 확정하지 않습니다.', '법률 위반·처분 가능성은 확정하지 않습니다.'],
+    disclaimer: '무료 전자동 공개 페이지 예비 점검입니다. 자동 확정 불가 항목은 직접 확인 필요로 분리합니다.'
   };
 }
 export function buildScoreModel({ riskScore, findings = [], evidenceSummary = {} }) {

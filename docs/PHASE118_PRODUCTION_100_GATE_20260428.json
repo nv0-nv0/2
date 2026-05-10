@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-28T01:46:55.485Z",
+  "generatedAt": "2026-05-10T22:55:59.360Z",
   "ok": true,
   "phase": "phase118-production-100-launch-gated",
   "total": 67,
@@ -82,7 +82,7 @@
       "details": null
     },
     {
-      "name": "server:commercial-guard:Commercial launch requires real ",
+      "name": "server:commercial-guard:Commercial launch requires",
       "ok": true,
       "details": null
     },
@@ -232,17 +232,17 @@
       "details": null
     },
     {
-      "name": "public:required-copy:위험도 72 / 100",
+      "name": "public:required-copy:검사 후 표시",
       "ok": true,
       "details": null
     },
     {
-      "name": "public:required-copy:전체 상품 비교",
+      "name": "public:required-copy:상품 바로 보기",
       "ok": true,
       "details": null
     },
     {
-      "name": "public:required-copy:상용 공개 차단 기준",
+      "name": "public:required-copy:운영 공개 기준",
       "ok": true,
       "details": null
     },
@@ -292,12 +292,12 @@
       "details": null
     },
     {
-      "name": "coolify-bulk:NV0_PAYMENT_PROVIDER=portone_v2",
+      "name": "coolify-bulk:NV0_PAYMENT_PROVIDER=disabled",
       "ok": true,
       "details": null
     },
     {
-      "name": "coolify-bulk:NV0_PORTONE_WEBHOOK_VERIFY_MODE=strict",
+      "name": "coolify-bulk:NV0_PORTONE_WEBHOOK_VERIFY_MODE=optional",
       "ok": true,
       "details": null
     },
@@ -322,12 +322,12 @@
       "details": null
     },
     {
-      "name": "coolify-bulk:no-forbidden:NV0_SCAN_PROVIDER=builtin",
+      "name": "coolify-bulk:no-forbidden:NV0_STORAGE_MODE=local_fs",
       "ok": true,
       "details": null
     },
     {
-      "name": "coolify-bulk:no-forbidden:NV0_STORAGE_MODE=local_fs",
+      "name": "coolify-bulk:no-forbidden:NV0_SCAN_PROVIDER=builtin",
       "ok": true,
       "details": null
     },

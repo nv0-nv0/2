@@ -34,7 +34,7 @@ for (const token of ['payment-config-state', 'is-ready', 'is-warning']) {
 for (const token of ["pathname === '/api/public/payment/config'", 'PORTONE_CLIENT.configSummary', 'productCodes', 'paymentReady', "PAYMENT_PROVIDER === 'portone_v2' && !PORTONE_CLIENT?.enabled", 'storeId, channelKey, apiSecret']) {
   assert.ok(paymentRoute.includes(token), `payment route missing ${token}`);
 }
-for (const token of ["code: 'Report'", "code: 'FixPack'", "code: 'Auto'", 'price: 69000', 'price: 99000', 'price: 299000', 'function buildCommercialOfferCatalog', 'function planPrice']) {
+for (const token of ["code: 'Report'", "code: 'FixPack'", "code: 'Auto'", 'price: 39000', 'price: 79000', 'price: 149000', 'function buildCommercialOfferCatalog', 'function planPrice']) {
   assert.ok(serverIndex.includes(token), `server catalog missing ${token}`);
 }
 
@@ -46,6 +46,6 @@ console.log(JSON.stringify({
     paymentAwarePlanJs: 9,
     paymentAwareCheckoutJs: 8,
     serverPaymentConfigGuard: 6,
-    catalogPrices: { Report: 69000, FixPack: 99000, Auto: 299000 }
+    catalogPrices: { Report: 39000, FixPack: 79000, Auto: 149000 }
   }
 }, null, 2));

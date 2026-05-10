@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-25T13:09:51.171Z",
+  "generatedAt": "2026-05-10T22:55:59.480Z",
   "ok": true,
   "score": 100,
   "phase": "commercial-final",
@@ -101,7 +101,7 @@
       "ok": true
     },
     {
-      "name": "page:home:not-stuck-loading",
+      "name": "page:home:not-terminal-loading",
       "ok": true
     },
     {
@@ -117,7 +117,7 @@
       "ok": true
     },
     {
-      "name": "page:veridion-demo:not-stuck-loading",
+      "name": "page:veridion-demo:not-terminal-loading",
       "ok": true
     },
     {
@@ -133,7 +133,7 @@
       "ok": true
     },
     {
-      "name": "page:plans:not-stuck-loading",
+      "name": "page:plans:not-terminal-loading",
       "ok": true
     },
     {
@@ -149,7 +149,7 @@
       "ok": true
     },
     {
-      "name": "page:documents:not-stuck-loading",
+      "name": "page:documents:not-terminal-loading",
       "ok": true
     },
     {
@@ -165,7 +165,7 @@
       "ok": true
     },
     {
-      "name": "page:checkout:not-stuck-loading",
+      "name": "page:checkout:not-terminal-loading",
       "ok": true
     },
     {
@@ -181,7 +181,7 @@
       "ok": true
     },
     {
-      "name": "page:portal:not-stuck-loading",
+      "name": "page:portal:not-terminal-loading",
       "ok": true
     },
     {
@@ -197,7 +197,7 @@
       "ok": true
     },
     {
-      "name": "page:privacy:not-stuck-loading",
+      "name": "page:privacy:not-terminal-loading",
       "ok": true
     },
     {
@@ -213,7 +213,7 @@
       "ok": true
     },
     {
-      "name": "page:terms:not-stuck-loading",
+      "name": "page:terms:not-terminal-loading",
       "ok": true
     },
     {
@@ -229,7 +229,7 @@
       "ok": true
     },
     {
-      "name": "page:refund:not-stuck-loading",
+      "name": "page:refund:not-terminal-loading",
       "ok": true
     },
     {
@@ -249,7 +249,7 @@
       "ok": true
     },
     {
-      "name": "home-conversion:위험도 72 / 100",
+      "name": "home-conversion:검사 후 표시",
       "ok": true
     },
     {

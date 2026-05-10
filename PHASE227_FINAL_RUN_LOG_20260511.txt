@@ -1,0 +1,108 @@
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-phase227-demo-paid-guidance-max phase227:final
+> npm run check:syntax && npm run test:phase227 && npm run validate:phase227 && npm run test:routes && npm run test:e2e
+
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-phase227-demo-paid-guidance-max check:syntax
+> node scripts/check-source-syntax.mjs
+
+{
+  "ok": true,
+  "checkedCount": 279,
+  "failures": []
+}
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-phase227-demo-paid-guidance-max test:phase227
+> node tests/phase227-demo-paid-guidance.mjs
+
+{
+  "ok": true,
+  "passed": 6,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "phase227 version is active",
+      "ok": true
+    },
+    {
+      "name": "free demo exposes problem areas/elements/counts only",
+      "ok": true
+    },
+    {
+      "name": "paid contract exposes 100% detail rows",
+      "ok": true
+    },
+    {
+      "name": "site operations document is customized and 100 score",
+      "ok": true
+    },
+    {
+      "name": "public diagnosis package includes free demo contract but not paid detail payload",
+      "ok": true
+    },
+    {
+      "name": "premium purchased asset includes all phase227 payloads",
+      "ok": true
+    }
+  ]
+}
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-phase227-demo-paid-guidance-max validate:phase227
+> node scripts/validate-phase227-demo-paid-guidance.mjs
+
+{
+  "ok": true,
+  "passed": 9,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "service exposes phase227 builders",
+      "ok": true
+    },
+    {
+      "name": "public diagnosis includes free demo overview",
+      "ok": true
+    },
+    {
+      "name": "premium asset includes paid full detail and operations document",
+      "ok": true
+    },
+    {
+      "name": "scan pipeline attaches demo overview and guidance document metadata",
+      "ok": true
+    },
+    {
+      "name": "paid scan-detail API exposes full contract",
+      "ok": true
+    },
+    {
+      "name": "demo UI renders problem area element count and paid full detail",
+      "ok": true
+    },
+    {
+      "name": "demo CSS includes phase227 grids",
+      "ok": true
+    },
+    {
+      "name": "portal renders phase227 asset fields",
+      "ok": true
+    },
+    {
+      "name": "README documents phase227 behavior",
+      "ok": true
+    }
+  ]
+}
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-phase227-demo-paid-guidance-max test:routes
+> node tests/routes-smoke.mjs
+
+{
+  "ok": true,
+  "checked": 24
+}
+
+> nv0-veridion-cleanroom@1.0.0-commercial-final-phase227-demo-paid-guidance-max test:e2e
+> node tests/e2e.mjs
+
+E2E passed

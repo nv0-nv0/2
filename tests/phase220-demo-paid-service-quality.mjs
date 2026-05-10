@@ -53,8 +53,8 @@ assert.ok(diagnosis.paidDeliverableBlueprint?.acceptanceChecklist.length >= 10, 
 assert.equal(diagnosis.automation.intervalMinutes, 20, 'CTA cadence must remain 20 minutes');
 assert.ok(diagnosis.productQualityGate.demoAccuracyScore >= 70, 'product quality gate must include demo accuracy score');
 
-const order = { id: 'ord_phase220', status: 'paid', plan: 'FixPack', amount: 99000, siteId: 'site_phase220', domain: 'https://example-store.kr', email: 'owner@example.com', paidAt: new Date().toISOString() };
-const offer = { code: 'FixPack', title: 'FixPack', price: 99000, deliverables: ['상세 리포트', '수정 문구안', '재점검 기준'] };
+const order = { id: 'ord_phase220', status: 'paid', plan: 'FixPack', amount: 79000, siteId: 'site_phase220', domain: 'https://example-store.kr', email: 'owner@example.com', paidAt: new Date().toISOString() };
+const offer = { code: 'FixPack', title: 'FixPack', price: 79000, deliverables: ['상세 리포트', '수정 문구안', '재점검 기준'] };
 const asset = buildPremiumPurchasedAsset({ order, offer, scan, site: { id: 'site_phase220', domain: 'https://example-store.kr' }, businessProfile: { contactEmail: 'ct@nv0.kr' }, policyDocuments: [], industryGuide: { industry: '일반 이커머스', checklist: ['환불 기준 확인', '개인정보 안내 확인', '문의 경로 확인'] } });
 assert.ok(asset.demoAccuracyContract?.score >= 70, 'premium asset must retain demo accuracy trace');
 assert.ok(asset.paidDeliverableBlueprint?.requiredSections.length >= 12, 'premium asset must retain paid blueprint');

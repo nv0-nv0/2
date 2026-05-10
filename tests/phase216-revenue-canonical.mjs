@@ -13,7 +13,7 @@ const security = read('server/middleware/security.mjs');
 const server = read('server/index.mjs');
 const pkg = JSON.parse(read('package.json'));
 
-ok('home shows free-to-paid revenue ladder', ['nv0-revenue-ladder', '무료 진단', '상세 리포트', 'FixPack', 'Auto', '99,000원', '299,000원 / 월'].every(token => home.includes(token)));
+ok('home shows free-to-paid revenue ladder', ['nv0-revenue-ladder', '무료 진단', '상세 리포트', 'FixPack', 'Auto', '79,000원', '149,000원 / 월'].every(token => home.includes(token)));
 ok('plans has no-js product cards for crawlers and slow JS', ['data-plan-code="Free"', 'data-plan-code="Report"', 'data-plan-code="FixPack"', 'data-plan-code="Auto"'].every(token => plans.includes(token)));
 ok('plans keeps direct paid checkout links', ['/checkout?plan=Report', '/checkout?plan=FixPack', '/checkout?plan=Auto'].every(token => plans.includes(token)));
 ok('plans emphasizes FixPack as fastest action', plans.includes('가장 빠른 매출 개선 행동') && plans.includes('FixPack 바로 결제'));

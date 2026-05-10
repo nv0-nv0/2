@@ -10,7 +10,7 @@ function pass(id, ok, detail = '') { checks.push({ id, ok, detail }); if (!ok) f
 const home = read('apps/public/home/index.html');
 const homeVisible = home.replace(/<[^>]+hidden[^>]*>.*?<\/[^>]+>/gs, '');
 pass('home.fixed_72_removed', !/<(?:b|strong)[^>]*>\s*72\s*<\/(?:b|strong)>/.test(homeVisible), 'home still exposes fixed 72 score');
-pass('home.clean_preview', home.includes('nv0-dashboard-clean') && home.includes('고정 점수 예시는 제거했습니다'), 'home clean dashboard preview missing');
+pass('home.clean_preview', home.includes('nv0-dashboard-clean') && home.includes('고정 예시 점수 없음'), 'home clean dashboard preview missing');
 
 const demoIndex = read('apps/public/veridion-demo/index.html');
 const demoJs = read('apps/public/veridion-demo/app.js');
