@@ -1,0 +1,75 @@
+{
+  "ok": true,
+  "phase": "235",
+  "name": "30-person red-team final UI authority validation",
+  "publicPages": 17,
+  "redTeamRoles": 30,
+  "checks": 255,
+  "requiredMinChecks": 220,
+  "contrastResults": [
+    {
+      "name": "body text on page",
+      "fg": "#24364b",
+      "bg": "#f7fbff",
+      "ratio": 11.85,
+      "min": 7
+    },
+    {
+      "name": "body text on card",
+      "fg": "#24364b",
+      "bg": "#ffffff",
+      "ratio": 12.32,
+      "min": 7
+    },
+    {
+      "name": "heading on card",
+      "fg": "#07182b",
+      "bg": "#ffffff",
+      "ratio": 17.88,
+      "min": 12
+    },
+    {
+      "name": "muted on card",
+      "fg": "#52657c",
+      "bg": "#ffffff",
+      "ratio": 5.98,
+      "min": 5
+    },
+    {
+      "name": "primary button",
+      "fg": "#ffffff",
+      "bg": "#2463eb",
+      "ratio": 5.17,
+      "min": 4.5
+    },
+    {
+      "name": "secondary button",
+      "fg": "#164ac4",
+      "bg": "#ffffff",
+      "ratio": 7.47,
+      "min": 5
+    },
+    {
+      "name": "blue chip",
+      "fg": "#17345f",
+      "bg": "#e9f1ff",
+      "ratio": 10.92,
+      "min": 6
+    },
+    {
+      "name": "green chip",
+      "fg": "#075e3a",
+      "bg": "#ecfdf3",
+      "ratio": 7.45,
+      "min": 7
+    },
+    {
+      "name": "warning chip",
+      "fg": "#8a3c04",
+      "bg": "#fff7ed",
+      "ratio": 7.25,
+      "min": 5
+    }
+  ],
+  "decision": "PASS: public UI now uses one final bright professional high-contrast design authority layer."
+}

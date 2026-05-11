@@ -1,0 +1,26 @@
+npm run phase234:final
+OK
+
+check:syntax
+OK / checkedCount 294 / failures 0
+
+test:phase234
+OK / checkedHtml 17 / passed 263
+
+validate:phase234
+OK / correctiveItems 219 / checkedPages 17 / contrastPairs 9
+
+test:routes
+OK / checked 24
+
+test:e2e
+OK / E2E passed
+
+npm run check:pages
+OK / mappedRouteCount 34
+
+npm run check:links -- --summary
+OK / checkedCount 503 / errorCount 0
+
+npm run test:all
+OK / passed 84 / failed 0

@@ -1,6 +1,6 @@
 {
   "name": "nv0-veridion-cleanroom",
-  "version": "1.0.0-commercial-final-phase233-contrast-authority-clean-system",
+  "version": "1.0.0-commercial-final-phase235-30-redteam-ui-100",
   "private": true,
   "type": "module",
   "scripts": {
@@ -302,6 +302,12 @@
     "phase232:final": "npm run check:syntax && npm run test:phase232 && npm run validate:phase232 && npm run test:phase231 && npm run validate:phase231 && npm run test:routes && npm run test:e2e",
     "test:phase233": "node tests/phase233-contrast-unity-system.mjs",
     "validate:phase233": "node scripts/validate-phase233-contrast-authority-clean-system.mjs",
-    "phase233:final": "npm run check:syntax && npm run test:phase233 && npm run validate:phase233 && npm run test:phase232 && npm run validate:phase232 && npm run test:routes && npm run test:e2e"
+    "phase233:final": "npm run check:syntax && npm run test:phase233 && npm run validate:phase233 && npm run test:phase232 && npm run validate:phase232 && npm run test:routes && npm run test:e2e",
+    "test:phase234": "node tests/phase234-clean-visibility-reset.mjs",
+    "validate:phase234": "node scripts/validate-phase234-clean-visibility-reset.mjs",
+    "phase234:final": "npm run check:syntax && npm run test:phase234 && npm run validate:phase234 && npm run test:routes && npm run test:e2e",
+    "test:phase235": "node tests/phase235-30-redteam-final-ui.mjs",
+    "validate:phase235": "node scripts/validate-phase235-30-redteam-final-ui.mjs",
+    "phase235:final": "npm run check:syntax && npm run test:phase235 && npm run validate:phase235 && npm run test:routes && npm run test:e2e && npm run check:pages"
   }
 }
