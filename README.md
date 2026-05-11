@@ -405,3 +405,26 @@ The work order and closeout artifacts are included as:
 - `PHASE232_FINAL_TYPOGRAPHY_CARD_READABILITY_WORK_ORDER_20260511_KO.md`
 - `PHASE232_FINAL_TYPOGRAPHY_CARD_READABILITY_VALIDATION_20260511.json`
 
+
+## Phase233 contrast authority clean system
+
+Phase233 locks the public NV0 UI into a bright, professional, high-contrast design system.
+It adds `/shared/phase233-contrast-authority-clean-system.css` as the final stylesheet on every public page and applies the `phase233-clarity-authority` body class.
+
+### What it fixes
+- Remaining dark-theme CSS variables from earlier phases
+- White or pale text leaking onto pale panels
+- Dense footer and policy/business information blocks
+- Scattered text that should be grouped into cards
+- Weak chip, badge, CTA, input, table, and mobile tap-target contrast
+
+### Validation
+
+```bash
+npm run phase233:final
+npm run test:all
+npm run check:links -- --summary
+npm run check:pages
+```
+
+Phase233 validation writes `PHASE233_CONTRAST_AUTHORITY_VALIDATION_20260511.json` and reports 122 identified visual/contrast/readability issues addressed by the final authority layer.

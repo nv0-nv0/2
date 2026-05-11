@@ -1,6 +1,6 @@
 {
   "name": "nv0-veridion-cleanroom",
-  "version": "1.0.0-commercial-final-phase232-typography-card-readability-lock",
+  "version": "1.0.0-commercial-final-phase233-contrast-authority-clean-system",
   "private": true,
   "type": "module",
   "scripts": {
@@ -299,6 +299,9 @@
     "phase231:final": "npm run check:syntax && npm run test:phase231 && npm run validate:phase231 && npm run test:routes && npm run test:e2e",
     "test:phase232": "node tests/phase232-typography-card-readability-lock.mjs",
     "validate:phase232": "node scripts/validate-phase232-typography-card-readability-lock.mjs",
-    "phase232:final": "npm run check:syntax && npm run test:phase232 && npm run validate:phase232 && npm run test:phase231 && npm run validate:phase231 && npm run test:routes && npm run test:e2e"
+    "phase232:final": "npm run check:syntax && npm run test:phase232 && npm run validate:phase232 && npm run test:phase231 && npm run validate:phase231 && npm run test:routes && npm run test:e2e",
+    "test:phase233": "node tests/phase233-contrast-unity-system.mjs",
+    "validate:phase233": "node scripts/validate-phase233-contrast-authority-clean-system.mjs",
+    "phase233:final": "npm run check:syntax && npm run test:phase233 && npm run validate:phase233 && npm run test:phase232 && npm run validate:phase232 && npm run test:routes && npm run test:e2e"
   }
 }
