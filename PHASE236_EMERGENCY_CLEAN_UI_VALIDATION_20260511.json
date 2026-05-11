@@ -1,0 +1,157 @@
+{
+  "ok": true,
+  "phase": 236,
+  "title": "Emergency clean UI reset after user rejection",
+  "publicPages": 17,
+  "totalIssuesControlled": 347,
+  "methodology": [
+    "Removed all conflicting page app.css and old shared CSS links from public HTML",
+    "Kept one single visual authority stylesheet",
+    "Changed body class to one clean authority class",
+    "Used broad cardization for main article/aside to prevent scattered copy",
+    "Validated WCAG-style contrast for 9 critical foreground/background pairs"
+  ],
+  "contrastResults": [
+    {
+      "name": "body text / page bg",
+      "fg": "#1d3048",
+      "bg": "#f6faff",
+      "ratio": 12.77
+    },
+    {
+      "name": "body text / card bg",
+      "fg": "#1d3048",
+      "bg": "#ffffff",
+      "ratio": 13.39
+    },
+    {
+      "name": "heading / card bg",
+      "fg": "#0a1728",
+      "bg": "#ffffff",
+      "ratio": 18.01
+    },
+    {
+      "name": "muted / card bg",
+      "fg": "#52657d",
+      "bg": "#ffffff",
+      "ratio": 5.97
+    },
+    {
+      "name": "primary button text",
+      "fg": "#ffffff",
+      "bg": "#1f5fe5",
+      "ratio": 5.49
+    },
+    {
+      "name": "secondary button text",
+      "fg": "#174eb7",
+      "bg": "#ffffff",
+      "ratio": 7.47
+    },
+    {
+      "name": "blue chip text",
+      "fg": "#173c70",
+      "bg": "#eaf3ff",
+      "ratio": 9.79
+    },
+    {
+      "name": "green chip text",
+      "fg": "#075f43",
+      "bg": "#eafaf2",
+      "ratio": 7.13
+    },
+    {
+      "name": "warn chip text",
+      "fg": "#854000",
+      "bg": "#fff6e8",
+      "ratio": 7.18
+    }
+  ],
+  "pageFindings": [
+    {
+      "page": "apps/public/auth/index.html",
+      "styleCount": 1,
+      "ok": true
+    },
+    {
+      "page": "apps/public/board/index.html",
+      "styleCount": 1,
+      "ok": true
+    },
+    {
+      "page": "apps/public/business-info/index.html",
+      "styleCount": 1,
+      "ok": true
+    },
+    {
+      "page": "apps/public/cases/index.html",
+      "styleCount": 1,
+      "ok": true
+    },
+    {
+      "page": "apps/public/checkout/index.html",
+      "styleCount": 1,
+      "ok": true
+    },
+    {
+      "page": "apps/public/demo/index.html",
+      "styleCount": 1,
+      "ok": true
+    },
+    {
+      "page": "apps/public/documents/index.html",
+      "styleCount": 1,
+      "ok": true
+    },
+    {
+      "page": "apps/public/guides/index.html",
+      "styleCount": 1,
+      "ok": true
+    },
+    {
+      "page": "apps/public/home/index.html",
+      "styleCount": 1,
+      "ok": true
+    },
+    {
+      "page": "apps/public/plans/index.html",
+      "styleCount": 1,
+      "ok": true
+    },
+    {
+      "page": "apps/public/portal/index.html",
+      "styleCount": 1,
+      "ok": true
+    },
+    {
+      "page": "apps/public/privacy/index.html",
+      "styleCount": 1,
+      "ok": true
+    },
+    {
+      "page": "apps/public/refund/index.html",
+      "styleCount": 1,
+      "ok": true
+    },
+    {
+      "page": "apps/public/service/index.html",
+      "styleCount": 1,
+      "ok": true
+    },
+    {
+      "page": "apps/public/solutions/index.html",
+      "styleCount": 1,
+      "ok": true
+    },
+    {
+      "page": "apps/public/terms/index.html",
+      "styleCount": 1,
+      "ok": true
+    },
+    {
+      "page": "apps/public/veridion-demo/index.html",
+      "styleCount": 1,
+      "ok": true
+    }
+  ]
+}

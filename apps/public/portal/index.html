@@ -1,120 +1,114 @@
 <!doctype html>
+
 <html lang="ko">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="내 사이트 저장, 최근 진단 결과, 보완 항목, 콘텐츠 보드를 한 화면에서 관리합니다.">
-  <title>내 사이트 관리 | NV0 / Veridion</title>
-  <link rel="canonical" href="https://nv0.kr/portal">
-  <link rel="stylesheet" href="/shared/base.css">
-  <link rel="stylesheet" href="/apps/public/portal/app.css">
-  <script type="application/ld+json" data-phase225="agentic-seo">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://nv0.kr/#organization","name":"엔브이제로(NV0)","alternateName":["NV0","Veridion"],"url":"https://nv0.kr/","email":"ct@nv0.kr","identifier":"584-77-00586","address":{"@type":"PostalAddress","addressCountry":"KR","addressRegion":"경기도","addressLocality":"남양주시","streetAddress":"와부읍 덕소로97번길 34, 105동 402호"},"contactPoint":{"@type":"ContactPoint","contactType":"customer support","email":"ct@nv0.kr","availableLanguage":["ko"]}},{"@type":"WebSite","@id":"https://nv0.kr/#website","name":"NV0 / Veridion","url":"https://nv0.kr/","publisher":{"@id":"https://nv0.kr/#organization"},"inLanguage":"ko-KR"},{"@type":"WebPage","@id":"https://nv0.kr/portal#webpage","url":"https://nv0.kr/portal","name":"내 사이트 관리 | NV0 / Veridion","description":"내 사이트 저장, 최근 진단 결과, 보완 항목, 콘텐츠 보드를 한 화면에서 관리합니다.","isPartOf":{"@id":"https://nv0.kr/#website"},"about":{"@id":"https://nv0.kr/#veridion-service"},"inLanguage":"ko-KR"},{"@type":"BreadcrumbList","@id":"https://nv0.kr/portal#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"홈","item":"https://nv0.kr/"},{"@type":"ListItem","position":2,"name":"내 사이트 관리","item":"https://nv0.kr/portal"}]}]}</script><link rel="stylesheet" href="/shared/nv0-final-100-ui-system.css"></head>
-<body class="nv0-final-100">
-  <main class="nv74-dashboard-shell nv191-portal-shell">
-    <aside class="nv74-sidebar">
-      <a class="nv74-brand" href="/">
-        <span class="nv74-logo-dot"></span>
-        <strong>nv0</strong>
-        <small>웹사이트 안내·정책 점검</small>
-      </a>
-      <a class="nv191-sidebar-primary" href="#saveSiteForm" aria-label="새 사이트 등록 바로가기">
-        <span>＋</span>
-        <b>새 사이트 등록</b>
-      </a>
-      <nav class="nv74-nav" aria-label="회원 포털 메뉴">
-        <a class="active" href="/portal">대시보드</a>
-        <a href="#portalPrimary">내 사이트</a>
-        <a href="/products/veridion/demo">무료 진단</a>
-        <a href="/plans">상품·요금</a>
-        <a href="/board">콘텐츠 보드</a>
-        <a href="/business-info">고객지원</a>
-      </nav>
-      <section class="nv74-plan-card">
-        <div><b>회원 전용 관리</b><small><span>사이트 0개</span><span>최근 검사 0개</span></small></div>
-        <a class="btn secondary" href="/plans">상품·요금 보기</a>
-      </section>
-      <div class="nv74-account">비회원 · 저장 기능 비활성</div>
-    </aside>
-
-    <section class="nv74-main">
-      <header class="nv74-topbar">
-        <div>
-          <h1>내 사이트 상태와 다음 작업을 한눈에 관리하세요</h1>
-          <p>사이트를 저장하면 최근 진단, 보완 항목, 다음 작업을 같은 화면에서 이어서 볼 수 있습니다.</p>
-        </div>
-        <div class="nv74-top-actions">
-          <a class="nv74-icon-btn" href="/business-info" aria-label="도움말">도움말<span>?</span></a>
-          <a class="btn primary" href="/products/veridion/demo">새 진단 시작</a>
-        </div>
-      </header>
-
-      <section class="nv74-card nv74-save-site">
-        <div class="nv74-phase72-keep" hidden>사이트별 진단 이력 관리 상태</div>
-        <h2>새 사이트 등록</h2>
-        <p>사이트를 저장하면 진단 이력과 최근 검사 내역을 이어서 관리할 수 있습니다.</p>
-        <form id="saveSiteForm" class="nv74-save-form">
-          <label>사이트 URL<input aria-label="저장할 사이트 URL" id="saveUrl" placeholder="https://your-store.kr" autocomplete="url"></label>
-          <label>사이트 이름<input aria-label="저장할 사이트 이름" id="saveName" placeholder="자사몰 / 캠페인 첫 화면" autocomplete="off"></label>
-          <label>메모<input aria-label="사이트 메모" id="saveMemo" placeholder="오픈일, 광고 집행 여부 등" autocomplete="off"></label>
-          <button class="btn primary" type="submit">내 사이트에 저장</button>
-        </form>
-        <div id="saveSiteState" role="status" aria-live="polite" class="nv74-state muted">로그인하면 사이트를 저장할 수 있습니다. 비회원 진단 결과도 로그인 후 이어서 관리할 수 있습니다.</div>
-      </section>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="내 사이트 저장, 최근 진단 결과, 보완 항목, 콘텐츠 보드를 한 화면에서 관리합니다." name="description"/>
+<title>내 사이트 관리 | NV0 / Veridion</title>
+<link href="https://nv0.kr/portal" rel="canonical"/>
 
 
-      <section id="portalNextActions" class="nv191-action-grid" aria-label="내 사이트 다음 조치">
-        <article class="nv191-action-card">
-          <div class="nv191-action-icon">01</div>
-          <div class="nv191-action-body">
-            <div class="nv191-action-head"><h2>최근 진단</h2><span class="nv191-pill">검사 이력 없음</span></div>
-            <p>진단을 실행하면 최근 점수와 발견 항목이 이곳에 표시됩니다.</p>
-            <a class="btn secondary" href="/products/veridion/demo">다시 진단</a>
-          </div>
-        </article>
-        <article class="nv191-action-card">
-          <div class="nv191-action-icon">02</div>
-          <div class="nv191-action-body">
-            <div class="nv191-action-head"><h2>우선 보완 항목</h2><span class="nv191-pill">0개</span></div>
-            <p>최근 결과를 기준으로 우선 보완 항목을 표시합니다.</p>
-            <a class="btn secondary" href="/plans">상세 리포트 보기</a>
-          </div>
-        </article>
-        <article class="nv191-action-card">
-          <div class="nv191-action-icon">03</div>
-          <div class="nv191-action-body">
-            <div class="nv191-action-head"><h2>저장 사이트 관리</h2><span class="nv191-pill">0개</span></div>
-            <p>저장한 URL을 재검사하고 최근 결과와 비교해 관리합니다.</p>
-            <a class="btn secondary" href="#portalPrimary">사이트 관리</a>
-          </div>
-        </article>
-        <article class="nv191-action-card">
-          <div class="nv191-action-icon">04</div>
-          <div class="nv191-action-body">
-            <div class="nv191-action-head"><h2>성과 모니터링</h2><span class="nv191-pill">대기</span></div>
-            <p>진단 기록과 개선 추이를 계속 확인할 수 있습니다.</p>
-            <a class="btn secondary" href="#portalPrimary">성과 확인</a>
-          </div>
-        </article>
-      </section>
-
-      <section class="nv74-card nv74-sites">
-        <div class="nv74-card-head"><h2>내 사이트</h2><a href="#saveSiteForm">새 사이트 등록 ›</a></div>
-        <div id="portalState" role="status" aria-live="polite" class="nv74-state">계정 정보를 확인하고 있습니다.</div>
-        <div id="portalPrimary" class="nv74-site-render"></div>
-      </section>
-
-      <section class="nv74-card nv191-content-board" aria-label="콘텐츠 보드">
-        <div class="nv74-card-head"><h2>콘텐츠 보드</h2><a href="/board">전체 보기 ›</a></div>
-        <p>진단과 연결된 게시글, 공지, 인사이트를 같은 색감의 카드로 정리했습니다.</p>
-        <div id="portalFeed" class="nv74-feed-render"></div>
-      </section>
-
-      <section class="sr-only nv75-route-coverage">고객 포털 · 사이트 종합 점수 · 진행 중인 작업 · 빠른 실행 · 가장 효과 큰 개선 실행 · 게시판 자동 발행</section>
-    </section>
-  <section class="sr-only phase225-legacy-portal-coverage">산출물 주문</section></main>
-  <footer class="business-footer commercial-footer"><strong>엔브이제로(NV0)</strong><span>대표자: 나금상</span><span>사업자등록번호: 584-77-00586</span><span>주소: 경기도 남양주시 와부읍 덕소로97번길 34, 105동 402호</span><span>업태·종목: 정보통신업 · 소프트웨어 개발 및 공급업 · 전자상거래업 · 데이터베이스 및 온라인 정보 제공업 · 광고 대행업</span><span>고객지원: <a href="mailto:ct@nv0.kr">ct@nv0.kr</a> · 이메일 전용 고객지원 · 평일 09:00–18:00 접수 확인</span><span class="legal-disclaimer">본 서비스는 웹사이트 운영 점검 보조도구이며 법률 자문을 제공하지 않습니다.</span><nav><a href="/terms">이용약관</a><a href="/privacy">개인정보처리방침</a><a href="/refund">환불·청약철회 정책</a><a href="/business-info">사업자 정보</a></nav></footer>
-  <script src="/shared/safe-dom.js"></script>
+<script data-phase225="agentic-seo" type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://nv0.kr/#organization","name":"엔브이제로(NV0)","alternateName":["NV0","Veridion"],"url":"https://nv0.kr/","email":"ct@nv0.kr","identifier":"584-77-00586","address":{"@type":"PostalAddress","addressCountry":"KR","addressRegion":"경기도","addressLocality":"남양주시","streetAddress":"와부읍 덕소로97번길 34, 105동 402호"},"contactPoint":{"@type":"ContactPoint","contactType":"customer support","email":"ct@nv0.kr","availableLanguage":["ko"]}},{"@type":"WebSite","@id":"https://nv0.kr/#website","name":"NV0 / Veridion","url":"https://nv0.kr/","publisher":{"@id":"https://nv0.kr/#organization"},"inLanguage":"ko-KR"},{"@type":"WebPage","@id":"https://nv0.kr/portal#webpage","url":"https://nv0.kr/portal","name":"내 사이트 관리 | NV0 / Veridion","description":"내 사이트 저장, 최근 진단 결과, 보완 항목, 콘텐츠 보드를 한 화면에서 관리합니다.","isPartOf":{"@id":"https://nv0.kr/#website"},"about":{"@id":"https://nv0.kr/#veridion-service"},"inLanguage":"ko-KR"},{"@type":"BreadcrumbList","@id":"https://nv0.kr/portal#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"홈","item":"https://nv0.kr/"},{"@type":"ListItem","position":2,"name":"내 사이트 관리","item":"https://nv0.kr/portal"}]}]}</script><link href="/shared/nv0-phase236-emergency-clean-ui.css" rel="stylesheet"/></head>
+<body class="nv0-phase236-clean">
+<main class="nv74-dashboard-shell nv191-portal-shell">
+<aside class="nv74-sidebar">
+<a class="nv74-brand" href="/">
+<span class="nv74-logo-dot"></span>
+<strong>nv0</strong>
+<small>웹사이트 안내·정책 점검</small>
+</a>
+<a aria-label="새 사이트 등록 바로가기" class="nv191-sidebar-primary" href="#saveSiteForm">
+<span>＋</span>
+<b>새 사이트 등록</b>
+</a>
+<nav aria-label="회원 포털 메뉴" class="nv74-nav">
+<a class="active" href="/portal">대시보드</a>
+<a href="#portalPrimary">내 사이트</a>
+<a href="/products/veridion/demo">무료 진단</a>
+<a href="/plans">상품·요금</a>
+<a href="/board">콘텐츠 보드</a>
+<a href="/business-info">고객지원</a>
+</nav>
+<section class="nv74-plan-card">
+<div><b>회원 전용 관리</b><small><span>사이트 0개</span><span>최근 검사 0개</span></small></div>
+<a class="btn secondary" href="/plans">상품·요금 보기</a>
+</section>
+<div class="nv74-account">비회원 · 저장 기능 비활성</div>
+</aside>
+<section class="nv74-main">
+<header class="nv74-topbar">
+<div>
+<h1>내 사이트 상태와 다음 작업을 한눈에 관리하세요</h1>
+<p>사이트를 저장하면 최근 진단, 보완 항목, 다음 작업을 같은 화면에서 이어서 볼 수 있습니다.</p>
+</div>
+<div class="nv74-top-actions">
+<a aria-label="도움말" class="nv74-icon-btn" href="/business-info">도움말<span>?</span></a>
+<a class="btn primary" href="/products/veridion/demo">새 진단 시작</a>
+</div>
+</header>
+<section class="nv74-card nv74-save-site">
+<div class="nv74-phase72-keep" hidden="">사이트별 진단 이력 관리 상태</div>
+<h2>새 사이트 등록</h2>
+<p>사이트를 저장하면 진단 이력과 최근 검사 내역을 이어서 관리할 수 있습니다.</p>
+<form class="nv74-save-form" id="saveSiteForm">
+<label>사이트 URL<input aria-label="저장할 사이트 URL" autocomplete="url" id="saveUrl" placeholder="https://your-store.kr"/></label>
+<label>사이트 이름<input aria-label="저장할 사이트 이름" autocomplete="off" id="saveName" placeholder="자사몰 / 캠페인 첫 화면"/></label>
+<label>메모<input aria-label="사이트 메모" autocomplete="off" id="saveMemo" placeholder="오픈일, 광고 집행 여부 등"/></label>
+<button class="btn primary" type="submit">내 사이트에 저장</button>
+</form>
+<div aria-live="polite" class="nv74-state muted" id="saveSiteState" role="status">로그인하면 사이트를 저장할 수 있습니다. 비회원 진단 결과도 로그인 후 이어서 관리할 수 있습니다.</div>
+</section>
+<section aria-label="내 사이트 다음 조치" class="nv191-action-grid" id="portalNextActions">
+<article class="nv191-action-card">
+<div class="nv191-action-icon">01</div>
+<div class="nv191-action-body">
+<div class="nv191-action-head"><h2>최근 진단</h2><span class="nv191-pill">검사 이력 없음</span></div>
+<p>진단을 실행하면 최근 점수와 발견 항목이 이곳에 표시됩니다.</p>
+<a class="btn secondary" href="/products/veridion/demo">다시 진단</a>
+</div>
+</article>
+<article class="nv191-action-card">
+<div class="nv191-action-icon">02</div>
+<div class="nv191-action-body">
+<div class="nv191-action-head"><h2>우선 보완 항목</h2><span class="nv191-pill">0개</span></div>
+<p>최근 결과를 기준으로 우선 보완 항목을 표시합니다.</p>
+<a class="btn secondary" href="/plans">상세 리포트 보기</a>
+</div>
+</article>
+<article class="nv191-action-card">
+<div class="nv191-action-icon">03</div>
+<div class="nv191-action-body">
+<div class="nv191-action-head"><h2>저장 사이트 관리</h2><span class="nv191-pill">0개</span></div>
+<p>저장한 URL을 재검사하고 최근 결과와 비교해 관리합니다.</p>
+<a class="btn secondary" href="#portalPrimary">사이트 관리</a>
+</div>
+</article>
+<article class="nv191-action-card">
+<div class="nv191-action-icon">04</div>
+<div class="nv191-action-body">
+<div class="nv191-action-head"><h2>성과 모니터링</h2><span class="nv191-pill">대기</span></div>
+<p>진단 기록과 개선 추이를 계속 확인할 수 있습니다.</p>
+<a class="btn secondary" href="#portalPrimary">성과 확인</a>
+</div>
+</article>
+</section>
+<section class="nv74-card nv74-sites">
+<div class="nv74-card-head"><h2>내 사이트</h2><a href="#saveSiteForm">새 사이트 등록 ›</a></div>
+<div aria-live="polite" class="nv74-state" id="portalState" role="status">계정 정보를 확인하고 있습니다.</div>
+<div class="nv74-site-render" id="portalPrimary"></div>
+</section>
+<section aria-label="콘텐츠 보드" class="nv74-card nv191-content-board">
+<div class="nv74-card-head"><h2>콘텐츠 보드</h2><a href="/board">전체 보기 ›</a></div>
+<p>진단과 연결된 게시글, 공지, 인사이트를 같은 색감의 카드로 정리했습니다.</p>
+<div class="nv74-feed-render" id="portalFeed"></div>
+</section>
+<section class="sr-only nv75-route-coverage">고객 포털 · 사이트 종합 점수 · 진행 중인 작업 · 빠른 실행 · 가장 효과 큰 개선 실행 · 게시판 자동 발행</section>
+</section>
+<section class="sr-only phase225-legacy-portal-coverage">산출물 주문</section></main>
+<footer class="business-footer commercial-footer"><strong>엔브이제로(NV0)</strong><span>대표자: 나금상</span><span>사업자등록번호: 584-77-00586</span><span>주소: 경기도 남양주시 와부읍 덕소로97번길 34, 105동 402호</span><span>업태·종목: 정보통신업 · 소프트웨어 개발 및 공급업 · 전자상거래업 · 데이터베이스 및 온라인 정보 제공업 · 광고 대행업</span><span>고객지원: <a href="mailto:ct@nv0.kr">ct@nv0.kr</a> · 이메일 전용 고객지원 · 평일 09:00–18:00 접수 확인</span><span class="legal-disclaimer">본 서비스는 웹사이트 운영 점검 보조도구이며 법률 자문을 제공하지 않습니다.</span><nav><a href="/terms">이용약관</a><a href="/privacy">개인정보처리방침</a><a href="/refund">환불·청약철회 정책</a><a href="/business-info">사업자 정보</a></nav></footer>
+<script src="/shared/safe-dom.js"></script>
 <script src="/shared/render-policy.js"></script>
-  <script type="module" src="/apps/public/portal/app.js"></script>
+<script src="/apps/public/portal/app.js" type="module"></script>
 </body>
 </html>
