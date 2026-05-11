@@ -381,3 +381,27 @@ Phase231은 Phase230의 어두운 위기감 팔레트를 마지막 시각 권한
 - 실행 검증: `npm run phase231:final`
 
 가격, 데모, 유료 결과물 구조는 Phase229~Phase230 계약을 유지합니다. Phase231은 색상·대비·카드·CTA·폼·푸터·모바일 시인성을 전면 교체하는 시각 품질 잠금층입니다.
+
+
+## Phase232 final typography/card readability lock
+
+Phase232 adds the final public UI authority layer: `shared/phase232-final-typography-card-system.css`. It is loaded after Phase231 on all 17 public pages and locks typography scale, card spacing, CTA hierarchy, mobile breakpoints, footer readability, and cardified layouts for scattered copy groups.
+
+Run the final gate:
+
+```bash
+npm run phase232:final
+```
+
+Focused checks:
+
+```bash
+npm run test:phase232
+npm run validate:phase232
+```
+
+The work order and closeout artifacts are included as:
+
+- `PHASE232_FINAL_TYPOGRAPHY_CARD_READABILITY_WORK_ORDER_20260511_KO.md`
+- `PHASE232_FINAL_TYPOGRAPHY_CARD_READABILITY_VALIDATION_20260511.json`
+
