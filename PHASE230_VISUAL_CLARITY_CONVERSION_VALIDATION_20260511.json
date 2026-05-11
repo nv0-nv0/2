@@ -1,0 +1,110 @@
+{
+  "ok": true,
+  "checkedAt": "2026-05-11T06:02:50.658Z",
+  "publicPageCount": 17,
+  "fixedIssueCount": 46,
+  "fixedIssueInventory": [
+    {
+      "area": "Live /plans pricing visibility",
+      "count": 6,
+      "fix": "Remove stale old-price exposure and lock value-price copy."
+    },
+    {
+      "area": "Global stylesheet authority gaps",
+      "count": 17,
+      "fix": "Load phase230 final clarity layer on every public page."
+    },
+    {
+      "area": "Dense navigation and CTA wrapping",
+      "count": 3,
+      "fix": "Standardize topbar, CTA size, responsive nav grid."
+    },
+    {
+      "area": "Low hierarchy hero/card sections",
+      "count": 5,
+      "fix": "Raise heading size, spacing, contrast, and panel borders."
+    },
+    {
+      "area": "Footer/business disclosure readability",
+      "count": 4,
+      "fix": "Convert dense inline footer into scannable grid chips."
+    },
+    {
+      "area": "Demo conversion message weakness",
+      "count": 4,
+      "fix": "Expose crisis score, problem area, elements, counts, and purchase path."
+    },
+    {
+      "area": "Form/input visibility",
+      "count": 3,
+      "fix": "Increase input height, contrast, placeholder color, focus ring."
+    },
+    {
+      "area": "Mobile readability risk",
+      "count": 4,
+      "fix": "One-column cards, full-width CTAs, nav grid collapse."
+    }
+  ],
+  "checks": [
+    {
+      "name": "all public pages linked to final visual stylesheet",
+      "ok": true,
+      "details": "17 pages scanned"
+    },
+    {
+      "name": "final stylesheet is loaded after previous readability layer",
+      "ok": true,
+      "details": "CSS order should preserve final overrides"
+    },
+    {
+      "name": "navigation contrast and wrapping guard present",
+      "ok": true,
+      "details": "nav visibility rules missing"
+    },
+    {
+      "name": "hero hierarchy guard present",
+      "ok": true,
+      "details": "headline hierarchy missing"
+    },
+    {
+      "name": "card contrast guard present",
+      "ok": true,
+      "details": "card contrast missing"
+    },
+    {
+      "name": "form contrast guard present",
+      "ok": true,
+      "details": "form readability missing"
+    },
+    {
+      "name": "footer grid guard present",
+      "ok": true,
+      "details": "footer readability missing"
+    },
+    {
+      "name": "conversion urgency visual guard present",
+      "ok": true,
+      "details": "urgency visual meter missing"
+    },
+    {
+      "name": "mobile single-column guard present",
+      "ok": true,
+      "details": "mobile guard missing"
+    },
+    {
+      "name": "plans price consistency",
+      "ok": true,
+      "details": "old prices must be absent from plans"
+    },
+    {
+      "name": "demo conversion contract visible",
+      "ok": true,
+      "details": "demo contract terms missing"
+    },
+    {
+      "name": "demo purchase CTA visible",
+      "ok": true,
+      "details": "purchase CTA missing"
+    }
+  ]
+}

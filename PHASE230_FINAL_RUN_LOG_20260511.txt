@@ -1,0 +1,14 @@
+PHASE230 FINAL RUN LOG
+
+npm run phase230:final
+- check:syntax: OK / checkedCount 286 / failures 0
+- test:phase230: OK / passed 45 / failed 0
+- validate:phase230: OK / publicPageCount 17 / fixedIssueCount 46
+- test:routes: OK / checked 24
+- test:e2e: E2E passed
+
+npm run test:all
+- OK / passed 84 / failed 0
+
+npm run check:links -- --summary
+- OK / checkedCount 537 / errorCount 0

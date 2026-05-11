@@ -1,6 +1,6 @@
 {
   "name": "nv0-veridion-cleanroom",
-  "version": "1.0.0-commercial-final-phase229-value-priced-quality-lock",
+  "version": "1.0.0-commercial-final-phase230-visual-clarity-conversion",
   "private": true,
   "type": "module",
   "scripts": {
@@ -290,6 +290,9 @@
     "phase228:final": "npm run check:syntax && npm run test:phase228 && npm run validate:phase228 && npm run test:phase227 && npm run validate:phase227 && npm run test:routes && npm run test:e2e",
     "test:phase229": "node tests/phase229-value-priced-quality-lock.mjs",
     "validate:phase229": "node scripts/validate-phase229-value-priced-quality-lock.mjs",
-    "phase229:final": "npm run check:syntax && npm run test:phase229 && npm run validate:phase229 && npm run test:phase228 && npm run validate:phase228 && npm run test:routes && npm run test:e2e"
+    "phase229:final": "npm run check:syntax && npm run test:phase229 && npm run validate:phase229 && npm run test:phase228 && npm run validate:phase228 && npm run test:routes && npm run test:e2e",
+    "test:phase230": "node tests/phase230-visual-clarity-conversion.mjs",
+    "validate:phase230": "node scripts/validate-phase230-visual-clarity-conversion.mjs",
+    "phase230:final": "npm run check:syntax && npm run test:phase230 && npm run validate:phase230 && npm run test:routes && npm run test:e2e"
   }
 }

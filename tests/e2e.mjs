@@ -23,7 +23,7 @@ const refundHtml = read('apps/public/refund/index.html');
 const termsHtml = read('apps/public/terms/index.html');
 const packageJson = JSON.parse(read('package.json'));
 
-assert.match(packageJson.version, /phase(4[2-3]|20[0-9]|22[0-9])|100-score/);
+assert.match(packageJson.version, /phase(4[2-3]|20[0-9]|22[0-9]|23[0-9])|100-score/);
 
 // Public conversion flow: scan -> plan -> checkout -> payment complete -> portal/download.
 for (const route of [
