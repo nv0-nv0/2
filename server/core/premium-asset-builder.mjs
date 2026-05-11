@@ -73,7 +73,7 @@ function buildFaqs(plan) {
     { q: '어디부터 적용하면 되나요?', a: 'P0/P1로 표시된 항목부터 적용하고, 결제 버튼 주변·푸터·정책 페이지·입력폼 순서로 재점검하는 것을 권장합니다.' }
   ];
   if (plan === 'Auto' || plan === 'Agency') {
-    common.push({ q: '자동 발행 글은 어떤 기준으로 생성되나요?', a: '한 줄 홍보가 아니라 제목 후보, 도입, 문제 제기, 해결 과정, 신뢰 근거, FAQ, 자연스러운 CTA, 태그를 포함하는 3,800~4,500자 포스팅 구조를 기준으로 생성합니다.' });
+    common.push({ q: '콘텐츠 업데이트 글은 어떤 기준으로 생성되나요?', a: '한 줄 홍보가 아니라 제목 후보, 도입, 문제 제기, 해결 과정, 신뢰 근거, FAQ, 자연스러운 CTA, 태그를 포함하는 3,800~4,500자 포스팅 구조를 기준으로 생성합니다.' });
   }
   return common;
 }
@@ -105,7 +105,7 @@ function buildExecutiveBrief(order, offer, scan, businessProfile) {
   const findings = topFindings(scan, 3);
   const score = number(scan?.riskScore, 72);
   return {
-    purpose: '운영자가 문제를 빠르게 이해하고, 수정 적용 순서와 결제 후 제공 범위를 즉시 판단하도록 구성합니다.',
+    purpose: '사이트 담당자가 문제를 빠르게 이해하고, 수정 적용 순서와 결제 후 제공 범위를 즉시 판단하도록 구성합니다.',
     target: text(scan?.target || order?.domain || '진단 대상 사이트', '진단 대상 사이트'),
     riskScore: score,
     riskLevel: text(scan?.riskLevel || riskLabel(score), riskLabel(score)),
@@ -128,9 +128,9 @@ function buildCoreSections(order, offer, scan) {
   return [
     section(
       '1. 제목 후보',
-      '운영자와 내부 공유자가 산출물의 목적을 즉시 이해하도록 제목 선택지를 제공합니다.',
+      '사이트 담당자와 팀 공유자가 산출물의 목적을 즉시 이해하도록 제목 선택지를 제공합니다.',
       titleCandidates(order, scan).map((item, index) => `${index + 1}. ${item}`).join('\n'),
-      ['상황에 맞는 제목 1개를 선택해 내부 공유 또는 고객 안내 자료에 사용합니다.'],
+      ['상황에 맞는 제목 1개를 선택해 팀 공유 또는 고객 안내 자료에 사용합니다.'],
       ['제목만 보고 진단 대상, 개선 목적, 산출물 성격이 드러나야 합니다.']
     ),
     section(
@@ -143,7 +143,7 @@ function buildCoreSections(order, offer, scan) {
     section(
       '3. 문제 제기',
       '고객 이탈과 문의 증가를 만들 수 있는 신뢰 공백을 구체화합니다.',
-      `주요 문제는 다음과 같습니다.\n${issueList}\n\n이 항목들은 고객이 결제 전 확인하는 정보와 직접 연결됩니다. 기준이 모호하면 고객은 결제를 미루거나 추가 문의를 남기고, 운영자는 같은 설명을 반복해야 할 수 있습니다.`,
+      `주요 문제는 다음과 같습니다.\n${issueList}\n\n이 항목들은 고객이 결제 전 확인하는 정보와 직접 연결됩니다. 기준이 모호하면 고객은 결제를 미루거나 추가 문의를 남기고, 사이트 담당자는 같은 설명을 반복해야 할 수 있습니다.`,
       findings.map(item => `${findingTitle(item)} 위치와 현재 문구를 확인합니다.`),
       ['각 문제는 페이지 위치, 영향, 수정 방향이 함께 제시되어야 합니다.']
     ),
@@ -165,7 +165,7 @@ function buildCoreSections(order, offer, scan) {
       '6. FAQ',
       '가격·신뢰·법률 단정 우려를 줄입니다.',
       buildFaqs(order?.plan).map((item, index) => `Q${index + 1}. ${item.q}\nA. ${item.a}`).join('\n\n'),
-      ['고객 문의 답변, 상세 페이지 하단, 자동 발행 CTA 글에 재사용합니다.'],
+      ['고객 문의 답변, 상세 페이지 하단, 콘텐츠 업데이트 CTA 글에 재사용합니다.'],
       ['FAQ는 과장 없이 불안을 줄여야 하며 구매 강요 문구를 반복하지 않아야 합니다.']
     ),
     section(
@@ -179,7 +179,7 @@ function buildCoreSections(order, offer, scan) {
       '8. 태그',
       '검색과 내부 분류에 사용할 태그를 제공합니다.',
       buildTags(order, scan).map(tag => `#${tag}`).join(' '),
-      ['게시판, 관리자 화면, 자동 발행 콘텐츠 분류에 사용합니다.'],
+      ['게시판, 관리 화면, 콘텐츠 업데이트 콘텐츠 분류에 사용합니다.'],
       ['최소 7개 이상의 관련 태그가 포함되어야 합니다.']
     ),
     section(
@@ -227,8 +227,8 @@ function buildFixes(scan) {
 }
 function buildTemplates(existingDocuments = []) {
   const defaults = [
-    { title: '개인정보 처리방침 보완 초안', purpose: '수집 목적, 항목, 보유기간, 파기 절차를 한 화면에서 확인 가능하게 정리', content: '본 서비스는 문의 응대와 서비스 제공을 위해 필요한 최소한의 개인정보를 수집합니다. 수집 항목, 이용 목적, 보유기간, 파기 절차는 실제 운영 기준에 맞게 확인 후 기재해야 합니다.', usageNote: '실제 수집 항목과 보유기간은 운영자가 확인해야 합니다.' },
-    { title: '환불·교환 안내 보완 초안', purpose: '결제 전 환불 가능 범위와 제한 조건을 명확히 안내', content: '환불·교환 기준은 상품 또는 서비스의 성격, 산출물 제공 시작 여부, 관련 법령과 약관에 따라 달라질 수 있습니다. 결제 전 제공 범위와 제한 조건을 반드시 확인해 주세요.', usageNote: '디지털 산출물 제공 시점과 환불 제한 조건은 실제 정책 기준으로 확인해야 합니다.' },
+    { title: '개인정보 처리방침 보완 초안', purpose: '수집 목적, 항목, 보유기간, 파기 절차를 한 화면에서 확인 가능하게 정리', content: '본 서비스는 문의 응대와 서비스 제공을 위해 필요한 최소한의 개인정보를 수집합니다. 수집 항목, 이용 목적, 보유기간, 파기 절차는 실제 운영 기준에 맞게 확인 후 기재해야 합니다.', usageNote: '실제 수집 항목과 보유기간은 사이트 담당자가 확인해야 합니다.' },
+    { title: '환불·교환 안내 보완 초안', purpose: '결제 전 환불 가능 범위와 제한 조건을 명확히 안내', content: '환불·교환 기준은 상품 또는 서비스의 성격, 산출물 제공 시작 여부, 관련 정책과 약관에 따라 달라질 수 있습니다. 결제 전 제공 범위와 제한 조건을 반드시 확인해 주세요.', usageNote: '디지털 산출물 제공 시점과 환불 제한 조건은 실제 정책 기준으로 확인해야 합니다.' },
     { title: '고객지원 안내 초안', purpose: '문의 경로와 응답 기준을 명확히 고지', content: '서비스 이용 중 문의가 필요한 경우 고객지원 이메일을 통해 접수할 수 있습니다. 접수된 문의는 영업일 기준 확인 후 순차적으로 안내합니다.', usageNote: '응답 시간과 운영 시간은 실제 운영 정책에 맞게 기재합니다.' }
   ];
   const normalized = Array.isArray(existingDocuments) ? existingDocuments.map(item => ({ ...item, purpose: item.purpose || '정책 문서 기본 구조 제공', usageNote: item.usageNote || '실제 운영 기준에 맞게 확인 후 사용하세요.' })) : [];
@@ -270,25 +270,25 @@ function buildAutoPublishingPlan(order, scan) {
 }
 function buildImplementationPlan(order, scan) {
   return [
-    { step: 1, title: '핵심 리스크 확인', output: '상위 P0/P1 항목과 영향 정리', owner: '운영자', done: '문제 위치와 수정 방향이 확인됨' },
+    { step: 1, title: '핵심 리스크 확인', output: '상위 P0/P1 항목과 영향 정리', owner: '사이트 담당자', done: '문제 위치와 수정 방향이 확인됨' },
     { step: 2, title: '문구 적용', output: '환불·개인정보·고객지원 문구 보완', owner: '운영/개발', done: '결제 전 화면에서 문구 확인 가능' },
-    { step: 3, title: '콘텐츠 보강', output: 'FAQ·CTA·태그·자동 발행 글 적용', owner: '마케팅', done: '게시판 또는 랜딩에 3,800자 이상 포스팅 반영' },
-    { step: 4, title: '재진단', output: '동일 URL 재검사 및 잔여 항목 관리', owner: '운영자', done: '점수와 발견 항목 변동 확인' }
+    { step: 3, title: '콘텐츠 보강', output: 'FAQ·CTA·태그·콘텐츠 업데이트 글 적용', owner: '마케팅', done: '게시판 또는 랜딩에 3,800자 이상 포스팅 반영' },
+    { step: 4, title: '재진단', output: '동일 URL 재검사 및 잔여 항목 관리', owner: '사이트 담당자', done: '점수와 발견 항목 변동 확인' }
   ];
 }
 function buildPurposeOptimization(order, offer, scan) {
   const plan = text(order?.plan || 'Report');
   const common = {
     plan,
-    primaryIntent: '운영자가 문제를 이해하고 결제 후 바로 적용 가능한 실행 기준을 받도록 설계',
-    targetReader: '쇼핑몰·랜딩·서비스 운영자, 마케팅 담당자, 내부 의사결정자',
+    primaryIntent: '사이트 담당자가 문제를 이해하고 결제 후 바로 적용 가능한 실행 기준을 받도록 설계',
+    targetReader: '쇼핑몰·랜딩·서비스 사이트 담당자, 마케팅 담당자, 내부 의사결정자',
     outputUseCase: '진단 결과 공유, 개발·운영 전달, 정책 문구 수정, CTA 콘텐츠 발행, 재점검 기준 수립',
     notIncluded: ['법률 자문', '위반 여부 확정', '매출 상승 보장', '외부 기관 공식 인증']
   };
   const map = {
     Report: {
       productIntent: '의사결정용 정밀 리포트',
-      optimizedFor: ['문제 파악 속도', '위험 우선순위', '결제 전 신뢰 공백 설명', '내부 공유'],
+      optimizedFor: ['문제 파악 속도', '위험 우선순위', '결제 전 신뢰 공백 설명', '팀 공유'],
       successCriteria: ['3분 안에 핵심 문제를 이해할 수 있음', 'P0/P1 개선 순서가 명확함', '상세 결제 필요성이 자연스럽게 설명됨']
     },
     FixPack: {
@@ -298,7 +298,7 @@ function buildPurposeOptimization(order, offer, scan) {
     },
     TemplatePack: {
       productIntent: '운영 운영 문서 초안 패키지',
-      optimizedFor: ['정책 문서 기본 구조', '확인 필요 변수 분리', '사용 전 검수', '운영자 맞춤 수정'],
+      optimizedFor: ['정책 문서 기본 구조', '확인 필요 변수 분리', '사용 전 검수', '사이트 담당자 맞춤 수정'],
       successCriteria: ['확인 필요 항목이 명확함', '문서별 목적과 사용 위치가 구분됨', '공식 원문 확인 필요 고지가 유지됨']
     },
     IndustryGuide: {
@@ -317,7 +317,7 @@ function buildPurposeOptimization(order, offer, scan) {
       successCriteria: ['리포트와 실행안이 연결됨', '수정 전후 비교가 가능함', '다음 개선 과제가 남음']
     },
     Auto: {
-      productIntent: '정기 진단 + 자동 발행 운영',
+      productIntent: '정기 진단 + 콘텐츠 업데이트 운영',
       optimizedFor: ['자동 CTA 포스팅', '운영 리듬', '콘텐츠 품질', '반복 전환'],
       successCriteria: ['3,800~4,500자 포스팅 구조 준수', '과장 표현이 배제됨', '문의 또는 체험 신청 CTA가 자연스러움']
     },
@@ -327,9 +327,9 @@ function buildPurposeOptimization(order, offer, scan) {
       successCriteria: ['도메인별 결과가 분리됨', '클라이언트 공유용 요약이 포함됨', '담당자별 실행 항목이 명확함']
     },
     Certified: {
-      productIntent: '운영자 검토 전제 인증 후보 산출물',
+      productIntent: '사이트 담당자 검토 전제 인증 후보 산출물',
       optimizedFor: ['검토 후보 상태 표시', '요건 충족 여부', '재검토 절차', '오해 방지'],
-      successCriteria: ['공식 인증처럼 오인되지 않음', '검토 전제와 보류 조건이 명확함', '운영자 확인 절차가 포함됨']
+      successCriteria: ['공식 인증처럼 오인되지 않음', '검토 전제와 보류 조건이 명확함', '사이트 담당자 확인 절차가 포함됨']
     }
   };
   return { ...common, ...(map[plan] || map.Report) };
@@ -338,7 +338,7 @@ function buildDeliverableIndex(order, scan) {
   const plan = text(order?.plan || 'Report');
   const findings = topFindings(scan, 5);
   return [
-    { name: '요약 대시보드', purpose: '점수·상태·주요 문제를 즉시 파악', included: true, depth: '핵심 KPI + 해석 문장' },
+    { name: '요약 대시보드', purpose: '점수·상태·주요 문제를 즉시 파악', included: true, depth: '핵심 핵심 지표 + 해석 문장' },
     { name: '상세 문제 분석', purpose: '문제 위치와 고객 영향 설명', included: true, depth: `${findings.length}개 상위 항목 중심` },
     { name: '수정 문구안', purpose: '바로 적용 가능한 문구 제공', included: ['FixPack','Pro','Auto','Agency','Certified'].includes(plan), depth: '수정 전/후 + 적용 위치 + 검수 기준' },
     { name: '정책 템플릿', purpose: '운영 문서 초안 제공', included: ['TemplatePack','Pro','Auto','Agency'].includes(plan), depth: '목적 + 본문 + 사용 전 확인' },
@@ -379,7 +379,7 @@ function buildAcceptanceChecklist(order, scan) {
     '법률 자문 또는 성과 보장처럼 읽히는 표현이 없는가'
   ];
   if (['FixPack','Pro','Auto','Agency'].includes(plan)) base.push('수정 전/후 문구와 적용 위치가 포함되어 있는가');
-  if (['Auto','Agency'].includes(plan)) base.push('자동 발행 CTA가 3,800~4,500자 포스팅 구조를 유지하는가');
+  if (['Auto','Agency'].includes(plan)) base.push('콘텐츠 업데이트 CTA가 3,800~4,500자 포스팅 구조를 유지하는가');
   return base;
 }
 function buildMeasurementPlan(scan) {
@@ -394,10 +394,10 @@ function buildMeasurementPlan(scan) {
 }
 function buildRiskRegister(scan) {
   return [
-    { risk: '법률 자문으로 오해될 가능성', mitigation: '법률 자문 아님과 공식 원문 확인 필요 문구를 산출물 상단과 하단에 반복 표시', owner: '운영자' },
+    { risk: '법률 자문으로 오해될 가능성', mitigation: '법률 자문 아님과 공식 원문 확인 필요 문구를 산출물 상단과 하단에 반복 표시', owner: '사이트 담당자' },
     { risk: '확인되지 않은 정책·가격 단정', mitigation: '확인 필요 항목을 별도 표기하고 공개 확인 가능한 범위만 확정 표현 사용', owner: '작성자' },
     { risk: '모바일에서 긴 문구 겹침', mitigation: '카드형 단락, 줄바꿈, 긴 URL/태그 래핑 기준 적용', owner: '개발/QA' },
-    { risk: '자동 발행 글 품질 저하', mitigation: '제목 후보·도입·문제 제기·해결 과정·신뢰 근거·FAQ·CTA·태그 검증 게이트 적용', owner: '콘텐츠 운영' }
+    { risk: '콘텐츠 업데이트 글 품질 저하', mitigation: '제목 후보·도입·문제 제기·해결 과정·신뢰 근거·FAQ·CTA·태그 검증 게이트 적용', owner: '콘텐츠 운영' }
   ];
 }
 function buildStakeholderHandoff(order, scan) {
@@ -537,7 +537,7 @@ export function buildPremiumAssetPdfLines(asset, order) {
   for (const fix of asset.fixes || []) lines.push(`${fix.title}: ${fix.after || fix.rationale || ''}`);
   for (const tpl of asset.templates || []) lines.push(`${tpl.title}: ${String(tpl.content || '').slice(0, 700)}`);
   if (asset.guide?.checklist) lines.push(`체크리스트: ${asset.guide.checklist.join(' / ')}`);
-  if (asset.autoPublishingPlan?.postStructure) lines.push(`자동 발행 기준: ${asset.autoPublishingPlan.postStructure.join(' / ')}`);
+  if (asset.autoPublishingPlan?.postStructure) lines.push(`콘텐츠 업데이트 기준: ${asset.autoPublishingPlan.postStructure.join(' / ')}`);
   if (asset.purposeOptimization) lines.push(`목적 최적화: ${asset.purposeOptimization.productIntent || asset.purposeOptimization.primaryIntent}`);
   if (asset.deliverableIndex) lines.push(`산출물 구성: ${asset.deliverableIndex.map(item => `${item.name}(${item.included ? '포함' : '비포함'})`).join(' / ')}`);
   if (asset.acceptanceChecklist) lines.push(`수용 기준: ${asset.acceptanceChecklist.join(' / ')}`);

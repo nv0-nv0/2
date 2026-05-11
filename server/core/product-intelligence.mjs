@@ -67,7 +67,7 @@ function actionCopy(plan, scan = {}) {
     },
     Report: {
       headline: '먼저 리포트로 기준을 잡는 단계입니다.',
-      reason: `큰 위험 신호는 제한적이지만 운영자가 놓치기 쉬운 ${problemText} 항목은 리포트로 정리해 두면 후속 수정 판단이 쉬워집니다.`,
+      reason: `큰 위험 신호는 제한적이지만 사이트 담당자가 놓치기 쉬운 ${problemText} 항목은 리포트로 정리해 두면 후속 수정 판단이 쉬워집니다.`,
       primaryCta: '상세 리포트 보기',
       nextPath: ['/plans', '/products/veridion/demo', '/documents']
     }

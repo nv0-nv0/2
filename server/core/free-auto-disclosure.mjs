@@ -32,7 +32,7 @@ export function buildAutomationDisclosure({ fetched = {}, findings = [] } = {}) 
     automatedChecks: [
       'URL 형식 자동 보정',
       '홈 HTML 수집',
-      '내부 링크 후보 추출',
+      '연결된 공개 페이지 후보 추출',
       ...(discovery.robotsEnabled !== false ? ['robots.txt에서 sitemap 위치 확인'] : []),
       ...(discovery.sitemapEnabled !== false ? ['sitemap.xml에서 주요 공개 URL 추출'] : []),
       '개인정보·약관·환불·문의·결제·가격·배송 후보 페이지 우선순위화',

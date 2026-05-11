@@ -1,6 +1,6 @@
 {
   "name": "nv0-veridion-cleanroom",
-  "version": "1.0.0-commercial-final-phase236-emergency-clean-ui-reset",
+  "version": "1.0.0-commercial-customer-copy-redesign-phase239",
   "private": true,
   "type": "module",
   "scripts": {
@@ -311,6 +311,13 @@
     "phase235:final": "npm run check:syntax && npm run test:phase235 && npm run validate:phase235 && npm run test:routes && npm run test:e2e && npm run check:pages",
     "test:phase236": "node tests/phase236-emergency-clean-ui.mjs",
     "validate:phase236": "node scripts/validate-phase236-emergency-clean-ui.mjs",
-    "phase236:final": "npm run check:syntax && npm run test:phase236 && npm run validate:phase236 && npm run test:routes && npm run test:e2e"
+    "phase236:final": "npm run check:syntax && npm run test:phase236 && npm run validate:phase236 && npm run test:routes && npm run test:e2e",
+    "apply:phase237": "node scripts/apply-phase237-clean-slate-redesign.mjs",
+    "validate:phase237": "node scripts/validate-phase237-clean-slate-redesign.mjs",
+    "phase237:final": "npm run validate:phase237 && npm run check:pages && npm run test:routes",
+    "validate:phase238": "node scripts/validate-phase238-visual-poster-redesign.mjs",
+    "phase238:final": "npm run validate:phase237 && npm run validate:phase238 && npm run check:pages && npm run test:routes",
+    "validate:phase239": "node scripts/validate-phase239-customer-copy-redesign.mjs",
+    "phase239:final": "npm run validate:phase237 && npm run validate:phase238 && npm run validate:phase239 && npm run check:pages && npm run test:routes"
   }
 }

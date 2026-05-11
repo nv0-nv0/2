@@ -1,5 +1,5 @@
 const SOFTWARE_QA_SIGNALS = [
-  '작업지시서', '전역 재검수', '재검수', '100점', '완성시켜', '시스템 개선', '시스템 강화',
+  '페이지 수정 요청서', '전역 재검수', '재검수', '100점', '완성시켜', '시스템 개선', '시스템 강화',
   '구조', '엔진', '배점', 'P0', 'P1', 'P2', 'QA', '검증', '회귀', '오분류', '롤백', '납품',
   '테스트', '체크섬', 'MANIFEST', 'SHA256SUMS', '파일 전체', '즉시 적용', '품질 향상', '정확도 향상'
 ];
@@ -50,7 +50,7 @@ export function classifyIntent(input) {
   const blogSignals = countSignals(text, BLOG_CONTENT_SIGNALS);
   const comparisonSignals = countSignals(text, COMPARISON_TABLE_SIGNALS) + countSignals(text, BLOG_PLATFORM_SIGNALS);
 
-  const hasWorkOrderShape = /\[최종 작업지시서\]|우선순위|완료 기준|롤백 기준|검증 방법|P0|P1|P2/i.test(text);
+  const hasWorkOrderShape = /\[최종 페이지 수정 요청서\]|우선순위|완료 기준|롤백 기준|검증 방법|P0|P1|P2/i.test(text);
   const hasExplicitSoftwareGuard = softwareSignals >= 2 || hasWorkOrderShape;
   const hasExplicitBlogPublishing = blogSignals >= 2 && /작성|원고|구매링크|네이버 모바일/.test(text);
   const hasBlogPlatformComparison = comparisonSignals >= 3 && countSignals(text, BLOG_PLATFORM_SIGNALS) >= 1;
@@ -58,7 +58,7 @@ export function classifyIntent(input) {
   let niche = 'software_delivery_qa';
   let mode = 'dev_brief';
   let channel = 'development_qa_delivery';
-  let outputContract = '[최종 작업지시서]';
+  let outputContract = '[최종 페이지 수정 요청서]';
   let reason = 'software_delivery_qa_guard_default';
 
   if (hasExplicitSoftwareGuard) {

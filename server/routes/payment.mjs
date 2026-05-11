@@ -382,7 +382,7 @@ return json(req, res, 200, { ok: true, order: { ...synced.order, accessToken: ge
 try {
 assertCommercialRouteAllowed(PLATFORM, 'demo_payment_complete');
 } catch (error) {
-return json(req, res, 403, { ok: false, error: '상용 타깃에서는 테스트 결제 완료 라우트를 사용할 수 없습니다.' });
+return json(req, res, 403, { ok: false, error: '상용 타깃에서는 확인용 결제 완료 라우트를 사용할 수 없습니다.' });
 }
 if (PAYMENT_PROVIDER === 'external_http') return json(req, res, 400, { ok: false, error: '외부 결제 방식에서는 결제 확인 절차가 필요합니다.' });
 const completed = completeCheckoutOrder(db, orderId);

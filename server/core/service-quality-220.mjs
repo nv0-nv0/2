@@ -227,7 +227,7 @@ export function buildPaidFullDetailContract({ scan = {}, order = {}, asset = {} 
     sourcePages: list(item.sourcePages || item.pages || item.urls).length ? list(item.sourcePages || item.pages || item.urls) : [text(scan.normalizedTarget || scan.target || '직접 확인 필요', '직접 확인 필요')],
     coverage: item.coverage || {},
     certainty: text(item.certainty || item.confidence || '확인 필요'),
-    limitation: text(item.limitation || '운영자 확인 후 확정'),
+    limitation: text(item.limitation || '사이트 담당자 확인 후 확정'),
     recommendation: text(item.recommendation || item.fixTemplate || '운영 기준 확인 후 문구와 위치를 보완합니다.'),
     fixTemplate: text(item.fixTemplate || item.recommendation || ''),
     manualReviewRequired: item.manualReviewRequired === true || publicFindingStatus(item) === '검토 필요',
@@ -284,13 +284,13 @@ export function buildSiteOperationsDocument(scan = {}, context = {}) {
     { title: '1. 운영 목적', body: `${domain}의 고객 신뢰 공백을 줄이고, 결제·문의·회원가입 직전에 필요한 정보를 같은 기준으로 유지합니다.` },
     { title: '2. 현재 문제 영역', body: topAreas.length ? topAreas.map((item, index) => `${index + 1}) ${item.area}: 문제 ${item.issueCount}개 · 요소 ${item.elementCount}개(${item.elements.slice(0, 4).join(', ')})`).join('\n') : '현재 공개 점검에서 즉시 분류된 문제 영역은 없습니다.' },
     { title: '3. 즉시 조치 SOP', body: immediate.length ? immediate.map((item, index) => `${index + 1}) [${item.priority}] ${item.title}\n- 위치: ${item.sourcePages.join(' · ') || '직접 확인'}\n- 조치: ${item.recommendation}\n- 수용 기준: ${item.acceptanceCriteria.join(' / ')}`).join('\n\n') : 'P0/P1 항목 없음. 주간 정기 점검 루틴으로 관리합니다.' },
-    { title: '4. 역할 분담', body: ['운영자: 정책·가격·제공 범위 원문 확정', '개발자: 푸터·결제 전 안내·정책 링크 위치 반영', '마케터: 과장 표현 완화와 FAQ/CTA 문구 반영', '검수자: 모바일 가독성·법률 단정·성과 보장 표현 제거 확인'].join('\n') },
+    { title: '4. 역할 분담', body: ['사이트 담당자: 정책·가격·제공 범위 원문 확정', '개발자: 푸터·결제 전 안내·정책 링크 위치 반영', '마케터: 과장 표현 완화와 FAQ/CTA 문구 반영', '검수자: 모바일 가독성·법률 단정·성과 보장 표현 제거 확인'].join('\n') },
     { title: '5. 문서 운영 기준', body: ['개인정보처리방침: 수집 항목·목적·보관 기간·문의처 유지', '환불정책: 제공 시점·제한 조건·문의 경로를 결제 전 노출', '이용약관: 서비스 범위·책임 제한·분쟁 처리 기준 명확화', '광고/랜딩: 조건·근거·예외를 혜택 문구 가까이에 배치'].join('\n') },
     { title: '6. 점검 주기', body: ['매일: 결제/문의 버튼 주변 고지 깨짐 확인', '매주: 환불·개인정보·약관 링크와 푸터 정보 점검', '월간: 주요 랜딩·광고 문구·이벤트 페이지 재진단', '변경 즉시: 가격, 제공 범위, 환불 조건 변경 후 재검사'].join('\n') },
     { title: '7. 변경관리', body: ['변경 전 원문 캡처', '수정 문구 적용', '모바일/데스크톱 동시 확인', '동일 URL 재진단', '잔여 P0/P1 항목 기록'].join('\n') },
     { title: '8. 품질 수용 기준', body: ['문제 영역·요소·개수가 최신 진단과 일치', '모든 수정 문구에 적용 위치 존재', '확인되지 않은 공식 정보는 확인 필요 표기', '법률 자문·성과 보장 표현 없음', '담당자가 같은 절차로 반복 가능'].join('\n') },
     { title: '9. 고객지원 스크립트', body: `${industry} 고객에게는 “제공 범위, 환불 기준, 개인정보 처리, 문의 응답 기준을 결제 전 확인할 수 있습니다”를 기본 안내로 사용합니다.` },
-    { title: '10. 재검증 게이트', body: `완료 기준은 P0/P1 잔여 항목 0개 또는 운영자 확인 보류로 분리, 보완 우선도 점수 하락, 핵심 정책 링크 100% 접근 가능 상태입니다.` }
+    { title: '10. 재검증 게이트', body: `완료 기준은 P0/P1 잔여 항목 0개 또는 사이트 담당자 확인 보류로 분리, 보완 우선도 점수 하락, 핵심 정책 링크 100% 접근 가능 상태입니다.` }
   ];
   return {
     version: PHASE220_SERVICE_QUALITY_VERSION,
@@ -481,7 +481,7 @@ export function buildPhase229OutputQualityLock({ scan = {}, order = {}, asset = 
   const gates = [
     gate('full_detail_100', full.completenessScore === 100 && full.allDetailsVisible, '유료 전체 상세 100% 공개'),
     gate('site_ops_100', ops.qualityScore === 100 && list(ops.sections).length >= 10, '사이트 맞춤 운영 문서 100점'),
-    gate('paid_output_gate_98', gateResult.score >= 98, '유료 산출물 품질 게이트 98점 이상', { score: gateResult.score }),
+    gate('paid_output_gate_98', gateResult.score >= 98, '유료 산출물 검수 기준 98점 이상', { score: gateResult.score }),
     gate('section_depth_locked', sections.length >= 10 || Boolean(asset.reportExample), '가격 인하 후에도 10개 이상 결과물 섹션 유지'),
     gate('acceptance_locked', list(asset.acceptanceChecklist).length >= 10 || list(gateResult.gates).length >= 8, '수용 기준 유지'),
     gate('fixpack_copy_locked', plan !== 'FixPack' || fixes.length >= 3, 'FixPack 수정 전/후 문구 유지'),

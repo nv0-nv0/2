@@ -1,11 +1,1 @@
-
-.auth-shell{max-width:1180px}
-.auth-shell input{width:100%;box-sizing:border-box;border:1px solid #334155;border-radius:14px;padding:14px 16px;margin-top:8px;background:#0B1220;color:#F8FAFC}
-.auth-shell input::placeholder{color:#64748B}
-.auth-shell label{display:grid;gap:6px;font-weight:800;color:#E2E8F0}
-.auth-shell h2{margin:0 0 6px;color:#fff}
-.auth-shell form{align-content:start}
-.auth-shell .card{gap:16px}
-.check-row{display:flex;gap:10px;align-items:flex-start}
-.check-row input{width:auto;margin-top:4px}
-.page-head p,.auth-shell p,.auth-shell .notice{line-height:1.65}
+/* Retired by PHASE237 and PHASE238 visual-poster redesign. Page-specific visual overrides are intentionally empty. Use /shared/nv0-clean-slate-20260512.css only. */

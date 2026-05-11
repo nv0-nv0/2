@@ -175,7 +175,7 @@ export function buildFulfillmentQualityProfile(order = {}, asset = {}, scan = {}
     qualityGate('asset_created', Boolean(asset && (asset.id || asset.title || asset.type)), '산출물 객체 생성'),
     qualityGate('customer_reachable', Boolean(order.customerEmail || order.email || order.buyerEmail), '고객 수신 이메일 확보'),
     qualityGate('target_bound', Boolean(order.targetUrl || order.url || order.siteUrl || order.domain || scan.target), '진단 대상과 주문 연결'),
-    qualityGate('downloadable_or_review_state', asset.downloadable !== false || asset.certificationStatus === 'pending_operator_review', '다운로드 가능 또는 운영자 검토 상태 명확화'),
+    qualityGate('downloadable_or_review_state', asset.downloadable !== false || asset.certificationStatus === 'pending_operator_review', '다운로드 가능 또는 사이트 담당자 검토 상태 명확화'),
     qualityGate('quality_profile_pass', number(asset.reportQualityProfile?.score, 0) >= 75 || buildReportQualityProfile(asset, scan).score >= 75, '결제 산출물 품질 75점 이상')
   ];
   const score = clamp(checklist.filter(item => item.ok).length / checklist.length * 100);

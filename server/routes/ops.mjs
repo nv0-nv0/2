@@ -247,7 +247,7 @@ return json(req, res, 200, result);
 }
 if (pathname === '/api/admin/ops/self-test' && req.method === 'POST') {
 const readiness = buildReleaseReadiness(db);
-const emailProbe = enqueueTransactionalEmail(db, { to: OPERATOR_ALERT_EMAIL, template: 'ops_self_test', subject: '[NV0] 운영 자가검수', body: '운영 자가검수 이메일 큐 테스트입니다.' });
+const emailProbe = enqueueTransactionalEmail(db, { to: OPERATOR_ALERT_EMAIL, template: 'ops_self_test', subject: '[NV0] 운영 자가 점검', body: '운영 자가 점검 메일 처리 테스트입니다.' });
 appendAudit(db, req, 'admin.ops.self_test', { ready: readiness.ready, emailProbeId: emailProbe.id });
 await writeDb(db);
 return json(req, res, 200, { ok: true, readiness, probes: { emailOutboxId: emailProbe.id, dbWritable: true, runtime: 'ok' } });
@@ -264,7 +264,7 @@ return json(req, res, 200, { ok: true, action, backup });
 }
 if (action === 'restore_latest') {
 const backups = await listBackupSnapshots();
-if (!backups.length) return json(req, res, 404, { ok: false, error: '복원할 백업이 없습니다.' });
+if (!backups.length) return json(req, res, 404, { ok: false, error: '복원할 보관본이 없습니다.' });
 const restored = await restoreBackupSnapshot(backups[0].name);
 const fresh = await readDb();
 appendAudit(fresh, req, 'admin.ops.restore_latest', { name: backups[0].name });

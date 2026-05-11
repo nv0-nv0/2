@@ -1,10 +1,1 @@
-.nv0-grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}@media(max-width:860px){.nv0-grid-2{grid-template-columns:1fr}}
-.service-output-score .section-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;flex-wrap:wrap}.service-output-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.service-output-grid strong{display:block;font-size:2rem;line-height:1.1;margin:.45rem 0}.service-output-grid small{color:var(--muted,#9aa4b2);line-height:1.6}@media(max-width:1020px){.service-output-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:680px){.service-output-grid{grid-template-columns:1fr}}
-
-
-/* PHASE209: product output 100-point completion scorecards */
-.phase209-product-100 .service-output-grid strong{color:#fff}
-.phase209-acceptance-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:16px}
-.phase209-acceptance-grid article{border:1px solid rgba(148,163,184,.22);border-radius:22px;padding:16px;background:linear-gradient(180deg,rgba(15,23,42,.86),rgba(8,13,24,.94))}
-.phase209-acceptance-grid span{display:block;color:var(--muted,#9aa4b2);font-size:12px;font-weight:900;letter-spacing:.06em;text-transform:uppercase}.phase209-acceptance-grid b{display:block;margin:.45rem 0;color:#fff;font-size:1.2rem}.phase209-acceptance-grid p{margin:0;color:var(--muted,#9aa4b2);line-height:1.65}
-@media(max-width:1020px){.phase209-acceptance-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:680px){.phase209-acceptance-grid{grid-template-columns:1fr}}
+/* Retired by PHASE237 and PHASE238 visual-poster redesign. Page-specific visual overrides are intentionally empty. Use /shared/nv0-clean-slate-20260512.css only. */

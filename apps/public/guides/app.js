@@ -9,7 +9,7 @@ const list = document.getElementById('guideList');
     const data = await res.json();
     const items = data.items || [];
     state.textContent = `공개 콘텐츠 ${items.length}건`;
-    list.innerHTML = renderList(items, '<div class="card stack"><strong>공개 가이드가 아직 표시되지 않았습니다.</strong><p class="muted">운영자는 관리자 자료실에서 신뢰 점검, 환불 정책, 안내 버튼 개선, 게시판 운영 가이드를 발행해야 합니다.</p><a class="btn secondary" href="/products/veridion/demo">무료 진단 먼저 보기</a></div>', (item) => `
+    list.innerHTML = renderList(items, '<div class="card stack"><strong>공개 가이드가 아직 표시되지 않았습니다.</strong><p class="muted">사이트 담당자는 관리자 자료실에서 신뢰 점검, 환불 정책, 안내 버튼 개선, 게시판 관리 가이드를 발행해야 합니다.</p><a class="btn secondary" href="/products/veridion/demo">무료 진단 먼저 보기</a></div>', (item) => `
       <div class="result-card stack">
         <div class="meta-row"><strong>${escapeHtml(item.title)}</strong><span class="pill">${escapeHtml(item.type)}</span></div>
         <div class="muted">${escapeHtml(item.createdAt || '-')}${item.effectiveDate ? ` · 시행 ${escapeHtml(item.effectiveDate)}` : ''}</div>

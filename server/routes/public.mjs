@@ -318,7 +318,7 @@ const activity = publicPosts.slice(0, 3).map(item => ({
   title: item.title,
   type: item.boardType === 'cta' ? 'CTA 글' : (item.boardType || '게시글'),
   createdAt: item.createdAt || null,
-  label: item.autoPublished ? '자동 발행' : '공개 게시글'
+  label: item.autoPublished ? '콘텐츠 업데이트' : '공개 게시글'
 }));
 return json(req, res, 200, {
 ok: true,

@@ -13,7 +13,7 @@ const ALLOWED_SECTIONS = [
 ];
 
 const DEFAULT_TESTS = [
-  ['T-001', '단일 출력', '결과가 항상 `# 최종 작업지시서`로 시작한다.'],
+  ['T-001', '단일 출력', '결과가 항상 `# 최종 페이지 수정 요청서`로 시작한다.'],
   ['T-002', '실행 작업 완결성', '모든 작업 행에 담당, 완료 기준, 검수 방법이 존재한다.'],
   ['T-003', '금지 조건 우선', '금지·제외 조건이 실행 작업으로 승격되지 않는다.'],
   ['T-004', '불필요 정보 차단', '작업자가 실행할 내용과 검수 기준만 남는다.'],
@@ -87,16 +87,16 @@ function firstMeaningfulLine(text, fallback) {
 
 function inferTaskName(input) {
   const explicit = extractSection(input, '작업명');
-  if (explicit) return firstMeaningfulLine(explicit, '작업지시서 생성 제품 개선');
-  if (/작업지시서.*전면|전면.*작업지시서/.test(input)) return '작업지시서 생성 제품 전면 개편';
-  if (/nv0\.kr|패키지|제품.*검증|100점/.test(input)) return 'NV0 제품 검증 및 작업지시서 생성 엔진 개선';
-  return '사용자 요청 기반 작업지시서 생성';
+  if (explicit) return firstMeaningfulLine(explicit, '페이지 수정 요청서 생성 제품 개선');
+  if (/페이지 수정 요청서.*전면|전면.*페이지 수정 요청서/.test(input)) return '페이지 수정 요청서 생성 제품 전면 개편';
+  if (/nv0\.kr|패키지|제품.*검증|100점/.test(input)) return 'NV0 제품 검증 및 페이지 수정 요청서 생성 엔진 개선';
+  return '사용자 요청 기반 페이지 수정 요청서 생성';
 }
 
 function inferGoal(input) {
   const explicit = extractSection(input, '목표');
-  if (explicit) return firstMeaningfulLine(explicit, '사용자 입력을 실행 가능한 작업지시서로 변환한다.');
-  if (/작업지시서/.test(input)) return '사용자 입력을 실무자가 바로 실행할 수 있는 단일 작업지시서로 변환한다.';
+  if (explicit) return firstMeaningfulLine(explicit, '사용자 입력을 실행 가능한 페이지 수정 요청서로 변환한다.');
+  if (/페이지 수정 요청서/.test(input)) return '사용자 입력을 실무자가 바로 실행할 수 있는 단일 페이지 수정 요청서로 변환한다.';
   return '요청 내용을 실행 작업, 완료 기준, 검수 방법, 보완 기준이 있는 지시서로 정리한다.';
 }
 
@@ -105,7 +105,7 @@ function inferSuccessCriteria(input) {
   const lines = uniqueLines(bulletLines(explicit), 5);
   if (lines.length) return lines;
   return [
-    '최종 산출물은 작업지시서 1개만 생성한다.',
+    '최종 산출물은 페이지 수정 요청서 1개만 생성한다.',
     '실행 작업, 완료 기준, 검수 방법, 롤백/보완 기준을 포함한다.',
     '확인되지 않은 사실은 단정하지 않고 확인 필요로 분리한다.'
   ];
@@ -118,7 +118,7 @@ function inferScope(input) {
   const scope = [];
   if (/패키지|nv0\.kr|탐색|검증/.test(input)) scope.push('패키지와 공개 사이트 기준으로 출력 구조, 문구, 노출값, 회귀 위험을 점검한다.');
   if (/입력|의도|요구|금지|제외/.test(input)) scope.push('입력문에서 목표, 요구사항, 금지 조건, 제외 범위, 확인 필요 항목을 분리한다.');
-  if (/작업지시서|산출물|출력/.test(input)) scope.push('최종 출력은 단일 작업지시서 구조로 고정한다.');
+  if (/페이지 수정 요청서|산출물|출력/.test(input)) scope.push('최종 출력은 단일 페이지 수정 요청서 구조로 고정한다.');
   if (/테스트|검수|롤백|보완/.test(input)) scope.push('완료 기준, 테스트 기준, 롤백/보완 기준을 누락 없이 포함한다.');
   return scope.length ? uniqueLines(scope, 6) : [
     '입력 내용을 작업 단위로 정리한다.',
@@ -163,9 +163,9 @@ function defaultTasks(input) {
   if (productFocus) {
     return [
       ['WI-001', 'P0', '제품/프롬프트 엔진', '입력문을 정제해 목표, 필수 요구, 금지 조건, 제외 범위, 확인 필요 항목으로 분리한다.', '동일 입력에서 요구사항과 금지사항이 별도 필드로 분리된다.', '금지 조건이 포함된 샘플 5개를 넣고 실행 작업으로 승격되지 않는지 확인한다.'],
-      ['WI-002', 'P0', '출력 엔진', '최종 결과를 `# 최종 작업지시서` 1개로만 렌더링한다.', '원고, 이메일, 설명문, 이미지 프롬프트 형식으로 분기되지 않는다.', '콘텐츠·개발·QA·디자인 입력을 넣어도 같은 작업지시서 구조로 출력되는지 확인한다.'],
+      ['WI-002', 'P0', '출력 엔진', '최종 결과를 `# 최종 페이지 수정 요청서` 1개로만 렌더링한다.', '원고, 이메일, 설명문, 이미지 프롬프트 형식으로 분기되지 않는다.', '콘텐츠·개발·QA·디자인 입력을 넣어도 같은 페이지 수정 요청서 구조로 출력되는지 확인한다.'],
       ['WI-003', 'P0', '보안/렌더링', '사용자 입력은 텍스트로만 처리하고 HTML·스크립트·불필요한 내부 정보 노출을 차단한다.', '출력에는 실행 내용, 완료 기준, 검수 기준만 남는다.', 'HTML 삽입 샘플을 넣고 태그가 실행되거나 그대로 노출되지 않는지 확인한다.'],
-      ['WI-004', 'P0', '품질 게이트', '모든 실행 작업에 담당, 작업 내용, 완료 기준, 검수 방법을 강제한다.', '빈 완료 기준이나 모호한 검수 방법이 있는 행은 최종 출력되지 않는다.', '누락 필드가 있는 입력을 넣고 자동 보완 또는 재작성되는지 확인한다.'],
+      ['WI-004', 'P0', '검수 기준', '모든 실행 작업에 담당, 작업 내용, 완료 기준, 검수 방법을 강제한다.', '빈 완료 기준이나 모호한 검수 방법이 있는 행은 최종 출력되지 않는다.', '누락 필드가 있는 입력을 넣고 자동 보완 또는 재작성되는지 확인한다.'],
       ['WI-005', 'P1', '제품 UI', '입력 → 생성 → 복사/저장 흐름으로 화면을 단순화한다.', '사용자는 한 화면에서 입력, 결과 확인, 복사, 저장을 완료할 수 있다.', '모바일 폭에서 버튼, 입력창, 결과 영역이 겹치지 않는지 확인한다.'],
       ['WI-006', 'P1', '라이브 운영', '공개 화면의 placeholder, 미확정 값, 오래된 문구를 숨기거나 확인 필요로 분리한다.', '확정되지 않은 번호·운영값이 푸터와 안내문에 노출되지 않는다.', '루트, 무료진단, 문서, 보드, 고객지원 페이지를 열어 미확정 값 노출 여부를 확인한다.'],
       ['WI-007', 'P1', '회귀 테스트', '단일 출력, 금지 조건 우선, 보안 렌더링, 모바일 UI 검사를 자동 테스트에 추가한다.', '패키지 검증 스크립트에서 신규 테스트가 통과한다.', '관련 npm 스크립트와 직접 테스트를 실행해 실패 항목이 없는지 확인한다.']
@@ -215,7 +215,7 @@ function renderTestTable(input) {
 
 function inferOutputFormat() {
   return [
-    '`# 최종 작업지시서`로 시작한다.',
+    '`# 최종 페이지 수정 요청서`로 시작한다.',
     '허용 섹션만 사용한다.',
     '실행 작업은 표로 작성한다.',
     '확인되지 않은 항목은 확인 필요에 분리한다.'
@@ -236,7 +236,7 @@ function inferRollback(input) {
   const lines = uniqueLines(bulletLines(explicit), 5);
   if (lines.length) return lines;
   return [
-    '결과가 작업지시서 형식이 아니면 직전 정상 버전으로 되돌린다.',
+    '결과가 페이지 수정 요청서 형식이 아니면 직전 정상 버전으로 되돌린다.',
     '완료 기준 또는 검수 방법이 빠진 행은 출력하지 않고 재작성한다.',
     '금지 조건이 작업 범위로 들어가면 요구사항 추출 단계를 되돌리고 금지 우선 규칙을 재적용한다.',
     '공개 화면에 미확정 값이 노출되면 해당 렌더링을 비활성화하고 확인 필요로 이동한다.'
@@ -259,7 +259,7 @@ export function buildFinalWorkOrder(sourceInput = '', options = {}) {
   const input = cleanText(sourceInput);
   const rows = taskRows(input);
   const content = [
-    '# 최종 작업지시서',
+    '# 최종 페이지 수정 요청서',
     '',
     '## 1. 작업명',
     inferTaskName(input),
@@ -302,14 +302,14 @@ export function buildWorkOrderPreview(payload = {}, options = {}) {
   const source = payload.sourceInput || payload.input || payload.prompt || payload.request || payload.workOrderInput || '';
   const content = buildFinalWorkOrder(source, options);
   return {
-    businessName: '작업지시서 생성기',
+    businessName: '페이지 수정 요청서 생성기',
     domain: 'work-order',
     generatedAt: typeof options.nowIso === 'function' ? options.nowIso() : new Date().toISOString(),
     documents: [
-      { type: 'work_order', title: '최종 작업지시서', content }
+      { type: 'work_order', title: '최종 페이지 수정 요청서', content }
     ],
     qualityGate: {
-      singleOutput: content.startsWith('# 최종 작업지시서'),
+      singleOutput: content.startsWith('# 최종 페이지 수정 요청서'),
       taskCount: (content.match(/\| WI-\d{3} \|/g) || []).length,
       allowedSectionCount: ALLOWED_SECTIONS.length
     }
@@ -318,7 +318,7 @@ export function buildWorkOrderPreview(payload = {}, options = {}) {
 
 export function assertWorkOrderContract(output) {
   const text = String(output ?? '');
-  if (!text.startsWith('# 최종 작업지시서')) throw new Error('work order must start with # 최종 작업지시서');
+  if (!text.startsWith('# 최종 페이지 수정 요청서')) throw new Error('work order must start with # 최종 페이지 수정 요청서');
   for (const section of ALLOWED_SECTIONS) {
     if (!text.includes(`## ${ALLOWED_SECTIONS.indexOf(section) + 1}. ${section}`)) throw new Error(`missing section: ${section}`);
   }

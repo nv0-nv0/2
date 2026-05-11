@@ -16,10 +16,10 @@ let activities = [];
 
 function buildFallbackBody(theme, problem, product) {
   return `전문가 관점 요약
-처음 방문한 고객은 상품 설명보다 먼저 “이 사이트에서 문의하거나 결제해도 되는가”를 판단합니다. ${theme}은 단순 안내문이 아니라 고객 행동 직전의 불확실성을 줄이는 전환 설계 요소입니다. 이 글은 ${problem} 같은 상황을 기준으로 운영자가 바로 확인할 수 있는 화면 위치, 문구 방향, 내부 링크 흐름을 전문가형 포스팅 구조로 정리합니다.
+처음 방문한 고객은 상품 설명보다 먼저 “이 사이트에서 문의하거나 결제해도 되는가”를 판단합니다. ${theme}은 단순 안내문이 아니라 고객 행동 직전의 불확실성을 줄이는 전환 설계 요소입니다. 이 글은 ${problem} 같은 상황을 기준으로 사이트 담당자가 바로 확인할 수 있는 화면 위치, 문구 방향, 연결된 공개 페이지 흐름을 전문가형 포스팅 구조로 정리합니다.
 
 현장에서 자주 생기는 문제
-${problem} 운영자는 정책 문서나 푸터에 이미 내용을 적어 두었다고 생각하지만, 고객은 결제 버튼, 문의 버튼, 회원가입 화면, 상담 신청 화면에서 바로 답을 찾습니다. 필요한 답이 고객 행동과 떨어져 있으면 상품력이 좋아도 마지막 단계에서 멈출 수 있습니다.
+${problem} 사이트 담당자는 정책 문서나 푸터에 이미 내용을 적어 두었다고 생각하지만, 고객은 결제 버튼, 문의 버튼, 회원가입 화면, 상담 신청 화면에서 바로 답을 찾습니다. 필요한 답이 고객 행동과 떨어져 있으면 상품력이 좋아도 마지막 단계에서 멈출 수 있습니다.
 
 매출과 신뢰에 영향을 주는 이유
 광고 유입이 많아질수록 안내 공백은 더 빠르게 비용으로 바뀝니다. 고객은 불편하다고 말하기보다 조용히 다른 선택지로 이동합니다. ${theme}을 버튼 주변에 배치하면 고객은 제공 범위, 문의 경로, 예외 조건, 처리 시간을 예측할 수 있습니다. 예측 가능성이 높아질수록 무료 진단에서 상세 리포트, FixPack, Auto 정기 케어로 이어지는 결과물 선택 흐름도 자연스러워집니다.
@@ -48,7 +48,7 @@ ${problem} 운영자는 정책 문서나 푸터에 이미 내용을 적어 두�
 2. 약관, 푸터, 상세페이지, 결제 화면의 표현이 서로 충돌하지 않는지 봅니다.
 3. 예외 조건이 작은 글씨나 접힌 영역에만 숨어 있지 않은지 확인합니다.
 4. 모바일에서 링크와 버튼을 손쉽게 누를 수 있는지 확인합니다.
-5. 수정 후 무료 진단 또는 내부 재진단으로 남은 공백을 비교합니다.
+5. 수정 후 무료 진단 또는 재진단으로 남은 공백을 비교합니다.
 
 검색 유입을 고려한 구성
 전문가처럼 보이는 게시글은 키워드만 반복하지 않습니다. 제목에는 고객이 실제로 찾는 표현을 넣고, 첫 문단에는 문제 상황과 해결 방향을 함께 제시합니다. 중간에는 체크리스트와 전후 문구 예시를 넣어 체류 시간을 확보하고, 마지막에는 무료 진단, 상품·요금, 내 사이트 관리처럼 행동 단계를 명확히 연결합니다.
@@ -60,11 +60,11 @@ A. 아닙니다. 먼저 문제를 정확히 설명하고, 마지막에 해결 �
 Q2. 무료 진단만으로 충분한가요?
 A. 무료 진단은 현재 공백을 빠르게 보는 출발점입니다. 실제 반영 문구, 페이지별 우선순위, 재점검 기준이 필요하면 ${product}으로 이어가는 것이 좋습니다.
 
-Q3. 20분마다 발행하면 중복으로 보이지 않나요?
+Q3. 주제가 반복되면 중복으로 보이지 않나요?
 A. 제목만 바꾸면 중복처럼 보입니다. 그래서 주제, 고객 질문, 사례, 체크리스트, FAQ, CTA 위치를 함께 바꿔야 합니다.
 
 자연스러운 다음 행동
-이 글은 법률 판단이나 매출 상승을 보장하지 않습니다. 다만 고객이 어디에서 멈추는지 확인하고 판매 흐름을 정리하는 실무 기준으로 사용할 수 있습니다. 먼저 무료 진단으로 안내 공백을 확인하고, 결과를 저장한 뒤 상세 리포트에서 근거와 우선순위를 확인하세요. 문구 교체가 필요하면 FixPack, 반복 관리가 필요하면 Auto 정기 케어로 연결하면 됩니다. 자동 발행 주기는 기존 조건대로 20분 1회입니다.`;
+이 글은 법률 판단이나 매출 상승을 보장하지 않습니다. 다만 고객이 어디에서 멈추는지 확인하고 판매 흐름을 정리하는 실무 기준으로 사용할 수 있습니다. 먼저 무료 진단으로 안내 공백을 확인하고, 결과를 저장한 뒤 상세 리포트에서 근거와 우선순위를 확인하세요. 문구 교체가 필요하면 FixPack, 반복 관리가 필요하면 Auto 정기 케어로 연결하면 됩니다. 콘텐츠는 고객 질문과 사례 중심으로 계속 보완할 수 있습니다.`;
 }
 
 const FALLBACK_POSTS = [
@@ -135,7 +135,7 @@ const FALLBACK_POSTS = [
   }
 ];
 const FALLBACK_ACTIVITIES = FALLBACK_POSTS.slice(0, 3).map((item) => ({
-  label: item.autoPublished ? '자동 발행' : '기본 콘텐츠',
+  label: item.autoPublished ? '콘텐츠 업데이트' : '기본 콘텐츠',
   title: item.title,
   type: item.boardType,
   createdAt: item.createdAt
@@ -152,7 +152,7 @@ function applyBoardFallback(reason = '') {
   pagination = { page: 1, pageSize: 5, total: posts.length, totalPages: 1 };
   page = 1;
   render();
-  if (state) state.textContent = `게시판 API 연결이 지연되어 전문가형 기본 포스팅 ${posts.length}건을 먼저 표시합니다. 자동 발행 기본 주기는 20분입니다.${reason ? ` (${reason})` : ''}`;
+  if (state) state.textContent = `콘텐츠를 불러오는 중이라 기본 안내 글 ${posts.length}건을 먼저 표시합니다. 잠시 후 최신 글로 갱신됩니다.${reason ? ` (${reason})` : ''}`;
 }
 
 
@@ -252,8 +252,8 @@ function render(){
   const totalPages = Math.max(1, Number(pagination.totalPages || 1));
   const currentCount = visiblePosts.length;
   const topicText = topic ? ` · 현재 페이지 주제 일치 ${currentCount}건` : '';
-  state.textContent = `전체 ${Number(stats.total || totalForFilter).toLocaleString('ko-KR')}건 중 현재 ${currentCount.toLocaleString('ko-KR')}건 표시${topicText} · ${pagination.page}/${totalPages}페이지 · 필터 대상 ${totalForFilter.toLocaleString('ko-KR')}건 · 자동 발행 ${autoCount.toLocaleString('ko-KR')}건 · 20분 주기`;
-  list.innerHTML = renderList(visiblePosts, '<div class="empty-state stack"><strong>조건에 맞는 게시글이 없습니다.</strong><p>필터를 초기화하거나 무료 진단 후 새 글을 발행하세요.</p><a class="btn secondary" href="/board">필터 초기화</a><a class="btn secondary" href="/products/veridion/demo">무료 진단 시작</a></div>', item => `<article class="result-card stack board-post ${item.boardType === 'cta' || item.autoPublished ? 'cta' : ''}"><div class="meta-row"><strong>${escapeHtml(item.title)}</strong><span class="pill">${escapeHtml(item.boardType || item.type || 'post')}</span></div><div class="post-meta"><span>${item.autoPublished ? '자동 발행' : '운영 글'}</span><span>${escapeHtml(item.createdAt || '-')}</span><span>${escapeHtml(item.primaryKeyword || '고객 안내')}</span></div>${item.summary ? `<p class="post-summary">${escapeHtml(item.summary)}</p>` : ''}${renderPostBody(item.body || item.summary || '')}${renderPostTags(item.tags || [])}<div class="post-cta"><a class="btn primary" href="/products/veridion/demo">내 사이트도 무료 진단</a><a class="btn secondary" href="/plans">상품·요금</a><a class="btn secondary" href="/portal">내 사이트 관리</a></div></article>`);
+  state.textContent = `전체 ${Number(stats.total || totalForFilter).toLocaleString('ko-KR')}건 중 현재 ${currentCount.toLocaleString('ko-KR')}건 표시${topicText} · ${pagination.page}/${totalPages}페이지 · 필터 대상 ${totalForFilter.toLocaleString('ko-KR')}건 · 콘텐츠 업데이트 ${autoCount.toLocaleString('ko-KR')}건 · 정기 주기`;
+  list.innerHTML = renderList(visiblePosts, '<div class="empty-state stack"><strong>조건에 맞는 게시글이 없습니다.</strong><p>필터를 초기화하거나 무료 진단 후 새 글을 발행하세요.</p><a class="btn secondary" href="/board">필터 초기화</a><a class="btn secondary" href="/products/veridion/demo">무료 진단 시작</a></div>', item => `<article class="result-card stack board-post ${item.boardType === 'cta' || item.autoPublished ? 'cta' : ''}"><div class="meta-row"><strong>${escapeHtml(item.title)}</strong><span class="pill">${escapeHtml(item.boardType || item.type || 'post')}</span></div><div class="post-meta"><span>${item.autoPublished ? '콘텐츠 업데이트' : '운영 글'}</span><span>${escapeHtml(item.createdAt || '-')}</span><span>${escapeHtml(item.primaryKeyword || '고객 안내')}</span></div>${item.summary ? `<p class="post-summary">${escapeHtml(item.summary)}</p>` : ''}${renderPostBody(item.body || item.summary || '')}${renderPostTags(item.tags || [])}<div class="post-cta"><a class="btn primary" href="/products/veridion/demo">내 사이트도 무료 진단</a><a class="btn secondary" href="/plans">상품·요금</a><a class="btn secondary" href="/portal">내 사이트 관리</a></div></article>`);
   renderPagination();
 }
 

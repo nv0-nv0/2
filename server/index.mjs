@@ -1342,15 +1342,15 @@ function routeMeta(urlPath) {
 const base = seoBaseUrl();
 const metas = {
 '/': { title: 'NV0 / Veridion | AI 기반 웹사이트 신뢰 진단 & 전환 개선 플랫폼', description: '고객이 결제하기 전에 확인하는 사업자 정보, 개인정보 안내, 환불 기준, 문의 경로, 결제 안내를 근거 기반으로 진단하고 개선 흐름을 제안합니다.', keywords: ['웹사이트 신뢰 진단','전환 개선','무료 진단','FixPack','Auto 정기 케어'] },
-'/products/veridion/demo': { title: '무료 진단 | NV0 / Veridion', description: '주소 하나로 결제 전 신뢰 공백과 수동 확인이 필요한 영역을 분리해 보여주고, 결제 후 산출물 품질 기준까지 안내합니다.', keywords: ['무료 진단','웹사이트 신뢰 진단','오탐 방어','수동 확인','품질 게이트'] },
-'/demo': { title: '무료 진단 | NV0 / Veridion', description: '주소 하나로 결제 전 신뢰 공백과 수동 확인이 필요한 영역을 분리해 보여주고, 결제 후 산출물 품질 기준까지 안내합니다.', keywords: ['무료 진단','웹사이트 신뢰 진단','오탐 방어','수동 확인','품질 게이트'] },
+'/products/veridion/demo': { title: '무료 진단 | NV0 / Veridion', description: '주소 하나로 결제 전 신뢰 공백과 수동 확인이 필요한 영역을 분리해 보여주고, 결제 후 산출물 품질 기준까지 안내합니다.', keywords: ['무료 진단','웹사이트 신뢰 진단','오탐 방어','수동 확인','검수 기준'] },
+'/demo': { title: '무료 진단 | NV0 / Veridion', description: '주소 하나로 결제 전 신뢰 공백과 수동 확인이 필요한 영역을 분리해 보여주고, 결제 후 산출물 품질 기준까지 안내합니다.', keywords: ['무료 진단','웹사이트 신뢰 진단','오탐 방어','수동 확인','검수 기준'] },
 '/plans': { title: '상품·요금 | NV0 / Veridion', description: '무료 진단 이후 상세 리포트, FixPack, Auto 정기 케어를 제공 범위·가격·추천 상황 기준으로 비교합니다.', keywords: ['상품·요금','상세 리포트','FixPack','Auto 정기 케어','사이트 진단 요금'] },
 '/products': { title: '상품·요금 | NV0 / Veridion', description: '무료 진단 이후 상세 리포트, FixPack, Auto 정기 케어를 제공 범위·가격·추천 상황 기준으로 비교합니다.', keywords: ['상품·요금','상세 리포트','FixPack','Auto 정기 케어','사이트 진단 요금'] },
-'/documents': { title: '문서·작업지시서 생성 | NV0 / Veridion', description: '정책 문서와 내부 실행용 작업지시서를 최소 입력으로 정리하고, 실제 적용 전 확인해야 할 범위와 한계를 함께 표시합니다.', keywords: ['문서 생성','작업지시서 생성','운영 문서 초안','개선 가이드','운영 문구'] },
-'/policy-documents': { title: '문서·작업지시서 생성 | NV0 / Veridion', description: '정책 문서와 내부 실행용 작업지시서를 최소 입력으로 정리하고, 실제 적용 전 확인해야 할 범위와 한계를 함께 표시합니다.', keywords: ['문서 생성','작업지시서 생성','운영 문서 초안','개선 가이드','운영 문구'] },
+'/documents': { title: '문서·페이지 수정 요청서 생성 | NV0 / Veridion', description: '정책 문서와 팀 실행용 페이지 수정 요청서를 최소 입력으로 정리하고, 실제 적용 전 확인해야 할 범위와 한계를 함께 표시합니다.', keywords: ['문서 생성','페이지 수정 요청서 생성','운영 문서 초안','개선 가이드','운영 문구'] },
+'/policy-documents': { title: '문서·페이지 수정 요청서 생성 | NV0 / Veridion', description: '정책 문서와 팀 실행용 페이지 수정 요청서를 최소 입력으로 정리하고, 실제 적용 전 확인해야 할 범위와 한계를 함께 표시합니다.', keywords: ['문서 생성','페이지 수정 요청서 생성','운영 문서 초안','개선 가이드','운영 문구'] },
 '/docs/veridion': { title: 'Veridion 문서 생성 | 정책 문서·진단 리포트 초안', description: 'Veridion 진단 후 필요한 정책 문서, 안내 문구, 개선 리포트 초안을 생성하는 문서 허브입니다.', keywords: ['Veridion 문서','정책 문서 생성','진단 리포트','개선 문구'] },
-'/guides': { title: '운영 가이드 | 쇼핑몰 신뢰도·정책 안내 점검', description: '쇼핑몰 신뢰도, 환불 정책, 구매 안내 버튼, 게시판 자동 발행, 반복 재진단 활용법을 전문가형 실무 가이드로 정리합니다.' },
-'/resources': { title: '운영 가이드 | 쇼핑몰 신뢰도·정책 안내 점검', description: '쇼핑몰 신뢰도, 환불 정책, 구매 안내 버튼, 게시판 자동 발행, 반복 재진단 활용법을 전문가형 실무 가이드로 정리합니다.' },
+'/guides': { title: '관리 가이드 | 쇼핑몰 신뢰도·정책 안내 점검', description: '쇼핑몰 신뢰도, 환불 정책, 구매 안내 버튼, 게시판 콘텐츠 업데이트, 반복 재진단 활용법을 전문가형 실무 가이드로 정리합니다.' },
+'/resources': { title: '관리 가이드 | 쇼핑몰 신뢰도·정책 안내 점검', description: '쇼핑몰 신뢰도, 환불 정책, 구매 안내 버튼, 게시판 콘텐츠 업데이트, 반복 재진단 활용법을 전문가형 실무 가이드로 정리합니다.' },
 '/solutions': { title: '솔루션 | 웹사이트 안내 고지·정책 문서·문의 흐름 점검', description: '웹사이트 필수 고지, 정책 문서, 결제 전 안내, 고객지원 안내를 한 번에 점검하는 NV0 솔루션입니다.' },
 '/service': { title: '서비스 작동 방식 | NV0 무료진단·리포트 산출 흐름', description: 'NV0가 공개 페이지를 수집하고 근거 신뢰도, 직접 확인 항목, 결제 산출물로 이어지는 과정을 설명합니다.' },
 '/cases': { title: '적용 사례 | NV0 신뢰 공백 개선 사례', description: '쇼핑몰과 랜딩페이지가 사업자 고지, 환불 안내, 문의 흐름을 어떻게 정리하는지 사례로 확인합니다.' },
@@ -1361,7 +1361,7 @@ const metas = {
 '/refund': { title: '환불·청약철회 정책 | NV0', description: '디지털 산출물 제공 시점, 환불 요청 기준, 청약철회 제한 안내를 확인하세요.' },
 '/auth': { title: '로그인·회원가입 | NV0', description: '무료진단 횟수 관리, 내 사이트 저장, 원클릭 재검사, 최근 진단 이력 확인을 위한 로그인·회원가입 페이지입니다.' },
 '/portal': { title: '내 사이트 관리 | NV0 / Veridion', description: '내 사이트 저장, 최근 진단 결과, 보완 항목, 콘텐츠 보드를 한 화면에서 관리합니다.' },
-'/checkout': { title: '결제 확인 | NV0 / Veridion', description: '결제 전 선택한 결과물, 품질 게이트, 디지털 산출물 환불 제한, 정책 동의 항목을 확인합니다.' }
+'/checkout': { title: '결제 확인 | NV0 / Veridion', description: '결제 전 선택한 결과물, 검수 기준, 디지털 산출물 환불 제한, 정책 동의 항목을 확인합니다.' }
 };
 const meta = metas[urlPath] || metas['/'];
 return { ...meta, canonical: `${base}${urlPath === '/' ? '/' : urlPath}`, locale: 'ko_KR' };
@@ -1907,7 +1907,7 @@ if (hasAny(source, ['약관','terms','정책'])) return { title: '이용약관�
 const fallback = [
 { title: '처음 온 고객이 믿고 읽을 수 있는 사이트 안내 만들기', keyword: '사이트 신뢰 안내', issue: '고객이 필요한 정보를 찾기 위해 여러 화면을 돌아다녀야 하는 상황' },
 { title: '문의와 구매 전에 꼭 보여줘야 할 안내 체크리스트', keyword: '고객 안내 체크리스트', issue: '문의, 결제, 회원가입 직전에 필요한 답이 보이지 않는 상황' },
-{ title: '고객이 헷갈리지 않게 사이트 문구를 정리하는 방법', keyword: '사이트 문구 정리', issue: '운영자에게는 익숙하지만 고객에게는 설명이 부족한 상황' }
+{ title: '고객이 헷갈리지 않게 사이트 문구를 정리하는 방법', keyword: '사이트 문구 정리', issue: '사이트 담당자에게는 익숙하지만 고객에게는 설명이 부족한 상황' }
 ];
 return fallback[index % fallback.length];
 }
@@ -1918,9 +1918,9 @@ const target = item.target || item.normalizedTarget || 'nv0.kr';
 const theme = (() => {
 if (/환불|취소|교환|청약/.test(source)) return { label: '환불·청약철회 안내', elements: ['환불 가능 조건', '취소 접수 위치', '처리 기간', '예외 기준', '문의 경로'], buttonCopy: '환불 가능 조건 먼저 확인', risk: '환불 기준이 흐릿하면 고객은 결제보다 분쟁 가능성을 먼저 떠올립니다.', cta: '환불 기준이 페이지마다 다르다면 무료 진단으로 먼저 공백을 확인해 보세요.' };
 if (/개인정보|동의|보관|파기|privacy/.test(source)) return { label: '개인정보 안내', elements: ['수집 항목', '수집 목적', '보관 기간', '파기 기준', '문의 이메일'], buttonCopy: '수집 목적과 보관 기간 확인', risk: '개인정보 안내가 입력 화면과 떨어져 있으면 고객은 정보를 남기기 전에 멈춥니다.', cta: '개인정보 안내가 입력 화면과 멀리 떨어져 있다면 위치부터 점검해 보세요.' };
-if (/사업자|문의|고객센터|푸터|대표자/.test(source)) return { label: '사업자 정보와 문의 경로', elements: ['상호', '대표자', '사업자번호', '고객지원 이메일', '답변 기준'], buttonCopy: '운영자 정보와 문의 방법 보기', risk: '운영자 정보가 모호하면 상품보다 사이트 자체의 신뢰가 먼저 흔들립니다.', cta: '사업자 정보와 문의 경로가 흩어져 있다면 푸터와 문의 버튼 주변부터 정리하세요.' };
+if (/사업자|문의|고객센터|푸터|대표자/.test(source)) return { label: '사업자 정보와 문의 경로', elements: ['상호', '대표자', '사업자번호', '고객지원 이메일', '답변 기준'], buttonCopy: '사이트 담당자 정보와 문의 방법 보기', risk: '사이트 담당자 정보가 모호하면 상품보다 사이트 자체의 신뢰가 먼저 흔들립니다.', cta: '사업자 정보와 문의 경로가 흩어져 있다면 푸터와 문의 버튼 주변부터 정리하세요.' };
 if (/결제|구매|주문|가격/.test(source)) return { label: '결제 전 안내', elements: ['제공 범위', '가격 포함 항목', '환불 기준', '결제 후 제공 시점', '고객지원 경로'], buttonCopy: '결제 전 제공 범위 확인', risk: '가격은 보이는데 제공 범위가 안 보이면 고객은 결제 직전에 뒤로 갑니다.', cta: '결제 직전 이탈이 많다면 버튼 바로 위·아래 안내부터 무료 진단으로 확인해 보세요.' };
-return { label: '사이트 신뢰 안내', elements: ['운영자 정보', '문의 경로', '환불 기준', '개인정보 안내', '모바일 표시 상태'], buttonCopy: '필수 안내 먼저 확인', risk: '첫 방문자가 신뢰 확인에 실패하면 좋은 상품 설명도 제대로 읽히지 않습니다.', cta: '사이트 첫인상을 안정적으로 만들고 싶다면 무료 진단으로 주요 공백부터 확인하세요.' };
+return { label: '사이트 신뢰 안내', elements: ['사이트 담당자 정보', '문의 경로', '환불 기준', '개인정보 안내', '모바일 표시 상태'], buttonCopy: '필수 안내 먼저 확인', risk: '첫 방문자가 신뢰 확인에 실패하면 좋은 상품 설명도 제대로 읽히지 않습니다.', cta: '사이트 첫인상을 안정적으로 만들고 싶다면 무료 진단으로 주요 공백부터 확인하세요.' };
 })();
 const checklist = [
 `고객 행동 버튼과 같은 화면에서 ${theme.label}을 확인할 수 있는지 점검합니다.`,
@@ -1937,14 +1937,14 @@ const copyExamples = [
 const tags = [`#${String(keyword || theme.label).replace(/[\s·/]+/g, '')}`, `#${String(theme.label).replace(/[\s·/]+/g, '')}`, '#전문가포스팅', '#사이트신뢰진단', '#CTA개선', '#무료진단'].join(' ');
 return [
 `전문가 관점 요약\n${target} 사이트에서 ${theme.label}은 고객 행동 직전의 불확실성을 줄이는 전환 설계입니다. ${theme.risk} 이 글은 단순 홍보가 아니라 실제 화면을 보며 고칠 수 있는 항목을 정리한 전문가형 포스팅입니다.`,
-`현장에서 자주 생기는 문제\n운영자는 푸터나 약관에 이미 적어 두었다고 생각하지만 고객은 결제, 문의, 회원가입, 상담 신청 직전에 답을 찾습니다. 필요한 정보가 그 위치에서 보이지 않으면 상품 설명을 끝까지 읽기 전에 비교 페이지로 이동할 수 있습니다.`,
+`현장에서 자주 생기는 문제\n사이트 담당자는 푸터나 약관에 이미 적어 두었다고 생각하지만 고객은 결제, 문의, 회원가입, 상담 신청 직전에 답을 찾습니다. 필요한 정보가 그 위치에서 보이지 않으면 상품 설명을 끝까지 읽기 전에 비교 페이지로 이동할 수 있습니다.`,
 `매출과 신뢰에 영향을 주는 이유\n광고 유입이 늘수록 안내 공백은 더 빠르게 비용으로 바뀝니다. 고객이 제공 범위, 문의 경로, 예외 기준, 처리 시간을 예측할 수 있어야 무료 진단에서 상세 리포트, FixPack, Auto 정기 케어로 이어지는 결과물 선택 흐름도 자연스럽게 연결됩니다.`,
 `실무 적용 순서\n1. 결제 버튼, 문의 버튼, 가격표, 회원가입 화면을 먼저 확인합니다.\n2. ${theme.elements.join(', ')} 중 고객 질문과 직접 연결되는 항목을 버튼 주변에 배치합니다.\n3. 푸터에는 전체 기준을 두고 행동 화면에는 요약 문장을 둡니다.\n4. 모바일에서 문장이 접히거나 버튼 아래로 밀리는지 확인합니다.`,
 `문구 개선 예시\n${copyExamples.map(([before, after], idx) => `${idx + 1}. 바꾸기 전: “${before}”\n   바꾼 뒤: “${after}”`).join('\n')}`,
 `검증 체크리스트\n${checklist.map((line, idx) => `${idx + 1}. ${line}`).join('\n')}`,
-`검색 유입을 고려한 구성\n제목에는 고객이 실제로 찾을 표현을 넣고, 본문에는 문제 상황, 실무 체크리스트, 전후 문구 예시, 내부 링크를 순서대로 배치합니다. 키워드 반복보다 독자가 체류할 이유를 만드는 구조가 중요합니다.`,
+`검색 유입을 고려한 구성\n제목에는 고객이 실제로 찾을 표현을 넣고, 본문에는 문제 상황, 실무 체크리스트, 전후 문구 예시, 연결된 공개 페이지를 순서대로 배치합니다. 키워드 반복보다 독자가 체류할 이유를 만드는 구조가 중요합니다.`,
 `자주 묻는 질문\nQ1. 무료 진단만으로 충분한가요?\nA. 무료 진단은 현재 공백을 빠르게 보는 출발점입니다. 실제 반영 문구와 우선순위가 필요하면 상세 리포트나 FixPack으로 이어가면 됩니다.\n\nQ2. 자동 글이 반복처럼 보이지 않으려면요?\nA. 주제, 고객 질문, 사례, 체크리스트, CTA 위치를 함께 바꿔야 합니다. 제목만 바꾸는 방식은 피해야 합니다.`,
-`자연스러운 다음 행동\n${theme.cta} 결과를 저장하면 상세 리포트에서 수정 우선순위를 보고, FixPack으로 실제 문구안을 받아 적용할 수 있습니다. 반복 관리가 필요하면 Auto 정기 케어로 20분 주기 게시판 발행과 재진단 흐름까지 이어가세요.`,
+`자연스러운 다음 행동\n${theme.cta} 결과를 저장하면 상세 리포트에서 수정 우선순위를 보고, FixPack으로 실제 문구안을 받아 적용할 수 있습니다. 반복 관리가 필요하면 Auto 정기 케어로 정기 주기 게시판 발행과 재진단 흐름까지 이어가세요.`,
 `관련 링크\n무료 진단: /products/veridion/demo\n상품·요금: /plans\n내 사이트 관리: /portal`,
 `해시태그\n${tags}`
 ].join('\n\n');
@@ -2177,7 +2177,7 @@ const subscriptionBilling = payload.subscriptionBilling === true;
 const privacy = [
 `# 개인정보처리방침`,
 '',
-`${businessName}(이하 "회사")는 서비스 제공에 필요한 최소한의 개인정보만 처리하며, 개인정보보호 관련 법령을 준수합니다.`,
+`${businessName}(이하 "회사")는 서비스 제공에 필요한 최소한의 개인정보만 처리하며, 개인정보보호 관련 정책을 준수합니다.`,
 '',
 `## 1. 수집 항목`,
 collectsPersonalData
@@ -2186,13 +2186,13 @@ collectsPersonalData
 marketingOptIn ? `- 선택: 마케팅 수신 동의 정보` : `- 마케팅 수신 선택항목 없음`,
 '',
 `## 2. 처리 목적`,
-`- 계정 인증, 주문 처리, 결제 확인, 디지털 산출물 제공, 고객 문의 응답, 보안 감사, 법령상 의무 이행`,
+`- 계정 인증, 주문 처리, 결제 확인, 디지털 산출물 제공, 고객 문의 응답, 보안 감사, 정책상 의무 이행`,
 '',
 `## 3. 보유 기간 및 파기`,
-`- 처리 목적 달성 또는 보유기간 만료 시 지체 없이 파기합니다. 관계 법령상 보존이 필요한 주문·결제 기록은 해당 기간 동안 분리 보관합니다.`,
+`- 처리 목적 달성 또는 보유기간 만료 시 지체 없이 파기합니다. 관계 정책상 보존이 필요한 주문·결제 기록은 해당 기간 동안 분리 보관합니다.`,
 '',
 `## 4. 제3자 제공 및 처리위탁`,
-`- 법령상 의무 또는 결제·인프라 처리에 필요한 경우를 제외하고 제3자에게 제공하지 않습니다.`,
+`- 정책상 의무 또는 결제·인프라 처리에 필요한 경우를 제외하고 제3자에게 제공하지 않습니다.`,
 delegatedProcessors.length ? `- 처리위탁: ${delegatedProcessors.join(', ')}` : `- 처리위탁 내역 없음`,
 '',
 `## 5. 정보주체 권리`,
@@ -2226,9 +2226,9 @@ address ? `- 주소: ${address}` : `- 주소: 미수집`,
 subscriptionBilling ? `- 정기결제 상품은 결제 주기와 해지 방법을 별도 고지합니다.` : `- 정기결제 상품 없음`,
 '',
 `## 4. 청약철회 및 환불`,
-`- 서비스 제공 전 또는 법령상 청약철회가 가능한 경우 환불 요청을 접수합니다.`,
+`- 서비스 제공 전 또는 정책상 청약철회가 가능한 경우 환불 요청을 접수합니다.`,
 `- 이용자의 명시적 동의에 따라 디지털 산출물 제공이 시작된 뒤에는 제공 범위에 따라 청약철회가 제한될 수 있습니다.`,
-`- 표시·광고 또는 계약 내용과 다르게 제공된 경우에는 관련 법령상 권리를 안내합니다.`
+`- 표시·광고 또는 계약 내용과 다르게 제공된 경우에는 관련 정책상 권리를 안내합니다.`
 ].join('\n');
 const policy = [
 `# 환불·청약철회 정책`,
@@ -2237,12 +2237,12 @@ const policy = [
 `- 평균 출고 기간: 결제 후 ${shippingLeadDays}영업일 이내`,
 '',
 `## 환불`,
-`- 서비스 제공 전 또는 법령상 청약철회가 가능한 경우 결제일로부터 ${refundWindowDays}일 이내 환불 요청을 접수합니다.`,
+`- 서비스 제공 전 또는 정책상 청약철회가 가능한 경우 결제일로부터 ${refundWindowDays}일 이내 환불 요청을 접수합니다.`,
 `- 이용자의 명시적 동의에 따라 PDF 리포트·템플릿·수정안 등 디지털 산출물 제공이 시작된 경우 제공 범위에 따라 환불이 제한될 수 있습니다.`,
-`- 표시·광고 또는 계약 내용과 다르게 제공된 경우에는 관계 법령상 청약철회·환불 권리를 안내하고 처리합니다.`,
+`- 표시·광고 또는 계약 내용과 다르게 제공된 경우에는 관계 정책상 청약철회·환불 권리를 안내하고 처리합니다.`,
 '',
 `## 교환`,
-`- 교환 가능 여부와 비용은 상품 특성 및 관련 법령에 따라 안내합니다.`,
+`- 교환 가능 여부와 비용은 상품 특성 및 관련 정책에 따라 안내합니다.`,
 '',
 `## 고객센터`,
 `- 이메일: ${contactEmail}`,
@@ -2353,7 +2353,7 @@ attemptedPageCount: externalPages.length,
 manualReviewCount: Number(payload?.manualReviewCount || 0),
 scannedPages: externalPages,
 limitations: payload?.limitations || ['외부 제공자 결과 기준이며 법률 판단 확정값이 아닙니다.'],
-disclaimer: payload?.disclaimer || '외부 스캔 결과도 법률 자문이나 성과 보장을 의미하지 않습니다.'
+disclaimer: payload?.disclaimer || '외부 진단 결과도 법률 자문이나 성과 보장을 의미하지 않습니다.'
 };
 const scoreModel = payload?.scoreModel || buildScoreModel({ riskScore, findings: detailFindings, evidenceSummary });
 const accuracyProfile = payload?.accuracyProfile || buildDiagnosisAccuracyProfile({ ...payload, fetched: payload?.fetched !== false, detailFindings, evidenceSummary, scannedPages: externalPages, riskScore });
@@ -2365,7 +2365,7 @@ requestId: payload?.requestId || uid('scan'),
 provider: 'external_http',
 target: String(input).trim(),
 normalizedTarget: payload?.normalizedTarget || String(input).trim(),
-summary: payload?.summary || `${String(input).trim()} 외부 스캔이 완료되었습니다.`,
+summary: payload?.summary || `${String(input).trim()} 외부 진단이 완료되었습니다.`,
 fetched: payload?.fetched !== false,
 fetchStatus: Number(payload?.fetchStatus || 200),
 fetchError: payload?.fetchError || null,
@@ -2648,7 +2648,7 @@ function buildFixCopyFromScan(scan) {
 const findings = Array.isArray(scan?.detailFindings) ? scan.detailFindings.slice(0, 5) : [];
 if (!findings.length) return [
 { title: '푸터 사업자 정보', before: '사업자 정보 미노출 또는 위치 불명확', after: `${BUSINESS_PROFILE.tradeName} · 대표 ${BUSINESS_PROFILE.representative} · 지원 ${BUSINESS_PROFILE.contactEmail}` },
-{ title: '환불 안내', before: '환불 가능 기간과 제한 조건 미기재', after: '환불·교환 기준은 결제 전 고지하며, 상품 특성 및 관련 법령에 따라 제한될 수 있습니다.' },
+{ title: '환불 안내', before: '환불 가능 기간과 제한 조건 미기재', after: '환불·교환 기준은 결제 전 고지하며, 상품 특성 및 관련 정책에 따라 제한될 수 있습니다.' },
 { title: '개인정보 안내', before: '수집 목적과 보유 기간 불명확', after: '문의 응대 및 서비스 제공을 위해 필요한 최소한의 개인정보만 수집·이용합니다.' }
 ];
 return findings.map(item => ({ title: item.title, before: item.evidence || '페이지 내 근거 문구 확인 필요', after: item.recommendation || '필수 고지 문구를 명확한 위치에 추가하세요.', priority: item.priority || 'P2' }));
@@ -3185,7 +3185,7 @@ if (!SCAN_PROVIDER_FALLBACK) throw error;
 const url = safeUrl(String(input).trim());
 if (url && isBlockedTargetUrl(url)) throw new Error('blocked target url');
 const fallback = await buildBuiltinScanResultWithFetchBudget(input, startedAt, 'builtin_fallback', error.message);
-fallback.summary = `${String(input).trim()} 외부 스캔 실패로 내장 엔진으로 분석했습니다.`;
+fallback.summary = `${String(input).trim()} 외부 진단 실패로 내장 엔진으로 분석했습니다.`;
 return await enhanceScanWithAiReview(fallback);
 }
 }
@@ -3287,7 +3287,7 @@ const checks = [
 { key: 'smtp_configured', ok: !isPlaceholderConfigValue(process.env.NV0_SMTP_URL) || !PLATFORM.commercial, label: '거래성 이메일 SMTP 설정' },
 { key: 'strict_webhook', ok: PAYMENT_PROVIDER !== 'portone_v2' || PORTONE_WEBHOOK_VERIFY_MODE === 'strict' || !PLATFORM.commercial, label: PAYMENT_PROVIDER === 'portone_v2' ? 'PortOne 웹훅 strict 검증' : '결제 공급자 비활성/비PortOne 상태' },
 { key: 'admin_ip_allowlist', ok: ADMIN_IP_ALLOWLIST.length > 0 || !PLATFORM.commercial, label: '관리자 IP allowlist 설정' },
-{ key: 'runtime_clean_enough', ok: (db.pendingJobs || []).length === 0 && (db.emailOutbox || []).filter(item => item.status === 'sending').length === 0, label: '배포 직전 런타임 미완료 작업 없음' },
+{ key: 'runtime_clean_enough', ok: (db.pendingJobs || []).length === 0 && (db.emailOutbox || []).filter(item => item.status === 'sending').length === 0, label: '배포 직전 서비스 환경 미완료 작업 없음' },
 { key: 'unresolved_refunds_empty', ok: (db.refundRequests || []).filter(item => ['requested','reviewing'].includes(item.status)).length === 0, label: '미처리 환불 요청 없음' },
 { key: 'failed_email_reviewed', ok: (db.emailOutbox || []).filter(item => item.status === 'failed').length === 0, label: '실패 이메일 없음' }
 ];

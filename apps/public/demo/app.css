@@ -1,3 +1,1 @@
-/* Phase225 redirect page fallback styling. The primary /demo route redirects to /products/veridion/demo, but this keeps the legacy page readable if refresh is disabled. */
-body{min-height:100vh}
-.redirect-note{max-width:720px;margin:8rem auto;padding:2rem}
+/* Retired by PHASE237 and PHASE238 visual-poster redesign. Page-specific visual overrides are intentionally empty. Use /shared/nv0-clean-slate-20260512.css only. */

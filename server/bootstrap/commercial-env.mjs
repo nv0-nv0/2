@@ -46,7 +46,7 @@ export function validateCommercialEnv(env = process.env, options = {}) {
   const missing = Array.from(new Set(required)).filter((name) => !String(env[name] || '').trim());
   const warnings = [];
   if (mode === 'commercial' && persistenceMode === 'json') warnings.push('commercial-json-persistence: 운영 매출 데이터는 postgres_primary 권장');
-  if (mode === 'commercial' && storageMode === 'local_fs') warnings.push('commercial-local-storage: 산출물/백업은 s3 권장');
+  if (mode === 'commercial' && storageMode === 'local_fs') warnings.push('commercial-local-storage: 산출물/보관본은 s3 권장');
   if (paymentProvider !== 'portone_v2') warnings.push('payment-provider-not-live: 실결제 검증은 portone_v2 설정 필요');
 
   return {

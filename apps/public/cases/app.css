@@ -1,1 +1,1 @@
-.cases-grid,.nv0-grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.cases-grid .nv0-panel{display:grid;gap:12px}@media(max-width:860px){.cases-grid,.nv0-grid-3{grid-template-columns:1fr}}
+/* Retired by PHASE237 and PHASE238 visual-poster redesign. Page-specific visual overrides are intentionally empty. Use /shared/nv0-clean-slate-20260512.css only. */

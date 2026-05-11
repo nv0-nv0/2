@@ -1,10 +1,1 @@
-.document-preview h3{font-size:22px;line-height:1.35;}
-#docForm{display:grid;grid-template-columns:1fr;gap:16px;margin-top:18px;}
-#docForm label{display:grid;gap:8px;font-weight:850;color:#E2E8F0;line-height:1.45;}
-#docForm input,#docForm textarea{min-height:50px;background:#0B1220;color:#fff;border:1px solid rgba(51,65,85,.9);border-radius:14px;padding:13px 15px;font:inherit;line-height:1.6;}
-#docForm textarea{resize:vertical;min-height:280px;white-space:pre-wrap;}
-#docForm .wide,#docForm .notice,#docForm .checkline,#docForm button{grid-column:1/-1;}
-.form-actions,.preview-toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:8px;}
-.document-preview pre{white-space:pre-wrap;word-break:keep-all;overflow-wrap:anywhere;max-height:none;background:#0B1220;border:1px solid rgba(51,65,85,.9);border-radius:18px;padding:18px;line-height:1.62;color:#E5E7EB;}
-.nv0-doc-item,.nv0-summary-box{line-height:1.6;}
-@media(max-width:760px){#docForm{grid-template-columns:1fr;}.form-actions,.preview-toolbar{align-items:stretch}.form-actions button,.preview-toolbar button{width:100%;}}
+/* Retired by PHASE237 and PHASE238 visual-poster redesign. Page-specific visual overrides are intentionally empty. Use /shared/nv0-clean-slate-20260512.css only. */

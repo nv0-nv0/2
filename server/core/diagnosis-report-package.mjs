@@ -42,7 +42,7 @@ export function buildPublicDiagnosisPackage(result = {}, options = {}) {
     reportExample: { majorIssues: topIssues },
     fixPlan: (detail.filter((item) => item.autoFixEligible).length ? detail.filter((item) => item.autoFixEligible) : detail).slice(0, 5).map((item, index) => ({ step: index + 1, target: item.title, action: item.recommendation })),
     deliverableBundle: { requiredSections: ['확인 범위', '확인 URL', '발견 근거', '신뢰도', '한계', '수동 검토 필요', '개선 순서', '재점검 기준'], faq: ['이 결과는 법률 자문인가요?', '결제 후 무엇을 받나요?', '바로 적용 가능한가요?'] },
-    disclaimer: '실제 법령 위반 여부와 공식 정책·가격·일정은 공식 원문 또는 운영 자료 확인이 필요합니다.'
+    disclaimer: '실제 정책 위반 여부와 공식 정책·가격·일정은 공식 원문 또는 운영 자료 확인이 필요합니다.'
   }, result);
   return {
     engine: 'NV0 Evidence-first Preliminary Check Engine',
@@ -89,10 +89,10 @@ export function buildPublicDiagnosisPackage(result = {}, options = {}) {
       majorIssues: topIssues,
       expectedRisks: (expectedRisks.length ? expectedRisks : ['필수 고지 확인 지연으로 인한 구매 전 이탈 가능성','고객지원·정책 안내 불명확으로 인한 문의 증가 가능성']).slice(0, 4),
       improvementSupport: ['개인정보 처리방침 구조 정리','이용약관 구조 보완','환불 및 교환 정책 기준 정리','운영 정책 안내 문구 개선'],
-      disclaimer: '실제 법령 위반 여부와 공식 정책·가격·일정은 공식 원문 또는 운영 자료 확인이 필요합니다.'
+      disclaimer: '실제 정책 위반 여부와 공식 정책·가격·일정은 공식 원문 또는 운영 자료 확인이 필요합니다.'
     },
     fixPlan: detail.filter((item) => item.autoFixEligible).slice(0, 5).map((item, index) => ({ step: index + 1, target: item.title, action: item.recommendation })),
-    nextCtas: [{ label: '무료 결과 저장', href: '/portal' }, { label: '위기도 상세 리포트 결제', href: `/checkout?plan=${conversionUrgency.recommendedPlan}` }, { label: '게시판 자동 발행 확인', href: '/board' }],
+    nextCtas: [{ label: '무료 결과 저장', href: '/portal' }, { label: '위기도 상세 리포트 결제', href: `/checkout?plan=${conversionUrgency.recommendedPlan}` }, { label: '게시판 콘텐츠 업데이트 확인', href: '/board' }],
     automation: { boardName: '게시판', enabled: true, intervalMs: ctaIntervalMs, intervalMinutes: Math.round(ctaIntervalMs / 60000), variants: ['진단 요약형','위험 경고형','비교형','개선 전후형','체크리스트형','재진단 유도형'] }
   };
 }

@@ -85,7 +85,7 @@ export function buildFulfillmentChecklist(order = {}, asset = null) {
     { key: 'asset_generated', label: '산출물 생성', ok: order.status === 'fulfilled' || !!order.assetId || !!order.reportPath || !!asset },
     { key: 'download_authorized', label: '다운로드 권한 토큰', ok: !!(order.accessToken || order.downloadToken) },
     { key: 'asset_structured', label: '산출물 구조화 확인', ok: hasStructuredAsset },
-    { key: 'report_quality_gate', label: '리포트 품질 게이트', ok: !asset || reportQualityScore === 0 || reportQualityScore >= 75 },
+    { key: 'report_quality_gate', label: '리포트 검수 기준', ok: !asset || reportQualityScore === 0 || reportQualityScore >= 75 },
     { key: 'fulfillment_quality_gate', label: '납품 가능성 게이트', ok: !asset || fulfillmentQualityScore === 0 || fulfillmentQualityScore >= 75 }
   ];
   return { ok: items.every((item) => item.ok), items, quality: { reportQualityScore, fulfillmentQualityScore } };

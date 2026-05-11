@@ -66,11 +66,11 @@ async function runAction(endpoint, label, pick, options = {}) {
   }
 }
 
-document.getElementById('backupBtn')?.addEventListener('click', () => runAction('/api/admin/backups/run', '백업', payload => payload.backup?.dbTarget || '백업 결과 경로를 확인하세요.'));
-document.getElementById('opsReportBtn')?.addEventListener('click', () => runAction('/api/admin/ops-report/run', '운영 리포트 생성', payload => payload.snapshot?.filePath || '운영 리포트 결과를 확인하세요.'));
-document.getElementById('selfTestBtn')?.addEventListener('click', () => runAction('/api/admin/ops/self-test', '운영 자가검수', payload => payload.probes?.emailOutboxId ? `자가검수 큐 생성: ${payload.probes.emailOutboxId}` : '자가검수 결과를 확인하세요.'));
-document.getElementById('emailDryRunBtn')?.addEventListener('click', () => runAction('/api/admin/email-outbox/process', '이메일 큐 미리보기', payload => `미리보기 ${payload.result?.processed || 0}건`, { body: { dryRun: true, limit: 20 } }));
-document.getElementById('emailLiveBtn')?.addEventListener('click', () => runAction('/api/admin/email-outbox/process', 'SMTP 큐 실처리', payload => `큐 처리 ${payload.result?.processed || 0}건`, { body: { dryRun: false, limit: 20 } }));
-document.getElementById('pruneBtn')?.addEventListener('click', () => runAction('/api/admin/maintenance/prune', '런타임 정리', payload => JSON.stringify(payload.pruned || {})));
+document.getElementById('backupBtn')?.addEventListener('click', () => runAction('/api/admin/backups/run', '보관본', payload => payload.backup?.dbTarget || '보관본 결과 경로를 확인하세요.'));
+document.getElementById('opsReportBtn')?.addEventListener('click', () => runAction('/api/admin/ops-report/run', '점검 리포트 생성', payload => payload.snapshot?.filePath || '점검 리포트 결과를 확인하세요.'));
+document.getElementById('selfTestBtn')?.addEventListener('click', () => runAction('/api/admin/ops/self-test', '운영 자가 점검', payload => payload.probes?.emailOutboxId ? `자가 점검 큐 생성: ${payload.probes.emailOutboxId}` : '자가 점검 결과를 확인하세요.'));
+document.getElementById('emailDryRunBtn')?.addEventListener('click', () => runAction('/api/admin/email-outbox/process', '메일 처리 미리보기', payload => `미리보기 ${payload.result?.processed || 0}건`, { body: { dryRun: true, limit: 20 } }));
+document.getElementById('emailLiveBtn')?.addEventListener('click', () => runAction('/api/admin/email-outbox/process', '메일 실처리', payload => `큐 처리 ${payload.result?.processed || 0}건`, { body: { dryRun: false, limit: 20 } }));
+document.getElementById('pruneBtn')?.addEventListener('click', () => runAction('/api/admin/maintenance/prune', '서비스 환경 정리', payload => JSON.stringify(payload.pruned || {})));
 
 load();

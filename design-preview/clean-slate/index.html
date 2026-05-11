@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>NV0 Visual Poster Redesign Preview · PHASE238</title>
+  <link href="../../shared/nv0-clean-slate-20260512.css" rel="stylesheet"/>
+</head>
+<body class="nv0-clean-slate">
+<header class="nv0-topbar"><div class="nv0-topbar-inner"><a class="nv0-brand" href="#"><span class="nv0-brand-mark">NV</span><span>NV0 / Veridion</span></a><nav class="nv0-nav"><a href="#public">공개 페이지</a><a href="#auth">인증</a><a href="#admin">관리자</a><a href="#system">디자인 시스템</a></nav><div class="nv0-top-actions"><a class="nv0-icon-link" href="#reference">기준 이미지</a><a class="cta" href="#pages">전체 시안 보기</a></div></div></header>
+<main class="nv0-shell">
+  <section class="nv0-hero" id="reference">
+    <div class="nv0-hero-copy">
+      <span class="nv0-kicker">PHASE238 Visual Poster Redesign</span>
+      <h1>생성 이미지 기준으로 전체 페이지를 새 디자인으로 이식</h1>
+      <p class="nv0-subcopy">기존 누적 UI는 덮어쓰지 않고 폐기했습니다. 흰 배경, 선명한 블루, 카드형 화면, 인증·검색·상세·관리자 페이지별 대시보드 구성을 단일 CSS 시스템으로 통합했습니다.</p>
+      <div class="nv0-trust-row"><div class="nv0-trust-chip"><span class="nv0-icon-dot">✓</span><span>기존 page app.css 비활성</span></div><div class="nv0-trust-chip"><span class="nv0-icon-dot">✓</span><span>단일 전역 CSS</span></div><div class="nv0-trust-chip"><span class="nv0-icon-dot">✓</span><span>24개 앱 페이지 적용</span></div></div>
+    </div>
+    <aside class="nv0-dashboard-preview"><img src="nv0-visual-reference-20260512.png" alt="NV0 전체 페이지 최적화 리디자인 기준 이미지"/></aside>
+  </section>
+
+  <section class="visual-reference-board" id="system">
+    <aside class="visual-reference-sidebar card stack">
+      <span class="pill brand">Design System</span>
+      <h2>색상·타입·컴포넌트</h2>
+      <p>생성 이미지의 좌측 스타일가이드 영역을 실제 토큰으로 정리했습니다.</p>
+      <div class="visual-swatch-grid" aria-label="색상 팔레트">
+        <span class="visual-swatch" style="background:#005dff"></span><span class="visual-swatch" style="background:#20c997"></span><span class="visual-swatch" style="background:#ff9f1c"></span><span class="visual-swatch" style="background:#ff4d4f"></span><span class="visual-swatch" style="background:#07111f"></span><span class="visual-swatch" style="background:#617087"></span><span class="visual-swatch" style="background:#f7fbff"></span>
+      </div>
+      <div class="grid"><button class="btn primary">Primary</button><button class="btn secondary">Secondary</button></div>
+      <div class="grid cols-2"><span class="pill brand">New</span><span class="pill green">Verified</span><span class="pill gold">Premium</span><span class="pill red">Hot</span></div>
+    </aside>
+    <section class="visual-page-wall" id="pages">
+      <div class="section-title"><div><span class="pill brand">전체 페이지 맵</span><h2>공개·인증·관리자 페이지를 같은 시각 언어로 통일</h2><p>각 미니 화면은 실제 페이지에 적용된 레이아웃 패턴입니다.</p></div></div>
+      <div class="visual-page-row" id="public">
+        <article class="visual-mini-page"><span class="pill brand">01. 메인</span><div class="visual-mini-hero"></div><div class="visual-mini-bar"></div><div class="visual-mini-list"><span></span><span></span><span></span></div></article>
+        <article class="visual-mini-page"><span class="pill brand">02. 프로젝트 목록</span><div class="visual-mini-list"><span></span><span></span><span></span><span></span></div></article>
+        <article class="visual-mini-page"><span class="pill brand">03. 상세/결과</span><div class="visual-mini-media"></div><div class="visual-mini-list"><span></span><span></span></div></article>
+        <article class="visual-mini-page"><span class="pill brand">04. 검색/보드</span><div class="visual-mini-bar"></div><div class="visual-mini-list"><span></span><span></span><span></span><span></span></div></article>
+      </div>
+      <div class="visual-page-row" id="auth">
+        <article class="visual-mini-page"><span class="pill green">05. 로그인</span><div class="visual-mini-list"><span></span><span></span></div><button class="btn primary">로그인</button></article>
+        <article class="visual-mini-page"><span class="pill green">06. 회원가입</span><div class="visual-mini-list"><span></span><span></span><span></span></div><button class="btn primary">가입하기</button></article>
+        <article class="visual-mini-page"><span class="pill green">07. 비밀번호 찾기</span><div class="visual-mini-hero"></div><button class="btn primary">이메일 보내기</button></article>
+        <article class="visual-mini-page"><span class="pill green">08. 이메일 인증</span><div class="visual-mini-media"></div><div class="visual-mini-bar"></div></article>
+      </div>
+      <div class="visual-page-row" id="admin">
+        <article class="visual-mini-page"><span class="pill gold">09. 관리자 대시보드</span><div class="visual-mini-list"><span></span><span></span><span></span></div></article>
+        <article class="visual-mini-page"><span class="pill gold">10. 프로젝트 관리</span><div class="visual-mini-bar"></div><div class="visual-mini-list"><span></span><span></span><span></span></div></article>
+        <article class="visual-mini-page"><span class="pill gold">11. 사용자 관리</span><div class="visual-mini-list"><span></span><span></span><span></span><span></span></div></article>
+        <article class="visual-mini-page"><span class="pill gold">12. 통계 분석</span><div class="visual-mini-media"></div><div class="visual-mini-bar"></div></article>
+      </div>
+    </section>
+  </section>
+
+  <section class="nv0-section nv0-kpi-grid">
+    <article class="nv0-kpi-card blue"><div class="stat-label">적용 페이지</div><strong>24</strong><div>공개·관리자 앱</div></article>
+    <article class="nv0-kpi-card green"><div class="stat-label">전역 CSS</div><strong>1</strong><div>단일 디자인 시스템</div></article>
+    <article class="nv0-kpi-card orange"><div class="stat-label">Page CSS</div><strong>0</strong><div>활성 오버라이드 없음</div></article>
+    <article class="nv0-kpi-card red"><div class="stat-label">검증</div><strong>PASS</strong><div>phase238 최종 게이트</div></article>
+  </section>
+</main>
+</body>
+</html>

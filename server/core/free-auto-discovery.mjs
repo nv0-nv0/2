@@ -169,7 +169,7 @@ export async function discoverTargetAutomationLinks(target, primaryFetch = {}, o
     resources,
     capabilities: [
       'URL 자동 보정',
-      '홈 내부 링크 자동 수집',
+      '홈 연결된 공개 페이지 자동 수집',
       'robots.txt sitemap 자동 탐색',
       'sitemap.xml 주요 URL 자동 선별',
       '정책·결제·문의 후보 페이지 자동 우선순위화',

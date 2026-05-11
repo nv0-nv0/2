@@ -47,7 +47,7 @@ function requiredConsentReady() {
 function providerLabel(provider) {
   if (provider === 'portone_v2') return '온라인 안전결제';
   if (provider === 'external_http') return '온라인 결제';
-  if (provider === 'demo') return '테스트 결제';
+  if (provider === 'demo') return '온라인 주문';
   return provider || '결제 상태 확인 중';
 }
 function priceLabel(offer) {
@@ -137,7 +137,7 @@ function renderOrder(order, paymentSession) {
       <div>대상 사이트: ${escapeHtml(order.domain || order.siteId || '미연결')}</div>
       <div>결제 방식: ${escapeHtml(providerLabel(provider))}</div>
       <div>결제 완료 후 결과물 확인 안내가 이어집니다.</div>
-      <div class="phase220-gate-strip"><span>근거 확인</span><span>품질 게이트</span><span>재점검 기준</span></div>
+      <div class="phase220-gate-strip"><span>근거 확인</span><span>검수 기준</span><span>재점검 기준</span></div>
       ${paymentHint}
       ${redirectUrl ? `<a href="${escapeAttr(redirectUrl)}" target="_blank" rel="noreferrer">결제 완료 후 이동 페이지</a>` : ''}
     </div>`;
@@ -216,7 +216,7 @@ async function createSession() {
     }
     return;
   }
-  state.textContent = data.providerMode === 'demo' ? '테스트 결제 주문이 생성되었습니다. 결제 완료 확인 버튼을 눌러 흐름을 검증하세요.' : '주문 정보가 확인되었습니다. 온라인 결제를 진행해 주세요.';
+  state.textContent = data.providerMode === 'demo' ? '주문 정보가 생성되었습니다. 결제 완료 확인 버튼을 눌러 결과물 안내를 확인하세요.' : '주문 정보가 확인되었습니다. 온라인 결제를 진행해 주세요.';
 }
 async function completePayment() {
   if (isCompletingPayment) return;

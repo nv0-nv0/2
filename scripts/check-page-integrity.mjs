@@ -36,8 +36,8 @@ for (const entry of mappedRoutes) {
       const abs = path.join(dir, file);
       await fs.access(abs);
     }
-    if (!html.includes('/shared/base.css')) errors.push({ route: entry.route, slug: entry.slug, error: 'index.html missing /shared/base.css' });
-    if (!html.includes(`/apps/${entry.area}/${entry.slug}/app.css`)) errors.push({ route: entry.route, slug: entry.slug, error: 'index.html missing app.css reference' });
+    if (!html.includes('/shared/nv0-clean-slate-20260512.css')) errors.push({ route: entry.route, slug: entry.slug, error: 'index.html missing /shared/nv0-clean-slate-20260512.css' });
+    if (html.includes('/shared/base.css') || html.includes(`/apps/${entry.area}/${entry.slug}/app.css`)) errors.push({ route: entry.route, slug: entry.slug, error: 'retired css reference detected' });
     if (!html.includes(`/apps/${entry.area}/${entry.slug}/app.js`)) errors.push({ route: entry.route, slug: entry.slug, error: 'index.html missing app.js reference' });
     if (/\son[a-z]+\s*=/.test(html)) errors.push({ route: entry.route, slug: entry.slug, error: 'inline event handler detected' });
     if (/style="/.test(html)) errors.push({ route: entry.route, slug: entry.slug, error: 'inline style attribute detected' });
