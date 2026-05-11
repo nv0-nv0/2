@@ -369,3 +369,15 @@ Phase229는 무료 데모에서 확인한 위기도 점수와 문제 영역·요
 ```bash
 npm run phase229:final
 ```
+
+## Phase231 밝고 산뜻한 전문 SaaS 시인성 전면 교체
+
+Phase231은 Phase230의 어두운 위기감 팔레트를 마지막 시각 권한층에서 덮어, 전체 공개 페이지를 밝고 산뜻한 전문 SaaS 이미지로 전환합니다.
+
+- 최종 CSS: `shared/phase231-bright-professional-clarity.css`
+- 적용 범위: `apps/public/**/index.html` 17개 공개 페이지
+- 디자인 기준: white surface, sky blue primary, mint accent, navy text, warm risk panel
+- 시인성 보완 대상: 총 54개
+- 실행 검증: `npm run phase231:final`
+
+가격, 데모, 유료 결과물 구조는 Phase229~Phase230 계약을 유지합니다. Phase231은 색상·대비·카드·CTA·폼·푸터·모바일 시인성을 전면 교체하는 시각 품질 잠금층입니다.

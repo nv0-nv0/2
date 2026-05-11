@@ -1,6 +1,6 @@
 {
   "name": "nv0-veridion-cleanroom",
-  "version": "1.0.0-commercial-final-phase230-visual-clarity-conversion",
+  "version": "1.0.0-commercial-final-phase231-bright-professional-visibility",
   "private": true,
   "type": "module",
   "scripts": {
@@ -293,6 +293,9 @@
     "phase229:final": "npm run check:syntax && npm run test:phase229 && npm run validate:phase229 && npm run test:phase228 && npm run validate:phase228 && npm run test:routes && npm run test:e2e",
     "test:phase230": "node tests/phase230-visual-clarity-conversion.mjs",
     "validate:phase230": "node scripts/validate-phase230-visual-clarity-conversion.mjs",
-    "phase230:final": "npm run check:syntax && npm run test:phase230 && npm run validate:phase230 && npm run test:routes && npm run test:e2e"
+    "phase230:final": "npm run check:syntax && npm run test:phase230 && npm run validate:phase230 && npm run test:routes && npm run test:e2e",
+    "test:phase231": "node tests/phase231-bright-professional-visibility.mjs",
+    "validate:phase231": "node scripts/validate-phase231-bright-professional-visibility.mjs",
+    "phase231:final": "npm run check:syntax && npm run test:phase231 && npm run validate:phase231 && npm run test:routes && npm run test:e2e"
   }
 }
