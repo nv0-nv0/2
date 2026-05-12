@@ -1,4 +1,5 @@
 import { escapeHtml, renderList } from '/shared/html.js';
+
 const state = document.getElementById('boardState');
 const list = document.getElementById('boardList');
 const pager = document.getElementById('boardPagination');
@@ -6,301 +7,167 @@ const activity = document.getElementById('boardActivity');
 const statNodes = Array.from(document.querySelectorAll('[data-board-stat]'));
 const tabs = Array.from(document.querySelectorAll('[data-filter]'));
 const topicButtons = Array.from(document.querySelectorAll('[data-topic]'));
-let posts = [];
+
 let filter = new URLSearchParams(location.search).get('filter') || 'all';
 let topic = new URLSearchParams(location.search).get('topic') || '';
-let page = Math.max(1, Number(new URLSearchParams(location.search).get('page') || '1'));
-let pagination = { page: 1, pageSize: 5, total: 0, totalPages: 1 };
-let stats = { total: 0, cta: 0, notice: 0, case: 0, recent7d: 0, filteredTotal: 0 };
+let page = Number(new URLSearchParams(location.search).get('page') || 1) || 1;
+let posts = [];
+let stats = { total: 6, seo: 2, content: 2, technical: 1, recent7d: 6, filteredTotal: 6 };
+let pagination = { page: 1, pageSize: 6, total: 6, totalPages: 1 };
 let activities = [];
-let publishIntervalMinutes = 20;
 
-function buildFallbackBody(theme, problem, product) {
-  return `전문가 관점 요약
-처음 방문한 고객은 상품 설명보다 먼저 “이 사이트에서 문의하거나 결제해도 되는가”를 판단합니다. ${theme}은 단순 안내문이 아니라 고객 행동 직전의 불확실성을 줄이는 전환 설계 요소입니다. 이 글은 ${problem} 같은 상황을 기준으로 사이트 담당자가 바로 확인할 수 있는 화면 위치, 문구 방향, 연결된 공개 페이지 흐름을 전문가형 포스팅 구조로 정리합니다.
-
-현장에서 자주 생기는 문제
-${problem} 사이트 담당자는 정책 문서나 푸터에 이미 내용을 적어 두었다고 생각하지만, 고객은 결제 버튼, 문의 버튼, 회원가입 화면, 상담 신청 화면에서 바로 답을 찾습니다. 필요한 답이 고객 행동과 떨어져 있으면 상품력이 좋아도 마지막 단계에서 멈출 수 있습니다.
-
-매출과 신뢰에 영향을 주는 이유
-광고 유입이 많아질수록 안내 공백은 더 빠르게 비용으로 바뀝니다. 고객은 불편하다고 말하기보다 조용히 다른 선택지로 이동합니다. ${theme}을 버튼 주변에 배치하면 고객은 제공 범위, 문의 경로, 예외 조건, 처리 시간을 예측할 수 있습니다. 예측 가능성이 높아질수록 무료 진단에서 상세 리포트, FixPack, 정기 관리 케어로 이어지는 결과물 선택 흐름도 자연스러워집니다.
-
-실무 적용 순서
-1. 결제 버튼, 문의 버튼, 가격표, 회원가입 화면, 신청 완료 화면을 먼저 확인합니다.
-2. 고객이 그 순간 궁금해할 질문 3개를 적습니다.
-3. 푸터와 정책 문서에는 전체 기준을 두고, 행동 화면에는 요약 문장을 배치합니다.
-4. 모바일 화면에서 문장과 버튼이 동시에 보이는지 확인합니다.
-5. 수정 후 같은 URL로 재진단해 이전 상태와 달라진 항목을 비교합니다.
-
-문구 개선 예시
-1. 바꾸기 전: “문의하기”
-   바꾼 뒤: “문의하기 · 평일 기준 1영업일 안에 답변합니다”
-2. 바꾸기 전: “무료”
-   바꾼 뒤: “무료 진단 · 요약 결과까지 바로 확인”
-3. 바꾸기 전: “서비스 신청”
-   바꾼 뒤: “제공 범위와 환불 기준 확인 후 신청하기”
-4. 바꾸기 전: “자세히 보기”
-   바꾼 뒤: “결제 전 제공 범위와 문의 경로 확인”
-5. 바꾸기 전: “개인정보 동의”
-   바꾼 뒤: “문의 답변을 위한 수집 목적과 보관 기간 확인”
-
-검증 체크리스트
-1. ${theme}이 버튼과 같은 화면 안에 있는지 확인합니다.
-2. 약관, 푸터, 상세페이지, 결제 화면의 표현이 서로 충돌하지 않는지 봅니다.
-3. 예외 조건이 작은 글씨나 접힌 영역에만 숨어 있지 않은지 확인합니다.
-4. 모바일에서 링크와 버튼을 손쉽게 누를 수 있는지 확인합니다.
-5. 수정 후 무료 진단 또는 재진단으로 남은 공백을 비교합니다.
-
-검색 유입을 고려한 구성
-전문가처럼 보이는 게시글은 키워드만 반복하지 않습니다. 제목에는 고객이 실제로 찾는 표현을 넣고, 첫 문단에는 문제 상황과 해결 방향을 함께 제시합니다. 중간에는 체크리스트와 전후 문구 예시를 넣어 체류 시간을 확보하고, 마지막에는 무료 진단, 상품·요금, 내 사이트 관리처럼 행동 단계를 명확히 연결합니다.
-
-자주 묻는 질문
-Q1. 이런 글이 꼭 판매 글이어야 하나요?
-A. 아닙니다. 먼저 문제를 정확히 설명하고, 마지막에 해결 흐름을 자연스럽게 안내하는 편이 더 전문적으로 보입니다.
-
-Q2. 무료 진단만으로 충분한가요?
-A. 무료 진단은 현재 공백을 빠르게 보는 출발점입니다. 실제 반영 문구, 페이지별 우선순위, 재점검 기준이 필요하면 ${product}으로 이어가는 것이 좋습니다.
-
-Q3. 주제가 반복되면 중복으로 보이지 않나요?
-A. 제목만 바꾸면 중복처럼 보입니다. 그래서 주제, 고객 질문, 사례, 체크리스트, FAQ, 버튼 위치를 함께 바꿔야 합니다.
-
-자연스러운 다음 행동
-이 글은 법률 판단이나 매출 상승을 보장하지 않습니다. 다만 고객이 어디에서 멈추는지 확인하고 판매 흐름을 정리하는 실무 기준으로 사용할 수 있습니다. 먼저 무료 진단으로 안내 공백을 확인하고, 결과를 저장한 뒤 상세 리포트에서 근거와 우선순위를 확인하세요. 문구 교체가 필요하면 FixPack, 반복 관리가 필요하면 정기 관리 케어로 연결하면 됩니다. 콘텐츠는 고객 질문과 사례 중심으로 계속 보완할 수 있습니다.`;
-}
-
-const FALLBACK_POSTS = [
+const fallbackPosts = [
   {
-    id: 'fallback-cta-checkout-friction-4000',
-    boardType: 'cta',
-    type: 'cta',
-    title: '결제 버튼 앞에서 고객이 멈추는 이유와 전환 개선 구조',
-    primaryKeyword: '결제 전 안내',
-    tags: ['결제전안내', '환불정책', '구매전환', '무료진단', '사이트점검'],
-    body: buildFallbackBody('결제 전 안내와 환불 기준', '가격과 혜택은 잘 보이는데 제공 범위, 환불 가능 조건, 문의 경로가 버튼 가까이에 없다면 고객은 마지막 순간에 결정을 미룹니다.', '상세 리포트 또는 FixPack'),
-    summary: '결제 전 안내를 전문가형 문제 진단, 문구 예시, 검증 체크리스트로 정리했습니다.',
-    visibility: 'public',
-    createdAt: '2026-05-08T00:00:00+09:00'
+    id: 'column-content-structure',
+    boardType: 'seo',
+    title: '검색 노출을 높이는 콘텐츠 구조 설계 방법',
+    primaryKeyword: '콘텐츠 구조 설계',
+    createdAt: '2026-05-12',
+    summary: '검색 의도 파악부터 제목, 본문, 내부 링크까지 검색 로봇과 독자가 함께 이해할 수 있는 구조를 정리합니다.',
+    tags: ['검색의도', '콘텐츠구조', '내부링크'],
+    body: '전문가 관점 요약\n콘텐츠는 많이 쓰는 것보다 읽히는 순서가 중요합니다. 검색 로봇은 제목, 소제목, 문단 흐름, 내부 링크를 통해 페이지 주제를 이해하고, 사람은 첫 화면에서 자신에게 필요한 답이 있는지 판단합니다.\n\n실무 적용 순서\n먼저 한 문장으로 페이지의 목적을 정합니다. 다음으로 검색 의도에 맞는 질문을 소제목으로 배치하고, 각 문단은 한 가지 답만 담도록 나눕니다. 마지막에는 관련 페이지와 다음 행동 버튼을 자연스럽게 연결합니다.\n\n검증 체크리스트\n제목에 핵심 주제가 포함되어 있는지, 소제목이 질문에 답하는 구조인지, 본문에 중복 표현이 많은지, 내부 링크가 다음 행동을 돕는지 확인합니다.'
   },
   {
-    id: 'fallback-cta-privacy-form-4000',
-    boardType: 'cta',
-    type: 'cta',
-    title: '문의폼 이탈을 줄이는 개인정보 안내와 응답 기준 정리',
-    primaryKeyword: '개인정보 안내',
-    tags: ['개인정보안내', '문의폼', '고객지원', '무료진단', '사이트점검'],
-    body: buildFallbackBody('개인정보 안내와 문의 응답 기준', '문의폼은 짧아 보여도 고객에게는 개인정보를 맡기는 순간입니다. 수집 목적, 보관 기준, 답변 시간이 보이지 않으면 고객은 입력을 멈출 수 있습니다.', 'FixPack'),
-    summary: '개인정보 입력 화면과 고객지원 응답 기준을 전문가형 포스팅 구조로 정리했습니다.',
-    visibility: 'public',
-    createdAt: '2026-05-08T00:20:00+09:00'
+    id: 'column-meta-title',
+    boardType: 'seo',
+    title: '제목과 메타 설명 최적화로 클릭률을 높이는 방법',
+    primaryKeyword: '제목과 메타 설명',
+    createdAt: '2026-05-12',
+    summary: '검색 결과에서 사용자가 클릭해야 할 이유를 제목과 설명에 분명히 담는 방법을 정리합니다.',
+    tags: ['온페이지', '클릭률', '검색결과'],
+    body: '전문가 관점 요약\n제목과 메타 설명은 검색 결과에서 처음 만나는 영업 문장입니다. 과장된 표현보다 사용자가 얻을 수 있는 답을 구체적으로 보여주는 문장이 클릭률을 높입니다.\n\n문구 개선 예시\n“서비스 안내”보다 “검색 노출과 전환을 높이는 페이지 구조 진단”이 더 명확합니다. “자세히 보기”보다 “진단 결과 예시 확인하기”가 다음 행동을 더 잘 안내합니다.\n\n검증 체크리스트\n제목이 1개의 핵심 주제를 담고 있는지, 설명이 문제와 해결 방향을 함께 보여주는지, 같은 표현을 여러 페이지에서 반복하지 않는지 확인합니다.'
   },
   {
-    id: 'fallback-cta-mobile-readability-4000',
-    boardType: 'case',
-    type: 'cta',
-    title: '모바일 화면에서 다음 행동 버튼와 정책 링크를 전문가처럼 배치하는 법',
-    primaryKeyword: '모바일 다음 행동 버튼 안내',
-    tags: ['모바일가독성', '다음 행동 버튼배치', '무료진단', '전환개선', '사이트점검'],
-    body: buildFallbackBody('모바일 가독성과 버튼 주변 안내', 'PC에서는 정돈되어 보이는 카드와 안내문도 모바일에서는 줄바꿈과 여백 때문에 핵심 정보가 아래로 밀릴 수 있습니다.', '정기 관리 케어'),
-    summary: '모바일 화면에서 다음 행동 버튼와 정책 링크를 동시에 보이게 하는 실무 구조입니다.',
-    visibility: 'public',
-    createdAt: '2026-05-08T00:40:00+09:00'
+    id: 'column-eat-content',
+    boardType: 'content',
+    title: 'E-E-A-T를 반영한 신뢰도 높은 콘텐츠 작성법',
+    primaryKeyword: '신뢰도 높은 콘텐츠',
+    createdAt: '2026-05-12',
+    summary: '경험, 전문성, 권위, 신뢰를 페이지 구조에 반영해 독자가 안심하고 읽을 수 있게 만드는 방법입니다.',
+    tags: ['콘텐츠전략', '신뢰도', '전문성'],
+    body: '전문가 관점 요약\n신뢰도는 화려한 문장보다 확인 가능한 근거에서 나옵니다. 누가 썼는지, 어떤 기준으로 판단했는지, 어떤 한계가 있는지를 명확히 보여주면 콘텐츠가 더 안정적으로 읽힙니다.\n\n실무 적용 순서\n작성자 또는 검토 기준을 밝히고, 주장에는 근거를 붙입니다. 확정할 수 없는 내용은 확인이 필요하다고 분리합니다. 독자가 다음에 무엇을 하면 되는지도 문장으로 안내합니다.\n\n검증 체크리스트\n작성 기준, 최신성, 출처, 한계, 다음 행동이 페이지 안에서 확인되는지 점검합니다.'
   },
   {
-    id: 'fallback-cta-business-info-4000',
-    boardType: 'case',
-    type: 'cta',
-    title: '푸터 사업자 정보와 문의 경로를 믿음직하게 정리하는 방법',
-    primaryKeyword: '사업자 정보',
-    tags: ['사업자정보', '고객지원', '푸터정리', '무료진단', '사이트점검'],
-    body: buildFallbackBody('사업자 정보와 문의 경로', '푸터에 상호와 고객지원 메일만 있고 답변 기준이 없다면 고객은 문의해도 답이 올지 걱정하기 쉽습니다.', '상세 리포트'),
-    summary: '푸터와 문의 버튼 주변에 신뢰 정보를 배치하는 전문가형 실무 가이드입니다.',
-    visibility: 'public',
-    createdAt: '2026-05-08T01:00:00+09:00'
+    id: 'column-robots-sitemap',
+    boardType: 'technical',
+    title: 'robots.txt와 sitemap.xml을 올바르게 설정하기',
+    primaryKeyword: 'robots sitemap 설정',
+    createdAt: '2026-05-12',
+    summary: '검색 로봇이 중요한 페이지를 찾고 불필요한 차단을 피할 수 있게 기본 설정을 점검합니다.',
+    tags: ['기술SEO', '색인', '크롤링'],
+    body: '전문가 관점 요약\n검색 로봇이 페이지를 찾지 못하면 좋은 콘텐츠도 노출되기 어렵습니다. robots.txt는 접근 허용과 차단을 알려주고, sitemap.xml은 중요한 페이지 목록을 전달합니다.\n\n실무 적용 순서\n먼저 주요 페이지가 차단되어 있지 않은지 확인합니다. 다음으로 sitemap에 실제 공개 페이지가 들어 있는지 점검합니다. 오래된 URL이나 비공개 URL이 섞여 있다면 정리해야 합니다.\n\n검증 체크리스트\n홈, 서비스, 칼럼, 가이드, 요금제 페이지가 접근 가능한지 확인하고, 검색 결과에 보여야 할 페이지가 sitemap에 포함되어 있는지 확인합니다.'
   },
   {
-    id: 'fallback-cta-ad-copy-4000',
-    boardType: 'notice',
-    type: 'cta',
-    title: '광고 문구를 신뢰 잃지 않게 설계하는 전문가식 구조',
-    primaryKeyword: '광고 문구 점검',
-    tags: ['광고문구', '첫 화면', '신뢰안내', '무료진단', '사이트점검'],
-    body: buildFallbackBody('광고 문구와 첫 화면 신뢰 안내', '강한 표현은 클릭을 만들 수 있지만 근거와 조건 없이 위기감만 강조하면 고객은 오히려 불신할 수 있습니다.', 'FixPack 또는 정기 관리 케어'),
-    summary: '광고 문구와 첫 화면 신뢰 안내를 전문가형 문제 제기 구조로 정리했습니다.',
-    visibility: 'public',
-    createdAt: '2026-05-08T01:20:00+09:00'
+    id: 'column-action-button',
+    boardType: 'content',
+    title: '전환을 만드는 다음 행동 버튼 배치와 문구 전략',
+    primaryKeyword: '다음 행동 버튼',
+    createdAt: '2026-05-12',
+    summary: '사용자가 망설이지 않고 다음 단계로 이동하도록 버튼 위치와 문구를 자연스럽게 설계하는 방법입니다.',
+    tags: ['전환개선', '버튼문구', '사용자흐름'],
+    body: '전문가 관점 요약\n버튼은 단순한 장식이 아니라 사용자의 다음 결정을 돕는 안내판입니다. 버튼이 무엇을 의미하는지, 누르면 무엇이 이어지는지 분명해야 합니다.\n\n문구 개선 예시\n“확인”보다 “무료 진단 시작하기”가 구체적입니다. “문의”보다 “상담 내용 남기기 · 평일 기준 순차 확인”이 더 안심됩니다.\n\n검증 체크리스트\n버튼 주변에 제공 범위, 문의 경로, 결과 확인 방법이 있는지 확인합니다. 모바일에서 버튼과 안내 문구가 동시에 읽히는지도 확인합니다.'
+  },
+  {
+    id: 'column-internal-link',
+    boardType: 'seo',
+    title: '내부 링크 최적화로 사이트 주제성을 강화하는 방법',
+    primaryKeyword: '내부 링크 최적화',
+    createdAt: '2026-05-12',
+    summary: '관련 페이지를 자연스럽게 연결해 검색 로봇의 이해도와 사용자의 이동 흐름을 함께 개선합니다.',
+    tags: ['내부링크', '사이트구조', '주제성'],
+    body: '전문가 관점 요약\n내부 링크는 검색 로봇에게 사이트의 구조를 알려주고, 사용자에게 다음에 읽을 만한 내용을 안내합니다. 연결이 부족하면 좋은 글도 고립된 페이지가 됩니다.\n\n실무 적용 순서\n먼저 핵심 페이지를 정합니다. 그다음 관련 칼럼, 가이드, 요금제, 무료 진단 화면을 문맥에 맞게 연결합니다. 링크 문구는 “여기”보다 “요금제 비교 보기”처럼 목적이 드러나야 합니다.\n\n검증 체크리스트\n중요 페이지로 향하는 내부 링크가 충분한지, 링크 문구가 구체적인지, 관련성이 낮은 링크가 과도하지 않은지 확인합니다.'
   }
 ];
-const FALLBACK_ACTIVITIES = FALLBACK_POSTS.slice(0, 3).map((item) => ({
-  label: '새 칼럼 공개',
-  title: item.title,
-  type: item.boardType,
-  createdAt: item.createdAt
-}));
-const FALLBACK_STATS = { total: 5, cta: 2, notice: 1, case: 2, recent7d: 5, filteredTotal: 5 };
 
-function fallbackForFilter(value = 'all') {
-  return FALLBACK_POSTS.filter((item) => value === 'all' || item.boardType === value);
+function typeLabel(type = '') {
+  if (type === 'technical') return '기술 SEO';
+  if (type === 'content') return '콘텐츠 전략';
+  return 'SEO 전략';
 }
-function applyBoardFallback(reason = '') {
-  posts = fallbackForFilter(filter);
-  stats = { ...FALLBACK_STATS, filteredTotal: posts.length };
-  activities = FALLBACK_ACTIVITIES;
-  pagination = { page: 1, pageSize: 5, total: posts.length, totalPages: 1 };
-  page = 1;
-  render();
-  if (state) state.textContent = `20분에 1회 공개되는 전문가형 칼럼 ${posts.length}건을 표시합니다.${reason ? ` (${reason})` : ''}`;
+function updateUrlState() {
+  const params = new URLSearchParams();
+  if (filter && filter !== 'all') params.set('filter', filter);
+  if (topic) params.set('topic', topic);
+  if (page > 1) params.set('page', String(page));
+  history.replaceState(null, '', `${location.pathname}${params.toString() ? `?${params.toString()}` : ''}`);
 }
-
-
-function formatRelativeTime(value) {
-  const at = Date.parse(value || '');
-  if (!Number.isFinite(at)) return '등록일 확인 중';
-  const delta = Math.max(0, Date.now() - at);
-  const minute = 60_000;
-  const hour = 60 * minute;
-  const day = 24 * hour;
-  if (delta < minute) return '방금 전';
-  if (delta < hour) return `${Math.floor(delta / minute)}분 전`;
-  if (delta < day) return `${Math.floor(delta / hour)}시간 전`;
-  if (delta < 7 * day) return `${Math.floor(delta / day)}일 전`;
-  return new Date(at).toLocaleDateString('ko-KR');
+function matchesTopic(item) {
+  if (!topic) return true;
+  const query = topic.toLowerCase();
+  return [item.title, item.summary, item.body, item.primaryKeyword, ...(item.tags || [])].join(' ').toLowerCase().includes(query);
 }
-
+function normalizePost(item = {}) {
+  const type = ['seo', 'content', 'technical'].includes(item.boardType) ? item.boardType : (item.boardType === 'case' ? 'content' : item.boardType === 'notice' ? 'technical' : 'seo');
+  return {
+    id: item.id || `post-${Math.random().toString(36).slice(2)}`,
+    boardType: type,
+    title: item.title || '전문가 칼럼',
+    summary: item.summary || '',
+    body: item.body || item.summary || '',
+    tags: Array.isArray(item.tags) ? item.tags : [],
+    primaryKeyword: item.primaryKeyword || '사이트 구조',
+    createdAt: item.createdAt || ''
+  };
+}
+function renderPostBody(body = '') {
+  const sections = String(body || '').split(/\n{2,}/).map(v => v.trim()).filter(Boolean);
+  if (!sections.length) return '';
+  return `<div class="post-body">${sections.map(section => {
+    const [first, ...rest] = section.split('\n');
+    const isHeading = rest.length && first.length <= 30;
+    return isHeading ? `<section class="post-section"><h3>${escapeHtml(first)}</h3><p>${escapeHtml(rest.join('\n')).replace(/\n/g, '<br/>')}</p></section>` : `<p class="post-paragraph">${escapeHtml(section).replace(/\n/g, '<br/>')}</p>`;
+  }).join('')}</div>`;
+}
 function renderStats() {
   statNodes.forEach(node => {
     const key = node.dataset.boardStat;
-    const value = Number(stats[key] ?? 0);
+    const value = key === 'cta' ? (stats.seo || 0) : Number(stats[key] ?? 0);
     node.textContent = Number.isFinite(value) ? value.toLocaleString('ko-KR') : '-';
   });
 }
-
 function renderActivity() {
   if (!activity) return;
-  if (!activities.length) {
-    activity.innerHTML = '<div class="activity-item"><span class="nv0-avatar">NV</span><div><strong>아직 공개된 새 칼럼이 없습니다.</strong><div class="muted">새 칼럼이 공개되면 이곳에 표시됩니다.</div></div></div>';
-    return;
-  }
-  activity.innerHTML = activities.map((item, index) => {
-    const initials = index === 0 ? 'UP' : index === 1 ? 'CT' : 'NV';
-    return `<div class="activity-item"><span class="nv0-avatar">${initials}</span><div><strong>${escapeHtml(item.label || '공개 칼럼')} · ${escapeHtml(item.title || '제목 없음')}</strong><div class="muted">${escapeHtml(item.type || '게시글')} · ${escapeHtml(formatRelativeTime(item.createdAt))}</div></div></div>`;
-  }).join('');
+  const items = activities.length ? activities : posts.slice(0, 3).map(item => ({ label: '칼럼 공개', title: item.title, type: typeLabel(item.boardType), createdAt: item.createdAt }));
+  activity.innerHTML = items.map((item, index) => `<div class="activity-item"><span class="nv0-avatar">${index + 1}</span><div><strong>${escapeHtml(item.title || '전문가 칼럼')}</strong><div class="muted">${escapeHtml(item.type || '칼럼')} · ${escapeHtml(item.createdAt || '오늘')}</div></div></div>`).join('');
 }
-
-function cleanBoardBodyForPublicDisplay(body = '') {
-  const internalKeyPattern = new RegExp(['content' + 'Fingerprint', 'finger' + 'print', 'combination' + 'Mode', 'public' + 'Display' + 'Version'].join('|'), 'gi');
-  const isHiddenHeading = heading => {
-    const value = String(heading || '').trim().replace(/^#+\s*/, '');
-    return (value.includes('제목') && value.includes('후보')) || value.includes('메모') || value.includes('마이그레이션');
-  };
-  const sections = String(body || '')
-    .replace(internalKeyPattern, '공개 표시 항목')
-    .replace(new RegExp('C' + 'TA', 'g'), '다음 행동 버튼')
-    .replace(new RegExp('S' + 'EO', 'g'), '검색 노출')
-    .replace(new RegExp('퍼' + '널', 'g'), '고객 단계')
-    .replace(new RegExp('랜' + '딩', 'g'), '첫 화면')
-    .split(/\n{2,}/)
-    .map(part => part.trim())
-    .filter(Boolean);
-  return sections.filter(section => !isHiddenHeading(section.split('\n')[0])).join('\n\n');
-}
-
-function renderPostBody(body = '') {
-  const sections = cleanBoardBodyForPublicDisplay(body).split(/\n{2,}/).map(part => part.trim()).filter(Boolean);
-  if (!sections.length) return '<p class="post-paragraph muted">본문이 준비되지 않았습니다.</p>';
-  return `<div class="post-body">${sections.map(section => {
-    const [first, ...rest] = section.split('\n');
-    const headingLike = /^(전문가 관점 요약|현장에서 자주 생기는 문제|매출과 신뢰에 영향을 주는 이유|실무 적용 순서|문구 개선 예시|검증 체크리스트|검색 유입을 고려한 구성|자주 묻는 질문|자연스러운 다음 행동|관련 링크|왜 이 글을 썼나요|한눈에 보는 핵심 요약|지금 보이는 문제|고객 입장에서 보면|실제로 확인할 요소|바로 고칠 수 있는 것|문구를 쉽게 바꾸는 방법|검색에 잘 읽히게 정리하는 방법|다음에 할 일|이 글에서 바로 얻을 수 있는 것|이런 경우 문제가 됩니다|고객은 이렇게 느낍니다|오늘 바로 확인할 체크리스트|문구를 이렇게 바꿔보세요|마무리|공지|사례|체크리스트|도입|이 글이 도움이 되는 경우|연관 예시|고객이 실제로 확인하는 포인트|바로 적용할 체크리스트|문구 예시|FAQ|자연스러운 다음 행동 버튼|문제 인식과 위기감|독자가 관심 있어 할 부분|독자가 계속 읽는 구성|독자가 관심 있어할 일반 주제|지금 놓치면 생길 수 있는 일|실제 적용 예시|마지막 섹션: 자연스러운 안내|추가 체크리스트|해시태그|고객이 실제로 확인하는 포인트|바로 고칠 수 있는 문구 예시|검색과 독자를 함께 고려한 구조)[.!?。]?$/.test(first.trim());
-    if (headingLike) {
-      const content = rest.join('\n').trim();
-      return `<section class="post-section"><h3>${escapeHtml(first)}</h3>${content ? `<p>${escapeHtml(content).replace(/\n/g, '<br>')}</p>` : ''}</section>`;
-    }
-    return `<p class="post-paragraph">${escapeHtml(section).replace(/\n/g, '<br>')}</p>`;
-  }).join('')}</div>`;
-}
-
-function renderPostTags(tags = []) {
-  const items = Array.isArray(tags) ? tags.map(tag => String(tag || '').trim().replace(/^#/, '')).filter(Boolean).slice(0, 10) : [];
-  if (!items.length) return '';
-  return `<div class="post-tags">${items.map(tag => `<span>#${escapeHtml(tag)}</span>`).join('')}</div>`;
-}
-
-function postMatchesTopic(item = {}, topicValue = '') {
-  const query = String(topicValue || '').trim().toLowerCase();
-  if (!query) return true;
-  const haystack = [item.title, item.summary, item.body, item.primaryKeyword, item.boardType, ...(Array.isArray(item.tags) ? item.tags : [])]
-    .map(value => String(value || '').toLowerCase())
-    .join(' ');
-  return query.split(/\s+/).filter(Boolean).some(token => haystack.includes(token));
-}
-function updateUrlState() {
-  const next = new URLSearchParams();
-  if (filter && filter !== 'all') next.set('filter', filter);
-  if (topic) next.set('topic', topic);
-  if (page > 1) next.set('page', String(page));
-  history.replaceState(null, '', `${location.pathname}${next.toString() ? `?${next.toString()}` : ''}`);
-}
-
 function renderPagination() {
-  if (!pager) return;
-  const totalPages = Math.max(1, Number(pagination.totalPages || 1));
-  if (totalPages <= 1) { pager.innerHTML = ''; return; }
-  const buttons = [];
-  for (let i = 1; i <= totalPages; i += 1) {
-    buttons.push(`<button type="button" data-page="${i}" class="${i === pagination.page ? 'active' : ''}" aria-current="${i === pagination.page ? 'page' : 'false'}">${i}</button>`);
-  }
-  pager.innerHTML = buttons.join('');
-  pager.querySelectorAll('[data-page]').forEach(btn => btn.addEventListener('click', () => {
-    page = Number(btn.dataset.page || '1');
-    loadBoard();
-  }));
+  if (pager) pager.innerHTML = '';
 }
-
-function render(){
-  tabs.forEach(btn => btn.classList.toggle('active', btn.dataset.filter === filter));
+function render() {
+  tabs.forEach(btn => btn.classList.toggle('active', (btn.dataset.filter || 'all') === filter));
   topicButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.topic === topic));
   renderStats();
   renderActivity();
-  const visiblePosts = posts.filter(item => postMatchesTopic(item, topic));
-  const totalForFilter = Number(pagination.total || stats.filteredTotal || visiblePosts.length || 0);
-  const totalPages = Math.max(1, Number(pagination.totalPages || 1));
-  const currentCount = visiblePosts.length;
-  const topicText = topic ? ` · 현재 페이지 주제 일치 ${currentCount}건` : '';
-  state.textContent = `20분에 1회 공개 · 전체 ${Number(stats.total || totalForFilter).toLocaleString('ko-KR')}건 중 현재 ${currentCount.toLocaleString('ko-KR')}건 표시${topicText} · ${pagination.page}/${totalPages}페이지 · 필터 대상 ${totalForFilter.toLocaleString('ko-KR')}건 · 발행 주기 ${publishIntervalMinutes}분`;
-  list.innerHTML = renderList(visiblePosts, '<div class="empty-state stack"><strong>조건에 맞는 게시글이 없습니다.</strong><p>필터를 초기화하거나 무료 진단 후 새 글을 발행하세요.</p><a class="btn secondary" href="/board">필터 초기화</a><a class="btn secondary" href="/products/veridion/demo">무료 진단 시작</a></div>', item => `<article class="result-card stack board-post ${item.boardType === 'cta' ? 'cta' : ''}"><div class="meta-row"><strong>${escapeHtml(item.title)}</strong><span class="pill">${escapeHtml(item.boardType || item.type || 'post')}</span></div><div class="post-meta"><span>20분 주기 칼럼</span><span>${escapeHtml(item.createdAt || '-')}</span><span>${escapeHtml(item.primaryKeyword || '고객 안내')}</span></div>${item.summary ? `<p class="post-summary">${escapeHtml(item.summary)}</p>` : ''}${renderPostBody(item.body || item.summary || '')}${renderPostTags(item.tags || [])}<div class="post-cta"><a class="btn primary" href="/products/veridion/demo">내 사이트 무료 진단</a><a class="btn secondary" href="/plans">상품·요금</a><a class="btn secondary" href="/portal">내 사이트 관리</a></div></article>`);
+  const visible = posts.filter(item => (filter === 'all' || item.boardType === filter || (filter === 'cta' && item.boardType === 'seo')) && matchesTopic(item));
+  if (state) state.textContent = `20분에 1회 공개 · 현재 ${visible.length.toLocaleString('ko-KR')}개 칼럼을 읽기 쉬운 구조로 표시합니다.`;
+  if (list) {
+    list.innerHTML = renderList(visible, '<div class="empty-state"><strong>조건에 맞는 칼럼이 없습니다.</strong><p>필터를 초기화해 주세요.</p></div>', item => `<article class="article-card board-post"><div class="pill ${item.boardType === 'technical' ? 'green' : item.boardType === 'content' ? 'purple' : 'brand'}">${escapeHtml(typeLabel(item.boardType))}</div><h3>${escapeHtml(item.title)}</h3><p class="post-summary">${escapeHtml(item.summary)}</p>${renderPostBody(item.body)}<div class="post-tags">${(item.tags || []).map(tag => `<span>#${escapeHtml(String(tag).replace(/^#/, ''))}</span>`).join('')}</div><div class="post-cta"><a class="btn primary" href="/products/veridion/demo">내 사이트 무료 진단</a><a class="btn secondary" href="/guides">관련 가이드 보기</a></div></article>`);
+  }
   renderPagination();
 }
-
+function applyFallback() {
+  posts = fallbackPosts;
+  stats = { total: posts.length, filteredTotal: posts.length, seo: posts.filter(p => p.boardType === 'seo').length, content: posts.filter(p => p.boardType === 'content').length, technical: posts.filter(p => p.boardType === 'technical').length, recent7d: posts.length };
+  pagination = { page: 1, pageSize: posts.length, total: posts.length, totalPages: 1 };
+  activities = [];
+  render();
+}
 async function loadBoard() {
-  state.textContent = '최신 칼럼을 불러오는 중입니다.';
-  updateUrlState();
-  const params = new URLSearchParams({ page: String(page), pageSize: '5', filter });
+  applyFallback();
   try {
-    const res = await fetch(`/api/public/board?${params.toString()}`);
-    const data = await res.json();
-    if (!res.ok || !data?.ok) throw new Error(data?.error || `게시판 요청 실패 (${res.status})`);
-    publishIntervalMinutes = Number(data.publishIntervalMinutes || 20);
-    stats = { ...stats, ...(data.stats || {}), filteredTotal: data.pagination?.total ?? data.stats?.filteredTotal ?? 0 };
+    const res = await fetch(`/api/public/board?page=${page}&pageSize=6&filter=all`);
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data?.ok || !Array.isArray(data.posts) || !data.posts.length) return;
+    posts = data.posts.map(normalizePost);
+    stats = { ...stats, ...(data.stats || {}) };
     activities = Array.isArray(data.activity) ? data.activity : [];
-    posts = (data.posts || []).filter(item => item.visibility !== 'private');
-    if (!posts.length) { applyBoardFallback('공개 칼럼 없음'); return; }
-    pagination = data.pagination || { page, pageSize: 5, total: posts.length, totalPages: 1 };
-    page = pagination.page;
+    pagination = data.pagination || pagination;
     render();
-  } catch (error) {
-    applyBoardFallback(error.message || '연결 지연');
+  } catch {
+    render();
   }
 }
 
-tabs.forEach(btn => btn.addEventListener('click', () => {
-  filter = btn.dataset.filter || 'all';
-  topic = '';
-  page = 1;
-  loadBoard();
-}));
-topicButtons.forEach(btn => btn.addEventListener('click', () => {
-  topic = btn.dataset.topic === topic ? '' : (btn.dataset.topic || '');
-  page = 1;
-  render();
-  updateUrlState();
-}));
+tabs.forEach(btn => btn.addEventListener('click', () => { filter = btn.dataset.filter || 'all'; topic = ''; page = 1; updateUrlState(); render(); }));
+topicButtons.forEach(btn => btn.addEventListener('click', () => { topic = btn.dataset.topic === topic ? '' : (btn.dataset.topic || ''); page = 1; updateUrlState(); render(); }));
 loadBoard();

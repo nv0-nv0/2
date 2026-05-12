@@ -1341,27 +1341,27 @@ return String(value ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;
 function routeMeta(urlPath) {
 const base = seoBaseUrl();
 const metas = {
-'/': { title: 'NV0 / Veridion | AI 기반 웹사이트 신뢰 진단 & 전환 개선 플랫폼', description: '고객이 결제하기 전에 확인하는 사업자 정보, 개인정보 안내, 환불 기준, 문의 경로, 결제 안내를 근거 기반으로 진단하고 개선 흐름을 제안합니다.', keywords: ['웹사이트 신뢰 진단','전환 개선','무료 진단','FixPack','정기 관리 케어'] },
-'/products/veridion/demo': { title: '무료 진단 | NV0 / Veridion', description: '주소 하나로 결제 전 신뢰 공백과 수동 확인이 필요한 영역을 분리해 보여주고, 결제 후 산출물 품질 기준까지 안내합니다.', keywords: ['무료 진단','웹사이트 신뢰 진단','오탐 방어','수동 확인','검수 기준'] },
-'/demo': { title: '무료 진단 | NV0 / Veridion', description: '주소 하나로 결제 전 신뢰 공백과 수동 확인이 필요한 영역을 분리해 보여주고, 결제 후 산출물 품질 기준까지 안내합니다.', keywords: ['무료 진단','웹사이트 신뢰 진단','오탐 방어','수동 확인','검수 기준'] },
-'/plans': { title: '상품·요금 | NV0 / Veridion', description: '무료 진단 이후 상세 리포트, FixPack, 정기 관리 케어를 제공 범위·가격·추천 상황 기준으로 비교합니다.', keywords: ['상품·요금','상세 리포트','FixPack','정기 관리 케어','사이트 진단 요금'] },
-'/products': { title: '상품·요금 | NV0 / Veridion', description: '무료 진단 이후 상세 리포트, FixPack, 정기 관리 케어를 제공 범위·가격·추천 상황 기준으로 비교합니다.', keywords: ['상품·요금','상세 리포트','FixPack','정기 관리 케어','사이트 진단 요금'] },
-'/documents': { title: '문서·페이지 수정 요청서 생성 | NV0 / Veridion', description: '정책 문서와 팀 실행용 페이지 수정 요청서를 최소 입력으로 정리하고, 실제 적용 전 확인해야 할 범위와 한계를 함께 표시합니다.', keywords: ['문서 생성','페이지 수정 요청서 생성','운영 문서 초안','개선 가이드','고객 안내 문구'] },
-'/policy-documents': { title: '문서·페이지 수정 요청서 생성 | NV0 / Veridion', description: '정책 문서와 팀 실행용 페이지 수정 요청서를 최소 입력으로 정리하고, 실제 적용 전 확인해야 할 범위와 한계를 함께 표시합니다.', keywords: ['문서 생성','페이지 수정 요청서 생성','운영 문서 초안','개선 가이드','고객 안내 문구'] },
-'/docs/veridion': { title: 'Veridion 문서 생성 | 정책 문서·진단 리포트 초안', description: 'Veridion 진단 후 필요한 정책 문서, 안내 문구, 개선 리포트 초안을 생성하는 문서 허브입니다.', keywords: ['Veridion 문서','정책 문서 생성','진단 리포트','개선 문구'] },
-'/guides': { title: '관리 가이드 | 쇼핑몰 신뢰도·정책 안내 점검', description: '쇼핑몰 신뢰도, 환불 정책, 구매 안내 버튼, 게시판 콘텐츠 업데이트, 반복 재진단 활용법을 전문가형 실무 가이드로 정리합니다.' },
-'/resources': { title: '관리 가이드 | 쇼핑몰 신뢰도·정책 안내 점검', description: '쇼핑몰 신뢰도, 환불 정책, 구매 안내 버튼, 게시판 콘텐츠 업데이트, 반복 재진단 활용법을 전문가형 실무 가이드로 정리합니다.' },
-'/solutions': { title: '솔루션 | 웹사이트 안내 고지·정책 문서·문의 흐름 점검', description: '웹사이트 필수 고지, 정책 문서, 결제 전 안내, 고객지원 안내를 한 번에 점검하는 NV0 솔루션입니다.' },
-'/service': { title: '서비스 작동 방식 | NV0 무료진단·리포트 산출 흐름', description: 'NV0가 공개 페이지를 수집하고 근거 신뢰도, 직접 확인 항목, 결제 산출물로 이어지는 과정을 설명합니다.' },
-'/cases': { title: '적용 사례 | NV0 신뢰 공백 개선 사례', description: '쇼핑몰과 첫 화면이 사업자 고지, 환불 안내, 문의 흐름을 어떻게 정리하는지 사례로 확인합니다.' },
-'/board': { title: '전환 개선 칼럼 게시판 | NV0 / Veridion', description: '20분마다 진단 주제, 사례, 체크리스트, FAQ, 버튼 문구를 조합한 전문가형 칼럼을 공개합니다.' },
-'/business-info': { title: '사업자 정보와 고객지원 안내 | NV0', description: '결제 전 확인할 수 있는 NV0 사업자 정보와 고객지원 기준입니다.' },
-'/terms': { title: '이용약관 | NV0', description: 'NV0 서비스 이용약관과 서비스 범위 기준입니다.' },
-'/privacy': { title: '개인정보처리방침 | NV0', description: 'NV0 서비스의 개인정보 처리 기준과 입력 정보 최소화 원칙입니다.' },
-'/refund': { title: '환불·청약철회 정책 | NV0', description: '디지털 산출물 제공 시점, 환불 요청 기준, 청약철회 제한 안내를 확인하세요.' },
-'/auth': { title: '로그인·회원가입 | NV0', description: '무료진단 횟수 관리, 내 사이트 저장, 원클릭 재검사, 최근 진단 이력 확인을 위한 로그인·회원가입 페이지입니다.' },
-'/portal': { title: '내 사이트 관리 | NV0 / Veridion', description: '내 사이트 저장, 최근 진단 결과, 보완 항목, 콘텐츠 보드를 한 화면에서 관리합니다.' },
-'/checkout': { title: '결제 확인 | NV0 / Veridion', description: '결제 전 선택한 결과물, 검수 기준, 디지털 산출물 환불 제한, 정책 동의 항목을 확인합니다.' }
+'/': { title: 'NV0 | 검색 노출과 전환을 높이는 페이지 구조 진단', description: '공개 접근부터 콘텐츠 구조, 정책 연결, 다음 행동 버튼까지 한눈에 진단하고 개선 우선순위를 제안합니다.', keywords: ['웹사이트 구조 진단','검색 노출 개선','전환 개선','무료 진단','콘텐츠 구조'] },
+'/products/veridion/demo': { title: '무료 진단 | NV0', description: '사이트 주소 하나로 공개 접근, 검색 구조, 전환 흐름, 정책 연결 상태를 빠르게 확인합니다.', keywords: ['무료 진단','웹사이트 분석','검색 구조 진단','전환 진단'] },
+'/demo': { title: '무료 진단 안내 | NV0', description: '최신 무료 진단 화면으로 이동하여 사이트 구조와 개선 우선순위를 확인합니다.', keywords: ['무료 진단','사이트 진단'] },
+'/plans': { title: '요금제 | NV0', description: '무료 진단, 기본 리포트, 전문가 리포트의 제공 범위와 가격을 명확하게 비교합니다.', keywords: ['요금제','기본 리포트','전문가 리포트','사이트 진단 요금'] },
+'/products': { title: '요금제 | NV0', description: '무료 진단, 기본 리포트, 전문가 리포트의 제공 범위와 가격을 명확하게 비교합니다.', keywords: ['요금제','기본 리포트','전문가 리포트'] },
+'/documents': { title: '문서 생성 | NV0', description: '고객 안내문, 정책 초안, 개선 요청서를 읽기 쉬운 구조로 정리합니다.', keywords: ['문서 생성','고객 안내문','정책 문서','개선 가이드'] },
+'/policy-documents': { title: '문서 생성 | NV0', description: '고객 안내문, 정책 초안, 개선 요청서를 읽기 쉬운 구조로 정리합니다.', keywords: ['문서 생성','고객 안내문','정책 문서'] },
+'/docs/veridion': { title: '문서 생성 | NV0', description: '진단 후 필요한 고객 안내문, 정책 문서, 개선 리포트 초안을 정리하는 문서 허브입니다.', keywords: ['문서 생성','정책 문서','진단 리포트','개선 문구'] },
+'/guides': { title: '가이드 | NV0', description: '진단 결과를 읽는 법과 검색 노출·전환 개선 방법을 쉽게 안내합니다.', keywords: ['가이드','진단 결과','검색 노출','전환 개선'] },
+'/resources': { title: '가이드 | NV0', description: '진단 결과를 읽는 법과 검색 노출·전환 개선 방법을 쉽게 안내합니다.', keywords: ['가이드','진단 결과','검색 노출'] },
+'/solutions': { title: '분석 프로세스 | NV0', description: '입력부터 결과 정리까지 검색과 전환 관점에서 페이지 구조를 단계별로 분석합니다.', keywords: ['분석 프로세스','검색 구조 분석','전환 구조 분석'] },
+'/service': { title: '서비스 소개 | NV0', description: '검색 친화적 구조 분석으로 문제를 빠르게 찾고 전환 가능성까지 함께 점검합니다.', keywords: ['서비스 소개','사이트 구조 분석','전환 점검'] },
+'/cases': { title: '개선 사례 | NV0', description: '진단 후 어떤 항목을 먼저 고쳤고 어떤 변화가 생겼는지 사례 형태로 정리했습니다.', keywords: ['개선 사례','전환 개선 사례','검색 구조 사례'] },
+'/board': { title: '전문가 칼럼 | NV0', description: '검색 로봇도 잘 읽고 사람도 이해하기 쉬운 구조로 정리한 실전 칼럼을 제공합니다.', keywords: ['전문가 칼럼','검색 노출','콘텐츠 전략','온페이지 SEO','기술 SEO'] },
+'/business-info': { title: '사업자 정보와 고객지원 안내 | NV0', description: '결제 전 확인할 수 있는 NV0 사업자 정보와 고객지원 기준입니다.', keywords: ['사업자 정보','고객지원'] },
+'/terms': { title: '이용약관 | NV0', description: 'NV0 서비스 이용 조건과 기본 약관을 안내합니다.', keywords: ['이용약관'] },
+'/privacy': { title: '개인정보처리방침 | NV0', description: 'NV0 서비스의 개인정보 처리 기준과 입력 정보 최소화 원칙입니다.', keywords: ['개인정보처리방침'] },
+'/refund': { title: '환불 정책 | NV0', description: '디지털 산출물 제공 시점과 환불 기준을 안내합니다.', keywords: ['환불 정책','청약철회'] },
+'/auth': { title: '로그인 | NV0', description: '내 사이트 저장과 진단 이력 관리를 위한 로그인 페이지입니다.', keywords: ['로그인','회원가입'] },
+'/portal': { title: '내 사이트 관리 | NV0', description: '내 사이트 저장, 최근 진단 결과, 보완 항목, 다음 작업을 한 화면에서 관리합니다.', keywords: ['내 사이트 관리','진단 이력'] },
+'/checkout': { title: '결제 확인 | NV0', description: '선택한 상품, 금액, 받을 결과물, 동의 항목을 결제 전에 확인합니다.', keywords: ['결제 확인','리포트 결제'] }
 };
 const meta = metas[urlPath] || metas['/'];
 return { ...meta, canonical: `${base}${urlPath === '/' ? '/' : urlPath}`, locale: 'ko_KR' };
@@ -1416,7 +1416,7 @@ const faqMap = {
 ['로그인하면 무엇이 달라지나요?', '무료진단 횟수 관리, 내 사이트 저장, 원클릭 재검사, 최근 진단 이력 확인을 이용할 수 있습니다.']
 ],
 '/plans': [
-['어떤 상품을 먼저 선택해야 하나요?', '먼저 무료진단을 보고, 근거가 필요하면 상세 리포트, 바로 붙여넣을 문구가 필요하면 FixPack, 반복 관리가 필요하면 정기 관리 케어를 비교하면 됩니다.'],
+['어떤 상품을 먼저 선택해야 하나요?', '먼저 무료진단을 보고, 근거가 필요하면 상세 리포트, 바로 붙여넣을 문구가 필요하면 전문가 리포트, 반복 관리가 필요하면 정기 관리 케어를 비교하면 됩니다.'],
 ['결제 전 어떤 내용을 확인해야 하나요?', '제공 범위, 디지털 산출물 제공 시점, 환불 제한, 고객지원 경로를 확인해야 합니다.']
 ],
 '/board': [
@@ -1460,16 +1460,15 @@ return `${className ? ` class="${className}"` : ''}${isCurrent ? ' aria-current=
 }
 function publicTopMenuHtml(urlPath = '/') {
 return `<a class="skip-link" href="#main">본문 바로가기</a><nav class="site-topbar" aria-label="주요 메뉴">
-<a class="brand" href="/"><span class="brand-mark">N</span><span>NV0<small>웹사이트 안내·정책 점검</small></span></a>
+<a class="brand" href="/"><span class="brand-mark">nv0</span></a>
 <div class="site-menu">
-<a href="/products/veridion/demo"${navAttrs(urlPath, '/products/veridion/demo')}>무료 진단</a>
-<a href="/plans"${navAttrs(urlPath, '/plans')}>상품·요금</a>
-<a href="/board"${navAttrs(urlPath, '/board')}>전환 칼럼</a>
-<a href="/documents"${navAttrs(urlPath, '/documents')}>문서 생성</a>
-<a href="/portal"${navAttrs(urlPath, '/portal')}>내 사이트</a>
-<a href="/business-info"${navAttrs(urlPath, '/business-info')}>고객지원</a>
-<a href="/auth"${navAttrs(urlPath, '/auth', 'login-link')}>로그인</a>
+<a href="/service"${navAttrs(urlPath, '/service')}>서비스 소개</a>
+<a href="/solutions"${navAttrs(urlPath, '/solutions')}>분석 프로세스</a>
+<a href="/board"${navAttrs(urlPath, '/board')}>전문가 칼럼</a>
+<a href="/guides"${navAttrs(urlPath, '/guides')}>가이드</a>
+<a href="/plans"${navAttrs(urlPath, '/plans')}>요금제</a>
 </div>
+<div class="site-actions"><a class="login-link" href="/auth"${navAttrs(urlPath, '/auth')}>로그인</a><a class="top-cta" href="/products/veridion/demo"${navAttrs(urlPath, '/products/veridion/demo')}>무료 진단 시작 →</a></div>
 </nav>`;
 }
 function ensureMainId(body) {
@@ -1477,9 +1476,7 @@ if (body.includes('<main id="main"')) return body;
 return body.replace('<main ', '<main id="main" tabindex="-1" ');
 }
 function injectNoScriptNotice(body, urlPath) {
-if (urlPath.startsWith('/admin') || body.includes('<noscript>')) return body;
-if (!['/products/veridion/demo','/checkout'].includes(urlPath)) return body;
-return body.replace(/<body\b([^>]*)>/i, '<body$1><noscript><div class="noscript-banner">진단·결제 흐름에 JavaScript가 필요합니다.</div></noscript>');
+return body;
 }
 function injectPublicTopMenu(body, urlPath) {
 if (urlPath.startsWith('/admin')) return body;
@@ -1506,15 +1503,11 @@ function businessFooterHtml() {
 const types = BUSINESS_PROFILE.businessTypes.join(' · ');
 const mailOrderNumber = isSafePublicOptionalField(BUSINESS_PROFILE.mailOrderRegistrationNumber, { requireMailOrderShape: true }) ? BUSINESS_PROFILE.mailOrderRegistrationNumber : '';
 return '<footer class="business-footer" aria-label="사업자 정보">'
-+ `<strong>${BUSINESS_PROFILE.tradeName}</strong>`
-+ `<span>대표자: ${BUSINESS_PROFILE.representative}</span>`
-+ `<span>사업자등록번호: ${BUSINESS_PROFILE.registrationNumber}</span>`
-+ (mailOrderNumber ? `<span>통신판매업 신고번호: ${mailOrderNumber}</span>` : '')
-+ `<span>주소: ${BUSINESS_PROFILE.address}</span>`
-+ `<span>업태·종목: ${types}</span>`
-+ `<span>고객지원: ${BUSINESS_PROFILE.contactEmail}${BUSINESS_PROFILE.customerServicePhone ? ' · ' + BUSINESS_PROFILE.customerServicePhone : ' · 이메일 전용 고객지원'} · 평일 09:00–18:00 접수 확인</span>`
-+ `<span class="legal-disclaimer">본 서비스는 운영 점검 보조도구이며 법률 자문을 제공하지 않습니다.</span>`
-+ '<nav><a href="/terms">이용약관</a><a href="/privacy">개인정보처리방침</a><a href="/refund">환불·청약철회 정책</a><a href="/business-info">사업자 정보</a></nav>'
++ '<div class="brand-col"><strong>nv0</strong><span>검색 친화적 구조 분석으로 더 많은 고객과 매출을 연결합니다.</span><span>© 2024 nv0.kr. All rights reserved.</span></div>'
++ '<div class="footer-col"><strong>서비스</strong><a href="/service">서비스 소개</a><a href="/solutions">분석 프로세스</a><a href="/plans">요금제</a></div>'
++ '<div class="footer-col"><strong>정보</strong><a href="/board">전문가 칼럼</a><a href="/guides">가이드</a><a href="/documents">문서 생성</a></div>'
++ '<div class="footer-col"><strong>회사</strong><a href="/business-info">회사 소개</a><a href="/privacy">개인정보처리방침</a><a href="/terms">이용약관</a><a href="/refund">환불 정책</a></div>'
++ `<div class="footer-col"><strong>문의</strong><a href="mailto:hello@nv0.kr">hello@nv0.kr</a><a href="mailto:${BUSINESS_PROFILE.contactEmail}">고객지원 이메일</a><span class="legal-disclaimer">${BUSINESS_PROFILE.tradeName} · 대표자 ${BUSINESS_PROFILE.representative} · 사업자등록번호 ${BUSINESS_PROFILE.registrationNumber}${mailOrderNumber ? ' · 통신판매업 신고번호 ' + mailOrderNumber : ''}</span><span class="legal-disclaimer">주소: ${BUSINESS_PROFILE.address}</span><span class="legal-disclaimer">업태·종목: ${types}</span><span class="legal-disclaimer">NV0는 공개 웹페이지 기반 구조 분석 서비스이며 법률 자문이나 성과 보장을 제공하지 않습니다.</span></div>`
 + '</footer>';
 }
 function injectSessionNavScript(body, urlPath) {
@@ -1938,7 +1931,7 @@ const tags = [`#${String(keyword || theme.label).replace(/[\s·/]+/g, '')}`, `#$
 return [
 `전문가 관점 요약\n${target} 사이트에서 ${theme.label}은 고객 행동 직전의 불확실성을 줄이는 전환 설계입니다. ${theme.risk} 이 글은 단순 홍보가 아니라 실제 화면을 보며 고칠 수 있는 항목을 정리한 전문가형 포스팅입니다.`,
 `현장에서 자주 생기는 문제\n사이트 담당자는 푸터나 약관에 이미 적어 두었다고 생각하지만 고객은 결제, 문의, 회원가입, 상담 신청 직전에 답을 찾습니다. 필요한 정보가 그 위치에서 보이지 않으면 상품 설명을 끝까지 읽기 전에 비교 페이지로 이동할 수 있습니다.`,
-`매출과 신뢰에 영향을 주는 이유\n광고 유입이 늘수록 안내 공백은 더 빠르게 비용으로 바뀝니다. 고객이 제공 범위, 문의 경로, 예외 기준, 처리 시간을 예측할 수 있어야 무료 진단에서 상세 리포트, FixPack, 정기 관리 케어로 이어지는 결과물 선택 흐름도 자연스럽게 연결됩니다.`,
+`매출과 신뢰에 영향을 주는 이유\n광고 유입이 늘수록 안내 공백은 더 빠르게 비용으로 바뀝니다. 고객이 제공 범위, 문의 경로, 예외 기준, 처리 시간을 예측할 수 있어야 무료 진단에서 상세 리포트, 전문가 리포트, 정기 관리 케어로 이어지는 결과물 선택 흐름도 자연스럽게 연결됩니다.`,
 `실무 적용 순서\n1. 결제 버튼, 문의 버튼, 가격표, 회원가입 화면을 먼저 확인합니다.\n2. ${theme.elements.join(', ')} 중 고객 질문과 직접 연결되는 항목을 버튼 주변에 배치합니다.\n3. 푸터에는 전체 기준을 두고 행동 화면에는 요약 문장을 둡니다.\n4. 모바일에서 문장이 접히거나 버튼 아래로 밀리는지 확인합니다.`,
 `문구 개선 예시\n${copyExamples.map(([before, after], idx) => `${idx + 1}. 바꾸기 전: “${before}”\n   바꾼 뒤: “${after}”`).join('\n')}`,
 `검증 체크리스트\n${checklist.map((line, idx) => `${idx + 1}. ${line}`).join('\n')}`,
@@ -1962,6 +1955,10 @@ return String(value || '')
 .replace(/https?:\/\/example\.com/gi, '운영 중인 사이트')
 .replace(/\bCTA\b/g, '다음 행동 버튼')
 .replace(/\bSEO\b/g, '검색 노출')
+.replace(/\bFixPack\b/g, '전문가 리포트')
+.replace(/\bAuto\b/g, '정기 관리')
+.replace(/자동\s*발행/g, '정기 공개')
+.replace(/자동발행/g, '정기 공개')
 .replace(/고객 단계/g, '고객 단계')
 .replace(/첫 화면/g, '첫 화면')
 .replace(/메타 설명/g, '검색 설명')
@@ -1979,6 +1976,10 @@ const sections = String(body || '')
 .replace(/\bphase\d+\b/gi, '')
 .replace(/\bCTA\b/g, '다음 행동 버튼')
 .replace(/\bSEO\b/g, '검색 노출')
+.replace(/\bFixPack\b/g, '전문가 리포트')
+.replace(/\bAuto\b/g, '정기 관리')
+.replace(/자동\s*발행/g, '정기 공개')
+.replace(/자동발행/g, '정기 공개')
 .replace(/고객 단계/g, '고객 단계')
 .replace(/첫 화면/g, '첫 화면')
 .split(/\n{2,}/)
@@ -1992,30 +1993,21 @@ return !hiddenHeadings.has(heading);
 }
 function publicBoardLabel(type = '') {
 const value = String(type || '').trim();
-if (value === 'notice') return 'notice';
-if (value === 'case') return 'case';
-return 'cta';
+if (value === 'technical' || value === 'notice') return 'technical';
+if (value === 'content' || value === 'case') return 'content';
+return 'seo';
 }
 function toPublicBoardPost(item = {}, index = 0) {
-const ctaLike = item.boardType === 'cta' || item.autoPublished || item.type === 'cta' || item.ctaType || /제목 후보|검색 의도|고객 단계|contentFingerprint|CTA|SEO|https:\/\/example\.com/i.test(String(item.body || ''));
-const source = ctaLike ? rewriteExistingCtaPublication(item, {
-  force: true,
-  seed: `public-editorial-board:${String(item.id || item.createdAt || item.title || `board-${index}`)}`,
-  sequenceOffset: Number.parseInt(ctaFingerprint(String(item.id || item.createdAt || item.title || `board-${index}`)).slice(0, 6), 16) % 997,
-  target: item.target || item.normalizedTarget || 'nv0.kr',
-  industry: item.industry || '온라인 사업',
-  rewrittenAt: item.rewrittenAt || item.createdAt || nowIso()
-}) : item;
+const source = item;
 const body = sanitizePublicBoardBody(source.body || item.body || source.summary || item.summary || '');
 const tags = Array.isArray(source.tags || item.tags)
   ? (source.tags || item.tags).map(tag => String(tag || '').replace(/^#/, '').trim()).filter(Boolean).slice(0, 12)
   : [];
-const primaryKeyword = source.seo?.primaryKeyword || source.primaryKeyword || item.primaryKeyword || '사이트 신뢰 안내';
+const primaryKeyword = source.seo?.primaryKeyword || source.primaryKeyword || item.primaryKeyword || '사이트 구조';
 return {
   id: item.id || source.id || `board-${index + 1}`,
-  title: publicCleanPhrase(source.title || item.title || `사이트 안내 칼럼 ${index + 1}`),
+  title: publicCleanPhrase(source.title || item.title || `사이트 구조 칼럼 ${index + 1}`),
   boardType: publicBoardLabel(item.boardType || source.boardType),
-  type: 'cta',
   visibility: item.visibility || 'public',
   createdAt: item.createdAt || source.createdAt || nowIso(),
   primaryKeyword: publicCleanPhrase(primaryKeyword),
@@ -2024,6 +2016,7 @@ return {
   body
 };
 }
+
 
 function buildGuidanceForSite(site, scan, settings = {}) {
 const operationsDocument = buildSiteOperationsDocument(scan || {}, { site, settings });

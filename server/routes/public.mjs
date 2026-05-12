@@ -282,15 +282,16 @@ const rawPosts = (db.boards || [])
 .filter(item => item && item.visibility !== 'private')
 .sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
 const seedBoardPosts = [
-  { id: 'board-seed-checkout-4000', title: '결제 버튼 앞에서 고객이 멈추는 이유와 전환 개선 구조', boardType: 'cta', type: 'cta', ctaType: 'checkout_friction', primaryKeyword: '결제 전 안내', target: 'nv0.kr', visibility: 'public', autoPublished: true, createdAt: nowIso(), summary: '결제 직전 불안을 줄이는 전문가형 공개 포스팅입니다.' },
-  { id: 'board-seed-privacy-4000', title: '문의폼 이탈을 줄이는 개인정보 안내와 응답 기준', boardType: 'notice', type: 'cta', ctaType: 'privacy_form', primaryKeyword: '개인정보 안내', target: 'nv0.kr', visibility: 'public', autoPublished: true, createdAt: nowIso(), summary: '입력폼 주변 안내를 쉽게 정리한 전문가형 공개 포스팅입니다.' },
-  { id: 'board-seed-footer-4000', title: '푸터 사업자 정보만 정리해도 신뢰가 달라지는 이유', boardType: 'case', type: 'cta', ctaType: 'footer_trust', primaryKeyword: '사업자 정보와 문의 경로', target: 'nv0.kr', visibility: 'public', autoPublished: true, createdAt: nowIso(), summary: '사이트 신뢰를 만드는 사업자 정보 배치 안내 글입니다.' },
-  { id: 'board-seed-mobile-4000', title: '모바일 화면에서 버튼과 정책 링크를 함께 보이게 배치하는 방법', boardType: 'cta', type: 'cta', ctaType: 'mobile_readability', primaryKeyword: '모바일 안내 가독성', target: 'nv0.kr', visibility: 'public', autoPublished: true, createdAt: nowIso(), summary: '모바일 화면 여백, 버튼 위치, 정책 링크를 정리하는 전문가형 안내 포스팅입니다.' },
-  { id: 'board-seed-adcopy-4000', title: '광고 유입 첫 화면에서 신뢰를 잃지 않는 문제 제기 구조', boardType: 'case', type: 'cta', ctaType: 'ad_copy_risk', primaryKeyword: '광고 첫 화면 신뢰 안내', target: 'nv0.kr', visibility: 'public', autoPublished: true, createdAt: nowIso(), summary: '문제 인식과 자연스러운 다음 행동 흐름을 정리한 공개 안내 글입니다.' }
+  { id: 'column-content-structure', title: '검색 노출을 높이는 콘텐츠 구조 설계 방법', boardType: 'seo', primaryKeyword: '콘텐츠 구조 설계', visibility: 'public', createdAt: nowIso(), summary: '검색 의도, 제목, 본문, 내부 링크를 검색 로봇과 독자가 함께 이해할 수 있는 구조로 정리합니다.' },
+  { id: 'column-meta-title', title: '제목과 메타 설명 최적화로 클릭률을 높이는 방법', boardType: 'seo', primaryKeyword: '제목과 메타 설명', visibility: 'public', createdAt: nowIso(), summary: '검색 결과에서 사용자가 클릭해야 할 이유를 제목과 설명에 분명히 담는 방법입니다.' },
+  { id: 'column-eat-content', title: 'E-E-A-T를 반영한 신뢰도 높은 콘텐츠 작성법', boardType: 'content', primaryKeyword: '신뢰도 높은 콘텐츠', visibility: 'public', createdAt: nowIso(), summary: '경험, 전문성, 권위, 신뢰를 페이지 구조에 반영해 독자가 안심하고 읽을 수 있게 만드는 방법입니다.' },
+  { id: 'column-robots-sitemap', title: 'robots.txt와 sitemap.xml을 올바르게 설정하기', boardType: 'technical', primaryKeyword: 'robots sitemap 설정', visibility: 'public', createdAt: nowIso(), summary: '검색 로봇이 중요한 페이지를 찾고 불필요한 차단을 피할 수 있게 기본 설정을 점검합니다.' },
+  { id: 'column-action-button', title: '전환을 만드는 다음 행동 버튼 배치와 문구 전략', boardType: 'content', primaryKeyword: '다음 행동 버튼', visibility: 'public', createdAt: nowIso(), summary: '사용자가 망설이지 않고 다음 단계로 이동하도록 버튼 위치와 문구를 자연스럽게 설계하는 방법입니다.' },
+  { id: 'column-internal-link', title: '내부 링크 최적화로 사이트 주제성을 강화하는 방법', boardType: 'seo', primaryKeyword: '내부 링크 최적화', visibility: 'public', createdAt: nowIso(), summary: '관련 페이지를 자연스럽게 연결해 검색 로봇의 이해도와 사용자의 이동 흐름을 함께 개선합니다.' }
 ];
 const sourcePosts = rawPosts.length ? rawPosts : seedBoardPosts;
 const publicPosts = sourcePosts.map((item, index) => toPublicBoardPost(item, index));
-const normalizedFilter = ['all', 'cta', 'notice', 'case'].includes(filter) ? filter : 'all';
+const normalizedFilter = ['all', 'seo', 'content', 'technical'].includes(filter) ? filter : 'all';
 const filtered = publicPosts.filter(item => normalizedFilter === 'all' || item.boardType === normalizedFilter);
 const total = filtered.length;
 const totalPages = Math.max(1, Math.ceil(total / pageSize));
@@ -306,15 +307,15 @@ const boardTypeCount = type => publicPosts.filter(item => item.boardType === typ
 const stats = {
   total: publicPosts.length,
   filteredTotal: total,
-  cta: boardTypeCount('cta'),
-  notice: boardTypeCount('notice'),
-  case: boardTypeCount('case'),
+  seo: boardTypeCount('seo'),
+  content: boardTypeCount('content'),
+  technical: boardTypeCount('technical'),
   recent7d
 };
 const activity = publicPosts.slice(0, 3).map(item => ({
   id: item.id,
   title: item.title,
-  type: item.boardType === 'cta' ? '전문가 칼럼' : (item.boardType || '게시글'),
+  type: item.boardType === 'technical' ? '기술 SEO' : item.boardType === 'content' ? '콘텐츠 전략' : 'SEO 전략',
   createdAt: item.createdAt || null,
   label: '새 칼럼 공개'
 }));
@@ -323,7 +324,7 @@ ok: true,
 publishIntervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000),
 cadenceLabel: `${Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000)}분에 1회`,
 pageSize,
-stats: { total: stats.total, filteredTotal: stats.filteredTotal, cta: stats.cta, notice: stats.notice, case: stats.case, recent7d: stats.recent7d },
+stats: { total: stats.total, filteredTotal: stats.filteredTotal, seo: stats.seo, content: stats.content, technical: stats.technical, recent7d: stats.recent7d },
 activity,
 pagination: { page, pageSize, total, totalPages, hasPrev: page > 1, hasNext: page < totalPages },
 posts

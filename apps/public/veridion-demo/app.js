@@ -396,7 +396,7 @@ function fallbackConversionUrgency(view) {
     conversionBlockers: blockers,
     lostTrustSignals: [`발견 문제 ${issue}개`, `문제 영역 ${area}개`, `영향 요소 ${elements}개`, `직접 확인 필요 ${manual}개`],
     primaryCta: '상세 리포트 결제하고 원인 확인',
-    secondaryCta: 'FixPack으로 수정 문구까지 받기',
+    secondaryCta: '전문가 리포트로 수정 문구까지 받기',
     recommendedPlan: view.recommendedPlan,
     disclaimer: '위기도 점수는 법률 위반 또는 매출 손실을 확정하는 값이 아니라 공개 화면 기준 보완 우선순위입니다.'
   };
@@ -426,7 +426,7 @@ function renderConversionUrgencyPanel(view) {
     <div class="crisis-blocker-grid">${blockers.slice(0, 5).map(item => `<article><b>${escapeHtml(item.label)}</b><strong>${escapeHtml(item.count)}개</strong><small>${escapeHtml(item.customerFeeling || '구매 망설임')}</small></article>`).join('')}</div>
     <div class="crisis-cta-box">
       <div><b>요약만 보면 방향만 압니다. 결제 후에는 실제 고칠 문장과 위치까지 열립니다.</b><p>전체 근거 · 수정 전후 문구 · 적용 위치 · 재검사 기준 · 사이트 맞춤 관리 문서를 한 번에 확인하세요.</p></div>
-      <div class="topnav"><a class="btn primary" href="${escapeAttr(checkoutHref)}">${escapeHtml(model.primaryCta || '상세 리포트 결제')}</a><a class="btn secondary" href="/checkout?plan=FixPack&siteId=${escapeAttr(view.siteId)}">${escapeHtml(model.secondaryCta || 'FixPack 보기')}</a></div>
+      <div class="topnav"><a class="btn primary" href="${escapeAttr(checkoutHref)}">${escapeHtml(model.primaryCta || '상세 리포트 결제')}</a><a class="btn secondary" href="/checkout?plan=FixPack&siteId=${escapeAttr(view.siteId)}">${escapeHtml(model.secondaryCta || '전문가 리포트 보기')}</a></div>
     </div>
   </section>`;
 }
@@ -965,7 +965,7 @@ function renderPhase209CompletionScorecard(view) {
   const rows = [
     ['무료 진단', '먼저 확인', '고객이 결제 전 확인하는 기본 안내와 불안 요소를 빠르게 파악합니다.', '/products/veridion/demo'],
     ['상세 리포트', '원인 정리', '문제 위치, 이유, 우선순위를 팀 공유가 쉬운 형태로 정리합니다.', `/checkout?plan=Report${siteId}`],
-    ['FixPack', '바로 수정', '푸터·환불·문의·다음 행동 버튼 문장을 전/후 형태로 받아 사이트에 반영합니다.', `/checkout?plan=FixPack${siteId}`],
+    ['전문가 리포트', '바로 수정', '푸터·환불·문의·다음 행동 버튼 문장을 전/후 형태로 받아 사이트에 반영합니다.', `/checkout?plan=FixPack${siteId}`],
     ['정기 관리 케어', '계속 관리', '자주 바뀌는 페이지의 안내 공백과 다음 행동 버튼 흐름을 정기적으로 살핍니다.', `/checkout?plan=Auto${siteId}`]
   ];
   const gates = [
@@ -975,7 +975,7 @@ function renderPhase209CompletionScorecard(view) {
     '자주 바뀌는 페이지의 안내 공백을 꾸준히 점검'
   ];
   return `<section class="phase209-completion-scorecard phase214-result-path" aria-label="무료 진단 이후 선택 가능한 결과물">
-    <div class="section-title"><span class="pill brand">다음 단계</span><h3>문제가 보이면, 필요한 결과물만 선택하세요</h3><p>무료 결과로 현재 상태를 먼저 보고, 고칠 필요가 보일 때만 상세 리포트·FixPack·정기 관리 케어 중 필요한 산출물만 선택하면 됩니다.</p></div>
+    <div class="section-title"><span class="pill brand">다음 단계</span><h3>문제가 보이면, 필요한 결과물만 선택하세요</h3><p>무료 결과로 현재 상태를 먼저 보고, 고칠 필요가 보일 때만 상세 리포트·전문가 리포트·정기 관리 케어 중 필요한 산출물만 선택하면 됩니다.</p></div>
     <div class="phase209-score-grid">${rows.map(([title, score, desc, href]) => `<article><b>${escapeHtml(title)}</b><strong>${escapeHtml(score)}</strong><p>${escapeHtml(desc)}</p><a href="${escapeAttr(href)}">자세히 보기</a></article>`).join('')}</div>
     <div class="phase209-gate-list">${gates.map((item, index) => `<span><em>${escapeHtml(index + 1)}</em>${escapeHtml(item)}</span>`).join('')}</div>
   </section>`;
