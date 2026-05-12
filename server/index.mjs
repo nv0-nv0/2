@@ -1185,13 +1185,13 @@ return rows;
 function buildFeedXml(db = {}) {
 const base = seoBaseUrl();
 const items = feedItems(db).map((item, index) => {
-const title = xmlEscape(item.title || `NV0 운영 글 ${index + 1}`);
+const title = xmlEscape(item.title || `NV0 안내 글 ${index + 1}`);
 const summary = xmlEscape(item.summary || item.seo?.metaDescription || stripHtml(item.body || '').slice(0, 240));
 const pubDate = new Date(item.createdAt || item.rewrittenAt || Date.now()).toUTCString();
 const guid = xmlEscape(item.id ? `${base}/board#${item.id}` : `${base}/board#item-${index + 1}`);
 return `<item><title>${title}</title><link>${xmlEscape(base + '/board')}</link><guid isPermaLink="false">${guid}</guid><description>${summary}</description><pubDate>${pubDate}</pubDate></item>`;
 }).join('');
-return `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>NV0 전문가형 사이트 점검 글</title><link>${xmlEscape(base + '/board')}</link><description>고객 신뢰·구매 전환·운영 문구를 전문가형 포스팅으로 정리한 공개 가이드입니다.</description><language>ko-KR</language><lastBuildDate>${new Date().toUTCString()}</lastBuildDate>${items}</channel></rss>`;
+return `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>NV0 전문가형 사이트 점검 글</title><link>${xmlEscape(base + '/board')}</link><description>고객 신뢰·구매 전환·고객 안내 문구를 전문가형 포스팅으로 정리한 공개 가이드입니다.</description><language>ko-KR</language><lastBuildDate>${new Date().toUTCString()}</lastBuildDate>${items}</channel></rss>`;
 }
 function createPasswordResetToken(db, customer, req) {
 db.passwordResetTokens ||= [];
@@ -1341,20 +1341,20 @@ return String(value ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;
 function routeMeta(urlPath) {
 const base = seoBaseUrl();
 const metas = {
-'/': { title: 'NV0 / Veridion | AI 기반 웹사이트 신뢰 진단 & 전환 개선 플랫폼', description: '고객이 결제하기 전에 확인하는 사업자 정보, 개인정보 안내, 환불 기준, 문의 경로, 결제 안내를 근거 기반으로 진단하고 개선 흐름을 제안합니다.', keywords: ['웹사이트 신뢰 진단','전환 개선','무료 진단','FixPack','Auto 정기 케어'] },
+'/': { title: 'NV0 / Veridion | AI 기반 웹사이트 신뢰 진단 & 전환 개선 플랫폼', description: '고객이 결제하기 전에 확인하는 사업자 정보, 개인정보 안내, 환불 기준, 문의 경로, 결제 안내를 근거 기반으로 진단하고 개선 흐름을 제안합니다.', keywords: ['웹사이트 신뢰 진단','전환 개선','무료 진단','FixPack','정기 관리 케어'] },
 '/products/veridion/demo': { title: '무료 진단 | NV0 / Veridion', description: '주소 하나로 결제 전 신뢰 공백과 수동 확인이 필요한 영역을 분리해 보여주고, 결제 후 산출물 품질 기준까지 안내합니다.', keywords: ['무료 진단','웹사이트 신뢰 진단','오탐 방어','수동 확인','검수 기준'] },
 '/demo': { title: '무료 진단 | NV0 / Veridion', description: '주소 하나로 결제 전 신뢰 공백과 수동 확인이 필요한 영역을 분리해 보여주고, 결제 후 산출물 품질 기준까지 안내합니다.', keywords: ['무료 진단','웹사이트 신뢰 진단','오탐 방어','수동 확인','검수 기준'] },
-'/plans': { title: '상품·요금 | NV0 / Veridion', description: '무료 진단 이후 상세 리포트, FixPack, Auto 정기 케어를 제공 범위·가격·추천 상황 기준으로 비교합니다.', keywords: ['상품·요금','상세 리포트','FixPack','Auto 정기 케어','사이트 진단 요금'] },
-'/products': { title: '상품·요금 | NV0 / Veridion', description: '무료 진단 이후 상세 리포트, FixPack, Auto 정기 케어를 제공 범위·가격·추천 상황 기준으로 비교합니다.', keywords: ['상품·요금','상세 리포트','FixPack','Auto 정기 케어','사이트 진단 요금'] },
-'/documents': { title: '문서·페이지 수정 요청서 생성 | NV0 / Veridion', description: '정책 문서와 팀 실행용 페이지 수정 요청서를 최소 입력으로 정리하고, 실제 적용 전 확인해야 할 범위와 한계를 함께 표시합니다.', keywords: ['문서 생성','페이지 수정 요청서 생성','운영 문서 초안','개선 가이드','운영 문구'] },
-'/policy-documents': { title: '문서·페이지 수정 요청서 생성 | NV0 / Veridion', description: '정책 문서와 팀 실행용 페이지 수정 요청서를 최소 입력으로 정리하고, 실제 적용 전 확인해야 할 범위와 한계를 함께 표시합니다.', keywords: ['문서 생성','페이지 수정 요청서 생성','운영 문서 초안','개선 가이드','운영 문구'] },
+'/plans': { title: '상품·요금 | NV0 / Veridion', description: '무료 진단 이후 상세 리포트, FixPack, 정기 관리 케어를 제공 범위·가격·추천 상황 기준으로 비교합니다.', keywords: ['상품·요금','상세 리포트','FixPack','정기 관리 케어','사이트 진단 요금'] },
+'/products': { title: '상품·요금 | NV0 / Veridion', description: '무료 진단 이후 상세 리포트, FixPack, 정기 관리 케어를 제공 범위·가격·추천 상황 기준으로 비교합니다.', keywords: ['상품·요금','상세 리포트','FixPack','정기 관리 케어','사이트 진단 요금'] },
+'/documents': { title: '문서·페이지 수정 요청서 생성 | NV0 / Veridion', description: '정책 문서와 팀 실행용 페이지 수정 요청서를 최소 입력으로 정리하고, 실제 적용 전 확인해야 할 범위와 한계를 함께 표시합니다.', keywords: ['문서 생성','페이지 수정 요청서 생성','운영 문서 초안','개선 가이드','고객 안내 문구'] },
+'/policy-documents': { title: '문서·페이지 수정 요청서 생성 | NV0 / Veridion', description: '정책 문서와 팀 실행용 페이지 수정 요청서를 최소 입력으로 정리하고, 실제 적용 전 확인해야 할 범위와 한계를 함께 표시합니다.', keywords: ['문서 생성','페이지 수정 요청서 생성','운영 문서 초안','개선 가이드','고객 안내 문구'] },
 '/docs/veridion': { title: 'Veridion 문서 생성 | 정책 문서·진단 리포트 초안', description: 'Veridion 진단 후 필요한 정책 문서, 안내 문구, 개선 리포트 초안을 생성하는 문서 허브입니다.', keywords: ['Veridion 문서','정책 문서 생성','진단 리포트','개선 문구'] },
 '/guides': { title: '관리 가이드 | 쇼핑몰 신뢰도·정책 안내 점검', description: '쇼핑몰 신뢰도, 환불 정책, 구매 안내 버튼, 게시판 콘텐츠 업데이트, 반복 재진단 활용법을 전문가형 실무 가이드로 정리합니다.' },
 '/resources': { title: '관리 가이드 | 쇼핑몰 신뢰도·정책 안내 점검', description: '쇼핑몰 신뢰도, 환불 정책, 구매 안내 버튼, 게시판 콘텐츠 업데이트, 반복 재진단 활용법을 전문가형 실무 가이드로 정리합니다.' },
 '/solutions': { title: '솔루션 | 웹사이트 안내 고지·정책 문서·문의 흐름 점검', description: '웹사이트 필수 고지, 정책 문서, 결제 전 안내, 고객지원 안내를 한 번에 점검하는 NV0 솔루션입니다.' },
 '/service': { title: '서비스 작동 방식 | NV0 무료진단·리포트 산출 흐름', description: 'NV0가 공개 페이지를 수집하고 근거 신뢰도, 직접 확인 항목, 결제 산출물로 이어지는 과정을 설명합니다.' },
-'/cases': { title: '적용 사례 | NV0 신뢰 공백 개선 사례', description: '쇼핑몰과 랜딩페이지가 사업자 고지, 환불 안내, 문의 흐름을 어떻게 정리하는지 사례로 확인합니다.' },
-'/board': { title: '자동발행 CTA 게시판 | NV0 / Veridion', description: '20분마다 진단 주제, 사례, 체크리스트, FAQ, CTA를 조합한 전문가형 칼럼을 자동 발행합니다.' },
+'/cases': { title: '적용 사례 | NV0 신뢰 공백 개선 사례', description: '쇼핑몰과 첫 화면이 사업자 고지, 환불 안내, 문의 흐름을 어떻게 정리하는지 사례로 확인합니다.' },
+'/board': { title: '전환 개선 칼럼 게시판 | NV0 / Veridion', description: '20분마다 진단 주제, 사례, 체크리스트, FAQ, 버튼 문구를 조합한 전문가형 칼럼을 공개합니다.' },
 '/business-info': { title: '사업자 정보와 고객지원 안내 | NV0', description: '결제 전 확인할 수 있는 NV0 사업자 정보와 고객지원 기준입니다.' },
 '/terms': { title: '이용약관 | NV0', description: 'NV0 서비스 이용약관과 서비스 범위 기준입니다.' },
 '/privacy': { title: '개인정보처리방침 | NV0', description: 'NV0 서비스의 개인정보 처리 기준과 입력 정보 최소화 원칙입니다.' },
@@ -1416,12 +1416,12 @@ const faqMap = {
 ['로그인하면 무엇이 달라지나요?', '무료진단 횟수 관리, 내 사이트 저장, 원클릭 재검사, 최근 진단 이력 확인을 이용할 수 있습니다.']
 ],
 '/plans': [
-['어떤 상품을 먼저 선택해야 하나요?', '먼저 무료진단을 보고, 근거가 필요하면 상세 리포트, 바로 붙여넣을 문구가 필요하면 FixPack, 반복 관리가 필요하면 Auto 정기 케어를 비교하면 됩니다.'],
+['어떤 상품을 먼저 선택해야 하나요?', '먼저 무료진단을 보고, 근거가 필요하면 상세 리포트, 바로 붙여넣을 문구가 필요하면 FixPack, 반복 관리가 필요하면 정기 관리 케어를 비교하면 됩니다.'],
 ['결제 전 어떤 내용을 확인해야 하나요?', '제공 범위, 디지털 산출물 제공 시점, 환불 제한, 고객지원 경로를 확인해야 합니다.']
 ],
 '/board': [
 ['게시판 글은 어떤 역할을 하나요?', '진단 결과를 전문가형 포스팅으로 풀어 재방문, 상품·요금, 유료 산출물 검토 흐름을 돕습니다.'],
-['글이 전문가처럼 보이나요?', '문제 진단, 매출 영향, 실무 체크리스트, 문구 개선 예시, 자연스러운 CTA 순서로 작성됩니다.']
+['글이 전문가처럼 보이나요?', '문제 진단, 매출 영향, 실무 체크리스트, 문구 개선 예시, 자연스러운 다음 행동 순서로 작성됩니다.']
 ]
 };
 return faqMap[urlPath] || [];
@@ -1464,7 +1464,7 @@ return `<a class="skip-link" href="#main">본문 바로가기</a><nav class="sit
 <div class="site-menu">
 <a href="/products/veridion/demo"${navAttrs(urlPath, '/products/veridion/demo')}>무료 진단</a>
 <a href="/plans"${navAttrs(urlPath, '/plans')}>상품·요금</a>
-<a href="/board"${navAttrs(urlPath, '/board')}>CTA 게시판</a>
+<a href="/board"${navAttrs(urlPath, '/board')}>전환 칼럼</a>
 <a href="/documents"${navAttrs(urlPath, '/documents')}>문서 생성</a>
 <a href="/portal"${navAttrs(urlPath, '/portal')}>내 사이트</a>
 <a href="/business-info"${navAttrs(urlPath, '/business-info')}>고객지원</a>
@@ -1682,7 +1682,7 @@ function buildSiteProfile(target, text = '') {
 const all = `${target} ${text}`.toLowerCase();
 const industry = classifyIndustry(target, text);
 const siteType = hasAny(all, ['landing','campaign','event','promo','promotion','utm_'])
-? '랜딩페이지'
+? '첫 화면'
 : hasAny(all, ['product','goods','shop','cart','order','checkout','buy','store','상품','장바구니','주문','결제'])
 ? '이커머스'
 : hasAny(all, ['blog','news','guide','help','notice','콘텐츠','가이드','블로그'])
@@ -1934,60 +1934,94 @@ const copyExamples = [
 ['무료 진단', '무료 진단 · 요약 결과까지 바로 확인'],
 ['서비스 신청', '제공 범위와 환불 기준 확인 후 신청하기']
 ];
-const tags = [`#${String(keyword || theme.label).replace(/[\s·/]+/g, '')}`, `#${String(theme.label).replace(/[\s·/]+/g, '')}`, '#전문가포스팅', '#사이트신뢰진단', '#CTA개선', '#무료진단'].join(' ');
+const tags = [`#${String(keyword || theme.label).replace(/[\s·/]+/g, '')}`, `#${String(theme.label).replace(/[\s·/]+/g, '')}`, '#전문가포스팅', '#사이트신뢰진단', '#버튼문구개선', '#무료진단'].join(' ');
 return [
 `전문가 관점 요약\n${target} 사이트에서 ${theme.label}은 고객 행동 직전의 불확실성을 줄이는 전환 설계입니다. ${theme.risk} 이 글은 단순 홍보가 아니라 실제 화면을 보며 고칠 수 있는 항목을 정리한 전문가형 포스팅입니다.`,
 `현장에서 자주 생기는 문제\n사이트 담당자는 푸터나 약관에 이미 적어 두었다고 생각하지만 고객은 결제, 문의, 회원가입, 상담 신청 직전에 답을 찾습니다. 필요한 정보가 그 위치에서 보이지 않으면 상품 설명을 끝까지 읽기 전에 비교 페이지로 이동할 수 있습니다.`,
-`매출과 신뢰에 영향을 주는 이유\n광고 유입이 늘수록 안내 공백은 더 빠르게 비용으로 바뀝니다. 고객이 제공 범위, 문의 경로, 예외 기준, 처리 시간을 예측할 수 있어야 무료 진단에서 상세 리포트, FixPack, Auto 정기 케어로 이어지는 결과물 선택 흐름도 자연스럽게 연결됩니다.`,
+`매출과 신뢰에 영향을 주는 이유\n광고 유입이 늘수록 안내 공백은 더 빠르게 비용으로 바뀝니다. 고객이 제공 범위, 문의 경로, 예외 기준, 처리 시간을 예측할 수 있어야 무료 진단에서 상세 리포트, FixPack, 정기 관리 케어로 이어지는 결과물 선택 흐름도 자연스럽게 연결됩니다.`,
 `실무 적용 순서\n1. 결제 버튼, 문의 버튼, 가격표, 회원가입 화면을 먼저 확인합니다.\n2. ${theme.elements.join(', ')} 중 고객 질문과 직접 연결되는 항목을 버튼 주변에 배치합니다.\n3. 푸터에는 전체 기준을 두고 행동 화면에는 요약 문장을 둡니다.\n4. 모바일에서 문장이 접히거나 버튼 아래로 밀리는지 확인합니다.`,
 `문구 개선 예시\n${copyExamples.map(([before, after], idx) => `${idx + 1}. 바꾸기 전: “${before}”\n   바꾼 뒤: “${after}”`).join('\n')}`,
 `검증 체크리스트\n${checklist.map((line, idx) => `${idx + 1}. ${line}`).join('\n')}`,
 `검색 유입을 고려한 구성\n제목에는 고객이 실제로 찾을 표현을 넣고, 본문에는 문제 상황, 실무 체크리스트, 전후 문구 예시, 연결된 공개 페이지를 순서대로 배치합니다. 키워드 반복보다 독자가 체류할 이유를 만드는 구조가 중요합니다.`,
-`자주 묻는 질문\nQ1. 무료 진단만으로 충분한가요?\nA. 무료 진단은 현재 공백을 빠르게 보는 출발점입니다. 실제 반영 문구와 우선순위가 필요하면 상세 리포트나 FixPack으로 이어가면 됩니다.\n\nQ2. 자동 글이 반복처럼 보이지 않으려면요?\nA. 주제, 고객 질문, 사례, 체크리스트, CTA 위치를 함께 바꿔야 합니다. 제목만 바꾸는 방식은 피해야 합니다.`,
-`자연스러운 다음 행동\n${theme.cta} 결과를 저장하면 상세 리포트에서 수정 우선순위를 보고, FixPack으로 실제 문구안을 받아 적용할 수 있습니다. 반복 관리가 필요하면 Auto 정기 케어로 정기 주기 게시판 발행과 재진단 흐름까지 이어가세요.`,
+`자주 묻는 질문\nQ1. 무료 진단만으로 충분한가요?\nA. 무료 진단은 현재 공백을 빠르게 보는 출발점입니다. 실제 반영 문구와 우선순위가 필요하면 상세 리포트나 FixPack으로 이어가면 됩니다.\n\nQ2. 자동 글이 반복처럼 보이지 않으려면요?\nA. 주제, 고객 질문, 사례, 체크리스트, 버튼 위치를 함께 바꿔야 합니다. 제목만 바꾸는 방식은 피해야 합니다.`,
+`자연스러운 다음 행동\n${theme.cta} 결과를 저장하면 상세 리포트에서 수정 우선순위를 보고, FixPack으로 실제 문구안을 받아 적용할 수 있습니다. 반복 관리가 필요하면 정기 관리 케어로 정기 주기 게시판 발행과 재진단 흐름까지 이어가세요.`,
 `관련 링크\n무료 진단: /products/veridion/demo\n상품·요금: /plans\n내 사이트 관리: /portal`,
 `해시태그\n${tags}`
 ].join('\n\n');
 }
 
+
+function publicClampText(value = '', max = 190) {
+const text = String(value || '').replace(/\s+/g, ' ').trim();
+if (text.length <= max) return text;
+return `${text.slice(0, Math.max(0, max - 1)).trim()}…`;
+}
+
+function publicCleanPhrase(value = '') {
+return String(value || '')
+.replace(/https?:\/\/example\.com/gi, '운영 중인 사이트')
+.replace(/\bCTA\b/g, '다음 행동 버튼')
+.replace(/\bSEO\b/g, '검색 노출')
+.replace(/고객 단계/g, '고객 단계')
+.replace(/첫 화면/g, '첫 화면')
+.replace(/메타 설명/g, '검색 설명')
+.replace(/contentFingerprint|fingerprint|combinationMode|publicDisplayVersion/gi, '공개 표시 항목')
+.replace(/\s+/g, ' ')
+.trim();
+}
+function sanitizePublicBoardBody(body = '') {
+const hiddenHeadings = new Set(['제목 후보', '공개 제외 메모', '공개 제외 메모', '공개 제외 메모', '공개 제외 메모']);
+const sections = String(body || '')
+.replace(/\bcontentFingerprint\b/gi, '중복 확인값')
+.replace(/\bfingerprint\b/gi, '중복 확인값')
+.replace(/\bcombinationMode\b/gi, '글 구성 방식')
+.replace(/\bpublicDisplayVersion\b/gi, '공개 표시 기준')
+.replace(/\bphase\d+\b/gi, '')
+.replace(/\bCTA\b/g, '다음 행동 버튼')
+.replace(/\bSEO\b/g, '검색 노출')
+.replace(/고객 단계/g, '고객 단계')
+.replace(/첫 화면/g, '첫 화면')
+.split(/\n{2,}/)
+.map(part => part.trim())
+.filter(Boolean);
+return sections.filter(section => {
+const [first] = section.split('\n');
+const heading = String(first || '').trim().replace(/^#+\s*/, '');
+return !hiddenHeadings.has(heading);
+}).join('\n\n');
+}
+function publicBoardLabel(type = '') {
+const value = String(type || '').trim();
+if (value === 'notice') return 'notice';
+if (value === 'case') return 'case';
+return 'cta';
+}
 function toPublicBoardPost(item = {}, index = 0) {
-const ctaLike = item.boardType === 'cta' || item.autoPublished || item.type === 'cta' || item.ctaType || /제목 후보|검색 의도|퍼널|contentFingerprint|CTA|SEO|https:\/\/example\.com/i.test(String(item.body || ''));
-if (!ctaLike) return item;
-const stableKey = String(item.id || item.contentFingerprint || item.createdAt || item.title || `board-${index}`);
-const stableOffset = Number.parseInt(ctaFingerprint(stableKey).slice(0, 6), 16) % 997;
-const rewritten = rewriteExistingCtaPublication(item, {
+const ctaLike = item.boardType === 'cta' || item.autoPublished || item.type === 'cta' || item.ctaType || /제목 후보|검색 의도|고객 단계|contentFingerprint|CTA|SEO|https:\/\/example\.com/i.test(String(item.body || ''));
+const source = ctaLike ? rewriteExistingCtaPublication(item, {
   force: true,
-  seed: `phase217-expert-board:${stableKey}:${index}`,
-  sequenceOffset: stableOffset,
+  seed: `public-editorial-board:${String(item.id || item.createdAt || item.title || `board-${index}`)}`,
+  sequenceOffset: Number.parseInt(ctaFingerprint(String(item.id || item.createdAt || item.title || `board-${index}`)).slice(0, 6), 16) % 997,
   target: item.target || item.normalizedTarget || 'nv0.kr',
   industry: item.industry || '온라인 사업',
   rewrittenAt: item.rewrittenAt || item.createdAt || nowIso()
-});
-const audit = auditHumanFriendlyCtaArticle(rewritten);
-const bodyText = String(rewritten.body || item.body || '');
+}) : item;
+const body = sanitizePublicBoardBody(source.body || item.body || source.summary || item.summary || '');
+const tags = Array.isArray(source.tags || item.tags)
+  ? (source.tags || item.tags).map(tag => String(tag || '').replace(/^#/, '').trim()).filter(Boolean).slice(0, 12)
+  : [];
+const primaryKeyword = source.seo?.primaryKeyword || source.primaryKeyword || item.primaryKeyword || '사이트 신뢰 안내';
 return {
-...item,
-...rewritten,
-id: item.id || rewritten.id,
-createdAt: item.createdAt || rewritten.createdAt || nowIso(),
-visibility: item.visibility || 'public',
-boardType: item.boardType || rewritten.boardType || 'cta',
-type: 'cta',
-autoPublished: item.autoPublished !== false,
-summary: `${rewritten.seo?.primaryKeyword || rewritten.primaryKeyword || '사이트 점검'}을 전문가형 문제 진단, 실무 체크리스트, 문구 개선 예시, 자연스러운 CTA 흐름으로 정리한 4천~5천자 포스팅입니다.`,
-searchIntent: rewritten.seo?.searchIntent || '고객 도움형',
-funnelStage: rewritten.seo?.funnelStage || '읽고 바로 확인',
-contentArchetype: rewritten.contentArchetype || 'phase217_expert_editorial_article',
-readabilityTarget: 'expert_but_accessible_korean',
-publicDisplayVersion: 'phase217-expert-editorial-board',
-phase217Audit: {
-  ok: audit.ok,
-  banned: audit.banned,
-  missingSections: audit.missingSections,
-  longSentenceCount: audit.longSentenceCount,
-  bodyLength: bodyText.length,
-  stableOffset
-}
+  id: item.id || source.id || `board-${index + 1}`,
+  title: publicCleanPhrase(source.title || item.title || `사이트 안내 칼럼 ${index + 1}`),
+  boardType: publicBoardLabel(item.boardType || source.boardType),
+  type: 'cta',
+  visibility: item.visibility || 'public',
+  createdAt: item.createdAt || source.createdAt || nowIso(),
+  primaryKeyword: publicCleanPhrase(primaryKeyword),
+  summary: publicClampText(source.seo?.metaDescription || source.summary || item.summary || `${primaryKeyword}을 문제 진단, 실무 체크리스트, 문구 개선 예시, 다음 행동 흐름으로 정리했습니다.`, 190),
+  tags,
+  body
 };
 }
 

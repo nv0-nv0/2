@@ -51,7 +51,7 @@ function ctaLabel(plan) {
   if (plan.code === 'Free') return '무료 진단 시작';
   if (plan.code === 'Report') return '상세 리포트 결제';
   if (plan.code === 'FixPack') return 'FixPack 바로 결제';
-  if (plan.code === 'Auto') return 'Auto 정기 케어 결제';
+  if (plan.code === 'Auto') return '정기 관리 케어 결제';
   return '온라인 결제';
 }
 function checkoutHref(plan, siteId) {
@@ -89,14 +89,14 @@ function strengthenSalesCopy(plan) {
     FixPack: {
       title: 'FixPack',
       summary: '진단에서 끝내지 않고 사이트에 바로 넣을 수정 전/후 문장을 제공합니다.',
-      targetCustomer: '오늘 바로 푸터·환불·문의·CTA 문구를 고치고 싶은 분',
-      deliverables: ['수정 전/후 문장', '붙여넣을 위치 안내', '고객 불안을 줄이는 CTA 문구']
+      targetCustomer: '오늘 바로 푸터·환불·문의·다음 행동 버튼 문구를 고치고 싶은 분',
+      deliverables: ['수정 전/후 문장', '붙여넣을 위치 안내', '고객 불안을 줄이는 다음 행동 버튼 문구']
     },
     Auto: {
-      title: 'Auto 정기 케어',
+      title: '정기 관리 케어',
       summary: '광고·이벤트·상세페이지가 바뀔 때마다 생기는 안내 공백을 정기적으로 확인합니다.',
-      targetCustomer: '랜딩페이지와 이벤트 페이지가 자주 바뀌는 팀',
-      deliverables: ['정기 재진단', 'CTA 콘텐츠 흐름 관리', '위험 항목 우선 알림']
+      targetCustomer: '첫 화면페이지와 이벤트 페이지가 자주 바뀌는 팀',
+      deliverables: ['정기 재진단', '다음 행동 버튼 콘텐츠 흐름 관리', '위험 항목 우선 알림']
     }
   }[normalizeCode(plan.code)] || {};
   return { ...plan, ...override, code: normalizeCode(plan.code), deliverables: override.deliverables || list(plan.deliverables) };
@@ -106,7 +106,7 @@ function basePlans(offers) {
   const fallback = [
     { code: 'Report', title: '상세 리포트', price: 39000, period: '1회', group: 'one_time' },
     { code: 'FixPack', title: 'FixPack', price: 79000, period: '1회', group: 'one_time' },
-    { code: 'Auto', title: 'Auto 정기 케어', price: 149000, period: '월', group: 'subscription' }
+    { code: 'Auto', title: '정기 관리 케어', price: 149000, period: '월', group: 'subscription' }
   ].map(strengthenSalesCopy);
   const free = strengthenSalesCopy({ code: 'Free', title: '무료 진단', price: 0, period: '무료' });
   const merged = ['Report', 'FixPack', 'Auto'].map(code => paid.find(item => item.code === code) || fallback.find(item => item.code === code));
@@ -151,9 +151,9 @@ function comparison(plan, paymentConfig) {
     },
     Auto: {
       when: '페이지가 계속 바뀌어 관리가 필요할 때',
-      get: '정기 재진단과 CTA 흐름 관리',
+      get: '정기 재진단과 다음 행동 버튼 흐름 관리',
       reason: '새로 생기는 안내 공백을 줄입니다.',
-      action: 'Auto 정기 케어 결제'
+      action: '정기 관리 케어 결제'
     }
   }[plan.code] || {};
   return `<article class="decision-card" data-decision-plan="${escapeAttr(plan.code)}">
