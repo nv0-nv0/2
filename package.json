@@ -1,6 +1,6 @@
 {
   "name": "nv0-veridion-cleanroom",
-  "version": "1.0.0-commercial-board-cta-purpose-mix-phase251",
+  "version": "1.0.0-commercial-customer-copy-redesign-phase253",
   "private": true,
   "type": "module",
   "scripts": {
@@ -340,6 +340,10 @@
     "validate:phase250": "node scripts/validate-phase250-demo-paid-board-price.mjs",
     "phase250:final": "npm run check:syntax && npm run check:pages && npm run check:links -- --summary && npm run test:routes && npm run validate:phase250",
     "validate:phase251": "node scripts/validate-phase251-board-cta-purpose-mix.mjs",
-    "phase251:final": "npm run check:syntax && npm run check:pages && npm run test:routes && npm run validate:phase251"
+    "phase251:final": "npm run check:syntax && npm run check:pages && npm run test:routes && npm run validate:phase251",
+    "validate:phase252": "node scripts/validate-phase252-legal-risk-product-definition.mjs",
+    "phase252:final": "npm run check:syntax && npm run check:pages && npm run test:routes && npm run validate:phase252",
+    "validate:phase253": "node scripts/validate-phase253-board-seo-expansion.mjs",
+    "phase253:final": "npm run check:syntax && npm run check:pages && npm run test:routes && npm run validate:phase253"
   }
 }

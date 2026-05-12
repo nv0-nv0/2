@@ -353,7 +353,18 @@ const publicPosts = buildPublicColumnEnginePosts({ pageSize: 50 }).map((item) =>
   summary: item.summary,
   tags: item.tags || [],
   body: item.body,
-  contentMix: item.contentMix
+  contentMix: item.contentMix,
+  seoElements: item.seoElements || {},
+  metaTitle: item.metaTitle || '',
+  metaDescription: item.metaDescription || '',
+  canonicalPath: item.canonicalPath || '',
+  searchIntent: item.searchIntent || '',
+  headings: item.headings || [],
+  checklist: item.checklist || [],
+  faq: item.faq || [],
+  internalLinks: item.internalLinks || [],
+  hashtags: item.hashtags || [],
+  structuredData: item.structuredData || null
 }));
 const filtered = publicPosts.filter(item => {
   if (normalizedFilter === 'all') return true;
@@ -378,7 +389,7 @@ const activity = publicPosts.slice(0, 3).map(item => ({
 }));
 return json(req, res, 200, {
   ok: true,
-  publicationCadence: { intervalMinutes: 20, label: '20분에 1회', engine: 'public-cta-column-engine-v3-purpose-100-mix-60-20-20' },
+  publicationCadence: { intervalMinutes: 20, label: '20분에 1회', engine: 'public-cta-column-engine-v5-seo-expanded-purpose-100-mix-60-20-20' },
   pageSize,
   activity,
   pagination: { page, pageSize, total, totalPages, hasPrev: page > 1, hasNext: page < totalPages },

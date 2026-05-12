@@ -335,3 +335,13 @@ p{margin:0}
 .phase250-clean .nv0-nav a{white-space:nowrap}.nv0-nav{overflow-x:auto;scrollbar-width:thin}.nv0-nav::-webkit-scrollbar{height:4px}.nv0-nav::-webkit-scrollbar-thumb{background:#d5e2f5;border-radius:999px}
 @media(max-width:980px){.demo-count-kpis,.paid-result-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.demo-count-layout,.paid-result-grid,.demo-paid-gate{grid-template-columns:1fr}.demo-count-head,.paid-result-hero{display:grid}.demo-paid-gate .nv0-cta-row{width:100%}}
 @media(max-width:620px){.demo-count-kpis,.paid-result-kpis{grid-template-columns:1fr}.demo-count-result,.paid-result-clean{padding:20px;border-radius:26px}.demo-count-table th,.demo-count-table td{padding:10px 8px;font-size:13px}.demo-count-kpis strong,.paid-result-kpis strong{font-size:38px}}
+
+
+/* PHASE253 board SEO expansion */
+.seo-meta-strip{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 2px}
+.seo-meta-strip span{display:inline-flex;align-items:center;padding:7px 11px;border-radius:999px;background:#f3f7ff;border:1px solid #dbe7ff;color:#415575;font-size:13px;font-weight:700}
+.seo-meta-card{border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg,#fbfdff,#fff);padding:18px;display:grid;gap:10px}
+.seo-meta-card h4{margin:0;color:var(--title);font-size:17px;letter-spacing:-.02em}
+.internal-link-row{display:flex;gap:10px;flex-wrap:wrap}
+.board-post .post-tags{margin-top:4px}
+.board-post .post-tags span{background:#f7fafc;border:1px solid #e3ebf5;color:#45566f}

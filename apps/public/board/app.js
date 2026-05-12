@@ -63,7 +63,14 @@ function render() {
   const visible = posts.filter(matchesQuery);
   if (state) state.textContent = `CTA 목적 게시판 · 현재 ${visible.length.toLocaleString('ko-KR')}개 글을 표시합니다. 모든 글은 흥미·문제 인식 60%, CTA 설득 20%, 보조 정보 20% 구조입니다.`;
   if (list) {
-    list.innerHTML = renderList(visible, '<div class="empty-state"><strong>조건에 맞는 칼럼이 없습니다.</strong><p>검색어를 줄이거나 전체 탭을 선택해 주세요.</p></div>', item => `<article class="article-card board-post"><div class="pill ${pillClass(item.boardType)}">${escapeHtml(item.category || typeLabel(item.boardType))}</div><h3>${escapeHtml(item.title)}</h3><p class="post-summary">${escapeHtml(item.summary || '')}</p>${renderPostBody(item.body || '')}<div class="post-tags">${(item.tags || []).map(tag => `<span>#${escapeHtml(String(tag).replace(/^#/, ''))}</span>`).join('')}</div><div class="post-cta"><a class="btn primary" href="/products/veridion/demo">내 사이트 무료 진단</a><a class="btn secondary" href="/guides">서비스·가이드 보기</a></div></article>`);
+    list.innerHTML = renderList(visible, '<div class="empty-state"><strong>조건에 맞는 칼럼이 없습니다.</strong><p>검색어를 줄이거나 전체 탭을 선택해 주세요.</p></div>', item => {
+      const tagItems = (item.tags || item.hashtags || []).slice(0, 10).map(tag => `<span>#${escapeHtml(String(tag).replace(/^#/, ''))}</span>`).join('');
+      const checklist = Array.isArray(item.checklist) && item.checklist.length ? `<section class="seo-meta-card"><h4>빠른 체크리스트</h4><ul class="check-list">${item.checklist.slice(0, 6).map(point => `<li><span class="check">✓</span>${escapeHtml(point)}</li>`).join('')}</ul></section>` : '';
+      const faq = Array.isArray(item.faq) && item.faq.length ? `<section class="seo-meta-card"><h4>자주 묻는 질문</h4>${item.faq.slice(0, 3).map(entry => `<details class="faq-item"><summary>${escapeHtml(entry.question || '')}</summary><div class="faq-content">${escapeHtml(entry.answer || '')}</div></details>`).join('')}</section>` : '';
+      const links = Array.isArray(item.internalLinks) && item.internalLinks.length ? `<nav class="internal-link-row" aria-label="관련 링크">${item.internalLinks.slice(0, 4).map(link => `<a class="btn secondary" href="${escapeHtml(link.href || '#')}">${escapeHtml(link.label || '관련 링크')}</a>`).join('')}</nav>` : '';
+      const seoSummary = `<div class="seo-meta-strip"><span>검색 의도: ${escapeHtml(item.searchIntent || item.primaryKeyword || '법률·규제 리스크 점검')}</span><span>주요 키워드: ${escapeHtml(item.primaryKeyword || '')}</span><span>해시태그 ${Math.min(10, (item.tags || []).length)}개</span></div>`;
+      return `<article class="article-card board-post" id="${escapeHtml(item.slug || item.id || '')}"><div class="pill ${pillClass(item.boardType)}">${escapeHtml(item.category || typeLabel(item.boardType))}</div><h3>${escapeHtml(item.title)}</h3><p class="post-summary">${escapeHtml(item.summary || '')}</p>${seoSummary}${renderPostBody(item.body || '')}${checklist}${faq}<div class="post-tags">${tagItems}</div>${links}<div class="post-cta"><a class="btn primary" href="/products/veridion/demo">내 사이트 무료 진단</a><a class="btn secondary" href="/plans">요금제 확인</a><a class="btn secondary" href="/service">서비스·가이드 보기</a></div></article>`;
+    });
   }
   renderActivity();
   renderPagination();

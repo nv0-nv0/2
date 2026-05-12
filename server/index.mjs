@@ -1337,8 +1337,8 @@ return String(value ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;
 function routeMeta(urlPath) {
 const base = seoBaseUrl();
 const metas = {
-'/': { title: 'NV0 | 검색 노출과 전환을 높이는 페이지 구조 진단', description: '공개 접근부터 콘텐츠 구조, 정책 연결, 다음 행동 버튼까지 한눈에 진단하고 개선 우선순위를 제안합니다.', keywords: ['웹사이트 구조 진단','검색 노출 개선','전환 개선','무료 진단','콘텐츠 구조'] },
-'/products/veridion/demo': { title: '무료 진단 | NV0', description: '사이트 주소 하나로 공개 접근, 검색 구조, 전환 흐름, 정책 연결 상태를 빠르게 확인합니다.', keywords: ['무료 진단','웹사이트 분석','검색 구조 진단','전환 진단'] },
+'/': { title: 'NV0 | 온라인 사업자 법률·규제 리스크 진단', description: '온라인 사업자가 놓치기 쉬운 전자상거래 고지, 개인정보 안내, 환불·청약철회, 표시광고 표현, 과태료 리스크 후보를 공개 화면 기준으로 점검합니다.', keywords: ['웹사이트 구조 진단','검색 노출 개선','전환 개선','무료 진단','콘텐츠 구조'] },
+'/products/veridion/demo': { title: '무료 진단 | NV0', description: '사이트 주소 하나로 온라인 사업자의 법률·규제 리스크 후보를 영역·요소·구분별 개수로 확인합니다.', keywords: ['무료 진단','웹사이트 분석','검색 구조 진단','전환 진단'] },
 '/demo': { title: '무료 진단 안내 | NV0', description: '최신 무료 진단 화면으로 이동하여 사이트 구조와 개선 우선순위를 확인합니다.', keywords: ['무료 진단','사이트 진단'] },
 '/plans': { title: '요금제 | NV0', description: '무료 진단, 기본 리포트, 전문가 리포트의 제공 범위와 가격을 명확하게 비교합니다.', keywords: ['요금제','기본 리포트','전문가 리포트','사이트 진단 요금'] },
 '/products': { title: '요금제 | NV0', description: '무료 진단, 기본 리포트, 전문가 리포트의 제공 범위와 가격을 명확하게 비교합니다.', keywords: ['요금제','기본 리포트','전문가 리포트'] },
@@ -1347,10 +1347,10 @@ const metas = {
 '/docs/veridion': { title: '문서 생성 | NV0', description: '진단 후 필요한 고객 안내문, 정책 문서, 개선 리포트 초안을 정리하는 문서 허브입니다.', keywords: ['문서 생성','정책 문서','진단 리포트','개선 문구'] },
 '/guides': { title: '가이드 | NV0', description: '진단 결과를 읽는 법과 검색 노출·전환 개선 방법을 쉽게 안내합니다.', keywords: ['가이드','진단 결과','검색 노출','전환 개선'] },
 '/resources': { title: '가이드 | NV0', description: '진단 결과를 읽는 법과 검색 노출·전환 개선 방법을 쉽게 안내합니다.', keywords: ['가이드','진단 결과','검색 노출'] },
-'/solutions': { title: '분석 프로세스 | NV0', description: '입력부터 결과 정리까지 검색과 전환 관점에서 페이지 구조를 단계별로 분석합니다.', keywords: ['분석 프로세스','검색 구조 분석','전환 구조 분석'] },
-'/service': { title: '서비스 소개 | NV0', description: '검색 친화적 구조 분석으로 문제를 빠르게 찾고 전환 가능성까지 함께 점검합니다.', keywords: ['서비스 소개','사이트 구조 분석','전환 점검'] },
+'/solutions': { title: '분석 프로세스 | NV0', description: '입력부터 결과 정리까지 온라인 사업자의 법률·규제 리스크 후보를 영역·요소·구분별로 분석합니다.', keywords: ['분석 프로세스','검색 구조 분석','전환 구조 분석'] },
+'/service': { title: '서비스 소개 | NV0', description: '온라인 사업자의 법률·규제·과태료 리스크 후보를 줄이기 위해 전자상거래 고지, 개인정보 안내, 환불·청약철회, 표시광고 표현을 점검합니다.', keywords: ['서비스 소개','사이트 구조 분석','전환 점검'] },
 '/cases': { title: '개선 사례 | NV0', description: '진단 후 어떤 항목을 먼저 고쳤고 어떤 변화가 생겼는지 사례 형태로 정리했습니다.', keywords: ['개선 사례','전환 개선 사례','검색 구조 사례'] },
-'/board': { title: '게시판 | NV0', description: '검색 로봇도 잘 읽고 사람도 이해하기 쉬운 구조로 정리한 실전 칼럼을 제공합니다.', keywords: ['게시판','검색 노출','콘텐츠 전략','온페이지 SEO','기술 SEO'] },
+'/board': { title: '게시판 | NV0', description: '온라인 사업자가 이해하기 쉬운 법률·규제·과태료 리스크 감소형 CTA 칼럼을 제공합니다.', keywords: ['게시판','검색 노출','콘텐츠 전략','온페이지 SEO','기술 SEO'] },
 '/business-info': { title: '사업자 정보와 고객지원 안내 | NV0', description: '결제 전 확인할 수 있는 NV0 사업자 정보와 고객지원 기준입니다.', keywords: ['사업자 정보','고객지원'] },
 '/terms': { title: '이용약관 | NV0', description: 'NV0 서비스 이용 조건과 기본 약관을 안내합니다.', keywords: ['이용약관'] },
 '/privacy': { title: '개인정보처리방침 | NV0', description: 'NV0 서비스의 개인정보 처리 기준과 입력 정보 최소화 원칙입니다.', keywords: ['개인정보처리방침'] },
@@ -1404,7 +1404,7 @@ return out;
 function pageFaqStructuredData(urlPath) {
 const faqMap = {
 '/': [
-['NV0는 무엇을 점검하나요?', '고객이 문의하거나 결제하기 전에 확인하는 사업자 정보, 개인정보 안내, 환불 기준, 문의 버튼, 가격 안내를 쉽게 점검합니다.'],
+['NV0는 무엇을 점검하나요?', '온라인 사업자가 공개 화면에서 갖춰야 할 전자상거래 고지, 개인정보 안내, 환불·청약철회, 표시광고 표현, 문의·사업자 정보를 쉽게 점검합니다.'],
 ['무료진단 후 무엇을 보면 되나요?', '탐지 점수가 높은 항목과 먼저 고칠 안내 문구를 확인한 뒤 필요한 상품을 비교하면 됩니다.']
 ],
 '/products/veridion/demo': [
@@ -1431,7 +1431,7 @@ const graph = [
 { '@type': 'Organization', '@id': `${base}/#organization`, name: BUSINESS_PROFILE.tradeName, url: base, email: BUSINESS_PROFILE.contactEmail },
 { '@type': 'WebSite', '@id': `${base}/#website`, name: 'NV0', url: base, inLanguage: 'ko-KR', publisher: { '@id': `${base}/#organization` }, potentialAction: { '@type': 'SearchAction', target: `${base}/board?q={search_term_string}`, 'query-input': 'required name=search_term_string' } },
 { '@type': 'SoftwareApplication', '@id': `${base}/#software`, name: 'NV0', applicationCategory: 'BusinessApplication', operatingSystem: 'Web', url: base, description: meta.description, offers: { '@type': 'Offer', priceCurrency: 'KRW', price: '0', availability: 'https://schema.org/InStock' }, provider: { '@id': `${base}/#organization` } },
-{ '@type': 'Service', '@id': `${base}/#service`, name: '웹사이트 안내·정책 점검', serviceType: 'Website trust and policy guidance check', provider: { '@id': `${base}/#organization` }, areaServed: 'KR', audience: { '@type': 'Audience', audienceType: '온라인 사업자' } },
+{ '@type': 'Service', '@id': `${base}/#service`, name: '온라인 사업자 법률·규제 리스크 점검', serviceType: 'Online business legal and regulatory risk screening', provider: { '@id': `${base}/#organization` }, areaServed: 'KR', audience: { '@type': 'Audience', audienceType: '온라인 사업자' } },
 { '@type': 'WebPage', '@id': `${pageUrl}#webpage`, url: pageUrl, name: meta.title, description: meta.description, isPartOf: { '@id': `${base}/#website` }, about: { '@id': `${base}/#software` }, inLanguage: 'ko-KR', dateModified: new Date().toISOString().slice(0, 10) },
 { '@type': 'BreadcrumbList', '@id': `${pageUrl}#breadcrumb`, itemListElement: [
 { '@type': 'ListItem', position: 1, name: '홈', item: `${base}/` },
@@ -1499,7 +1499,7 @@ function businessFooterHtml() {
 const types = BUSINESS_PROFILE.businessTypes.join(' · ');
 const mailOrderNumber = isSafePublicOptionalField(BUSINESS_PROFILE.mailOrderRegistrationNumber, { requireMailOrderShape: true }) ? BUSINESS_PROFILE.mailOrderRegistrationNumber : '';
 return '<footer class="business-footer" aria-label="사업자 정보">'
-+ '<div class="brand-col"><strong>nv0</strong><span>검색 친화적 구조 분석으로 더 많은 고객과 매출을 연결합니다.</span><span>© 2024 nv0.kr. All rights reserved.</span></div>'
++ '<div class="brand-col"><strong>nv0</strong><span>온라인 사업자의 법률·규제·과태료 리스크 후보를 공개 화면 기준으로 줄입니다.</span><span>© 2024 nv0.kr. All rights reserved.</span></div>'
 + '<div class="footer-col"><strong>서비스</strong><a href="/service">서비스 소개</a><a href="/solutions">분석 프로세스</a><a href="/plans">요금제</a></div>'
 + '<div class="footer-col"><strong>정보</strong><a href="/board">게시판</a><a href="/service">서비스·가이드</a><a href="/business-info">고객지원</a></div>'
 + '<div class="footer-col"><strong>회사</strong><a href="/business-info">회사 소개</a><a href="/privacy">개인정보처리방침</a><a href="/terms">이용약관</a><a href="/refund">환불 정책</a></div>'
