@@ -170,7 +170,42 @@ return { requestId: scan?.requestId || null, siteId: scan?.siteId || null, targe
   const paymentHandled = await paymentRouteHandler(req, res, { requestUrl: url, pathname });
   if (paymentHandled !== false) return paymentHandled;
 if (pathname === '/api/public/diagnosis-engine' && req.method === 'GET') {
-return json(req, res, 200, { ok: true, phase: RELEASE_PHASE, engine: 'NV0 Public Evidence Summary Check Engine', rulesVersion: RULES_VERSION, targetFetchEnabled: TARGET_FETCH_ENABLED, scanProvider: SCAN_PROVIDER, aiReviewProvider: AI_REVIEW_PROVIDER, geminiConfigured: AI_REVIEW_ENABLED, resultContract: { resultType: 'preliminary_check', legalConclusion: false, includesEvidenceSummary: true, includesConfidenceScore: true, includesManualReviewFlags: true, includesAutomationDisclosure: true, includesAutomatedActionPlan: true, includesAccuracyProfile: true, includesReportQualityGate: true, includesDemoAccuracyContract: true, includesPaidOutputQualityGate: true, phase220ServiceQualityVersion: PHASE220_SERVICE_QUALITY_VERSION, phase223RiskGuardVersion: PHASE223_RISK_GUARD_VERSION }, endpoints: { scan: 'POST /api/public/scan', diagnose: 'POST /api/public/diagnose', board: 'GET /api/public/system-items', engine: 'GET /api/public/diagnosis-engine', productIntelligence: 'GET /api/public/product-intelligence', productQuality: 'GET /api/public/product-quality' }, smartProduct: { version: 'p153-smart-ops-v1', nextBestAction: true, planFitScoring: true, journeyOrchestration: true, smartProductEndpoint: '/api/public/smart-product', userPath: ['무료 요약','요금제 선택','내 사이트 관리','게시판 재유입'] }, autoPublish: { boardName: '게시판', intervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000), cadenceLabel: `${Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000)}분에 1회`, topicPackCount: ctaTopicPacks().length }, automation: { mode: TARGET_FETCH_AUTOMATION_LEVEL, robotsEnabled: TARGET_FETCH_ROBOTS_ENABLED, sitemapEnabled: TARGET_FETCH_SITEMAP_ENABLED, maxPages: TARGET_FETCH_MAX_PAGES, maxDiscoveryResources: TARGET_FETCH_MAX_DISCOVERY_RESOURCES, notice: '자동 확인 가능한 공개 항목은 모두 처리하고 자동 확정 불가 영역은 직접 확인으로 고지합니다.' }, checks: buildRuleCatalog().map(({ code, category, title, severity, penaltyMax }) => ({ code, category, title, severity, penaltyMax })) });
+return json(req, res, 200, { ok: true, phase: RELEASE_PHASE, engine: 'NV0 Public Evidence Summary Check Engine', rulesVersion: RULES_VERSION, targetFetchEnabled: TARGET_FETCH_ENABLED, scanProvider: SCAN_PROVIDER, aiReviewProvider: AI_REVIEW_PROVIDER, geminiConfigured: AI_REVIEW_ENABLED, resultContract: { resultType: 'preliminary_check', legalConclusion: false, includesEvidenceSummary: true, includesConfidenceScore: true, includesManualReviewFlags: true, includesAutomationDisclosure: true, includesAutomatedActionPlan: true, includesAccuracyProfile: true, includesReportQualityGate: true, includesDemoAccuracyContract: true, includesPaidOutputQualityGate: true, phase220ServiceQualityVersion: PHASE220_SERVICE_QUALITY_VERSION, phase223RiskGuardVersion: PHASE223_RISK_GUARD_VERSION }, endpoints: { scan: 'POST /api/public/scan', diagnose: 'POST /api/public/diagnose', board: 'GET /api/public/system-items', engine: 'GET /api/public/diagnosis-engine', productIntelligence: 'GET /api/public/product-intelligence', productQuality: 'GET /api/public/product-quality' }, smartProduct: { version: 'p153-smart-ops-v1', nextBestAction: true, planFitScoring: true, journeyOrchestration: true, smartProductEndpoint: '/api/public/smart-product', userPath: ['무료 요약','요금제 선택','내 사이트 관리','게시판 재유입'] }, publicationCadence: { boardName: '전문가 칼럼', intervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000), cadenceLabel: `${Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000)}분에 1회`, topicPackCount: ctaTopicPacks().length }, automation: { mode: TARGET_FETCH_AUTOMATION_LEVEL, robotsEnabled: TARGET_FETCH_ROBOTS_ENABLED, sitemapEnabled: TARGET_FETCH_SITEMAP_ENABLED, maxPages: TARGET_FETCH_MAX_PAGES, maxDiscoveryResources: TARGET_FETCH_MAX_DISCOVERY_RESOURCES, notice: '자동 확인 가능한 공개 항목은 모두 처리하고 자동 확정 불가 영역은 직접 확인으로 고지합니다.' }, checks: buildRuleCatalog().map(({ code, category, title, severity, penaltyMax }) => ({ code, category, title, severity, penaltyMax })) });
+}
+
+if (pathname === '/api/public/diagnose' && req.method === 'POST') {
+const rate = await hitRateLimit('public-diagnose', clientIp(req), { windowMs: PUBLIC_SCAN_WINDOW_MS, limit: PUBLIC_SCAN_LIMIT });
+if (rate.blocked) return json(req, res, 429, { ok: false, error: '요청이 너무 많습니다. 잠시 후 다시 시도해 주세요.' });
+let payload;
+try {
+payload = normalizeScanPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
+} catch (error) {
+return json(req, res, 400, { ok: false, error: error.message || '진단할 사이트 주소가 필요합니다.' });
+}
+if (TURNSTILE_PUBLIC_ENABLED && TURNSTILE_CONFIGURED) {
+const challenge = await verifyTurnstile(payload.turnstileToken, clientIp(req));
+if (!challenge.ok) return json(req, res, 400, { ok: false, error: '보안 확인을 완료한 뒤 다시 시도해 주세요.' });
+}
+const db = await readDb();
+const session = await getCustomerSession(req, db);
+const scan = await scanResultFor(payload.target, db);
+const site = ensureSiteRecord(db, scan);
+scan.siteId = scan.siteId || site.id;
+scan.requestId = scan.requestId || uid('scan');
+scan.customerId = session?.customer?.id || scan.customerId || null;
+scan.savedToAccount = !!session;
+scan.paidAccess = false;
+scan.locked = true;
+db.scans ||= [];
+const existingIndex = db.scans.findIndex(item => item.requestId === scan.requestId || (item.siteId === scan.siteId && item.target === scan.target && item.generatedAt === scan.generatedAt));
+if (existingIndex >= 0) db.scans[existingIndex] = { ...db.scans[existingIndex], ...scan };
+else db.scans.unshift(scan);
+db.scans = db.scans.slice(0, 120);
+if (session?.customer && site?.id) linkCustomerToSite(db, session.customer.id, site, { label: site.domain || scan.target, memo: '무료 진단 결과 저장' });
+try { createCtaPublicationIfDue(db, scan, { force: false }); } catch {}
+appendAudit(db, req, 'public.diagnose.completed', { siteId: scan.siteId, requestId: scan.requestId, target: scan.target, customerId: session?.customer?.id || null });
+await writeDb(db);
+return json(req, res, 200, { ok: true, result: { ...scan, diagnosis: buildPublicDiagnosisPackage(scan), demoIssueOverview: scan.demoIssueOverview || buildDemoIssueOverview(scan), conversionUrgency: scan.conversionUrgency || buildConversionUrgencyModel(scan, { plan: scan.recommendedPlan || 'Report' }), savedToAccount: !!session, paidAccess: false, locked: true } });
 }
 if (pathname === '/api/public/config' && req.method === 'GET') {
 return json(req, res, 200, { ok: true, turnstileEnabled: TURNSTILE_PUBLIC_ENABLED, turnstileConfigured: TURNSTILE_CONFIGURED, prelaunchMode: PRELAUNCH_MODE, turnstileSiteKey: TURNSTILE_PUBLIC_ENABLED ? TURNSTILE_SITE_KEY : '' });
@@ -289,7 +324,12 @@ const seedBoardPosts = [
   { id: 'column-action-button', title: '전환을 만드는 다음 행동 버튼 배치와 문구 전략', boardType: 'content', primaryKeyword: '다음 행동 버튼', visibility: 'public', createdAt: nowIso(), summary: '사용자가 망설이지 않고 다음 단계로 이동하도록 버튼 위치와 문구를 자연스럽게 설계하는 방법입니다.' },
   { id: 'column-internal-link', title: '내부 링크 최적화로 사이트 주제성을 강화하는 방법', boardType: 'seo', primaryKeyword: '내부 링크 최적화', visibility: 'public', createdAt: nowIso(), summary: '관련 페이지를 자연스럽게 연결해 검색 로봇의 이해도와 사용자의 이동 흐름을 함께 개선합니다.' }
 ];
-const sourcePosts = rawPosts.length ? rawPosts : seedBoardPosts;
+const mergedBoardMap = new Map();
+for (const item of [...rawPosts, ...seedBoardPosts]) {
+  const key = String(item.id || item.title || '').trim() || `seed-${mergedBoardMap.size}`;
+  if (!mergedBoardMap.has(key)) mergedBoardMap.set(key, item);
+}
+const sourcePosts = [...mergedBoardMap.values()].slice(0, Math.max(6, mergedBoardMap.size));
 const publicPosts = sourcePosts.map((item, index) => toPublicBoardPost(item, index));
 const normalizedFilter = ['all', 'seo', 'content', 'technical'].includes(filter) ? filter : 'all';
 const filtered = publicPosts.filter(item => normalizedFilter === 'all' || item.boardType === normalizedFilter);

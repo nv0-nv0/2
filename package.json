@@ -1,6 +1,6 @@
 {
   "name": "nv0-veridion-cleanroom",
-  "version": "1.0.0-commercial-customer-copy-redesign-phase245",
+  "version": "1.0.0-commercial-customer-copy-redesign-phase247",
   "private": true,
   "type": "module",
   "scripts": {
@@ -328,6 +328,10 @@
     "validate:phase243": "node scripts/validate-phase243-board-seo-unified-design.mjs",
     "phase243:final": "npm run check:syntax && npm run validate:phase243 && npm run test:routes",
     "validate:phase245": "node scripts/validate-phase245-live-issue-lock.mjs",
-    "phase245:final": "npm run check:syntax && npm run check:pages && npm run check:links -- --summary && npm run test:routes && npm run validate:phase245"
+    "phase245:final": "npm run check:syntax && npm run check:pages && npm run check:links -- --summary && npm run test:routes && npm run validate:phase245",
+    "validate:phase246": "node scripts/validate-phase246-demo-nav-complete.mjs",
+    "phase246:final": "npm run check:syntax && npm run check:pages && npm run check:links -- --summary && npm run test:routes && npm run validate:phase245 && npm run validate:phase246",
+    "validate:phase247": "node scripts/validate-phase247-image-reference-products.mjs",
+    "phase247:final": "npm run check:syntax && npm run check:pages && npm run check:links -- --summary && npm run test:routes && npm run validate:phase247"
   }
 }

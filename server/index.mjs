@@ -1459,7 +1459,7 @@ const isCurrent = urlPath === pathOnly || (pathOnly !== '/' && urlPath.startsWit
 return `${className ? ` class="${className}"` : ''}${isCurrent ? ' aria-current="page"' : ''}`;
 }
 function publicTopMenuHtml(urlPath = '/') {
-return `<a class="skip-link" href="#main">본문 바로가기</a><nav class="site-topbar" aria-label="주요 메뉴">
+return `<a class="skip-link" href="#main">본문 바로가기</a><nav class="site-topbar" aria-label="주요 메뉴"><div class="site-topbar-inner">
 <a class="brand" href="/"><span class="brand-mark">nv0</span></a>
 <div class="site-menu">
 <a href="/service"${navAttrs(urlPath, '/service')}>서비스 소개</a>
@@ -1469,7 +1469,7 @@ return `<a class="skip-link" href="#main">본문 바로가기</a><nav class="sit
 <a href="/plans"${navAttrs(urlPath, '/plans')}>요금제</a>
 </div>
 <div class="site-actions"><a class="login-link" href="/auth"${navAttrs(urlPath, '/auth')}>로그인</a><a class="top-cta" href="/products/veridion/demo"${navAttrs(urlPath, '/products/veridion/demo')}>무료 진단 시작 →</a></div>
-</nav>`;
+</div></nav>`;
 }
 function ensureMainId(body) {
 if (body.includes('<main id="main"')) return body;
@@ -1535,7 +1535,7 @@ function renderPublicErrorPage(req, res, status, title, message, requestId = '')
 const safeTitle = escapeHtml(title);
 const safeMessage = escapeHtml(message);
 const safeRequestId = requestId ? escapeHtml(requestId) : '';
-const body = `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${safeTitle} | NV0 / Veridion</title><meta name="robots" content="noindex,nofollow,noarchive"><link rel="stylesheet" href="/shared/base.css"><link rel="stylesheet" href="/shared/design-system.css"><link rel="stylesheet" href="/shared/phase218-fresh-premium.css"></head><body>${publicTopMenuHtml('/')}<main id="main" tabindex="-1" class="nv0-error-page"><section class="nv0-error-card"><p class="eyebrow">서비스 안내</p><h1>${safeTitle}</h1><p>${safeMessage}</p>${safeRequestId ? `<p class="nv0-error-request">요청 ID: ${safeRequestId}</p>` : ''}<div class="hero-actions"><a class="btn primary" href="/products/veridion/demo">무료 진단으로 이동</a><a class="btn secondary" href="/">홈으로 이동</a></div></section></main>${businessFooterHtml()}<script src="/shared/client-risk-guard.js" defer></script></body></html>`;
+const body = `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${safeTitle} | NV0 / Veridion</title><meta name="robots" content="noindex,nofollow,noarchive"><link rel="stylesheet" href="/shared/nv0-clean-slate-20260512.css"></head><body>${publicTopMenuHtml('/')}<main id="main" tabindex="-1" class="nv0-error-page"><section class="nv0-error-card"><p class="eyebrow">서비스 안내</p><h1>${safeTitle}</h1><p>${safeMessage}</p>${safeRequestId ? `<p class="nv0-error-request">요청 ID: ${safeRequestId}</p>` : ''}<div class="hero-actions"><a class="btn primary" href="/products/veridion/demo">무료 진단으로 이동</a><a class="btn secondary" href="/">홈으로 이동</a></div></section></main>${businessFooterHtml()}<script src="/shared/client-risk-guard.js" defer></script></body></html>`;
 return html(req, res, status, body, { 'cache-control': 'no-store' }, 'public-page');
 }
 function adminNav() {
@@ -1959,6 +1959,7 @@ return String(value || '')
 .replace(/\bAuto\b/g, '정기 관리')
 .replace(/자동\s*발행/g, '정기 공개')
 .replace(/자동발행/g, '정기 공개')
+.replace(/자동 글/g, '정기 칼럼')
 .replace(/고객 단계/g, '고객 단계')
 .replace(/첫 화면/g, '첫 화면')
 .replace(/메타 설명/g, '검색 설명')
@@ -1980,6 +1981,7 @@ const sections = String(body || '')
 .replace(/\bAuto\b/g, '정기 관리')
 .replace(/자동\s*발행/g, '정기 공개')
 .replace(/자동발행/g, '정기 공개')
+.replace(/자동 글/g, '정기 칼럼')
 .replace(/고객 단계/g, '고객 단계')
 .replace(/첫 화면/g, '첫 화면')
 .split(/\n{2,}/)
@@ -1999,9 +2001,9 @@ return 'seo';
 }
 function toPublicBoardPost(item = {}, index = 0) {
 const source = item;
-const body = sanitizePublicBoardBody(source.body || item.body || source.summary || item.summary || '');
+const body = sanitizePublicBoardBody(source.body || item.body || publicBoardBodyFor(source, index) || source.summary || item.summary || '');
 const tags = Array.isArray(source.tags || item.tags)
-  ? (source.tags || item.tags).map(tag => String(tag || '').replace(/^#/, '').trim()).filter(Boolean).slice(0, 12)
+  ? (source.tags || item.tags).map(tag => publicCleanPhrase(String(tag || '').replace(/^#/, '').trim())).filter(tag => tag && !/[a-z]+_[a-z]+/i.test(tag)).slice(0, 10)
   : [];
 const primaryKeyword = source.seo?.primaryKeyword || source.primaryKeyword || item.primaryKeyword || '사이트 구조';
 return {
@@ -2011,7 +2013,7 @@ return {
   visibility: item.visibility || 'public',
   createdAt: item.createdAt || source.createdAt || nowIso(),
   primaryKeyword: publicCleanPhrase(primaryKeyword),
-  summary: publicClampText(source.seo?.metaDescription || source.summary || item.summary || `${primaryKeyword}을 문제 진단, 실무 체크리스트, 문구 개선 예시, 다음 행동 흐름으로 정리했습니다.`, 190),
+  summary: publicCleanPhrase(publicClampText(source.seo?.metaDescription || source.summary || item.summary || `${primaryKeyword}을 문제 진단, 실무 체크리스트, 문구 개선 예시, 다음 행동 흐름으로 정리했습니다.`, 190)),
   tags,
   body
 };

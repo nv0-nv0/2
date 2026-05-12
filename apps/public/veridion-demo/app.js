@@ -59,7 +59,7 @@ function renderProgress(index = 0) {
   const elapsed = progressStartedAt ? Math.max(0, Math.round((Date.now() - progressStartedAt) / 1000)) : 0;
   const active = Math.max(0, Math.min(PROGRESS_STEPS.length - 1, index));
   return `<section class="demo-progress-panel" aria-live="polite">
-    <div class="demo-progress-head"><span class="pill brand">실시간 무료진단</span><b>${elapsed}초 경과</b></div>
+    <div class="demo-progress-head"><span class="pill brand">실시간 무료 진단</span><b>${elapsed}초 경과</b></div>
     <h3>결과 화면을 먼저 준비하면서 공개 페이지를 확인하고 있습니다</h3>
     <p class="muted">응답이 느린 사이트도 빈 화면으로 기다리게 하지 않고, 현재 처리 단계를 계속 보여줍니다.</p>
     <ol class="demo-progress-steps phase240-readable-steps">${PROGRESS_STEPS.map((step, stepIndex) => `<li class="${stepIndex < active ? 'done' : stepIndex === active ? 'active' : ''}"><span aria-hidden="true">${stepIndex + 1}</span><div><b>${escapeHtml(step.title)}</b><p>${escapeHtml(step.detail)}</p></div></li>`).join('')}</ol>
@@ -453,14 +453,14 @@ function renderResultHero(view) {
       <small>진단 시각 ${escapeHtml(formatDate(view.generatedAt))}</small>
     </div>
     <div class="score-orbit" style="--score:${escapeAttr(view.health.percent)}">
-      <div class="score-ring" aria-label="탐지 점수 ${escapeAttr(scoreText)}점"><em>탐지 점수</em><strong>${escapeHtml(scoreText)}</strong><span>/ 100</span></div>
+      <div class="score-ring" aria-label="개선 우선도 ${escapeAttr(scoreText)}점"><em>개선 우선도</em><strong>${escapeHtml(scoreText)}</strong><span>/ 100</span></div>
       <b>${escapeHtml(view.riskLevel)}</b>
     </div>
   </section>`;
 }
 function renderMetricStrip(view) {
   return `<section class="metric-strip" aria-label="요약 지표">
-    <article><span>추천 상품</span><strong>${escapeHtml(view.recommendedPlan)}</strong><small>현재 탐지 점수 기준</small></article>
+    <article><span>추천 상품</span><strong>${escapeHtml(view.recommendedPlan)}</strong><small>현재 개선 우선도 기준</small></article>
     <article><span>잠금 해제 항목</span><strong>${escapeHtml(view.lockedCount)}</strong><small>회원/유료 상세에서 확인</small></article>
     <article><span>직접 확인 필요</span><strong>${escapeHtml(view.scoreModel?.manualReviewCount ?? 0)}개</strong><small>직접 확인 필요 항목</small></article>
   </section>`;
@@ -634,7 +634,7 @@ function renderPaidFullDetailContract(scan) {
   const contract = scan.paidFullDetailContract || scan.asset?.paidFullDetailContract || null;
   if (!contract) return '';
   const rows = Array.isArray(contract.issueDetails) ? contract.issueDetails : [];
-  return `<section class="paid-full-detail-contract"><div class="section-title"><span class="pill brand">유료 전체 공개</span><h3>문제 전체 내용 100% 공개 게이트</h3><p>무료 데모에서 요약된 문제 영역·요소·갯수의 전체 상세 내용을 결제 산출물에서 모두 노출합니다.</p></div><div class="demo-issue-kpis"><article><span>상세 공개율</span><strong>${escapeHtml(contract.completenessScore ?? 0)}</strong><small>/100</small></article><article><span>전체 항목</span><strong>${escapeHtml(contract.totalIssueCount ?? rows.length)}</strong><small>${contract.allDetailsVisible ? '전체 공개' : '보완 필요'}</small></article><article><span>누락 상세</span><strong>${escapeHtml(Number(contract.missingDetailRows || 0))}</strong><small>0이어야 통과</small></article><article><span>필수 필드</span><strong>${escapeHtml((contract.requiredFields || []).length)}</strong><small>근거·조치·검수</small></article></div><div class="paid-detail-grid">${rows.map((item, index) => `<article class="paid-detail-card"><div class="meta-row"><b>${index + 1}. ${escapeHtml(item.title || item.code || '점검 항목')}</b><span class="pill ${priorityTone(item.priority)}">${escapeHtml(item.priority || 'P2')}</span></div><dl><div><dt>영역/요소</dt><dd>${escapeHtml(item.area || item.category || '')} · ${(item.elements || []).map(escapeHtml).join(' / ')}</dd></div><div><dt>근거</dt><dd>${escapeHtml(item.evidence || '확인 필요')}</dd></div><div><dt>권장 조치</dt><dd>${escapeHtml(item.recommendation || '권장 조치 확인')}</dd></div><div><dt>수정 문구</dt><dd>${escapeHtml(item.fixTemplate || '수정 문구 확인')}</dd></div><div><dt>수용 기준</dt><dd>${(item.acceptanceCriteria || []).map(escapeHtml).join(' / ') || '재점검 기준 확인'}</dd></div></dl></article>`).join('')}</div></section>`;
+  return `<section class="paid-full-detail-contract"><div class="section-title"><span class="pill brand">상세 결과 안내</span><h3>상세 문제 항목 확인 안내</h3><p>무료 진단에서 요약된 문제 영역과 영향 요소를 상세 리포트에서 더 구체적으로 확인할 수 있습니다.</p></div><div class="demo-issue-kpis"><article><span>상세 정리율</span><strong>${escapeHtml(contract.completenessScore ?? 0)}</strong><small>/100</small></article><article><span>전체 항목</span><strong>${escapeHtml(contract.totalIssueCount ?? rows.length)}</strong><small>${contract.allDetailsVisible ? '전체 공개' : '보완 필요'}</small></article><article><span>추가 확인 항목</span><strong>${escapeHtml(Number(contract.missingDetailRows || 0))}</strong><small>재검토 기준</small></article><article><span>필수 필드</span><strong>${escapeHtml((contract.requiredFields || []).length)}</strong><small>근거·조치·검수</small></article></div><div class="paid-detail-grid">${rows.map((item, index) => `<article class="paid-detail-card"><div class="meta-row"><b>${index + 1}. ${escapeHtml(item.title || item.code || '점검 항목')}</b><span class="pill ${priorityTone(item.priority)}">${escapeHtml(item.priority || 'P2')}</span></div><dl><div><dt>영역/요소</dt><dd>${escapeHtml(item.area || item.category || '')} · ${(item.elements || []).map(escapeHtml).join(' / ')}</dd></div><div><dt>근거</dt><dd>${escapeHtml(item.evidence || '확인 필요')}</dd></div><div><dt>권장 조치</dt><dd>${escapeHtml(item.recommendation || '권장 조치 확인')}</dd></div><div><dt>수정 문구</dt><dd>${escapeHtml(item.fixTemplate || '수정 문구 확인')}</dd></div><div><dt>수용 기준</dt><dd>${(item.acceptanceCriteria || []).map(escapeHtml).join(' / ') || '재점검 기준 확인'}</dd></div></dl></article>`).join('')}</div></section>`;
 }
 
 function renderSiteOperationsDocument(scan) {
@@ -829,10 +829,10 @@ function renderSummaryMetricCards(view) {
   const urgent = view.recommendedActions?.[0]?.title || '상세 리포트에서 우선순위 확인';
   return `<section class="diagnosis-command" aria-label="진단 요약 대시보드">
     <article class="command-main ${escapeAttr(tone)}">
-      <div class="command-head"><span class="pill brand">VERIDION SUMMARY</span><span class="command-grade">${escapeHtml(riskTextFromScore(view.riskScore))}</span></div>
+      <div class="command-head"><span class="pill brand">진단 요약</span><span class="command-grade">${escapeHtml(riskTextFromScore(view.riskScore))}</span></div>
       <h2>${escapeHtml(view.target)}</h2>
       <p>${escapeHtml(riskStatusCopy(view.riskScore))}</p>
-      <div class="command-score-line"><strong>${escapeHtml(view.riskScore ?? '-')}</strong><span>/ 100</span><small>탐지 점수</small></div>
+      <div class="command-score-line"><strong>${escapeHtml(view.riskScore ?? '-')}</strong><span>/ 100</span><small>개선 우선도</small></div>
       <div class="command-kpis">
         <div><b>${escapeHtml(stats.total)}</b><span>발견 문제</span></div>
         <div><b>${escapeHtml(stats.autoFixable)}</b><span>자동 수정 가능</span></div>
@@ -929,7 +929,7 @@ function renderPremiumUpgradePanel(view) {
       <article>
         <b>무료 요약</b>
         <ul>
-          <li>총점과 탐지 점수 확인</li>
+          <li>총점과 개선 우선도 확인</li>
           <li>상위 문제 요약</li>
           <li>대략적인 개선 방향</li>
         </ul>
@@ -1021,7 +1021,7 @@ function renderEvidenceFirstHero(view) {
       <small>진단 시각 ${escapeHtml(formatDate(view.generatedAt))} · ${escapeHtml(view.scoreModel?.scoreDisclaimer || '점수는 법적 결론이 아니라 발견 항목의 우선순위입니다.')}</small>
     </div>
     <div class="evidence-score-card">
-      <span>탐지 점수</span><strong>${escapeHtml(view.riskScore ?? '-')}</strong><small>/ 100 · 개선 우선도</small>
+      <span>개선 우선도</span><strong>${escapeHtml(view.riskScore ?? '-')}</strong><small>/ 100 · 개선 우선도</small>
       <div><b>수집 신뢰도</b><em>${escapeHtml(confidence)}</em></div>
       <div><b>확인 페이지</b><em>${escapeHtml(pages)}개</em></div>
     </div>

@@ -82,7 +82,7 @@ function renderPriceSummary() {
   const offer = currentOffer();
   if (!offer) {
     summaryPlanName.textContent = '선택한 상품 정보를 확인하는 중입니다.';
-    summaryPlanPeriod.textContent = '받을 결과물과 가격을 불러오고 있습니다.';
+    summaryPlanPeriod.textContent = '선택 상품에 맞춰 요약을 준비합니다.';
     summaryBasePrice.textContent = '-';
     summaryDelivery.textContent = '내 사이트 관리에서 확인';
     summaryTargetCustomer.textContent = '추천 대상 확인';
