@@ -72,7 +72,7 @@ function countByRegex(findings = [], pattern) {
 }
 function crisisBand(score) {
   const n = clamp(score);
-  if (n >= 82) return { label: '매우 높음', tone: 'danger', action: '지금 상세 리포트로 원인과 수정 문구를 먼저 확보하세요.' };
+  if (n >= 82) return { label: '매우 높음', tone: 'danger', action: '지금 기본 리포트로 원인과 수정 문구를 먼저 확보하세요.' };
   if (n >= 66) return { label: '높음', tone: 'danger', action: '결제 전 고지·정책·문의 흐름을 우선 보완하세요.' };
   if (n >= 48) return { label: '주의', tone: 'warn', action: '상세 근거를 확인하고 P0/P1 항목부터 정리하세요.' };
   return { label: '관리 가능', tone: 'success', action: '현재 구조를 유지하되 정기 점검으로 재발을 막으세요.' };
@@ -120,7 +120,7 @@ export function buildConversionUrgencyModel(scan = {}, options = {}) {
     overview.elementCount > 0 ? `영향 요소 ${overview.elementCount}개` : '영향 요소 낮음',
     manual > 0 ? `직접 확인 필요 ${manual}개` : '직접 확인 항목 적음'
   ];
-  const recommendedPlan = text(options.plan || scan.recommendedPlan || scan.intelligence?.recommendedPlan || (crisisScore >= 78 ? 'Auto' : crisisScore >= 58 ? 'FixPack' : 'Report'), 'Report');
+  const recommendedPlan = text(options.plan || scan.recommendedPlan || scan.intelligence?.recommendedPlan || (crisisScore >= 58 ? 'Expert' : 'Report'), 'Report');
   return {
     version: PHASE220_SERVICE_QUALITY_VERSION,
     scope: 'free_demo_conversion_crisis_score',
@@ -137,8 +137,8 @@ export function buildConversionUrgencyModel(scan = {}, options = {}) {
     immediateFixableCount,
     conversionBlockers,
     lostTrustSignals,
-    primaryCta: '상세 리포트 결제하고 원인 확인',
-    secondaryCta: 'FixPack으로 수정 문구까지 받기',
+    primaryCta: '기본 리포트 결제하고 원인 확인',
+    secondaryCta: '전문가 리포트로 개선안 받기',
     recommendedPlan,
     purchasePath: [
       { step: 1, title: '위기도 확인', body: '무료 데모에서 문제 영역·요소·갯수와 위기도 점수를 확인합니다.' },
@@ -382,8 +382,8 @@ export function buildPaidDeliverableBlueprint(scan = {}, plan = 'Report') {
   ];
   const planDeliverables = {
     Report: ['정밀 리포트', '근거 매트릭스', '우선순위 로드맵', '재점검 기준'],
-    FixPack: ['정밀 리포트', '수정 전/후 문구', '적용 위치', '검수 체크리스트', '재점검 기준'],
-    Auto: ['정밀 리포트', '정기 케어 권한', '변경 감지 기준', 'CTA 자동발행 품질 기준', '월간 재점검 루틴']
+    Expert: ['정밀 리포트', '수정 전/후 문구', '적용 위치', '검수 체크리스트', '재점검 기준'],
+    Expert: ['정밀 리포트', '정기 케어 권한', '변경 감지 기준', '칼럼 공개 품질 기준', '월간 재점검 루틴']
   };
   return {
     version: PHASE220_SERVICE_QUALITY_VERSION,
@@ -415,8 +415,8 @@ export function buildPaidDeliverableBlueprint(scan = {}, plan = 'Report') {
       minSiteOperationsDocumentScore: 100,
       minPaidOutputGateScore: 98,
       allIssueDetailsRequired: true,
-      beforeAfterCopyRequiredForFixPack: plan === 'FixPack',
-      recurringCarePlanRequiredForAuto: plan === 'Auto',
+      beforeAfterCopyRequiredForExpert: plan === 'Expert',
+      recurringCarePlanRequiredForExpert: plan === 'Expert',
       priceReductionMustNotReduceDeliverables: true
     },
     performanceBudget: {
@@ -484,8 +484,8 @@ export function buildPhase229OutputQualityLock({ scan = {}, order = {}, asset = 
     gate('paid_output_gate_98', gateResult.score >= 98, '유료 산출물 검수 기준 98점 이상', { score: gateResult.score }),
     gate('section_depth_locked', sections.length >= 10 || Boolean(asset.reportExample), '가격 인하 후에도 10개 이상 결과물 섹션 유지'),
     gate('acceptance_locked', list(asset.acceptanceChecklist).length >= 10 || list(gateResult.gates).length >= 8, '수용 기준 유지'),
-    gate('fixpack_copy_locked', plan !== 'FixPack' || fixes.length >= 3, 'FixPack 수정 전/후 문구 유지'),
-    gate('auto_care_locked', plan !== 'Auto' || Boolean(asset.autoPublishingPlan || asset.entitlement), 'Auto 반복 관리 권한 유지')
+    gate('fixpack_copy_locked', plan !== 'Expert' || fixes.length >= 3, 'Expert 수정 전/후 문구 유지'),
+    gate('auto_care_locked', plan !== 'Expert' || Boolean(asset.autoPublishingPlan || asset.entitlement), 'Expert 전문가 개선안 유지')
   ];
   const ok = gates.every((item) => item.ok);
   return {
@@ -512,7 +512,7 @@ export function attachPhase220ServiceQuality(scan = {}, options = {}) {
         demoToPaidTraceable: true,
         freeResultFeedsPaidAsset: true,
         manualReviewRemainsVisible: true,
-        ctaAutopublishIntervalMinutes: number(options.ctaIntervalMs, 20 * 60_000) / 60_000
+        ctaExpertpublishIntervalMinutes: number(options.ctaIntervalMs, 20 * 60_000) / 60_000
       }
     }
   };

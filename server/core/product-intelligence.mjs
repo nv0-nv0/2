@@ -44,8 +44,7 @@ function topFindingTitles(scan = {}, limit = 3) {
 
 function recommendedPlanFor(score, scan = {}) {
   const counts = findPriorityCounts(scan);
-  if (score >= 75 || counts.p0 >= 2) return 'Auto';
-  if (score >= 45 || counts.p0 >= 1 || counts.p1 >= 1) return 'FixPack';
+  if (score >= 45 || counts.p0 >= 1 || counts.p1 >= 1) return 'Expert';
   return 'Report';
 }
 
@@ -53,38 +52,27 @@ function actionCopy(plan, scan = {}) {
   const findings = topFindingTitles(scan, 3);
   const problemText = findings.length ? findings.join(', ') : '정책·문의·고지 흐름';
   const copies = {
-    Auto: {
-      headline: '반복 관리가 필요한 상태입니다.',
-      reason: `${problemText} 항목이 전환 직전 신뢰 판단에 영향을 줄 수 있어 정기 재진단과 발행 루틴까지 묶어 관리하는 편이 효율적입니다.`,
-      primaryCta: 'Auto 정기 케어 보기',
-      nextPath: ['/plans', '/portal', '/board']
-    },
-    FixPack: {
-      headline: '바로 바꿀 문구가 필요한 상태입니다.',
-      reason: `${problemText} 항목은 긴 설명보다 푸터·환불·개인정보·광고 표현을 바로 교체할 문구안이 먼저 필요합니다.`,
-      primaryCta: 'FixPack 문구안 보기',
-      nextPath: ['/plans', '/documents', '/checkout']
+    Expert: {
+      headline: '전문가 해설과 개선안이 필요한 상태입니다.',
+      reason: `${problemText} 항목은 단순 점수보다 상세 근거와 구체적인 개선 방향을 함께 확인하는 편이 좋습니다.`,
+      primaryCta: '전문가 리포트 보기',
+      nextPath: ['/plans', '/checkout', '/portal']
     },
     Report: {
       headline: '먼저 리포트로 기준을 잡는 단계입니다.',
-      reason: `큰 위험 신호는 제한적이지만 사이트 담당자가 놓치기 쉬운 ${problemText} 항목은 리포트로 정리해 두면 후속 수정 판단이 쉬워집니다.`,
-      primaryCta: '상세 리포트 보기',
-      nextPath: ['/plans', '/products/veridion/demo', '/documents']
+      reason: `큰 위험 신호는 제한적이지만 사이트 담당자가 놓치기 쉬운 ${problemText} 항목은 기본 리포트로 정리해 두면 후속 수정 판단이 쉬워집니다.`,
+      primaryCta: '기본 리포트 보기',
+      nextPath: ['/plans', '/products/veridion/demo', '/service']
     }
   };
-  return copies[plan] || copies.Pro;
+  return copies[plan] || copies.Report;
 }
-
 function planFitReason(offer = {}, intelligence = {}) {
   const plan = offer.code;
-  const score = intelligence.riskScore ?? 55;
   const recommended = intelligence.recommendedPlan;
   if (plan === recommended) return intelligence.reason;
   if (plan === 'Report') return '전체 수정 전에 근거와 우선순위를 한 번 정리해야 할 때 적합합니다.';
-  if (plan === 'FixPack') return '오늘 바로 교체할 고지·환불·개인정보·광고 문구가 필요할 때 적합합니다.';
-  if (plan === 'Auto') return score >= 65 ? '반복 변경이 잦거나 고위험 항목을 계속 추적해야 할 때 적합합니다.' : '광고·이벤트·상세페이지 변경이 잦은 팀에 적합합니다.';
-  if (plan === 'Certified') return '진단 후 외부에 보여줄 신뢰 표시가 필요할 때 적합합니다.';
-  if (plan === 'Agency') return '여러 고객사 도메인을 반복 점검해야 하는 조직에 적합합니다.';
+  if (plan === 'Expert') return '상세 근거와 전문가 해설, 맞춤 개선 방향이 필요할 때 적합합니다.';
   return offer.summary || '상황별 선택지입니다.';
 }
 
@@ -94,9 +82,8 @@ export function annotateOffersWithIntelligence(offers = [], intelligence = {}) {
   return list(offers).map((offer) => {
     let fitScore = 55;
     if (offer.code === recommendedPlan) fitScore = 98;
-    else if (recommendedPlan === 'Auto' && offer.code === 'FixPack') fitScore = 86;
-    else if (recommendedPlan === 'FixPack' && ['Report','Auto'].includes(offer.code)) fitScore = offer.code === 'Report' ? 78 : 74;
-    else if (recommendedPlan === 'Report' && ['FixPack'].includes(offer.code)) fitScore = 72;
+    else if (recommendedPlan === 'Expert' && offer.code === 'Report') fitScore = 78;
+    else if (recommendedPlan === 'Report' && offer.code === 'Expert') fitScore = 72;
     else if (offer.group === 'b2b' || offer.group === 'annual') fitScore = score >= 60 ? 64 : 58;
     return {
       ...offer,
@@ -155,20 +142,20 @@ export function buildProductDashboard(db = {}) {
   const scans = list(db.scans);
   const latest = scans[0] || {};
   const score = clamp(latest.riskScore ?? latest.score?.value ?? 55);
-  const ctaCount = list(db.boards).filter(item => item.type === 'cta' || item.boardType === 'cta').length;
+  const columnCount = list(db.boards).filter(item => item.type === 'column' || item.engine === 'public-column-engine-v1').length;
   const siteCount = list(db.sites).length;
   const orderCount = list(db.orders).length;
   return {
     ok: true,
     version: 'p152-smart-product-v1',
-    productScore: clamp(70 + Math.min(10, siteCount) + Math.min(10, ctaCount / 5) + Math.min(10, orderCount / 3)),
+    productScore: clamp(70 + Math.min(10, siteCount) + Math.min(10, columnCount / 5) + Math.min(10, orderCount / 3)),
     latestRiskScore: score,
     operatingSignals: {
       savedSites: siteCount,
       scans: scans.length,
-      ctaPosts: ctaCount,
+      columns: columnCount,
       orders: orderCount
     },
-    nextProductFocus: score >= 70 ? '고위험 진단 후 Auto/Pro 전환 흐름 강화' : '무료 진단 후 Report/FixPack 선택 이유 강화'
+    nextProductFocus: score >= 70 ? '고위험 진단 후 전문가 리포트 전환 흐름 강화' : '무료 진단 후 기본 리포트와 전문가 리포트 선택 이유 강화'
   };
 }

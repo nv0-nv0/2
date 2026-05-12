@@ -2,6 +2,7 @@
 import { createAccountRouteHandler } from './account.mjs';
 import { createPaymentRouteHandler } from './payment.mjs';
 import { buildDemoAccuracyContract, buildDemoIssueOverview, buildPaidDeliverableBlueprint, buildPaidOutputQualityGate, buildPaidFullDetailContract, buildSiteOperationsDocument, buildConversionUrgencyModel, PHASE220_SERVICE_QUALITY_VERSION } from '../core/service-quality-220.mjs';
+import { buildPublicColumnEnginePosts, publicColumnTypeLabel } from '../core/public-column-engine.mjs';
 
 export function createPublicRouteHandler(ctx) {
   const {
@@ -145,6 +146,31 @@ export function createPublicRouteHandler(ctx) {
   const accountRouteHandler = createAccountRouteHandler(ctx);
   const paymentRouteHandler = createPaymentRouteHandler(ctx);
 
+
+function cleanLegacyPublicTokens(value) {
+  if (typeof value === 'string') {
+    return value
+      .replace(/FixPack/g, '전문가 리포트')
+      .replace(/Auto\s*정기\s*케어/g, '전문가 리포트')
+      .replace(/TemplatePack/g, '전문가 리포트')
+      .replace(/상세 리포트/g, '기본 리포트')
+      .replace(/CTA\s*게시판/g, '게시판')
+      .replace(/자동\s*발행\s*200/g, '')
+      .replace(/자동발행/g, '20분 공개')
+      .replace(/contentFingerprint|combinationMode|publicDisplayVersion/gi, '공개 항목');
+  }
+  if (Array.isArray(value)) return value.map(cleanLegacyPublicTokens);
+  if (value && typeof value === 'object') {
+    const next = {};
+    for (const [key, val] of Object.entries(value)) {
+      if (/contentFingerprint|combinationMode|publicDisplayVersion/i.test(key)) continue;
+      next[key] = cleanLegacyPublicTokens(val);
+    }
+    return next;
+  }
+  return value;
+}
+
 function hasPaidScanAccess(db, customer, scan) {
 if (!customer || !scan) return false;
 const sameSite = (order) => !!order?.siteId && !!scan.siteId && order.siteId === scan.siteId;
@@ -170,7 +196,7 @@ return { requestId: scan?.requestId || null, siteId: scan?.siteId || null, targe
   const paymentHandled = await paymentRouteHandler(req, res, { requestUrl: url, pathname });
   if (paymentHandled !== false) return paymentHandled;
 if (pathname === '/api/public/diagnosis-engine' && req.method === 'GET') {
-return json(req, res, 200, { ok: true, phase: RELEASE_PHASE, engine: 'NV0 Public Evidence Summary Check Engine', rulesVersion: RULES_VERSION, targetFetchEnabled: TARGET_FETCH_ENABLED, scanProvider: SCAN_PROVIDER, aiReviewProvider: AI_REVIEW_PROVIDER, geminiConfigured: AI_REVIEW_ENABLED, resultContract: { resultType: 'preliminary_check', legalConclusion: false, includesEvidenceSummary: true, includesConfidenceScore: true, includesManualReviewFlags: true, includesAutomationDisclosure: true, includesAutomatedActionPlan: true, includesAccuracyProfile: true, includesReportQualityGate: true, includesDemoAccuracyContract: true, includesPaidOutputQualityGate: true, phase220ServiceQualityVersion: PHASE220_SERVICE_QUALITY_VERSION, phase223RiskGuardVersion: PHASE223_RISK_GUARD_VERSION }, endpoints: { scan: 'POST /api/public/scan', diagnose: 'POST /api/public/diagnose', board: 'GET /api/public/system-items', engine: 'GET /api/public/diagnosis-engine', productIntelligence: 'GET /api/public/product-intelligence', productQuality: 'GET /api/public/product-quality' }, smartProduct: { version: 'p153-smart-ops-v1', nextBestAction: true, planFitScoring: true, journeyOrchestration: true, smartProductEndpoint: '/api/public/smart-product', userPath: ['무료 요약','요금제 선택','내 사이트 관리','게시판 재유입'] }, publicationCadence: { boardName: '전문가 칼럼', intervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000), cadenceLabel: `${Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000)}분에 1회`, topicPackCount: ctaTopicPacks().length }, automation: { mode: TARGET_FETCH_AUTOMATION_LEVEL, robotsEnabled: TARGET_FETCH_ROBOTS_ENABLED, sitemapEnabled: TARGET_FETCH_SITEMAP_ENABLED, maxPages: TARGET_FETCH_MAX_PAGES, maxDiscoveryResources: TARGET_FETCH_MAX_DISCOVERY_RESOURCES, notice: '자동 확인 가능한 공개 항목은 모두 처리하고 자동 확정 불가 영역은 직접 확인으로 고지합니다.' }, checks: buildRuleCatalog().map(({ code, category, title, severity, penaltyMax }) => ({ code, category, title, severity, penaltyMax })) });
+return json(req, res, 200, { ok: true, phase: RELEASE_PHASE, engine: 'NV0 Public Evidence Summary Check Engine', rulesVersion: RULES_VERSION, targetFetchEnabled: TARGET_FETCH_ENABLED, scanProvider: SCAN_PROVIDER, aiReviewProvider: AI_REVIEW_PROVIDER, geminiConfigured: AI_REVIEW_ENABLED, resultContract: { resultType: 'preliminary_check', legalConclusion: false, includesEvidenceSummary: true, includesConfidenceScore: true, includesManualReviewFlags: true, includesAutomationDisclosure: true, includesAutomatedActionPlan: true, includesAccuracyProfile: true, includesReportQualityGate: true, includesDemoAccuracyContract: true, includesPaidOutputQualityGate: true, phase220ServiceQualityVersion: PHASE220_SERVICE_QUALITY_VERSION, phase223RiskGuardVersion: PHASE223_RISK_GUARD_VERSION }, endpoints: { scan: 'POST /api/public/scan', diagnose: 'POST /api/public/diagnose', board: 'GET /api/public/board', engine: 'GET /api/public/diagnosis-engine', productIntelligence: 'GET /api/public/product-intelligence', productQuality: 'GET /api/public/product-quality' }, smartProduct: { version: 'p153-smart-ops-v1', nextBestAction: true, planFitScoring: true, journeyOrchestration: true, smartProductEndpoint: '/api/public/smart-product', userPath: ['무료 요약','요금제 선택','내 사이트 관리','게시판 재유입'] }, publicationCadence: { boardName: '게시판', intervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000), cadenceLabel: `${Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000)}분에 1회`, columnEngine: 'public-column-engine-v1' }, automation: { mode: TARGET_FETCH_AUTOMATION_LEVEL, robotsEnabled: TARGET_FETCH_ROBOTS_ENABLED, sitemapEnabled: TARGET_FETCH_SITEMAP_ENABLED, maxPages: TARGET_FETCH_MAX_PAGES, maxDiscoveryResources: TARGET_FETCH_MAX_DISCOVERY_RESOURCES, notice: '자동 확인 가능한 공개 항목은 모두 처리하고 자동 확정 불가 영역은 직접 확인으로 고지합니다.' }, checks: buildRuleCatalog().map(({ code, category, title, severity, penaltyMax }) => ({ code, category, title, severity, penaltyMax })) });
 }
 
 if (pathname === '/api/public/diagnose' && req.method === 'POST') {
@@ -205,7 +231,7 @@ if (session?.customer && site?.id) linkCustomerToSite(db, session.customer.id, s
 try { createCtaPublicationIfDue(db, scan, { force: false }); } catch {}
 appendAudit(db, req, 'public.diagnose.completed', { siteId: scan.siteId, requestId: scan.requestId, target: scan.target, customerId: session?.customer?.id || null });
 await writeDb(db);
-return json(req, res, 200, { ok: true, result: { ...scan, diagnosis: buildPublicDiagnosisPackage(scan), demoIssueOverview: scan.demoIssueOverview || buildDemoIssueOverview(scan), conversionUrgency: scan.conversionUrgency || buildConversionUrgencyModel(scan, { plan: scan.recommendedPlan || 'Report' }), savedToAccount: !!session, paidAccess: false, locked: true } });
+return json(req, res, 200, cleanLegacyPublicTokens({ ok: true, result: { ...scan, diagnosis: buildPublicDiagnosisPackage(scan), demoIssueOverview: scan.demoIssueOverview || buildDemoIssueOverview(scan), conversionUrgency: scan.conversionUrgency || buildConversionUrgencyModel(scan, { plan: scan.recommendedPlan || 'Report' }), savedToAccount: !!session, paidAccess: false, locked: true } }));
 }
 if (pathname === '/api/public/config' && req.method === 'GET') {
 return json(req, res, 200, { ok: true, turnstileEnabled: TURNSTILE_PUBLIC_ENABLED, turnstileConfigured: TURNSTILE_CONFIGURED, prelaunchMode: PRELAUNCH_MODE, turnstileSiteKey: TURNSTILE_PUBLIC_ENABLED ? TURNSTILE_SITE_KEY : '' });
@@ -309,65 +335,54 @@ const preview = body.documentKind === 'work_order'
 return json(req, res, 200, { ok: true, preview });
 }
 if (pathname === '/api/public/board' && req.method === 'GET') {
-const db = await readDb();
-const pageSize = 5;
+const requestedPageSize = clamp(Number(url.searchParams.get('pageSize') || 10) || 10, 1, 20);
+const pageSize = requestedPageSize;
 const requestedPage = clamp(Number(url.searchParams.get('page') || 1) || 1, 1, 9999);
 const filter = String(url.searchParams.get('filter') || 'all').trim();
-const rawPosts = (db.boards || [])
-.filter(item => item && item.visibility !== 'private')
-.sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
-const seedBoardPosts = [
-  { id: 'column-content-structure', title: '검색 노출을 높이는 콘텐츠 구조 설계 방법', boardType: 'seo', primaryKeyword: '콘텐츠 구조 설계', visibility: 'public', createdAt: nowIso(), summary: '검색 의도, 제목, 본문, 내부 링크를 검색 로봇과 독자가 함께 이해할 수 있는 구조로 정리합니다.' },
-  { id: 'column-meta-title', title: '제목과 메타 설명 최적화로 클릭률을 높이는 방법', boardType: 'seo', primaryKeyword: '제목과 메타 설명', visibility: 'public', createdAt: nowIso(), summary: '검색 결과에서 사용자가 클릭해야 할 이유를 제목과 설명에 분명히 담는 방법입니다.' },
-  { id: 'column-eat-content', title: 'E-E-A-T를 반영한 신뢰도 높은 콘텐츠 작성법', boardType: 'content', primaryKeyword: '신뢰도 높은 콘텐츠', visibility: 'public', createdAt: nowIso(), summary: '경험, 전문성, 권위, 신뢰를 페이지 구조에 반영해 독자가 안심하고 읽을 수 있게 만드는 방법입니다.' },
-  { id: 'column-robots-sitemap', title: 'robots.txt와 sitemap.xml을 올바르게 설정하기', boardType: 'technical', primaryKeyword: 'robots sitemap 설정', visibility: 'public', createdAt: nowIso(), summary: '검색 로봇이 중요한 페이지를 찾고 불필요한 차단을 피할 수 있게 기본 설정을 점검합니다.' },
-  { id: 'column-action-button', title: '전환을 만드는 다음 행동 버튼 배치와 문구 전략', boardType: 'content', primaryKeyword: '다음 행동 버튼', visibility: 'public', createdAt: nowIso(), summary: '사용자가 망설이지 않고 다음 단계로 이동하도록 버튼 위치와 문구를 자연스럽게 설계하는 방법입니다.' },
-  { id: 'column-internal-link', title: '내부 링크 최적화로 사이트 주제성을 강화하는 방법', boardType: 'seo', primaryKeyword: '내부 링크 최적화', visibility: 'public', createdAt: nowIso(), summary: '관련 페이지를 자연스럽게 연결해 검색 로봇의 이해도와 사용자의 이동 흐름을 함께 개선합니다.' }
-];
-const mergedBoardMap = new Map();
-for (const item of [...rawPosts, ...seedBoardPosts]) {
-  const key = String(item.id || item.title || '').trim() || `seed-${mergedBoardMap.size}`;
-  if (!mergedBoardMap.has(key)) mergedBoardMap.set(key, item);
-}
-const sourcePosts = [...mergedBoardMap.values()].slice(0, Math.max(6, mergedBoardMap.size));
-const publicPosts = sourcePosts.map((item, index) => toPublicBoardPost(item, index));
-const normalizedFilter = ['all', 'seo', 'content', 'technical'].includes(filter) ? filter : 'all';
-const filtered = publicPosts.filter(item => normalizedFilter === 'all' || item.boardType === normalizedFilter);
+const normalizedFilter = ['all', 'read', 'diagnosis', 'policy', 'conversion'].includes(filter) ? filter : 'all';
+const publicPosts = buildPublicColumnEnginePosts({ pageSize: 50 }).map((item) => ({
+  id: item.id,
+  title: item.title,
+  boardType: 'cta',
+  boardPurpose: 'cta',
+  category: item.category || publicColumnTypeLabel(item.boardType),
+  audienceHook: item.audienceHook || '',
+  visibility: 'public',
+  createdAt: item.createdAt || nowIso(),
+  primaryKeyword: item.primaryKeyword,
+  summary: item.summary,
+  tags: item.tags || [],
+  body: item.body,
+  contentMix: item.contentMix
+}));
+const filtered = publicPosts.filter(item => {
+  if (normalizedFilter === 'all') return true;
+  const haystack = [item.title, item.summary, item.primaryKeyword, item.audienceHook, ...(item.tags || [])].join(' ');
+  if (normalizedFilter === 'read') return /가독성|모바일|푸터|첫인상|문구/.test(haystack);
+  if (normalizedFilter === 'diagnosis') return /진단|재점검|구조|검색/.test(haystack);
+  if (normalizedFilter === 'policy') return /정책|개인정보|환불|결제/.test(haystack);
+  if (normalizedFilter === 'conversion') return /CTA|버튼|전환|리포트|무료진단/.test(haystack);
+  return true;
+});
 const total = filtered.length;
 const totalPages = Math.max(1, Math.ceil(total / pageSize));
 const page = clamp(requestedPage, 1, totalPages);
 const start = (page - 1) * pageSize;
 const posts = filtered.slice(start, start + pageSize);
-const now = Date.now();
-const recent7d = publicPosts.filter(item => {
-  const at = Date.parse(item.createdAt || '');
-  return Number.isFinite(at) && at >= now - 7 * 24 * 60 * 60_000;
-}).length;
-const boardTypeCount = type => publicPosts.filter(item => item.boardType === type).length;
-const stats = {
-  total: publicPosts.length,
-  filteredTotal: total,
-  seo: boardTypeCount('seo'),
-  content: boardTypeCount('content'),
-  technical: boardTypeCount('technical'),
-  recent7d
-};
 const activity = publicPosts.slice(0, 3).map(item => ({
   id: item.id,
   title: item.title,
-  type: item.boardType === 'technical' ? '기술 SEO' : item.boardType === 'content' ? '콘텐츠 전략' : 'SEO 전략',
+  type: 'CTA 목적 칼럼',
   createdAt: item.createdAt || null,
   label: '새 칼럼 공개'
 }));
 return json(req, res, 200, {
-ok: true,
-publishIntervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000),
-cadenceLabel: `${Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000)}분에 1회`,
-pageSize,
-stats: { total: stats.total, filteredTotal: stats.filteredTotal, seo: stats.seo, content: stats.content, technical: stats.technical, recent7d: stats.recent7d },
-activity,
-pagination: { page, pageSize, total, totalPages, hasPrev: page > 1, hasNext: page < totalPages },
-posts
+  ok: true,
+  publicationCadence: { intervalMinutes: 20, label: '20분에 1회', engine: 'public-cta-column-engine-v3-purpose-100-mix-60-20-20' },
+  pageSize,
+  activity,
+  pagination: { page, pageSize, total, totalPages, hasPrev: page > 1, hasNext: page < totalPages },
+  posts
 });
 }
 if ((pathname === '/api/public/content' || pathname === '/api/public/system-items') && req.method === 'GET') {
@@ -544,7 +559,7 @@ const paidSite = (db.sites || []).find(item => item.id === scan.siteId || item.s
 const paidOrder = (db.orders || []).find(item => item.siteId === scan.siteId && ['paid','completed','fulfilled'].includes(item.status)) || { plan: scan.recommendedPlan || 'Report', siteId: scan.siteId, domain: scan.target || scan.normalizedTarget };
 const paidFullDetailContract = buildPaidFullDetailContract({ scan, order: paidOrder, asset: { plan: paidOrder.plan || scan.recommendedPlan || 'Report' } });
 const siteOperationsDocument = buildSiteOperationsDocument(scan, { site: paidSite, order: paidOrder, settings: db.settings || {} });
-return json(req, res, 200, { ok: true, result: { ...scan, diagnosis: buildPublicDiagnosisPackage(scan), demoIssueOverview: scan.demoIssueOverview || buildDemoIssueOverview(scan), conversionUrgency: scan.conversionUrgency || buildConversionUrgencyModel(scan, { plan: scan.recommendedPlan || paidOrder.plan || 'Report' }), paidFullDetailContract, siteOperationsDocument, savedToAccount: true, paidAccess: true }, locked: false });
+return json(req, res, 200, cleanLegacyPublicTokens({ ok: true, result: { ...scan, diagnosis: buildPublicDiagnosisPackage(scan), demoIssueOverview: scan.demoIssueOverview || buildDemoIssueOverview(scan), conversionUrgency: scan.conversionUrgency || buildConversionUrgencyModel(scan, { plan: scan.recommendedPlan || paidOrder.plan || 'Report' }), paidFullDetailContract, siteOperationsDocument, savedToAccount: true, paidAccess: true }, locked: false }));
 }
 if (pathname === '/api/public/account/sites' && req.method === 'POST') {
 const body = normalizeSavedSitePayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});

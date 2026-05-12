@@ -35,8 +35,7 @@ function priorityCounts(scan = {}) {
 }
 
 function planFor(score, counts = {}) {
-  if (score >= 75 || counts.p0 >= 2) return 'Auto';
-  if (score >= 45 || counts.p0 >= 1 || counts.p1 >= 1) return 'FixPack';
+  if (score >= 45 || counts.p0 >= 1 || counts.p1 >= 1) return 'Expert';
   return 'Report';
 }
 
@@ -51,7 +50,7 @@ function buildPathState({ hasScan = false, hasSite = false, recommendedPlan = 'R
   return [
     { key: 'scan', title: '무료 진단', path: '/products/veridion/demo', status: hasScan ? 'done' : 'current', goal: '사이트의 신뢰 공백을 먼저 확인' },
     { key: 'understand', title: '결과 해석', path: '/products/veridion/demo', status: hasScan ? 'current' : 'locked', goal: '위험도·우선순위·근거 파악' },
-    { key: 'choose', title: '상품 선택', path: `/plans?recommended=${encodeURIComponent(recommendedPlan)}`, status: hasScan ? 'next' : 'ready', goal: 'Report/FixPack/Auto 중 필요한 산출물 선택' },
+    { key: 'choose', title: '상품 선택', path: `/plans?recommended=${encodeURIComponent(recommendedPlan)}`, status: hasScan ? 'next' : 'ready', goal: '무료 진단, 기본 리포트, 전문가 리포트 중 필요한 단계 선택' },
     { key: 'manage', title: '내 사이트 관리', path: '/portal', status: hasSite ? 'ready' : 'locked', goal: '저장·재검사·게시판 발행으로 운영 루틴화' }
   ];
 }
@@ -77,21 +76,21 @@ function buildActionCards({ scan = {}, intelligence = {}, recommendedPlan = 'Rep
     },
     {
       key: 'operating-loop',
-      priority: recommendedPlan === 'Auto' ? 'P0' : 'P2',
+      priority: recommendedPlan === 'Expert' ? 'P0' : 'P2',
       title: '재검사·게시판·이력 관리 루틴화',
       description: '한 번 고치고 끝나는 구조가 아니라, 사이트 변경 후 다시 검사하고 게시글로 재유입을 만드는 흐름을 유지합니다.',
       path: '/portal',
       cta: '내 사이트 관리'
     }
   ];
-  if (recommendedPlan === 'Auto') {
+  if (recommendedPlan === 'Expert') {
     base.unshift({
       key: 'auto-loop',
       priority: 'P0',
-      title: 'Auto 운영 루프 우선 적용',
-      description: '고위험 또는 반복 변경 사이트는 정기 재진단과 CTA 발행을 묶어 운영 신호를 계속 유지하는 편이 효율적입니다.',
-      path: '/plans?recommended=Auto',
-      cta: 'Auto 보기'
+      title: '전문가 리포트 우선 검토',
+      description: '고위험 결과는 상세 근거와 맞춤 개선 방향을 함께 확인하는 편이 효율적입니다.',
+      path: '/plans?recommended=Expert',
+      cta: '전문가 리포트 보기'
     });
   }
   return base.slice(0, 4);
@@ -111,16 +110,16 @@ function buildSmartBacklog(scan = {}, recommendedPlan = 'Report') {
   const findings = list(scan.detailFindings).slice(0, 5);
   if (!findings.length) {
     return [
-      { id: 'footer-trust', priority: 'P1', title: '푸터 사업자·고객지원 고지 확인', product: 'FixPack', status: 'ready' },
+      { id: 'footer-trust', priority: 'P1', title: '푸터 사업자·고객지원 고지 확인', product: 'Expert', status: 'ready' },
       { id: 'refund-privacy', priority: 'P1', title: '환불·개인정보·약관 링크 위치 확인', product: 'Report', status: 'ready' },
-      { id: 'cta-path', priority: 'P2', title: '무료 진단 → 요금제 → 내 사이트 관리 흐름 확인', product: 'Auto', status: 'ready' }
+      { id: 'cta-path', priority: 'P2', title: '무료 진단 → 요금제 → 내 사이트 관리 흐름 확인', product: 'Expert', status: 'ready' }
     ];
   }
   return findings.map((item, index) => ({
     id: text(item.code, `finding-${index + 1}`),
     priority: text(item.priority, index === 0 ? 'P0' : 'P1'),
     title: text(item.title || item.recommendation, '점검 항목'),
-    product: index === 0 && recommendedPlan === 'Auto' ? 'Auto' : index < 2 ? 'FixPack' : 'Report',
+    product: index === 0 && recommendedPlan === 'Expert' ? 'Expert' : index < 2 ? 'Expert' : 'Report',
     status: 'ready'
   }));
 }
@@ -140,7 +139,7 @@ export function buildSmartProductOrchestration({ scan = {}, site = null, intelli
     title: hasScan ? `${recommendedPlan} 기준으로 다음 행동 선택` : '무료 진단으로 먼저 상태 확인',
     description: hasScan
       ? `${domain}의 현재 위험도 ${score}점 기준으로 ${recommendedPlan} 흐름이 가장 자연스럽습니다.`
-      : '이메일 입력 없이 무료 요약 결과를 먼저 보여주고, 결과에 따라 리포트·문구안·Auto를 추천합니다.',
+      : '이메일 입력 없이 무료 요약 결과를 먼저 보여주고, 결과에 따라 기본 리포트와 전문가 리포트를 추천합니다.',
     path: hasScan ? `/plans?riskScore=${encodeURIComponent(score)}${hasSite ? `&siteId=${encodeURIComponent(site?.id || scan.siteId)}` : ''}` : '/products/veridion/demo',
     cta: hasScan ? (intelligence.primaryCta || '추천 상품 보기') : '무료 진단 시작'
   };
@@ -165,9 +164,9 @@ export function buildSmartProductOrchestration({ scan = {}, site = null, intelli
     frictionRemovers,
     operatingLoop: [
       '무료 진단으로 신뢰 공백 확인',
-      '결과에 맞춰 상세 리포트/FixPack/Auto 자동 추천',
+      '결과에 맞춰 기본 리포트와 전문가 리포트 추천',
       '내 사이트 관리에서 저장·재검사',
-      '콘텐츠 보드으로 재유입 콘텐츠 발행'
+      '게시판으로 재유입 콘텐츠 공개'
     ],
     productFit: {
       recommendedPlan,
@@ -203,7 +202,7 @@ export function buildSmartPublicSnapshot(db = {}, { offers = [], intelligence = 
     signals: {
       scans: scans.length,
       savedSites: sites.length,
-      ctaPosts: boards.length,
+      columns: boards.length,
       hasLatestScan: Boolean(latestScan.requestId || latestScan.target)
     },
     headline: orchestration.nextBestAction.title,

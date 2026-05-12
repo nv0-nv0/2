@@ -24,15 +24,14 @@ let paymentConfig = { ok: false, provider: 'unknown', paymentReady: false, reaso
 // PHASE211 compatibility tokens: 결제창 로드 확인 중, PortOne으로 결제 시작, providerPaymentId: responsePaymentId, 선택한 상품코드를 확인하지 못했습니다
 
 const fallbackOffers = [
-  { code: 'Report', title: '상세 리포트', price: 39000, period: '1회', summary: '고객이 어디서 멈추는지 근거와 우선순위를 정리합니다.', targetCustomer: '대표님이나 팀에 설명할 근거가 필요한 분' },
-  { code: 'FixPack', title: '전문가 리포트', price: 89000, period: '1회', summary: '전문가 해설과 맞춤 개선 방향을 제공합니다.', targetCustomer: '전문가 해설과 전략적 인사이트가 필요한 분' },
-  { code: 'Auto', title: '정기 관리 케어', price: 149000, period: '월', summary: '변경이 잦은 페이지의 안내 공백을 정기적으로 확인합니다.', targetCustomer: '광고와 이벤트가 자주 바뀌는 팀' }
+  { code: 'Report', title: '기본 리포트', price: 29000, period: '1회', summary: '핵심 문제와 개선 우선순위를 한눈에 파악합니다.', targetCustomer: '현재 사이트의 문제와 우선순위를 빠르게 확인하고 싶은 분' },
+  { code: 'Expert', title: '전문가 리포트', price: 89000, period: '1회', summary: '상세 근거와 전문가 해설, 맞춤 개선 방향을 제공합니다.', targetCustomer: '구조 개선안과 설명 가능한 근거가 필요한 분' }
 ];
 offerMap = new Map(fallbackOffers.map(item => [item.code, item]));
 
 function normalizePlanCode(value) {
   const key = String(value || '').trim().toLowerCase().replace(/[\s_-]+/g, '');
-  const aliases = { report: 'Report', detailedreport: 'Report', proreport: 'Report', pro: 'Report', basic: 'Report', fixpack: 'FixPack', fix: 'FixPack', copypack: 'FixPack', templatepack: 'FixPack', industryguide: 'FixPack', auto: 'Auto', agency: 'Auto', subscription: 'Auto' };
+  const aliases = { report: 'Report', detailedreport: 'Report', proreport: 'Report', pro: 'Report', basic: 'Report', expert: 'Expert', expertreport: 'Expert', professional: 'Expert', fixpack: 'Expert', fix: 'Expert', copypack: 'Expert', templatepack: 'Expert', industryguide: 'Expert', auto: 'Expert', agency: 'Expert', subscription: 'Expert' };
   return aliases[key] || 'Report';
 }
 function getSavedScan() {
@@ -92,7 +91,7 @@ function renderPriceSummary() {
   summaryPlanName.textContent = offer.title || code;
   summaryPlanPeriod.textContent = offer.summary || `${offer.period || '1회'} 제공 상품`;
   summaryBasePrice.textContent = priceLabel(offer);
-  summaryDelivery.textContent = code === 'Auto' ? '결제 후 정기 케어 안내 제공' : '결제 후 내 사이트 관리에서 결과물 확인';
+  summaryDelivery.textContent = '결제 후 내 사이트 관리에서 결과물 확인';
   summaryTargetCustomer.textContent = offer.targetCustomer || '사이트 구매 흐름을 더 탄탄하게 만들고 싶은 분';
   summaryTotal.textContent = priceLabel(offer);
   renderPaymentConfig();

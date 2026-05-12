@@ -1,6 +1,6 @@
 {
   "name": "nv0-veridion-cleanroom",
-  "version": "1.0.0-commercial-customer-copy-redesign-phase247",
+  "version": "1.0.0-commercial-board-cta-purpose-mix-phase251",
   "private": true,
   "type": "module",
   "scripts": {
@@ -332,6 +332,14 @@
     "validate:phase246": "node scripts/validate-phase246-demo-nav-complete.mjs",
     "phase246:final": "npm run check:syntax && npm run check:pages && npm run check:links -- --summary && npm run test:routes && npm run validate:phase245 && npm run validate:phase246",
     "validate:phase247": "node scripts/validate-phase247-image-reference-products.mjs",
-    "phase247:final": "npm run check:syntax && npm run check:pages && npm run check:links -- --summary && npm run test:routes && npm run validate:phase247"
+    "phase247:final": "npm run check:syntax && npm run check:pages && npm run check:links -- --summary && npm run test:routes && npm run validate:phase247",
+    "validate:phase248": "node scripts/validate-phase248-product-ia-board-engine.mjs",
+    "phase248:final": "npm run check:syntax && npm run check:pages && npm run check:links -- --summary && npm run test:routes && npm run validate:phase248",
+    "validate:phase249": "node scripts/validate-phase249-final-product-cleanup.mjs",
+    "phase249:final": "npm run check:syntax && npm run check:pages && npm run check:links -- --summary && npm run test:routes && npm run validate:phase248 && npm run validate:phase249",
+    "validate:phase250": "node scripts/validate-phase250-demo-paid-board-price.mjs",
+    "phase250:final": "npm run check:syntax && npm run check:pages && npm run check:links -- --summary && npm run test:routes && npm run validate:phase250",
+    "validate:phase251": "node scripts/validate-phase251-board-cta-purpose-mix.mjs",
+    "phase251:final": "npm run check:syntax && npm run check:pages && npm run test:routes && npm run validate:phase251"
   }
 }

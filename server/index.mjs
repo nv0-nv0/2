@@ -42,8 +42,9 @@ import { buildHealthDetails, classifyIncident } from './services/observability.m
 import { buildDeploymentRiskGuard, PHASE223_RISK_GUARD_VERSION } from './core/deployment-risk-guard.mjs';
 import { timingSafeStringEqual, hasValidOrderAccessToken } from './core/access-token.mjs';
 import { putObjectToS3Compatible } from './infrastructure/storage/s3-compatible.mjs';
-import { PHASE229_PRICING_VERSION, buildValuePricedOfferCatalog, buildPricingRecalculation } from './core/pricing-conversion-model.mjs';
-const COMMERCIAL_OFFER_COMPATIBILITY_MARKERS = ['TemplatePack', 'IndustryGuide', 'Certified'];
+import { PHASE229_PRICING_VERSION, buildPricingRecalculation } from './core/pricing-conversion-model.mjs';
+import { buildPublicColumnEnginePosts, publicColumnTypeLabel } from './core/public-column-engine.mjs';
+const COMMERCIAL_OFFER_COMPATIBILITY_MARKERS = ['전문가 리포트', 'IndustryGuide', 'Certified'];
 const ENV_CONFIG = readEnvConfig(process.env);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -263,7 +264,7 @@ ctaTargetLengthKo: '4200-5200'
 },
 orders: [
 { id: 'ord-1001', customer: 'Acme Co', status: 'paid', stage: 'scan_requested', amount: 79000, createdAt: nowIso() },
-{ id: 'ord-1002', customer: 'Beta Labs', status: 'pending', stage: 'draft', amount: 39000, createdAt: nowIso() }
+{ id: 'ord-1002', customer: 'Beta Labs', status: 'pending', stage: 'draft', amount: 29000, createdAt: nowIso() }
 ],
 subscriptions: [
 { id: 'sub-1001', siteId: 'site-seed-001', plan: 'Auto', status: 'active', monthlyPrice: 149000, createdAt: nowIso() }
@@ -1175,23 +1176,18 @@ const urls = publicSitemapEntries(db).filter(item => item.path && !seen.has(item
 return `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}</urlset>`;
 }
 function feedItems(db = {}) {
-const rows = [...(db.publications || []), ...(db.boards || [])]
-.filter(item => item && typeof item === 'object')
-.filter(item => item.status === 'published' || item.autoPublished || item.boardType === 'cta' || item.type === 'cta')
-.sort((a, b) => String(b.createdAt || b.rewrittenAt || '').localeCompare(String(a.createdAt || a.rewrittenAt || '')))
-.slice(0, 30);
-return rows;
+return buildPublicColumnEnginePosts({ pageSize: 20 });
 }
 function buildFeedXml(db = {}) {
 const base = seoBaseUrl();
 const items = feedItems(db).map((item, index) => {
-const title = xmlEscape(item.title || `NV0 안내 글 ${index + 1}`);
-const summary = xmlEscape(item.summary || item.seo?.metaDescription || stripHtml(item.body || '').slice(0, 240));
-const pubDate = new Date(item.createdAt || item.rewrittenAt || Date.now()).toUTCString();
+const title = xmlEscape(item.title || `NV0 게시판 ${index + 1}`);
+const summary = xmlEscape(item.summary || stripHtml(item.body || '').slice(0, 240));
+const pubDate = new Date(item.createdAt || Date.now()).toUTCString();
 const guid = xmlEscape(item.id ? `${base}/board#${item.id}` : `${base}/board#item-${index + 1}`);
 return `<item><title>${title}</title><link>${xmlEscape(base + '/board')}</link><guid isPermaLink="false">${guid}</guid><description>${summary}</description><pubDate>${pubDate}</pubDate></item>`;
 }).join('');
-return `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>NV0 전문가형 사이트 점검 글</title><link>${xmlEscape(base + '/board')}</link><description>고객 신뢰·구매 전환·고객 안내 문구를 전문가형 포스팅으로 정리한 공개 가이드입니다.</description><language>ko-KR</language><lastBuildDate>${new Date().toUTCString()}</lastBuildDate>${items}</channel></rss>`;
+return `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>NV0 게시판</title><link>${xmlEscape(base + '/board')}</link><description>검색 노출과 전환 구조를 사람이 이해하기 쉬운 칼럼으로 정리한 공개 가이드입니다.</description><language>ko-KR</language><lastBuildDate>${new Date().toUTCString()}</lastBuildDate>${items}</channel></rss>`;
 }
 function createPasswordResetToken(db, customer, req) {
 db.passwordResetTokens ||= [];
@@ -1354,7 +1350,7 @@ const metas = {
 '/solutions': { title: '분석 프로세스 | NV0', description: '입력부터 결과 정리까지 검색과 전환 관점에서 페이지 구조를 단계별로 분석합니다.', keywords: ['분석 프로세스','검색 구조 분석','전환 구조 분석'] },
 '/service': { title: '서비스 소개 | NV0', description: '검색 친화적 구조 분석으로 문제를 빠르게 찾고 전환 가능성까지 함께 점검합니다.', keywords: ['서비스 소개','사이트 구조 분석','전환 점검'] },
 '/cases': { title: '개선 사례 | NV0', description: '진단 후 어떤 항목을 먼저 고쳤고 어떤 변화가 생겼는지 사례 형태로 정리했습니다.', keywords: ['개선 사례','전환 개선 사례','검색 구조 사례'] },
-'/board': { title: '전문가 칼럼 | NV0', description: '검색 로봇도 잘 읽고 사람도 이해하기 쉬운 구조로 정리한 실전 칼럼을 제공합니다.', keywords: ['전문가 칼럼','검색 노출','콘텐츠 전략','온페이지 SEO','기술 SEO'] },
+'/board': { title: '게시판 | NV0', description: '검색 로봇도 잘 읽고 사람도 이해하기 쉬운 구조로 정리한 실전 칼럼을 제공합니다.', keywords: ['게시판','검색 노출','콘텐츠 전략','온페이지 SEO','기술 SEO'] },
 '/business-info': { title: '사업자 정보와 고객지원 안내 | NV0', description: '결제 전 확인할 수 있는 NV0 사업자 정보와 고객지원 기준입니다.', keywords: ['사업자 정보','고객지원'] },
 '/terms': { title: '이용약관 | NV0', description: 'NV0 서비스 이용 조건과 기본 약관을 안내합니다.', keywords: ['이용약관'] },
 '/privacy': { title: '개인정보처리방침 | NV0', description: 'NV0 서비스의 개인정보 처리 기준과 입력 정보 최소화 원칙입니다.', keywords: ['개인정보처리방침'] },
@@ -1416,11 +1412,11 @@ const faqMap = {
 ['로그인하면 무엇이 달라지나요?', '무료진단 횟수 관리, 내 사이트 저장, 원클릭 재검사, 최근 진단 이력 확인을 이용할 수 있습니다.']
 ],
 '/plans': [
-['어떤 상품을 먼저 선택해야 하나요?', '먼저 무료진단을 보고, 근거가 필요하면 상세 리포트, 바로 붙여넣을 문구가 필요하면 전문가 리포트, 반복 관리가 필요하면 정기 관리 케어를 비교하면 됩니다.'],
+['어떤 상품을 먼저 선택해야 하나요?', '먼저 무료진단을 보고, 근거가 필요하면 기본 리포트, 바로 붙여넣을 문구가 필요하면 전문가 리포트, 구조 개선안이 필요하면 전문가 리포트를 비교하면 됩니다.'],
 ['결제 전 어떤 내용을 확인해야 하나요?', '제공 범위, 디지털 산출물 제공 시점, 환불 제한, 고객지원 경로를 확인해야 합니다.']
 ],
 '/board': [
-['게시판 글은 어떤 역할을 하나요?', '진단 결과를 전문가형 포스팅으로 풀어 재방문, 상품·요금, 유료 산출물 검토 흐름을 돕습니다.'],
+['게시판 글은 어떤 역할을 하나요?', '진단 결과를 전문가형 포스팅으로 풀어 재방문, 요금제, 유료 산출물 검토 흐름을 돕습니다.'],
 ['글이 전문가처럼 보이나요?', '문제 진단, 매출 영향, 실무 체크리스트, 문구 개선 예시, 자연스러운 다음 행동 순서로 작성됩니다.']
 ]
 };
@@ -1462,11 +1458,11 @@ function publicTopMenuHtml(urlPath = '/') {
 return `<a class="skip-link" href="#main">본문 바로가기</a><nav class="site-topbar" aria-label="주요 메뉴"><div class="site-topbar-inner">
 <a class="brand" href="/"><span class="brand-mark">nv0</span></a>
 <div class="site-menu">
-<a href="/service"${navAttrs(urlPath, '/service')}>서비스 소개</a>
+<a href="/service"${navAttrs(urlPath, '/service')}>서비스·가이드</a>
 <a href="/solutions"${navAttrs(urlPath, '/solutions')}>분석 프로세스</a>
-<a href="/board"${navAttrs(urlPath, '/board')}>전문가 칼럼</a>
-<a href="/guides"${navAttrs(urlPath, '/guides')}>가이드</a>
+<a href="/board"${navAttrs(urlPath, '/board')}>게시판</a>
 <a href="/plans"${navAttrs(urlPath, '/plans')}>요금제</a>
+<a href="/products/veridion/demo"${navAttrs(urlPath, '/products/veridion/demo')}>무료 진단</a>
 </div>
 <div class="site-actions"><a class="login-link" href="/auth"${navAttrs(urlPath, '/auth')}>로그인</a><a class="top-cta" href="/products/veridion/demo"${navAttrs(urlPath, '/products/veridion/demo')}>무료 진단 시작 →</a></div>
 </div></nav>`;
@@ -1505,7 +1501,7 @@ const mailOrderNumber = isSafePublicOptionalField(BUSINESS_PROFILE.mailOrderRegi
 return '<footer class="business-footer" aria-label="사업자 정보">'
 + '<div class="brand-col"><strong>nv0</strong><span>검색 친화적 구조 분석으로 더 많은 고객과 매출을 연결합니다.</span><span>© 2024 nv0.kr. All rights reserved.</span></div>'
 + '<div class="footer-col"><strong>서비스</strong><a href="/service">서비스 소개</a><a href="/solutions">분석 프로세스</a><a href="/plans">요금제</a></div>'
-+ '<div class="footer-col"><strong>정보</strong><a href="/board">전문가 칼럼</a><a href="/guides">가이드</a><a href="/documents">문서 생성</a></div>'
++ '<div class="footer-col"><strong>정보</strong><a href="/board">게시판</a><a href="/service">서비스·가이드</a><a href="/business-info">고객지원</a></div>'
 + '<div class="footer-col"><strong>회사</strong><a href="/business-info">회사 소개</a><a href="/privacy">개인정보처리방침</a><a href="/terms">이용약관</a><a href="/refund">환불 정책</a></div>'
 + `<div class="footer-col"><strong>문의</strong><a href="mailto:hello@nv0.kr">hello@nv0.kr</a><a href="mailto:${BUSINESS_PROFILE.contactEmail}">고객지원 이메일</a><span class="legal-disclaimer">${BUSINESS_PROFILE.tradeName} · 대표자 ${BUSINESS_PROFILE.representative} · 사업자등록번호 ${BUSINESS_PROFILE.registrationNumber}${mailOrderNumber ? ' · 통신판매업 신고번호 ' + mailOrderNumber : ''}</span><span class="legal-disclaimer">주소: ${BUSINESS_PROFILE.address}</span><span class="legal-disclaimer">업태·종목: ${types}</span><span class="legal-disclaimer">NV0는 공개 웹페이지 기반 구조 분석 서비스이며 법률 자문이나 성과 보장을 제공하지 않습니다.</span></div>`
 + '</footer>';
@@ -1931,14 +1927,14 @@ const tags = [`#${String(keyword || theme.label).replace(/[\s·/]+/g, '')}`, `#$
 return [
 `전문가 관점 요약\n${target} 사이트에서 ${theme.label}은 고객 행동 직전의 불확실성을 줄이는 전환 설계입니다. ${theme.risk} 이 글은 단순 홍보가 아니라 실제 화면을 보며 고칠 수 있는 항목을 정리한 전문가형 포스팅입니다.`,
 `현장에서 자주 생기는 문제\n사이트 담당자는 푸터나 약관에 이미 적어 두었다고 생각하지만 고객은 결제, 문의, 회원가입, 상담 신청 직전에 답을 찾습니다. 필요한 정보가 그 위치에서 보이지 않으면 상품 설명을 끝까지 읽기 전에 비교 페이지로 이동할 수 있습니다.`,
-`매출과 신뢰에 영향을 주는 이유\n광고 유입이 늘수록 안내 공백은 더 빠르게 비용으로 바뀝니다. 고객이 제공 범위, 문의 경로, 예외 기준, 처리 시간을 예측할 수 있어야 무료 진단에서 상세 리포트, 전문가 리포트, 정기 관리 케어로 이어지는 결과물 선택 흐름도 자연스럽게 연결됩니다.`,
+`매출과 신뢰에 영향을 주는 이유\n광고 유입이 늘수록 안내 공백은 더 빠르게 비용으로 바뀝니다. 고객이 제공 범위, 문의 경로, 예외 기준, 처리 시간을 예측할 수 있어야 무료 진단에서 기본 리포트와 전문가 리포트로 이어지는 결과물 선택 흐름도 자연스럽게 연결됩니다.`,
 `실무 적용 순서\n1. 결제 버튼, 문의 버튼, 가격표, 회원가입 화면을 먼저 확인합니다.\n2. ${theme.elements.join(', ')} 중 고객 질문과 직접 연결되는 항목을 버튼 주변에 배치합니다.\n3. 푸터에는 전체 기준을 두고 행동 화면에는 요약 문장을 둡니다.\n4. 모바일에서 문장이 접히거나 버튼 아래로 밀리는지 확인합니다.`,
 `문구 개선 예시\n${copyExamples.map(([before, after], idx) => `${idx + 1}. 바꾸기 전: “${before}”\n   바꾼 뒤: “${after}”`).join('\n')}`,
 `검증 체크리스트\n${checklist.map((line, idx) => `${idx + 1}. ${line}`).join('\n')}`,
 `검색 유입을 고려한 구성\n제목에는 고객이 실제로 찾을 표현을 넣고, 본문에는 문제 상황, 실무 체크리스트, 전후 문구 예시, 연결된 공개 페이지를 순서대로 배치합니다. 키워드 반복보다 독자가 체류할 이유를 만드는 구조가 중요합니다.`,
-`자주 묻는 질문\nQ1. 무료 진단만으로 충분한가요?\nA. 무료 진단은 현재 공백을 빠르게 보는 출발점입니다. 실제 반영 문구와 우선순위가 필요하면 상세 리포트나 FixPack으로 이어가면 됩니다.\n\nQ2. 자동 글이 반복처럼 보이지 않으려면요?\nA. 주제, 고객 질문, 사례, 체크리스트, 버튼 위치를 함께 바꿔야 합니다. 제목만 바꾸는 방식은 피해야 합니다.`,
-`자연스러운 다음 행동\n${theme.cta} 결과를 저장하면 상세 리포트에서 수정 우선순위를 보고, FixPack으로 실제 문구안을 받아 적용할 수 있습니다. 반복 관리가 필요하면 정기 관리 케어로 정기 주기 게시판 발행과 재진단 흐름까지 이어가세요.`,
-`관련 링크\n무료 진단: /products/veridion/demo\n상품·요금: /plans\n내 사이트 관리: /portal`,
+`자주 묻는 질문\nQ1. 무료 진단만으로 충분한가요?\nA. 무료 진단은 현재 공백을 빠르게 보는 출발점입니다. 실제 반영 문구와 우선순위가 필요하면 기본 리포트나 전문가 리포트로 이어가면 됩니다.\n\nQ2. 자동 글이 반복처럼 보이지 않으려면요?\nA. 주제, 고객 질문, 사례, 체크리스트, 버튼 위치를 함께 바꿔야 합니다. 제목만 바꾸는 방식은 피해야 합니다.`,
+`자연스러운 다음 행동\n${theme.cta} 결과를 저장하면 기본 리포트에서 수정 우선순위를 보고, 전문가 리포트에서 실제 개선 방향을 확인할 수 있습니다.`,
+`관련 링크\n무료 진단: /products/veridion/demo\n요금제: /plans\n내 사이트 관리: /portal`,
 `해시태그\n${tags}`
 ].join('\n\n');
 }
@@ -1955,10 +1951,10 @@ return String(value || '')
 .replace(/https?:\/\/example\.com/gi, '운영 중인 사이트')
 .replace(/\bCTA\b/g, '다음 행동 버튼')
 .replace(/\bSEO\b/g, '검색 노출')
-.replace(/\bFixPack\b/g, '전문가 리포트')
-.replace(/\bAuto\b/g, '정기 관리')
-.replace(/자동\s*발행/g, '정기 공개')
-.replace(/자동발행/g, '정기 공개')
+.replace(/\b전문가 리포트\b/g, '전문가 리포트')
+.replace(/\bAuto\b/g, '전문가 리포트')
+.replace(/자동\s*발행/g, '20분 공개')
+.replace(/20분 공개/g, '20분 공개')
 .replace(/자동 글/g, '정기 칼럼')
 .replace(/고객 단계/g, '고객 단계')
 .replace(/첫 화면/g, '첫 화면')
@@ -1977,10 +1973,10 @@ const sections = String(body || '')
 .replace(/\bphase\d+\b/gi, '')
 .replace(/\bCTA\b/g, '다음 행동 버튼')
 .replace(/\bSEO\b/g, '검색 노출')
-.replace(/\bFixPack\b/g, '전문가 리포트')
-.replace(/\bAuto\b/g, '정기 관리')
-.replace(/자동\s*발행/g, '정기 공개')
-.replace(/자동발행/g, '정기 공개')
+.replace(/\b전문가 리포트\b/g, '전문가 리포트')
+.replace(/\bAuto\b/g, '전문가 리포트')
+.replace(/자동\s*발행/g, '20분 공개')
+.replace(/20분 공개/g, '20분 공개')
 .replace(/자동 글/g, '정기 칼럼')
 .replace(/고객 단계/g, '고객 단계')
 .replace(/첫 화면/g, '첫 화면')
@@ -2302,35 +2298,65 @@ documents: [
 };
 }
 function pickRecommendedPlan(riskScore) {
-if (riskScore >= 75) return 'Auto';
-if (riskScore >= 45) return 'FixPack';
+if (riskScore >= 45) return 'Expert';
 return 'Report';
 }
 function normalizePlanCode(value, fallback = 'Report') {
 const raw = String(value || '').trim();
 const key = raw.toLowerCase().replace(/[\s_-]+/g, '');
 const aliases = {
-report: 'Report', detailedreport: 'Report', proreport: 'Report', pro: 'Report', basic: 'Report',
-fixpack: 'FixPack', fix: 'FixPack', copypack: 'FixPack', templatepack: 'FixPack', industryguide: 'FixPack',
-auto: 'Auto', agency: 'Auto', subscription: 'Auto'
+free: 'Free', trial: 'Free', demo: 'Free',
+report: 'Report', basicreport: 'Report', detailedreport: 'Report', proreport: 'Report', pro: 'Report', basic: 'Report',
+expert: 'Expert', expertreport: 'Expert', premium: 'Expert', professional: 'Expert',
+fixpack: 'Expert', fix: 'Expert', copypack: 'Expert', templatepack: 'Expert', industryguide: 'Expert',
+auto: 'Expert', agency: 'Expert', subscription: 'Expert'
 };
-return aliases[key] || (['Report','FixPack','Auto'].includes(raw) ? raw : fallback);
+return aliases[key] || (['Free','Report','Expert'].includes(raw) ? raw : fallback);
 }
 function buildCommercialOfferCatalog() {
-const commonAssurance = ['결제 전 받을 결과물과 환불 기준을 다시 확인합니다.', '결과물은 내 사이트 관리에서 확인합니다.', 'ct@nv0.kr 이메일 고객지원으로 문의할 수 있습니다.'];
-return buildValuePricedOfferCatalog({ commonAssurance });
+const commonAssurance = ['결제 전 받을 결과물과 환불 기준을 다시 확인합니다.', '결과물은 내 사이트 관리에서 확인합니다.', 'hello@nv0.kr 이메일 고객지원으로 문의할 수 있습니다.'];
+return [
+  {
+    code: 'Report',
+    title: '기본 리포트',
+    group: 'paid',
+    price: 29000,
+    monthlyPrice: 29000,
+    period: '1회',
+    summary: '핵심 문제와 개선 우선순위를 한눈에 파악합니다.',
+    targetCustomer: '현재 사이트의 문제와 우선순위를 빠르게 확인하고 싶은 분',
+    deliverables: ['공개 접근 확인', '자동 수집 분석', '우선순위 점수 전체 제공', '실행 가이드 제공', ...commonAssurance],
+    referencePrice: 49000,
+    valuePackWorth: 69000
+  },
+  {
+    code: 'Expert',
+    title: '전문가 리포트',
+    group: 'paid',
+    price: 89000,
+    monthlyPrice: 89000,
+    period: '1회',
+    summary: '상세 근거와 전문가 해설, 맞춤 개선 방향까지 제공합니다.',
+    targetCustomer: '구조 개선안과 설명 가능한 근거가 필요한 대표·마케터·운영자',
+    deliverables: ['공개 접근 확인', '자동 수집 분석', '우선순위 점수 전체 제공', '상세 근거 정리', '전문가 해설 및 맞춤 제안', ...commonAssurance],
+    referencePrice: 129000,
+    valuePackWorth: 159000
+  }
+];
 }
 function getCommercialOffer(code) { const normalized = normalizePlanCode(code); return buildCommercialOfferCatalog().find(item => item.code === normalized) || null; }
 function buildPlanCatalog(recommendedPlan = 'Report') {
-const offers = buildCommercialOfferCatalog();
-const free = { code: 'Free', monthlyPrice: 0, period: '무료', title: '무료 진단', group: 'free', summary: '고객이 결제 전 멈출 만한 지점을 무료로 먼저 확인합니다.', features: ['신뢰를 떨어뜨릴 수 있는 요소 요약', '상위 개선 포인트 확인', '내게 맞는 다음 상품 추천', '비회원 일일 3회 제한'], recommended: false };
-const paid = offers.map(offer => ({ code: offer.code, monthlyPrice: offer.price, period: offer.period, title: offer.title, group: offer.group, summary: offer.summary, features: offer.deliverables, targetCustomer: offer.targetCustomer, referencePrice: offer.referencePrice, valuePackWorth: offer.valuePackWorth, dailyPrice: offer.period === '월' ? Math.ceil(offer.price / 30) : 0, recommended: offer.code === normalizePlanCode(recommendedPlan) }));
+const recommended = normalizePlanCode(recommendedPlan);
+const free = { code: 'Free', monthlyPrice: 0, price: 0, period: '무료', title: '무료 진단', group: 'free', summary: '사이트의 기본 상태를 빠르게 확인합니다.', features: ['공개 접근 확인', '자동 수집 분석', '우선순위 점수 일부 제공', 'URL 입력만으로 시작'], deliverables: ['공개 접근 확인', '자동 수집 분석', '우선순위 점수 일부 제공'], targetCustomer: '먼저 현재 상태를 확인하고 싶은 분', recommended: false };
+const paid = buildCommercialOfferCatalog().map(offer => ({ code: offer.code, monthlyPrice: offer.price, price: offer.price, period: offer.period, title: offer.title, group: offer.group, summary: offer.summary, features: offer.deliverables.slice(0, 5), deliverables: offer.deliverables, targetCustomer: offer.targetCustomer, referencePrice: offer.referencePrice, valuePackWorth: offer.valuePackWorth, dailyPrice: 0, recommended: offer.code === recommended }));
 return [free, ...paid];
 }
 function planPrice(plan) {
-const offer = getCommercialOffer(plan);
+const normalized = normalizePlanCode(plan);
+if (normalized === 'Free') return 0;
+const offer = getCommercialOffer(normalized);
 if (offer) return offer.price;
-return buildPlanCatalog(plan).find(item => item.code === normalizePlanCode(plan))?.monthlyPrice || 39000;
+return normalized === 'Expert' ? 89000 : 29000;
 }
 function findLatestGuidanceForSite(db, siteId) {
 return (db.guidanceDocuments || []).find(item => item.siteId === siteId) || null;
@@ -2696,8 +2722,8 @@ const industryGuide = buildIndustryChecklist(scan?.industry || site?.industry ||
 const policyDocuments = buildPolicyDocumentPreview({}, db.settings || {}).documents;
 const premium = buildPremiumPurchasedAsset({ order, offer, scan, site, businessProfile: BUSINESS_PROFILE, policyDocuments, industryGuide });
 const isReportPlan = order.plan === 'Report';
-const isFixPackPlan = order.plan === 'FixPack';
-const assetKind = isFixPackPlan ? 'fix_pack' : order.plan === 'Auto' ? 'subscription_entitlement' : isReportPlan ? 'report' : 'report';
+const isExpertPlan = order.plan === 'Expert';
+const assetKind = isExpertPlan ? 'expert_report' : isReportPlan ? 'report' : 'expert_report';
 const base = {
 id: uid('asset'),
 assetKind,
@@ -3651,7 +3677,7 @@ function ensureSubscriptionForSite(db, site, plan) {
 db.subscriptions ||= [];
 let sub = db.subscriptions.find(item => item.siteId === site.id);
 if (!sub) {
-sub = { id: uid('sub'), siteId: site.id, plan, status: 'trial', monthlyPrice: plan === 'Auto' ? 149000 : plan === 'FixPack' ? 79000 : 39000, createdAt: nowIso() };
+sub = { id: uid('sub'), siteId: site.id, plan, status: 'trial', monthlyPrice: plan === 'Expert' ? 89000 : plan === 'Free' ? 0 : 29000, createdAt: nowIso() };
 db.subscriptions.unshift(sub);
 } else {
 sub.plan = plan || sub.plan;
@@ -3701,29 +3727,30 @@ return jobs;
 function createCtaPublication(db, scan, options = {}) {
 db.publications ||= [];
 db.boards ||= [];
-let article = null;
-const tried = [];
-for (let offset = 0; offset < 144; offset += 1) {
-const variant = chooseCtaVariant(db, { ...options, sequenceOffset: offset });
-const triedKey = variant.combinationKey || variant.ctaType;
-if (tried.includes(triedKey)) continue;
-tried.push(triedKey);
-const draft = buildCtaBoardArticle(scan || {}, variant, { ...options, sequenceOffset: offset });
-const duplicate = [...db.publications, ...db.boards].some(item => item.contentFingerprint === draft.contentFingerprint || (item.title && item.title === draft.title));
-if (!duplicate) { article = draft; break; }
-}
-if (!article) {
-const variant = chooseCtaVariant(db, { ...options, sequenceOffset: Date.now() % 144 });
-article = buildCtaBoardArticle(scan || {}, variant, { ...options, title: `${variant.headline} · ${new Date().toLocaleDateString('ko-KR')}` });
-}
-const base = { ctaType: article.ctaType, titleCandidates: article.titleCandidates, tags: article.tags, qualityStandard:'cta-v10-phase217-expert-editorial-revenue-20min', seoQualityStandard:'cta-v10-phase217-expert-editorial-revenue-20min', wordRangeKo: '4200-5200', sections: ['전문가 관점 요약', '현장에서 자주 생기는 문제', '매출과 신뢰에 영향을 주는 이유', '실무 적용 순서', '문구 개선 예시', '검증 체크리스트', '검색 유입을 고려한 구성', '자주 묻는 질문', '자연스러운 다음 행동'], diversityKey: article.diversityKey, contentFingerprint: article.contentFingerprint, searchIntent: article.seo?.searchIntent || null, funnelStage: article.seo?.funnelStage || null, primaryKeyword: article.seo?.primaryKeyword || null, secondaryKeywords: article.seo?.secondaryKeywords || [], metaDescription: article.seo?.metaDescription || null, baseCtaType: article.baseCtaType || null, combinationMode: article.combinationMode || null, combinationKey: article.combinationKey || null, contentArchetype: article.contentArchetype || article.seo?.contentArchetype || null, audienceSegment: article.audienceSegment || article.seo?.audienceSegment || null };
-const publication = { id: uid('pub'), title: article.title, status: 'published', type: 'cta', boardType: article.boardType, ...base, relatedRequestId: scan?.requestId || null, body: article.body, createdAt: nowIso(), autoPublished: options.autoPublished === true };
-db.publications.unshift(publication);
-const publishIntervalMs = normalizeCtaAutopublishIntervalMs(options.publishIntervalMs, CTA_AUTOPUBLISH_INTERVAL_MS);
-db.boards.unshift({ id: uid('board'), title: article.title, boardType: article.boardType, type: 'cta', ...base, body: article.body, createdAt: nowIso(), visibility: 'public', autoPublished: options.autoPublished === true, publishIntervalMs });
-db.publications = db.publications.slice(0, 200);
-db.boards = db.boards.slice(0, 200);
-return publication;
+const existingCount = db.boards.filter(item => item && item.type === 'column').length;
+const enginePosts = buildPublicColumnEnginePosts({ pageSize: 50 });
+const article = enginePosts[existingCount % enginePosts.length];
+const record = {
+  id: uid('column'),
+  title: article.title,
+  status: 'published',
+  type: 'column',
+  boardType: article.boardType,
+  tags: article.tags,
+  primaryKeyword: article.primaryKeyword,
+  summary: article.summary,
+  body: article.body,
+  createdAt: nowIso(),
+  visibility: 'public',
+  autoPublished: options.autoPublished === true,
+  publicationCadence: '20분에 1회',
+  engine: 'public-column-engine-v1'
+};
+db.publications.unshift(record);
+db.boards.unshift({ ...record, id: uid('board') });
+db.publications = db.publications.filter(item => item && item.type !== 'cta' && item.boardType !== 'cta').slice(0, 60);
+db.boards = db.boards.filter(item => item && item.type !== 'cta' && item.boardType !== 'cta').slice(0, 60);
+return record;
 }
 
 function syncCtaAutopublishSettings(db = {}) {
@@ -3733,15 +3760,15 @@ if (db.settings.ctaAutopublishIntervalMs !== CTA_AUTOPUBLISH_INTERVAL_MS) {
 db.settings.ctaAutopublishIntervalMs = CTA_AUTOPUBLISH_INTERVAL_MS;
 changed = true;
 }
-if (!db.settings.ctaTargetLengthKo) {
-db.settings.ctaTargetLengthKo = '4200-5200';
+if (!db.settings.columnTargetStructure) {
+db.settings.columnTargetStructure = 'expert-readable-search-column';
 changed = true;
 }
 return { changed, intervalMs: CTA_AUTOPUBLISH_INTERVAL_MS };
 }
 function latestAutoCtaPublication(db = {}) {
 return [...(db.publications || []), ...(db.boards || [])]
-.filter(item => item && item.autoPublished && (item.type === 'cta' || item.boardType === 'cta' || item.ctaType))
+.filter(item => item && item.autoPublished && (item.type === 'column' || item.engine === 'public-column-engine-v1'))
 .sort((a, b) => Date.parse(b.createdAt || 0) - Date.parse(a.createdAt || 0))[0] || null;
 }
 function ctaAutopublishDueStatus(db = {}, intervalMs = CTA_AUTOPUBLISH_INTERVAL_MS) {
@@ -3762,7 +3789,7 @@ return createCtaPublication(db, scan, { ...options, autoPublished: true, publish
 }
 
 async function runCtaAutopublish(reason = 'interval') {
-const lockKey = 'cta-autopublish-20min-expert-editorial';
+const lockKey = 'public-column-engine-20min';
 const locked = await distributedLock.acquire(lockKey, Math.max(30, Math.ceil(CTA_AUTOPUBLISH_INTERVAL_MS / 1000)));
 if (!locked) return { ok: true, skipped: 'locked' };
 try {
@@ -3787,7 +3814,7 @@ totalFindings: 3,
 topFindings: ['지원 고지', '환불 정책 표시', '개인정보 처리방침 위치']
 };
 const item = createCtaPublication(db, scan, { autoPublished: true, publishIntervalMs: synced.intervalMs });
-appendAudit(db, { headers: {}, socket: {} }, 'system.cta.autopublished', { id: item.id, reason, intervalMs: synced.intervalMs });
+appendAudit(db, { headers: {}, socket: {} }, 'system.column.published', { id: item.id, reason, intervalMs: synced.intervalMs });
 await writeDb(db);
 return { ok: true, publication: item, intervalMs: synced.intervalMs };
 } finally {

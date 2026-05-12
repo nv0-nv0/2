@@ -1,15 +1,16 @@
-export const PHASE229_PRICING_VERSION = 'phase229-value-priced-quality-lock-v1';
+export const PHASE250_PRICING_VERSION = 'phase250-three-plan-public-catalog-lock-v1';
+export const PHASE229_PRICING_VERSION = PHASE250_PRICING_VERSION;
 
-export const PHASE229_PRICE_TABLE = Object.freeze({
-  Report: 39000,
-  FixPack: 79000,
-  Auto: 149000
+export const PHASE250_PRICE_TABLE = Object.freeze({
+  Free: 0,
+  Report: 29000,
+  Expert: 89000
 });
-
+export const PHASE229_PRICE_TABLE = PHASE250_PRICE_TABLE;
 export const PHASE229_PREVIOUS_PRICE_TABLE = Object.freeze({
-  Report: 69000,
-  FixPack: 99000,
-  Auto: 299000
+  Free: 0,
+  Report: 29000,
+  Expert: 129000
 });
 
 function number(value, fallback = 0) {
@@ -30,108 +31,99 @@ function netAfterPg(price, pgFeeRate = 0.032) {
 function conversionIndexFor(code, price) {
   const p = number(price, 0);
   const thresholds = {
-    Report: { ideal: 39000, ceiling: 59000, base: 88 },
-    FixPack: { ideal: 79000, ceiling: 99000, base: 92 },
-    Auto: { ideal: 149000, ceiling: 199000, base: 84 }
+    Free: { ideal: 0, ceiling: 1, base: 96 },
+    Report: { ideal: 29000, ceiling: 49000, base: 92 },
+    Expert: { ideal: 89000, ceiling: 129000, base: 88 }
   }[code] || { ideal: p || 1, ceiling: p || 1, base: 80 };
   const overIdeal = Math.max(0, p - thresholds.ideal);
   const underIdeal = Math.max(0, thresholds.ideal - p);
-  const penalty = overIdeal / Math.max(1, thresholds.ceiling - thresholds.ideal) * 18 + underIdeal / Math.max(1, thresholds.ideal) * 8;
+  const penalty = overIdeal / Math.max(1, thresholds.ceiling - thresholds.ideal) * 18 + underIdeal / Math.max(1, thresholds.ideal || 1) * 8;
   return clamp(thresholds.base - penalty, 45, 98);
 }
 function revenueFitScore(code, price) {
+  if (code === 'Free') return 100;
   const conversion = conversionIndexFor(code, price);
   const net = netAfterPg(price).netRevenue;
-  const netTarget = { Report: 37000, FixPack: 76000, Auto: 144000 }[code] || Math.max(1, price);
+  const netTarget = { Report: 28000, Expert: 86000 }[code] || Math.max(1, price);
   const unitEconomics = clamp((net / Math.max(1, netTarget)) * 82, 40, 96);
-  const qualityValue = code === 'FixPack' ? 98 : code === 'Report' ? 92 : 88;
+  const qualityValue = code === 'Expert' ? 98 : 92;
   return clamp(conversion * 0.45 + unitEconomics * 0.35 + qualityValue * 0.20);
 }
 
-/**
- * Builds the value-priced catalog used after Phase229.
- * Prices are optimized for first-purchase conversion while preserving digital
- * gross margin and a clear ladder: low-friction report, main FixPack offer,
- * and lower-entry monthly Auto care.
- */
 export function buildValuePricedOfferCatalog({ commonAssurance = [] } = {}) {
   const assurance = Array.isArray(commonAssurance) ? commonAssurance : [];
   return [
     {
+      code: 'Free',
+      group: 'free',
+      title: '무료 진단',
+      price: 0,
+      period: '무료',
+      priority: 0,
+      summary: '문제 영역, 영향 요소, 구분별 개수를 빠르게 확인합니다.',
+      targetCustomer: '먼저 현재 상태를 확인하고 싶은 분',
+      deliverables: ['문제 영역 개수', '영향 요소 개수', '구분별 문제 개수', 'URL 입력만으로 시작'],
+      operations: ['상세 근거와 수정안은 유료 리포트에서 제공', ...assurance],
+      benefits: ['부담 없이 현재 상태를 확인합니다.'],
+      cta: '무료 진단 시작',
+      referencePrice: 0,
+      valuePackWorth: 0,
+      pricingBasis: 'free-entry',
+      conversionRole: '무료 진입'
+    },
+    {
       code: 'Report',
       group: 'one_time',
-      title: '상세 리포트',
-      price: PHASE229_PRICE_TABLE.Report,
+      title: '기본 리포트',
+      price: PHASE250_PRICE_TABLE.Report,
       period: '1회',
       priority: 1,
-      summary: '부담 없는 첫 결제로 문제 위치, 이유, 우선순위, 전체 근거를 확인합니다.',
-      targetCustomer: '문제를 확인했지만 아직 수정 범위를 판단해야 하는 분',
-      deliverables: ['전체 문제 상세 공개', '근거·한계·우선순위', '공유 가능한 개선 리포트', '재확인 체크리스트', '다음 행동 제안'],
-      operations: ['결제 확인 후 전체 문제 상세와 근거 공개', '진단 이력이 없을 경우 기본 점검 양식으로 제공', ...assurance],
-      benefits: ['구매 장벽을 낮춰 첫 결제를 쉽게 만듭니다.', '팀과 공유할 근거가 생깁니다.'],
-      cta: '39,000원으로 전체 근거 열기',
-      referencePrice: 120000,
-      valuePackWorth: 195000,
-      pricingBasis: 'low-friction-paid-unlock',
+      summary: '핵심 문제와 개선 우선순위를 한눈에 파악합니다.',
+      targetCustomer: '문제와 우선순위를 빠르게 확인하고 싶은 분',
+      deliverables: ['페이지별 문제 근거', '전체 문제 상세 공개', '우선순위 정리', '재확인 체크리스트', '다음 행동 제안'],
+      operations: ['결제 확인 후 전체 문제 상세와 근거 공개', '진단 이력이 없을 경우 기본 점검 양식 제공', ...assurance],
+      benefits: ['팀과 공유할 근거가 생깁니다.', '수정 전 우선순위를 정할 수 있습니다.'],
+      cta: '29,000원으로 기본 리포트 보기',
+      referencePrice: 49000,
+      valuePackWorth: 69000,
+      pricingBasis: 'low-friction-paid-report',
       conversionRole: '첫 유료 전환'
     },
     {
-      code: 'FixPack',
+      code: 'Expert',
       group: 'one_time',
-      title: 'FixPack',
-      price: PHASE229_PRICE_TABLE.FixPack,
+      title: '전문가 리포트',
+      price: PHASE250_PRICE_TABLE.Expert,
       period: '1회',
       priority: 2,
-      summary: '문제 확인에서 멈추지 않고 사이트에 바로 붙여넣을 수정 전/후 문장과 운영 문서를 제공합니다.',
-      targetCustomer: '오늘 바로 푸터·환불·문의·CTA 문구를 고치고 싶은 분',
-      deliverables: ['전체 문제 상세 공개', '수정 전/후 문장', '붙여넣을 위치 안내', '환불·문의·결제 전 안내 문구', '사이트 맞춤 운영 SOP', '재검증 기준'],
-      operations: ['우선순위가 높은 문구부터 제공', '고객이 보는 화면 기준으로 정리', '사이트 맞춤 개선 지침과 운영 문서 포함', ...assurance],
-      benefits: ['가장 빠르게 실행 가능한 주력 상품입니다.', '고객 불안을 줄이는 안내 흐름을 만들 수 있습니다.'],
-      cta: '79,000원으로 문구까지 받기',
-      referencePrice: 190000,
-      valuePackWorth: 316000,
-      pricingBasis: 'main-conversion-and-profit-offer',
-      conversionRole: '주력 매출 전환'
-    },
-    {
-      code: 'Auto',
-      group: 'subscription',
-      title: 'Auto 정기 케어',
-      price: PHASE229_PRICE_TABLE.Auto,
-      period: '월',
-      priority: 3,
-      summary: '월 10만 원대 진입가로 변경이 잦은 페이지의 안내 공백과 CTA 흐름을 반복 점검합니다.',
-      targetCustomer: '광고·이벤트·랜딩페이지가 자주 바뀌는 팀',
-      deliverables: ['정기 재진단', 'CTA 콘텐츠 흐름 관리', '변경 후 안내 공백 확인', '고위험 항목 우선 알림', '내 사이트 관리 대시보드', '게시판 콘텐츠 관리'],
-      operations: ['정기 점검 결과 제공', '수정 후보는 확인 후 사용할 수 있도록 제공', '월 단위 반복 관리 기준 제공', ...assurance],
-      benefits: ['월 결제 장벽을 낮춰 반복 매출 진입을 쉽게 만듭니다.', '여러 랜딩페이지의 문제를 우선순위로 볼 수 있습니다.'],
-      cta: '월 149,000원으로 정기 케어 시작',
-      referencePrice: 300000,
-      valuePackWorth: 596000,
-      pricingBasis: 'subscription-entry-price',
-      conversionRole: '반복 매출'
+      summary: '상세 근거와 전문가 해설, 맞춤 개선 방향까지 제공합니다.',
+      targetCustomer: '구조 개선안과 설명 가능한 근거가 필요한 대표·마케터·운영자',
+      deliverables: ['상세 근거 정리', '전문가 해설', '맞춤 개선 방향', '수정 문구 제안', '재점검 기준'],
+      operations: ['우선순위가 높은 항목부터 전문가 해설 제공', '고객이 보는 화면 기준으로 정리', ...assurance],
+      benefits: ['실제 개선 실행까지 이어가기 쉽습니다.', '고객 불안을 줄이는 구조를 만들 수 있습니다.'],
+      cta: '89,000원으로 전문가 리포트 보기',
+      referencePrice: 129000,
+      valuePackWorth: 159000,
+      pricingBasis: 'expert-execution-report',
+      conversionRole: '전문 분석 전환'
     }
   ].map((offer) => {
     const economics = netAfterPg(offer.price);
+    const previous = PHASE229_PREVIOUS_PRICE_TABLE[offer.code] ?? offer.price;
     return {
       ...offer,
-      previousPrice: PHASE229_PREVIOUS_PRICE_TABLE[offer.code],
-      priceDropAmount: Math.max(0, number(PHASE229_PREVIOUS_PRICE_TABLE[offer.code], offer.price) - offer.price),
-      priceDropRate: Number((Math.max(0, number(PHASE229_PREVIOUS_PRICE_TABLE[offer.code], offer.price) - offer.price) / Math.max(1, number(PHASE229_PREVIOUS_PRICE_TABLE[offer.code], offer.price))).toFixed(2)),
+      previousPrice: previous,
+      priceDropAmount: Math.max(0, number(previous, offer.price) - offer.price),
+      priceDropRate: previous ? Number((Math.max(0, number(previous, offer.price) - offer.price) / Math.max(1, number(previous, offer.price))).toFixed(2)) : 0,
       conversionFitScore: conversionIndexFor(offer.code, offer.price),
       revenueFitScore: revenueFitScore(offer.code, offer.price),
       netRevenueAfterEstimatedPgFee: economics.netRevenue,
       estimatedPgFee: economics.paymentFee,
-      valueMultiple: Number((offer.valuePackWorth / Math.max(1, offer.price)).toFixed(1))
+      valueMultiple: offer.price ? Number((offer.valuePackWorth / Math.max(1, offer.price)).toFixed(1)) : 0
     };
   }).sort((a, b) => a.priority - b.priority);
 }
 
-/**
- * Returns the Phase229 pricing decision record used by tests, public APIs, and
- * release notes. It keeps the pricing rationale separate from UI copy so future
- * price changes can be tested without weakening paid-output quality gates.
- */
 export function buildPricingRecalculation({ pgFeeRate = 0.032 } = {}) {
   const offers = buildValuePricedOfferCatalog();
   const rows = offers.map((offer) => {
@@ -141,7 +133,7 @@ export function buildPricingRecalculation({ pgFeeRate = 0.032 } = {}) {
       title: offer.title,
       previousPrice: PHASE229_PREVIOUS_PRICE_TABLE[offer.code],
       recommendedPrice: offer.price,
-      priceLabel: offer.period === '월' ? `${won(offer.price)} / 월` : won(offer.price),
+      priceLabel: offer.price === 0 ? '0원' : won(offer.price),
       priceDropAmount: offer.priceDropAmount,
       priceDropRate: offer.priceDropRate,
       estimatedPaymentFee: net.paymentFee,
@@ -155,21 +147,19 @@ export function buildPricingRecalculation({ pgFeeRate = 0.032 } = {}) {
   });
   return {
     ok: true,
-    version: PHASE229_PRICING_VERSION,
-    recommendedFocusPlan: 'FixPack',
-    strategy: '가격 장벽은 낮추고, 유료 결과물의 전체 상세·수정 문구·운영 문서 품질은 잠급니다.',
-    pgAssumption: { source: 'PortOne public PG fee table baseline', cardFeeRate: pgFeeRate },
+    version: PHASE250_PRICING_VERSION,
+    recommendedFocusPlan: 'Report',
+    strategy: '공개 요금제는 무료 진단, 기본 리포트, 전문가 리포트 3개로 고정합니다.',
+    pgAssumption: { source: 'estimated PG fee baseline', cardFeeRate: pgFeeRate },
     prices: Object.fromEntries(rows.map((row) => [row.code, row.recommendedPrice])),
     rows,
     qualityLock: {
-      minPaidFullDetailScore: 100,
-      minSiteOperationsDocumentScore: 100,
-      minPaidOutputGateScore: 98,
       freeDemoMustRemainLimited: true,
+      freeDemoShowsCountsOnly: true,
       paidMustExposeAllIssueDetails: true,
-      fixPackMustIncludeBeforeAfterCopy: true,
-      autoMustIncludeRecurringCarePlan: true
+      reportPriceMustEqualCheckout: 29000,
+      expertPriceMustEqualCheckout: 89000
     },
-    conclusion: '전환율과 수익률의 균형점은 Report 39,000원, FixPack 79,000원, Auto 월 149,000원이며, 주력 CTA는 FixPack입니다.'
+    conclusion: '공개 가격은 무료 진단 0원, 기본 리포트 29,000원, 전문가 리포트 89,000원으로 전 화면과 결제 흐름에서 일치합니다.'
   };
 }

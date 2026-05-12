@@ -305,3 +305,33 @@ p{margin:0}
 .result-tabbed-ia{background:#fff!important;border:1px solid var(--line)!important}
 .result-tab-panel.active{animation:none}
 @media(max-width:1120px){.phase239-side-card{position:relative;top:auto}.article-card.featured .feature-side{border-left:0;border-top:1px solid var(--line)}}
+
+/* PHASE250: simplified demo and paid result screens */
+.demo-count-result,.paid-result-clean{display:grid;gap:22px;background:#fff;border:1px solid var(--line);border-radius:34px;box-shadow:var(--shadow-sm);padding:28px}
+.demo-count-head,.paid-result-hero{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;padding-bottom:18px;border-bottom:1px solid var(--line)}
+.demo-count-head h2,.paid-result-hero h2{font-size:clamp(30px,3.3vw,46px)}
+.demo-count-head p,.paid-result-hero p{color:var(--muted);word-break:break-all}
+.demo-count-kpis,.paid-result-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.demo-count-kpis article,.paid-result-kpis article{border:1px solid var(--line);border-radius:24px;background:linear-gradient(180deg,#f8fbff,#fff);padding:20px;display:grid;gap:8px}
+.demo-count-kpis article:nth-child(3){border-color:#ffd9cc;background:linear-gradient(180deg,#fff8f4,#fff)}
+.demo-count-kpis span,.paid-result-kpis span{font-size:13px;font-weight:850;color:var(--muted)}
+.demo-count-kpis strong,.paid-result-kpis strong{font-size:46px;line-height:1;font-weight:950;letter-spacing:-.07em;color:var(--title)}
+.demo-count-kpis small,.paid-result-kpis small{color:var(--muted)}
+.demo-count-layout,.paid-result-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(280px,.65fr);gap:18px}
+.demo-count-table-card,.demo-count-class-card,.paid-detail-panel,.paid-action-panel{border:1px solid var(--line);border-radius:28px;background:#fff;padding:22px;box-shadow:var(--shadow-sm);display:grid;gap:14px;align-content:start}
+.demo-count-table{width:100%;border-collapse:collapse}
+.demo-count-table th,.demo-count-table td{padding:14px 12px;border-bottom:1px solid #eef3fb;text-align:left;vertical-align:middle}
+.demo-count-table th{font-size:13px;color:var(--title);background:#f8fbff}
+.demo-count-table tr:last-child td{border-bottom:0}
+.demo-count-table b{font-size:22px;color:var(--title)}
+.demo-count-table td span{display:inline-flex;border-radius:999px;background:var(--blue-soft);color:var(--blue);font-weight:900;padding:6px 10px;font-size:12px}
+.class-count-row{display:flex;align-items:center;justify-content:space-between;gap:14px;border:1px solid var(--line);border-radius:18px;background:#f8fbff;padding:14px}
+.class-count-row span{font-weight:850;color:#40516a}.class-count-row strong{font-size:30px;line-height:1;color:var(--title)}
+.demo-paid-gate{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:center;border:1px solid #cfe0ff;background:linear-gradient(180deg,#f5f8ff,#fff);border-radius:28px;padding:22px}
+.demo-paid-gate h3{margin:0}.demo-paid-gate p{color:var(--muted)}
+.paid-detail-row{display:flex;justify-content:space-between;gap:14px;border:1px solid #eef3fb;border-radius:18px;padding:14px;background:#fbfdff}
+.paid-detail-row b{display:block;color:var(--title);margin-bottom:4px}.paid-detail-row p{color:var(--muted);font-size:14px}
+.paid-action-row{display:flex;gap:12px;border:1px solid var(--line);border-radius:18px;background:#f8fbff;padding:14px}.paid-action-row>span{width:30px;height:30px;border-radius:10px;background:var(--blue);color:#fff;display:grid;place-items:center;font-weight:950;flex:0 0 auto}.paid-action-row b{display:block;color:var(--title)}.paid-action-row small{color:var(--muted)}
+.phase250-clean .nv0-nav a{white-space:nowrap}.nv0-nav{overflow-x:auto;scrollbar-width:thin}.nv0-nav::-webkit-scrollbar{height:4px}.nv0-nav::-webkit-scrollbar-thumb{background:#d5e2f5;border-radius:999px}
+@media(max-width:980px){.demo-count-kpis,.paid-result-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.demo-count-layout,.paid-result-grid,.demo-paid-gate{grid-template-columns:1fr}.demo-count-head,.paid-result-hero{display:grid}.demo-paid-gate .nv0-cta-row{width:100%}}
+@media(max-width:620px){.demo-count-kpis,.paid-result-kpis{grid-template-columns:1fr}.demo-count-result,.paid-result-clean{padding:20px;border-radius:26px}.demo-count-table th,.demo-count-table td{padding:10px 8px;font-size:13px}.demo-count-kpis strong,.paid-result-kpis strong{font-size:38px}}
