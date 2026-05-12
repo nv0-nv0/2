@@ -17,11 +17,11 @@ const REQUEST_TIMEOUT_MS = 18000;
 const DEMO_CACHE_TTL_MS = 5 * 60 * 1000;
 const PROGRESS_TICK_MS = 900;
 const PROGRESS_STEPS = [
-  '주소 형식과 공개 접근 가능 여부를 확인합니다.',
-  '홈·연결된 공개 페이지·robots.txt·sitemap.xml 후보를 수집합니다.',
-  '사업자·환불·개인정보·결제 전 안내 신호를 분류합니다.',
-  '바로 확인 가능한 항목과 직접 확인할 항목을 분리합니다.',
-  '지금 고칠 3가지와 리포트 전환 동선을 정리합니다.'
+  { title: 'URL 입력', detail: '주소 형식과 공개 접근 가능 여부 확인' },
+  { title: '자동 수집', detail: '홈·정책·문의·robots·sitemap 후보 확인' },
+  { title: '신뢰 신호 분류', detail: '사업자·환불·개인정보·결제 전 안내 확인' },
+  { title: '수동확인 분리', detail: '자동 단정하면 위험한 항목은 따로 표시' },
+  { title: '결과 정렬', detail: '점수·근거·다음 행동을 읽기 쉬운 순서로 정리' }
 ];
 const usageKey = `veridion:instantDemoUsage:v2:${new Date().toISOString().slice(0, 10)}`;
 const legacyUsageKey = `veridion:instantDemoUsage:${new Date().toISOString().slice(0, 10)}`;
@@ -62,7 +62,7 @@ function renderProgress(index = 0) {
     <div class="demo-progress-head"><span class="pill brand">실시간 무료진단</span><b>${elapsed}초 경과</b></div>
     <h3>결과 화면을 먼저 준비하면서 공개 페이지를 확인하고 있습니다</h3>
     <p class="muted">응답이 느린 사이트도 빈 화면으로 기다리게 하지 않고, 현재 처리 단계를 계속 보여줍니다.</p>
-    <ol class="demo-progress-steps">${PROGRESS_STEPS.map((step, stepIndex) => `<li class="${stepIndex < active ? 'done' : stepIndex === active ? 'active' : ''}"><span>${stepIndex + 1}</span><p>${escapeHtml(step)}</p></li>`).join('')}</ol>
+    <ol class="demo-progress-steps phase240-readable-steps">${PROGRESS_STEPS.map((step, stepIndex) => `<li class="${stepIndex < active ? 'done' : stepIndex === active ? 'active' : ''}"><span aria-hidden="true">${stepIndex + 1}</span><div><b>${escapeHtml(step.title)}</b><p>${escapeHtml(step.detail)}</p></div></li>`).join('')}</ol>
     <div class="demo-progress-note">반복 실행 시 최근 5분 이내 동일 URL 결과는 즉시 재사용해 체감 대기시간을 줄입니다.</div>
   </section>`;
 }

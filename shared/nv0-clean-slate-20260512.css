@@ -189,3 +189,373 @@ table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(
 .phase239-portal-head .nv74-topbar{border:1px solid var(--phase239-line);border-radius:32px;background:#fff;padding:28px;box-shadow:var(--nvo-shadow-sm);display:flex;align-items:center;justify-content:space-between;gap:20px}.phase239-portal-main{display:grid;gap:18px}.phase239-metric-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.phase239-action-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.phase239-policy{display:grid;gap:18px;max-width:980px;margin:0 auto}.phase239-policy-card h2{margin-top:10px}.phase239-admin{padding-top:28px}.phase239-admin .page-head{border:1px solid var(--phase239-line);border-radius:28px;background:#fff;padding:24px;box-shadow:var(--nvo-shadow-xs)}
 @media(max-width:1100px){.phase239-hero,.phase239-demo-hero,.phase239-guide-layout,.phase239-board-layout,.phase239-checkout-layout,.phase239-doc-layout,.phase239-portal-layout{grid-template-columns:1fr}.phase239-card-grid,.phase239-plan-grid,.phase239-board-list,.phase239-dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.phase239-info-grid,.phase239-auth-grid,.phase239-plan-intro,.phase239-stat-row,.phase239-action-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.phase239-side-card{position:relative;top:auto}.phase239-portal-head .nv74-topbar{display:grid}}
 @media(max-width:720px){.phase239-copy h1{font-size:38px}.phase239-hero,.phase239-demo-hero{padding:22px;border-radius:28px}.phase239-card-grid,.phase239-plan-grid,.phase239-board-list,.phase239-dashboard-grid,.phase239-info-grid,.phase239-auth-grid,.phase239-plan-intro,.phase239-stat-row,.phase239-action-grid,.phase239-before-after{grid-template-columns:1fr}.phase239-input-row{grid-template-columns:1fr}.phase239-copy p,.phase239-copy li{font-size:15.5px}.phase239-hero-copy{gap:16px}.phase239-shell{gap:22px}.phase239-form-card,.phase239-card,.phase239-side-card{border-radius:24px;padding:20px}.phase239-arrow{display:none}.phase239-portal-head .nv74-topbar .btn{width:100%}}
+
+/* Phase240: readable step/pill layout lock
+   Prevents compact inline rendering such as "1URL 입력공개 접근..." when
+   page-specific CSS is retired or a numbered flow is rendered inside cards. */
+.phase239-copy :where(.phase240-readable-steps,.demo-progress-steps,.loading-steps){
+  list-style:none;
+  margin:0;
+  padding:0;
+  display:grid;
+  gap:12px;
+}
+.phase239-copy :where(.phase240-readable-steps li,.demo-progress-steps li){
+  list-style:none;
+  min-width:0;
+  display:grid;
+  grid-template-columns:42px minmax(0,1fr);
+  align-items:start;
+  gap:12px;
+  min-height:58px;
+  padding:14px 16px;
+  border:1px solid var(--phase239-line,#dbe7f4);
+  border-radius:22px;
+  background:#fff;
+  box-shadow:0 10px 28px rgba(15,23,42,.045);
+  overflow:hidden;
+}
+.phase239-copy :where(.phase240-readable-steps li,.demo-progress-steps li)::marker{content:""}
+.phase239-copy :where(.phase240-readable-steps li > span,.demo-progress-steps li > span){
+  display:grid;
+  place-items:center;
+  width:34px;
+  height:34px;
+  border-radius:999px;
+  background:var(--nvo-blue-soft,#eff6ff);
+  color:var(--nvo-blue,#0b5cff);
+  font-size:14px;
+  font-weight:950;
+  line-height:1;
+}
+.phase239-copy :where(.phase240-readable-steps li > div,.demo-progress-steps li > div,.demo-progress-steps li > p){
+  min-width:0;
+}
+.phase239-copy :where(.phase240-readable-steps li b,.demo-progress-steps li b,.loading-steps b){
+  display:block;
+  margin:0 0 3px;
+  color:var(--phase239-ink,#0c1628);
+  font-size:16px;
+  font-weight:950;
+  line-height:1.32;
+  letter-spacing:-.04em;
+}
+.phase239-copy :where(.phase240-readable-steps li p,.demo-progress-steps li p){
+  margin:0;
+  color:var(--phase239-body,#334155);
+  font-size:14px;
+  font-weight:760;
+  line-height:1.55;
+  letter-spacing:-.025em;
+  overflow-wrap:break-word;
+  word-break:keep-all;
+}
+.phase239-copy .loading-steps > *{
+  display:block;
+  list-style:none;
+  min-width:0;
+  min-height:0;
+  padding:14px 16px;
+  border:1px solid var(--phase239-line,#dbe7f4);
+  border-radius:22px;
+  background:#fff;
+  box-shadow:0 10px 28px rgba(15,23,42,.045);
+  color:var(--phase239-body,#334155);
+  font-size:14px;
+  font-weight:760;
+  line-height:1.55;
+  overflow:hidden;
+}
+.phase239-copy :where(.phase240-readable-steps li.active,.demo-progress-steps li.active){
+  border-color:#9ec2ff;
+  background:linear-gradient(135deg,#fff,#f4f8ff);
+}
+.phase239-copy :where(.phase240-readable-steps li.done > span,.demo-progress-steps li.done > span){
+  background:#ecfdf5;
+  color:#047857;
+}
+.phase239-copy .demo-progress-panel{
+  display:grid;
+  gap:16px;
+  border:1px solid var(--phase239-line,#dbe7f4);
+  border-radius:30px;
+  background:linear-gradient(180deg,#fff,#f8fbff);
+  padding:24px;
+  box-shadow:var(--nvo-shadow-sm,0 18px 50px rgba(15,23,42,.08));
+}
+.phase239-copy .demo-progress-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.phase239-copy .demo-progress-note{
+  border-radius:18px;
+  background:#f1f5f9;
+  padding:12px 14px;
+  color:var(--phase239-muted,#64748b);
+  font-size:13px;
+  font-weight:820;
+  line-height:1.55;
+}
+@media(max-width:720px){
+  .phase239-copy :where(.phase240-readable-steps li,.demo-progress-steps li){
+    grid-template-columns:34px minmax(0,1fr);
+    padding:13px 14px;
+    border-radius:18px;
+  }
+  .phase239-copy :where(.phase240-readable-steps li > span,.demo-progress-steps li > span){
+    width:30px;
+    height:30px;
+    font-size:13px;
+  }
+  .phase239-copy .loading-steps > *{
+    padding:13px 14px;
+    border-radius:18px;
+  }
+}
+
+/* PHASE241 · Global layout, typography, spacing, shape and line polish · 2026-05-12
+   Purpose: lock every public/admin page into a readable, professional SaaS layout after full-page review. */
+:root{
+  --phase241-page:#f6f9fd;
+  --phase241-surface:#ffffff;
+  --phase241-surface-soft:#f9fbff;
+  --phase241-ink:#0b1220;
+  --phase241-text:#334155;
+  --phase241-muted:#64748b;
+  --phase241-line:#d8e3ef;
+  --phase241-line-soft:#e7eef6;
+  --phase241-blue:#0b5cff;
+  --phase241-blue-deep:#0847c2;
+  --phase241-green:#0f9f72;
+  --phase241-warn:#b45309;
+  --phase241-radius-card:26px;
+  --phase241-radius-panel:34px;
+  --phase241-shadow-card:0 14px 38px rgba(15,23,42,.075);
+  --phase241-shadow-panel:0 22px 64px rgba(15,23,42,.095);
+  --phase241-shadow-soft:0 8px 24px rgba(15,23,42,.055);
+}
+html{font-size:16px;overflow-x:hidden;scroll-padding-top:92px}
+body.nv0-clean-slate{
+  overflow-x:hidden;
+  background:
+    radial-gradient(circle at 8% -12%,rgba(11,92,255,.10),transparent 360px),
+    radial-gradient(circle at 93% 0%,rgba(15,159,114,.075),transparent 330px),
+    linear-gradient(180deg,#fff 0%,var(--phase241-page) 48%,#f3f7fc 100%);
+  color:var(--phase241-text);
+  letter-spacing:-.018em;
+}
+body.nv0-clean-slate::before{opacity:.42;background-size:56px 56px;mask-image:linear-gradient(180deg,rgba(0,0,0,.22),transparent 62%)}
+body.nv0-clean-slate::after{background:linear-gradient(90deg,rgba(255,255,255,.94),rgba(255,255,255,.42) 22%,transparent 52%,rgba(255,255,255,.82))}
+
+/* Global rhythm */
+.phase239-copy{
+  color:var(--phase241-text);
+  letter-spacing:-.022em;
+  word-break:keep-all;
+  overflow-wrap:break-word;
+}
+.phase239-copy h1,.phase239-copy h2,.phase239-copy h3,.phase239-copy h4{
+  color:var(--phase241-ink);
+  text-wrap:balance;
+  word-break:keep-all;
+  overflow-wrap:break-word;
+}
+.phase239-copy h1{font-size:clamp(36px,4.8vw,64px);line-height:1.06;letter-spacing:-.07em;font-weight:950;max-width:900px}
+.phase239-copy h2{font-size:clamp(24px,2.7vw,36px);line-height:1.16;letter-spacing:-.055em;font-weight:940}
+.phase239-copy h3{font-size:clamp(18px,1.9vw,23px);line-height:1.28;letter-spacing:-.043em;font-weight:920}
+.phase239-copy p,.phase239-copy li,.phase239-copy dd{font-size:clamp(15.5px,1.18vw,16.5px);line-height:1.72;color:var(--phase241-text);letter-spacing:-.018em}
+.phase239-copy .muted,.phase239-copy small{color:var(--phase241-muted);line-height:1.62}
+.phase239-shell,.nv0-shell,.app-shell,.nv74-dashboard-shell,.nv191-portal-shell{width:min(1168px,calc(100% - 40px));padding-top:32px;padding-bottom:72px}
+.phase239-shell{gap:28px}
+.nv0-section,section{margin-top:26px}
+.phase239-copy .section-title,.phase239-copy .page-head,.phase239-copy .compact-title,.phase239-copy .demo-head{
+  display:grid;
+  justify-content:start;
+  align-items:start;
+  gap:10px;
+  max-width:860px;
+  margin-bottom:20px;
+}
+.phase239-copy .section-title .pill,.phase239-copy .page-head .pill{margin-bottom:2px}
+.phase239-copy .section-title p,.phase239-copy .page-head p{max-width:760px}
+
+/* Header and navigation */
+.phase239-topbar{border-bottom:1px solid rgba(216,227,239,.92);background:rgba(255,255,255,.90);box-shadow:0 8px 26px rgba(15,23,42,.045)}
+.phase239-topbar .nv0-topbar-inner{width:min(1168px,calc(100% - 40px));gap:14px;padding:12px 0;min-width:0}
+.phase239-topbar .nv0-brand{flex:0 0 auto;letter-spacing:-.04em}
+.phase239-topbar .nv0-brand-mark{width:40px;height:40px;border-radius:14px;box-shadow:0 14px 30px rgba(11,92,255,.20)}
+.phase239-topbar .nv0-nav{
+  flex:1 1 auto;
+  min-width:0;
+  max-width:680px;
+  overflow-x:auto;
+  overflow-y:hidden;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+  justify-content:flex-start;
+  border-color:var(--phase241-line-soft);
+  background:rgba(248,251,255,.86);
+}
+.phase239-topbar .nv0-nav::-webkit-scrollbar{display:none}
+.phase239-topbar .nv0-nav a{min-height:34px;padding:0 12px;font-size:13px;line-height:1;font-weight:880;color:#52627a}
+.phase239-topbar .nv0-nav a[aria-current="page"],.phase239-topbar .nv0-nav a:hover{background:#fff;color:var(--phase241-blue);box-shadow:0 7px 18px rgba(15,23,42,.065)}
+.phase239-topbar .nv0-top-actions{flex:0 0 auto;gap:8px}
+.phase239-topbar .nv0-icon-link,.phase239-topbar .cta{min-height:38px;padding:0 14px;font-size:12.5px}
+
+/* Cards, panels, lines, decorative shapes */
+.phase239-card,.phase239-form-card,.phase239-side-card,.phase239-policy-card,.phase239-score-card,.phase239-list-card,
+.card,.nv0-panel,.clean-plan-card,.decision-card,.result-card,.board-post,.post-section,.activity-item,.checkout-card,.checkout-summary,.checkout-method,.result-panel,.scan-card,.demo-result-surface,.nv74-card,.nv74-plan-card,.nv191-action-card,.phase239-dashboard-panel,.phase239-hero-visual,.phase239-scan-card{
+  border:1px solid var(--phase241-line);
+  border-radius:var(--phase241-radius-card);
+  background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(250,253,255,.96));
+  box-shadow:var(--phase241-shadow-soft);
+  overflow:hidden;
+}
+.phase239-dashboard-panel,.phase239-hero,.phase239-demo-hero,.phase239-portal-head .nv74-topbar{
+  border-color:var(--phase241-line);
+  border-radius:var(--phase241-radius-panel);
+  box-shadow:var(--phase241-shadow-panel);
+}
+.phase239-card,.phase239-form-card,.phase239-side-card,.phase239-policy-card,.phase239-score-card,.phase239-list-card,.card,.nv0-panel,.clean-plan-card,.decision-card,.result-card,.board-post,.post-section,.activity-item,.checkout-card,.checkout-summary,.checkout-method,.result-panel,.scan-card,.nv74-card,.nv74-plan-card,.nv191-action-card{padding:24px}
+.card::before,.nv0-panel::before,.clean-plan-card::before,.checkout-card::before,.board-post::before,.nv74-card::before,.result-panel::before,.scan-card::before,.grid>article::before,section>article::before{
+  height:2px;
+  background:linear-gradient(90deg,rgba(11,92,255,.42),rgba(15,159,114,.32),rgba(255,255,255,0));
+  opacity:.46;
+}
+.phase239-card:hover,.card:hover,.nv0-panel:hover,.clean-plan-card:hover,.board-post:hover,.nv74-card:hover,.grid>article:hover,section>article:hover{transform:translateY(-1px);box-shadow:var(--phase241-shadow-card);border-color:#cbd9e8}
+.phase239-hero{gap:30px;padding:clamp(28px,4.2vw,52px);background:linear-gradient(135deg,#fff 0%,#f8fbff 58%,#eef6ff 100%)}
+.phase239-hero::after{right:-120px;top:-160px;width:380px;height:380px;opacity:.82}
+.phase239-hero-copy{gap:20px}
+.phase239-hero-copy .nv0-subcopy{font-size:clamp(16.5px,1.55vw,19px);line-height:1.72;color:#34445c;max-width:760px}
+.phase239-glass-card{gap:16px}
+.phase239-card-icon,.nv0-feature-icon,.nv0-benefit-icon,.phase218-icon,.nv191-action-icon{border-radius:15px;background:#eef5ff;color:var(--phase241-blue);box-shadow:inset 0 0 0 1px rgba(11,92,255,.10)}
+
+/* Grid and arrangement locks */
+.phase239-card-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
+.phase239-plan-grid,.phase239-board-list{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
+.phase239-info-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.phase239-dashboard-grid{grid-template-columns:.82fr 1fr 1fr;gap:20px}
+.phase239-guide-layout,.phase239-board-layout,.phase239-checkout-layout,.phase239-doc-layout,.phase239-portal-layout{gap:24px}
+.phase239-action-grid,.nv191-action-grid,.phase239-metric-grid{gap:16px}
+.cols-2,.nv0-grid-2,.checkout-grid,.checkout-layout,.plan-decision-grid,.price-fit-grid,.phase214-pain-grid,.phase214-outcome-map,.phase218-infographic-grid,.nv0-report-grid,.nv0-step-grid,.nv0-side-layout{gap:20px}
+.cols-3,.score-grid,.guide-grid,.buyer-pain-grid,.nv0-feature-grid,.nv0-benefit-grid,.nv0-step-flow,.phase190-steps,.phase190-flow-list,.phase213-checkout-steps,.phase190-checkout-steps,.phase213-delivery-expectation,.nv191-action-grid{gap:20px}
+.phase239-plan-intro{grid-template-columns:minmax(0,1.16fr) minmax(300px,.84fr);gap:20px}
+
+/* Lists, steps and chips */
+.phase239-mini-steps{gap:12px}
+.phase239-mini-steps li{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;
+  gap:12px;
+  min-height:64px;
+  border-color:var(--phase241-line-soft);
+  border-radius:18px;
+  padding:14px 16px;
+  box-shadow:0 5px 16px rgba(15,23,42,.035);
+}
+.phase239-mini-steps b{font-size:15.5px;line-height:1.25;letter-spacing:-.035em}
+.phase239-mini-steps span{font-size:13.5px;line-height:1.35;text-align:right;color:var(--phase241-muted)}
+.phase239-list-card ul,.phase239-copy .result-list,.phase239-copy .plan-deliverables,.phase239-copy .comparison-list,.phase239-copy .evidence-stack,.phase239-copy .nv0-info-list{margin:0;padding:0;display:grid;gap:10px}
+.phase239-list-card li,.phase239-copy .result-list li,.phase239-copy .plan-deliverables li,.phase239-copy .comparison-list li,.phase239-copy .evidence-stack>*,.phase239-copy .nv0-info-list li{
+  list-style:none;
+  border:1px solid var(--phase241-line-soft);
+  border-radius:15px;
+  background:#fff;
+  padding:12px 14px;
+  font-weight:780;
+  line-height:1.55;
+}
+.pill,.nv191-pill,.plan-badges span,.post-tags span,.post-meta span,.meta-row span,.comparison-head span,.stat-label{border-color:var(--phase241-line);font-size:12px;font-weight:900;min-height:28px;padding:7px 11px;line-height:1.05}
+.nv0-kicker{padding:8px 12px;font-size:12px;border-color:#c7d9ff;background:#eef5ff;color:var(--phase241-blue-deep)}
+
+/* Forms and buttons */
+.btn,.cta,button[type="button"],button[type="submit"],button:not(.nv0-filter-item):not(.segment-tabs button){
+  min-height:46px;
+  border-radius:999px;
+  padding:0 18px;
+  font-size:13.5px;
+  font-weight:920;
+  box-shadow:0 14px 30px rgba(11,92,255,.20);
+}
+.btn.secondary,.secondary,button.secondary,.phase239-topbar .nv0-icon-link{border:1px solid var(--phase241-line);background:#fff;color:var(--phase241-ink);box-shadow:0 7px 18px rgba(15,23,42,.055)}
+.phase239-copy input,.phase239-copy textarea,.phase239-copy select{min-height:48px;border-radius:15px;border-color:var(--phase241-line);font-size:15px;font-weight:760;box-shadow:inset 0 1px 0 rgba(255,255,255,.92),0 5px 14px rgba(15,23,42,.035)}
+.phase239-copy label{gap:8px;font-size:13.5px;font-weight:900;color:var(--phase241-ink)}
+.phase239-input-row{grid-template-columns:minmax(0,1fr) minmax(116px,auto);gap:10px;align-items:stretch}
+.notice,.nv74-state,.payment-config-state{border:1px solid var(--phase241-line-soft);border-radius:16px;background:#f8fbff;padding:12px 14px;color:var(--phase241-muted);font-size:14px;line-height:1.55;font-weight:720}
+
+/* Tables, generated reports and portal surfaces */
+.table-wrap{width:100%;overflow-x:auto;border:1px solid var(--phase241-line);border-radius:22px;background:#fff;box-shadow:var(--phase241-shadow-soft)}
+.phase239-copy table{width:100%;border-collapse:separate;border-spacing:0;min-width:720px;background:#fff}
+.phase239-copy th,.phase239-copy td{border-bottom:1px solid var(--phase241-line-soft);padding:15px 16px;text-align:left;vertical-align:top;font-size:14.5px;line-height:1.55;color:var(--phase241-text)}
+.phase239-copy th{background:#f7faff;color:var(--phase241-ink);font-weight:920}
+.phase239-copy tr:last-child td{border-bottom:0}
+.phase239-copy pre,.pre-wrap,.asset-body{white-space:pre-wrap;word-break:keep-all;overflow-wrap:break-word;border-radius:18px;border:1px solid #172238;background:#07111f;color:#eaf2ff;padding:16px;line-height:1.68;font-size:14px}
+.meta-row,.plan-card-top,.preview-toolbar,.portal-report-cta-row,.topnav,.post-cta{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.plan-card-top{align-items:flex-start}
+.plan-price,.nv74-score-number{color:var(--phase241-blue);font-size:clamp(30px,3.8vw,46px);line-height:1;font-weight:950;letter-spacing:-.07em}
+.payment-microcopy,.plan-fit,.asset-mini-block,.asset-section,.asset-faq,.portal-empty{border:1px solid var(--phase241-line-soft);border-radius:18px;background:#fff;padding:14px 16px;box-shadow:0 5px 16px rgba(15,23,42,.035)}
+.asset-index-grid,.asset-kpi-grid,.asset-maturity-grid,.asset-before-after,.portal-unified-top,.portal-unified-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.asset-kpi-grid,.asset-maturity-grid,.portal-unified-top{grid-template-columns:repeat(3,minmax(0,1fr))}
+.portal-unified-box,.portal-unified-score,.portal-unified-kpi,.nv74-score-chip,.phase239-metric-grid article{border:1px solid var(--phase241-line-soft);border-radius:18px;background:#fff;padding:16px;box-shadow:0 5px 16px rgba(15,23,42,.035)}
+.nv74-site-table{width:100%;border-collapse:separate;border-spacing:0;min-width:760px}
+.nv74-site-render,.nv74-feed-render{overflow-x:auto}
+
+/* Demo progress: readable step card lock */
+.phase239-copy .demo-progress-panel{border-radius:28px;border-color:var(--phase241-line);background:linear-gradient(180deg,#fff,#f8fbff);padding:24px;box-shadow:var(--phase241-shadow-card)}
+.phase239-copy :where(.phase240-readable-steps li,.demo-progress-steps li){border-radius:18px;border-color:var(--phase241-line-soft);padding:14px 16px;grid-template-columns:38px minmax(0,1fr);box-shadow:0 6px 18px rgba(15,23,42,.04)}
+.phase239-copy :where(.phase240-readable-steps li > span,.demo-progress-steps li > span){width:32px;height:32px;font-size:13px}
+.phase239-copy :where(.phase240-readable-steps li b,.demo-progress-steps li b,.loading-steps b){font-size:15.5px;line-height:1.28;letter-spacing:-.035em}
+.phase239-copy :where(.phase240-readable-steps li p,.demo-progress-steps li p){font-size:13.5px;line-height:1.55;letter-spacing:-.018em}
+
+/* Footer */
+.phase239-footer,.business-footer.commercial-footer{
+  width:min(1168px,calc(100% - 40px));
+  margin:8px auto 34px;
+  display:grid;
+  grid-template-columns:1fr;
+  gap:8px;
+  border:1px solid var(--phase241-line);
+  border-radius:24px;
+  background:rgba(255,255,255,.92);
+  padding:20px 22px;
+  color:var(--phase241-muted);
+  font-size:13px;
+  line-height:1.55;
+  box-shadow:var(--phase241-shadow-soft);
+}
+.phase239-footer strong{font-size:14px;color:var(--phase241-ink)}
+.phase239-footer nav{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;padding-top:10px;border-top:1px solid var(--phase241-line-soft)}
+.phase239-footer nav a{color:var(--phase241-blue-deep);font-weight:850}
+
+@media(max-width:1180px){
+  .phase239-topbar .nv0-topbar-inner{display:grid;grid-template-columns:1fr auto;align-items:center}
+  .phase239-topbar .nv0-nav{grid-column:1/-1;max-width:100%;order:3}
+}
+@media(max-width:1100px){
+  .phase239-card-grid,.phase239-plan-grid,.phase239-board-list,.phase239-dashboard-grid,.phase239-info-grid,.phase239-stat-row,.phase239-action-grid,.nv191-action-grid,.phase239-metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .phase239-plan-intro,.phase239-guide-layout,.phase239-board-layout,.phase239-checkout-layout,.phase239-doc-layout,.phase239-portal-layout,.phase239-hero,.phase239-demo-hero{grid-template-columns:1fr}
+  .asset-kpi-grid,.asset-maturity-grid,.portal-unified-top{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:720px){
+  .phase239-shell,.nv0-shell,.app-shell,.nv74-dashboard-shell,.nv191-portal-shell,.phase239-footer,.business-footer.commercial-footer{width:min(100% - 28px,1168px)}
+  .phase239-topbar .nv0-topbar-inner{width:min(100% - 28px,1168px);grid-template-columns:1fr;gap:10px}
+  .phase239-topbar .nv0-brand{justify-self:start}
+  .phase239-topbar .nv0-top-actions{width:100%;display:grid;grid-template-columns:1fr 1fr}
+  .phase239-topbar .nv0-top-actions a{width:100%}
+  .phase239-copy h1{font-size:clamp(32px,9.4vw,42px);letter-spacing:-.062em}
+  .phase239-copy h2{font-size:clamp(23px,7.1vw,30px)}
+  .phase239-copy p,.phase239-copy li,.phase239-copy dd{font-size:15.5px;line-height:1.68}
+  .phase239-hero,.phase239-demo-hero{border-radius:28px;padding:22px;gap:20px}
+  .phase239-card-grid,.phase239-plan-grid,.phase239-board-list,.phase239-dashboard-grid,.phase239-info-grid,.phase239-auth-grid,.phase239-plan-intro,.phase239-stat-row,.phase239-action-grid,.phase239-before-after,.nv191-action-grid,.phase239-metric-grid,.asset-index-grid,.asset-kpi-grid,.asset-maturity-grid,.asset-before-after,.portal-unified-top,.portal-unified-grid{grid-template-columns:1fr}
+  .phase239-card,.phase239-form-card,.phase239-side-card,.phase239-policy-card,.phase239-score-card,.phase239-list-card,.card,.nv0-panel,.clean-plan-card,.decision-card,.result-card,.board-post,.post-section,.activity-item{padding:20px;border-radius:22px}
+  .phase239-mini-steps li{grid-template-columns:1fr;align-items:start;gap:6px;min-height:0}
+  .phase239-mini-steps span{text-align:left}
+  .phase239-input-row{grid-template-columns:1fr}
+  .btn,.cta,button[type="button"],button[type="submit"]{width:100%;min-height:46px}
+  .nv0-cta-row,.offer-actions,.result-actions,.form-actions,.checkout-button-row,.topnav,.post-cta,.portal-report-cta-row{display:grid;grid-template-columns:1fr;width:100%}
+  .phase239-footer{border-radius:20px;padding:18px}
+}

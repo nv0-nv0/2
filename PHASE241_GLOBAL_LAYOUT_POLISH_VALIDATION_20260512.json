@@ -1,0 +1,293 @@
+{
+  "ok": true,
+  "pages": 24,
+  "staticChecks": 57,
+  "checks": [
+    {
+      "id": "phase241-css-block-present",
+      "ok": true,
+      "detail": "global phase241 design-system tokens and polish block are present"
+    },
+    {
+      "id": "typography-lock-present",
+      "ok": true,
+      "detail": "heading scale, balanced wrapping, and Korean word-break lock are present"
+    },
+    {
+      "id": "section-title-grid-lock",
+      "ok": true,
+      "detail": "section/page titles are stacked instead of squeezed into a horizontal row"
+    },
+    {
+      "id": "navigation-overflow-lock",
+      "ok": true,
+      "detail": "top navigation is scroll-safe and responsive"
+    },
+    {
+      "id": "shape-line-polish-lock",
+      "ok": true,
+      "detail": "cards, panels, decorative lines and shadows are normalized"
+    },
+    {
+      "id": "table-report-polish-lock",
+      "ok": true,
+      "detail": "tables and generated report surfaces have layout styles"
+    },
+    {
+      "id": "mobile-arrangement-lock",
+      "ok": true,
+      "detail": "mobile spacing and one-column arrangement are locked"
+    },
+    {
+      "id": "package-script-present",
+      "ok": true,
+      "detail": "phase241 final validation script is wired into package.json"
+    },
+    {
+      "id": "shared-css-linked:/apps/admin/console/index.html",
+      "ok": true,
+      "detail": "/apps/admin/console/index.html has access to the shared design system"
+    },
+    {
+      "id": "clean-class-present:/apps/admin/console/index.html",
+      "ok": true,
+      "detail": "/apps/admin/console/index.html uses the global visual shell classes"
+    },
+    {
+      "id": "shared-css-linked:/apps/admin/diagnostics/index.html",
+      "ok": true,
+      "detail": "/apps/admin/diagnostics/index.html has access to the shared design system"
+    },
+    {
+      "id": "clean-class-present:/apps/admin/diagnostics/index.html",
+      "ok": true,
+      "detail": "/apps/admin/diagnostics/index.html uses the global visual shell classes"
+    },
+    {
+      "id": "shared-css-linked:/apps/admin/gate/index.html",
+      "ok": true,
+      "detail": "/apps/admin/gate/index.html has access to the shared design system"
+    },
+    {
+      "id": "clean-class-present:/apps/admin/gate/index.html",
+      "ok": true,
+      "detail": "/apps/admin/gate/index.html uses the global visual shell classes"
+    },
+    {
+      "id": "shared-css-linked:/apps/admin/library/index.html",
+      "ok": true,
+      "detail": "/apps/admin/library/index.html has access to the shared design system"
+    },
+    {
+      "id": "clean-class-present:/apps/admin/library/index.html",
+      "ok": true,
+      "detail": "/apps/admin/library/index.html uses the global visual shell classes"
+    },
+    {
+      "id": "shared-css-linked:/apps/admin/orders/index.html",
+      "ok": true,
+      "detail": "/apps/admin/orders/index.html has access to the shared design system"
+    },
+    {
+      "id": "clean-class-present:/apps/admin/orders/index.html",
+      "ok": true,
+      "detail": "/apps/admin/orders/index.html uses the global visual shell classes"
+    },
+    {
+      "id": "shared-css-linked:/apps/admin/publications/index.html",
+      "ok": true,
+      "detail": "/apps/admin/publications/index.html has access to the shared design system"
+    },
+    {
+      "id": "clean-class-present:/apps/admin/publications/index.html",
+      "ok": true,
+      "detail": "/apps/admin/publications/index.html uses the global visual shell classes"
+    },
+    {
+      "id": "shared-css-linked:/apps/admin/settings/index.html",
+      "ok": true,
+      "detail": "/apps/admin/settings/index.html has access to the shared design system"
+    },
+    {
+      "id": "clean-class-present:/apps/admin/settings/index.html",
+      "ok": true,
+      "detail": "/apps/admin/settings/index.html uses the global visual shell classes"
+    },
+    {
+      "id": "shared-css-linked:/apps/public/auth/index.html",
+      "ok": true,
+      "detail": "/apps/public/auth/index.html has access to the shared design system"
+    },
+    {
+      "id": "clean-class-present:/apps/public/auth/index.html",
+      "ok": true,
+      "detail": "/apps/public/auth/index.html uses the global visual shell classes"
+    },
+    {
+      "id": "shared-css-linked:/apps/public/board/index.html",
+      "ok": true,
+      "detail": "/apps/public/board/index.html has access to the shared design system"
+    },
+    {
+      "id": "clean-class-present:/apps/public/board/index.html",
+      "ok": true,
+      "detail": "/apps/public/board/index.html uses the global visual shell classes"
+    },
+    {
+      "id": "shared-css-linked:/apps/public/business-info/index.html",
+      "ok": true,
+      "detail": "/apps/public/business-info/index.html has access to the shared design system"
+    },
+    {
+      "id": "clean-class-present:/apps/public/business-info/index.html",
+      "ok": true,
+      "detail": "/apps/public/business-info/index.html uses the global visual shell classes"
+    },
+    {
+      "id": "shared-css-linked:/apps/public/cases/index.html",
+      "ok": true,
+      "detail": "/apps/public/cases/index.html has access to the shared design system"
+    },
+    {
+      "id": "clean-class-present:/apps/public/cases/index.html",
+      "ok": true,
+      "detail": "/apps/public/cases/index.html uses the global visual shell classes"
+    },
+    {
+      "id": "shared-css-linked:/apps/public/checkout/index.html",
+      "ok": true,
+      "detail": "/apps/public/checkout/index.html has access to the shared design system"
+    },
+    {
+      "id": "clean-class-present:/apps/public/checkout/index.html",
+      "ok": true,
+      "detail": "/apps/public/checkout/index.html uses the global visual shell classes"
+    },
+    {
+      "id": "shared-css-linked:/apps/public/demo/index.html",
+      "ok": true,
+      "detail": "/apps/public/demo/index.html has access to the shared design system"
+    },
+    {
+      "id": "clean-class-present:/apps/public/demo/index.html",
+      "ok": true,
+      "detail": "/apps/public/demo/index.html uses the global visual shell classes"
+    },
+    {
+      "id": "shared-css-linked:/apps/public/documents/index.html",
+      "ok": true,
+      "detail": "/apps/public/documents/index.html has access to the shared design system"
+    },
+    {
+      "id": "clean-class-present:/apps/public/documents/index.html",
+      "ok": true,
+      "detail": "/apps/public/documents/index.html uses the global visual shell classes"
+    },
+    {
+      "id": "shared-css-linked:/apps/public/guides/index.html",
+      "ok": true,
+      "detail": "/apps/public/guides/index.html has access to the shared design system"
+    },
+    {
+      "id": "clean-class-present:/apps/public/guides/index.html",
+      "ok": true,
+      "detail": "/apps/public/guides/index.html uses the global visual shell classes"
+    },
+    {
+      "id": "shared-css-linked:/apps/public/home/index.html",
+      "ok": true,
+      "detail": "/apps/public/home/index.html has access to the shared design system"
+    },
+    {
+      "id": "clean-class-present:/apps/public/home/index.html",
+      "ok": true,
+      "detail": "/apps/public/home/index.html uses the global visual shell classes"
+    },
+    {
+      "id": "shared-css-linked:/apps/public/plans/index.html",
+      "ok": true,
+      "detail": "/apps/public/plans/index.html has access to the shared design system"
+    },
+    {
+      "id": "clean-class-present:/apps/public/plans/index.html",
+      "ok": true,
+      "detail": "/apps/public/plans/index.html uses the global visual shell classes"
+    },
+    {
+      "id": "shared-css-linked:/apps/public/portal/index.html",
+      "ok": true,
+      "detail": "/apps/public/portal/index.html has access to the shared design system"
+    },
+    {
+      "id": "clean-class-present:/apps/public/portal/index.html",
+      "ok": true,
+      "detail": "/apps/public/portal/index.html uses the global visual shell classes"
+    },
+    {
+      "id": "shared-css-linked:/apps/public/privacy/index.html",
+      "ok": true,
+      "detail": "/apps/public/privacy/index.html has access to the shared design system"
+    },
+    {
+      "id": "clean-class-present:/apps/public/privacy/index.html",
+      "ok": true,
+      "detail": "/apps/public/privacy/index.html uses the global visual shell classes"
+    },
+    {
+      "id": "shared-css-linked:/apps/public/refund/index.html",
+      "ok": true,
+      "detail": "/apps/public/refund/index.html has access to the shared design system"
+    },
+    {
+      "id": "clean-class-present:/apps/public/refund/index.html",
+      "ok": true,
+      "detail": "/apps/public/refund/index.html uses the global visual shell classes"
+    },
+    {
+      "id": "shared-css-linked:/apps/public/service/index.html",
+      "ok": true,
+      "detail": "/apps/public/service/index.html has access to the shared design system"
+    },
+    {
+      "id": "clean-class-present:/apps/public/service/index.html",
+      "ok": true,
+      "detail": "/apps/public/service/index.html uses the global visual shell classes"
+    },
+    {
+      "id": "shared-css-linked:/apps/public/solutions/index.html",
+      "ok": true,
+      "detail": "/apps/public/solutions/index.html has access to the shared design system"
+    },
+    {
+      "id": "clean-class-present:/apps/public/solutions/index.html",
+      "ok": true,
+      "detail": "/apps/public/solutions/index.html uses the global visual shell classes"
+    },
+    {
+      "id": "shared-css-linked:/apps/public/terms/index.html",
+      "ok": true,
+      "detail": "/apps/public/terms/index.html has access to the shared design system"
+    },
+    {
+      "id": "clean-class-present:/apps/public/terms/index.html",
+      "ok": true,
+      "detail": "/apps/public/terms/index.html uses the global visual shell classes"
+    },
+    {
+      "id": "shared-css-linked:/apps/public/veridion-demo/index.html",
+      "ok": true,
+      "detail": "/apps/public/veridion-demo/index.html has access to the shared design system"
+    },
+    {
+      "id": "clean-class-present:/apps/public/veridion-demo/index.html",
+      "ok": true,
+      "detail": "/apps/public/veridion-demo/index.html uses the global visual shell classes"
+    },
+    {
+      "id": "browser-layout-audit",
+      "ok": true,
+      "detail": "72 page/viewport checks passed"
+    }
+  ],
+  "failed": []
+}
