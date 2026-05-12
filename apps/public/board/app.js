@@ -13,6 +13,7 @@ let page = Math.max(1, Number(new URLSearchParams(location.search).get('page') |
 let pagination = { page: 1, pageSize: 5, total: 0, totalPages: 1 };
 let stats = { total: 0, cta: 0, notice: 0, case: 0, recent7d: 0, filteredTotal: 0 };
 let activities = [];
+let publishIntervalMinutes = 20;
 
 function buildFallbackBody(theme, problem, product) {
   return `전문가 관점 요약
@@ -152,7 +153,7 @@ function applyBoardFallback(reason = '') {
   pagination = { page: 1, pageSize: 5, total: posts.length, totalPages: 1 };
   page = 1;
   render();
-  if (state) state.textContent = `콘텐츠를 불러오는 중이라 기본 안내 글 ${posts.length}건을 먼저 표시합니다. 잠시 후 최신 글로 갱신됩니다.${reason ? ` (${reason})` : ''}`;
+  if (state) state.textContent = `20분 자동발행 CTA 게시판 기본 칼럼 ${posts.length}건을 먼저 표시합니다. 서버 연결 후 최신 전문가형 칼럼으로 갱신됩니다.${reason ? ` (${reason})` : ''}`;
 }
 
 
@@ -252,8 +253,8 @@ function render(){
   const totalPages = Math.max(1, Number(pagination.totalPages || 1));
   const currentCount = visiblePosts.length;
   const topicText = topic ? ` · 현재 페이지 주제 일치 ${currentCount}건` : '';
-  state.textContent = `전체 ${Number(stats.total || totalForFilter).toLocaleString('ko-KR')}건 중 현재 ${currentCount.toLocaleString('ko-KR')}건 표시${topicText} · ${pagination.page}/${totalPages}페이지 · 필터 대상 ${totalForFilter.toLocaleString('ko-KR')}건 · 콘텐츠 업데이트 ${autoCount.toLocaleString('ko-KR')}건 · 정기 주기`;
-  list.innerHTML = renderList(visiblePosts, '<div class="empty-state stack"><strong>조건에 맞는 게시글이 없습니다.</strong><p>필터를 초기화하거나 무료 진단 후 새 글을 발행하세요.</p><a class="btn secondary" href="/board">필터 초기화</a><a class="btn secondary" href="/products/veridion/demo">무료 진단 시작</a></div>', item => `<article class="result-card stack board-post ${item.boardType === 'cta' || item.autoPublished ? 'cta' : ''}"><div class="meta-row"><strong>${escapeHtml(item.title)}</strong><span class="pill">${escapeHtml(item.boardType || item.type || 'post')}</span></div><div class="post-meta"><span>${item.autoPublished ? '콘텐츠 업데이트' : '운영 글'}</span><span>${escapeHtml(item.createdAt || '-')}</span><span>${escapeHtml(item.primaryKeyword || '고객 안내')}</span></div>${item.summary ? `<p class="post-summary">${escapeHtml(item.summary)}</p>` : ''}${renderPostBody(item.body || item.summary || '')}${renderPostTags(item.tags || [])}<div class="post-cta"><a class="btn primary" href="/products/veridion/demo">내 사이트도 무료 진단</a><a class="btn secondary" href="/plans">상품·요금</a><a class="btn secondary" href="/portal">내 사이트 관리</a></div></article>`);
+  state.textContent = `20분 자동발행 CTA 게시판 · 전체 ${Number(stats.total || totalForFilter).toLocaleString('ko-KR')}건 중 현재 ${currentCount.toLocaleString('ko-KR')}건 표시${topicText} · ${pagination.page}/${totalPages}페이지 · 필터 대상 ${totalForFilter.toLocaleString('ko-KR')}건 · 자동 발행 ${autoCount.toLocaleString('ko-KR')}건 · 발행 주기 ${publishIntervalMinutes}분`;
+  list.innerHTML = renderList(visiblePosts, '<div class="empty-state stack"><strong>조건에 맞는 게시글이 없습니다.</strong><p>필터를 초기화하거나 무료 진단 후 새 글을 발행하세요.</p><a class="btn secondary" href="/board">필터 초기화</a><a class="btn secondary" href="/products/veridion/demo">무료 진단 시작</a></div>', item => `<article class="result-card stack board-post ${item.boardType === 'cta' || item.autoPublished ? 'cta' : ''}"><div class="meta-row"><strong>${escapeHtml(item.title)}</strong><span class="pill">${escapeHtml(item.boardType || item.type || 'post')}</span></div><div class="post-meta"><span>${item.autoPublished ? '20분 자동발행' : '운영 글'}</span><span>${escapeHtml(item.createdAt || '-')}</span><span>${escapeHtml(item.primaryKeyword || '고객 안내')}</span></div>${item.summary ? `<p class="post-summary">${escapeHtml(item.summary)}</p>` : ''}${renderPostBody(item.body || item.summary || '')}${renderPostTags(item.tags || [])}<div class="post-cta"><a class="btn primary" href="/products/veridion/demo">내 사이트 무료 진단</a><a class="btn secondary" href="/plans">상품·요금</a><a class="btn secondary" href="/portal">내 사이트 관리</a></div></article>`);
   renderPagination();
 }
 
@@ -266,6 +267,7 @@ async function loadBoard() {
     const data = await res.json();
     if (!res.ok || !data?.ok) throw new Error(data?.error || `게시판 요청 실패 (${res.status})`);
     window.__NV0_BOARD_AUTO_COUNT__ = data.autoPublishedCount || data.stats?.autoPublished || 0;
+    publishIntervalMinutes = Number(data.publishIntervalMinutes || 20);
     stats = { ...stats, ...(data.stats || {}), filteredTotal: data.pagination?.total ?? data.stats?.filteredTotal ?? 0 };
     activities = Array.isArray(data.activity) ? data.activity : [];
     posts = (data.posts || []).filter(item => item.visibility !== 'private');

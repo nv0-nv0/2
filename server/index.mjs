@@ -1354,7 +1354,7 @@ const metas = {
 '/solutions': { title: '솔루션 | 웹사이트 안내 고지·정책 문서·문의 흐름 점검', description: '웹사이트 필수 고지, 정책 문서, 결제 전 안내, 고객지원 안내를 한 번에 점검하는 NV0 솔루션입니다.' },
 '/service': { title: '서비스 작동 방식 | NV0 무료진단·리포트 산출 흐름', description: 'NV0가 공개 페이지를 수집하고 근거 신뢰도, 직접 확인 항목, 결제 산출물로 이어지는 과정을 설명합니다.' },
 '/cases': { title: '적용 사례 | NV0 신뢰 공백 개선 사례', description: '쇼핑몰과 랜딩페이지가 사업자 고지, 환불 안내, 문의 흐름을 어떻게 정리하는지 사례로 확인합니다.' },
-'/board': { title: '콘텐츠 보드 | NV0 / Veridion', description: '진단 결과를 전문가형 CTA 포스팅, 체크리스트, 사례, 정책 안내 글로 정리해 재방문과 상품·요금 흐름을 돕습니다.' },
+'/board': { title: '자동발행 CTA 게시판 | NV0 / Veridion', description: '20분마다 진단 주제, 사례, 체크리스트, FAQ, CTA를 조합한 전문가형 칼럼을 자동 발행합니다.' },
 '/business-info': { title: '사업자 정보와 고객지원 안내 | NV0', description: '결제 전 확인할 수 있는 NV0 사업자 정보와 고객지원 기준입니다.' },
 '/terms': { title: '이용약관 | NV0', description: 'NV0 서비스 이용약관과 서비스 범위 기준입니다.' },
 '/privacy': { title: '개인정보처리방침 | NV0', description: 'NV0 서비스의 개인정보 처리 기준과 입력 정보 최소화 원칙입니다.' },
@@ -1464,7 +1464,7 @@ return `<a class="skip-link" href="#main">본문 바로가기</a><nav class="sit
 <div class="site-menu">
 <a href="/products/veridion/demo"${navAttrs(urlPath, '/products/veridion/demo')}>무료 진단</a>
 <a href="/plans"${navAttrs(urlPath, '/plans')}>상품·요금</a>
-<a href="/board"${navAttrs(urlPath, '/board')}>콘텐츠 보드</a>
+<a href="/board"${navAttrs(urlPath, '/board')}>CTA 게시판</a>
 <a href="/documents"${navAttrs(urlPath, '/documents')}>문서 생성</a>
 <a href="/portal"${navAttrs(urlPath, '/portal')}>내 사이트</a>
 <a href="/business-info"${navAttrs(urlPath, '/business-info')}>고객지원</a>
@@ -4166,8 +4166,8 @@ ensureRuntime().then(async () => {
 await hydrateSessions();
 const db = await readDb();
 await ensureBootstrapAdmin(db, process.env, uid, nowIso);
-await runCtaAutopublish('startup');
 await writeDb(db);
+await runCtaAutopublish('startup');
 if (AUTO_BACKUP_ENABLED && AUTO_BACKUP_ON_STARTUP) {
 setTimeout(() => { runAutomaticBackup('startup').catch(error => console.error('startup backup failed', error)); }, 15_000).unref();
 }

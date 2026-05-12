@@ -559,3 +559,93 @@ body.nv0-clean-slate::after{background:linear-gradient(90deg,rgba(255,255,255,.9
   .nv0-cta-row,.offer-actions,.result-actions,.form-actions,.checkout-button-row,.topnav,.post-cta,.portal-report-cta-row{display:grid;grid-template-columns:1fr;width:100%}
   .phase239-footer{border-radius:20px;padding:18px}
 }
+
+
+/* PHASE242 · CTA board automation and refined neutral palette polish · 2026-05-12
+   Goal: remove distracting top-left mark, calm the color system, and make the 20-minute CTA board feel like a professional editorial product. */
+:root{
+  --phase242-bg:#f6f8fb;
+  --phase242-bg-soft:#fbfcfe;
+  --phase242-surface:#ffffff;
+  --phase242-surface-tint:#f8fafc;
+  --phase242-ink:#111827;
+  --phase242-text:#334155;
+  --phase242-muted:#64748b;
+  --phase242-line:#d9e2ec;
+  --phase242-line-soft:#e8eef5;
+  --phase242-blue:#2563eb;
+  --phase242-blue-deep:#1d4ed8;
+  --phase242-blue-soft:#eff6ff;
+  --phase242-green:#059669;
+  --phase242-green-soft:#ecfdf5;
+  --phase242-amber:#b7791f;
+  --phase242-amber-soft:#fff7ed;
+  --phase242-shadow-xs:0 4px 14px rgba(15,23,42,.04);
+  --phase242-shadow-card:0 14px 36px rgba(15,23,42,.065);
+  --phase242-shadow-panel:0 24px 72px rgba(15,23,42,.085);
+}
+body.nv0-clean-slate{
+  background:
+    radial-gradient(circle at 85% -14%,rgba(37,99,235,.075),transparent 360px),
+    radial-gradient(circle at 12% 4%,rgba(5,150,105,.045),transparent 310px),
+    linear-gradient(180deg,#ffffff 0%,var(--phase242-bg-soft) 38%,var(--phase242-bg) 100%) !important;
+  color:var(--phase242-text) !important;
+}
+body.nv0-clean-slate::before{opacity:.13 !important;background-size:64px 64px !important;background-image:linear-gradient(rgba(100,116,139,.14) 1px,transparent 1px),linear-gradient(90deg,rgba(100,116,139,.14) 1px,transparent 1px) !important;}
+body.nv0-clean-slate::after{display:none !important;}
+/* Remove the distracting square mark in the upper-left header and keep a clean text wordmark. */
+.phase239-topbar .nv0-brand-mark,.nv0-topbar .nv0-brand-mark,.site-topbar .brand-mark{display:none !important;}
+.phase239-topbar .nv0-brand,.nv0-topbar .nv0-brand{gap:0;font-size:15px;font-weight:950;color:var(--phase242-ink);letter-spacing:-.045em;}
+.phase239-topbar{background:rgba(255,255,255,.94) !important;border-bottom:1px solid var(--phase242-line-soft) !important;box-shadow:0 8px 24px rgba(15,23,42,.038) !important;}
+.phase239-topbar .nv0-nav{border-color:var(--phase242-line-soft) !important;background:#f8fafc !important;box-shadow:none !important;}
+.phase239-topbar .nv0-nav a{color:#475569 !important;font-weight:870;}
+.phase239-topbar .nv0-nav a[aria-current="page"],.phase239-topbar .nv0-nav a:hover{background:#fff !important;color:var(--phase242-blue-deep) !important;box-shadow:0 6px 16px rgba(37,99,235,.08) !important;}
+.phase239-copy h1,.phase239-copy h2,.phase239-copy h3,.phase239-copy h4{color:var(--phase242-ink) !important;}
+.phase239-copy p,.phase239-copy li,.phase239-copy dd{color:var(--phase242-text) !important;}
+.phase239-copy .muted,.phase239-copy small{color:var(--phase242-muted) !important;}
+.phase239-hero,.phase239-demo-hero,.phase239-dashboard-panel,.phase239-portal-head .nv74-topbar{
+  background:linear-gradient(135deg,#fff 0%,#fbfdff 62%,#f1f6ff 100%) !important;
+  border-color:var(--phase242-line) !important;
+  box-shadow:var(--phase242-shadow-panel) !important;
+}
+.phase239-hero::after,.phase239-demo-hero::after{background:radial-gradient(circle,rgba(37,99,235,.11),rgba(5,150,105,.045),transparent 70%) !important;opacity:.55 !important;}
+.phase239-card,.phase239-form-card,.phase239-side-card,.phase239-policy-card,.phase239-score-card,.phase239-list-card,
+.card,.nv0-panel,.clean-plan-card,.decision-card,.result-card,.board-post,.post-section,.activity-item,.checkout-card,.checkout-summary,.checkout-method,.result-panel,.scan-card,.demo-result-surface,.nv74-card,.nv74-plan-card,.nv191-action-card{
+  background:linear-gradient(180deg,#fff,#fbfcfe) !important;
+  border-color:var(--phase242-line) !important;
+  box-shadow:var(--phase242-shadow-xs) !important;
+}
+.phase239-card:hover,.card:hover,.nv0-panel:hover,.clean-plan-card:hover,.board-post:hover,.nv74-card:hover,.grid>article:hover,section>article:hover{box-shadow:var(--phase242-shadow-card) !important;border-color:#ccd7e4 !important;}
+.card::before,.nv0-panel::before,.clean-plan-card::before,.checkout-card::before,.board-post::before,.nv74-card::before,.result-panel::before,.scan-card::before,.grid>article::before,section>article::before{
+  background:linear-gradient(90deg,rgba(37,99,235,.28),rgba(5,150,105,.18),rgba(255,255,255,0)) !important;
+  opacity:.38 !important;
+}
+.pill,.nv191-pill,.plan-badges span,.post-tags span,.post-meta span,.meta-row span,.comparison-head span,.stat-label{background:#f8fafc;border-color:var(--phase242-line-soft);color:#475569;}
+.pill.brand,.nv0-kicker{background:var(--phase242-blue-soft) !important;border-color:#c7d7fe !important;color:var(--phase242-blue-deep) !important;}
+.nv0-kicker::before{background:var(--phase242-blue) !important;box-shadow:0 0 0 5px rgba(37,99,235,.10) !important;}
+.btn,.cta,button[type="button"],button[type="submit"],button:not(.nv0-filter-item):not(.segment-tabs button){background:var(--phase242-blue) !important;border-color:var(--phase242-blue) !important;color:#fff !important;box-shadow:0 12px 26px rgba(37,99,235,.18) !important;}
+.btn.secondary,.secondary,button.secondary,.phase239-topbar .nv0-icon-link,.phase239-pagination button{background:#fff !important;color:var(--phase242-ink) !important;border-color:var(--phase242-line) !important;box-shadow:0 6px 16px rgba(15,23,42,.045) !important;}
+.phase239-filter-row button{background:#fff !important;color:#475569 !important;border:1px solid var(--phase242-line) !important;box-shadow:var(--phase242-shadow-xs) !important;}
+.phase239-filter-row button.active,.phase239-pagination button.active{background:var(--phase242-blue-soft) !important;color:var(--phase242-blue-deep) !important;border-color:#c7d7fe !important;}
+.phase239-card-icon,.nv0-feature-icon,.nv0-benefit-icon,.phase218-icon,.nv191-action-icon{background:var(--phase242-blue-soft) !important;color:var(--phase242-blue-deep) !important;}
+.phase239-stat-row article strong,.phase239-score-card strong,.plan-price,.nv74-score-number{color:var(--phase242-blue-deep) !important;}
+.phase239-cta-band{background:linear-gradient(135deg,#1e3a8a,#2563eb 58%,#059669) !important;color:#fff !important;}
+.phase239-cta-band .btn.primary{background:#fff !important;color:#1d4ed8 !important;border-color:#fff !important;box-shadow:0 10px 24px rgba(15,23,42,.13) !important;}
+.phase239-cta-band .btn.secondary{background:rgba(255,255,255,.12) !important;color:#fff !important;border-color:rgba(255,255,255,.42) !important;box-shadow:none !important;}
+.phase239-board-toolbar{display:grid;gap:16px;}
+.phase239-board-toolbar .notice{background:#fff;border-color:var(--phase242-line);box-shadow:var(--phase242-shadow-xs);}
+.board-post.cta{border-color:#c7d7fe !important;background:linear-gradient(180deg,#fff,#f8fbff) !important;}
+.board-post .meta-row strong{font-size:clamp(19px,2vw,26px);line-height:1.28;letter-spacing:-.047em;}
+.board-post .post-summary{border-left:3px solid var(--phase242-blue);padding-left:14px;color:#334155;font-weight:760;}
+.post-section{padding:18px 20px !important;border-radius:20px !important;background:#fff !important;}
+.post-section h3{font-size:clamp(17px,1.5vw,21px);margin-bottom:8px;}
+.post-section p,.post-paragraph{font-size:15.5px;line-height:1.78;}
+.post-tags span{background:#f8fafc;color:#475569;}
+.activity-item .nv0-avatar,.nv0-avatar{background:var(--phase242-blue-soft) !important;color:var(--phase242-blue-deep) !important;border:1px solid #c7d7fe !important;}
+.phase239-side-card{background:linear-gradient(180deg,#fff,#f8fafc) !important;}
+.phase239-footer,.business-footer.commercial-footer{background:rgba(255,255,255,.94) !important;border-color:var(--phase242-line-soft) !important;box-shadow:var(--phase242-shadow-xs) !important;}
+@media(max-width:720px){
+  .phase239-topbar .nv0-brand{font-size:14.5px;}
+  .board-post .meta-row{align-items:flex-start;}
+  .board-post .meta-row .pill{width:max-content;}
+}

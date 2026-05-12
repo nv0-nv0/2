@@ -1,6 +1,6 @@
 {
   "name": "nv0-veridion-cleanroom",
-  "version": "1.0.0-commercial-customer-copy-redesign-phase241",
+  "version": "1.0.0-commercial-customer-copy-redesign-phase242",
   "private": true,
   "type": "module",
   "scripts": {
@@ -322,6 +322,8 @@
     "validate:phase240": "node scripts/validate-phase240-readable-step-layout.mjs",
     "phase240:final": "npm run check:syntax && npm run validate:phase239 && npm run validate:phase240 && npm run test:routes",
     "validate:phase241": "node scripts/validate-phase241-global-layout-polish.mjs",
-    "phase241:final": "npm run check:syntax && npm run validate:phase239 && npm run validate:phase240 && npm run validate:phase241 && npm run test:routes"
+    "phase241:final": "npm run check:syntax && npm run validate:phase239 && npm run validate:phase240 && npm run validate:phase241 && npm run test:routes",
+    "validate:phase242": "node scripts/validate-phase242-cta-board-palette-polish.mjs",
+    "phase242:final": "npm run check:syntax && npm run validate:phase239 && npm run validate:phase240 && npm run validate:phase241 && npm run validate:phase242 && npm run test:routes"
   }
 }

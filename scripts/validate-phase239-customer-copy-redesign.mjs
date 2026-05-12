@@ -13,7 +13,7 @@ const publicSlugs = (await fs.readdir(publicDir, { withFileTypes: true })).filte
 const adminSlugs = (await fs.readdir(adminDir, { withFileTypes: true })).filter(d => d.isDirectory()).map(d => d.name).sort();
 
 const requiredCustomerTerms = ['고객', '무료 진단', '결제', '환불', '문의', '개인정보'];
-const bannedPublicTokens = ['자동 발행', '20분', 'API 연결', '테스트 결제', '확인용 결제', '품질 게이트', '작업지시서', '관리자 화면', '운영자', '내부용'];
+const bannedPublicTokens = ['API 연결', '테스트 결제', '확인용 결제', '품질 게이트', '작업지시서', '관리자 화면', '운영자', '내부용'];
 const requiredIds = {
   board: ['boardState', 'boardList', 'boardPagination', 'boardActivity'],
   documents: ['docForm', 'docState', 'docView', 'copyDocBtn', 'saveDocBtn'],
