@@ -767,6 +767,10 @@ async function runScan(e) {
   if (isScanning) return;
   setBusy(true);
   await loadSession();
+  if (guard.enabled && !guard.ready) {
+    setState('보안 확인 모듈을 불러오는 중입니다. 잠시만 기다려주세요.', 'warn');
+    setBusy(false); return;
+  }
   const normalizedTarget = normalizeTarget(targetInput?.value);
   if (!isValidTarget(normalizedTarget)) { setState('유효한 사이트 주소를 입력하세요. 예: https://your-store.kr', 'warn'); setBusy(false); return; }
   if (!session.authenticated && getUsage() >= FREE_LIMIT) {
@@ -816,6 +820,12 @@ async function runScan(e) {
 scanBtn?.addEventListener('click', runScan);
 retryBtn?.addEventListener('click', runScan);
 unlockBtn?.addEventListener('click', unlockSavedScan);
+targetInput?.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    runScan();
+  }
+});
 updateBadge();
 setState('이메일을 먼저 요구하지 않습니다. 가능한 공개 항목은 자동 확인하고, 자동 확정 불가 영역은 명확히 표시합니다.');
 
@@ -828,6 +838,13 @@ mountTurnstile({ containerId: 'turnstileBox', tokenInputId: 'turnstileToken', no
   });
 loadSession();
 window.addEventListener('pageshow', async () => { await loadSession(); });
+
+// 파라미터로 target이 전달된 경우, UI 렌더링 후 자동 실행
+if (params.get('target') && isValidTarget(normalizeTarget(params.get('target')))) {
+  setTimeout(() => {
+    if (!isScanning) runScan();
+  }, 800);
+}
 
 /* PHASE129: result information architecture + infographic cleanup
    Goal: remove crowded / overlapping copy, reorganize the diagnosis into a
@@ -1197,6 +1214,12 @@ function renderDemoCountOnlyResult(view) {
   const classRows = Object.entries(buckets.classCounts).length
     ? Object.entries(buckets.classCounts)
     : [['누락 의심', buckets.totalIssues]];
+  
+  const isFallback = view.raw?.fallback === true;
+  const checkoutSection = isFallback 
+    ? `<div class="notice warn" style="margin-top: 2rem;">서버 응답 지연으로 생성된 임시 결과입니다. 정상적인 리포트 결제를 위해 상단의 [다시 점검] 버튼을 눌러주세요.</div>`
+    : `<div class="demo-paid-gate"><div><h3>상세 분석은 유료 서비스 영역입니다</h3><p>페이지별 근거, 실제 문구, 수정 전후안, 우선순위 로드맵, 재점검 기준은 기본 리포트 또는 전문가 리포트에서 제공합니다.</p></div><div class="nv0-cta-row"><a class="btn primary" href="/checkout?plan=Report&siteId=${escapeAttr(view.siteId)}">기본 리포트 29,000원</a><a class="btn secondary" href="/checkout?plan=Expert&siteId=${escapeAttr(view.siteId)}">전문가 리포트 89,000원</a></div></div>`;
+
   return `<section class="demo-count-result" aria-label="무료 데모 결과 요약">
     <div class="demo-count-head">
       <div><span class="pill brand">무료 데모 결과</span><h2>문제 개수만 한눈에 확인하세요</h2><p>${escapeHtml(view.target)}</p></div>
@@ -1212,7 +1235,7 @@ function renderDemoCountOnlyResult(view) {
       <article class="demo-count-table-card"><div class="meta-row"><h3>영역별 문제 개수</h3><span class="pill gray">상세 근거는 유료 리포트</span></div><table class="demo-count-table"><thead><tr><th>영역</th><th>문제</th><th>요소</th><th>법령 구분</th></tr></thead><tbody>${buckets.areas.map(row => `<tr><td>${escapeHtml(row.area)}</td><td><b>${escapeHtml(row.issueCount)}</b>개</td><td><b>${escapeHtml(row.elementCount)}</b>개</td><td><span>${escapeHtml(row.classification)}</span></td></tr>`).join('')}</tbody></table></article>
       <aside class="demo-count-class-card"><h3>법령 구분별 문제 개수</h3>${classRows.map(([label, count]) => `<div class="class-count-row"><span>${escapeHtml(label)}</span><strong>${escapeHtml(count)}</strong></div>`).join('')}<div class="notice muted">무료 데모는 리스크 영역, 요소, 법령 구분별 개수까지만 공개합니다. 상세 근거와 수정안은 유료 결과 화면에서 확인합니다.</div></aside>
     </div>
-    <div class="demo-paid-gate"><div><h3>상세 분석은 유료 서비스 영역입니다</h3><p>페이지별 근거, 실제 문구, 수정 전후안, 우선순위 로드맵, 재점검 기준은 기본 리포트 또는 전문가 리포트에서 제공합니다.</p></div><div class="nv0-cta-row"><a class="btn primary" href="/checkout?plan=Report&siteId=${escapeAttr(view.siteId)}">기본 리포트 29,000원</a><a class="btn secondary" href="/checkout?plan=Expert&siteId=${escapeAttr(view.siteId)}">전문가 리포트 89,000원</a></div></div>
+    ${checkoutSection}
   </section>`;
 }
 
