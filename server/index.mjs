@@ -140,6 +140,7 @@ const PLATFORM = createPlatformProfile(process.env);
 const DEPLOYMENT_STAGE = String(process.env.NV0_DEPLOYMENT_STAGE || (PLATFORM.commercial ? 'prelaunch' : 'mvp')).trim().toLowerCase();
 const COMMERCIAL_LAUNCH_READY = process.env.NV0_COMMERCIAL_LAUNCH_READY === 'true' || DEPLOYMENT_STAGE === 'commercial_launch';
 const PRELAUNCH_MODE = PLATFORM.commercial && !COMMERCIAL_LAUNCH_READY;
+const ALLOW_PRELAUNCH_ONLINE_PAYMENT = process.env.NV0_ALLOW_PRELAUNCH_ONLINE_PAYMENT === 'true';
 const TRUST_PROXY_HEADERS = ENV_CONFIG.trustProxyHeaders;
 const ADMIN_KEY = process.env.NV0_ADMIN_KEY || ''; // legacy MVP-only shared key
 const SESSION_TTL_MS = Number(process.env.NV0_ADMIN_SESSION_TTL_MS || 1000 * 60 * 60);
@@ -344,6 +345,7 @@ nodeEnv: NODE_ENV,
 deploymentStage: DEPLOYMENT_STAGE,
 commercialLaunchReady: COMMERCIAL_LAUNCH_READY,
 prelaunchMode: PRELAUNCH_MODE,
+allowPrelaunchOnlinePayment: ALLOW_PRELAUNCH_ONLINE_PAYMENT,
 adminAuthMode: ADMIN_AUTH_MODE,
 persistenceMode: PERSISTENCE_MODE,
 storageMode: STORAGE_MODE,
@@ -410,7 +412,7 @@ if (process.env.NV0_RATE_LIMIT_STORE !== 'redis') throw new Error('Commercial la
 if (process.env.NV0_LOCK_PROVIDER !== 'redis') throw new Error('Commercial launch requires NV0_LOCK_PROVIDER=redis.');
 if (!String(process.env.NV0_REDIS_URL || '').trim()) throw new Error('Commercial launch requires NV0_REDIS_URL.');
 if (COMMERCIAL_LAUNCH_READY && PAYMENT_PROVIDER !== 'portone_v2') throw new Error('Commercial launch requires NV0_PAYMENT_PROVIDER=portone_v2.');
-if (PRELAUNCH_MODE && PAYMENT_PROVIDER === 'portone_v2') throw new Error('Prelaunch mode must not enable PortOne payment without NV0_COMMERCIAL_LAUNCH_READY=true.');
+if (PRELAUNCH_MODE && PAYMENT_PROVIDER === 'portone_v2' && !ALLOW_PRELAUNCH_ONLINE_PAYMENT) throw new Error('Prelaunch mode blocks PortOne unless NV0_ALLOW_PRELAUNCH_ONLINE_PAYMENT=true or NV0_COMMERCIAL_LAUNCH_READY=true.');
 if (SCAN_PROVIDER !== 'external_http') throw new Error('Commercial launch requires NV0_SCAN_PROVIDER=external_http.');
 if (!SCAN_PROVIDER_URL) throw new Error('Commercial launch requires NV0_SCAN_PROVIDER_URL.');
 if (!['s3','s3_compatible','object_storage'].includes(STORAGE_MODE)) throw new Error('Commercial launch requires object storage mode, not local_fs.');
@@ -536,10 +538,10 @@ const cspParts = [
 "form-action 'self'",
 "img-src 'self' data: blob:",
 "object-src 'none'",
-`script-src 'self' https://cdn.portone.io${TURNSTILE_PUBLIC_ENABLED ? ' https://challenges.cloudflare.com' : ''}`,
+`script-src 'self' https://cdn.portone.io https://*.portone.io${TURNSTILE_PUBLIC_ENABLED ? ' https://challenges.cloudflare.com' : ''}`,
 "style-src 'self'",
-`connect-src 'self' https://cdn.portone.io https://api.portone.io${TURNSTILE_PUBLIC_ENABLED ? ' https://challenges.cloudflare.com' : ''}`,
-TURNSTILE_PUBLIC_ENABLED ? 'frame-src https://challenges.cloudflare.com' : "frame-src 'none'"
+`connect-src 'self' https://cdn.portone.io https://*.portone.io https://api.portone.io${TURNSTILE_PUBLIC_ENABLED ? ' https://challenges.cloudflare.com' : ''}`,
+`frame-src https://cdn.portone.io https://*.portone.io${TURNSTILE_PUBLIC_ENABLED ? ' https://challenges.cloudflare.com' : ''}`
 ];
 const headers = {
 'x-content-type-options': 'nosniff',
@@ -1187,7 +1189,7 @@ const pubDate = new Date(item.createdAt || Date.now()).toUTCString();
 const guid = xmlEscape(item.id ? `${base}/board#${item.id}` : `${base}/board#item-${index + 1}`);
 return `<item><title>${title}</title><link>${xmlEscape(base + '/board')}</link><guid isPermaLink="false">${guid}</guid><description>${summary}</description><pubDate>${pubDate}</pubDate></item>`;
 }).join('');
-return `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>NV0 게시판</title><link>${xmlEscape(base + '/board')}</link><description>검색 노출과 전환 구조를 사람이 이해하기 쉬운 칼럼으로 정리한 공개 가이드입니다.</description><language>ko-KR</language><lastBuildDate>${new Date().toUTCString()}</lastBuildDate>${items}</channel></rss>`;
+return `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>NV0 게시판</title><link>${xmlEscape(base + '/board')}</link><description>고지·환불·개인정보·전환 구조를 사람이 이해하기 쉬운 칼럼으로 정리한 공개 가이드입니다.</description><language>ko-KR</language><lastBuildDate>${new Date().toUTCString()}</lastBuildDate>${items}</channel></rss>`;
 }
 function createPasswordResetToken(db, customer, req) {
 db.passwordResetTokens ||= [];
@@ -1337,20 +1339,20 @@ return String(value ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;
 function routeMeta(urlPath) {
 const base = seoBaseUrl();
 const metas = {
-'/': { title: 'NV0 | 온라인 사업자 법률·규제 리스크 진단', description: '온라인 사업자가 놓치기 쉬운 전자상거래 고지, 개인정보 안내, 환불·청약철회, 표시광고 표현, 과태료 리스크 후보를 공개 화면 기준으로 점검합니다.', keywords: ['웹사이트 구조 진단','검색 노출 개선','전환 개선','무료 진단','콘텐츠 구조'] },
-'/products/veridion/demo': { title: '무료 진단 | NV0', description: '사이트 주소 하나로 온라인 사업자의 법률·규제 리스크 후보를 영역·요소·구분별 개수로 확인합니다.', keywords: ['무료 진단','웹사이트 분석','검색 구조 진단','전환 진단'] },
-'/demo': { title: '무료 진단 안내 | NV0', description: '최신 무료 진단 화면으로 이동하여 사이트 구조와 개선 우선순위를 확인합니다.', keywords: ['무료 진단','사이트 진단'] },
+'/': { title: 'NV0 | 온라인 사업자 법률·규제 리스크 진단', description: '온라인 사업자가 놓치기 쉬운 전자상거래 고지, 개인정보 안내, 환불·청약철회, 표시광고 표현, 과태료 리스크 후보를 공개 화면 기준으로 점검합니다.', keywords: ['법률 리스크 진단','규제 리스크 점검','전자상거래 고지','개인정보 안내','무료 진단'] },
+'/products/veridion/demo': { title: '무료 진단 | NV0', description: '사이트 주소 하나로 온라인 사업자의 법률·규제 리스크 후보를 영역·요소·구분별 개수로 확인합니다.', keywords: ['무료 진단','법률 리스크','규제 리스크','전자상거래 점검'] },
+'/demo': { title: '무료 진단 안내 | NV0', description: '최신 무료 진단 화면으로 이동하여 공개 화면 기준의 법률·규제 리스크 후보를 확인합니다.', keywords: ['무료 진단','사이트 진단'] },
 '/plans': { title: '요금제 | NV0', description: '무료 진단, 기본 리포트, 전문가 리포트의 제공 범위와 가격을 명확하게 비교합니다.', keywords: ['요금제','기본 리포트','전문가 리포트','사이트 진단 요금'] },
 '/products': { title: '요금제 | NV0', description: '무료 진단, 기본 리포트, 전문가 리포트의 제공 범위와 가격을 명확하게 비교합니다.', keywords: ['요금제','기본 리포트','전문가 리포트'] },
 '/documents': { title: '문서 생성 | NV0', description: '고객 안내문, 정책 초안, 개선 요청서를 읽기 쉬운 구조로 정리합니다.', keywords: ['문서 생성','고객 안내문','정책 문서','개선 가이드'] },
 '/policy-documents': { title: '문서 생성 | NV0', description: '고객 안내문, 정책 초안, 개선 요청서를 읽기 쉬운 구조로 정리합니다.', keywords: ['문서 생성','고객 안내문','정책 문서'] },
 '/docs/veridion': { title: '문서 생성 | NV0', description: '진단 후 필요한 고객 안내문, 정책 문서, 개선 리포트 초안을 정리하는 문서 허브입니다.', keywords: ['문서 생성','정책 문서','진단 리포트','개선 문구'] },
-'/guides': { title: '가이드 | NV0', description: '진단 결과를 읽는 법과 검색 노출·전환 개선 방법을 쉽게 안내합니다.', keywords: ['가이드','진단 결과','검색 노출','전환 개선'] },
-'/resources': { title: '가이드 | NV0', description: '진단 결과를 읽는 법과 검색 노출·전환 개선 방법을 쉽게 안내합니다.', keywords: ['가이드','진단 결과','검색 노출'] },
-'/solutions': { title: '분석 프로세스 | NV0', description: '입력부터 결과 정리까지 온라인 사업자의 법률·규제 리스크 후보를 영역·요소·구분별로 분석합니다.', keywords: ['분석 프로세스','검색 구조 분석','전환 구조 분석'] },
-'/service': { title: '서비스 소개 | NV0', description: '온라인 사업자의 법률·규제·과태료 리스크 후보를 줄이기 위해 전자상거래 고지, 개인정보 안내, 환불·청약철회, 표시광고 표현을 점검합니다.', keywords: ['서비스 소개','사이트 구조 분석','전환 점검'] },
-'/cases': { title: '개선 사례 | NV0', description: '진단 후 어떤 항목을 먼저 고쳤고 어떤 변화가 생겼는지 사례 형태로 정리했습니다.', keywords: ['개선 사례','전환 개선 사례','검색 구조 사례'] },
-'/board': { title: '게시판 | NV0', description: '온라인 사업자가 이해하기 쉬운 법률·규제·과태료 리스크 감소형 CTA 칼럼을 제공합니다.', keywords: ['게시판','검색 노출','콘텐츠 전략','온페이지 SEO','기술 SEO'] },
+'/guides': { title: '가이드 | NV0', description: '진단 결과를 읽는 법과 전자상거래 고지, 개인정보 안내, 환불·청약철회 기준을 쉽게 안내합니다.', keywords: ['가이드','진단 결과','전자상거래 고지','환불 기준'] },
+'/resources': { title: '가이드 | NV0', description: '진단 결과를 읽는 법과 전자상거래 고지, 개인정보 안내, 환불·청약철회 기준을 쉽게 안내합니다.', keywords: ['가이드','진단 결과','규제 점검'] },
+'/solutions': { title: '분석 프로세스 | NV0', description: '입력부터 결과 정리까지 온라인 사업자의 법률·규제 리스크 후보를 영역·요소·구분별로 분석합니다.', keywords: ['분석 프로세스','법률 리스크 분석','규제 리스크 분석'] },
+'/service': { title: '서비스 소개 | NV0', description: '온라인 사업자의 법률·규제·과태료 리스크 후보를 줄이기 위해 전자상거래 고지, 개인정보 안내, 환불·청약철회, 표시광고 표현을 점검합니다.', keywords: ['서비스 소개','전자상거래 점검','개인정보 안내 점검'] },
+'/cases': { title: '개선 사례 | NV0', description: '진단 후 어떤 항목을 먼저 고쳤고 어떤 변화가 생겼는지 사례 형태로 정리했습니다.', keywords: ['개선 사례','고지 보완 사례','정책 안내 사례'] },
+'/board': { title: '게시판 | NV0', description: '온라인 사업자가 이해하기 쉬운 법률·규제·과태료 리스크 감소형 CTA 칼럼을 제공합니다.', keywords: ['게시판','법률 리스크','규제 점검','전자상거래 고지','개인정보 안내'] },
 '/business-info': { title: '사업자 정보와 고객지원 안내 | NV0', description: '결제 전 확인할 수 있는 NV0 사업자 정보와 고객지원 기준입니다.', keywords: ['사업자 정보','고객지원'] },
 '/terms': { title: '이용약관 | NV0', description: 'NV0 서비스 이용 조건과 기본 약관을 안내합니다.', keywords: ['이용약관'] },
 '/privacy': { title: '개인정보처리방침 | NV0', description: 'NV0 서비스의 개인정보 처리 기준과 입력 정보 최소화 원칙입니다.', keywords: ['개인정보처리방침'] },
@@ -1506,6 +1508,10 @@ return '<footer class="business-footer" aria-label="사업자 정보">'
 + `<div class="footer-col"><strong>문의</strong><a href="mailto:hello@nv0.kr">hello@nv0.kr</a><a href="mailto:${BUSINESS_PROFILE.contactEmail}">고객지원 이메일</a><span class="legal-disclaimer">${BUSINESS_PROFILE.tradeName} · 대표자 ${BUSINESS_PROFILE.representative} · 사업자등록번호 ${BUSINESS_PROFILE.registrationNumber}${mailOrderNumber ? ' · 통신판매업 신고번호 ' + mailOrderNumber : ''}</span><span class="legal-disclaimer">주소: ${BUSINESS_PROFILE.address}</span><span class="legal-disclaimer">업태·종목: ${types}</span><span class="legal-disclaimer">NV0는 공개 웹페이지 기반 구조 분석 서비스이며 법률 자문이나 성과 보장을 제공하지 않습니다.</span></div>`
 + '</footer>';
 }
+function injectSiteEnhancementsScript(body, urlPath) {
+if (urlPath.startsWith('/admin') || body.includes('/shared/site-enhancements.js')) return body;
+return body.replace('</body>', '<script src="/shared/site-enhancements.js" defer></script></body>');
+}
 function injectSessionNavScript(body, urlPath) {
 if (urlPath.startsWith('/admin') || body.includes('/shared/session-nav.js')) return body;
 return body.replace('</body>', '<script type="module" src="/shared/session-nav.js"></script></body>');
@@ -1561,6 +1567,7 @@ body = ensureMainId(body);
 body = injectNoScriptNotice(body, urlPath);
 body = injectPublicTopMenu(body, urlPath);
 body = injectSessionNavScript(body, urlPath);
+body = injectSiteEnhancementsScript(body, urlPath);
 body = injectClientRiskGuard(body, urlPath);
 body = injectBusinessFooter(body, urlPath);
 const category = urlPath.startsWith('/admin') ? 'dynamic' : 'public-page';
@@ -1931,7 +1938,7 @@ return [
 `실무 적용 순서\n1. 결제 버튼, 문의 버튼, 가격표, 회원가입 화면을 먼저 확인합니다.\n2. ${theme.elements.join(', ')} 중 고객 질문과 직접 연결되는 항목을 버튼 주변에 배치합니다.\n3. 푸터에는 전체 기준을 두고 행동 화면에는 요약 문장을 둡니다.\n4. 모바일에서 문장이 접히거나 버튼 아래로 밀리는지 확인합니다.`,
 `문구 개선 예시\n${copyExamples.map(([before, after], idx) => `${idx + 1}. 바꾸기 전: “${before}”\n   바꾼 뒤: “${after}”`).join('\n')}`,
 `검증 체크리스트\n${checklist.map((line, idx) => `${idx + 1}. ${line}`).join('\n')}`,
-`검색 유입을 고려한 구성\n제목에는 고객이 실제로 찾을 표현을 넣고, 본문에는 문제 상황, 실무 체크리스트, 전후 문구 예시, 연결된 공개 페이지를 순서대로 배치합니다. 키워드 반복보다 독자가 체류할 이유를 만드는 구조가 중요합니다.`,
+`고객 유입을 고려한 구성\n제목에는 고객이 실제로 찾을 표현을 넣고, 본문에는 문제 상황, 실무 체크리스트, 전후 문구 예시, 연결된 공개 페이지를 순서대로 배치합니다. 키워드 반복보다 독자가 체류할 이유를 만드는 구조가 중요합니다.`,
 `자주 묻는 질문\nQ1. 무료 진단만으로 충분한가요?\nA. 무료 진단은 현재 공백을 빠르게 보는 출발점입니다. 실제 반영 문구와 우선순위가 필요하면 기본 리포트나 전문가 리포트로 이어가면 됩니다.\n\nQ2. 자동 글이 반복처럼 보이지 않으려면요?\nA. 주제, 고객 질문, 사례, 체크리스트, 버튼 위치를 함께 바꿔야 합니다. 제목만 바꾸는 방식은 피해야 합니다.`,
 `자연스러운 다음 행동\n${theme.cta} 결과를 저장하면 기본 리포트에서 수정 우선순위를 보고, 전문가 리포트에서 실제 개선 방향을 확인할 수 있습니다.`,
 `관련 링크\n무료 진단: /products/veridion/demo\n요금제: /plans\n내 사이트 관리: /portal`,
@@ -1950,15 +1957,15 @@ function publicCleanPhrase(value = '') {
 return String(value || '')
 .replace(/https?:\/\/example\.com/gi, '운영 중인 사이트')
 .replace(/\bCTA\b/g, '다음 행동 버튼')
-.replace(/\bSEO\b/g, '검색 노출')
+.replace(/\bSEO\b/g, '리스크 점검')
 .replace(/\b전문가 리포트\b/g, '전문가 리포트')
 .replace(/\bAuto\b/g, '전문가 리포트')
-.replace(/자동\s*발행/g, '20분 공개')
-.replace(/20분 공개/g, '20분 공개')
+.replace(/자동\s*발행/g, '20분 발행')
+.replace(/20분 공개/g, '20분 발행')
 .replace(/자동 글/g, '정기 칼럼')
 .replace(/고객 단계/g, '고객 단계')
 .replace(/첫 화면/g, '첫 화면')
-.replace(/메타 설명/g, '검색 설명')
+.replace(/메타 설명/g, '요약 설명')
 .replace(/contentFingerprint|fingerprint|combinationMode|publicDisplayVersion/gi, '공개 표시 항목')
 .replace(/\s+/g, ' ')
 .trim();
@@ -1972,11 +1979,11 @@ const sections = String(body || '')
 .replace(/\bpublicDisplayVersion\b/gi, '공개 표시 기준')
 .replace(/\bphase\d+\b/gi, '')
 .replace(/\bCTA\b/g, '다음 행동 버튼')
-.replace(/\bSEO\b/g, '검색 노출')
+.replace(/\bSEO\b/g, '리스크 점검')
 .replace(/\b전문가 리포트\b/g, '전문가 리포트')
 .replace(/\bAuto\b/g, '전문가 리포트')
-.replace(/자동\s*발행/g, '20분 공개')
-.replace(/20분 공개/g, '20분 공개')
+.replace(/자동\s*발행/g, '20분 발행')
+.replace(/20분 공개/g, '20분 발행')
 .replace(/자동 글/g, '정기 칼럼')
 .replace(/고객 단계/g, '고객 단계')
 .replace(/첫 화면/g, '첫 화면')
@@ -1993,7 +2000,7 @@ function publicBoardLabel(type = '') {
 const value = String(type || '').trim();
 if (value === 'technical' || value === 'notice') return 'technical';
 if (value === 'content' || value === 'case') return 'content';
-return 'seo';
+return 'column';
 }
 function toPublicBoardPost(item = {}, index = 0) {
 const source = item;
@@ -2301,6 +2308,7 @@ function pickRecommendedPlan(riskScore) {
 if (riskScore >= 45) return 'Expert';
 return 'Report';
 }
+const PHASE255_LEGACY_PRODUCT_ALIASES = ['FixPack'];
 function normalizePlanCode(value, fallback = 'Report') {
 const raw = String(value || '').trim();
 const key = raw.toLowerCase().replace(/[\s_-]+/g, '');
@@ -2683,6 +2691,7 @@ async function callExternalPaymentSession(payload) {
 const controller = new AbortController();
 const timeout = setTimeout(() => controller.abort(), 5000);
 try {
+if (!PAYMENT_PROVIDER_URL) throw new Error('외부 결제 연동 URL이 설정되지 않았습니다.');
 const res = await fetch(PAYMENT_PROVIDER_URL, {
 method: 'POST',
 signal: controller.signal,
@@ -2694,7 +2703,19 @@ body: JSON.stringify(payload)
 });
 const data = await res.json().catch(() => null);
 if (!res.ok || !data?.ok) throw new Error(data?.error || `payment provider failed: ${res.status}`);
-return data.session || data;
+const session = data.session || data;
+if (session?.redirectUrl) {
+  try {
+    const redirect = new URL(session.redirectUrl);
+    if (!['http:', 'https:'].includes(redirect.protocol)) throw new Error('invalid_protocol');
+  } catch {
+    throw new Error('Invalid external payment redirectUrl: 외부 결제사가 유효한 결제 URL을 반환하지 않았습니다.');
+  }
+}
+return session;
+} catch (error) {
+if (error?.name === 'AbortError') throw new Error('외부 결제사 응답 시간이 초과되었습니다.');
+throw error;
 } finally {
 clearTimeout(timeout);
 }
@@ -3743,7 +3764,8 @@ const record = {
   createdAt: nowIso(),
   visibility: 'public',
   autoPublished: options.autoPublished === true,
-  publicationCadence: '20분에 1회',
+  publicationCadence: '20분마다 1건 발행',
+  publishedAt: nowIso(),
   engine: 'public-column-engine-v1'
 };
 db.publications.unshift(record);
@@ -3859,6 +3881,7 @@ PORTONE_CLIENT,
 PORTONE_WEBHOOK_SECRET,
 PORTONE_WEBHOOK_VERIFY_MODE,
 PRELAUNCH_MODE,
+ALLOW_PRELAUNCH_ONLINE_PAYMENT,
 PUBLIC_SCAN_LIMIT,
 PUBLIC_SCAN_WINDOW_MS,
 READYZ_REDIS_STRICT,

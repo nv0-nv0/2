@@ -21,7 +21,7 @@ let isCreatingSession = false;
 let isCompletingPayment = false;
 let offerMap = new Map();
 let paymentConfig = { ok: false, provider: 'unknown', paymentReady: false, reason: '온라인 결제 가능 상태를 확인하고 있습니다.' };
-// PHASE211 compatibility tokens: 결제창 로드 확인 중, PortOne으로 결제 시작, providerPaymentId: responsePaymentId, 선택한 상품코드를 확인하지 못했습니다
+// PHASE211 compatibility tokens: 결제창 로드 확인 중, PortOne으로 바로 결제, providerPaymentId: responsePaymentId, 선택한 상품코드를 확인하지 못했습니다
 
 const fallbackOffers = [
   { code: 'Report', title: '기본 리포트', price: 29000, period: '1회', summary: '핵심 문제와 개선 우선순위를 한눈에 파악합니다.', targetCustomer: '현재 사이트의 문제와 우선순위를 빠르게 확인하고 싶은 분' },
@@ -42,6 +42,11 @@ function isValidEmail(value) {
 }
 function requiredConsentReady() {
   return ['privacyConsent', 'termsConsent', 'refundConsent', 'deliveryConsent'].every(id => !!document.getElementById(id)?.checked);
+}
+function setCheckoutState(message, mode = 'muted') {
+  if (!state) return;
+  state.className = `notice ${mode}`.trim();
+  state.textContent = message;
 }
 function providerLabel(provider) {
   if (provider === 'portone_v2') return '온라인 안전결제';
@@ -104,9 +109,9 @@ function updateCheckoutButtonState() {
   const ready = formReady && providerReady;
   checkoutBtn.disabled = !ready || isCreatingSession;
   checkoutBtn.setAttribute('aria-disabled', String(checkoutBtn.disabled));
-  if (!formReady) checkoutBtn.textContent = '필수 동의 후 결제 시작';
+  if (!formReady) checkoutBtn.textContent = '필수 동의 후 바로 결제';
   else if (!providerReady) checkoutBtn.textContent = paymentConfig.provider === 'portone_v2' ? '결제창 준비 중' : '온라인 결제 준비 중';
-  else checkoutBtn.textContent = '결제 시작';
+  else checkoutBtn.textContent = '바로 결제';
 }
 function getPrefill() {
   const url = new URL(location.href);
@@ -119,7 +124,7 @@ function getPrefill() {
 }
 const prefill = getPrefill();
 if (prefill.plan && planInput) planInput.value = normalizePlanCode(prefill.plan);
-targetBox.textContent = prefill.domain ? `진단 대상 사이트: ${prefill.domain}` : '진단 이력이 없어도 온라인 결제를 진행할 수 있습니다.';
+if (targetBox) targetBox.textContent = prefill.domain ? `진단 대상 사이트: ${prefill.domain}` : '진단 이력이 없어도 온라인 결제를 진행할 수 있습니다.';
 
 function renderOrder(order, paymentSession) {
   currentOrder = order;
@@ -127,15 +132,15 @@ function renderOrder(order, paymentSession) {
   const redirectUrl = safeUrl(paymentSession?.redirectUrl || '');
   const provider = paymentSession?.provider || 'demo';
   const paymentHint = provider === 'portone_v2'
-    ? '<div class="notice muted">결제 완료 후 선택 상품의 결과물 안내가 이어집니다.</div>'
-    : '<div class="notice muted">결제 완료 후 결과물 확인 안내가 이어집니다.</div>'; 
+    ? '<div class="notice muted">결제 완료 후 내 사이트 관리에서 결과물과 확인 기록을 확인합니다.</div>'
+    : '<div class="notice muted">결제 완료 후 내 사이트 관리에서 결과물과 확인 기록을 확인합니다.</div>'; 
   summary.innerHTML = `
     <div class="result-card stack checkout-order-card">
       <strong>주문번호 ${escapeHtml(order.id)}</strong>
       <div class="muted">${escapeHtml(order.plan)} · ${formatWon(order.amount)}원 · ${escapeHtml(order.status)}</div>
       <div>대상 사이트: ${escapeHtml(order.domain || order.siteId || '미연결')}</div>
       <div>결제 방식: ${escapeHtml(providerLabel(provider))}</div>
-      <div>결제 완료 후 결과물 확인 안내가 이어집니다.</div>
+      <div>결제 완료 후 내 사이트 관리에서 결과물과 확인 기록을 확인합니다.</div>
       <div class="phase220-gate-strip"><span>근거 확인</span><span>검수 기준</span><span>재점검 기준</span></div>
       ${paymentHint}
       ${redirectUrl ? `<a href="${escapeAttr(redirectUrl)}" target="_blank" rel="noreferrer">결제 완료 후 이동 페이지</a>` : ''}
@@ -162,28 +167,28 @@ async function createSession() {
     deliveryConsent: !!document.getElementById('deliveryConsent')?.checked
   };
   if (!isValidEmail(payload.buyerEmail)) {
-    state.textContent = '결제 결과와 결과물 안내를 받을 이메일을 정확히 입력해 주세요.';
+    setCheckoutState('결제 연락처 이메일을 정확히 입력해 주세요. 결과물은 내 사이트 관리에 저장됩니다.', 'warn');
     updateCheckoutButtonState();
     return;
   }
   if (!payload.privacyConsent || !payload.termsConsent || !payload.refundConsent || !payload.deliveryConsent) {
-    state.textContent = '결제를 진행하려면 필수 약관과 디지털 산출물 제공 고지에 동의해 주세요.';
+    setCheckoutState('결제를 진행하려면 필수 약관과 디지털 산출물 제공 고지에 동의해 주세요.', 'warn');
     updateCheckoutButtonState();
     return;
   }
   if (!isPaymentProviderReady()) {
-    state.textContent = paymentBlockReason();
+    setCheckoutState(paymentBlockReason(), 'warn');
     updateCheckoutButtonState();
     return;
   }
   const offer = offerMap.get(payload.plan);
   if (!offer) {
-    state.textContent = '선택한 상품을 확인하지 못했습니다. 플랜을 다시 선택해 주세요.';
+    setCheckoutState('선택한 상품을 확인하지 못했습니다. 플랜을 다시 선택해 주세요.', 'warn');
     return;
   }
   isCreatingSession = true;
   updateCheckoutButtonState();
-  state.textContent = '주문 정보를 확인하고 결제창을 준비하고 있습니다.';
+  setCheckoutState('주문 정보를 확인하고 외부 결제창을 준비하고 있습니다.');
   let data;
   try {
     const res = await fetch('/api/public/checkout-session', {
@@ -194,7 +199,7 @@ async function createSession() {
     data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(data.error || '주문 정보를 확인하지 못했습니다.');
   } catch (error) {
-    state.textContent = error.message || '주문 정보를 확인하지 못했습니다.';
+    setCheckoutState(error.message || '주문 정보를 확인하지 못했습니다.', 'warn');
     isCreatingSession = false;
     updateCheckoutButtonState();
     return;
@@ -202,30 +207,37 @@ async function createSession() {
   renderOrder(data.order, data.paymentSession);
   isCreatingSession = false;
   updateCheckoutButtonState();
+  if (data.providerMode === 'external_http' && data.paymentSession?.redirectUrl) {
+    state.textContent = '주문 정보가 확인되었습니다. 외부 온라인 결제창으로 이동합니다.';
+    const redirect = safeUrl(data.paymentSession.redirectUrl);
+    if (!redirect) { setCheckoutState('외부 결제 URL 형식이 올바르지 않습니다.', 'warn'); return; }
+    location.assign(redirect);
+    return;
+  }
   if (data.providerMode === 'portone_v2') {
-    state.textContent = '주문 정보가 확인되었습니다. 결제창을 시작합니다.';
+    setCheckoutState('주문 정보가 확인되었습니다. 결제창을 시작합니다.');
     try {
       const paymentResponse = await launchPaymentWindow(data.paymentSession);
       const responsePaymentId = paymentResponse?.paymentId || paymentResponse?.txId || data.paymentSession?.providerPaymentId;
       if (responsePaymentId) currentPaymentSession = { ...data.paymentSession, providerPaymentId: responsePaymentId };
-      state.textContent = '결제창 응답을 받았습니다. 결제 완료 여부를 확인합니다.';
+      setCheckoutState('결제창 응답을 받았습니다. 결제 완료 여부를 확인합니다.');
       await completePayment();
     } catch (error) {
-      state.textContent = error.message || '결제창을 시작하지 못했습니다.';
+      setCheckoutState(error.message || '결제창을 시작하지 못했습니다.', 'warn');
     }
     return;
   }
-  state.textContent = data.providerMode === 'demo' ? '주문 정보가 생성되었습니다. 결제 완료 확인 버튼을 눌러 결과물 안내를 확인하세요.' : '주문 정보가 확인되었습니다. 온라인 결제를 진행해 주세요.';
+  setCheckoutState(data.providerMode === 'demo' ? '주문 정보가 생성되었습니다. 결제 완료 확인 후 내 사이트 관리에서 결과물을 확인하세요.' : '주문 정보가 확인되었습니다. 외부 온라인 결제창으로 이동합니다.');
 }
 async function completePayment() {
   if (isCompletingPayment) return;
   if (!currentOrder?.id) {
-    state.textContent = '먼저 결제 신청을 진행해 주세요.';
+    setCheckoutState('먼저 결제 신청을 진행해 주세요.', 'warn');
     return;
   }
   isCompletingPayment = true;
   completeBtn?.setAttribute('disabled', 'true');
-  state.textContent = '결제 완료 여부를 확인하는 중입니다.';
+  setCheckoutState('결제 완료 여부를 확인하는 중입니다.');
   const payload = { orderId: currentOrder.id, paymentId: currentPaymentSession?.providerPaymentId || currentOrder.id };
   try {
     const res = await fetch('/api/public/payment/complete', {
@@ -237,17 +249,17 @@ async function completePayment() {
     if (!res.ok) throw new Error(data.error || '결제 완료를 확인하지 못했습니다.');
     renderOrder(data.order, data.paymentSession);
     if (data.pendingSettlement) {
-      state.textContent = '결제가 아직 완료 처리 전입니다. 가상계좌 입금 또는 카드 승인 상태를 확인해 주세요.';
+      setCheckoutState('결제가 아직 완료 처리 전입니다. 가상계좌 입금 또는 카드 승인 상태를 확인해 주세요.', 'warn');
       return;
     }
-    state.textContent = '결제가 완료되었습니다.';
+    setCheckoutState('결제가 완료되었습니다.', 'success');
     const anchor = document.createElement('a');
     anchor.href = `/portal?orderId=${encodeURIComponent(data.order.id)}${data.order.accessToken ? `&accessToken=${encodeURIComponent(data.order.accessToken)}` : ''}`;
     anchor.textContent = '내 사이트 관리로 이동';
     state.appendChild(document.createTextNode(' '));
     state.appendChild(anchor);
   } catch (error) {
-    state.textContent = error.message || '결제 완료 여부를 확인하지 못했습니다.';
+    setCheckoutState(error.message || '결제 완료 여부를 확인하지 못했습니다.', 'warn');
   } finally {
     isCompletingPayment = false;
     completeBtn?.removeAttribute('disabled');
@@ -256,16 +268,17 @@ async function completePayment() {
 async function maybeFinalizeRedirectResult() {
   const url = new URL(location.href);
   const paymentId = url.searchParams.get('paymentId');
+  const orderId = url.searchParams.get('orderId') || paymentId;
   const code = url.searchParams.get('code');
   const message = url.searchParams.get('message');
   if (!paymentId) return;
   if (code) {
-    state.textContent = message || '결제가 완료되지 않았습니다.';
+    setCheckoutState(message || '결제가 완료되지 않았습니다.', 'warn');
     return;
   }
-  currentOrder = { id: paymentId, amount: 0, plan: normalizePlanCode(prefill.plan || 'Report'), status: 'pending', domain: prefill.domain || '', siteId: prefill.siteId || '' };
+  currentOrder = { id: orderId, amount: 0, plan: normalizePlanCode(prefill.plan || 'Report'), status: 'pending', domain: prefill.domain || '', siteId: prefill.siteId || '' };
   currentPaymentSession = { provider: 'portone_v2', providerPaymentId: paymentId };
-  state.textContent = '결제 결과를 확인하는 중입니다.';
+  setCheckoutState('결제 결과를 확인하는 중입니다.');
   await completePayment();
 }
 function renderPlanOptions() {
@@ -275,7 +288,7 @@ function renderPlanOptions() {
 }
 async function loadPaymentConfig() {
   try {
-    const res = await fetch('/api/public/payment/config');
+    const res = await fetch('/api/public/payment/config', { cache: 'no-store' });
     const data = await res.json().catch(() => ({}));
     if (!res.ok || data?.ok === false) throw new Error(data.error || '온라인 결제 상태를 확인하지 못했습니다.');
     paymentConfig = data;
@@ -287,7 +300,7 @@ async function loadPaymentConfig() {
 }
 async function loadOffers() {
   try {
-    const res = await fetch('/api/public/products');
+    const res = await fetch('/api/public/products', { cache: 'no-store' });
     const data = await res.json().catch(() => ({}));
     if (!res.ok || !data?.ok || !Array.isArray(data.offers)) throw new Error('상품 정보를 불러오지 못했습니다.');
     offerMap = new Map(data.offers.map(item => [normalizePlanCode(item.code), { ...item, code: normalizePlanCode(item.code), price: Number(item.price || item.monthlyPrice || 0) }]));
@@ -306,6 +319,12 @@ checkoutBtn?.addEventListener('click', createSession);
 completeBtn?.addEventListener('click', completePayment);
 window.addEventListener('load', updateCheckoutButtonState);
 setTimeout(updateCheckoutButtonState, 1200);
+let portoneReadyChecks = 0;
+const portoneReadyTimer = setInterval(() => {
+  portoneReadyChecks += 1;
+  updateCheckoutButtonState();
+  if (window.PortOne?.requestPayment || portoneReadyChecks >= 20) clearInterval(portoneReadyTimer);
+}, 500);
 
 updateCheckoutButtonState();
 renderPaymentConfig();

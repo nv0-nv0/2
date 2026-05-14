@@ -1,5 +1,0 @@
-
-> nv0-veridion-cleanroom@1.0.0-commercial-final-100-score-phase76-phase77-phase100 validate:deploy
-> node scripts/validate-deploy-bundle.mjs
-
-Deploy bundle validation passed

@@ -16,3 +16,14 @@ uploads
 .DS_Store
 .vscode
 .idea
+
+# phase artifact cleanup
+PHASE*.zip
+PHASE[0-9]*
+README_PATCH*
+MANIFEST_PHASE*
+SHA256SUMS*
+docs/logs
+docs/phase*
+docs/release
+docs/archive

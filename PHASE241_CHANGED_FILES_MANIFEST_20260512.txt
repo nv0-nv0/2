@@ -1,9 +1,0 @@
-shared/nv0-clean-slate-20260512.css
-scripts/validate-phase240-readable-step-layout.mjs
-scripts/validate-phase241-global-layout-polish.mjs
-package.json
-PHASE241_GLOBAL_LAYOUT_POLISH_CLOSEOUT_20260512_KO.md
-PHASE241_GLOBAL_LAYOUT_POLISH_VALIDATION_20260512.json
-PHASE241_FINAL_RUN_LOG_20260512.txt
-PHASE241_CHANGED_FILES_MANIFEST_20260512.txt
-PHASE241_SHA256SUMS_20260512.txt

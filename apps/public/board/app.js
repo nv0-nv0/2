@@ -1,4 +1,4 @@
-import { escapeHtml, renderList } from '/shared/html.js';
+import { escapeAttr, escapeHtml, renderList, safeLocalPath } from '/shared/html.js';
 
 const state = document.getElementById('boardState');
 const list = document.getElementById('boardList');
@@ -14,11 +14,25 @@ let page = Number(new URLSearchParams(location.search).get('page') || 1) || 1;
 let posts = [];
 let pagination = { page: 1, pageSize: 6, total: 0, totalPages: 1 };
 let activities = [];
+let boardAbortController = null;
 
-if (searchInput) searchInput.value = query;
+if (searchInput) { searchInput.value = query; searchInput.maxLength = 80; searchInput.setAttribute('autocomplete', 'off'); }
+
+function safeBoardId(value = '') {
+  const id = String(value || '').trim().toLowerCase().replace(/[^a-z0-9가-힣_-]+/gi, '-').replace(/^-+|-+$/g, '').slice(0, 80);
+  return id || `post-${Math.random().toString(36).slice(2, 8)}`;
+}
+function normalizeBoardQuery(value = '') {
+  return String(value || '').replace(/\s+/g, ' ').trim().slice(0, 80);
+}
+function setLoading(isLoading) {
+  if (searchBtn) searchBtn.disabled = !!isLoading;
+  tabs.forEach(btn => { btn.disabled = !!isLoading; });
+  if (list) list.setAttribute('aria-busy', String(!!isLoading));
+}
 
 function typeLabel() {
-  return 'CTA 목적 칼럼';
+  return '리스크 점검 칼럼';
 }
 function pillClass() {
   return 'brand';
@@ -26,15 +40,11 @@ function pillClass() {
 function updateUrlState() {
   const next = new URLSearchParams();
   if (filter && filter !== 'all') next.set('filter', filter);
-  if (query) next.set('q', query);
+  if (query) next.set('q', normalizeBoardQuery(query));
   if (page > 1) next.set('page', String(page));
   history.replaceState(null, '', `${location.pathname}${next.toString() ? `?${next.toString()}` : ''}`);
 }
-function matchesQuery(item) {
-  const needle = String(query || '').trim().toLowerCase();
-  if (!needle) return true;
-  return [item.title, item.summary, item.body, item.primaryKeyword, ...(item.tags || [])].join(' ').toLowerCase().includes(needle);
-}
+
 function renderPostBody(body = '') {
   const sections = String(body || '').split(/\n{2,}/).map(part => part.trim()).filter(Boolean);
   return `<div class="post-body">${sections.map(section => {
@@ -52,34 +62,45 @@ function renderPagination() {
   if (!pager) return;
   const totalPages = Math.max(1, Number(pagination.totalPages || 1));
   if (totalPages <= 1) { pager.innerHTML = ''; return; }
-  pager.innerHTML = Array.from({ length: totalPages }, (_, idx) => {
-    const n = idx + 1;
-    return `<button type="button" data-page="${n}" class="${n === pagination.page ? 'active' : ''}">${n}</button>`;
+  const current = Number(pagination.page || page || 1);
+  const windowSize = 2;
+  const nearby = Array.from({ length: windowSize * 2 + 1 }, (_, index) => current - windowSize + index);
+  const pages = Array.from(new Set([1, totalPages, ...nearby].filter(n => n >= 1 && n <= totalPages))).sort((a, b) => a - b);
+  let previous = 0;
+  pager.innerHTML = pages.map((n) => {
+    const gap = previous && n - previous > 1 ? '<span class="pager-gap">…</span>' : '';
+    previous = n;
+    return `${gap}<button type="button" data-page="${n}" class="${n === current ? 'active' : ''}" aria-current="${n === current ? 'page' : 'false'}">${n}</button>`;
   }).join('');
   pager.querySelectorAll('[data-page]').forEach(btn => btn.addEventListener('click', () => { page = Number(btn.dataset.page || 1); loadBoard(); }));
 }
 function render() {
   tabs.forEach(btn => btn.classList.toggle('active', (btn.dataset.filter || 'all') === filter));
-  const visible = posts.filter(matchesQuery);
-  if (state) state.textContent = `CTA 목적 게시판 · 현재 ${visible.length.toLocaleString('ko-KR')}개 글을 표시합니다. 모든 글은 흥미·문제 인식 60%, CTA 설득 20%, 보조 정보 20% 구조입니다.`;
+  const visible = posts;
+  const totalLabel = Number(pagination.total || visible.length).toLocaleString('ko-KR');
+  if (state) state.textContent = `리스크 점검 게시판 · 조건에 맞는 ${totalLabel}개 글 중 현재 ${visible.length.toLocaleString('ko-KR')}개를 표시합니다. 모든 글은 문제 인식, 실무 체크리스트, 다음 행동 순서로 정리됩니다.`;
   if (list) {
-    list.innerHTML = renderList(visible, '<div class="empty-state"><strong>조건에 맞는 칼럼이 없습니다.</strong><p>검색어를 줄이거나 전체 탭을 선택해 주세요.</p></div>', item => {
+    list.innerHTML = renderList(visible, '<div class="empty-state"><strong>조건에 맞는 칼럼이 없습니다.</strong><p>입력어를 줄이거나 전체 탭을 선택해 주세요.</p></div>', item => {
       const tagItems = (item.tags || item.hashtags || []).slice(0, 10).map(tag => `<span>#${escapeHtml(String(tag).replace(/^#/, ''))}</span>`).join('');
-      const checklist = Array.isArray(item.checklist) && item.checklist.length ? `<section class="seo-meta-card"><h4>빠른 체크리스트</h4><ul class="check-list">${item.checklist.slice(0, 6).map(point => `<li><span class="check">✓</span>${escapeHtml(point)}</li>`).join('')}</ul></section>` : '';
-      const faq = Array.isArray(item.faq) && item.faq.length ? `<section class="seo-meta-card"><h4>자주 묻는 질문</h4>${item.faq.slice(0, 3).map(entry => `<details class="faq-item"><summary>${escapeHtml(entry.question || '')}</summary><div class="faq-content">${escapeHtml(entry.answer || '')}</div></details>`).join('')}</section>` : '';
-      const links = Array.isArray(item.internalLinks) && item.internalLinks.length ? `<nav class="internal-link-row" aria-label="관련 링크">${item.internalLinks.slice(0, 4).map(link => `<a class="btn secondary" href="${escapeHtml(link.href || '#')}">${escapeHtml(link.label || '관련 링크')}</a>`).join('')}</nav>` : '';
-      const seoSummary = `<div class="seo-meta-strip"><span>검색 의도: ${escapeHtml(item.searchIntent || item.primaryKeyword || '법률·규제 리스크 점검')}</span><span>주요 키워드: ${escapeHtml(item.primaryKeyword || '')}</span><span>해시태그 ${Math.min(10, (item.tags || []).length)}개</span></div>`;
-      return `<article class="article-card board-post" id="${escapeHtml(item.slug || item.id || '')}"><div class="pill ${pillClass(item.boardType)}">${escapeHtml(item.category || typeLabel(item.boardType))}</div><h3>${escapeHtml(item.title)}</h3><p class="post-summary">${escapeHtml(item.summary || '')}</p>${seoSummary}${renderPostBody(item.body || '')}${checklist}${faq}<div class="post-tags">${tagItems}</div>${links}<div class="post-cta"><a class="btn primary" href="/products/veridion/demo">내 사이트 무료 진단</a><a class="btn secondary" href="/plans">요금제 확인</a><a class="btn secondary" href="/service">서비스·가이드 보기</a></div></article>`;
+      const checklist = Array.isArray(item.checklist) && item.checklist.length ? `<section class="risk-meta-card"><h4>빠른 체크리스트</h4><ul class="check-list">${item.checklist.slice(0, 6).map(point => `<li><span class="check">✓</span>${escapeHtml(point)}</li>`).join('')}</ul></section>` : '';
+      const faq = Array.isArray(item.faq) && item.faq.length ? `<section class="risk-meta-card"><h4>자주 묻는 질문</h4>${item.faq.slice(0, 3).map(entry => `<details class="faq-item"><summary>${escapeHtml(entry.question || '')}</summary><div class="faq-content">${escapeHtml(entry.answer || '')}</div></details>`).join('')}</section>` : '';
+      const links = Array.isArray(item.internalLinks) && item.internalLinks.length ? `<nav class="internal-link-row" aria-label="관련 링크">${item.internalLinks.slice(0, 4).map(link => `<a class="btn secondary" href="${escapeAttr(safeLocalPath(link.href || '#'))}">${escapeHtml(link.label || '관련 링크')}</a>`).join('')}</nav>` : '';
+      const riskSummary = `<div class="risk-meta-strip"><span>점검 의도: ${escapeHtml(item.searchIntent || item.primaryKeyword || '법률·규제 리스크 점검')}</span><span>핵심 주제: ${escapeHtml(item.primaryKeyword || '')}</span><span>분류 태그 ${Math.min(10, (item.tags || []).length)}개</span></div>`;
+      return `<article class="article-card board-post" id="${escapeAttr(safeBoardId(item.slug || item.id || ''))}"><div class="pill ${pillClass(item.boardType)}">${escapeHtml(item.category || typeLabel(item.boardType))}</div><h3>${escapeHtml(item.title)}</h3><p class="post-summary">${escapeHtml(item.summary || '')}</p>${riskSummary}${renderPostBody(item.body || '')}${checklist}${faq}<div class="post-tags">${tagItems}</div>${links}<div class="post-cta"><a class="btn primary" href="/products/veridion/demo">내 사이트 무료 진단</a><a class="btn secondary" href="/plans">요금제 확인</a><a class="btn secondary" href="/service">서비스·가이드 보기</a></div></article>`;
     });
   }
   renderActivity();
   renderPagination();
 }
 async function loadBoard() {
+  query = normalizeBoardQuery(query);
   updateUrlState();
-  if (state) state.textContent = '새 칼럼 엔진이 공개한 글을 불러오는 중입니다.';
+  if (boardAbortController) boardAbortController.abort();
+  boardAbortController = new AbortController();
+  setLoading(true);
+  if (state) state.textContent = '새 칼럼 엔진이 발행한 글을 불러오는 중입니다.';
   try {
-    const res = await fetch(`/api/public/board?page=${page}&pageSize=10&filter=${encodeURIComponent(filter)}`);
+    const res = await fetch(`/api/public/board?page=${page}&pageSize=10&filter=${encodeURIComponent(filter)}&q=${encodeURIComponent(query)}`, { cache: 'no-store', signal: boardAbortController.signal });
     const data = await res.json().catch(() => ({}));
     if (!res.ok || !data?.ok || !Array.isArray(data.posts)) throw new Error('칼럼을 불러오지 못했습니다.');
     posts = data.posts;
@@ -87,11 +108,14 @@ async function loadBoard() {
     pagination = data.pagination || pagination;
     render();
   } catch (error) {
+    if (error?.name === 'AbortError') return;
     if (state) state.textContent = error.message || '칼럼을 불러오지 못했습니다.';
+  } finally {
+    setLoading(false);
   }
 }
 
 tabs.forEach(btn => btn.addEventListener('click', () => { filter = btn.dataset.filter || 'all'; page = 1; loadBoard(); }));
-searchBtn?.addEventListener('click', () => { query = searchInput?.value.trim() || ''; page = 1; updateUrlState(); render(); });
-searchInput?.addEventListener('keydown', event => { if (event.key === 'Enter') { query = searchInput.value.trim(); page = 1; updateUrlState(); render(); } });
+searchBtn?.addEventListener('click', () => { query = normalizeBoardQuery(searchInput?.value || ''); page = 1; loadBoard(); });
+searchInput?.addEventListener('keydown', event => { if (event.key === 'Enter') { query = normalizeBoardQuery(searchInput.value); page = 1; loadBoard(); } });
 loadBoard();

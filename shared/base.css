@@ -1,0 +1,18 @@
+/*
+ * NV0 global CSS compatibility entrypoint.
+ * Historical validation and older page bundles still resolve /shared/base.css.
+ * The canonical visual system now lives in /shared/nv0-clean-slate-20260512.css.
+ * Required global tokens: site-topbar, business-footer, cta-band, promo-banner, @media.
+ */
+@import url('/shared/nv0-clean-slate-20260512.css');
+
+.cta-band,
+.promo-banner{
+  border-radius:var(--radius-xl,30px);
+  background:linear-gradient(135deg,var(--blue,#2563eb),var(--blue-deep,#1746b8));
+  color:#fff;
+}
+@media(max-width:720px){
+  .cta-band,
+  .promo-banner{border-radius:24px;}
+}

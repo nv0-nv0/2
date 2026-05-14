@@ -142,7 +142,7 @@ function renderBoardHighlights(boards = []) {
   if (!items.length) return '<div class="muted">게시판 연결 글 없음</div>';
   return items.map(item => {
     const tags = Array.isArray(item.tags) ? item.tags.slice(0, 5) : [];
-    return `<div class="result-card stack"><div class="meta-row"><strong>${escapeHtml(item.title || '게시글')}</strong><span class="pill">진단 연결</span></div><div class="muted">${escapeHtml(formatDate(item.createdAt || '-'))}</div><p>${escapeHtml(clampText(item.summary || item.body || '', 170))}</p>${tags.length ? `<div class="asset-tags">${tags.map(tag => `<span>#${escapeHtml(String(tag).replace(/^#/, ''))}</span>`).join('')}</div>` : ''}<div class="topnav"><a class="btn secondary" href="/board">보드에서 보기</a><a class="btn secondary" href="/products/veridion/demo">무료 진단</a></div></div>`;
+    return `<div class="result-card stack"><div class="meta-row"><strong>${escapeHtml(item.title || '게시글')}</strong><span class="pill">진단 연결</span></div><div class="muted">${escapeHtml(formatDate(item.createdAt || '-'))}</div><p>${escapeHtml(clampText(item.summary || item.body || '', 170))}</p>${tags.length ? `<div class="asset-tags">${tags.map(tag => `<span>#${escapeHtml(String(tag).replace(/^#/, ''))}</span>`).join('')}</div>` : ''}<div class="topnav"><a class="btn secondary" href="/board">게시판에서 보기</a><a class="btn secondary" href="/products/veridion/demo">무료 진단</a></div></div>`;
   }).join('');
 }
 function renderInsightFeed(boards = []) {
@@ -170,7 +170,7 @@ function renderAsset(asset, order, accessToken) {
   const stakeholderHandoff = asset.stakeholderHandoff ? `<section class="asset-section"><h3>담당자별 실행 메모</h3><div class="asset-handoff-grid">${Object.entries(asset.stakeholderHandoff || {}).map(([role, items]) => `<article><b>${escapeHtml(role)}</b><ul>${renderList(items || [], '', item => `<li>${escapeHtml(item)}</li>`)}</ul></article>`).join('')}</div></section>` : '';
   const outputPerformanceProfile = asset.outputPerformanceProfile ? `<section class="asset-section"><h3>결과물 구성 프로필</h3><div class="asset-maturity-grid"><article><span>상세도</span><b>${escapeHtml(asset.outputPerformanceProfile.detailDepth || '')}</b></article><article><span>가치 기준</span><b>${escapeHtml(asset.outputPerformanceProfile.valueMultiple || '')}</b></article><article><span>렌더링</span><b>${escapeHtml((asset.outputPerformanceProfile.renderPerformance || []).join(' · '))}</b></article></div></section>` : '';
 
-  const phase227DemoOverview = asset.demoIssueOverview ? `<section class="asset-section"><h3>무료 데모 공개 요약</h3><div class="asset-kpi-grid"><article><span>문제 항목</span><b>${escapeHtml(asset.demoIssueOverview.totalIssueCount ?? 0)}</b></article><article><span>문제 영역</span><b>${escapeHtml(asset.demoIssueOverview.areaCount ?? 0)}</b></article><article><span>영향 요소</span><b>${escapeHtml(asset.demoIssueOverview.elementCount ?? 0)}</b></article></div><p class="muted">무료 데모는 문제 영역·요소·갯수만 보여주고, 전체 세부 근거는 유료 산출물에서 공개합니다.</p></section>` : '';
+  const phase227DemoOverview = asset.demoIssueOverview ? `<section class="asset-section"><h3>무료 데모 요약</h3><div class="asset-kpi-grid"><article><span>문제 항목</span><b>${escapeHtml(asset.demoIssueOverview.totalIssueCount ?? 0)}</b></article><article><span>문제 영역</span><b>${escapeHtml(asset.demoIssueOverview.areaCount ?? 0)}</b></article><article><span>영향 요소</span><b>${escapeHtml(asset.demoIssueOverview.elementCount ?? 0)}</b></article></div><p class="muted">무료 데모는 문제 영역·요소·갯수만 보여주고, 전체 세부 근거는 유료 산출물에서 발행합니다.</p></section>` : '';
   const phase227PaidContract = asset.paidFullDetailContract ? `<section class="asset-section"><h3>상세 결과 확인 안내</h3><div class="asset-kpi-grid"><article><span>완성도</span><b>${escapeHtml(asset.paidFullDetailContract.completenessScore ?? 0)} / 100</b></article><article><span>상세 제공</span><b>${escapeHtml(asset.paidFullDetailContract.allDetailsVisible ? '제공 가능' : '보완 필요')}</b></article><article><span>상세 항목</span><b>${escapeHtml((asset.paidFullDetailContract.issueDetails || []).length)}</b></article></div><div class="asset-mini-block"><b>상세 문제 내용</b><ol>${renderList(asset.paidFullDetailContract.issueDetails || [], '', item => `<li><b>${escapeHtml(item.title || item.code || '점검 항목')}</b> — ${escapeHtml(item.recommendation || '권장 조치 확인')}</li>`)}</ol></div></section>` : '';
   const phase227OperationsDoc = asset.siteOperationsDocument ? `<section class="asset-section"><h3>${escapeHtml(asset.siteOperationsDocument.title || '사이트 맞춤 운영 지침 문서')}</h3><div class="asset-kpi-grid"><article><span>문서 품질</span><b>${escapeHtml(asset.siteOperationsDocument.qualityScore ?? 100)} / 100</b></article><article><span>문제 영역</span><b>${escapeHtml(asset.siteOperationsDocument.issueAreaCount ?? 0)}</b></article><article><span>영향 요소</span><b>${escapeHtml(asset.siteOperationsDocument.issueElementCount ?? 0)}</b></article></div><div class="asset-mini-block"><b>관리 절차</b><ol>${renderList(asset.siteOperationsDocument.sections || [], '', item => `<li><b>${escapeHtml(item.title || '관리 항목')}</b> — ${escapeHtml(item.body || item.objective || '')}</li>`)}</ol></div></section>` : '';
   const tags = (asset.tags || []).length ? `<div class="asset-tags">${(asset.tags || []).map(tag => `<span>#${escapeHtml(tag)}</span>`).join('')}</div>` : '';
@@ -222,6 +222,14 @@ function renderRecentScans(scans = []) {
   return `<div class="card stack"><div class="meta-row"><strong>지난 검사 내역 5개</strong><a class="btn secondary" href="/products/veridion/demo">새 검사</a></div>${scans.map(scan => `<div class="result-card"><div class="meta-row"><strong>${escapeHtml(scan.target || '저장 사이트')}</strong><span class="pill">${escapeHtml(scan.riskLevel || '검사 완료')}</span></div><p class="muted">${escapeHtml(formatDate(scan.createdAt || scan.generatedAt))} · 점수 ${escapeHtml(scan.riskScore ?? '-')} · 발견 ${escapeHtml(scan.totalFindings ?? '-')}개</p><div class="topnav"><button class="btn primary" data-rescan-site="${escapeAttr(scan.siteId || '')}" data-rescan-domain="${escapeAttr(scan.target || '')}" type="button">다시 검사하기</button><a class="btn secondary" href="/checkout?plan=Report&siteId=${escapeAttr(scan.siteId || '')}">전문가 리포트 결제</a><a class="btn secondary" href="/plans?siteId=${escapeAttr(scan.siteId || '')}">요금제 보기</a></div></div>`).join('')}</div>`;
 }
 
+function renderGuestScan(scan) {
+  if (!scan) return '<div class="portal-empty"><strong>비회원 확인 기록이 없습니다.</strong><p>무료 진단을 실행하면 이 브라우저의 내 사이트 메뉴에 최근 확인 기록이 저장됩니다.</p><a class="btn primary" href="/products/veridion/demo">무료 진단 시작</a></div>';
+  const siteId = scan.siteId || '';
+  const target = scan.target || scan.domain || '';
+  const findings = scan.totalFindings ?? findCountFromScan(scan);
+  return `<div class="card stack guest-history-card"><div class="meta-row"><strong>최근 확인 기록</strong><span class="pill">비회원 브라우저 저장</span></div><div class="result-card"><div class="meta-row"><strong>${escapeHtml(target || '최근 진단 사이트')}</strong><span class="pill">${escapeHtml(scan.riskLevel || '검사 완료')}</span></div><p class="muted">${escapeHtml(formatDate(scan.createdAt || scan.generatedAt))} · 점수 ${escapeHtml(scan.riskScore ?? '-')} · 발견 ${escapeHtml(findings ?? '-')}개</p><p>${escapeHtml(clampText(scan.summary || scan.diagnosis?.summary || '최근 무료 진단 결과가 내 사이트 메뉴에 저장되었습니다.', 180))}</p><div class="topnav"><a class="btn primary" href="/checkout?plan=Report${siteId ? `&siteId=${escapeAttr(siteId)}` : ''}">기본 리포트 바로 결제</a><a class="btn secondary" href="/plans${siteId ? `?siteId=${escapeAttr(siteId)}` : ''}">요금제 보기</a><a class="btn secondary" href="/products/veridion/demo${target ? `?target=${escapeAttr(encodeURIComponent(target))}` : ''}">다시 진단</a></div></div></div>`;
+}
+
 function renderMemberValueBox(session, account) {
   if (!session?.authenticated) {
     return `<div class="card stack"><strong>회원가입하면 바로 쓸 수 있는 기능</strong><ul class="result-list"><li>내 사이트 저장</li><li>클릭 한 번으로 다시 검사</li><li>지난 검사 내역 5개 확인</li><li>검사 결과 자동 저장</li></ul><a class="btn primary" href="/auth?next=/portal">무료로 검사 결과 저장하기</a></div>`;
@@ -230,12 +238,13 @@ function renderMemberValueBox(session, account) {
 }
 function updateStaticDashboard(session, account, summary) {
   const authenticated = !!session?.authenticated;
-  const latest = latestScanFrom(account, summary);
+  const saved = getSavedScan();
+  const latest = latestScanFrom(account, summary) || saved;
   const sitesCount = account?.savedSites?.length || 0;
-  if (sidebarAccount) sidebarAccount.textContent = authenticated ? (account?.customer?.email || session.customer?.email || '로그인 계정') : '비회원 · 저장 기능 비활성';
+  if (sidebarAccount) sidebarAccount.textContent = authenticated ? (account?.customer?.email || session.customer?.email || '로그인 계정') : '비회원 · 최근 확인 기록';
   if (planCard) planCard.innerHTML = `<div><b>${authenticated ? '회원 전용 관리' : '무료 계정 필요'}</b><small><span>사이트 ${sitesCount}개</span><span>최근 검사 ${account?.recentScans?.length || 0}개</span></small></div><a class="btn secondary" href="${authenticated ? '/plans' : '/auth?next=/portal'}">${authenticated ? '상품 보기' : '로그인·회원가입'}</a>`;
   if (topbarTitle) topbarTitle.textContent = '내 사이트 다음 조치';
-  if (topbarCopy) topbarCopy.textContent = authenticated ? '저장한 사이트를 다시 검사하고 최근 결과를 한곳에서 확인하세요.' : '회원가입하면 내 사이트 저장, 원클릭 재검사, 지난 검사 내역 확인을 사용할 수 있습니다.';
+  if (topbarCopy) topbarCopy.textContent = authenticated ? '저장한 사이트를 다시 검사하고 최근 결과를 한곳에서 확인하세요.' : '비회원도 이 브라우저의 최근 확인 기록을 볼 수 있고, 회원가입하면 계정에 저장됩니다.';
   if (scoreNumber) scoreNumber.textContent = latest?.riskScore ?? '-';
   if (scoreStatus) scoreStatus.textContent = latest?.riskLevel || '검사 전';
   if (scoreFooter) scoreFooter.textContent = `최근 진단일: ${formatDate(latest?.createdAt || latest?.generatedAt)}`;
@@ -261,13 +270,13 @@ async function loadPortal() {
   const accessToken = url.searchParams.get('accessToken') || '';
   if (orderId) fulfillment = await fetch(`/api/public/fulfillment?orderId=${encodeURIComponent(orderId)}${accessToken ? `&accessToken=${encodeURIComponent(accessToken)}` : ''}`).then(r => r.json()).catch(() => null);
   if (!session.authenticated) {
-    state.innerHTML = '로그인하면 사이트 저장, 원클릭 재검사, 지난 검사 내역 확인을 사용할 수 있습니다. <a href="/auth?next=/portal">로그인·회원가입</a>';
+    state.innerHTML = '이 브라우저의 최근 확인 기록을 표시합니다. 계정 저장이 필요하면 <a href="/auth?next=/portal">로그인·회원가입</a>을 이용하세요.';
   } else {
     state.textContent = `${account?.customer?.email || session.customer.email} 계정 · 저장 사이트 ${(account?.savedSites || []).length}개 · 최근 검사 ${(account?.recentScans || []).length}개`;
   }
   primary.innerHTML = `
-    ${renderSavedSites(account?.savedSites || [])}
-    ${renderRecentScans(account?.recentScans || [])}
+    ${session.authenticated ? renderSavedSites(account?.savedSites || []) : ''}
+    ${session.authenticated ? renderRecentScans(account?.recentScans || []) : renderGuestScan(saved)}
     ${renderMemberValueBox(session, account)}
     ${summary?.order ? `<div class="nv74-state"><strong>최근 주문</strong> · ${escapeHtml(summary.order.plan)} · ${escapeHtml(summary.order.status)}</div>` : ''}
     ${fulfillment?.locked ? `<div class="nv74-state"><strong>산출물 잠금</strong> · 구매한 리포트·수정안·템플릿은 이 영역에 표시됩니다.</div>` : ''}

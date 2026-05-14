@@ -20,8 +20,8 @@ for (const task of tasks) {
   if (!result.ok) break;
 }
 const ok = results.length === tasks.length && results.every(r => r.ok);
-const report = { generatedAt: new Date().toISOString(), ok, gate: 'phase21-ci-strict-no-error-masking', results };
-const out = path.join(docsDir, 'PHASE21_CI_STRICT_SUMMARY_20260424.json');
+const report = { generatedAt: new Date().toISOString(), ok, gate: 'phase258-ci-strict', results };
+const out = path.join(docsDir, 'current/PHASE258_CI_STRICT_SUMMARY_20260514.json');
 fs.writeFileSync(out, JSON.stringify(report, null, 2));
-console.log(JSON.stringify({ ok, report: 'docs/PHASE21_CI_STRICT_SUMMARY_20260424.json' }, null, 2));
+console.log(JSON.stringify({ ok, report: 'docs/current/PHASE258_CI_STRICT_SUMMARY_20260514.json' }, null, 2));
 process.exit(ok ? 0 : 1);

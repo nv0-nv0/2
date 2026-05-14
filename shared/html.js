@@ -32,3 +32,22 @@ export function safeUrl(value = '') {
     return '';
   }
 }
+
+
+export function safeLocalPath(value = '', fallback = '#') {
+  const raw = String(value || '').trim();
+  if (!raw) return fallback;
+  try {
+    const url = new URL(raw, window.location.origin);
+    if (url.origin !== window.location.origin) return fallback;
+    if (!['http:', 'https:'].includes(url.protocol)) return fallback;
+    return `${url.pathname}${url.search}${url.hash}` || fallback;
+  } catch {
+    return raw.startsWith('/') && !raw.startsWith('//') ? raw : fallback;
+  }
+}
+
+export function clampText(value = '', max = 500) {
+  const text = String(value || '').trim();
+  return text.length <= max ? text : `${text.slice(0, Math.max(0, max - 1))}…`;
+}

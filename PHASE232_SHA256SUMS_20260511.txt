@@ -1,4 +1,0 @@
-73fe75e0fcd77c83867ae25b070927c0e9f081af67756231fea2beed9ea41d74  shared/phase232-final-typography-card-system.css
-aaa6d9fa82f00410621d072e7d238137a8881e6a3cbe9258a3f4b3645038363c  tests/phase232-typography-card-readability-lock.mjs
-dfff6aec2c9d47a1f6e182100a8a592d8ecaceb05b4212611d5077e1b0a99d61  scripts/validate-phase232-typography-card-readability-lock.mjs
-bab2592e52f7942e565a70844f5b0dac63fc353417c744585ec655513e8ed0b3  package.json

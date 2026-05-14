@@ -52,7 +52,7 @@ function bodyWordEstimate(topic = {}, faqSet = []) {
 function tagsFor(industry, topic = {}, seed = '') {
   const compact = String(industry || '온라인사업').replace(/\s+/g, '');
   const keywordTags = keywordBase(industry, topic).map(item => `#${item.replace(/[\s·/]+/g, '')}`);
-  const base = [`#${compact}`, '#사이트점검', '#무료진단', '#고객안내', '#CTA', '#SEO', `#${String(topic.ctaType || '운영').replace(/_/g, '')}`];
+  const base = [`#${compact}`, '#사이트점검', '#무료진단', '#고객안내', '#CTA', '#리스크점검', `#${String(topic.ctaType || '운영').replace(/_/g, '')}`];
   const extra = pick([
     ['#전환율개선', '#문의전환', '#상세페이지'],
     ['#쇼핑몰운영', '#정책점검', '#신뢰도개선'],
@@ -85,14 +85,14 @@ const TOPIC_PACKS = [
   { ctaType: 'b2b_service', boardType: 'case', primaryKeyword: 'B2B 서비스 첫 화면 점검', headline: 'B2B 문의 전환 점검', angle: '도입 검토자가 확인하는 자료와 CTA 구조', intent: '상업 조사형', funnel: '결정', persona: 'B2B 세일즈 담당자', secondaryKeywords: ['자료 요청', '도입 문의'], intro: ['B2B 고객은 즉시 구매보다 내부 검토에 필요한 근거를 찾습니다.'], problem: ['사례, 제공 범위, 문의 후 절차가 부족하면 검토자가 다음 단계로 넘기기 어렵습니다.'], cta: 'B2B 문의 흐름은 상세 리포트에서 자료·문의·정책 연결을 함께 확인하세요.' },
   { ctaType: 'digital_product', boardType: 'notice', primaryKeyword: '디지털 상품 환불 고지', headline: '디지털 산출물 안내', angle: '제공 시작 시점과 환불 제한을 명확히 알리는 방법', intent: '문제 해결형', funnel: '결정', persona: '디지털 상품 판매자', secondaryKeywords: ['PDF 리포트', '템플릿 판매'], intro: ['PDF, 템플릿, 리포트 같은 디지털 산출물은 제공 시점 안내가 특히 중요합니다.'], problem: ['제공이 시작된 뒤 환불 제한이 있을 수 있다면 결제 전 고객이 이해할 수 있게 분리해서 보여줘야 합니다.'], cta: '디지털 산출물 판매 흐름은 TemplatePack과 FixPack으로 결제 전 문구를 정리하세요.' },
   { ctaType: 'faq_conversion', boardType: 'cta', primaryKeyword: 'FAQ 전환 개선', headline: 'FAQ 기반 전환 설계', angle: '반복 문의를 구매 전 불안 제거 콘텐츠로 바꾸기', intent: '전환 개선형', funnel: '고려', persona: 'CS·마케팅 담당자', secondaryKeywords: ['자주 묻는 질문', '구매 불안 제거'], intro: ['FAQ는 고객센터용 문서가 아니라 구매 전 불안을 줄이는 전환 콘텐츠가 될 수 있습니다.'], problem: ['반복 문의를 글 하단에만 쌓아두면 고객이 결제 전에 필요한 답을 찾기 어렵습니다.'], cta: '자주 묻는 질문을 전환 흐름에 맞게 정리하려면 상세 리포트의 FAQ 후보를 확인하세요.' },
-  { ctaType: 'seo_internal_link', boardType: 'notice', primaryKeyword: '사이트 내부링크 SEO', headline: '내부링크와 CTA 정리', angle: '검색 유입 후 다음 행동으로 이동시키는 구조', intent: 'SEO 개선형', funnel: '인지', persona: 'SEO 담당자', secondaryKeywords: ['내부링크', '콘텐츠 허브'], intro: ['검색 유입은 글 하나에서 끝나지 않고 다음 페이지로 자연스럽게 이어져야 효과가 커집니다.'], problem: ['관련 글, 정책 페이지, 무료 진단 버튼 안내가 분리되어 있으면 사용자가 다음 행동을 찾기 어렵습니다.'], cta: '내부링크와 CTA 구조는 Auto 발행 글을 통해 꾸준히 보강할 수 있습니다.' },
+  { ctaType: 'trust_notice_link', boardType: 'notice', primaryKeyword: '결제 전 안내 연결', headline: '정책 링크와 CTA 정리', angle: '고객이 결제 전 필요한 안내로 이동하는 구조', intent: '신뢰 점검형', funnel: '인지', persona: '운영 담당자', secondaryKeywords: ['정책 링크', '결제 전 고지'], intro: ['고객은 버튼을 누르기 전에 환불 기준, 제공 범위, 개인정보 안내를 빠르게 확인하려 합니다.'], problem: ['관련 글, 정책 페이지, 무료 진단 버튼 안내가 분리되어 있으면 사용자가 다음 행동을 찾기 어렵습니다.'], cta: '정책 링크와 CTA 구조는 Auto 발행 글을 통해 꾸준히 보강할 수 있습니다.' },
   { ctaType: 'seasonal_campaign', boardType: 'case', primaryKeyword: '이벤트 첫 화면 점검', headline: '캠페인 전 점검', angle: '프로모션 시작 전 반드시 확인할 안내 구조', intent: '실행 준비형', funnel: '결정', persona: '프로모션 담당자', secondaryKeywords: ['이벤트 페이지', '프로모션 CTA'], intro: ['이벤트 기간에는 유입이 늘어나는 만큼 작은 안내 공백도 문의로 이어지기 쉽습니다.'], problem: ['할인 조건, 적용 제외, 환불 기준, 종료일이 분산되어 있으면 고객이 혜택보다 조건을 더 오래 찾게 됩니다.'], cta: '캠페인 전에는 무료 진단으로 핵심 안내가 한 화면 안에 연결되는지 확인하세요.' }
 ];
 
 const PROCESS_STEPS = [
   ['고객 행동 직전 화면 확인', '누락·모호·과장 표현 분리', '수정 문구 적용', '모바일 화면 재확인', '같은 기준의 재진단'],
   ['유입 경로 확인', '정책 링크 위치 점검', 'CTA 주변 불안 요소 제거', 'FAQ 보강', '발행 후 반응 확인'],
-  ['핵심 키워드 선정', '검색 의도에 맞는 제목 구성', '본문에서 고객 질문에 답변', '관련 페이지 내부링크 연결', '다음 행동 CTA 배치'],
+  ['고객 질문 선정', '결제 전 확인 흐름 구성', '본문에서 고객 걱정에 답변', '정책·문의 페이지 연결', '다음 행동 CTA 배치'],
   ['문의가 반복되는 항목 수집', '결제·구매 문의 직전 화면과 연결', '짧은 답변과 상세 기준 분리', '과장 표현 제거', '운영 변경 시 재발행']
 ];
 const TITLE_PATTERNS = [
@@ -108,7 +108,7 @@ const TITLE_PATTERNS = [
 const INTRO_BRIDGES = [
   '이 글은 단순 홍보 문구가 아니라 사용자가 행동하기 전에 확인하는 정보를 중심으로 정리한 운영형 포스팅입니다.',
   '목표는 불안을 자극하는 것이 아니라 고객이 다음 행동을 선택할 수 있게 필요한 정보를 제자리에 배치하는 것입니다.',
-  '검색 유입, 광고 유입, 재방문 고객 모두 같은 화면을 보더라도 필요한 정보는 조금씩 다르게 확인합니다.',
+  '광고 유입, 직접 방문, 재방문 고객 모두 같은 화면을 보더라도 필요한 정보는 조금씩 다르게 확인합니다.',
   '따라서 제목, 본문, FAQ, 버튼 안내가 각각 따로 움직이지 않고 하나의 흐름으로 이어져야 합니다.'
 ];
 const TRUST_LINES = [
@@ -120,7 +120,7 @@ const FAQ_BANK = [
   ['이 글만 보면 모든 문제가 해결되나요?', '아닙니다. 우선순위 안내이며 실제 적용 전에는 운영 서비스 범위와 공식 정책을 확인해야 합니다.'],
   ['무엇부터 고치는 것이 좋나요?', '고객이 행동하기 직전에 보는 정보부터 정리하는 편이 효율적입니다. 문의, 결제, 회원가입, 푸터 순서로 확인합니다.'],
   ['같은 글이 반복 발행되나요?', '아닙니다. 콘텐츠 업데이트은 진단 요약, 체크리스트, 개인정보 안내, 약관 구조, 광고 표현, 재진단, 주간 운영 등 서로 다른 주제를 순환합니다.'],
-  ['SEO에는 어떤 방식으로 도움이 되나요?', '검색 의도에 맞는 제목 후보, 본문 질문 답변, 관련 키워드 태그, 자연스러운 다음 행동를 함께 생성해 게시판 콘텐츠의 중복도를 낮춥니다.'],
+  ['게시판 글은 어떤 방식으로 도움이 되나요?', '고객 질문에 맞는 제목 후보, 본문 답변, 관련 태그, 자연스러운 다음 행동을 함께 생성해 안내 콘텐츠의 중복도를 낮춥니다.'],
   ['바로 결제 유도만 하나요?', '아닙니다. 무료 진단, 결과 저장, 상세 리포트, 수정 문구안처럼 고객 단계에 맞는 다음 행동을 분리합니다.'],
   ['업종이 달라도 사용할 수 있나요?', '가능합니다. 업종명, 타깃 사이트, 주요 발견 항목을 반영해 제목과 본문 초점을 조정합니다.']
 ];
@@ -165,10 +165,10 @@ function legacyBuildCtaBoardArticle(scan = {}, variant = {}, options = {}) {
   const metaDescription = clampText(`${industry} 사이트 담당자가 ${topic.primaryKeyword}을 점검할 때 확인할 항목, FAQ, 자연스러운 다음 행동 연결 방식을 정리했습니다.`);
   const body = [
     `제목 후보\n1. ${titleCandidates[0]}\n2. ${titleCandidates[1]}\n3. ${titleCandidates[2]}\n4. ${titleCandidates[3]}\n5. ${titleCandidates[4]}`,
-    `도입\n${target} 운영에서 이번 글의 주제는 ${topic.headline}입니다. ${intro} ${scoreLine} ${bridge} 핵심 검색어는 ${primaryKeywords.join(', ')}입니다.`,
+    `도입\n${target} 운영에서 이번 글의 주제는 ${topic.headline}입니다. ${intro} ${scoreLine} ${bridge} 핵심 주제어는 ${primaryKeywords.join(', ')}입니다.`,
     `문제 제기\n이번 점검 기준으로는 ${findingCount}개 항목을 우선 확인 대상으로 보았습니다. 특히 ${top} 항목은 고객이 구매, 문의, 체험 신청 전에 확인하려는 정보와 연결됩니다. ${problem} 이 결과만으로 위반 여부나 매출 상승을 단정하지 않습니다.`,
     `해결 과정\n1) ${steps[0]}\n2) ${steps[1]}\n3) ${steps[2]}\n4) ${steps[3]}\n5) ${steps[4]}`,
-    `신뢰 근거\n${trust} 메타 설명 후보는 “${metaDescription}”입니다. 중복 발행을 줄이기 위해 주제, 검색 의도, 고객 단계, FAQ 조합을 다르게 구성합니다. 예상 읽기 시간은 약 ${readingTimeMinutes}분입니다.`,
+    `신뢰 근거\n${trust} 요약 설명 후보는 “${metaDescription}”입니다. 중복 발행을 줄이기 위해 주제, 고객 의도, 고객 단계, FAQ 조합을 다르게 구성합니다. 예상 읽기 시간은 약 ${readingTimeMinutes}분입니다.`,
     `FAQ\n${faqSet.map(([q, a], index) => `Q${index + 1}. ${q}\n${a}`).join('\n\n')}`,
     `자연스러운 다음 행동\n${topic.cta} 무료 진단으로 안내 공백을 확인하고, 결과를 저장하면 상세 리포트, 수정 문구안, Auto 정기 케어로 이어서 관리할 수 있습니다.`,
     `내부링크\n${internalLinks.map(link => `${link.label}: ${link.href}`).join('\n')}`,
@@ -232,7 +232,7 @@ const COMBO_ANGLES = [
   ['광고 유입 첫 화면 최적화', '상업 조사형', '결정', '광고 첫 화면 점검'],
   ['재방문 고객 설득 흐름', '유지 관리형', '유지', '재방문 전환'],
   ['결제 전환 보강', '전환 개선형', '결정', '결제 개선'],
-  ['검색 유입 후 다음 행동 설계', 'SEO 개선형', '인지', '검색 유입 CTA'],
+  ['결제 전 안내 후 다음 행동 설계', '신뢰 개선형', '인지', '고객 안내 CTA'],
   ['사이트 담당자 주간 점검 루틴', '유지 관리형', '유지', '주간 사이트 점검'],
   ['문구 과장도 낮추기', '문제 해결형', '고려', '광고 표현 완화'],
   ['고객센터 문의 감소', '문제 해결형', '고려', '반복 문의 감소'],
@@ -241,7 +241,7 @@ const COMBO_ANGLES = [
 const COMBO_AUDIENCES = ['초기 창업자', '1인 사이트 담당자', '쇼핑몰 담당자', '마케팅 담당자', 'CS 담당자', '개발·운영 담당자', '광고 대행 담당자', 'B2B 서비스 사이트 담당자', '디지털 상품 판매자', '예약·구매 문의 서비스 사이트 담당자', '지역 서비스 사업자', '콘텐츠 커머스 사이트 담당자'];
 const COMBO_ARCHETYPES = [
   ['checklist', '체크리스트형'], ['before_after', '수정 전후형'], ['case_note', '사례 해설형'], ['how_to', '방법론형'],
-  ['faq_first', 'FAQ 선해결형'], ['risk_map', '리스크 맵형'], ['seo_cluster', 'SEO 클러스터형'], ['ops_routine', '운영 루틴형']
+  ['faq_first', 'FAQ 선해결형'], ['risk_map', '리스크 맵형'], ['trust_cluster', '신뢰 안내 클러스터형'], ['ops_routine', '운영 루틴형']
 ];
 const COMBO_HOOKS = [
   ({ target }) => `${target}처럼 고객이 바로 판단하는 사이트는 첫 화면보다 행동 직전 안내가 더 중요합니다.`,
@@ -253,7 +253,7 @@ const COMBO_HOOKS = [
 const COMBO_SECTION_SETS = [
   ['제목 후보', '도입', '문제 제기', '실행 체크리스트', 'FAQ', '자연스러운 다음 행동', '내부링크', '태그'],
   ['제목 후보', '핵심 요약', '고객이 멈추는 지점', '수정 방향', 'FAQ', '다음 행동', '내부링크', '태그'],
-  ['제목 후보', '검색 의도', '현재 상태', '개선 순서', '주의 문구', 'FAQ', '자연스러운 다음 행동', '태그'],
+  ['제목 후보', '고객 의도', '현재 상태', '개선 순서', '주의 문구', 'FAQ', '자연스러운 다음 행동', '태그'],
   ['제목 후보', '사이트 담당자 관점', '고객 관점', '우선순위', '검증 방법', 'FAQ', '내부링크', '태그'],
   ['제목 후보', '상황 설명', '체크포인트', '문구 개선 방향', '반복 관리 방법', 'FAQ', '자연스러운 다음 행동', '태그']
 ];
@@ -268,19 +268,19 @@ const COMBO_CTA_STYLES = [
   '광고 집행 전 첫 화면과 CTA 주변 문구를 먼저 점검하세요.'
 ];
 const COMBO_FAQS = [
-  ['왜 같은 주제로 글을 계속 발행해도 되나요?', '같은 큰 주제라도 업종, 고객 단계, 검색 의도, 버튼 위치, FAQ가 달라지면 전혀 다른 목적의 글이 됩니다.'],
+  ['왜 같은 주제로 글을 계속 발행해도 되나요?', '같은 큰 주제라도 업종, 고객 단계, 고객 의도, 버튼 위치, FAQ가 달라지면 전혀 다른 목적의 글이 됩니다.'],
   ['무한대 결과물이 실제로 가능한가요?', '저장공간과 발행 횟수에는 한계가 있지만, 시드·시간·사이트·업종·발견항목·문체 조합을 계속 섞어 사실상 반복 없는 결과물을 만들 수 있습니다.'],
-  ['SEO에서 가장 피해야 할 점은 무엇인가요?', '제목만 바꾸고 본문 구조가 같은 글을 반복 발행하는 것입니다. 그래서 본문 구조, FAQ, 내부링크, CTA까지 함께 바꿔야 합니다.'],
+  ['자동 발행에서 가장 피해야 할 점은 무엇인가요?', '제목만 바꾸고 본문 구조가 같은 글을 반복 발행하는 것입니다. 그래서 본문 구조, FAQ, 정책 링크, CTA까지 함께 바꿔야 합니다.'],
   ['자동 글이 너무 기계적으로 보이지 않게 하려면?', '문단 순서, 예시, 고객 단계, 질문 답변, 내부링크를 바꾸고 확정형 표현보다 운영 기준 중심으로 작성해야 합니다.'],
   ['몇 개의 조합이 만들어지나요?', '고정 24개가 아니라 최소 수십만 개 이상의 조합 기반이며, 발행 시드와 사이트 입력값까지 포함하면 계속 확장됩니다.'],
-  ['중복 게시글은 어떻게 피하나요?', '제목과 본문 fingerprint를 저장하고 최근 ctaType, 검색의도, 고객단계, 키워드가 겹치지 않도록 후보를 다시 뽑습니다.'],
+  ['중복 게시글은 어떻게 피하나요?', '제목과 본문 fingerprint를 저장하고 최근 ctaType, 고객의도, 고객단계, 키워드가 겹치지 않도록 후보를 다시 뽑습니다.'],
   ['글 유형을 계속 추가해야 하나요?', '아닙니다. 주제팩은 뼈대이고 실제 다양성은 조합 엔진이 만듭니다. 필요하면 업종팩이나 시즌팩만 추가하면 됩니다.'],
   ['버튼 안내가 매번 똑같아지지 않나요?', 'CTA도 무료 진단, 상세 리포트, FixPack, Auto 정기 케어, 내 사이트 관리, 상품·요금 페이지 등 고객 단계에 맞춰 달라집니다.']
 ];
 const COMBO_MICRO_CASES = [
   '고객이 가격을 보기 전에 신뢰 정보를 먼저 찾는 상황', '문의폼 입력 직전에 개인정보 안내가 보이지 않는 상황',
   '광고 첫 화면에는 혜택이 있지만 예외 조건이 분리되어 있는 상황', '모바일에서 다음 행동 버튼은 보이지만 환불·취소 기준이 접혀 있는 상황',
-  'FAQ는 많지만 결제 전 불안을 직접 해결하지 못하는 상황', '검색 유입 글에서 다음 행동 링크가 없어 이탈하는 상황',
+  'FAQ는 많지만 결제 전 불안을 직접 해결하지 못하는 상황', '안내 글에서 다음 행동 링크가 없어 이탈하는 상황',
   '기존 공지가 오래되어 운영이 멈춘 것처럼 보이는 상황', '상세페이지와 푸터의 사업자 정보 표현이 서로 다른 상황'
 ];
 function comboPick(list, seed, offset = 0) { return pick(list, seed, offset); }
@@ -311,7 +311,7 @@ const HARD_WORDS = [
   ['contentFingerprint', '중복 확인값'],
   ['fingerprint', '중복 확인값'],
   ['아키타입', '글 구성'],
-  ['메타 설명', '검색에 보일 짧은 설명'],
+  ['요약 설명', '고객이 먼저 볼 짧은 설명'],
   ['무조건', '조건 확인 후'],
   ['완벽', '누락을 줄이는'],
   ['100% 보장', '가능성을 높이는'],
@@ -331,7 +331,7 @@ const HUMAN_READER_MEMOS = [
   '자주 묻는 질문이 고객의 걱정을 바로 풀어주는지 확인합니다.',
   '전문 표현도 고객 질문 기준으로 풀어 씁니다.',
   '한 문단에 여러 내용을 넣지 않고 하나씩 나눕니다.',
-  '고객이 다시 검색하지 않아도 되게 필요한 링크를 붙입니다.',
+  '고객이 다른 곳으로 이동하지 않아도 되게 필요한 링크를 붙입니다.',
   '너무 강한 표현보다 확인 가능한 말로 바꿉니다.',
   '상품 설명보다 먼저 안심할 수 있는 근거를 보여줍니다.',
   '고객센터로 물어보기 전에 답을 찾을 수 있게 만듭니다.',
@@ -413,8 +413,8 @@ function easyFaq(seed, industry, target, top) {
     ['바로 매출이 오른다고 볼 수 있나요?', `그렇게 단정할 수는 없습니다. 다만 고객이 헷갈리는 부분을 줄이면 문의와 구매 과정이 더 편해질 수 있습니다.`],
     ['이 글 다음에는 무엇을 하면 되나요?', `무료 진단으로 현재 상태를 확인하고, 문제가 큰 항목부터 문구와 버튼 위치를 차례대로 정리하면 됩니다.`],
     ['반복 글처럼 보이지 않게 하려면요?', `같은 말을 반복하지 말고 실제 사이트 상황, 고객 질문, 수정 예시를 바꿔서 쓰면 훨씬 자연스럽습니다.`],
-    ['고객이 가장 답답해하는 부분은 무엇인가요?', `${top}처럼 결정을 앞둔 순간에 필요한 정보가 안 보이면 고객은 다시 검색하거나 페이지를 닫을 수 있습니다.`],
-    ['검색에도 도움이 되나요?', `${industry}와 관련된 고객 질문, 실무 상황, 개선 순서를 함께 담으면 검색하는 사람에게 더 잘 맞는 글이 됩니다.`]
+    ['고객이 가장 답답해하는 부분은 무엇인가요?', `${top}처럼 결정을 앞둔 순간에 필요한 정보가 안 보이면 고객은 다른 곳으로 이동하거나 페이지를 닫을 수 있습니다.`],
+    ['고객 안내에도 도움이 되나요?', `${industry}와 관련된 고객 질문, 실무 상황, 개선 순서를 함께 담으면 처음 방문한 사람도 더 쉽게 이해할 수 있습니다.`]
   ];
   return unique([
     JSON.stringify(comboPick(pool, seed, 31)),
@@ -442,7 +442,7 @@ function cleanPublicPhrase(value = '') {
     .replace(/https?:\/\/example\.com/gi, '운영 중인 사이트')
     .replace(/\s*·\s*쉬운 점검\s*\d+-\d+\s*$/g, '')
     .replace(/\bCTA\b/g, '안내 버튼')
-    .replace(/\bSEO\b/g, '검색 노출')
+    .replace(/\bSEO\b/g, '리스크 점검')
     .replace(/전환/g, '문의나 구매로 이어지는 흐름')
     .replace(/이탈/g, '이탈')
     .replace(/첫 화면/g, '첫 화면')
@@ -470,7 +470,7 @@ function helpfulTitle(ctx, keyword, legacyTitle = '') {
     `처음 온 고객이 믿고 읽는 ${ctx.industry} 안내 구성`,
     `고객 질문에서 출발하는 ${topicForTitle} 작성법`,
     `결제와 문의 버튼 주변에 꼭 붙일 ${base} 예시`,
-    `검색 유입 고객이 바로 이해하는 ${ctx.industry} 사이트 안내`,
+    `결제 전 고객이 바로 이해하는 ${ctx.industry} 사이트 안내`,
     `사이트 담당자가 놓치기 쉬운 ${base} 요소 7가지`,
     stripJargon(legacyTitle).replace(/[|·].*$/, '').trim()
   ];
@@ -538,7 +538,7 @@ const EXPERT_EDITORIAL_SECTIONS = [
   '실무 적용 순서',
   '문구 개선 예시',
   '검증 체크리스트',
-  '검색 유입을 고려한 구성',
+  '고객 질문을 고려한 구성',
   '자주 묻는 질문',
   '자연스러운 다음 행동'
 ];
@@ -548,7 +548,7 @@ const EXPERT_REVENUE_LEVERS = [
   '문의 전에 필요한 답을 가까운 위치에 배치하는 것',
   '정책 문서와 실제 구매 화면의 표현을 맞추는 것',
   '모바일 화면에서 버튼과 안내 문구가 동시에 보이게 하는 것',
-  '고객이 다시 검색하지 않아도 되는 연결된 공개 페이지를 제공하는 것',
+  '고객이 다른 곳으로 이동하지 않아도 되는 연결된 공개 페이지를 제공하는 것',
   '무료 진단에서 유료 산출물로 이어지는 단계를 끊기지 않게 만드는 것'
 ];
 
@@ -569,7 +569,7 @@ function expertSeoTags(industry, theme, ctx, keyword) {
     '#구매전환개선',
     '#첫 화면점검',
     '#버튼문구개선',
-    '#검색친화콘텐츠',
+    '#고객안내콘텐츠',
     '#환불정책',
     '#개인정보처리방침',
     '#무료진단',
@@ -628,12 +628,12 @@ ${copyExamples.map(([before, after], index) => `${index + 1}. 바꾸기 전: “
     `검증 체크리스트
 ${checklist.map((item, index) => `${index + 1}. ${item}.`).join('\n')}
 체크리스트는 한 번 보고 끝내는 용도가 아닙니다. 새 상품을 올리거나 가격을 바꿀 때마다 같은 기준으로 반복 점검해야 합니다. 특히 자동 발행 칼럼은 누적될수록 사이트의 전문성을 보여주는 자료가 됩니다. 같은 주제라도 사례, 고객 질문, 개선 순서가 달라야 전문가가 쓴 글처럼 읽힙니다.`,
-    `검색 유입을 고려한 구성
-전문가처럼 보이는 게시글은 키워드만 반복하지 않습니다. 제목에는 ${theme.label}처럼 실제 고객이 검색할 표현을 넣습니다. 첫 문단에는 문제 상황과 해결 방향을 함께 제시합니다. 중간에는 체크리스트와 전후 문구 예시를 넣어 체류 시간을 확보합니다. 마지막에는 무료 진단, 상품·요금, 내 사이트 관리처럼 행동 단계를 명확히 연결합니다. 이렇게 구성하면 검색 엔진은 글의 주제와 연결된 공개 페이지 구조를 이해합니다. 실제 독자는 광고가 아니라 실무 가이드로 받아들이게 됩니다. 제목, 소제목, FAQ, 연결된 공개 페이지가 같은 의도로 연결될 때 검색 유입과 전환 흐름이 함께 좋아집니다.`,
+    `고객 질문을 고려한 구성
+전문가처럼 보이는 게시글은 같은 말을 반복하지 않습니다. 제목에는 ${theme.label}처럼 실제 고객이 결제 전에 궁금해할 표현을 넣습니다. 첫 문단에는 문제 상황과 해결 방향을 함께 제시합니다. 중간에는 체크리스트와 전후 문구 예시를 넣어 읽는 사람이 바로 적용할 수 있게 합니다. 마지막에는 무료 진단, 상품·요금, 내 사이트 관리처럼 행동 단계를 명확히 연결합니다. 이렇게 구성하면 독자는 광고가 아니라 실무 가이드로 받아들이게 됩니다. 제목, 소제목, FAQ, 연결된 공개 페이지가 같은 의도로 연결될 때 신뢰 흐름과 전환 흐름이 함께 좋아집니다.`,
     `자주 묻는 질문
 ${faq.map(([q, a], index) => `Q${index + 1}. ${sentence(q)}
 A. ${sentence(a)}`).join('\n\n')}
-FAQ는 단순한 꼬리말이 아닙니다. 고객이 구매 직전에 검색하는 질문을 본문 안으로 끌어오는 장치입니다. 답변은 짧게 쓰되, 다음 행동으로 이어지는 단서를 남기는 것이 좋습니다.`,
+FAQ는 단순한 꼬리말이 아닙니다. 고객이 구매 직전에 궁금해하는 질문을 본문 안으로 끌어오는 장치입니다. 답변은 짧게 쓰되, 다음 행동으로 이어지는 단서를 남기는 것이 좋습니다.`,
     `자연스러운 다음 행동
 이 글은 법률 판단이나 매출 상승을 보장하지 않습니다. 다만 고객이 멈추는 지점을 찾고, 판매 흐름을 정리하는 실무 기준으로 사용할 수 있습니다. 먼저 무료 진단으로 현재 사이트의 안내 공백을 확인합니다. 결과를 저장한 뒤 상세 리포트에서 페이지별 근거와 수정 우선순위를 확인하세요. 실제 문구 교체가 필요하면 FixPack이 적합합니다. 반복 점검과 게시판 발행까지 관리하려면 Auto 정기 케어로 연결하는 흐름이 자연스럽습니다. 자동 발행 칼럼은 20분마다 1회 자동 발행되는 것을 기준으로 운영합니다. 중요한 것은 빠른 발행보다 누적 품질입니다. 매 글이 하나의 작은 컨설팅 칼럼처럼 보여야 합니다.`,
     `관련 링크
@@ -695,21 +695,21 @@ export function buildCtaBoardArticle(scan = {}, variant = {}, options = {}) {
     toneProfile: 'expert_editorial_commercial',
     readabilityTarget: 'expert_but_accessible_korean',
     targetLengthKo: '4200-5200',
-    searchFriendlyVersion: 'phase217-expert-editorial-search-conversion-v1',
+    trustFriendlyVersion: 'phase256-expert-editorial-risk-trust-v1',
     publicDisplayVersion: 'phase217-expert-editorial-board',
     diversityKey: `${ctx.baseVariant.ctaType}:${ctx.angle[1]}:${ctx.angle[2]}:${ctx.angle[0]}:${ctx.archetype[0]}:${fingerprint(body)}`,
     contentFingerprint: fingerprint(`${title}\n${body}`),
     seo: {
       ...(legacy.seo || {}),
       primaryKeyword: keyword,
-      secondaryKeywords: unique([...(legacy.seo?.secondaryKeywords || []), '쉬운 사이트 점검', '고객 안내 문구', '모바일 안내 개선', `${ctx.industry} 사이트 개선`]).slice(0, 10),
+      secondaryKeywords: unique([...(legacy.seo?.secondaryKeywords || []), '쉬운 사이트 점검', '고객 안내 문구', '모바일 안내 개선', `${ctx.industry} 리스크 점검`]).slice(0, 10),
       searchIntent: ctx.angle[1],
       funnelStage: ctx.angle[2],
       persona: `${ctx.audience} / 일반 독자`,
       metaDescription,
       internalLinks,
       readingTimeMinutes: Math.max(4, Math.ceil(body.length / 850)),
-      contentGoal: '전문가형 포스팅으로 고객 문제, 실무 해결, 수익화 다음 행동을 자연스럽게 연결하기',
+      contentGoal: '전문가형 포스팅으로 고객 문제, 실무 해결, 리스크 점검 다음 행동을 자연스럽게 연결하기',
       combinationMode: 'unbounded_seeded_combinatorial',
       combinationKey,
       contentArchetype: 'expert_editorial_revenue_post',
@@ -718,7 +718,7 @@ export function buildCtaBoardArticle(scan = {}, variant = {}, options = {}) {
       humanToneVersion: HUMAN_TONE_VERSION,
       legacyHumanToneVersion: HUMAN_TONE_LEGACY_VERSION,
       legacyHumanToneVersion: HUMAN_TONE_LEGACY_VERSION,
-      searchFriendlyVersion: 'phase217-expert-editorial-search-conversion-v1'
+      trustFriendlyVersion: 'phase256-expert-editorial-risk-trust-v1'
     }
   };
 }
@@ -735,7 +735,7 @@ function isCtaLikePublication(item = {}) {
   ].join(' ').toLowerCase();
   if (/cta|auto|board|publication/.test(typeText) && (item.autoPublished || item.ctaType || item.baseCtaType)) return true;
   const body = String(item.body || item.summary || '');
-  return /제목 후보|검색 의도|고객 단계|CTA|SEO|고객 단계|첫 화면|메타 설명|fingerprint|아키타입/.test(body);
+  return /제목 후보|고객 의도|고객 단계|CTA|리스크|고객 단계|첫 화면|요약 설명|fingerprint|아키타입/.test(body);
 }
 
 function inferRewriteScan(item = {}, options = {}) {
@@ -805,7 +805,7 @@ export function rewriteExistingCtaPublication(item = {}, options = {}) {
     toneProfile: 'expert_editorial_commercial',
     readabilityTarget: 'expert_but_accessible_korean',
     humanToneVersion: HUMAN_TONE_VERSION,
-    searchFriendlyVersion: 'phase217-expert-editorial-search-conversion-v1',
+    trustFriendlyVersion: 'phase256-expert-editorial-risk-trust-v1',
     publicDisplayVersion: 'phase217-expert-editorial-board',
     rewrittenAt: options.rewrittenAt || new Date().toISOString(),
     rewrittenBy: 'phase217_expert_editorial_rewriter',

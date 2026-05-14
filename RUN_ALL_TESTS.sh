@@ -3,13 +3,6 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 cd "$ROOT"
 
-echo "[GOLDEN_CORE] intent firewall regression"
-node tests/phase203-intent-firewall.mjs
+npm run phase258:final
 
-echo "[STATIC_UI] render safety"
-node scripts/check-client-render-safety.mjs
-
-echo "[PHASE203_FINAL] structure/system engine gate"
-node scripts/run-phase203-final.mjs
-
-echo "PASS: GOLDEN_CORE, STATIC_UI, PHASE203_FINAL"
+echo "PASS: PHASE258 structural hardening final gate"

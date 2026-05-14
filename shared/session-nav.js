@@ -1,5 +1,5 @@
-const MENU_SELECTOR = '.site-menu';
-const LOGIN_SELECTOR = '.login-link';
+const MENU_SELECTOR = '.site-menu, .nv0-nav, .nv0-top-actions';
+const LOGIN_SELECTOR = '.login-link, a[href="/auth"].nv0-icon-link';
 const LOGOUT_CLASS = 'nav-logout-button';
 
 function makeStatus(menu) {
@@ -28,7 +28,7 @@ function sameOriginFetch(url, options = {}) {
 function buildLogoutButton(loginLink, customer, status) {
   const button = document.createElement('button');
   button.type = 'button';
-  button.className = `${LOGOUT_CLASS} login-link`;
+  button.className = `${LOGOUT_CLASS} login-link nv0-icon-link`;
   button.textContent = '로그아웃';
   button.dataset.sessionState = 'authenticated';
   const email = customer?.email ? String(customer.email) : '';

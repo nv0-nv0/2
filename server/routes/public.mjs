@@ -24,6 +24,7 @@ export function createPublicRouteHandler(ctx) {
   PORTONE_WEBHOOK_SECRET,
   PORTONE_WEBHOOK_VERIFY_MODE,
   PRELAUNCH_MODE,
+  ALLOW_PRELAUNCH_ONLINE_PAYMENT,
   PUBLIC_SCAN_LIMIT,
   PUBLIC_SCAN_WINDOW_MS,
   READYZ_REDIS_STRICT,
@@ -156,7 +157,7 @@ function cleanLegacyPublicTokens(value) {
       .replace(/상세 리포트/g, '기본 리포트')
       .replace(/CTA\s*게시판/g, '게시판')
       .replace(/자동\s*발행\s*200/g, '')
-      .replace(/자동발행/g, '20분 공개')
+      .replace(/자동발행/g, '20분 발행')
       .replace(/contentFingerprint|combinationMode|publicDisplayVersion/gi, '공개 항목');
   }
   if (Array.isArray(value)) return value.map(cleanLegacyPublicTokens);
@@ -196,10 +197,10 @@ return { requestId: scan?.requestId || null, siteId: scan?.siteId || null, targe
   const paymentHandled = await paymentRouteHandler(req, res, { requestUrl: url, pathname });
   if (paymentHandled !== false) return paymentHandled;
 if (pathname === '/api/public/diagnosis-engine' && req.method === 'GET') {
-return json(req, res, 200, { ok: true, phase: RELEASE_PHASE, engine: 'NV0 Public Evidence Summary Check Engine', rulesVersion: RULES_VERSION, targetFetchEnabled: TARGET_FETCH_ENABLED, scanProvider: SCAN_PROVIDER, aiReviewProvider: AI_REVIEW_PROVIDER, geminiConfigured: AI_REVIEW_ENABLED, resultContract: { resultType: 'preliminary_check', legalConclusion: false, includesEvidenceSummary: true, includesConfidenceScore: true, includesManualReviewFlags: true, includesAutomationDisclosure: true, includesAutomatedActionPlan: true, includesAccuracyProfile: true, includesReportQualityGate: true, includesDemoAccuracyContract: true, includesPaidOutputQualityGate: true, phase220ServiceQualityVersion: PHASE220_SERVICE_QUALITY_VERSION, phase223RiskGuardVersion: PHASE223_RISK_GUARD_VERSION }, endpoints: { scan: 'POST /api/public/scan', diagnose: 'POST /api/public/diagnose', board: 'GET /api/public/board', engine: 'GET /api/public/diagnosis-engine', productIntelligence: 'GET /api/public/product-intelligence', productQuality: 'GET /api/public/product-quality' }, smartProduct: { version: 'p153-smart-ops-v1', nextBestAction: true, planFitScoring: true, journeyOrchestration: true, smartProductEndpoint: '/api/public/smart-product', userPath: ['무료 요약','요금제 선택','내 사이트 관리','게시판 재유입'] }, publicationCadence: { boardName: '게시판', intervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000), cadenceLabel: `${Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000)}분에 1회`, columnEngine: 'public-column-engine-v1' }, automation: { mode: TARGET_FETCH_AUTOMATION_LEVEL, robotsEnabled: TARGET_FETCH_ROBOTS_ENABLED, sitemapEnabled: TARGET_FETCH_SITEMAP_ENABLED, maxPages: TARGET_FETCH_MAX_PAGES, maxDiscoveryResources: TARGET_FETCH_MAX_DISCOVERY_RESOURCES, notice: '자동 확인 가능한 공개 항목은 모두 처리하고 자동 확정 불가 영역은 직접 확인으로 고지합니다.' }, checks: buildRuleCatalog().map(({ code, category, title, severity, penaltyMax }) => ({ code, category, title, severity, penaltyMax })) });
+return json(req, res, 200, { ok: true, phase: RELEASE_PHASE, engine: 'NV0 Public Evidence Summary Check Engine', rulesVersion: RULES_VERSION, targetFetchEnabled: TARGET_FETCH_ENABLED, scanProvider: SCAN_PROVIDER, aiReviewProvider: AI_REVIEW_PROVIDER, geminiConfigured: AI_REVIEW_ENABLED, resultContract: { resultType: 'preliminary_check', legalConclusion: false, includesEvidenceSummary: true, includesConfidenceScore: true, includesManualReviewFlags: true, includesAutomationDisclosure: true, includesAutomatedActionPlan: true, includesAccuracyProfile: true, includesReportQualityGate: true, includesDemoAccuracyContract: true, includesPaidOutputQualityGate: true, phase220ServiceQualityVersion: PHASE220_SERVICE_QUALITY_VERSION, phase223RiskGuardVersion: PHASE223_RISK_GUARD_VERSION }, endpoints: { scan: 'POST /api/public/scan', diagnose: 'POST /api/public/diagnose', board: 'GET /api/public/board', engine: 'GET /api/public/diagnosis-engine', productIntelligence: 'GET /api/public/product-intelligence', productQuality: 'GET /api/public/product-quality' }, smartProduct: { version: 'p153-smart-ops-v1', nextBestAction: true, planFitScoring: true, journeyOrchestration: true, smartProductEndpoint: '/api/public/smart-product', userPath: ['무료 요약','요금제 선택','내 사이트 관리','게시판 재유입'] }, publicationCadence: { boardName: '게시판', intervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000), cadenceLabel: `${Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000)}분마다 1건 발행`, columnEngine: 'public-column-engine-v1' }, automation: { mode: TARGET_FETCH_AUTOMATION_LEVEL, robotsEnabled: TARGET_FETCH_ROBOTS_ENABLED, sitemapEnabled: TARGET_FETCH_SITEMAP_ENABLED, maxPages: TARGET_FETCH_MAX_PAGES, maxDiscoveryResources: TARGET_FETCH_MAX_DISCOVERY_RESOURCES, notice: '자동 확인 가능한 공개 항목은 모두 처리하고 자동 확정 불가 영역은 직접 확인으로 고지합니다.' }, checks: buildRuleCatalog().map(({ code, category, title, severity, penaltyMax }) => ({ code, category, title, severity, penaltyMax })) });
 }
 
-if (pathname === '/api/public/diagnose' && req.method === 'POST') {
+if ((pathname === '/api/public/diagnose' || pathname === '/api/public/scan') && req.method === 'POST') {
 const rate = await hitRateLimit('public-diagnose', clientIp(req), { windowMs: PUBLIC_SCAN_WINDOW_MS, limit: PUBLIC_SCAN_LIMIT });
 if (rate.blocked) return json(req, res, 429, { ok: false, error: '요청이 너무 많습니다. 잠시 후 다시 시도해 주세요.' });
 let payload;
@@ -209,7 +210,7 @@ payload = normalizeScanPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
 return json(req, res, 400, { ok: false, error: error.message || '진단할 사이트 주소가 필요합니다.' });
 }
 if (TURNSTILE_PUBLIC_ENABLED && TURNSTILE_CONFIGURED) {
-const challenge = await verifyTurnstile(payload.turnstileToken, clientIp(req));
+const challenge = await verifyTurnstile(req, payload.turnstileToken);
 if (!challenge.ok) return json(req, res, 400, { ok: false, error: '보안 확인을 완료한 뒤 다시 시도해 주세요.' });
 }
 const db = await readDb();
@@ -231,7 +232,8 @@ if (session?.customer && site?.id) linkCustomerToSite(db, session.customer.id, s
 try { createCtaPublicationIfDue(db, scan, { force: false }); } catch {}
 appendAudit(db, req, 'public.diagnose.completed', { siteId: scan.siteId, requestId: scan.requestId, target: scan.target, customerId: session?.customer?.id || null });
 await writeDb(db);
-return json(req, res, 200, cleanLegacyPublicTokens({ ok: true, result: { ...scan, diagnosis: buildPublicDiagnosisPackage(scan), demoIssueOverview: scan.demoIssueOverview || buildDemoIssueOverview(scan), conversionUrgency: scan.conversionUrgency || buildConversionUrgencyModel(scan, { plan: scan.recommendedPlan || 'Report' }), savedToAccount: !!session, paidAccess: false, locked: true } }));
+const portalUrl = `/portal?siteId=${encodeURIComponent(scan.siteId || '')}&requestId=${encodeURIComponent(scan.requestId || '')}`;
+return json(req, res, 200, cleanLegacyPublicTokens({ ok: true, portalUrl, result: { ...scan, portalUrl, diagnosis: buildPublicDiagnosisPackage(scan), demoIssueOverview: scan.demoIssueOverview || buildDemoIssueOverview(scan), conversionUrgency: scan.conversionUrgency || buildConversionUrgencyModel(scan, { plan: scan.recommendedPlan || 'Report' }), savedToAccount: !!session, paidAccess: false, locked: true } }));
 }
 if (pathname === '/api/public/config' && req.method === 'GET') {
 return json(req, res, 200, { ok: true, turnstileEnabled: TURNSTILE_PUBLIC_ENABLED, turnstileConfigured: TURNSTILE_CONFIGURED, prelaunchMode: PRELAUNCH_MODE, turnstileSiteKey: TURNSTILE_PUBLIC_ENABLED ? TURNSTILE_SITE_KEY : '' });
@@ -340,39 +342,55 @@ const pageSize = requestedPageSize;
 const requestedPage = clamp(Number(url.searchParams.get('page') || 1) || 1, 1, 9999);
 const filter = String(url.searchParams.get('filter') || 'all').trim();
 const normalizedFilter = ['all', 'read', 'diagnosis', 'policy', 'conversion'].includes(filter) ? filter : 'all';
-const publicPosts = buildPublicColumnEnginePosts({ pageSize: 50 }).map((item) => ({
-  id: item.id,
-  title: item.title,
-  boardType: 'cta',
-  boardPurpose: 'cta',
-  category: item.category || publicColumnTypeLabel(item.boardType),
-  audienceHook: item.audienceHook || '',
-  visibility: 'public',
-  createdAt: item.createdAt || nowIso(),
-  primaryKeyword: item.primaryKeyword,
-  summary: item.summary,
-  tags: item.tags || [],
-  body: item.body,
-  contentMix: item.contentMix,
-  seoElements: item.seoElements || {},
-  metaTitle: item.metaTitle || '',
-  metaDescription: item.metaDescription || '',
-  canonicalPath: item.canonicalPath || '',
-  searchIntent: item.searchIntent || '',
-  headings: item.headings || [],
-  checklist: item.checklist || [],
-  faq: item.faq || [],
-  internalLinks: item.internalLinks || [],
-  hashtags: item.hashtags || [],
-  structuredData: item.structuredData || null
-}));
+const query = String(url.searchParams.get('q') || '').trim().slice(0, 80).toLowerCase();
+const db = await readDb();
+let createdNow = null;
+try {
+  createdNow = createCtaPublicationIfDue(db, (db.scans || [])[0] || null, { force: false });
+  if (createdNow) {
+    appendAudit(db, req, 'public.column.published_from_board_request', { id: createdNow.id, intervalMs: CTA_AUTOPUBLISH_INTERVAL_MS });
+    await writeDb(db);
+  }
+} catch (error) {
+  appendAudit(db, req, 'public.column.publish_check_failed', { error: error.message });
+}
+const persisted = [...(db.boards || []), ...(db.publications || [])]
+  .filter(item => item && item.visibility !== 'private')
+  .filter(item => item.status === 'published' || item.visibility === 'public' || item.autoPublished === true)
+  .filter(item => item.type === 'column' || item.autoPublished === true || item.engine === 'public-column-engine-v1')
+  .sort((a, b) => Date.parse(b.publishedAt || b.createdAt || 0) - Date.parse(a.publishedAt || a.createdAt || 0));
+const seen = new Set();
+let publicPosts = persisted.map((item, index) => ({
+  ...toPublicBoardPost(item, index),
+  status: 'published',
+  publishedAt: item.publishedAt || item.createdAt || nowIso(),
+  source: 'persisted-db',
+  boardPurpose: 'column',
+  category: item.category || publicColumnTypeLabel(item.boardType)
+})).filter(item => {
+  const key = `${item.title}::${item.summary}`;
+  if (seen.has(key)) return false;
+  seen.add(key);
+  return true;
+});
+if (!publicPosts.length) {
+  publicPosts = buildPublicColumnEnginePosts({ pageSize: 50 }).map((item, index) => ({
+    ...toPublicBoardPost({ ...item, status: 'published', visibility: 'public', type: 'column' }, index),
+    status: 'published',
+    publishedAt: item.createdAt || nowIso(),
+    source: 'engine-emergency-fallback',
+    boardPurpose: 'column',
+    category: item.category || publicColumnTypeLabel(item.boardType)
+  }));
+}
 const filtered = publicPosts.filter(item => {
+  const haystack = [item.title, item.summary, item.body, item.primaryKeyword, item.audienceHook, item.searchIntent, item.category, ...(item.checklist || []), ...((item.faq || []).flatMap(entry => [entry.question, entry.answer])), ...(item.tags || []), ...(item.hashtags || [])].join(' ');
+  if (query && !haystack.toLowerCase().includes(query)) return false;
   if (normalizedFilter === 'all') return true;
-  const haystack = [item.title, item.summary, item.primaryKeyword, item.audienceHook, ...(item.tags || [])].join(' ');
   if (normalizedFilter === 'read') return /가독성|모바일|푸터|첫인상|문구/.test(haystack);
-  if (normalizedFilter === 'diagnosis') return /진단|재점검|구조|검색/.test(haystack);
+  if (normalizedFilter === 'diagnosis') return /진단|재점검|구조|고지/.test(haystack);
   if (normalizedFilter === 'policy') return /정책|개인정보|환불|결제/.test(haystack);
-  if (normalizedFilter === 'conversion') return /CTA|버튼|전환|리포트|무료진단/.test(haystack);
+  if (normalizedFilter === 'conversion') return /다음 행동 버튼|버튼|전환|리포트|무료진단/.test(haystack);
   return true;
 });
 const total = filtered.length;
@@ -383,16 +401,18 @@ const posts = filtered.slice(start, start + pageSize);
 const activity = publicPosts.slice(0, 3).map(item => ({
   id: item.id,
   title: item.title,
-  type: 'CTA 목적 칼럼',
-  createdAt: item.createdAt || null,
-  label: '새 칼럼 공개'
+  type: '정기 칼럼',
+  createdAt: item.publishedAt || item.createdAt || null,
+  label: '새 글 발행'
 }));
 return json(req, res, 200, {
   ok: true,
-  publicationCadence: { intervalMinutes: 20, label: '20분에 1회', engine: 'public-cta-column-engine-v5-seo-expanded-purpose-100-mix-60-20-20' },
+  publicationCadence: { intervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000), label: '20분마다 1건 발행', engine: 'public-column-engine-v1', actualPublishing: true, searchScope: 'server-side', dataSource: publicPosts[0]?.source || 'persisted-db' },
+  createdNow: !!createdNow,
   pageSize,
   activity,
-  pagination: { page, pageSize, total, totalPages, hasPrev: page > 1, hasNext: page < totalPages },
+  pagination: { page, pageSize, total, totalPages, hasPrev: page > 1, hasNext: page < totalPages, query },
+  query,
   posts
 });
 }

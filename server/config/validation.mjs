@@ -47,6 +47,7 @@ export function validateRuntimeConfig(input = {}) {
   const platform = input.platform || { commercial: false, target: 'mvp' };
   const commercialLaunchReady = Boolean(input.commercialLaunchReady);
   const prelaunchMode = Boolean(input.prelaunchMode);
+  const allowPrelaunchOnlinePayment = Boolean(input.allowPrelaunchOnlinePayment);
   const adminAuthMode = input.adminAuthMode || 'shared_key';
   const persistenceMode = input.persistenceMode || 'json';
   const storageMode = input.storageMode || 'local_fs';
@@ -106,7 +107,7 @@ export function validateRuntimeConfig(input = {}) {
     assertEmailConfig('NV0_SUPPORT_EMAIL', env.NV0_SUPPORT_EMAIL);
     assertEmailConfig('NV0_PRIVACY_OFFICER_EMAIL', env.NV0_PRIVACY_OFFICER_EMAIL);
     if (commercialLaunchReady) requireRealValue(env, 'NV0_MAIL_ORDER_REGISTRATION_NUMBER');
-    if (prelaunchMode && paymentProvider === 'portone_v2') throw new Error('Prelaunch deployments must not enable PortOne before NV0_COMMERCIAL_LAUNCH_READY=true.');
+    if (prelaunchMode && paymentProvider === 'portone_v2' && !allowPrelaunchOnlinePayment) throw new Error('Prelaunch deployments must not enable PortOne before NV0_COMMERCIAL_LAUNCH_READY=true or NV0_ALLOW_PRELAUNCH_ONLINE_PAYMENT=true.');
     if (commercialLaunchReady && paymentProvider !== 'portone_v2') throw new Error('Commercial launch requires NV0_PAYMENT_PROVIDER=portone_v2.');
     if (/\b0\.0\.0\.0\b|\*|0\.0\.0\.0\/0/.test(String(env.NV0_ADMIN_IP_ALLOWLIST || ''))) {
       throw new Error('NV0_ADMIN_IP_ALLOWLIST must not contain wildcard IP ranges in commercial mode.');

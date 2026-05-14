@@ -55,13 +55,13 @@ const ok = results.length === tasks.length && results.every(item => item.ok);
 const report = {
   generatedAt: new Date().toISOString(),
   ok,
-  gate: 'phase23-release-pipeline-gate',
+  gate: 'phase258-release-pipeline-gate',
   totalGates: tasks.length,
   passed: results.filter(item => item.ok).length,
   failed: results.filter(item => !item.ok).length,
   results
 };
-const out = path.join(docsDir, 'PHASE23_PIPELINE_RELEASE_GATE_20260424.json');
+const out = path.join(docsDir, 'current/PHASE258_PIPELINE_RELEASE_GATE_20260514.json');
 fs.writeFileSync(out, JSON.stringify(report, null, 2));
-console.log(JSON.stringify({ ok, totalGates: report.totalGates, passed: report.passed, failed: report.failed, report: 'docs/PHASE23_PIPELINE_RELEASE_GATE_20260424.json' }, null, 2));
+console.log(JSON.stringify({ ok, totalGates: report.totalGates, passed: report.passed, failed: report.failed, report: 'docs/current/PHASE258_PIPELINE_RELEASE_GATE_20260514.json' }, null, 2));
 process.exit(ok ? 0 : 1);

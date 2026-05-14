@@ -26,6 +26,7 @@ export function createPaymentRouteHandler(ctx) {
   PORTONE_WEBHOOK_SECRET,
   PORTONE_WEBHOOK_VERIFY_MODE,
   PRELAUNCH_MODE,
+  ALLOW_PRELAUNCH_ONLINE_PAYMENT,
   PUBLIC_SCAN_LIMIT,
   PUBLIC_SCAN_WINDOW_MS,
   READYZ_REDIS_STRICT,
@@ -161,8 +162,9 @@ export function createPaymentRouteHandler(ctx) {
 if (pathname === '/api/public/payment/config' && req.method === 'GET') {
 const portone = PORTONE_CLIENT?.configSummary ? PORTONE_CLIENT.configSummary() : { enabled: false };
 const productCodes = buildCommercialOfferCatalog().map(item => ({ code: item.code, title: item.title, price: item.price, period: item.period, group: item.group }));
-const paymentReady = !PRELAUNCH_MODE && PAYMENT_PROVIDER !== 'disabled' && (PAYMENT_PROVIDER !== 'portone_v2' || !!portone.enabled);
-const reason = paymentReady ? '' : PRELAUNCH_MODE ? '사전 오픈 모드에서는 결제창을 열지 않습니다.' : PAYMENT_PROVIDER === 'disabled' ? '결제 제공자가 비활성화되어 있습니다.' : PAYMENT_PROVIDER === 'portone_v2' ? 'PortOne 필수 환경값(storeId, channelKey, apiSecret)을 확인해야 합니다.' : '결제 제공자 상태를 확인해야 합니다.';
+const externalHttpReady = PAYMENT_PROVIDER !== 'external_http' || !!process.env.NV0_PAYMENT_PROVIDER_URL;
+const paymentReady = (!PRELAUNCH_MODE || ALLOW_PRELAUNCH_ONLINE_PAYMENT) && PAYMENT_PROVIDER !== 'disabled' && externalHttpReady && (PAYMENT_PROVIDER !== 'portone_v2' || !!portone.enabled);
+const reason = paymentReady ? '' : (PRELAUNCH_MODE && !ALLOW_PRELAUNCH_ONLINE_PAYMENT) ? '사전 오픈 모드에서는 NV0_ALLOW_PRELAUNCH_ONLINE_PAYMENT=true 설정 전까지 결제창을 열지 않습니다.' : PAYMENT_PROVIDER === 'disabled' ? '결제 제공자가 비활성화되어 있습니다.' : PAYMENT_PROVIDER === 'portone_v2' ? 'PortOne 필수 환경값(storeId, channelKey, apiSecret)을 확인해야 합니다.' : PAYMENT_PROVIDER === 'external_http' && !externalHttpReady ? '외부 결제 연동 URL(NV0_PAYMENT_PROVIDER_URL)을 설정해야 합니다.' : '결제 제공자 상태를 확인해야 합니다.';
 return json(req, res, 200, {
   ok: true,
   provider: PAYMENT_PROVIDER,
@@ -171,6 +173,7 @@ return json(req, res, 200, {
   prelaunchMode: PRELAUNCH_MODE,
   deploymentStage: DEPLOYMENT_STAGE,
   commercialLaunchReady: COMMERCIAL_LAUNCH_READY,
+  allowPrelaunchOnlinePayment: ALLOW_PRELAUNCH_ONLINE_PAYMENT,
   endpoints: { checkoutSession: 'POST /api/public/checkout-session', complete: 'POST /api/public/payment/complete', webhook: 'POST /api/public/payment/portone/webhook' },
   productCodes,
   portone: {
@@ -295,8 +298,8 @@ await writeDb(db);
 return json(req, res, 200, { ok: true, result: { ...result, siteId: site.id, guidanceId: guidance.id, autoFixJobsCount: autoFixJobs.length, savedToAccount: !!customerSession?.customer, ctaPublicationId: ctaPublication?.id || null, intelligence, journey, diagnosis: buildPublicDiagnosisPackage(result, { rulesVersion: RULES_VERSION, ctaIntervalMs: CTA_AUTOPUBLISH_INTERVAL_MS }) } });
 }
 if (pathname === '/api/public/checkout-session' && req.method === 'POST') {
-if (PRELAUNCH_MODE || PAYMENT_PROVIDER === 'disabled') {
-return json(req, res, 503, { ok: false, error: '온라인 결제 환경이 아직 활성화되지 않았습니다. NV0_PAYMENT_PROVIDER와 PortOne 환경값을 확인해 주세요.', stage: DEPLOYMENT_STAGE, paymentOnly: true });
+if ((PRELAUNCH_MODE && !ALLOW_PRELAUNCH_ONLINE_PAYMENT) || PAYMENT_PROVIDER === 'disabled') {
+return json(req, res, 503, { ok: false, error: PRELAUNCH_MODE && !ALLOW_PRELAUNCH_ONLINE_PAYMENT ? '사전 오픈 모드에서는 NV0_ALLOW_PRELAUNCH_ONLINE_PAYMENT=true 설정 전까지 결제창을 열지 않습니다.' : '온라인 결제 환경이 아직 활성화되지 않았습니다. NV0_PAYMENT_PROVIDER와 PortOne 환경값을 확인해 주세요.', stage: DEPLOYMENT_STAGE, paymentOnly: true });
 }
 if (PAYMENT_PROVIDER === 'portone_v2' && !PORTONE_CLIENT?.enabled) {
 return json(req, res, 503, { ok: false, error: 'PortOne 결제 환경값이 완성되지 않았습니다. storeId, channelKey, apiSecret 설정을 확인해 주세요.', stage: DEPLOYMENT_STAGE, paymentOnly: true });
@@ -319,7 +322,7 @@ if (customerSession?.customer) {
 body.customerId = customerSession.customer.id;
 body.buyerEmail ||= customerSession.customer.email;
 }
-if (!isValidEmail(body.buyerEmail || '')) return json(req, res, 400, { ok: false, error: '산출물 수신 이메일이 필요합니다.' });
+if (!isValidEmail(body.buyerEmail || '')) return json(req, res, 400, { ok: false, error: '결제 연락처 이메일이 필요합니다. 결과물은 내 사이트 관리에 저장됩니다.' });
 if (!body.privacyConsent || !body.termsConsent || !body.refundConsent || !body.deliveryConsent) {
 return json(req, res, 400, { ok: false, error: '개인정보처리방침, 이용약관, 환불정책, 디지털 산출물 제공 및 청약철회 제한 고지 확인이 필요합니다.' });
 }
@@ -370,7 +373,14 @@ return json(req, res, 409, { ok: false, error: '동일 주문의 결제 완료 �
 const db = await readDb();
 try {
 if (PAYMENT_PROVIDER === 'portone_v2') {
-const synced = await syncPortOneCheckoutOrder(db, orderId, body.paymentId, 'client_complete');
+let synced;
+try {
+synced = await syncPortOneCheckoutOrder(db, orderId, body.paymentId, 'client_complete');
+} catch (error) {
+appendAudit(db, req, 'public.payment.portone.provider_error', { orderId, paymentId: body.paymentId || orderId, error: error.message });
+await writeDb(db);
+return json(req, res, 502, { ok: false, error: '결제사 확인 응답을 받지 못했습니다. 잠시 후 결제 완료 확인을 다시 실행해 주세요.', reason: error.message });
+}
 if (!synced.order) return json(req, res, 404, { ok: false, error: '주문을 찾을 수 없습니다.' });
 appendAudit(db, req, synced.ok ? 'public.payment.portone.completed' : 'public.payment.portone.verification_failed', { orderId, paymentId: body.paymentId || orderId, reason: synced.reason || null });
 await writeDb(db);
@@ -457,7 +467,13 @@ rawSha256,
 reason: webhookVerification.reason || null,
 payload
 });
-const synced = await syncPortOneCheckoutOrder(db, paymentId, paymentId, 'webhook');
+let synced;
+try {
+synced = await syncPortOneCheckoutOrder(db, paymentId, paymentId, 'webhook');
+} catch (error) {
+synced = { ok: false, reason: error.message || 'provider_sync_failed', order: null, paymentSession: null };
+appendAudit(db, 'public.payment.webhook.provider_sync_error', { paymentId, reason: synced.reason });
+}
 const inbox = db.webhookInbox?.[0];
 if (inbox) {
 inbox.status = synced.ok ? 'processed' : 'failed';
