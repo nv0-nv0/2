@@ -28,7 +28,7 @@ const legacyUsageKey = `veridion:instantDemoUsage:${new Date().toISOString().sli
 let session = { authenticated: false, customer: null };
 let lastScan = null;
 let isScanning = false;
-let guard = { enabled: false, ready: false, getToken: () => '', reset: () => {} };
+let guard = { enabled: false, ready: false, getToken: () => '', reset: () => { } };
 let progressTimer = null;
 let progressStartedAt = 0;
 let progressIndex = 0;
@@ -36,6 +36,8 @@ let progressIndex = 0;
 function setState(message, mode = 'muted') {
   if (!state) return;
   state.className = `notice ${mode}`.trim();
+  if (!state.hasAttribute('role')) state.setAttribute('role', 'status');
+  if (!state.hasAttribute('aria-live')) state.setAttribute('aria-live', 'polite');
   state.textContent = message;
 }
 function setResultHtml(html) { if (result) result.innerHTML = html; }
@@ -53,7 +55,7 @@ function getCachedDemoResult(target) {
   } catch { return null; }
 }
 function setCachedDemoResult(target, scan) {
-  try { localStorage.setItem(demoCacheKey(target), JSON.stringify({ savedAt: Date.now(), result: scan })); } catch {}
+  try { localStorage.setItem(demoCacheKey(target), JSON.stringify({ savedAt: Date.now(), result: scan })); } catch { }
 }
 function renderProgress(index = 0) {
   const elapsed = progressStartedAt ? Math.max(0, Math.round((Date.now() - progressStartedAt) / 1000)) : 0;
@@ -78,7 +80,9 @@ function startProgress() {
 }
 function getUsage() {
   const legacy = localStorage.getItem(legacyUsageKey);
-  if (legacy !== null && localStorage.getItem(usageKey) === null) localStorage.setItem(usageKey, '0');
+  if (legacy !== null && localStorage.getItem(usageKey) === null) {
+    localStorage.setItem(usageKey, legacy);
+  }
   const n = Number(localStorage.getItem(usageKey) || '0');
   return Math.max(0, Math.min(FREE_LIMIT, Number.isFinite(n) ? n : 0));
 }
@@ -129,12 +133,13 @@ async function loadSession() {
 }
 
 function normalizeTarget(raw) {
-  const target = String(raw || '').trim();
+  const target = String(raw || '').trim().replace(/^(https?:\/\/)+/i, 'https://');
   if (!target) return '';
   return /^https?:\/\//i.test(target) ? target : `https://${target}`;
 }
 function isValidTarget(value) { return /^https?:\/\/[^\s.]+\.[^\s]+/i.test(value); }
 function clampScore(value) {
+  if (value === null || value === undefined || value === '') return null;
   const n = Number(value);
   if (!Number.isFinite(n)) return null;
   return Math.max(0, Math.min(100, Math.round(n)));
@@ -164,6 +169,8 @@ function formatPenalty(value) {
 function normalizePercent(value, fallback = 0) {
   const n = Number(value);
   if (!Number.isFinite(n)) return fallback;
+  const f = Math.max(0, Math.min(100, Number.isFinite(fallback) ? Math.round(fallback) : 0));
+  if (!Number.isFinite(n)) return f;
   return Math.max(0, Math.min(100, Math.round(n)));
 }
 function priorityTone(priority = '') {
@@ -245,7 +252,7 @@ function normalizeScan(scan = {}) {
   const details = detailRows(scan).slice(0, 6).map(normalizeRiskItem);
   const top = (Array.isArray(scan.topFindings) ? scan.topFindings : []).slice(0, 5).map(normalizeRiskItem);
   const risks = (details.length ? details : top).slice(0, 5);
-  const riskScore = clampScore(scan.riskScore ?? scan.score?.value);
+  const riskScore = clampScore(scan.riskScore ?? (typeof scan.score === 'object' ? scan.score?.value : scan.score));
   const health = scoreHealth(riskScore);
   const categories = normalizeChecks(scan);
   const recommendedActions = normalizeActions(scan, risks.length ? risks : [normalizeRiskItem('필수 고지와 정책 링크를 먼저 확인하세요.', 0)]);
@@ -482,7 +489,7 @@ function renderSmartNextAction(view) {
       <p>${escapeHtml(next.description || intel?.reason || '진단 결과에 맞춰 우선순위를 정리했습니다.')}</p>
     </div>
     <div class="smart-action-grid">${actions.map(item => `<span>${escapeHtml(item)}</span>`).join('')}</div>
-    <div class="topnav"><a class="btn primary" href="${escapeAttr(next.path || `/plans?riskScore=${encodeURIComponent(view.riskScore ?? '')}&siteId=${encodeURIComponent(view.siteId)}`)}">${escapeHtml(next.cta || intel?.primaryCta || '추천 상품 보기')}</a><a class="btn secondary" href="/portal?siteId=${escapeAttr(view.siteId)}">내 사이트 관리</a></div>
+    <div class="topnav"><a class="btn primary" href="${escapeAttr(next.path || `/plans?riskScore=${encodeURIComponent(view.riskScore ?? '')}&siteId=${encodeURIComponent(view.siteId || '')}`)}">${escapeHtml(next.cta || intel?.primaryCta || '추천 상품 보기')}</a><a class="btn secondary" href="/portal?siteId=${escapeAttr(view.siteId || '')}">내 사이트 관리</a></div>
     <small class="muted">${escapeHtml(journey?.caveat || intel?.caveat || '법률 자문이 아니며 성과를 약속하지 않습니다.')}</small>
   </section>`;
 }
@@ -649,9 +656,9 @@ function hasPaidAccess(scan) {
 }
 function renderFullResult(scan) {
   const view = normalizeScan(scan);
-  const findings = detailRows(scan);
+  const findings = detailRows(scan).map(normalizeRiskItem);
   const pages = view.pages;
-  return `<div class="card stack full-result"><div class="meta-row"><strong>상세 결과 열람 가능</strong><span class="pill brand">결제 완료</span></div><div class="notice"><strong>${escapeHtml(session.customer?.email || '로그인 계정')}</strong>에 저장되었습니다. 구매 산출물 영역에서 상세 근거와 수정 문구안을 확인할 수 있습니다.</div><h3>전체 발견 항목 ${findings.length}개</h3><div class="result-grid">${renderList(findings, '<div class="muted">상세 발견 항목 없음</div>', item => `<div class="result-card"><div class="meta-row"><strong>${escapeHtml(item.title || item.code || '점검 항목')}</strong><span class="pill ${item.priority === 'P0' ? 'gold' : ''}">${escapeHtml(item.priority || '확인')}</span></div><p>${escapeHtml(item.recommendation || item.fixTemplate || '권장 조치 확인')}</p><small class="muted">${escapeHtml(item.category || '')} · ${escapeHtml(item.code || '')}</small></div>`)}</div><div class="notice muted">진단 페이지: ${pages.length ? pages.map(p => escapeHtml(p.finalUrl || p.url || p)).join(' · ') : '기본 URL 중심 분석'}</div>${renderPaidFullDetailContract(scan)}${renderSiteOperationsDocument(scan)}<div class="topnav"><a class="btn primary" href="/portal?siteId=${escapeAttr(view.siteId)}">내 사이트 관리</a><a class="btn secondary" href="/plans?riskScore=${escapeAttr(view.riskScore ?? '')}&siteId=${escapeAttr(view.siteId)}">요금제 비교</a><a class="btn secondary" href="/checkout?plan=${escapeAttr(view.recommendedPlan)}&siteId=${escapeAttr(view.siteId)}">기본 리포트 신청</a></div></div>`;
+  return `<div class="card stack full-result"><div class="meta-row"><strong>상세 결과 열람 가능</strong><span class="pill brand">결제 완료</span></div><div class="notice"><strong>${escapeHtml(session.customer?.email || '로그인 계정')}</strong>에 저장되었습니다. 구매 산출물 영역에서 상세 근거와 수정 문구안을 확인할 수 있습니다.</div><h3>전체 발견 항목 ${findings.length}개</h3><div class="result-grid">${renderList(findings, '<div class="muted">상세 발견 항목 없음</div>', item => `<div class="result-card"><div class="meta-row"><strong>${escapeHtml(item.title || item.code || '점검 항목')}</strong><span class="pill ${item.priority === 'P0' ? 'gold' : ''}">${escapeHtml(item.priority || '확인')}</span></div><p>${escapeHtml(item.recommendation || item.fixTemplate || '권장 조치 확인')}</p><small class="muted">${escapeHtml(item.category || '')} · ${escapeHtml(item.code || '')}</small></div>`)}</div><div class="notice muted">진단 페이지: ${pages.length ? pages.map(p => escapeHtml(typeof p === 'string' ? p : (p.finalUrl || p.url || ''))).join(' · ') : '기본 URL 중심 분석'}</div>${renderPaidFullDetailContract(scan)}${renderSiteOperationsDocument(scan)}<div class="topnav"><a class="btn primary" href="/portal?siteId=${escapeAttr(view.siteId)}">내 사이트 관리</a><a class="btn secondary" href="/plans?riskScore=${escapeAttr(view.riskScore ?? '')}&siteId=${escapeAttr(view.siteId)}">요금제 비교</a><a class="btn secondary" href="/checkout?plan=${escapeAttr(view.recommendedPlan)}&siteId=${escapeAttr(view.siteId)}">기본 리포트 신청</a></div></div>`;
 }
 function renderLockedResult(scan) {
   const view = normalizeScan(scan);
@@ -660,9 +667,11 @@ function renderLockedResult(scan) {
 function renderPaywall(scan) { return renderLockedResult(scan); }
 
 async function saveCurrentSite(scan) {
-  return jsonFetch('/api/public/account/sites', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ siteId: scan.siteId, domain: scan.target, label: scan.target }) });
+  const domain = scan.target || scan.normalizedTarget || normalizeTarget(targetInput?.value) || 'unknown';
+  return jsonFetch('/api/public/account/sites', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ siteId: scan.siteId, domain, label: domain }) });
 }
-async function unlockSavedScan() {
+async function unlockSavedScan(e) {
+  if (e && typeof e.preventDefault === 'function') e.preventDefault();
   const scan = lastScan || getSavedScanFromStorage();
   if (scan) renderResult(scan);
 }
@@ -753,14 +762,17 @@ function buildLocalFallbackScan(target, message = '') {
     error: reason
   };
 }
-async function runScan() {
+async function runScan(e) {
+  if (e && typeof e.preventDefault === 'function') e.preventDefault();
   if (isScanning) return;
   setBusy(true);
   await loadSession();
   const normalizedTarget = normalizeTarget(targetInput?.value);
   if (!isValidTarget(normalizedTarget)) { setState('유효한 사이트 주소를 입력하세요. 예: https://your-store.kr', 'warn'); setBusy(false); return; }
   if (!session.authenticated && getUsage() >= FREE_LIMIT) {
-    state.innerHTML = `오늘 비회원 요약 결과 횟수를 모두 사용했습니다. <a href="${escapeAttr(loginUrl())}">로그인·회원가입하면 계속 이용할 수 있습니다.</a>`;
+    if (state) {
+      state.innerHTML = `오늘 비회원 요약 결과 횟수를 모두 사용했습니다. <a href="${escapeAttr(loginUrl())}">로그인·회원가입하면 계속 이용할 수 있습니다.</a>`;
+    }
     setResultHtml('<div class="upgrade-box"><strong>비회원 이용 한도 초과</strong><p class="muted">로그인하면 무료진단 횟수 관리, 저장, 재검사를 계속 사용할 수 있습니다. 상세 결과는 결제 후 공개됩니다.</p></div>');
     setBusy(false);
     return;
@@ -782,14 +794,12 @@ async function runScan() {
     if (!session.authenticated) setUsage(getUsage() + 1);
     setCachedDemoResult(normalizedTarget, data.result || {});
     saveScan(data.result || {});
-    if (session.authenticated && data.result) { try { await saveCurrentSite(data.result); } catch {} }
+    if (session.authenticated && data.result) { try { await saveCurrentSite(data.result); } catch { } }
     setState(session.authenticated ? '무료진단 완료 · 내 사이트 저장과 최근 이력 관리가 활성화되었습니다. 상세 결과는 결제 후 공개됩니다.' : '무료진단 완료 · 확인 근거와 한계를 먼저 보여드립니다. 상세 결과는 결제 후 공개됩니다.', 'success');
     renderResult(data.result || {});
   } catch (err) {
     stopProgress();
     const message = err?.message || '알 수 없는 오류';
-    const isTurnstile = /turnstile|보안|검증/i.test(message);
-    const isServer = /500|502|503|서버|timeout|초과/i.test(message);
     const fallback = buildLocalFallbackScan(normalizedTarget, message);
     if (!session.authenticated) setUsage(getUsage() + 1);
     setCachedDemoResult(normalizedTarget, fallback);
@@ -812,7 +822,7 @@ setState('이메일을 먼저 요구하지 않습니다. 가능한 공개 항목
 mountTurnstile({ containerId: 'turnstileBox', tokenInputId: 'turnstileToken', noticeId: 'turnstileState' })
   .then((mountedGuard) => { guard = { ready: true, ...mountedGuard }; })
   .catch((error) => {
-    guard = { enabled: false, ready: false, getToken: () => '', reset: () => {} };
+    guard = { enabled: false, ready: false, getToken: () => '', reset: () => { } };
     const notice = document.getElementById('turnstileState');
     if (notice) notice.textContent = `보안 확인을 불러오지 못했습니다. 설정 확인이 필요하지만 버튼은 계속 동작합니다. (${error.message})`;
   });
@@ -857,10 +867,10 @@ function renderDetectedIssueList(view) {
   return `<section class="detected-issues clean-detected" aria-label="주요 발견 문제">
     <div class="issue-section-head"><h3>주요 발견 문제</h3><span>결제 전에 가장 먼저 보완해야 할 항목</span></div>
     <div class="detected-list clean-detected-list">${items.map((item, index) => {
-      const code = item.code || item.category || `ISSUE_${String(index + 1).padStart(3, '0')}`;
-      const priority = item.priority || (index === 0 ? 'P0' : index === 1 ? 'P1' : 'P2');
-      const autoFixable = /수정|문구|정리|보완|고지|정책|fix|auto/i.test(`${item.action} ${item.category} ${item.title}`);
-      return `<article class="detected-card ${escapeAttr(priorityTone(priority))}">
+    const code = item.code || item.category || `ISSUE_${String(index + 1).padStart(3, '0')}`;
+    const priority = item.priority || (index === 0 ? 'P0' : index === 1 ? 'P1' : 'P2');
+    const autoFixable = /수정|문구|정리|보완|고지|정책|fix|auto/i.test(`${item.action} ${item.category} ${item.title}`);
+    return `<article class="detected-card ${escapeAttr(priorityTone(priority))}">
         <div class="detected-topline"><span class="detected-rank">0${index + 1}</span><span class="detected-priority ${escapeAttr(priorityTone(priority))}">${escapeHtml(priority)}</span><code>${escapeHtml(code)}</code></div>
         <h4>${escapeHtml(item.title)}</h4>
         <p>${escapeHtml(item.impact)}</p>
@@ -870,7 +880,7 @@ function renderDetectedIssueList(view) {
         </div>
         <div class="detected-bottom"><span class="fix-ready ${autoFixable ? 'on' : ''}">${autoFixable ? '개선안 연결 가능' : '상세 검토 후 수동 보완 필요'}</span><a href="/checkout?plan=${escapeAttr(view.recommendedPlan)}&siteId=${escapeAttr(view.siteId)}">기본 리포트로 연결</a></div>
       </article>`;
-    }).join('')}</div>
+  }).join('')}</div>
   </section>`;
 }
 
@@ -1119,7 +1129,7 @@ function renderExternalToolPlan(view) {
 
 function buildConfirmedItems(view) {
   const seen = new Map();
-  const add = (title, desc, badge='확인됨') => { if (!seen.has(title)) seen.set(title, { title, desc, badge }); };
+  const add = (title, desc, badge = '확인됨') => { if (!seen.has(title)) seen.set(title, { title, desc, badge }); };
   (view.pages || []).forEach((page) => {
     const url = String(typeof page === 'string' ? page : (page.finalUrl || page.url || '')).toLowerCase();
     if (!url) return;
@@ -1161,17 +1171,17 @@ function countDemoBuckets(view) {
   const risks = Array.isArray(view.risks) ? view.risks : [];
   const areas = Array.isArray(overview.areaBreakdown) && overview.areaBreakdown.length
     ? overview.areaBreakdown.map((row, index) => ({
-        area: row.area || `리스크 영역 ${index + 1}`,
-        issueCount: Number(row.issueCount || 0),
-        elementCount: Number(row.elementCount || (Array.isArray(row.elements) ? row.elements.length : 0)),
-        classification: row.classification || '누락 의심'
-      }))
+      area: row.area || `리스크 영역 ${index + 1}`,
+      issueCount: Number(row.issueCount || 0),
+      elementCount: Number(row.elementCount || (Array.isArray(row.elements) ? row.elements.length : 0)),
+      classification: row.classification || '누락 의심'
+    }))
     : risks.slice(0, 6).map((item, index) => ({
-        area: item.area || item.category || `리스크 영역 ${index + 1}`,
-        issueCount: 1,
-        elementCount: Math.max(1, (item.elements || []).length || topicElementsFor(item.title || item.category).length),
-        classification: item.manualReviewRequired ? '검토 필요' : statusLabelForFinding(item)
-      }));
+      area: item.area || item.category || `리스크 영역 ${index + 1}`,
+      issueCount: 1,
+      elementCount: Math.max(1, (Array.isArray(item.elements) ? item.elements : topicElementsFor(item.title || item.category)).length),
+      classification: item.manualReviewRequired ? '검토 필요' : statusLabelForFinding(item)
+    }));
   const classCounts = areas.reduce((acc, row) => {
     const key = row.classification || '누락 의심';
     acc[key] = (acc[key] || 0) + Number(row.issueCount || 0);
@@ -1223,4 +1233,5 @@ function renderResult(scan) {
   const html = hasPaidAccess(scan) ? renderPaidCleanResult(scan) : renderDemoCountOnlyResult(view);
   setResultHtml(html);
   document.getElementById('dashboardRetryBtn')?.addEventListener('click', runScan);
+  result?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
