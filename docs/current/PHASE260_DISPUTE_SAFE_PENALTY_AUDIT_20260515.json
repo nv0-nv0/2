@@ -1,0 +1,110 @@
+{
+  "generatedAt": "2026-05-15T03:34:00.120Z",
+  "phase": "phase260-dispute-safe-penalty",
+  "ok": true,
+  "total": 25,
+  "passed": 25,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "package version phase260",
+      "ok": true
+    },
+    {
+      "name": "package script:test:phase260",
+      "ok": true
+    },
+    {
+      "name": "package script:validate:phase260",
+      "ok": true
+    },
+    {
+      "name": "package script:phase260:final",
+      "ok": true
+    },
+    {
+      "name": "final review points to phase260",
+      "ok": true
+    },
+    {
+      "name": "penalty label is explicitly reference-only",
+      "ok": true
+    },
+    {
+      "name": "penalty strip denies certainty",
+      "ok": true
+    },
+    {
+      "name": "warning title uses review-needed copy",
+      "ok": true
+    },
+    {
+      "name": "warning paragraph explains official decision variance",
+      "ok": true
+    },
+    {
+      "name": "bullet avoids direct imposed fine claim",
+      "ok": true
+    },
+    {
+      "name": "administrative bullets are possibility/review phrasing",
+      "ok": true
+    },
+    {
+      "name": "customer impact phrasing is possibility-based",
+      "ok": true
+    },
+    {
+      "name": "legal advice not disclaimer visible in CSS badge",
+      "ok": true
+    },
+    {
+      "name": "server carries reference estimate type",
+      "ok": true
+    },
+    {
+      "name": "server denies legal conclusion on scan payload",
+      "ok": true
+    },
+    {
+      "name": "server disclaimer mentions authority and expert review",
+      "ok": true
+    },
+    {
+      "name": "table changed from legal category to review category",
+      "ok": true
+    },
+    {
+      "name": "summary changed from legal category to review category",
+      "ok": true
+    },
+    {
+      "name": "paid detail copy avoids 100 percent guarantee",
+      "ok": true
+    },
+    {
+      "name": "old urgent certainty sentence removed",
+      "ok": true
+    },
+    {
+      "name": "old maximum fine label removed from UI",
+      "ok": true
+    },
+    {
+      "name": "old warning strip removed from UI",
+      "ok": true
+    },
+    {
+      "name": "old max-fine bullet removed from UI",
+      "ok": true
+    },
+    {
+      "name": "no legal certainty or guaranteed outcome copy",
+      "ok": true
+    },
+    {
+      "name": "phase260 report exists and describes dispute-safe change",
+      "ok": true
+    }
+  ]
+}

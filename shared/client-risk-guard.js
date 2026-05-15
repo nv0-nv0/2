@@ -8,11 +8,10 @@
       var box = document.createElement('div');
       box.className = 'nv0-client-risk-banner';
       box.setAttribute('role', 'status');
-      box.setAttribute('aria-live', 'assertive');
       box.textContent = message || '일부 화면 요소를 불러오지 못했습니다. 새로고침 후에도 반복되면 고객지원으로 문의해 주세요.';
-      (document.body || document.documentElement).appendChild(box);
+      document.body.appendChild(box);
       setTimeout(function () { box.classList.add('is-visible'); }, 16);
-    } catch { }
+    } catch {}
   }
   window.addEventListener('error', function (event) {
     var target = event && event.target;

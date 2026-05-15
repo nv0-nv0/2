@@ -1,0 +1,150 @@
+{
+  "generatedAt": "2026-05-15T03:33:58.146Z",
+  "phase": "phase259-demo-penalty-dashboard",
+  "ok": true,
+  "total": 35,
+  "passed": 35,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "package version phase259",
+      "ok": true
+    },
+    {
+      "name": "package script:test:phase259",
+      "ok": true
+    },
+    {
+      "name": "package script:validate:phase259",
+      "ok": true
+    },
+    {
+      "name": "package script:phase259:final",
+      "ok": true
+    },
+    {
+      "name": "package script:final:review",
+      "ok": true
+    },
+    {
+      "name": "phase258 final redirects to phase259",
+      "ok": true
+    },
+    {
+      "name": "demo JS has compact Korean penalty formatter",
+      "ok": true
+    },
+    {
+      "name": "demo JS has penalty alert model",
+      "ok": true
+    },
+    {
+      "name": "demo JS uses explicit estimatedMaxPenalty first",
+      "ok": true
+    },
+    {
+      "name": "demo JS has fallback risk band amount",
+      "ok": true
+    },
+    {
+      "name": "demo JS includes penalty disclaimer",
+      "ok": true
+    },
+    {
+      "name": "demo JS renders warning panel",
+      "ok": true
+    },
+    {
+      "name": "demo JS warning title copy",
+      "ok": true
+    },
+    {
+      "name": "demo JS warning body copy",
+      "ok": true
+    },
+    {
+      "name": "demo JS warning bullet max fine",
+      "ok": true
+    },
+    {
+      "name": "demo JS warning bullets administrative action",
+      "ok": true
+    },
+    {
+      "name": "demo JS brand risk bullet",
+      "ok": true
+    },
+    {
+      "name": "demo dashboard class exists",
+      "ok": true
+    },
+    {
+      "name": "demo kpi warning grid class exists",
+      "ok": true
+    },
+    {
+      "name": "demo penalty card before summary cards",
+      "ok": true
+    },
+    {
+      "name": "demo old class side card removed from count result",
+      "ok": true
+    },
+    {
+      "name": "demo still keeps table card",
+      "ok": true
+    },
+    {
+      "name": "demo still keeps paid gate CTAs",
+      "ok": true
+    },
+    {
+      "name": "CSS phase259 block appended",
+      "ok": true
+    },
+    {
+      "name": "CSS red orange penalty gradient",
+      "ok": true
+    },
+    {
+      "name": "CSS siren icon exists",
+      "ok": true
+    },
+    {
+      "name": "CSS warning panel exists",
+      "ok": true
+    },
+    {
+      "name": "CSS warning grid responsive desktop",
+      "ok": true
+    },
+    {
+      "name": "CSS warning layout responsive",
+      "ok": true
+    },
+    {
+      "name": "CSS mobile fallback exists",
+      "ok": true
+    },
+    {
+      "name": "server provides estimated max penalty",
+      "ok": true
+    },
+    {
+      "name": "server has per-rule penaltyMax",
+      "ok": true
+    },
+    {
+      "name": "public route returns scan spread",
+      "ok": true
+    },
+    {
+      "name": "no legal certainty claim in warning code",
+      "ok": true
+    },
+    {
+      "name": "reference image packaged",
+      "ok": true
+    }
+  ]
+}

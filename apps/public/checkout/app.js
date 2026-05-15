@@ -15,21 +15,6 @@ const summaryDelivery = document.getElementById('summaryDelivery');
 const summaryTargetCustomer = document.getElementById('summaryTargetCustomer');
 const summaryTotal = document.getElementById('summaryTotal');
 
-async function fetchWithTimeout(resource, options = {}) {
-  const { timeout = 15000, ...fetchOptions } = options;
-  const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), timeout);
-  try {
-    const response = await fetch(resource, { ...fetchOptions, signal: controller.signal });
-    clearTimeout(id);
-    return response;
-  } catch (error) {
-    clearTimeout(id);
-    if (error.name === 'AbortError') throw new Error('네트워크 응답 시간이 초과되었습니다. 다시 시도해 주세요.');
-    throw error;
-  }
-}
-
 let currentOrder = null;
 let currentPaymentSession = null;
 let isCreatingSession = false;
@@ -128,21 +113,13 @@ function updateCheckoutButtonState() {
   else if (!providerReady) checkoutBtn.textContent = paymentConfig.provider === 'portone_v2' ? '결제창 준비 중' : '온라인 결제 준비 중';
   else checkoutBtn.textContent = '바로 결제';
 }
-function setFormDisabled(disabled) {
-  ['buyerEmail', 'plan', 'privacyConsent', 'termsConsent', 'refundConsent', 'deliveryConsent'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.disabled = disabled;
-  });
-}
 function getPrefill() {
   const url = new URL(location.href);
   const saved = getSavedScan();
-  const rawSiteId = url.searchParams.get('siteId') || saved?.siteId || '';
-  const rawDomain = url.searchParams.get('domain') || saved?.target || '';
   return {
-    siteId: String(rawSiteId).slice(0, 100),
+    siteId: url.searchParams.get('siteId') || saved?.siteId || '',
     plan: normalizePlanCode(url.searchParams.get('plan') || saved?.recommendedPlan || 'Report'),
-    domain: String(rawDomain).slice(0, 300)
+    domain: url.searchParams.get('domain') || saved?.target || ''
   };
 }
 const prefill = getPrefill();
@@ -211,23 +188,19 @@ async function createSession() {
   }
   isCreatingSession = true;
   updateCheckoutButtonState();
-  setFormDisabled(true);
   setCheckoutState('주문 정보를 확인하고 외부 결제창을 준비하고 있습니다.');
   let data;
   try {
-    const res = await fetchWithTimeout('/api/public/checkout-session', {
+    const res = await fetch('/api/public/checkout-session', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify(payload),
-      timeout: 15000
+      body: JSON.stringify(payload)
     });
-    const text = await res.text();
-    try { data = JSON.parse(text); } catch { data = { error: '서버 응답(주문 생성)을 처리하지 못했습니다.' }; }
+    data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(data.error || '주문 정보를 확인하지 못했습니다.');
   } catch (error) {
     setCheckoutState(error.message || '주문 정보를 확인하지 못했습니다.', 'warn');
     isCreatingSession = false;
-    setFormDisabled(false);
     updateCheckoutButtonState();
     return;
   }
@@ -250,10 +223,7 @@ async function createSession() {
       setCheckoutState('결제창 응답을 받았습니다. 결제 완료 여부를 확인합니다.');
       await completePayment();
     } catch (error) {
-      const errMsg = error.message || '결제가 취소되었거나 창을 열지 못했습니다.';
-      setCheckoutState(errMsg.includes('취소') ? '결제가 취소되었습니다. 다시 시도해 주세요.' : errMsg, 'warn');
-      setFormDisabled(false);
-      updateCheckoutButtonState();
+      setCheckoutState(error.message || '결제창을 시작하지 못했습니다.', 'warn');
     }
     return;
   }
@@ -270,33 +240,29 @@ async function completePayment() {
   setCheckoutState('결제 완료 여부를 확인하는 중입니다.');
   const payload = { orderId: currentOrder.id, paymentId: currentPaymentSession?.providerPaymentId || currentOrder.id };
   try {
-    const res = await fetchWithTimeout('/api/public/payment/complete', {
+    const res = await fetch('/api/public/payment/complete', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify(payload),
-      timeout: 20000
+      body: JSON.stringify(payload)
     });
-    const text = await res.text();
-    let data;
-    try { data = JSON.parse(text); } catch { data = { error: '서버 응답(결제 완료)을 처리하지 못했습니다.' }; }
+    const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(data.error || '결제 완료를 확인하지 못했습니다.');
-    
     renderOrder(data.order, data.paymentSession);
-    const nextUrl = `/portal?orderId=${encodeURIComponent(data.order.id)}${data.order.accessToken ? `&accessToken=${encodeURIComponent(data.order.accessToken)}` : ''}`;
-    
     if (data.pendingSettlement) {
-      setCheckoutState('가상계좌 발급 등 결제 대기 상태입니다. 잠시 후 결과 화면으로 이동합니다.', 'success');
-      setTimeout(() => location.assign(nextUrl), 2500);
+      setCheckoutState('결제가 아직 완료 처리 전입니다. 가상계좌 입금 또는 카드 승인 상태를 확인해 주세요.', 'warn');
       return;
     }
-    
-    setCheckoutState('결제가 성공적으로 완료되었습니다. 잠시 후 산출물 화면으로 자동 이동합니다.', 'success');
-    setTimeout(() => location.assign(nextUrl), 1500);
+    setCheckoutState('결제가 완료되었습니다.', 'success');
+    const anchor = document.createElement('a');
+    anchor.href = `/portal?orderId=${encodeURIComponent(data.order.id)}${data.order.accessToken ? `&accessToken=${encodeURIComponent(data.order.accessToken)}` : ''}`;
+    anchor.textContent = '내 사이트 관리로 이동';
+    state.appendChild(document.createTextNode(' '));
+    state.appendChild(anchor);
   } catch (error) {
     setCheckoutState(error.message || '결제 완료 여부를 확인하지 못했습니다.', 'warn');
-    completeBtn?.removeAttribute('disabled');
   } finally {
     isCompletingPayment = false;
+    completeBtn?.removeAttribute('disabled');
   }
 }
 async function maybeFinalizeRedirectResult() {
@@ -322,9 +288,8 @@ function renderPlanOptions() {
 }
 async function loadPaymentConfig() {
   try {
-    const res = await fetchWithTimeout('/api/public/payment/config', { cache: 'no-store', timeout: 8000 });
-    const text = await res.text();
-    let data; try { data = JSON.parse(text); } catch { data = {}; }
+    const res = await fetch('/api/public/payment/config', { cache: 'no-store' });
+    const data = await res.json().catch(() => ({}));
     if (!res.ok || data?.ok === false) throw new Error(data.error || '온라인 결제 상태를 확인하지 못했습니다.');
     paymentConfig = data;
   } catch (error) {
@@ -335,9 +300,8 @@ async function loadPaymentConfig() {
 }
 async function loadOffers() {
   try {
-    const res = await fetchWithTimeout('/api/public/products', { cache: 'no-store', timeout: 8000 });
-    const text = await res.text();
-    let data; try { data = JSON.parse(text); } catch { data = {}; }
+    const res = await fetch('/api/public/products', { cache: 'no-store' });
+    const data = await res.json().catch(() => ({}));
     if (!res.ok || !data?.ok || !Array.isArray(data.offers)) throw new Error('상품 정보를 불러오지 못했습니다.');
     offerMap = new Map(data.offers.map(item => [normalizePlanCode(item.code), { ...item, code: normalizePlanCode(item.code), price: Number(item.price || item.monthlyPrice || 0) }]));
   } catch {
@@ -351,8 +315,8 @@ async function loadOffers() {
 document.getElementById('buyerEmail')?.addEventListener('input', updateCheckoutButtonState);
 ['privacyConsent', 'termsConsent', 'refundConsent', 'deliveryConsent'].forEach(id => document.getElementById(id)?.addEventListener('change', updateCheckoutButtonState));
 planInput?.addEventListener('change', () => { renderPriceSummary(); updateCheckoutButtonState(); });
-checkoutBtn?.addEventListener('click', (e) => { e.preventDefault(); createSession(); });
-completeBtn?.addEventListener('click', (e) => { e.preventDefault(); completePayment(); });
+checkoutBtn?.addEventListener('click', createSession);
+completeBtn?.addEventListener('click', completePayment);
 window.addEventListener('load', updateCheckoutButtonState);
 setTimeout(updateCheckoutButtonState, 1200);
 let portoneReadyChecks = 0;

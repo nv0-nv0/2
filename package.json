@@ -1,6 +1,6 @@
 {
   "name": "nv0-veridion-cleanroom",
-  "version": "1.0.0-commercial-phase258-structural-hardening",
+  "version": "1.0.0-commercial-phase260-dispute-safe-penalty",
   "private": true,
   "type": "module",
   "scripts": {
@@ -27,12 +27,18 @@
     "test:e2e": "node tests/e2e.mjs",
     "test:phase258": "node tests/phase258-structural-hardening.mjs",
     "validate:phase258": "node scripts/validate-phase258-structural-hardening.mjs",
-    "phase258:final": "npm run check:syntax && npm test && npm run test:e2e && npm run check:pages && npm run test:routes && npm run check:links -- --summary && npm run test:phase258 && npm run validate:phase258 && npm run validate:commercial && npm run validate:commercial-runtime && npm run validate:pipeline",
-    "final:review": "npm run phase258:final",
+    "phase258:final": "npm run phase259:final",
+    "final:review": "npm run phase260:final",
     "ci:strict": "node scripts/ci-strict.mjs",
     "validate:commercial": "node scripts/validate-commercial-release.mjs",
     "validate:commercial-runtime": "node scripts/validate-commercial-runtime.mjs",
     "validate:pipeline": "node scripts/validate-pipeline.mjs",
-    "pipeline:release": "node scripts/pipeline-release-gate.mjs"
+    "pipeline:release": "node scripts/pipeline-release-gate.mjs",
+    "test:phase259": "node tests/phase259-demo-penalty-dashboard.mjs",
+    "validate:phase259": "node scripts/validate-phase259-demo-penalty-dashboard.mjs",
+    "phase259:final": "npm run check:syntax && npm test && npm run test:e2e && npm run check:pages && npm run test:routes && npm run check:links -- --summary && npm run test:phase258 && npm run validate:phase258 && npm run test:phase259 && npm run validate:phase259 && npm run validate:commercial && npm run validate:commercial-runtime && npm run validate:pipeline",
+    "test:phase260": "node tests/phase260-dispute-safe-penalty.mjs",
+    "validate:phase260": "node scripts/validate-phase260-dispute-safe-penalty.mjs",
+    "phase260:final": "npm run phase259:final && npm run test:phase260 && npm run validate:phase260"
   }
 }

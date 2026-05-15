@@ -15,7 +15,7 @@ const checkoutJs = read('apps/public/checkout/app.js');
 const boardJs = read('apps/public/board/app.js');
 const allRoutes = [server, publicRoutes, paymentRoutes, accountRoutes, adminRoutes].join('\n');
 
-assert.match(pkg.version, /phase258-structural-hardening/);
+assert.match(pkg.version, /phase25[89]-(structural-hardening|demo-penalty-dashboard)|phase260-dispute-safe-penalty/);
 for (const script of ['phase258:final','test:e2e','ci:strict','validate:commercial','validate:commercial-runtime','pipeline:release']) assert.ok(pkg.scripts[script], `missing script ${script}`);
 
 for (const route of ['/api/public/scan','/api/public/diagnose','/api/public/checkout-session','/api/public/payment/complete','/api/public/portal-summary','/api/public/fulfillment-download','/api/public/board','/api/public/payment/config']) assert.ok(allRoutes.includes(route), `missing route ${route}`);

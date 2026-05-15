@@ -84,7 +84,7 @@ function renderScoreSummary(latest, account, summary) {
   if (scoreBars) scoreBars.innerHTML = cards.map(item => `<article class="nv74-score-chip"><span>${escapeHtml(item.label)}</span><b>${escapeHtml(item.value)}</b><small>${escapeHtml(item.note)}</small></article>`).join('');
   if (scoreMetrics) scoreMetrics.innerHTML = metrics.map(item => `<article><span>${escapeHtml(item.label)}</span><b>${escapeHtml(item.value)}</b><small>${escapeHtml(item.note)}</small></article>`).join('');
   if (scoreDesc) {
-    scoreDesc.textContent = latest?.riskScore != null && Number.isFinite(Number(latest.riskScore))
+    scoreDesc.textContent = Number.isFinite(Number(latest?.riskScore))
       ? `${findings ? `최근 검사에서 ${findings}개 항목이 확인되었습니다.` : '최근 검사에서 즉시 보완할 항목은 적었습니다.'} ${nextAction.note}`
       : '진단을 실행하면 최근 점수와 보완 우선순위가 이곳에 정리됩니다.';
   }
@@ -212,7 +212,7 @@ function reportBars(score) {
 function renderPaidPortalDiagnosisReport(scan) {
   if (!scan) return '';
   const findings = Array.isArray(scan.detailFindings) ? scan.detailFindings.slice(0, 4) : [];
-  const checks = ['개인정보 안내', '구매·환불 안내', '사이트 관리 구조', '보안 안내'].map((label, index) => ({ label, score: Math.max(25, Math.min(95, Number(scan.riskScore || 0) - index * 7)) }));
+  const checks = ['개인정보 안내','구매·환불 안내','사이트 관리 구조','보안 안내'].map((label, index) => ({ label, score: Math.max(25, Math.min(95, Number(scan.riskScore || 0) - index * 7)) }));
   const projected = reportProjectedScore(scan.riskScore, findings.length);
   const riskCopy = reportRiskCopy(scan.riskScore);
   return `<div class="card stack portal-report-example portal-report-clean portal-unified-report"><div class="meta-row"><strong>URL 신뢰도 진단 결과</strong><span class="pill brand">실제 검사 결과</span></div><div class="portal-unified-top"><article class="portal-unified-score"><span>신뢰도 점수</span><strong>${escapeHtml(scan.riskScore ?? '-')}<em>/100</em></strong><small>${escapeHtml(riskCopy)}</small></article><article class="portal-unified-kpi"><span>개선 목표 점수</span><b>${escapeHtml(projected ?? '확인 필요')}</b><small>우선순위 항목 반영 기준</small></article><article class="portal-unified-kpi warn"><span>즉시 확인 필요</span><b>${escapeHtml(findings.length)}</b><small>상세 리포트에서 확인</small></article></div><div class="portal-unified-grid"><section class="portal-unified-box danger"><h4>핵심 문제</h4>${renderList(findings, '<p class="muted">세부 발견 항목 없음</p>', item => `<article><b>${escapeHtml(item.title || item.code || '점검 항목')}</b><small>${escapeHtml(item.recommendation || item.fixTemplate || '수정 방향 확인 필요')}</small></article>`)}</section><section class="portal-unified-box"><h4>항목별 분석</h4>${checks.map(item => `<article><b>${escapeHtml(item.label)}</b><small>${escapeHtml(item.score)}점 · ${escapeHtml(reportBars(item.score))}</small></article>`).join('')}</section></div><div class="portal-report-cta-row"><a class="btn primary" href="/checkout?plan=Expert&siteId=${escapeAttr(scan.siteId || '')}">전문가 리포트 결제</a><a class="btn secondary" href="/plans?siteId=${escapeAttr(scan.siteId || '')}">요금제</a><a class="btn secondary" href="/products/veridion/demo?target=${escapeAttr(encodeURIComponent(scan.target || ''))}">다시 진단</a></div><p class="muted">점수와 개선 목표는 진단 기준이며 실제 법적 안전성이나 성과를 보장하지 않습니다.</p></div>`;
@@ -241,7 +241,7 @@ function updateStaticDashboard(session, account, summary) {
   const saved = getSavedScan();
   const latest = latestScanFrom(account, summary) || saved;
   const sitesCount = account?.savedSites?.length || 0;
-  if (sidebarAccount) sidebarAccount.textContent = authenticated ? (account?.customer?.email || session?.customer?.email || '로그인 계정') : '비회원 · 최근 확인 기록';
+  if (sidebarAccount) sidebarAccount.textContent = authenticated ? (account?.customer?.email || session.customer?.email || '로그인 계정') : '비회원 · 최근 확인 기록';
   if (planCard) planCard.innerHTML = `<div><b>${authenticated ? '회원 전용 관리' : '무료 계정 필요'}</b><small><span>사이트 ${sitesCount}개</span><span>최근 검사 ${account?.recentScans?.length || 0}개</span></small></div><a class="btn secondary" href="${authenticated ? '/plans' : '/auth?next=/portal'}">${authenticated ? '상품 보기' : '로그인·회원가입'}</a>`;
   if (topbarTitle) topbarTitle.textContent = '내 사이트 다음 조치';
   if (topbarCopy) topbarCopy.textContent = authenticated ? '저장한 사이트를 다시 검사하고 최근 결과를 한곳에서 확인하세요.' : '비회원도 이 브라우저의 최근 확인 기록을 볼 수 있고, 회원가입하면 계정에 저장됩니다.';
@@ -270,11 +270,11 @@ async function loadPortal() {
   const accessToken = url.searchParams.get('accessToken') || '';
   if (orderId) fulfillment = await fetch(`/api/public/fulfillment?orderId=${encodeURIComponent(orderId)}${accessToken ? `&accessToken=${encodeURIComponent(accessToken)}` : ''}`).then(r => r.json()).catch(() => null);
   if (!session.authenticated) {
-    if (state) state.innerHTML = '이 브라우저의 최근 확인 기록을 표시합니다. 계정 저장이 필요하면 <a href="/auth?next=/portal">로그인·회원가입</a>을 이용하세요.';
+    state.innerHTML = '이 브라우저의 최근 확인 기록을 표시합니다. 계정 저장이 필요하면 <a href="/auth?next=/portal">로그인·회원가입</a>을 이용하세요.';
   } else {
-    if (state) state.textContent = `${account?.customer?.email || session?.customer?.email || '알 수 없는'} 계정 · 저장 사이트 ${(account?.savedSites || []).length}개 · 최근 검사 ${(account?.recentScans || []).length}개`;
+    state.textContent = `${account?.customer?.email || session.customer.email} 계정 · 저장 사이트 ${(account?.savedSites || []).length}개 · 최근 검사 ${(account?.recentScans || []).length}개`;
   }
-  if (primary) primary.innerHTML = `
+  primary.innerHTML = `
     ${session.authenticated ? renderSavedSites(account?.savedSites || []) : ''}
     ${session.authenticated ? renderRecentScans(account?.recentScans || []) : renderGuestScan(saved)}
     ${renderMemberValueBox(session, account)}
@@ -283,54 +283,43 @@ async function loadPortal() {
     ${renderAsset(fulfillment?.asset, fulfillment?.order || summary?.order, accessToken)}
     ${summary?.site ? `<div class="nv74-state"><strong>현재 선택 사이트</strong> · ${escapeHtml(summary.site.domain)} · ${escapeHtml(summary.site.latestRiskLevel || '검사 전')} · 최근 발견 ${escapeHtml(summary.site.latestFindings ?? summary.latestScan?.totalFindings ?? '-')}개</div>` : ''}
 `;
-  if (feed) feed.innerHTML = `
+  feed.innerHTML = `
     <div class="card stack"><div class="meta-row"><strong>게시판 연결 글</strong><a class="btn secondary" href="/board">게시판 보기</a></div>${renderBoardHighlights(summary?.boards || [])}</div>
     <div class="card stack"><strong>공지·인사이트</strong>${renderInsightFeed(summary?.boards || [])}</div>`;
 }
 
 saveForm?.addEventListener('submit', async (event) => {
   event.preventDefault();
-  const submitBtn = saveForm.querySelector('button[type="submit"]');
-  if (submitBtn) submitBtn.disabled = true;
-  if (saveState) saveState.textContent = '사이트를 저장하는 중입니다...';
+  saveState.textContent = '사이트를 저장하는 중입니다...';
   try {
-    const domain = (document.getElementById('saveUrl')?.value || '').trim();
-    const label = (document.getElementById('saveName')?.value || '').trim();
-    const memo = (document.getElementById('saveMemo')?.value || '').trim();
-    await jsonFetch('/api/public/account/sites', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ domain, label, memo }) });
-    if (saveState) saveState.textContent = '저장했습니다. 다음부터 클릭 한 번으로 다시 검사할 수 있습니다.';
+    await jsonFetch('/api/public/account/sites', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ domain: document.getElementById('saveUrl').value, label: document.getElementById('saveName').value, memo: document.getElementById('saveMemo').value }) });
+    saveState.textContent = '저장했습니다. 다음부터 클릭 한 번으로 다시 검사할 수 있습니다.';
     saveForm.reset();
     await loadPortal();
-  } catch (error) { if (saveState) saveState.textContent = error.message; }
-  finally { if (submitBtn) submitBtn.disabled = false; }
+  } catch (error) { saveState.textContent = error.message; }
 });
 primary?.addEventListener('click', async (event) => {
-  const removeBtn = event.target?.closest?.('[data-remove-site]');
-  const rescanBtn = event.target?.closest?.('[data-rescan-site], [data-rescan-domain]');
-  const removeId = removeBtn?.dataset?.removeSite;
-  const rescanId = rescanBtn?.dataset?.rescanSite;
-  const rescanDomain = rescanBtn?.dataset?.rescanDomain;
+  const removeId = event.target?.dataset?.removeSite;
+  const rescanId = event.target?.dataset?.rescanSite;
+  const rescanDomain = event.target?.dataset?.rescanDomain;
   if (removeId) {
     event.preventDefault();
-    if (removeBtn) removeBtn.disabled = true;
-    try { await jsonFetch(`/api/public/account/sites/${encodeURIComponent(removeId)}`, { method: 'DELETE' }); await loadPortal(); } catch (error) { if (state) state.textContent = error.message; }
-    finally { if (removeBtn) removeBtn.disabled = false; }
+    try { await jsonFetch(`/api/public/account/sites/${encodeURIComponent(removeId)}`, { method: 'DELETE' }); await loadPortal(); } catch (error) { state.textContent = error.message; }
   }
   if (rescanId || rescanDomain) {
     event.preventDefault();
-    if (rescanBtn) rescanBtn.disabled = true;
-    if (state) state.textContent = '저장된 사이트를 다시 검사하는 중입니다...';
+    state.textContent = '저장된 사이트를 다시 검사하는 중입니다...';
     try {
       await jsonFetch('/api/public/account/rescan', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ siteId: rescanId, domain: rescanDomain }) });
-      if (state) state.textContent = '재검사가 완료되었습니다. 최근 검사 내역을 갱신했습니다.';
+      state.textContent = '재검사가 완료되었습니다. 최근 검사 내역을 갱신했습니다.';
       await loadPortal();
-    } catch (error) { if (state) state.textContent = error.message; }
-    finally { if (rescanBtn) rescanBtn.disabled = false; }
+    } catch (error) { state.textContent = error.message; }
   }
 });
 
 loadPortal().catch(error => {
-  if (state) state.textContent = `내 사이트 관리 정보를 불러오지 못했습니다: ${error.message}`;
-  if (primary) primary.innerHTML = '<div class="nv74-state">내 사이트 관리 요약을 불러오지 못했습니다.</div>';
-  if (feed) feed.innerHTML = '<div class="nv74-state">잠시 후 다시 시도하세요.</div>';
+  state.textContent = `내 사이트 관리 정보를 불러오지 못했습니다: ${error.message}`;
+  primary.innerHTML = '<div class="nv74-state">내 사이트 관리 요약을 불러오지 못했습니다.</div>';
+  feed.innerHTML = '<div class="nv74-state">잠시 후 다시 시도하세요.</div>';
 });
+

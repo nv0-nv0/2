@@ -21,7 +21,7 @@ const ci = exists('.github/workflows/ci.yml') ? read('.github/workflows/ci.yml')
 const rel = exists('.github/workflows/commercial-release.yml') ? read('.github/workflows/commercial-release.yml') : '';
 
 ['server/index.mjs','server/routes/public.mjs','server/routes/payment.mjs','shared/html.js','shared/site-enhancements.js','apps/public/board/app.js','apps/public/checkout/app.js','scripts/test-all.mjs','tests/e2e.mjs','RUN_ALL_TESTS.sh'].forEach(file => add(`exists:${file}`, exists(file)));
-add('package version phase258', /phase258-structural-hardening/.test(pkg.version));
+add('package version phase258', /phase25[89]-(structural-hardening|demo-penalty-dashboard)|phase260-dispute-safe-penalty/.test(pkg.version));
 ['test:e2e','ci:strict','validate:commercial','validate:commercial-runtime','validate:pipeline','pipeline:release','final:review','test:phase258','validate:phase258','phase258:final'].forEach(script => add(`package script:${script}`, !!pkg.scripts?.[script]));
 add('phase257 aliases preserved to phase258', /phase258:final/.test(pkg.scripts?.['phase257:final'] || '') && /test:phase258/.test(pkg.scripts?.['test:phase257'] || ''));
 add('stale phase107 workflow removed', !exists('.github/workflows/phase107-complete-pipeline.yml'));

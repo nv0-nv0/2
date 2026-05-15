@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-14T01:37:11.176Z",
+  "generatedAt": "2026-05-15T03:34:01.889Z",
   "ok": true,
   "gate": "phase258-release-pipeline-gate",
   "totalGates": 9,
@@ -12,8 +12,8 @@
       "code": 0,
       "signal": null,
       "timedOut": false,
-      "durationMs": 117,
-      "stdout": "{\n  \"ok\": true,\n  \"checked\": \"runtime-clean-release\",\n  \"mode\": \"runtime-directory-present-clean\"\n}\n",
+      "durationMs": 95,
+      "stdout": "{\n  \"ok\": true,\n  \"checked\": \"runtime-clean-release\",\n  \"mode\": \"runtime-directory-absent-clean\"\n}\n",
       "stderr": ""
     },
     {
@@ -22,7 +22,7 @@
       "code": 0,
       "signal": null,
       "timedOut": false,
-      "durationMs": 107,
+      "durationMs": 125,
       "stdout": "{\n  \"ok\": true,\n  \"checked\": [\n    {\n      \"file\": \".env.example\",\n      \"keyCount\": 121,\n      \"ok\": true\n    },\n    {\n      \"file\": \"deploy/coolify.env.example\",\n      \"keyCount\": 115,\n      \"ok\": true\n    },\n    {\n      \"file\": \"deploy/env.production.template\",\n      \"keyCount\": 109,\n      \"ok\": true\n    },\n    {\n      \"file\": \"deploy/env.production.nv0.kr.example\",\n      \"keyCount\": 109,\n      \"ok\": true\n    },\n    {\n      \"file\": \"deploy/env.commercial.template\",\n      \"keyCount\": 109,\n      \"ok\": true\n    }\n  ],\n  \"errors\": []\n}\n",
       "stderr": ""
     },
@@ -32,7 +32,7 @@
       "code": 0,
       "signal": null,
       "timedOut": false,
-      "durationMs": 114,
+      "durationMs": 111,
       "stdout": "Deploy bundle validation passed\n",
       "stderr": ""
     },
@@ -42,8 +42,8 @@
       "code": 0,
       "signal": null,
       "timedOut": false,
-      "durationMs": 97,
-      "stdout": "{\n  \"ok\": true,\n  \"checkedAt\": \"2026-05-14T01:37:10.280Z\",\n  \"platformTarget\": \"commercial\",\n  \"controls\": {\n    \"auth\": \"account_rbac\",\n    \"persistence\": \"postgres_primary\",\n    \"session\": \"redis\",\n    \"rateLimit\": \"redis\",\n    \"lock\": \"redis\",\n    \"storage\": \"s3\",\n    \"scan\": \"external_http\",\n    \"payment\": \"portone_v2\"\n  }\n}\n",
+      "durationMs": 100,
+      "stdout": "{\n  \"ok\": true,\n  \"checkedAt\": \"2026-05-15T03:34:01.003Z\",\n  \"platformTarget\": \"commercial\",\n  \"controls\": {\n    \"auth\": \"account_rbac\",\n    \"persistence\": \"postgres_primary\",\n    \"session\": \"redis\",\n    \"rateLimit\": \"redis\",\n    \"lock\": \"redis\",\n    \"storage\": \"s3\",\n    \"scan\": \"external_http\",\n    \"payment\": \"portone_v2\"\n  }\n}\n",
       "stderr": ""
     },
     {
@@ -52,8 +52,8 @@
       "code": 0,
       "signal": null,
       "timedOut": false,
-      "durationMs": 107,
-      "stdout": "{\n  \"ok\": true,\n  \"checkedAt\": \"2026-05-14T01:37:10.388Z\",\n  \"commercialReleaseGuards\": 10,\n  \"legalPages\": 4,\n  \"businessProfile\": true\n}\n",
+      "durationMs": 109,
+      "stdout": "{\n  \"ok\": true,\n  \"checkedAt\": \"2026-05-15T03:34:01.114Z\",\n  \"commercialReleaseGuards\": 10,\n  \"legalPages\": 4,\n  \"businessProfile\": true\n}\n",
       "stderr": ""
     },
     {
@@ -62,8 +62,8 @@
       "code": 0,
       "signal": null,
       "timedOut": false,
-      "durationMs": 91,
-      "stdout": "{\n  \"ok\": true,\n  \"checkedAt\": \"2026-05-14T01:37:10.483Z\",\n  \"requiredFiles\": 11\n}\n",
+      "durationMs": 100,
+      "stdout": "{\n  \"ok\": true,\n  \"checkedAt\": \"2026-05-15T03:34:01.215Z\",\n  \"requiredFiles\": 11\n}\n",
       "stderr": ""
     },
     {
@@ -72,8 +72,8 @@
       "code": 0,
       "signal": null,
       "timedOut": false,
-      "durationMs": 124,
-      "stdout": "{\n  \"ok\": true,\n  \"passed\": 105,\n  \"failed\": 0,\n  \"report\": \"docs/current/PHASE258_TEST_ALL_SUMMARY_20260514.json\"\n}\n",
+      "durationMs": 117,
+      "stdout": "{\n  \"ok\": true,\n  \"passed\": 102,\n  \"failed\": 0,\n  \"report\": \"docs/current/PHASE258_TEST_ALL_SUMMARY_20260514.json\"\n}\n",
       "stderr": ""
     },
     {
@@ -82,7 +82,7 @@
       "code": 0,
       "signal": null,
       "timedOut": false,
-      "durationMs": 442,
+      "durationMs": 441,
       "stdout": "PASS full-test-suite\nPASS commercial-release-contract\nPASS pipeline-contract\n{\n  \"ok\": true,\n  \"report\": \"docs/current/PHASE258_CI_STRICT_SUMMARY_20260514.json\"\n}\n",
       "stderr": ""
     },
@@ -92,8 +92,8 @@
       "code": 0,
       "signal": null,
       "timedOut": false,
-      "durationMs": 112,
-      "stdout": "{\n  \"ok\": true,\n  \"checked\": \"runtime-clean-release\",\n  \"mode\": \"runtime-directory-present-clean\"\n}\n",
+      "durationMs": 99,
+      "stdout": "{\n  \"ok\": true,\n  \"checked\": \"runtime-clean-release\",\n  \"mode\": \"runtime-directory-absent-clean\"\n}\n",
       "stderr": ""
     }
   ]
