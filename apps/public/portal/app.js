@@ -5,7 +5,12 @@ const primary = document.getElementById('portalPrimary');
 const feed = document.getElementById('portalFeed');
 const saveForm = document.getElementById('saveSiteForm');
 const saveState = document.getElementById('saveSiteState');
-const sidebarAccount = document.querySelector('.nv74-account');
+const portalAccountState = document.getElementById('portalAccountState');
+const dashboardTotalSites = document.getElementById('portalTotalSites');
+const dashboardCriticalIssues = document.getElementById('portalCriticalIssues');
+const dashboardCompliantSites = document.getElementById('portalCompliantSites');
+const dashboardAssetList = document.getElementById('portalAssetList');
+const addSiteToggle = document.getElementById('addSiteToggle');
 const planCard = document.querySelector('.nv74-plan-card');
 const topbarTitle = document.querySelector('.nv74-topbar h1');
 const topbarCopy = document.querySelector('.nv74-topbar p');
@@ -57,12 +62,109 @@ function urgentCountFromScan(scan = {}) {
   const total = findCountFromScan(scan);
   return total ? Math.max(1, Math.min(total, Math.ceil(total / 2))) : 0;
 }
+
+function numericScore(value) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : null;
+}
+function riskProfileFromScore(score, level = '') {
+  const normalizedLevel = String(level || '').trim();
+  const n = numericScore(score);
+  if (n == null) {
+    if (/치명|심각|위험|높음|high|critical/i.test(normalizedLevel)) return { key: 'critical', label: '치명적 위험', icon: 'priority_high', border: 'border-error', chip: 'bg-secondary-container text-on-error', action: '지금 해결하기' };
+    if (/준수|완료|안전|낮음|safe|ok/i.test(normalizedLevel)) return { key: 'safe', label: '규제 준수 완료', icon: 'verified', border: 'border-tertiary-fixed-dim', chip: 'bg-[#DCFCE7] text-[#166534]', action: '상세 리포트' };
+    return { key: 'warning', label: '수동 점검 필요', icon: 'warning', border: 'border-[#F59E0B]', chip: 'bg-[#FEF3C7] text-[#92400E]', action: '가이드라인 업데이트' };
+  }
+  if (n >= 75) return { key: 'critical', label: '치명적 위험', icon: 'priority_high', border: 'border-error', chip: 'bg-secondary-container text-on-error', action: '지금 해결하기' };
+  if (n >= 55) return { key: 'warning', label: '수동 점검 필요', icon: 'warning', border: 'border-[#F59E0B]', chip: 'bg-[#FEF3C7] text-[#92400E]', action: '가이드라인 업데이트' };
+  return { key: 'safe', label: '규제 준수 완료', icon: 'verified', border: 'border-tertiary-fixed-dim', chip: 'bg-[#DCFCE7] text-[#166534]', action: '상세 리포트' };
+}
+function iconForDomain(domain = '') {
+  if (/shop|store|mall|commerce|ecommerce|pay|cart/i.test(domain)) return 'shopping_cart';
+  if (/blog|news|post|insight|content/i.test(domain)) return 'article';
+  return 'apartment';
+}
+function assetFromSite(site = {}) {
+  const risk = riskProfileFromScore(site.latestRiskScore, site.latestRiskLevel);
+  return {
+    id: site.siteId || site.id || site.domain || uidFallback(site.domain),
+    siteId: site.siteId || site.id || '',
+    domain: site.domain || site.label || '저장 사이트',
+    label: site.label || site.domain || '저장 사이트',
+    score: site.latestRiskScore ?? null,
+    findings: site.latestFindings ?? site.totalFindings ?? null,
+    lastScanAt: site.lastScanAt || site.updatedAt || site.createdAt || null,
+    source: 'site',
+    risk
+  };
+}
+function assetFromScan(scan = {}) {
+  const target = readableDomain(scan.target || scan.domain || '최근 진단 사이트');
+  const risk = riskProfileFromScore(scan.riskScore, scan.riskLevel);
+  return {
+    id: scan.siteId || scan.requestId || target || 'recent-scan',
+    siteId: scan.siteId || '',
+    requestId: scan.requestId || '',
+    domain: target,
+    label: target,
+    score: scan.riskScore ?? null,
+    findings: findCountFromScan(scan),
+    lastScanAt: scan.createdAt || scan.generatedAt || null,
+    source: 'scan',
+    risk
+  };
+}
+function uidFallback(value = '') {
+  return String(value || 'asset').toLowerCase().replace(/[^a-z0-9가-힣]+/gi, '-').replace(/^-|-$/g, '') || 'asset';
+}
+function collectDashboardAssets(account, summary, savedScan) {
+  const assets = [];
+  const seen = new Set();
+  const push = (asset) => {
+    const key = String(asset.siteId || asset.domain || asset.requestId || '').toLowerCase();
+    if (!key || seen.has(key)) return;
+    seen.add(key);
+    assets.push(asset);
+  };
+  for (const site of account?.savedSites || []) push(assetFromSite(site));
+  for (const scan of account?.recentScans || []) push(assetFromScan(scan));
+  if (summary?.site) push(assetFromSite(summary.site));
+  if (summary?.latestScan) push(assetFromScan(summary.latestScan));
+  if (savedScan) push(assetFromScan(savedScan));
+  return assets.slice(0, 12);
+}
+function renderDashboardAssets(assets = []) {
+  if (!dashboardAssetList) return;
+  if (!assets.length) {
+    dashboardAssetList.innerHTML = `<div class="bg-surface-container-lowest rounded-[16px] p-6 card-shadow border-l-4 border-primary"><div class="flex flex-col md:flex-row justify-between gap-4"><div><h3 class="font-headline-sm text-headline-sm text-on-surface">등록된 사이트가 없습니다</h3><p class="font-body-md text-body-md text-on-surface-variant mt-2">새 사이트를 추가하거나 무료 진단을 실행하면 이곳에 실제 자산과 상태가 표시됩니다.</p></div><div class="flex gap-2 flex-wrap"><a class="btn primary" href="#saveSiteForm">새 사이트 추가</a><a class="btn secondary" href="/products/veridion/demo">무료 진단 시작</a></div></div></div>`;
+    return;
+  }
+  dashboardAssetList.innerHTML = assets.map(asset => {
+    const siteParam = asset.siteId ? `siteId=${encodeURIComponent(asset.siteId)}` : '';
+    const reportHref = siteParam ? `/portal?${siteParam}#portalPrimary` : `/products/veridion/demo?target=${encodeURIComponent(asset.domain || '')}`;
+    const checkoutHref = siteParam ? `/checkout?plan=${asset.risk.key === 'critical' ? 'Expert' : 'Report'}&${siteParam}` : `/plans`;
+    const secondaryHref = asset.risk.key === 'safe' ? `/products/veridion/demo?target=${encodeURIComponent(asset.domain || '')}` : checkoutHref;
+    const meta = asset.lastScanAt ? `마지막 스캔: ${formatDate(asset.lastScanAt)}` : (asset.score == null ? '검사 전' : '최근 검사 기준');
+    const score = asset.score == null ? '' : `<span class="font-label-sm text-label-sm text-outline">점수 ${escapeHtml(asset.score)}${asset.findings != null ? ` · 발견 ${escapeHtml(asset.findings)}개` : ''}</span>`;
+    const actionText = asset.risk.key === 'critical' ? '지금 해결하기' : (asset.risk.key === 'warning' ? '가이드라인 업데이트' : '다시 진단');
+    return `<div class="bg-surface-container-lowest rounded-[16px] p-6 card-shadow border-l-4 ${asset.risk.border} flex flex-col md:flex-row items-start md:items-center justify-between gap-6"><div class="flex items-center gap-4"><div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-surface-variant">${escapeHtml(iconForDomain(asset.domain))}</span></div><div><h3 class="font-headline-sm text-headline-sm text-on-surface">${escapeHtml(asset.label || asset.domain)}</h3><p class="font-body-md text-body-md text-on-surface-variant">${escapeHtml(meta)}</p>${score}</div></div><div class="flex items-center gap-4 flex-wrap w-full md:w-auto"><div class="${asset.risk.chip} px-4 py-1.5 rounded-full font-label-md text-label-md flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">${escapeHtml(asset.risk.icon)}</span>${escapeHtml(asset.risk.label)}</div><div class="flex gap-2 w-full md:w-auto"><a class="flex-1 md:flex-none px-4 py-2 border border-primary text-primary rounded-xl font-label-md text-label-md hover:bg-surface-container-low transition-colors" href="${escapeAttr(reportHref)}">상세 리포트</a><a class="flex-1 md:flex-none px-4 py-2 ${asset.risk.key === 'critical' ? 'bg-secondary-container text-on-error hover:bg-secondary' : 'bg-primary text-on-primary hover:bg-primary-container'} rounded-xl font-label-md text-label-md transition-colors" href="${escapeAttr(secondaryHref)}">${escapeHtml(actionText)}</a></div></div></div>`;
+  }).join('');
+}
+function updateDashboardSummary(assets = []) {
+  const total = assets.length;
+  const critical = assets.filter(item => item.risk?.key === 'critical').length;
+  const compliant = assets.filter(item => item.risk?.key === 'safe').length;
+  if (dashboardTotalSites) dashboardTotalSites.textContent = String(total);
+  if (dashboardCriticalIssues) dashboardCriticalIssues.textContent = String(critical);
+  if (dashboardCompliantSites) dashboardCompliantSites.textContent = String(compliant);
+  renderDashboardAssets(assets);
+}
 function nextActionFromScan(scan = {}) {
   const score = Number(scan?.riskScore);
   const findings = findCountFromScan(scan);
   if (!Number.isFinite(score)) return { title: '새 진단 시작', note: '최근 결과가 없으므로 먼저 검사하세요.' };
-  if (score <= 39 || findings >= 6) return { title: '핵심 문구 먼저 보완', note: '결제·문의 직전 안내를 우선 정리하는 편이 좋습니다.' };
-  if (score <= 69 || findings >= 3) return { title: '상세 리포트 확인', note: '보완 우선순위와 수정 방향을 함께 확인하세요.' };
+  if (score >= 75 || findings >= 6) return { title: '핵심 문구 먼저 보완', note: '결제·문의 직전 안내를 우선 정리하는 편이 좋습니다.' };
+  if (score >= 55 || findings >= 3) return { title: '상세 리포트 확인', note: '보완 우선순위와 수정 방향을 함께 확인하세요.' };
   return { title: '재검사로 유지 확인', note: '현재 구조를 유지하면서 새 공백이 생기지 않는지 확인하세요.' };
 }
 function renderScoreSummary(latest, account, summary) {
@@ -241,7 +343,9 @@ function updateStaticDashboard(session, account, summary) {
   const saved = getSavedScan();
   const latest = latestScanFrom(account, summary) || saved;
   const sitesCount = account?.savedSites?.length || 0;
-  if (sidebarAccount) sidebarAccount.textContent = authenticated ? (account?.customer?.email || session.customer?.email || '로그인 계정') : '비회원 · 최근 확인 기록';
+  const dashboardAssets = collectDashboardAssets(account, summary, saved);
+  updateDashboardSummary(dashboardAssets);
+  if (portalAccountState) portalAccountState.textContent = authenticated ? `${account?.customer?.email || session.customer?.email || '로그인 계정'} 계정으로 연결됨` : '비회원 · 최근 확인 기록';
   if (planCard) planCard.innerHTML = `<div><b>${authenticated ? '회원 전용 관리' : '무료 계정 필요'}</b><small><span>사이트 ${sitesCount}개</span><span>최근 검사 ${account?.recentScans?.length || 0}개</span></small></div><a class="btn secondary" href="${authenticated ? '/plans' : '/auth?next=/portal'}">${authenticated ? '상품 보기' : '로그인·회원가입'}</a>`;
   if (topbarTitle) topbarTitle.textContent = '내 사이트 다음 조치';
   if (topbarCopy) topbarCopy.textContent = authenticated ? '저장한 사이트를 다시 검사하고 최근 결과를 한곳에서 확인하세요.' : '비회원도 이 브라우저의 최근 확인 기록을 볼 수 있고, 회원가입하면 계정에 저장됩니다.';
@@ -288,6 +392,11 @@ async function loadPortal() {
     <div class="card stack"><strong>공지·인사이트</strong>${renderInsightFeed(summary?.boards || [])}</div>`;
 }
 
+addSiteToggle?.addEventListener('click', () => {
+  saveForm?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  document.getElementById('saveUrl')?.focus({ preventScroll: true });
+});
+
 saveForm?.addEventListener('submit', async (event) => {
   event.preventDefault();
   saveState.textContent = '사이트를 저장하는 중입니다...';
@@ -296,7 +405,11 @@ saveForm?.addEventListener('submit', async (event) => {
     saveState.textContent = '저장했습니다. 다음부터 클릭 한 번으로 다시 검사할 수 있습니다.';
     saveForm.reset();
     await loadPortal();
-  } catch (error) { saveState.textContent = error.message; }
+  } catch (error) {
+    const message = error.message || '사이트를 저장하지 못했습니다.';
+    if (/로그인/.test(message)) saveState.innerHTML = `${escapeHtml(message)} <a href="/auth?next=/portal">로그인·회원가입</a>`;
+    else saveState.textContent = message;
+  }
 });
 primary?.addEventListener('click', async (event) => {
   const removeId = event.target?.dataset?.removeSite;

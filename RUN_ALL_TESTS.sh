@@ -3,6 +3,6 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 cd "$ROOT"
 
-npm run phase258:final
+npm run phase265:final
 
-echo "PASS: PHASE258 structural hardening final gate"
+echo "PASS: PHASE265 dashboard portal final gate"

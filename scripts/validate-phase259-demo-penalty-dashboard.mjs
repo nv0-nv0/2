@@ -12,7 +12,7 @@ const css = read('shared/nv0-clean-slate-20260512.css');
 const server = read('server/index.mjs');
 const publicRoutes = read('server/routes/public.mjs');
 
-add('package version phase259', /phase259-demo-penalty-dashboard|phase260-dispute-safe-penalty/.test(pkg.version));
+add('package version phase259', /phase259-demo-penalty-dashboard|phase260-dispute-safe-penalty|phase265-dashboard-portal-completion/.test(pkg.version));
 ['test:phase259','validate:phase259','phase259:final','final:review'].forEach(script => add(`package script:${script}`, !!pkg.scripts?.[script]));
 add('phase258 final redirects to phase259', /phase259:final/.test(pkg.scripts?.['phase258:final'] || ''));
 add('demo JS has compact Korean penalty formatter', demoJs.includes('function formatPenaltyCompact') && demoJs.includes('만 원'));
