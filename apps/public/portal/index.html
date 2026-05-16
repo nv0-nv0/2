@@ -3,7 +3,7 @@
 <html class="light" lang="ko"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>내 사이트 관리 - nv0 법률 리스크 관리</title>
+<title>내 사이트 다음 조치 - nv0 법률 리스크 관리</title>
 <link href="/shared/nv0-clean-slate-20260512.css" rel="stylesheet"/><link href="/shared/nv0n-generated.css" rel="stylesheet"/><link href="/shared/nv0n-runtime.css" rel="stylesheet"/></head>
 <body class="nv0n-page bg-background text-on-background font-body-md min-h-screen flex flex-col" data-nv0n-page="true">
 <header class="nv0n-topbar" data-nv0n-visible-menu="true">
@@ -17,55 +17,77 @@
 </div>
 </header>
 
-<main id="main" tabindex="-1" data-route-smoke="내 사이트 관리 확인 기록" class="flex-grow w-full max-w-container-max mx-auto px-gutter py-section-padding-mobile md:py-section-padding-desktop"><div class="sr-only">온라인 사업자 리스크 진단 · 법률·규제·과태료 리스크 · 페이지 이동 상단 메뉴 제공</div>
-<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-[64px] gap-6">
-<div>
-<h1 class="font-headline-lg text-headline-lg text-primary mb-2">내 사이트 관리</h1>
-<p class="font-body-md text-body-md text-on-surface-variant">웹 자산 전반의 법적 리스크를 모니터링하고 관리하세요.</p>
+<main id="main" tabindex="-1" data-route-smoke="내 사이트 관리 확인 기록" class="nv0-portal-main"><div class="sr-only">온라인 사업자 리스크 진단 · 법률·규제·과태료 리스크 · 페이지 이동 상단 메뉴 제공</div>
+<section class="portal-hero" aria-labelledby="portalTitle">
+<div class="portal-hero-copy">
+<p class="portal-kicker">내 사이트 관리</p>
+<h1 id="portalTitle">내 사이트 다음 조치</h1>
+<p>몇 분만 투자하면 검색 visibility가 올라가고, AI 및 LLM 가시성이 동시에 증가합니다. 함께 성장합시다.</p>
 </div>
-<button class="flex items-center gap-2 bg-primary text-on-primary px-6 py-3 rounded-xl font-label-md text-label-md hover:bg-primary-container transition-colors shadow-md" id="addSiteToggle" type="button" data-nv0n-action="scrollSaveSite">
-<span class="material-symbols-outlined text-[20px]">add</span>
-                새 사이트 추가
-            </button>
-</div>
-<section aria-label="새 사이트 등록" class="nv0n-functional-bridge" id="portalSiteFormPanel">
-<div class="phase264-functional-head"><div><h2>새 사이트 등록</h2><p class="muted">URL을 저장하면 진단 이력, 재검사, 리포트 결제 흐름이 한곳으로 연결됩니다.</p></div><a class="btn secondary" href="/products/veridion/demo">먼저 무료 진단</a></div>
-<form class="bridge-grid" id="saveSiteForm"><label>사이트 주소<input autocomplete="url" id="saveUrl" placeholder="https://your-store.kr"/></label><label>사이트 이름<input autocomplete="off" id="saveName" placeholder="자사몰 / 캠페인 첫 화면"/></label><label class="md:col-span-2">메모<input autocomplete="off" id="saveMemo" placeholder="오픈일, 광고 집행 여부 등"/></label><button type="submit">사이트 저장</button><div class="notice muted" id="saveSiteState">사이트를 저장하면 진단 이력을 이어서 관리할 수 있습니다.</div></form>
+<button class="portal-primary-action" id="addSiteToggle" type="button" data-nv0n-action="scrollSaveSite">새 액션 시작 →</button>
 </section>
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-[80px]" id="portalSummaryCards">
-<div class="bg-surface-container-lowest rounded-[16px] p-6 card-shadow border-l-4 border-primary">
-<div class="flex items-center gap-3 mb-4 text-on-surface-variant">
-<span class="material-symbols-outlined text-primary">language</span>
-<h3 class="font-headline-sm text-headline-sm">전체 사이트 수</h3>
+
+<section class="portal-dashboard-grid" aria-label="내 사이트 대시보드">
+<section class="portal-card portal-score-card nv74-score-card" aria-labelledby="portalScoreTitle">
+<div class="portal-score-head">
+<div class="portal-score-value"><span class="nv74-score-number">-</span><small>최근 점수</small></div>
+<div>
+<h2 id="portalScoreTitle">최근 진단 요약</h2>
+<p class="nv74-score-desc">진단을 실행하면 주요 보완 항목과 다음 조치가 이곳에 정리됩니다.</p>
+<p class="portal-last-scan"><span>최근 진단일: </span><b id="portalLatestScanAt">검사 이력 없음</b></p>
 </div>
-<div class="font-display-lg text-display-lg text-primary" id="portalTotalSites">0</div>
-<p class="font-label-sm text-label-sm text-outline mt-2">모니터링 중인 활성 자산</p>
+<a class="btn primary portal-score-cta" href="/products/veridion/demo">새 진단 시작</a>
 </div>
-<div class="bg-surface-container-lowest rounded-[16px] p-6 card-shadow border-l-4 border-error">
-<div class="flex items-center gap-3 mb-4 text-on-surface-variant">
-<span class="material-symbols-outlined text-error fill">warning</span>
-<h3 class="font-headline-sm text-headline-sm">심각한 이슈</h3>
+<div class="nv74-status-warning portal-risk-pill">검사 전</div>
+<div class="portal-metric-strip" id="portalSummaryCards">
+<article><span>즉각적 개선 필요</span><b id="portalCriticalIssues">0</b><small>즉시 조치 필요</small></article>
+<article><span>경고 상태</span><b id="portalWarningIssues">0</b><small>짧은 조치 가능</small></article>
+<article><span>실행 필요</span><b id="portalActionRequiredCount">0</b><small>중간 우선 실행</small></article>
+<article><span>발견 문제</span><b id="portalSummaryDomain">검사 전</b><small>도메인 이름 / 주소</small></article>
+<article><span>발생 문제</span><b id="portalIssueCount">0</b><small>긴급 조치 필요</small></article>
+<article><span>우선 조사 필요</span><b id="portalPriorityCount">0</b><small>추가 조사 확인</small></article>
+<article><span>저장 사이트</span><b id="portalTotalSites">0</b><small>계정 기준</small></article>
+<article><span>관리 정상</span><b id="portalCompliantSites">0</b><small>기준 충족 자산</small></article>
+<article class="portal-metric-wide"><span>콘텐츠 상태</span><b id="portalContentStatus">핵심 문구 먼저 보완</b><small>콘텐츠 전략 수립이 성과에 빠르게 영향을 줍니다.</small></article>
 </div>
-<div class="font-display-lg text-display-lg text-error" id="portalCriticalIssues">0</div>
-<p class="font-label-sm text-label-sm text-outline mt-2">즉각적인 조치 필요</p>
+<div class="phase239-metric-grid" id="portalScoreMetrics"></div>
+<div class="phase239-score-bars" id="portalScoreBars"></div>
+<footer><span>최근 진단일: 검사 이력 없음</span></footer>
+</section>
+
+<section class="portal-card nv74-work-card" aria-labelledby="portalQuickTitle">
+<div class="nv74-card-head"><h2 id="portalQuickTitle">바로 할 수 있는 일</h2><a href="#saveSiteForm">사이트 등록 ›</a></div>
+<div class="portal-placeholder-list"><p>사이트 최적화, 지금 시작해 보세요.</p><p>내 사이트 특성과 nv0의 기술력으로 쉽게 해결해 보세요.</p></div>
+</section>
+
+<section class="portal-card portal-actions-card" aria-labelledby="portalNextTitle">
+<div class="portal-section-head"><h2 id="portalNextTitle">다음 행동</h2></div>
+<div class="phase239-action-grid" id="portalNextActions"></div>
+</section>
+
+<section class="portal-card portal-site-card" aria-labelledby="portalSitesTitle">
+<div class="portal-section-head"><div><h2 id="portalSitesTitle">내 사이트 목록</h2><p>기본 확인 가능</p></div><a class="btn secondary" href="/products/veridion/demo">더 많은 사이트 보기</a></div>
+<div class="portal-asset-list" id="portalAssetList" aria-live="polite">
+<div class="portal-empty-card"><strong>내 사이트 정보를 불러오는 중입니다.</strong><p>잠시만 기다려 주세요.</p></div>
 </div>
-<div class="bg-surface-container-lowest rounded-[16px] p-6 card-shadow border-l-4 border-tertiary-fixed-dim">
-<div class="flex items-center gap-3 mb-4 text-on-surface-variant">
-<span class="material-symbols-outlined text-tertiary-fixed-dim">check_circle</span>
-<h3 class="font-headline-sm text-headline-sm">규제 준수 완료</h3>
+<div id="portalPrimary" class="portal-primary-detail"></div>
+</section>
+
+<section class="portal-card portal-feed-card" aria-labelledby="portalFeedTitle">
+<div class="portal-section-head"><h2 id="portalFeedTitle">최근 기록과 인사이트</h2><a class="btn secondary" href="/board">자세히 보기</a></div>
+<div id="portalFeed"></div>
+</section>
+
+<section class="portal-card portal-tools-card" aria-labelledby="portalToolsTitle">
+<div class="portal-section-head"><h2 id="portalToolsTitle">계정과 사이트 등록</h2></div>
+<div class="portal-account-panel nv74-account"><h3>계정 상태</h3><div class="notice muted" id="portalAccountState">계정 연결 상태를 확인하는 중입니다.</div><div class="notice muted" id="portalState">내 사이트 정보를 안전하게 확인하세요.</div></div>
+<div aria-label="새 사이트 등록" class="portal-site-form" id="portalSiteFormPanel">
+<div class="phase264-functional-head"><div><h3>새 사이트 등록</h3><p class="muted">URL을 저장하면 진단 이력, 재검사, 리포트 결제 흐름이 한곳으로 연결됩니다.</p></div><a class="btn secondary" href="/products/veridion/demo">먼저 무료 진단</a></div>
+<form class="bridge-grid" id="saveSiteForm"><label>사이트 주소<input autocomplete="url" id="saveUrl" placeholder="https://your-store.kr"/></label><label>사이트 이름<input autocomplete="off" id="saveName" placeholder="자사몰 / 캠페인 첫 화면"/></label><label class="memo-field">메모<input autocomplete="off" id="saveMemo" placeholder="오픈일, 광고 집행 여부 등"/></label><button type="submit">사이트 저장</button><div class="notice muted" id="saveSiteState">사이트를 저장하면 진단 이력을 이어서 관리할 수 있습니다.</div></form>
 </div>
-<div class="font-display-lg text-display-lg text-tertiary-container" id="portalCompliantSites">0</div>
-<p class="font-label-sm text-label-sm text-outline mt-2">가이드라인 기준 충족 자산</p>
-</div>
-</div>
-<div class="flex items-center justify-between gap-4 flex-wrap mb-6"><h2 class="font-headline-sm text-headline-sm text-primary">활성 자산 목록</h2><a class="btn secondary" href="/products/veridion/demo">새 진단 시작</a></div>
-<div class="flex flex-col gap-4" id="portalAssetList" aria-live="polite">
-<div class="bg-surface-container-lowest rounded-[16px] p-6 card-shadow border-l-4 border-primary"><strong>내 사이트 정보를 불러오는 중입니다.</strong><p class="font-body-md text-body-md text-on-surface-variant mt-2">잠시만 기다려 주세요.</p></div>
-</div>
-<section aria-label="내 사이트 실제 관리 기능" class="nv0n-functional-bridge phase239-portal-layout">
-<aside class="nv74-account"><h2>계정 상태</h2><div class="notice muted" id="portalAccountState">계정 연결 상태를 확인하는 중입니다.</div><div class="notice muted" id="portalState">내 사이트 정보를 안전하게 확인하세요.</div></aside>
-<div class="stack"><section class="nv74-score-card card"><div class="nv74-topbar"><div><h1>내 사이트 다음 조치</h1><p class="nv74-score-desc">최근 진단을 실행하면 신뢰 흐름 점수와 주요 보완 항목이 표시됩니다.</p></div><a class="btn primary" href="/products/veridion/demo">새 진단 시작 →</a></div><div class="nv74-score-number">검사 후 표시</div><div class="nv74-status-warning">검사 전</div><footer><span>최근 진단일: 검사 이력 없음</span></footer><div class="phase239-metric-grid" id="portalScoreMetrics"></div><div class="phase239-score-bars" id="portalScoreBars"></div></section><section class="nv74-work-card card"><div class="nv74-card-head"><h2>바로 할 수 있는 일</h2><a href="#saveSiteForm">사이트 등록 ›</a></div></section><section class="card"><h2>다음 행동</h2><div class="phase239-action-grid" id="portalNextActions"></div></section><section class="card"><h2>내 사이트 목록</h2><div id="portalPrimary"></div></section><section class="card"><h2>최근 기록과 인사이트</h2><div id="portalFeed"></div></section></div>
-</section></main>
+</section>
+</section>
+</main>
 <footer class="bg-primary full-width bottom mt-auto nv0n-footer">
 <div class="w-full py-section-padding-desktop px-gutter flex flex-col md:flex-row justify-between items-center max-w-container-max mx-auto gap-8">
 <div class="text-headline-sm font-headline-sm font-bold text-on-primary">nv0</div>

@@ -22,6 +22,13 @@ const scoreDesc = document.querySelector('.nv74-score-desc');
 const scoreBars = document.getElementById('portalScoreBars');
 const scoreMetrics = document.getElementById('portalScoreMetrics');
 const nextActionCards = document.getElementById('portalNextActions');
+const portalLatestScanAt = document.getElementById('portalLatestScanAt');
+const portalWarningIssues = document.getElementById('portalWarningIssues');
+const portalActionRequiredCount = document.getElementById('portalActionRequiredCount');
+const portalSummaryDomain = document.getElementById('portalSummaryDomain');
+const portalIssueCount = document.getElementById('portalIssueCount');
+const portalPriorityCount = document.getElementById('portalPriorityCount');
+const portalContentStatus = document.getElementById('portalContentStatus');
 
 function getSavedScan() {
   try { return JSON.parse(localStorage.getItem('nv0:lastScan') || 'null'); } catch { return null; }
@@ -136,27 +143,31 @@ function collectDashboardAssets(account, summary, savedScan) {
 function renderDashboardAssets(assets = []) {
   if (!dashboardAssetList) return;
   if (!assets.length) {
-    dashboardAssetList.innerHTML = `<div class="bg-surface-container-lowest rounded-[16px] p-6 card-shadow border-l-4 border-primary"><div class="flex flex-col md:flex-row justify-between gap-4"><div><h3 class="font-headline-sm text-headline-sm text-on-surface">등록된 사이트가 없습니다</h3><p class="font-body-md text-body-md text-on-surface-variant mt-2">새 사이트를 추가하거나 무료 진단을 실행하면 이곳에 실제 자산과 상태가 표시됩니다.</p></div><div class="flex gap-2 flex-wrap"><a class="btn primary" href="#saveSiteForm">새 사이트 추가</a><a class="btn secondary" href="/products/veridion/demo">무료 진단 시작</a></div></div></div>`;
+    dashboardAssetList.innerHTML = `<div class="portal-empty-card"><strong>등록된 사이트가 없습니다.</strong><p>새 사이트를 추가하거나 무료 진단을 실행하면 실제 자산과 상태가 표시됩니다.</p><div class="portal-dashboard-asset-actions"><a class="btn primary" href="#saveSiteForm">새 사이트 추가</a><a class="btn secondary" href="/products/veridion/demo">무료 진단 시작</a></div></div>`;
     return;
   }
-  dashboardAssetList.innerHTML = assets.map(asset => {
+  dashboardAssetList.innerHTML = assets.slice(0, 4).map(asset => {
     const siteParam = asset.siteId ? `siteId=${encodeURIComponent(asset.siteId)}` : '';
     const reportHref = siteParam ? `/portal?${siteParam}#portalPrimary` : `/products/veridion/demo?target=${encodeURIComponent(asset.domain || '')}`;
     const checkoutHref = siteParam ? `/checkout?plan=${asset.risk.key === 'critical' ? 'Expert' : 'Report'}&${siteParam}` : `/plans`;
     const secondaryHref = asset.risk.key === 'safe' ? `/products/veridion/demo?target=${encodeURIComponent(asset.domain || '')}` : checkoutHref;
-    const meta = asset.lastScanAt ? `마지막 스캔: ${formatDate(asset.lastScanAt)}` : (asset.score == null ? '검사 전' : '최근 검사 기준');
-    const score = asset.score == null ? '' : `<span class="font-label-sm text-label-sm text-outline">점수 ${escapeHtml(asset.score)}${asset.findings != null ? ` · 발견 ${escapeHtml(asset.findings)}개` : ''}</span>`;
+    const meta = asset.lastScanAt ? `${formatDate(asset.lastScanAt)} · ${asset.source === 'site' ? '저장 사이트' : '최근 진단'}` : (asset.score == null ? '검사 전' : '최근 검사 기준');
+    const score = asset.score == null ? '점수 확인 전' : `점수 ${asset.score}${asset.findings != null ? ` · 발견 ${asset.findings}개` : ''}`;
     const actionText = asset.risk.key === 'critical' ? '지금 해결하기' : (asset.risk.key === 'warning' ? '가이드라인 업데이트' : '다시 진단');
-    return `<div class="bg-surface-container-lowest rounded-[16px] p-6 card-shadow border-l-4 ${asset.risk.border} flex flex-col md:flex-row items-start md:items-center justify-between gap-6"><div class="flex items-center gap-4"><div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-surface-variant">${escapeHtml(iconForDomain(asset.domain))}</span></div><div><h3 class="font-headline-sm text-headline-sm text-on-surface">${escapeHtml(asset.label || asset.domain)}</h3><p class="font-body-md text-body-md text-on-surface-variant">${escapeHtml(meta)}</p>${score}</div></div><div class="flex items-center gap-4 flex-wrap w-full md:w-auto"><div class="${asset.risk.chip} px-4 py-1.5 rounded-full font-label-md text-label-md flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">${escapeHtml(asset.risk.icon)}</span>${escapeHtml(asset.risk.label)}</div><div class="flex gap-2 w-full md:w-auto"><a class="flex-1 md:flex-none px-4 py-2 border border-primary text-primary rounded-xl font-label-md text-label-md hover:bg-surface-container-low transition-colors" href="${escapeAttr(reportHref)}">상세 리포트</a><a class="flex-1 md:flex-none px-4 py-2 ${asset.risk.key === 'critical' ? 'bg-secondary-container text-on-error hover:bg-secondary' : 'bg-primary text-on-primary hover:bg-primary-container'} rounded-xl font-label-md text-label-md transition-colors" href="${escapeAttr(secondaryHref)}">${escapeHtml(actionText)}</a></div></div></div>`;
+    return `<article class="portal-dashboard-asset"><div class="portal-dashboard-asset-head"><div><h3>${escapeHtml(asset.label || asset.domain)}</h3><p class="domain">${escapeHtml(asset.domain || '-')}</p></div><span class="chip">${escapeHtml(asset.risk.label)}</span></div><p class="meta">${escapeHtml(meta)} · ${escapeHtml(score)}</p><p class="meta">${escapeHtml(asset.domain || '선택 사이트')}의 검색 및 AI 가시성 현황을 한눈에 확인할 수 있습니다.</p><div class="portal-dashboard-asset-actions"><a class="btn primary" href="${escapeAttr(reportHref)}">기본 리포트 바로 보기</a><a class="btn secondary" href="${escapeAttr(reportHref)}">요약표 보기</a><a class="btn secondary" href="${escapeAttr(secondaryHref)}">${escapeHtml(actionText)}</a></div></article>`;
   }).join('');
 }
 function updateDashboardSummary(assets = []) {
   const total = assets.length;
   const critical = assets.filter(item => item.risk?.key === 'critical').length;
+  const warning = assets.filter(item => item.risk?.key === 'warning').length;
   const compliant = assets.filter(item => item.risk?.key === 'safe').length;
-  if (dashboardTotalSites) dashboardTotalSites.textContent = String(total);
-  if (dashboardCriticalIssues) dashboardCriticalIssues.textContent = String(critical);
-  if (dashboardCompliantSites) dashboardCompliantSites.textContent = String(compliant);
+  const findings = assets.reduce((sum, item) => sum + (Number(item.findings) || 0), 0);
+  if (dashboardTotalSites) dashboardTotalSites.textContent = `${total}개`;
+  if (dashboardCriticalIssues) dashboardCriticalIssues.textContent = `${critical}개`;
+  if (portalWarningIssues) portalWarningIssues.textContent = `${warning}개`;
+  if (dashboardCompliantSites) dashboardCompliantSites.textContent = `${compliant}개`;
+  if (portalIssueCount) portalIssueCount.textContent = `${findings}개`;
   renderDashboardAssets(assets);
 }
 function nextActionFromScan(scan = {}) {
@@ -185,6 +196,12 @@ function renderScoreSummary(latest, account, summary) {
   ];
   if (scoreBars) scoreBars.innerHTML = cards.map(item => `<article class="nv74-score-chip"><span>${escapeHtml(item.label)}</span><b>${escapeHtml(item.value)}</b><small>${escapeHtml(item.note)}</small></article>`).join('');
   if (scoreMetrics) scoreMetrics.innerHTML = metrics.map(item => `<article><span>${escapeHtml(item.label)}</span><b>${escapeHtml(item.value)}</b><small>${escapeHtml(item.note)}</small></article>`).join('');
+  if (portalSummaryDomain) portalSummaryDomain.textContent = target || '검사 전';
+  if (portalActionRequiredCount) portalActionRequiredCount.textContent = `${urgent}개`;
+  if (portalPriorityCount) portalPriorityCount.textContent = `${urgent ? Math.max(1, Math.ceil(urgent / 2)) : 0}개`;
+  if (portalContentStatus) portalContentStatus.textContent = nextAction.title;
+  if (portalLatestScanAt) portalLatestScanAt.textContent = formatDate(latest?.createdAt || latest?.generatedAt);
+  if (portalIssueCount) portalIssueCount.textContent = `${findings}개`;
   if (scoreDesc) {
     scoreDesc.textContent = Number.isFinite(Number(latest?.riskScore))
       ? `${findings ? `최근 검사에서 ${findings}개 항목이 확인되었습니다.` : '최근 검사에서 즉시 보완할 항목은 적었습니다.'} ${nextAction.note}`
