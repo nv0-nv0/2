@@ -1477,7 +1477,7 @@ function injectNoScriptNotice(body, urlPath) {
 return body;
 }
 function injectPublicTopMenu(body, urlPath) {
-if (urlPath.startsWith('/admin')) return body;
+if (urlPath.startsWith('/admin') || body.includes('data-nv0n-page="true"')) return body;
 let nextBody = body;
 nextBody = nextBody.replace(/<header class="nv0-topbar">[\s\S]*?<\/header>/, '');
 if (nextBody.includes('site-topbar')) return nextBody;
@@ -1521,7 +1521,7 @@ if (urlPath.startsWith('/admin') || body.includes('/shared/client-risk-guard.js'
 return body.replace('</body>', '<script src="/shared/client-risk-guard.js" defer></script></body>');
 }
 function injectBusinessFooter(body, urlPath) {
-if (urlPath.startsWith('/admin')) return body;
+if (urlPath.startsWith('/admin') || body.includes('data-nv0n-page="true"')) return body;
 const footer = businessFooterHtml();
 const replaced = body.replace(/<footer\b[^>]*class=["'][^"']*\bbusiness-footer\b[^"']*["'][\s\S]*?<\/footer>/i, footer);
 if (replaced !== body) return replaced;

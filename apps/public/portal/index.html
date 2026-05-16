@@ -1,29 +1,163 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>내 사이트 관리 | nv0</title><meta name="description" content="진단 이력과 저장 사이트, 다음 작업을 한 화면에서 관리합니다."/><link rel="canonical" href="https://nv0.kr/portal"/>
-<link href="/shared/nv0-clean-slate-20260512.css" rel="stylesheet"/><!-- 내 사이트 관리 진단 이력 --></head><body class="nv0-clean-slate phase244-premium">
+<!doctype html>
 
-<header class="nv0-topbar">
-  <div class="nv0-topbar-inner">
-    <a class="nv0-brand" href="/"><span class="nv0-brand-mark">nv0</span></a>
-    <nav aria-label="주요 메뉴" class="nv0-nav"><a href="/service">서비스·가이드</a><a href="/solutions">분석 프로세스</a><a href="/board">게시판</a><a href="/plans">요금제</a><a href="/products/veridion/demo">무료 진단</a></nav>
-    <div class="nv0-top-actions"><a class="nv0-icon-link" href="/auth">로그인</a><a class="cta" href="/products/veridion/demo">무료 진단 시작 →</a></div>
-  </div>
-</header>
-<main class="nv0-shell">
-<section class="hero-copy"><span class="nv0-kicker">내 사이트 관리</span><h1>진단 이력과 다음 작업을 한눈에 관리하세요</h1><p>사이트를 저장하면 최근 진단, 보완 항목, 다음 작업을 같은 화면에서 이어서 볼 수 있습니다.</p></section>
-<section class="phase239-portal-layout"><aside class="phase239-form-card nv74-account"><h2>새 사이트 등록</h2><form id="saveSiteForm" class="nv74-save-form"><label>사이트 주소<input id="saveUrl" autocomplete="url" placeholder="https://your-store.kr"/></label><label>사이트 이름<input id="saveName" autocomplete="off" placeholder="자사몰 / 캠페인 첫 화면"/></label><label>메모<input id="saveMemo" autocomplete="off" placeholder="오픈일, 광고 집행 여부 등"/></label><button type="submit">사이트 저장</button><div id="saveSiteState" class="notice muted">사이트를 저장하면 진단 이력을 이어서 관리할 수 있습니다.</div></form><div id="portalState" class="notice muted">내 사이트 정보를 안전하게 확인하세요.</div></aside><div class="phase239-portal-main stack"><section class="phase239-card nv74-score-card"><div class="nv74-topbar"><div><h2>최근 진단 요약</h2><p class="nv74-score-desc">최근 진단을 실행하면 신뢰 흐름 점수와 주요 보완 항목이 표시됩니다.</p></div><a class="cta" href="/products/veridion/demo">새 진단 시작 →</a></div><div class="nv74-score-number">검사 후 표시</div><footer><span>확인 대기</span></footer><div id="portalScoreMetrics" class="phase239-metric-grid"></div><div id="portalScoreBars" class="phase239-score-bars"></div></section><section id="portalNextActions" class="nv191-action-grid phase239-action-grid"></section><section id="portalPrimary" class="nv74-site-render phase239-card"><h2>저장 사이트</h2><p class="muted">저장한 사이트와 최근 진단 결과가 여기에 표시됩니다.</p></section><section id="portalFeed" class="nv74-feed-render phase239-card"><h2>진단 연결 글</h2><p class="muted">진단과 연결된 안내 콘텐츠가 여기에 표시됩니다.</p></section></div></section>
-</main>
-<footer class="business-footer commercial-footer phase239-footer">
-  <div class="brand-col">
-    <strong>nv0</strong>
-    <span>온라인 사업자의 법률·규제·과태료 리스크 후보를 공개 화면 기준으로 줄입니다.</span>
-    <span>© 2024 nv0.kr. All rights reserved.</span>
-  </div>
-  <div class="footer-col"><strong>서비스</strong><a href="/service">서비스 소개</a><a href="/solutions">분석 프로세스</a><a href="/plans">요금제</a></div>
-  <div class="footer-col"><strong>정보</strong><a href="/board">게시판</a><a href="/service">서비스·가이드</a><a href="/business-info">고객지원</a></div>
-  <div class="footer-col"><strong>회사</strong><a href="/business-info">회사 소개</a><a href="/privacy">개인정보처리방침</a><a href="/terms">이용약관</a><a href="/refund">환불 정책</a></div>
-  <div class="footer-col"><strong>문의</strong><a href="mailto:hello@nv0.kr">hello@nv0.kr</a><a href="mailto:ct@nv0.kr">고객지원 이메일</a><span class="legal-disclaimer">사업자등록번호 584-77-00586 · 경기도 남양주시 와부읍 덕소로97번길 34, 105동 402호</span></div>
+<html class="light" lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>내 사이트 관리 - nv0 법률 리스크 관리</title>
+<link href="/shared/nv0-clean-slate-20260512.css" rel="stylesheet"/><link href="/shared/nv0n-runtime.css" rel="stylesheet"/></head>
+<body class="nv0n-page bg-background text-on-background font-body-md min-h-screen flex flex-col" data-nv0n-page="true"><div class="sr-only">내 사이트 관리 · 확인 기록</div>
+<!-- TopNavBar -->
+<nav class="bg-surface/90 backdrop-blur-md shadow-sm docked full-width top-0 sticky z-50">
+<div class="flex justify-between items-center w-full px-gutter max-w-container-max mx-auto h-20">
+<div class="text-headline-md font-headline-md font-extrabold text-primary tracking-tighter">nv0</div>
+<div class="hidden md:flex gap-8 items-center">
+<a class="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md" href="/products/veridion/demo">위험 진단</a>
+<a class="text-primary font-bold border-b-2 border-primary pb-1 font-label-md text-label-md" href="/service">서비스</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md" href="/plans">요금 안내</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md" href="/business-info">문의하기</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-primary font-label-md text-label-md hidden md:block hover:bg-surface-container-low transition-all duration-200 px-4 py-2 rounded-lg" data-nv0n-action="login" type="button">로그인</button>
+<button class="bg-primary text-on-primary font-label-md text-label-md px-6 py-2.5 rounded-xl hover:-translate-y-0.5 transition-transform duration-150" data-nv0n-action="diagnose" type="button">시작하기</button>
+</div>
+</div>
+</nav>
+<main class="flex-grow w-full max-w-container-max mx-auto px-gutter py-section-padding-mobile md:py-section-padding-desktop">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-[64px] gap-6">
+<div>
+<h1 class="font-headline-lg text-headline-lg text-primary mb-2">내 관리 사이트</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">귀하의 웹 자산 전반에 걸친 법률 리스크를 모니터링하고 관리하세요.</p>
+</div>
+<button class="flex items-center gap-2 bg-primary text-on-primary px-6 py-3 rounded-xl font-label-md text-label-md hover:bg-primary-container transition-colors shadow-md">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                새 사이트 추가
+            </button>
+</div>
+<!-- Dashboard Summary Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-[80px]">
+<!-- Summary Card 1 -->
+<div class="bg-surface-container-lowest rounded-[16px] p-6 card-shadow border-l-4 border-primary">
+<div class="flex items-center gap-3 mb-4 text-on-surface-variant">
+<span class="material-symbols-outlined text-primary">language</span>
+<h3 class="font-headline-sm text-headline-sm">전체 사이트</h3>
+</div>
+<div class="font-display-lg text-display-lg text-primary">12</div>
+<p class="font-label-sm text-label-sm text-outline mt-2">모니터링 중인 활성 자산</p>
+</div>
+<!-- Summary Card 2 -->
+<div class="bg-surface-container-lowest rounded-[16px] p-6 card-shadow border-l-4 border-error">
+<div class="flex items-center gap-3 mb-4 text-on-surface-variant">
+<span class="material-symbols-outlined text-error fill">warning</span>
+<h3 class="font-headline-sm text-headline-sm">치명적인 문제</h3>
+</div>
+<div class="font-display-lg text-display-lg text-error">3</div>
+<p class="font-label-sm text-label-sm text-outline mt-2">즉각적인 조치 필요</p>
+</div>
+<!-- Summary Card 3 -->
+<div class="bg-surface-container-lowest rounded-[16px] p-6 card-shadow border-l-4 border-tertiary-fixed-dim">
+<div class="flex items-center gap-3 mb-4 text-on-surface-variant">
+<span class="material-symbols-outlined text-tertiary-fixed-dim">check_circle</span>
+<h3 class="font-headline-sm text-headline-sm">규제 준수 완료</h3>
+</div>
+<div class="font-display-lg text-display-lg text-tertiary-container">8</div>
+<p class="font-label-sm text-label-sm text-outline mt-2">가이드라인에 완벽하게 부합함</p>
+</div>
+</div>
+<!-- Sites List Section -->
+<h2 class="font-headline-sm text-headline-sm text-primary mb-6">활성 자산 목록</h2>
+<div class="flex flex-col gap-4">
+<!-- Site Card: Critical Risk -->
+<div class="bg-surface-container-lowest rounded-[16px] p-6 card-shadow border-l-4 border-error flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-surface-variant">shopping_cart</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">ecommerce-hub.com</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">마지막 스캔: 2시간 전</p>
+</div>
+</div>
+<div class="flex items-center gap-4 flex-wrap w-full md:w-auto">
+<!-- Risk Chip -->
+<div class="bg-secondary-container text-on-error px-4 py-1.5 rounded-full font-label-md text-label-md flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">priority_high</span>
+                        치명적 위험
+                    </div>
+<div class="flex gap-2 w-full md:w-auto">
+<button class="flex-1 md:flex-none px-4 py-2 border border-primary text-primary rounded-xl font-label-md text-label-md hover:bg-surface-container-low transition-colors" data-nv0n-action="checkoutReport" type="button">
+                            상세 리포트
+                        </button>
+<button class="flex-1 md:flex-none px-4 py-2 bg-secondary-container text-on-error rounded-xl font-label-md text-label-md hover:bg-secondary transition-colors" data-nv0n-action="checkoutReport" type="button">
+                            지금 해결하기
+                        </button>
+</div>
+</div>
+</div>
+<!-- Site Card: Warning -->
+<div class="bg-surface-container-lowest rounded-[16px] p-6 card-shadow border-l-4 border-[#F59E0B] flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-surface-variant">article</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">blog.techinsights.net</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">마지막 스캔: 1일 전</p>
+</div>
+</div>
+<div class="flex items-center gap-4 flex-wrap w-full md:w-auto">
+<!-- Risk Chip -->
+<div class="bg-[#FEF3C7] text-[#92400E] px-4 py-1.5 rounded-full font-label-md text-label-md flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">warning</span>
+                        수동 점검 필요
+                    </div>
+<div class="flex gap-2 w-full md:w-auto">
+<button class="flex-1 md:flex-none px-4 py-2 border border-primary text-primary rounded-xl font-label-md text-label-md hover:bg-surface-container-low transition-colors" data-nv0n-action="checkoutReport" type="button">
+                            상세 리포트
+                        </button>
+<button class="flex-1 md:flex-none px-4 py-2 bg-primary text-on-primary rounded-xl font-label-md text-label-md hover:bg-primary-container transition-colors" data-nv0n-action="board" type="button">
+                            가이드라인 업데이트
+                        </button>
+</div>
+</div>
+</div>
+<!-- Site Card: Safe -->
+<div class="bg-surface-container-lowest rounded-[16px] p-6 card-shadow border-l-4 border-tertiary-fixed-dim flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-surface-variant">apartment</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">corporate-portal.io</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">마지막 스캔: 3일 전</p>
+</div>
+</div>
+<div class="flex items-center gap-4 flex-wrap w-full md:w-auto">
+<!-- Risk Chip -->
+<div class="bg-[#DCFCE7] text-[#166534] px-4 py-1.5 rounded-full font-label-md text-label-md flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">verified</span>
+                        규제 준수 완료
+                    </div>
+<div class="flex gap-2 w-full md:w-auto">
+<button class="flex-1 md:flex-none px-4 py-2 border border-primary text-primary rounded-xl font-label-md text-label-md hover:bg-surface-container-low transition-colors" data-nv0n-action="checkoutReport" type="button">
+                            상세 리포트
+                        </button>
+</div>
+</div>
+</div>
+</div>
+<section aria-label="내 사이트 실제 관리 기능" class="nv0n-functional-bridge phase239-portal-layout"><aside class="nv74-account"><h2>새 사이트 등록</h2><form class="stack" id="saveSiteForm"><label>사이트 주소<input autocomplete="url" id="saveUrl" placeholder="https://your-store.kr"/></label><label>사이트 이름<input autocomplete="off" id="saveName" placeholder="자사몰 / 캠페인 첫 화면"/></label><label>메모<input autocomplete="off" id="saveMemo" placeholder="오픈일, 광고 집행 여부 등"/></label><button type="submit">사이트 저장</button><div class="notice muted" id="saveSiteState">사이트를 저장하면 진단 이력을 이어서 관리할 수 있습니다.</div></form><div class="notice muted" id="portalState">내 사이트 정보를 안전하게 확인하세요.</div></aside><div class="stack"><section class="nv74-score-card card"><div class="nv74-topbar"><div><h1>내 사이트 다음 조치</h1><p class="nv74-score-desc">최근 진단을 실행하면 신뢰 흐름 점수와 주요 보완 항목이 표시됩니다.</p></div><a class="btn primary" href="/products/veridion/demo">새 진단 시작 →</a></div><div class="nv74-score-number">검사 후 표시</div><div class="nv74-status-warning">검사 전</div><footer><span>최근 진단일: 검사 이력 없음</span></footer><div class="phase239-metric-grid" id="portalScoreMetrics"></div><div class="phase239-score-bars" id="portalScoreBars"></div></section><section class="nv191-action-grid phase239-action-grid" id="portalNextActions"></section><section class="nv74-site-render" id="portalPrimary"><h2>저장 사이트</h2><p class="muted">저장한 사이트와 최근 진단 결과가 여기에 표시됩니다.</p></section><section class="nv74-feed-render" id="portalFeed"><h2>진단 연결 글</h2><p class="muted">진단과 연결된 안내 콘텐츠가 여기에 표시됩니다.</p></section></div></section></main>
+<!-- Footer -->
+<footer class="bg-primary full-width bottom mt-auto nv0n-footer">
+<div class="w-full py-section-padding-desktop px-gutter flex flex-col md:flex-row justify-between items-center max-w-container-max mx-auto gap-8">
+<div class="text-headline-sm font-headline-sm font-bold text-on-primary">nv0</div>
+<div class="flex gap-6 items-center flex-wrap justify-center">
+<a class="text-on-primary-container hover:text-secondary-fixed-dim transition-colors duration-200 font-label-sm text-label-sm" href="/privacy">개인정보 처리방침</a>
+<a class="text-on-primary-container hover:text-secondary-fixed-dim transition-colors duration-200 font-label-sm text-label-sm" href="/terms">이용약관</a>
+<a class="text-on-primary-container hover:text-secondary-fixed-dim transition-colors duration-200 font-label-sm text-label-sm" href="/business-info">보안</a>
+<a class="text-on-primary-container hover:text-secondary-fixed-dim transition-colors duration-200 font-label-sm text-label-sm" href="/business-info">상태</a>
+</div>
+<div class="text-on-primary-container font-body-md text-body-md text-sm">© 2024 nv0 법률 리스크 관리. All rights reserved.</div>
+</div>
 </footer>
-
-<script src="/shared/safe-dom.js"></script>
-<script src="/shared/render-policy.js"></script><script src="/apps/public/portal/app.js" type="module"></script></body></html>
+<script defer="True" src="/shared/nv0n-runtime.js"></script><script src="/apps/public/portal/app.js" type="module"></script></body></html>

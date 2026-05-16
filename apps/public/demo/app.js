@@ -1,3 +1,1 @@
-try {
-  document.documentElement.dataset.pageReady = 'true';
-} catch {}
+import '/apps/public/veridion-demo/app.js';
