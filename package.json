@@ -1,6 +1,6 @@
 {
   "name": "nv0-veridion-cleanroom",
-  "version": "1.0.0-commercial-phase263-nv0n-full-page-integration",
+  "version": "1.0.0-commercial-phase260-dispute-safe-penalty-phase264-functional-hardening",
   "private": true,
   "type": "module",
   "scripts": {
@@ -40,6 +40,7 @@
     "test:phase260": "node tests/phase260-dispute-safe-penalty.mjs",
     "validate:phase260": "node scripts/validate-phase260-dispute-safe-penalty.mjs",
     "phase260:final": "npm run phase259:final && npm run test:phase260 && npm run validate:phase260",
-    "validate:nv0n": "node scripts/validate-nv0n-page-swap.mjs"
+    "validate:nv0n": "node scripts/validate-nv0n-page-swap.mjs",
+    "validate:phase264": "node scripts/validate-phase264-functional-hardening.mjs"
   }
 }
