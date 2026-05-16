@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-05-16T03:21:00.036Z",
+  "generatedAt": "2026-05-16T04:33:55.972Z",
   "ok": true,
   "phase": "phase258-structural-hardening-test-all",
-  "total": 102,
-  "passed": 102,
+  "total": 105,
+  "passed": 105,
   "failed": 0,
   "checks": [
     {
@@ -412,6 +412,18 @@
     },
     {
       "name": "client:no-inline-handler",
+      "ok": true
+    },
+    {
+      "name": "runtime:runtime/uploads:empty",
+      "ok": true
+    },
+    {
+      "name": "runtime:runtime/backups:empty",
+      "ok": true
+    },
+    {
+      "name": "runtime:runtime/reports:empty",
       "ok": true
     }
   ]

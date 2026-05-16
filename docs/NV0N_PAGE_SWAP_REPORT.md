@@ -43,3 +43,9 @@ NV0_PLATFORM_TARGET=mvp NV0_PERSISTENCE_MODE=json NV0_STORAGE_MODE=local_fs \
 NV0_SCAN_PROVIDER=builtin NV0_PAYMENT_PROVIDER=demo NV0_ADMIN_AUTH_MODE=shared_key \
 node server/index.mjs
 ```
+
+## Phase262 visible top menu follow-up
+- Standardized the top navigation across NV0N swapped pages.
+- Top menu links are now visible without relying on `hidden md:flex` behavior.
+- Mobile view keeps the menu available through horizontal overflow instead of hiding page movement links.
+- `validate:nv0n` now checks required topbar links and blocks breakpoint-hidden navigation in the swapped-page header.

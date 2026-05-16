@@ -1,26 +1,162 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>로그인 | nv0</title><meta name="description" content="로그인과 회원가입을 통해 내 사이트 저장과 진단 이력 관리를 시작하세요."/><link rel="canonical" href="https://nv0.kr/auth"/>
-<link href="/shared/nv0-clean-slate-20260512.css" rel="stylesheet"/></head><body class="nv0-clean-slate phase244-premium">
+<!doctype html>
 
-<header class="nv0-topbar">
-  <div class="nv0-topbar-inner">
-    <a class="nv0-brand" href="/"><span class="nv0-brand-mark">nv0</span></a>
-    <nav aria-label="주요 메뉴" class="nv0-nav"><a href="/service">서비스·가이드</a><a href="/solutions">분석 프로세스</a><a href="/board">게시판</a><a href="/plans">요금제</a><a href="/products/veridion/demo">무료 진단</a></nav>
-    <div class="nv0-top-actions"><a class="nv0-icon-link" href="/auth">로그인</a><a class="cta" href="/products/veridion/demo">무료 진단 시작 →</a></div>
-  </div>
-</header>
-<main class="nv0-shell"><div class="auth-wrap"><section class="auth-side"><span class="nv0-kicker">로그인 / 회원가입</span><h1>내 사이트를 저장하고<br/>진단 이력을 관리하세요</h1><p>회원가입 후에는 저장한 사이트를 다시 검사하고 최근 결과와 구매 산출물을 한곳에서 관리할 수 있습니다.</p><ul class="check-list"><li><span class="check">✓</span>내 사이트 저장</li><li><span class="check">✓</span>원클릭 재진단</li><li><span class="check">✓</span>최근 진단 이력 확인</li><li><span class="check">✓</span>결제 후 산출물 확인 기록 관리</li></ul></section><section class="auth-form stack"><form id="loginForm" class="stack"><h2>로그인</h2><label>이메일<input id="loginEmail" type="email" placeholder="you@example.com" autocomplete="email" required/></label><label>비밀번호<input id="loginPassword" type="password" placeholder="비밀번호를 입력하세요" autocomplete="current-password" required/></label><button type="submit">로그인하고 내 사이트 보기</button><div id="loginState" class="notice muted">계정이 있으면 바로 내 사이트 관리로 이동합니다.</div></form><form id="registerForm" class="stack"><h2>회원가입</h2><label>이메일<input id="registerEmail" type="email" placeholder="you@example.com" autocomplete="email" required/></label><label>비밀번호<input id="registerPassword" type="password" placeholder="12자 이상 입력" autocomplete="new-password" minlength="12" required/></label><label class="inline-check"><input id="privacyConsent" class="checkbox-inline" type="checkbox" required/> 개인정보처리방침을 확인하고 계정 생성을 진행합니다.</label><button type="submit" class="secondary">무료 계정 만들기</button><div id="registerState" class="notice muted">회원가입하면 비회원 브라우저 기록보다 안정적으로 진단 이력을 보관할 수 있습니다.</div></form><form id="resetRequestForm" class="stack"><h2>비밀번호 재설정</h2><label>가입 이메일<input id="resetEmail" type="email" placeholder="you@example.com" autocomplete="email"/></label><button type="submit" class="secondary">재설정 안내 받기</button><div id="resetRequestState" class="notice muted">가입된 이메일이면 재설정 안내가 발송됩니다.</div></form><form id="resetForm" class="stack"><h2>재설정 토큰 입력</h2><label>이메일<input id="resetConfirmEmail" type="email" placeholder="you@example.com" autocomplete="email"/></label><label>재설정 토큰<input id="resetToken" autocomplete="one-time-code" placeholder="이메일 링크의 토큰"/></label><label>새 비밀번호<input id="resetPassword" type="password" placeholder="12자 이상 입력" autocomplete="new-password" minlength="12"/></label><button type="submit" class="secondary">비밀번호 변경</button><div id="resetState" class="notice muted">재설정 링크로 들어오면 토큰이 자동 입력됩니다.</div></form></section></div></main>
-<footer class="business-footer commercial-footer phase239-footer">
-  <div class="brand-col">
-    <strong>nv0</strong>
-    <span>온라인 사업자의 법률·규제·과태료 리스크 후보를 공개 화면 기준으로 줄입니다.</span>
-    <span>© 2024 nv0.kr. All rights reserved.</span>
-  </div>
-  <div class="footer-col"><strong>서비스</strong><a href="/service">서비스 소개</a><a href="/solutions">분석 프로세스</a><a href="/plans">요금제</a></div>
-  <div class="footer-col"><strong>정보</strong><a href="/board">게시판</a><a href="/service">서비스·가이드</a><a href="/business-info">고객지원</a></div>
-  <div class="footer-col"><strong>회사</strong><a href="/business-info">회사 소개</a><a href="/privacy">개인정보처리방침</a><a href="/terms">이용약관</a><a href="/refund">환불 정책</a></div>
-  <div class="footer-col"><strong>문의</strong><a href="mailto:hello@nv0.kr">hello@nv0.kr</a><a href="mailto:ct@nv0.kr">고객지원 이메일</a><span class="legal-disclaimer">사업자등록번호 584-77-00586 · 경기도 남양주시 와부읍 덕소로97번길 34, 105동 402호</span></div>
-</footer>
-
-<script src="/shared/safe-dom.js"></script>
-<script src="/shared/render-policy.js"></script><script src="/apps/public/auth/app.js" type="module"></script></body></html>
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Login - nv0 Legal Risk Management</title>
+<link href="/shared/nv0-clean-slate-20260512.css" rel="stylesheet"/><link href="/shared/nv0n-generated.css" rel="stylesheet"/><link href="/shared/nv0n-runtime.css" rel="stylesheet"/></head>
+<body class="nv0n-page bg-surface-container-lowest text-on-surface antialiased min-h-screen flex selection:bg-primary selection:text-on-primary" data-nv0n-page="true"><header class="nv0n-topbar" data-nv0n-visible-menu="true">
+<div class="nv0n-topbar-inner">
+<a aria-label="nv0 홈으로 이동" class="nv0n-brand" href="/">nv0</a>
+<nav aria-label="상단 메뉴" class="nv0n-primary-nav"><a class="nv0n-nav-link" href="/products/veridion/demo">위험 진단</a><a class="nv0n-nav-link" href="/service">서비스</a><a class="nv0n-nav-link" href="/plans">요금 안내</a><a class="nv0n-nav-link" href="/board">인사이트</a><a class="nv0n-nav-link" href="/portal">내 사이트</a><a class="nv0n-nav-link" href="/business-info">문의하기</a></nav>
+<div aria-label="계정 및 진단 바로가기" class="nv0n-topbar-actions">
+<a class="nv0n-login-link" href="/auth">로그인</a>
+<a class="nv0n-start-link" href="/products/veridion/demo">시작하기</a>
+</div>
+</div>
+</header><main id="main" tabindex="-1"><div class="sr-only">온라인 사업자 리스크 진단 · 법률·규제·과태료 리스크 · 페이지 이동 상단 메뉴 제공</div>
+<div class="hidden lg:flex w-1/2 relative overflow-hidden bg-primary items-center justify-center p-section-padding-desktop">
+<div class="absolute inset-0 z-0">
+<img alt="Legal tech background" class="w-full h-full object-cover opacity-20 mix-blend-luminosity" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1200 800%22%3E%3Crect width=%221200%22 height=%22800%22 fill=%22%23002068%22/%3E%3Cpath d=%22M120 620 L1080 180%22 stroke=%22%23b5c4ff%22 stroke-width=%2218%22 opacity=%22.18%22/%3E%3Ccircle cx=%22880%22 cy=%22240%22 r=%22140%22 fill=%22%23dce1ff%22 opacity=%22.12%22/%3E%3C/svg%3E"/>
+<div class="absolute inset-0 bg-gradient-to-br from-primary via-primary/95 to-primary-container z-10"></div>
+</div>
+<div class="relative z-20 max-w-lg text-on-primary flex flex-col gap-8">
+<div class="w-16 h-16 rounded-2xl bg-surface-container-lowest/10 backdrop-blur-md border border-on-primary/20 flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-4xl text-primary-fixed-dim">shield_locked</span>
+</div>
+<h1 class="font-display-lg text-on-primary break-keep">
+                내 사이트를 저장하고 진단 이력을 관리하세요
+            </h1>
+<ul class="flex flex-col gap-6 mt-4">
+<li class="flex items-start gap-4">
+<span class="material-symbols-outlined text-tertiary-fixed mt-1">check_circle</span>
+<span class="font-body-lg text-on-primary/90">내 사이트 저장</span>
+</li>
+<li class="flex items-start gap-4">
+<span class="material-symbols-outlined text-tertiary-fixed mt-1">check_circle</span>
+<span class="font-body-lg text-on-primary/90">원클릭 재진단</span>
+</li>
+<li class="flex items-start gap-4">
+<span class="material-symbols-outlined text-tertiary-fixed mt-1">check_circle</span>
+<span class="font-body-lg text-on-primary/90">최근 진단 이력 확인</span>
+</li>
+<li class="flex items-start gap-4">
+<span class="material-symbols-outlined text-tertiary-fixed mt-1">check_circle</span>
+<span class="font-body-lg text-on-primary/90">결제 후 산출물 확인 기록 관리</span>
+</li>
+</ul>
+</div>
+</div>
+<div class="w-full lg:w-1/2 flex flex-col items-center justify-start p-6 sm:p-12 lg:p-24 relative overflow-y-auto min-h-screen">
+<div class="lg:hidden absolute top-8 left-8 mb-8 relative">
+<a class="font-headline-md text-primary font-extrabold tracking-tighter flex items-center gap-2" href="/">
+<span class="material-symbols-outlined text-primary">gavel</span>
+                nv0
+            </a>
+</div>
+<div class="w-full max-w-md flex flex-col gap-12 pb-12 mt-12 lg:mt-0">
+<div class="hidden lg:flex mb-4">
+<a class="font-headline-md text-primary font-extrabold tracking-tighter flex items-center gap-2" href="/">
+<span class="material-symbols-outlined text-primary">gavel</span>
+                    nv0
+                </a>
+</div>
+<div class="flex flex-col gap-6" id="login">
+<div class="flex flex-col gap-2">
+<h2 class="font-headline-lg text-primary">로그인</h2>
+<p class="font-body-md text-on-surface-variant">반갑습니다. 정보를 입력하여 로그인해 보세요.</p>
+</div>
+<form class="flex flex-col gap-6" id="loginForm">
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-on-surface" for="login-email">이메일 주소</label>
+<input autocomplete="off" class="h-12 px-4 rounded-lg border border-outline bg-surface-bright font-body-md text-on-surface placeholder:text-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" id="loginEmail" name="email" placeholder="이메일 주소를 입력하세요" required="" type="email" value=""/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-on-surface" for="login-password">비밀번호</label>
+<input autocomplete="current-password" class="h-12 px-4 rounded-lg border border-outline bg-surface-bright font-body-md text-on-surface placeholder:text-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" id="loginPassword" name="password" placeholder="••••••••" required="" type="password"/>
+</div>
+<div class="flex items-center justify-between mt-2">
+<label class="flex items-center gap-2 cursor-pointer">
+<input class="w-4 h-4 rounded border-outline text-primary focus:ring-primary focus:ring-offset-surface-container-lowest" type="checkbox"/>
+<span class="font-label-sm text-on-surface-variant">로그인 상태 유지</span>
+</label>
+<a class="font-label-sm text-primary hover:text-primary-container transition-colors" href="#reset-request">비밀번호를 잊으셨나요?</a>
+</div>
+<button class="mt-4 h-12 w-full bg-primary text-on-primary rounded-xl font-label-md flex items-center justify-center hover:bg-primary-container hover:-translate-y-0.5 transition-all shadow-[0_4px_20px_rgba(0,32,104,0.15)]" type="submit">
+                    로그인하고 내 사이트 관리하기
+                </button>
+<div class="notice muted" id="loginState">이메일과 비밀번호를 입력하면 내 사이트 관리로 이동합니다.</div></form>
+</div>
+<hr class="border-surface-container-high"/>
+<div class="flex flex-col gap-6" id="signup">
+<div class="flex flex-col gap-2">
+<h2 class="font-headline-lg text-primary">회원가입</h2>
+<p class="font-body-md text-on-surface-variant">계정이 없으신가요? 지금 바로 간편하게 가입하세요.</p>
+</div>
+<form class="flex flex-col gap-6" id="registerForm">
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-on-surface" for="signup-email">이메일 주소</label>
+<input autocomplete="off" class="h-12 px-4 rounded-lg border border-outline bg-surface-bright font-body-md text-on-surface placeholder:text-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" id="registerEmail" name="email" placeholder="이메일 주소를 입력하세요" required="" type="email" value=""/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-on-surface" for="signup-password">비밀번호</label>
+<input autocomplete="new-password" class="h-12 px-4 rounded-lg border border-outline bg-surface-bright font-body-md text-on-surface placeholder:text-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" id="registerPassword" minlength="12" name="password" placeholder="••••••••" required="" type="password"/>
+</div>
+<label class="flex items-center gap-2 cursor-pointer"><input class="w-4 h-4 rounded border-outline text-primary" id="privacyConsent" required="required" type="checkbox"/> 개인정보처리방침을 확인하고 계정 생성을 진행합니다.</label><button class="mt-4 h-12 w-full bg-primary text-on-primary rounded-xl font-label-md flex items-center justify-center hover:bg-primary-container hover:-translate-y-0.5 transition-all shadow-[0_4px_20px_rgba(0,32,104,0.15)]" type="submit">
+                    회원가입 완료
+                </button>
+<div class="notice muted" id="registerState">회원가입하면 진단 이력을 안정적으로 보관할 수 있습니다.</div></form>
+</div>
+<hr class="border-surface-container-high"/>
+<div class="flex flex-col gap-6" id="reset-request">
+<div class="flex flex-col gap-2">
+<h2 class="font-headline-lg text-primary">비밀번호 재설정 요청</h2>
+<p class="font-body-md text-on-surface-variant">가입하신 이메일을 입력하시면 재설정 링크를 보내드립니다.</p>
+</div>
+<form class="flex flex-col gap-6" id="resetRequestForm">
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-on-surface" for="reset-req-email">이메일 주소</label>
+<input autocomplete="off" class="h-12 px-4 rounded-lg border border-outline bg-surface-bright font-body-md text-on-surface placeholder:text-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" id="resetEmail" name="email" placeholder="이메일 주소를 입력하세요" required="" type="email" value=""/>
+</div>
+<button class="mt-4 h-12 w-full bg-primary text-on-primary rounded-xl font-label-md flex items-center justify-center hover:bg-primary-container hover:-translate-y-0.5 transition-all shadow-[0_4px_20px_rgba(0,32,104,0.15)]" type="submit">
+                    재설정 링크 전송
+                </button>
+<div class="notice muted" id="resetRequestState">가입된 이메일이면 재설정 안내가 발송됩니다.</div></form>
+</div>
+<hr class="border-surface-container-high"/>
+<div class="flex flex-col gap-6" id="reset">
+<div class="flex flex-col gap-2">
+<h2 class="font-headline-lg text-primary">비밀번호 재설정</h2>
+<p class="font-body-md text-on-surface-variant">이메일로 전송된 토큰과 새 비밀번호를 입력해 주세요.</p>
+</div>
+<form class="flex flex-col gap-6" id="resetForm">
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-on-surface" for="reset-email">이메일 주소</label>
+<input autocomplete="off" class="h-12 px-4 rounded-lg border border-outline bg-surface-bright font-body-md text-on-surface placeholder:text-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" id="resetConfirmEmail" name="email" placeholder="이메일 주소를 입력하세요" required="" type="email" value=""/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-on-surface" for="reset-token">재설정 토큰</label>
+<input autocomplete="one-time-code" class="h-12 px-4 rounded-lg border border-outline bg-surface-bright font-body-md text-on-surface placeholder:text-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" id="resetToken" name="token" placeholder="토큰 입력" required="" type="text"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-on-surface" for="reset-password">새 비밀번호</label>
+<input autocomplete="new-password" class="h-12 px-4 rounded-lg border border-outline bg-surface-bright font-body-md text-on-surface placeholder:text-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" id="resetPassword" minlength="12" name="new_password" placeholder="••••••••" required="" type="password"/>
+</div>
+<button class="mt-4 h-12 w-full bg-primary text-on-primary rounded-xl font-label-md flex items-center justify-center hover:bg-primary-container hover:-translate-y-0.5 transition-all shadow-[0_4px_20px_rgba(0,32,104,0.15)]" type="submit">
+                    새 비밀번호 설정 완료
+                </button>
+<div class="notice muted" id="resetState">재설정 링크로 들어오면 토큰이 자동 입력됩니다.</div></form>
+</div>
+</div>
+</div>
+</main><!-- Footer -->
+<footer class="full-width bottom bg-primary text-on-primary w-full py-section-padding-desktop px-gutter flex flex-col md:flex-row justify-between items-center max-w-container-max mx-auto gap-8 flat no shadows nv0n-footer">
+<div class="text-headline-sm font-headline-sm font-bold text-on-primary">nv0</div>
+<div class="flex flex-wrap justify-center gap-6">
+<a class="font-label-sm text-label-sm text-on-primary font-bold hover:text-secondary-fixed-dim transition-colors duration-200" href="/privacy">개인정보 처리방침</a>
+<a class="font-label-sm text-label-sm text-on-primary-container hover:text-secondary-fixed-dim transition-colors duration-200" href="/terms">이용약관</a>
+<a class="font-label-sm text-label-sm text-on-primary-container hover:text-secondary-fixed-dim transition-colors duration-200" href="/business-info">보안</a>
+<a class="font-label-sm text-label-sm text-on-primary-container hover:text-secondary-fixed-dim transition-colors duration-200" href="/business-info">상태</a>
+</div>
+<div class="font-body-md text-body-md text-on-primary-container">© 2024 nv0 법률 리스크 관리. All rights reserved.</div>
+</footer><script defer="" src="/shared/nv0n-runtime.js"></script><script src="/apps/public/auth/app.js" type="module"></script></body></html>

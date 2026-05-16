@@ -4,33 +4,26 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>리스크 진단 대시보드 - nv0</title>
-<link href="/shared/nv0-clean-slate-20260512.css" rel="stylesheet"/><link href="/shared/nv0n-runtime.css" rel="stylesheet"/></head>
-<body class="nv0n-page bg-background text-on-background min-h-screen flex flex-col" data-nv0n-page="true"><div class="sr-only">무료 진단 · 최신 무료 진단 화면</div>
-<!-- TopNavBar -->
-<nav class="docked full-width top-0 sticky z-50 bg-surface/90 backdrop-blur-md bg-surface shadow-sm shadow-sm flex justify-between items-center w-full px-gutter max-w-container-max mx-auto h-20">
-<div class="text-headline-md font-headline-md font-extrabold text-primary tracking-tighter">nv0</div>
-<div class="hidden md:flex gap-8 items-center">
-<a class="text-primary font-bold border-b-2 border-primary pb-1 font-label-md text-label-md hover:bg-surface-container-low transition-all duration-200 scale-95 transition-transform duration-150" href="/products/veridion/demo">위험 진단</a>
-<a class="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md hover:bg-surface-container-low transition-all duration-200" href="/service">서비스</a>
-<a class="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md hover:bg-surface-container-low transition-all duration-200" href="/plans">요금 안내</a>
-<a class="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md hover:bg-surface-container-low transition-all duration-200" href="/business-info">문의하기</a>
+<link href="/shared/nv0-clean-slate-20260512.css" rel="stylesheet"/><link href="/shared/nv0n-generated.css" rel="stylesheet"/><link href="/shared/nv0n-runtime.css" rel="stylesheet"/></head>
+<body class="nv0n-page bg-background text-on-background min-h-screen flex flex-col" data-nv0n-page="true">
+<header class="nv0n-topbar" data-nv0n-visible-menu="true">
+<div class="nv0n-topbar-inner">
+<a aria-label="nv0 홈으로 이동" class="nv0n-brand" href="/">nv0</a>
+<nav aria-label="상단 메뉴" class="nv0n-primary-nav"><a aria-current="page" class="nv0n-nav-link is-active" href="/products/veridion/demo">위험 진단</a><a class="nv0n-nav-link" href="/service">서비스</a><a class="nv0n-nav-link" href="/plans">요금 안내</a><a class="nv0n-nav-link" href="/board">인사이트</a><a class="nv0n-nav-link" href="/portal">내 사이트</a><a class="nv0n-nav-link" href="/business-info">문의하기</a></nav>
+<div aria-label="계정 및 진단 바로가기" class="nv0n-topbar-actions">
+<a class="nv0n-login-link" href="/auth">로그인</a>
+<a class="nv0n-start-link" href="/products/veridion/demo">시작하기</a>
 </div>
-<div class="flex items-center gap-4">
-<button class="font-label-md text-label-md text-primary hover:bg-surface-container-low px-4 py-2 rounded-lg transition-all duration-200 border border-primary bg-transparent" data-nv0n-action="login" type="button">로그인</button>
-<button class="font-label-md text-label-md text-on-primary bg-primary px-4 py-2 rounded-lg transition-all duration-200 hover:bg-surface-container-low shadow-sm" data-nv0n-action="diagnose" type="button">시작하기</button>
 </div>
-</nav>
-<!-- Main Content Canvas -->
-<main class="flex-grow w-full max-w-container-max mx-auto px-gutter py-section-padding-mobile md:py-section-padding-desktop flex flex-col gap-[64px]">
-<!-- Header & Top Risk Section -->
+</header>
+
+<main data-route-smoke="최신 무료 진단 화면" class="flex-grow w-full max-w-container-max mx-auto px-gutter py-section-padding-mobile md:py-section-padding-desktop flex flex-col gap-[64px]" id="main" tabindex="-1"><div class="sr-only">온라인 사업자 리스크 진단 · 법률·규제·과태료 리스크 · 페이지 이동 상단 메뉴 제공</div>
 <section class="flex flex-col gap-8">
 <div class="flex flex-col gap-2">
 <h1 class="font-display-lg text-display-lg text-on-surface">리스크 진단 결과</h1>
 <p class="font-body-lg text-body-lg text-on-surface-variant">귀하의 사이트에서 발견된 심각한 법적 리스크를 확인하세요.</p>
 </div>
-<!-- Risk Gauge & Counter Bento -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-<!-- Total Critical Risks -->
 <div class="col-span-1 md:col-span-2 bg-[#ffffff] rounded-xl p-8 shadow-[0px_4px_20px_rgba(0,51,153,0.05)] border-l-[4px] border-error flex flex-col justify-center items-start gap-4">
 <div class="flex items-center gap-3">
 <span class="material-symbols-outlined text-error">warning</span>
@@ -42,7 +35,6 @@
 <span>고위험 완화 조치 필요</span>
 </div>
 </div>
-<!-- Risk Index Gauge -->
 <div class="col-span-1 bg-[#ffffff] rounded-xl p-8 shadow-[0px_4px_20px_rgba(0,51,153,0.05)] flex flex-col items-center justify-center gap-4 border border-surface-variant">
 <h3 class="font-headline-sm text-headline-sm text-on-surface">위험 지수</h3>
 <div class="relative w-40 h-40 flex items-center justify-center">
@@ -58,7 +50,6 @@
 </div>
 </div>
 </section>
-<!-- Middle: Summary Table & CTA -->
 <section class="flex flex-col gap-6">
 <h2 class="font-headline-md text-headline-md text-on-surface">발견된 문제 요소 요약</h2>
 <div class="bg-[#ffffff] rounded-xl shadow-[0px_4px_20px_rgba(0,51,153,0.05)] overflow-hidden border border-surface-variant">
@@ -106,27 +97,24 @@
 </table>
 </div>
 <div class="flex justify-center mt-4">
-<button class="bg-primary text-on-primary font-label-md text-label-md px-8 py-4 rounded-xl shadow-lg hover:-translate-y-1 transition-all duration-200 flex items-center gap-2 border-2 border-primary hover:shadow-[0px_8px_24px_rgba(0,32,104,0.2)]" data-nv0n-action="checkoutReport" type="button">
+<button class="bg-primary text-on-primary font-label-md text-label-md px-8 py-4 rounded-xl shadow-lg hover:-translate-y-1 transition-all duration-200 flex items-center gap-2 border-2 border-primary hover:shadow-[0px_8px_24px_rgba(0,32,104,0.2)]">
                     전체 내용 확인하기 (유료 리포트)
                     <span class="material-symbols-outlined">arrow_forward</span>
 </button>
 </div>
 </section>
-<!-- Bottom: Preview Sample -->
 <section class="flex flex-col gap-6 pt-8 border-t border-surface-variant relative overflow-hidden">
 <h2 class="font-headline-md text-headline-md text-on-surface">맞춤형 가이드라인 샘플 미리보기</h2>
 <p class="font-body-md text-body-md text-on-surface-variant">프리미엄 리포트를 통해 제공되는 실제 해결 방안의 예시입니다.</p>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
-<!-- Blurred Overlay for Upsell -->
 <div class="absolute inset-0 bg-surface/40 backdrop-blur-[2px] z-10 flex items-center justify-center rounded-xl">
 <div class="bg-[#ffffff] p-6 rounded-xl shadow-lg border border-surface-variant text-center flex flex-col gap-4 max-w-sm">
 <span class="material-symbols-outlined text-primary text-4xl">lock</span>
 <h3 class="font-headline-sm text-headline-sm text-on-surface">상세 솔루션 잠금 해제</h3>
 <p class="font-body-sm text-body-sm text-on-surface-variant">유료 플랜으로 전환하여 모든 리스크에 대한 구체적인 수정 가이드라인과 템플릿을 받아보세요.</p>
-<button class="bg-primary text-on-primary font-label-md text-label-md px-4 py-2 rounded-lg mt-2" data-nv0n-action="checkoutExpert" type="button">프리미엄 전환하기</button>
+<button class="bg-primary text-on-primary font-label-md text-label-md px-4 py-2 rounded-lg mt-2">프리미엄 전환하기</button>
 </div>
 </div>
-<!-- Sample Card 1 -->
 <div class="bg-[#ffffff] rounded-xl p-6 shadow-[0px_4px_20px_rgba(0,51,153,0.05)] border border-surface-variant opacity-70">
 <div class="flex items-center gap-2 mb-4">
 <span class="material-symbols-outlined text-outline">description</span>
@@ -137,7 +125,6 @@
                         "회사는 고객의 동의 없이 개인정보를 외부... [내용 블러 처리됨]"
                     </div>
 </div>
-<!-- Sample Card 2 -->
 <div class="bg-[#ffffff] rounded-xl p-6 shadow-[0px_4px_20px_rgba(0,51,153,0.05)] border border-surface-variant opacity-70">
 <div class="flex items-center gap-2 mb-4">
 <span class="material-symbols-outlined text-outline">shopping_cart</span>
@@ -150,18 +137,17 @@
 </div>
 </div>
 </section>
-<section aria-label="무료 진단 실행" class="nv0n-functional-bridge"><div><h2>무료 진단 실행</h2><p class="text-on-surface-variant">URL을 입력하면 기존 진단 API와 연결된 실제 결과가 이 영역에 표시됩니다.</p></div><div class="notice" id="freeUsageLead"><strong>오늘 남은 비회원 무료 진단 확인 중</strong></div><div class="text-on-surface-variant" id="freeUsageBadge">이용 가능 횟수를 확인합니다.</div><div class="bridge-grid"><input autocomplete="url" id="targetUrl" placeholder="https://your-store.kr"/><button id="scanBtn" type="button">무료 진단 시작</button></div><div id="turnstileBox"></div><input id="turnstileToken" type="hidden"/><div class="notice muted" id="turnstileState">보안 확인 준비 중입니다.</div><div class="notice muted" id="demoState">사이트 주소를 입력하고 진단을 시작하세요.</div><div class="bridge-actions"><button id="retryBtn" type="button">다시 점검</button><button id="unlockBtn" type="button">저장 결과 보기</button></div><div class="demo-result-surface" id="demoResult"><p class="muted">진단 결과가 여기에 표시됩니다.</p></div></section><div class="sr-only">무료 요약 진단 3회 사이트 주소 하나로 결제 전 신뢰 공백 무료 결과와 상품·요금 비교 상세 리포트 신청</div></main>
-<!-- Footer -->
+</main>
 <footer class="full-width bottom bg-primary text-on-primary w-full py-section-padding-desktop px-gutter flex flex-col md:flex-row justify-between items-center max-w-container-max mx-auto gap-8 flat no shadows nv0n-footer">
 <div class="text-headline-sm font-headline-sm font-bold text-on-primary">nv0</div>
 <div class="flex flex-wrap justify-center gap-6">
-<a class="font-label-sm text-label-sm text-on-primary font-bold hover:text-secondary-fixed-dim transition-colors duration-200" href="/privacy">개인정보 처리방침</a>
-<a class="font-label-sm text-label-sm text-on-primary-container hover:text-secondary-fixed-dim transition-colors duration-200" href="/terms">이용약관</a>
-<a class="font-label-sm text-label-sm text-on-primary-container hover:text-secondary-fixed-dim transition-colors duration-200" href="/business-info">보안</a>
-<a class="font-label-sm text-label-sm text-on-primary-container hover:text-secondary-fixed-dim transition-colors duration-200" href="/business-info">상태</a>
+<a class="font-label-sm text-label-sm text-on-primary font-bold hover:text-secondary-fixed-dim transition-colors duration-200" href="/">개인정보 처리방침</a>
+<a class="font-label-sm text-label-sm text-on-primary-container hover:text-secondary-fixed-dim transition-colors duration-200" href="/">이용약관</a>
+<a class="font-label-sm text-label-sm text-on-primary-container hover:text-secondary-fixed-dim transition-colors duration-200" href="/">보안</a>
+<a class="font-label-sm text-label-sm text-on-primary-container hover:text-secondary-fixed-dim transition-colors duration-200" href="/">상태</a>
 </div>
 <div class="font-body-md text-body-md text-on-primary-container">
             © 2024 nv0 법률 리스크 관리. All rights reserved.
         </div>
 </footer>
-<script defer="True" src="/shared/nv0n-runtime.js"></script><script src="/apps/public/demo/app.js" type="module"></script></body></html>
+<script defer="" src="/shared/nv0n-runtime.js"></script><script src="/apps/public/demo/app.js" type="module"></script></body></html>
