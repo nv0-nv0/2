@@ -44,9 +44,9 @@ const categories = [
       pkg.scripts?.['phase272:final']?.includes('validate:phase272'),
       pkg.scripts?.['phase273:final']?.includes('phase272:final'),
       pkg.scripts?.['validate:phase273'] === 'node scripts/validate-phase273-package-score-100.mjs',
-      pkg.scripts?.['final:review'] === 'npm run phase273:final',
+      ['npm run phase273:final','npm run phase274:final'].includes(pkg.scripts?.['final:review']),
       exists('scripts/validate-phase272-premium-redesign.mjs'),
-      ['tests/e2e.mjs','scripts/validate-phase258-structural-hardening.mjs','scripts/validate-phase259-demo-penalty-dashboard.mjs','scripts/validate-phase260-dispute-safe-penalty.mjs','scripts/validate-phase270-full-package-verified.mjs','scripts/validate-phase271-site-ux-insight-polish.mjs','scripts/validate-phase272-premium-redesign.mjs'].every(file => read(file).includes('phase273-package-100'))
+      ['tests/e2e.mjs','scripts/validate-phase258-structural-hardening.mjs','scripts/validate-phase259-demo-penalty-dashboard.mjs','scripts/validate-phase260-dispute-safe-penalty.mjs','scripts/validate-phase270-full-package-verified.mjs','scripts/validate-phase271-site-ux-insight-polish.mjs','scripts/validate-phase272-premium-redesign.mjs'].every(file => (read(file).includes('phase273-package-100') || read(file).includes('phase274-customer-copy-readability')))
     ]
   },
   {
@@ -65,9 +65,9 @@ const categories = [
     weight: 10,
     checks: [
       !/SAMSUNG|LG전자|현대자동차|CJ ENM|Amorepacific|kakaopage|8,000\+ 고객|고객이 신뢰합니다/.test(publicText),
-      board.includes('실제 게시판 API'),
+      (board.includes('사이트 운영자가 자주 궁금해하는') || board.includes('실제 게시판 API')),
       home.includes('공개 페이지 기준') && home.includes('확인 필요'),
-      plans.includes('무료 진단으로 상태를 확인하고') && !plans.includes('20% 할인'),
+      (plans.includes('무료 진단으로 상태를 확인하고') || plans.includes('무료 진단으로 현재 상태를 먼저 확인하고')) && !plans.includes('20% 할인'),
       exists('docs/PHASE272_PREMIUM_REDESIGN_REPORT.md')
     ]
   },
@@ -90,14 +90,14 @@ const categories = [
       authJs.includes('clearCredentialDefaults'),
       auth.includes('autocomplete="new-password"'),
       auth.includes('phase272-auth-layout'),
-      auth.includes('빈칸 기본값 유지')
+      (auth.includes('개인정보 보호') || auth.includes('빈칸 기본값 유지'))
     ]
   },
   {
     name: '요금·하단 영역',
     weight: 5,
     checks: [
-      ['₩0','₩49,000','₩149,000'].every(token => plans.includes(token)),
+      ['무료','₩49,000','₩149,000'].every(token => plans.includes(token)),
       plans.includes('plans-footer-clean'),
       plans.includes('자주 묻는 질문'),
       plans.includes('운영 단계에 맞춰 필요한 만큼만 선택합니다'),
@@ -112,18 +112,18 @@ const categories = [
       exists('deploy/docker-compose.coolify.yml'),
       exists('scripts/verify-security.mjs'),
       exists('scripts/validate-deploy-bundle.mjs'),
-      exists('.github/workflows/ci.yml') && read('.github/workflows/ci.yml').includes('npm run phase273:final') && read('RUN_ALL_TESTS.sh').includes('npm run phase273:final')
+      exists('.github/workflows/ci.yml') && (read('.github/workflows/ci.yml').includes('npm run phase273:final') || read('.github/workflows/ci.yml').includes('npm run phase274:final')) && (read('RUN_ALL_TESTS.sh').includes('npm run phase273:final') || read('RUN_ALL_TESTS.sh').includes('npm run phase274:final'))
     ]
   },
   {
     name: '납품 패키징·문서화',
     weight: 5,
     checks: [
-      /phase273-package-100/.test(pkg.version),
+      /phase273-package-100|phase274-customer-copy-readability/.test(pkg.version),
       /100점/.test(read('docs/PHASE273_PACKAGE_SCORECARD_100.md')),
       exists('docs/PHASE273_PACKAGE_SCORECARD_100.md'),
       exists('docs/current/PHASE272_PREMIUM_REDESIGN_AUDIT.json'),
-      read('DELIVERY_README.txt').includes('Phase273')
+      read('DELIVERY_README.txt').includes('Phase273') && read('DELIVERY_README.txt').includes('Phase274')
     ]
   }
 ];

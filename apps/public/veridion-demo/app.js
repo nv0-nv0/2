@@ -21,7 +21,7 @@ const PROGRESS_STEPS = [
   { title: '자동 수집', detail: '홈·정책·문의·robots·sitemap 후보 확인' },
   { title: '법률·규제 신호 분류', detail: '전자상거래·개인정보·환불·표시광고 후보 확인' },
   { title: '수동확인 분리', detail: '자동 단정하면 위험한 항목은 따로 표시' },
-  { title: '결과 정렬', detail: '점수·근거·다음 행동을 읽기 쉬운 순서로 정리' }
+  { title: '결과 정렬', detail: '점수·근거·다음 행동을 읽기 쉬운 순서로 확인' }
 ];
 const usageKey = `veridion:instantDemoUsage:v2:${new Date().toISOString().slice(0, 10)}`;
 const legacyUsageKey = `veridion:instantDemoUsage:${new Date().toISOString().slice(0, 10)}`;
@@ -370,7 +370,7 @@ function externalToolStatus(view) {
     ['브라우저 렌더링', providers.browserRendering ? '연결됨' : '미연결'],
     ['Lighthouse', providers.lighthouse ? '연결됨' : '미연결'],
     ['Search Console', providers.searchConsole ? '연결됨' : '미연결'],
-    ['Gemini 보조 검수', view.aiReview?.enabled ? '사용됨' : (view.aiReview?.provider === 'gemini' ? '설정 필요' : '미사용')]
+    ['Gemini 보조 확인', view.aiReview?.enabled ? '사용됨' : (view.aiReview?.provider === 'gemini' ? '설정 필요' : '미사용')]
   ];
   return rows;
 }
@@ -416,7 +416,7 @@ function renderConversionUrgencyPanel(view) {
     <div class="crisis-copy">
       <span class="pill red">위기도 점수</span>
       <h3>${escapeHtml(model.headline || '구매 전환을 막는 신뢰 공백을 시각화했습니다.')}</h3>
-      <p>${escapeHtml(model.reason || '무료 데모에서 확인된 리스크 영역과 점검 요소 기준입니다.')}</p>
+      <p>${escapeHtml(model.reason || '무료 진단에서 확인된 리스크 영역과 점검 요소 기준입니다.')}</p>
       <div class="crisis-signal-row">${signals.map(item => `<span>${escapeHtml(item)}</span>`).join('')}</div>
       <small>${escapeHtml(model.disclaimer || '점수는 보완 우선순위이며 결과를 보장하지 않습니다.')}</small>
     </div>
@@ -479,8 +479,8 @@ function renderSmartNextAction(view) {
   return `<section class="smart-next-action ${escapeAttr(tone)}" aria-label="스마트 다음 행동">
     <div>
       <span class="pill brand">스마트 다음 행동</span>
-      <h3>${escapeHtml(next.title || intel?.headline || '다음 행동을 정리했습니다.')}</h3>
-      <p>${escapeHtml(next.description || intel?.reason || '진단 결과에 맞춰 우선순위를 정리했습니다.')}</p>
+      <h3>${escapeHtml(next.title || intel?.headline || '다음 행동을 확인할 수 있습니다.')}</h3>
+      <p>${escapeHtml(next.description || intel?.reason || '진단 결과에 맞춰 우선순위를 확인할 수 있습니다.')}</p>
     </div>
     <div class="smart-action-grid">${actions.map(item => `<span>${escapeHtml(item)}</span>`).join('')}</div>
     <div class="topnav"><a class="btn primary" href="${escapeAttr(next.path || `/plans?riskScore=${encodeURIComponent(view.riskScore ?? '')}&siteId=${encodeURIComponent(view.siteId)}`)}">${escapeHtml(next.cta || intel?.primaryCta || '추천 상품 보기')}</a><a class="btn secondary" href="/portal?siteId=${escapeAttr(view.siteId)}">내 사이트 관리</a></div>
@@ -515,7 +515,7 @@ function reportStatusCopy(score) {
 function getIssueStats(view) {
   const issues = Array.isArray(view.risks) ? view.risks : [];
   const critical = issues.filter(item => /P0|긴급|high|높음|critical/i.test(`${item.priority} ${item.title}`)).length || Math.min(issues.length, view.riskScore !== null && view.riskScore >= 70 ? 2 : 1);
-  const autoFixable = issues.filter(item => /수정|문구|정리|보완|고지|정책|fix|auto/i.test(`${item.action} ${item.category} ${item.title}`)).length || Math.max(1, Math.min(issues.length, 3));
+  const autoFixable = issues.filter(item => /수정|문구|확인|보완|고지|정책|fix|auto/i.test(`${item.action} ${item.category} ${item.title}`)).length || Math.max(1, Math.min(issues.length, 3));
   return { total: issues.length, critical, autoFixable };
 }
 function projectedScore(view) {
@@ -544,7 +544,7 @@ function expectedRiskList(view) {
 }
 
 function renderReportSample(view) {
-  const risk = view.risks[0] || normalizeRiskItem('정책 문서와 결제 안내를 명확히 정리하세요.', 0);
+  const risk = view.risks[0] || normalizeRiskItem('정책 문서와 결제 안내를 명확히 확인하세요.', 0);
   return `<section class="report-sample">
     <div class="section-title"><span class="pill gold">리포트 미리보기</span><h3>유료 결과물이 어떻게 달라지는지 보여줍니다</h3></div>
     <div class="sample-grid">
@@ -619,7 +619,7 @@ function renderDemoIssueOverview(view, options = {}) {
   const priorityCounts = overview.priorityCounts || {};
   const priorityText = Object.entries(priorityCounts).map(([key, value]) => `${key} ${value}`).join(' · ') || '우선순위 계산 중';
   return `<section class="demo-issue-overview ${compact ? 'compact' : ''}">
-    <div class="section-title"><span class="pill green">무료 데모 공개 범위</span><h3>리스크 영역·점검 요소·갯수 요약</h3><p>무료 데모는 전체 세부 근거를 열지 않고, 어떤 영역에서 몇 개의 요소가 문제인지 먼저 보여줍니다.</p></div>
+    <div class="section-title"><span class="pill green">무료 진단 공개 범위</span><h3>리스크 영역·점검 요소·갯수 요약</h3><p>무료 진단은 전체 세부 근거를 열지 않고, 어떤 영역에서 몇 개의 요소가 문제인지 먼저 보여줍니다.</p></div>
     <div class="demo-issue-kpis">
       <article><span>문제 항목</span><strong>${escapeHtml(overview.totalIssueCount ?? rows.reduce((sum, row) => sum + Number(row.issueCount || 0), 0))}</strong><small>${escapeHtml(priorityText)}</small></article>
       <article><span>리스크 영역</span><strong>${escapeHtml(overview.areaCount ?? rows.length)}</strong><small>전자상거래·개인정보·환불·광고표현 등</small></article>
@@ -627,7 +627,7 @@ function renderDemoIssueOverview(view, options = {}) {
       <article><span>직접 확인</span><strong>${escapeHtml(overview.manualReviewCount ?? 0)}</strong><small>직접 확인 항목</small></article>
     </div>
     <div class="demo-area-grid">${rows.slice(0, compact ? 3 : 8).map((row) => `<article class="demo-area-card"><div class="meta-row"><b>${escapeHtml(row.area || '점검 영역')}</b><span class="pill">${escapeHtml(row.issueCount || 0)}개</span></div><p>${escapeHtml(row.reason || `${row.elementCount || 0}개 요소에 영향`)}</p><div class="demo-element-list">${(row.elements || []).slice(0, 6).map((el) => `<span>${escapeHtml(el)}</span>`).join('') || '<span>요소 확인 필요</span>'}</div>${compact ? '' : `<ul>${(row.previewFindings || []).slice(0, 3).map((item) => `<li><b>${escapeHtml(item.priority || 'P2')}</b> ${escapeHtml(item.title || '점검 항목')}</li>`).join('')}</ul>`}</article>`).join('')}</div>
-    <div class="notice muted">유료 산출물에서는 위 항목들의 전체 근거, URL, 상세 권장 조치, 수정 문구, 적용 위치, 재점검 기준을 제공합니다. 단, 법률 위반 여부와 과태료 부과 여부를 확정하지 않습니다.</div>
+    <div class="notice muted">유료 리포트에서는 위 항목들의 전체 근거, URL, 상세 권장 조치, 수정 문구, 적용 위치, 재점검 기준을 제공합니다. 단, 법률 위반 여부와 과태료 부과 여부를 확정하지 않습니다.</div>
   </section>`;
 }
 
@@ -635,14 +635,14 @@ function renderPaidFullDetailContract(scan) {
   const contract = scan.paidFullDetailContract || scan.asset?.paidFullDetailContract || null;
   if (!contract) return '';
   const rows = Array.isArray(contract.issueDetails) ? contract.issueDetails : [];
-  return `<section class="paid-full-detail-contract"><div class="section-title"><span class="pill brand">상세 결과 안내</span><h3>상세 문제 항목 확인 안내</h3><p>무료 진단에서 요약된 리스크 영역과 점검 요소를 기본 리포트에서 더 구체적으로 확인할 수 있습니다.</p></div><div class="demo-issue-kpis"><article><span>상세 정리율</span><strong>${escapeHtml(contract.completenessScore ?? 0)}</strong><small>/100</small></article><article><span>전체 항목</span><strong>${escapeHtml(contract.totalIssueCount ?? rows.length)}</strong><small>${contract.allDetailsVisible ? '전체 공개' : '보완 필요'}</small></article><article><span>추가 확인 항목</span><strong>${escapeHtml(Number(contract.missingDetailRows || 0))}</strong><small>재검토 기준</small></article><article><span>필수 필드</span><strong>${escapeHtml((contract.requiredFields || []).length)}</strong><small>근거·조치·검수</small></article></div><div class="paid-detail-grid">${rows.map((item, index) => `<article class="paid-detail-card"><div class="meta-row"><b>${index + 1}. ${escapeHtml(item.title || item.code || '점검 항목')}</b><span class="pill ${priorityTone(item.priority)}">${escapeHtml(item.priority || 'P2')}</span></div><dl><div><dt>영역/요소</dt><dd>${escapeHtml(item.area || item.category || '')} · ${(item.elements || []).map(escapeHtml).join(' / ')}</dd></div><div><dt>근거</dt><dd>${escapeHtml(item.evidence || '확인 필요')}</dd></div><div><dt>권장 조치</dt><dd>${escapeHtml(item.recommendation || '권장 조치 확인')}</dd></div><div><dt>수정 문구</dt><dd>${escapeHtml(item.fixTemplate || '수정 문구 확인')}</dd></div><div><dt>수용 기준</dt><dd>${(item.acceptanceCriteria || []).map(escapeHtml).join(' / ') || '재점검 기준 확인'}</dd></div></dl></article>`).join('')}</div></section>`;
+  return `<section class="paid-full-detail-contract"><div class="section-title"><span class="pill brand">상세 결과 안내</span><h3>상세 문제 항목 확인 안내</h3><p>무료 진단에서 요약된 리스크 영역과 점검 요소를 기본 리포트에서 더 구체적으로 확인할 수 있습니다.</p></div><div class="demo-issue-kpis"><article><span>상세 완성도</span><strong>${escapeHtml(contract.completenessScore ?? 0)}</strong><small>/100</small></article><article><span>전체 항목</span><strong>${escapeHtml(contract.totalIssueCount ?? rows.length)}</strong><small>${contract.allDetailsVisible ? '전체 공개' : '보완 필요'}</small></article><article><span>추가 확인 항목</span><strong>${escapeHtml(Number(contract.missingDetailRows || 0))}</strong><small>재검토 기준</small></article><article><span>필수 필드</span><strong>${escapeHtml((contract.requiredFields || []).length)}</strong><small>근거·조치·확인</small></article></div><div class="paid-detail-grid">${rows.map((item, index) => `<article class="paid-detail-card"><div class="meta-row"><b>${index + 1}. ${escapeHtml(item.title || item.code || '점검 항목')}</b><span class="pill ${priorityTone(item.priority)}">${escapeHtml(item.priority || 'P2')}</span></div><dl><div><dt>영역/요소</dt><dd>${escapeHtml(item.area || item.category || '')} · ${(item.elements || []).map(escapeHtml).join(' / ')}</dd></div><div><dt>근거</dt><dd>${escapeHtml(item.evidence || '확인 필요')}</dd></div><div><dt>권장 조치</dt><dd>${escapeHtml(item.recommendation || '권장 조치 확인')}</dd></div><div><dt>수정 문구</dt><dd>${escapeHtml(item.fixTemplate || '수정 문구 확인')}</dd></div><div><dt>수용 기준</dt><dd>${(item.acceptanceCriteria || []).map(escapeHtml).join(' / ') || '재점검 기준 확인'}</dd></div></dl></article>`).join('')}</div></section>`;
 }
 
 function renderSiteOperationsDocument(scan) {
   const doc = scan.siteOperationsDocument || scan.asset?.siteOperationsDocument || scan.guidance?.operationsDocument || null;
   if (!doc) return '';
   const sections = Array.isArray(doc.sections) ? doc.sections : [];
-  return `<section class="site-operations-document"><div class="section-title"><span class="pill gold">다음 서비스</span><h3>${escapeHtml(doc.title || '사이트 맞춤 운영 지침 문서')}</h3><p>진단 결과를 해당 사이트에 맞춘 개선 지침·운영 SOP·검수 기준으로 전환합니다.</p></div><div class="demo-issue-kpis"><article><span>문서 품질</span><strong>${escapeHtml(doc.qualityScore ?? 100)}</strong><small>/100 목표</small></article><article><span>리스크 영역</span><strong>${escapeHtml(doc.issueAreaCount ?? 0)}</strong><small>맞춤 반영</small></article><article><span>점검 요소</span><strong>${escapeHtml(doc.issueElementCount ?? 0)}</strong><small>운영 문서화</small></article><article><span>섹션</span><strong>${escapeHtml(sections.length)}</strong><small>SOP 포함</small></article></div><div class="operations-section-grid">${sections.slice(0, 10).map((section, index) => `<article><b>${index + 1}. ${escapeHtml(section.title || '관리 항목')}</b><p>${escapeHtml(section.body || section.objective || '')}</p><small>${(section.actions || section.actionItems || []).slice(0, 3).map(escapeHtml).join(' · ')}</small></article>`).join('')}</div></section>`;
+  return `<section class="site-operations-document"><div class="section-title"><span class="pill gold">다음 서비스</span><h3>${escapeHtml(doc.title || '사이트 맞춤 운영 지침 문서')}</h3><p>진단 결과를 해당 사이트에 맞춘 개선 지침·관리 절차·확인 기준으로 전환합니다.</p></div><div class="demo-issue-kpis"><article><span>문서 품질</span><strong>${escapeHtml(doc.qualityScore ?? 100)}</strong><small>/100 목표</small></article><article><span>리스크 영역</span><strong>${escapeHtml(doc.issueAreaCount ?? 0)}</strong><small>맞춤 반영</small></article><article><span>점검 요소</span><strong>${escapeHtml(doc.issueElementCount ?? 0)}</strong><small>운영 문서화</small></article><article><span>섹션</span><strong>${escapeHtml(sections.length)}</strong><small>관리 절차 포함</small></article></div><div class="operations-section-grid">${sections.slice(0, 10).map((section, index) => `<article><b>${index + 1}. ${escapeHtml(section.title || '관리 항목')}</b><p>${escapeHtml(section.body || section.objective || '')}</p><small>${(section.actions || section.actionItems || []).slice(0, 3).map(escapeHtml).join(' · ')}</small></article>`).join('')}</div></section>`;
 }
 
 function hasPaidAccess(scan) {
@@ -652,7 +652,7 @@ function renderFullResult(scan) {
   const view = normalizeScan(scan);
   const findings = detailRows(scan);
   const pages = view.pages;
-  return `<div class="card stack full-result"><div class="meta-row"><strong>상세 결과 열람 가능</strong><span class="pill brand">결제 완료</span></div><div class="notice"><strong>${escapeHtml(session.customer?.email || '로그인 계정')}</strong>에 저장되었습니다. 구매 산출물 영역에서 상세 근거와 수정 문구안을 확인할 수 있습니다.</div><h3>전체 발견 항목 ${findings.length}개</h3><div class="result-grid">${renderList(findings, '<div class="muted">상세 발견 항목 없음</div>', item => `<div class="result-card"><div class="meta-row"><strong>${escapeHtml(item.title || item.code || '점검 항목')}</strong><span class="pill ${item.priority === 'P0' ? 'gold' : ''}">${escapeHtml(item.priority || '확인')}</span></div><p>${escapeHtml(item.recommendation || item.fixTemplate || '권장 조치 확인')}</p><small class="muted">${escapeHtml(item.category || '')} · ${escapeHtml(item.code || '')}</small></div>`)}</div><div class="notice muted">진단 페이지: ${pages.length ? pages.map(p => escapeHtml(p.finalUrl || p.url || p)).join(' · ') : '기본 URL 중심 분석'}</div>${renderPaidFullDetailContract(scan)}${renderSiteOperationsDocument(scan)}<div class="topnav"><a class="btn primary" href="/portal?siteId=${escapeAttr(view.siteId)}">내 사이트 관리</a><a class="btn secondary" href="/plans?riskScore=${escapeAttr(view.riskScore ?? '')}&siteId=${escapeAttr(view.siteId)}">요금제 비교</a><a class="btn secondary" href="/checkout?plan=${escapeAttr(view.recommendedPlan)}&siteId=${escapeAttr(view.siteId)}">기본 리포트 신청</a></div></div>`;
+  return `<div class="card stack full-result"><div class="meta-row"><strong>상세 결과 열람 가능</strong><span class="pill brand">결제 완료</span></div><div class="notice"><strong>${escapeHtml(session.customer?.email || '로그인 계정')}</strong>에 저장되었습니다. 구매 산출물 영역에서 상세 근거와 수정 문구안을 확인할 수 있습니다.</div><h3>전체 발견 항목 ${findings.length}개</h3><div class="result-grid">${renderList(findings, '<div class="muted">상세 발견 항목 없음</div>', item => `<div class="result-card"><div class="meta-row"><strong>${escapeHtml(item.title || item.code || '점검 항목')}</strong><span class="pill ${item.priority === 'P0' ? 'gold' : ''}">${escapeHtml(item.priority || '확인')}</span></div><p>${escapeHtml(item.recommendation || item.fixTemplate || '권장 조치 확인')}</p><small class="muted">${escapeHtml(item.category || '')} · ${escapeHtml(item.code || '')}</small></div>`)}</div><div class="notice muted">진단 페이지: ${pages.length ? pages.map(p => escapeHtml(p.finalUrl || p.url || p)).join(' · ') : '기본 URL 중심 분석'}</div>${renderPaidFullDetailContract(scan)}${renderSiteOperationsDocument(scan)}<div class="topnav"><a class="btn primary" href="/portal?siteId=${escapeAttr(view.siteId)}">내 사이트 관리</a><a class="btn secondary" href="/plans?riskScore=${escapeAttr(view.riskScore ?? '')}&siteId=${escapeAttr(view.siteId)}">요금 안내 비교</a><a class="btn secondary" href="/checkout?plan=${escapeAttr(view.recommendedPlan)}&siteId=${escapeAttr(view.siteId)}">기본 리포트 신청</a></div></div>`;
 }
 function renderLockedResult(scan) {
   const view = normalizeScan(scan);
@@ -774,7 +774,7 @@ async function runScan() {
     setBusy(false);
     return;
   }
-  setState('공개 페이지·연결된 공개 페이지·robots.txt·sitemap.xml을 자동 수집하고 확인 근거를 정리하고 있습니다.', 'muted');
+  setState('공개 페이지·연결된 공개 페이지·robots.txt·sitemap.xml을 자동 수집하고 확인 근거를 확인하고 있습니다.', 'muted');
   startProgress();
   try {
     const token = guard.enabled ? guard.getToken() : '';
@@ -847,7 +847,7 @@ function renderSummaryMetricCards(view) {
       </div>
       <div class="command-note">
         <b>무료 요약에서 바로 확인하는 것</b>
-        <p>어디가 문제인지, 왜 결제 흐름을 막는지, 어떤 순서로 손봐야 하는지를 한 화면으로 정리합니다.</p>
+        <p>어디가 문제인지, 왜 결제 흐름을 막는지, 어떤 순서로 손봐야 하는지를 한 화면으로 보여드립니다.</p>
       </div>
     </article>
   </section>`;
@@ -860,7 +860,7 @@ function renderDetectedIssueList(view) {
     <div class="detected-list clean-detected-list">${items.map((item, index) => {
       const code = item.code || item.category || `ISSUE_${String(index + 1).padStart(3, '0')}`;
       const priority = item.priority || (index === 0 ? 'P0' : index === 1 ? 'P1' : 'P2');
-      const autoFixable = /수정|문구|정리|보완|고지|정책|fix|auto/i.test(`${item.action} ${item.category} ${item.title}`);
+      const autoFixable = /수정|문구|확인|보완|고지|정책|fix|auto/i.test(`${item.action} ${item.category} ${item.title}`);
       return `<article class="detected-card ${escapeAttr(priorityTone(priority))}">
         <div class="detected-topline"><span class="detected-rank">0${index + 1}</span><span class="detected-priority ${escapeAttr(priorityTone(priority))}">${escapeHtml(priority)}</span><code>${escapeHtml(code)}</code></div>
         <h4>${escapeHtml(item.title)}</h4>
@@ -965,7 +965,7 @@ function renderPhase209CompletionScorecard(view) {
   const siteId = view.siteId ? `&siteId=${encodeURIComponent(view.siteId)}` : '';
   const rows = [
     ['무료 진단', '먼저 확인', '고객이 결제 전 확인하는 기본 안내와 불안 요소를 빠르게 파악합니다.', '/products/veridion/demo'],
-    ['기본 리포트', '원인 정리', '문제 위치, 이유, 우선순위를 팀 공유가 쉬운 형태로 정리합니다.', `/checkout?plan=Report${siteId}`],
+    ['기본 리포트', '원인 확인', '문제 위치, 이유, 우선순위를 팀 공유가 쉬운 형태로 보여드립니다.', `/checkout?plan=Report${siteId}`],
     ['전문가 리포트', '상세 개선안', '상세 근거와 전문가 해설, 맞춤 개선 방향을 확인합니다.', `/checkout?plan=Expert${siteId}`]
   ];
   const gates = [
@@ -998,13 +998,13 @@ function renderPhase220ServiceQuality(view) {
   const controls = Array.isArray(demo.falsePositiveControls) ? demo.falsePositiveControls.slice(0, 4) : ['확인되지 않은 항목은 확정하지 않습니다.', '수동 확인 영역을 분리합니다.', '점수는 보완 우선순위입니다.'];
   const score = demo.score ?? view.evidenceSummary?.confidenceScore ?? '확인 필요';
   const grade = demo.grade || 'Review';
-  return `<section class="phase220-service-quality" aria-label="데모 정확도와 결제 후 산출물 품질 기준">
-    <div class="section-title"><span class="pill brand">정확도 계약</span><h3>데모 결과부터 결제 후 산출물까지 같은 근거로 연결합니다</h3><p>무료 데모는 공개 근거를 빠르게 보여주고, 결제 후 산출물은 같은 진단 데이터를 바탕으로 근거·수정안·수용 기준·재점검 기준까지 확장합니다.</p></div>
+  return `<section class="phase220-service-quality" aria-label="진단 참고도와 결제 후 산출물 품질 기준">
+    <div class="section-title"><span class="pill brand">정확도 계약</span><h3>진단 결과부터 결제 후 산출물까지 같은 근거로 연결합니다</h3><p>무료 진단은 공개 근거를 빠르게 보여주고, 결제 후 산출물은 같은 진단 데이터를 바탕으로 근거·수정안·수용 기준·재점검 기준까지 확장합니다.</p></div>
     <div class="phase220-quality-grid">
-      <article class="phase220-quality-score"><span>데모 신뢰 점수</span><strong>${escapeHtml(score)}</strong><small>${escapeHtml(grade)} · 법률 결론이 아닌 보완 우선순위</small></article>
+      <article class="phase220-quality-score"><span>진단 참고 점수</span><strong>${escapeHtml(score)}</strong><small>${escapeHtml(grade)} · 법률 결론이 아닌 보완 우선순위</small></article>
       <article><b>근거 추적</b><p>${escapeHtml(trace.successfulPageCount ?? 0)} / ${escapeHtml(trace.attemptedPageCount ?? 0)}개 공개 페이지 확인 · 근거 항목 ${escapeHtml(trace.explicitEvidenceCount ?? 0)}개</p></article>
       <article><b>오탐 방어</b><p>자동 확정이 위험한 항목 ${escapeHtml(trace.manualReviewCount ?? view.scoreModel?.manualReviewCount ?? 0)}개를 수동 확인으로 분리합니다.</p></article>
-      <article><b>결제 후 납품 기준</b><p>${deliverables.map(item => escapeHtml(item)).join(' · ')}</p></article>
+      <article><b>결제 후 제공 기준</b><p>${deliverables.map(item => escapeHtml(item)).join(' · ')}</p></article>
     </div>
     <div class="phase220-control-list">${controls.map(item => `<span>${escapeHtml(item)}</span>`).join('')}</div>
   </section>`;
@@ -1096,7 +1096,7 @@ function renderVerifiedPages(view) {
 }
 function renderEvidenceFindings(view) {
   const items = view.risks.slice(0, 5);
-  return `<section class="evidence-findings clean-detected"><div class="section-title"><span class="pill gold">발견 결과</span><h3>고객이 궁금해할 항목을 세부 요소로 풀었습니다</h3><p>단순한 처리 로그가 아니라, 어느 항목을 봤고 어떤 요소가 부족해 보이는지 바로 확인할 수 있게 정리했습니다.</p></div><div class="evidence-finding-list">${items.map((item, index) => {
+  return `<section class="evidence-findings clean-detected"><div class="section-title"><span class="pill gold">발견 결과</span><h3>고객이 궁금해할 항목을 세부 요소로 풀었습니다</h3><p>고객이 바로 이해할 수 있도록, 어느 항목을 봤고 어떤 요소가 부족해 보이는지 바로 확인할 수 있게 확인할 수 있습니다.</p></div><div class="evidence-finding-list">${items.map((item, index) => {
     const label = statusLabelForFinding(item);
     const elements = topicElementsFor(`${item.title} ${item.category} ${item.impact}`).slice(0, 4);
     return `<article class="evidence-finding ${escapeAttr(priorityTone(item.priority))}">
@@ -1234,14 +1234,14 @@ function renderDemoCountOnlyResult(view) {
     ? Object.entries(buckets.classCounts)
     : [['누락 의심', buckets.totalIssues]];
   const penalty = buildPenaltyAlertModel(view, buckets);
-  return `<section class="demo-count-result phase259-penalty-dashboard" aria-label="무료 데모 결과 요약">
+  return `<section class="demo-count-result phase259-penalty-dashboard" aria-label="무료 진단 결과 요약">
     <div class="demo-count-head">
-      <div><span class="pill brand">무료 데모 결과</span><h2>문제 개수만 한눈에 확인하세요</h2><p>${escapeHtml(view.target)}</p></div>
+      <div><span class="pill brand">무료 진단 결과</span><h2>문제 개수만 한눈에 확인하세요</h2><p>${escapeHtml(view.target)}</p></div>
       <button class="btn secondary" type="button" id="dashboardRetryBtn">다시 점검</button>
     </div>
     <div class="demo-count-kpis phase259-warning-grid">
       <article class="demo-penalty-card ${escapeAttr(penalty.classification)}"><div class="penalty-copy"><span>과태료 상한 후보 <em>참고용</em></span><strong>${escapeHtml(penalty.display)}</strong><small><i aria-hidden="true">⚠</i> 확정 안내 아님 · 검토 필요</small></div><div class="penalty-siren" aria-hidden="true"><span></span></div></article>
-      <article class="demo-summary-card danger"><span><i aria-hidden="true">!</i> 문제 합계</span><strong>${escapeHtml(buckets.totalIssues)}</strong><small>무료 데모 공개 범위</small></article>
+      <article class="demo-summary-card danger"><span><i aria-hidden="true">!</i> 문제 합계</span><strong>${escapeHtml(buckets.totalIssues)}</strong><small>무료 진단 공개 범위</small></article>
       <article class="demo-summary-card"><span><i aria-hidden="true">◆</i> 리스크 영역</span><strong>${escapeHtml(buckets.areaCount)}</strong><small>몇 개 영역에서 문제가 보이는지</small></article>
       <article class="demo-summary-card"><span><i aria-hidden="true">▣</i> 점검 요소</span><strong>${escapeHtml(buckets.totalElements)}</strong><small>문제가 걸린 요소 수</small></article>
       <article class="demo-summary-card"><span><i aria-hidden="true">⚖</i> 검토 구분</span><strong>${escapeHtml(classRows.length)}</strong><small>확인됨·누락 의심·검토 필요</small></article>

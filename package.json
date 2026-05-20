@@ -1,6 +1,6 @@
 {
   "name": "nv0-veridion-cleanroom",
-  "version": "1.0.0-commercial-phase273-package-100",
+  "version": "1.0.0-commercial-phase274-customer-copy-readability",
   "private": true,
   "type": "module",
   "scripts": {
@@ -28,7 +28,7 @@
     "test:phase258": "node tests/phase258-structural-hardening.mjs",
     "validate:phase258": "node scripts/validate-phase258-structural-hardening.mjs",
     "phase258:final": "npm run phase270:final",
-    "final:review": "npm run phase273:final",
+    "final:review": "npm run phase274:final",
     "ci:strict": "node scripts/ci-strict.mjs",
     "validate:commercial": "node scripts/validate-commercial-release.mjs",
     "validate:commercial-runtime": "node scripts/validate-commercial-runtime.mjs",
@@ -56,7 +56,9 @@
     "validate:phase272": "node scripts/validate-phase272-premium-redesign.mjs",
     "phase272:final": "npm run phase271:final && npm run validate:phase272",
     "validate:phase273": "node scripts/validate-phase273-package-score-100.mjs",
-    "phase273:final": "npm run phase272:final && npm run validate:phase273"
+    "phase273:final": "npm run phase272:final && npm run validate:phase273",
+    "validate:phase274": "node scripts/validate-phase274-customer-copy-readability.mjs",
+    "phase274:final": "npm run phase273:final && npm run validate:phase274"
   },
-  "description": "NV0 phase273 100점 검수 패키지: premium redesign, factual-only copy, preserved runtime flow, full regression/security/deploy validation, and fixed package scoring."
+  "description": "NV0 phase274 고객용 문구 전환 및 시인성 개선 패키지: 내부 제작 문구 제거, 고객 중심 안내 강화, 고대비 타이포그래피/카드/버튼 개선, 기존 즉시 진단·내 사이트·인사이트 기능 보존."
 }

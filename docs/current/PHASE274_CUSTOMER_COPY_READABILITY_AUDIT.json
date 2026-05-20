@@ -1,0 +1,110 @@
+{
+  "generatedAt": "2026-05-20T02:10:36.461Z",
+  "phase": "phase274-customer-copy-readability",
+  "ok": true,
+  "passed": 20,
+  "failed": 0,
+  "total": 20,
+  "checks": [
+    {
+      "name": "01 package version is phase274",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "02 final review points to phase274",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "03 phase274 final gate exists",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "04 customer-facing HTML has no production/internal copy phrases",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "05 public dynamic source has no old demo/proofing wording",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "06 board intro is customer-focused",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "07 auth copy is customer-focused and empty defaults preserved",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "08 portal copy is customer-focused",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "09 home copy is customer-focused",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "10 plans copy is customer-focused",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "11 checkout consent copy is customer-facing",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "12 no unverifiable enterprise-logo proof text",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "13 readability layer exists",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "14 stronger contrast text tokens applied",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "15 responsive font-size and spacing overrides applied",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "16 primary buttons use higher-contrast blue",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "17 card hierarchy is tightened",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "18 immediate diagnostic flow preserved",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "19 portal insight publishing preserved",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "20 documentation added",
+      "ok": true,
+      "detail": ""
+    }
+  ]
+}

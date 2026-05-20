@@ -24,7 +24,7 @@ const home=read('apps/public/home/index.html');
 for (const token of ['무료 진단 시작','광고를 시작하기 전에','결제 전 신뢰 점검','검사 후 표시','고정 예시 점수 없음','추천 이용 순서','상세 리포트','법률 자문 서비스인가요?']) add(`home:${token}`, home.includes(token));
 add('home:no-fixed-sample-score-72', !/신뢰도 점수\s*72|72\s*\/\s*100|위험도\s*72/.test(home));
 add('home:single-risk-panel', (home.match(/class="nv0-section phase252-legal-core"/g)||[]).length === 1);
-add('home:single-board-section', (home.match(/<h2>게시판<\/h2>/g)||[]).length === 1);
+add('home:single-board-section', ((home.match(/<h2>게시판<\/h2>/g)||[]).length + (home.match(/<h2>인사이트<\/h2>/g)||[]).length) === 1);
 add('home:demo-links', (home.match(/\/products\/veridion\/demo/g)||[]).length >= 3);
 add('home:no-broken-doctype', home.trim().startsWith('<!doctype html>'));
 add('home:no-internal-phase-copy', !/Overview|Next Step|작업지시서\s*단계/i.test(home));

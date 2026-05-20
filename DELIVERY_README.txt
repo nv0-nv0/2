@@ -38,3 +38,6 @@ Phase272 update: premium visual redesign applied with factual-only content, no c
 
 
 Phase273 update: package promoted to 100-point verified delivery, with explicit scorecard validation and final:review mapped to phase273:final.
+
+
+Phase274: 고객 화면 문구를 고객 관점으로 전환하고, 내부 제작 문구/검수/납품 표현을 제거했으며, 글자 크기·색상 대비·카드 간격을 재보정했습니다.

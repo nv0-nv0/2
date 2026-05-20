@@ -141,7 +141,7 @@ function renderOrder(order, paymentSession) {
       <div>대상 사이트: ${escapeHtml(order.domain || order.siteId || '미연결')}</div>
       <div>결제 방식: ${escapeHtml(providerLabel(provider))}</div>
       <div>결제 완료 후 내 사이트 관리에서 결과물과 확인 기록을 확인합니다.</div>
-      <div class="phase220-gate-strip"><span>근거 확인</span><span>검수 기준</span><span>재점검 기준</span></div>
+      <div class="phase220-gate-strip"><span>확인 기준</span><span>제공 기준</span><span>다시 확인</span></div>
       ${paymentHint}
       ${redirectUrl ? `<a href="${escapeAttr(redirectUrl)}" target="_blank" rel="noreferrer">결제 완료 후 이동 페이지</a>` : ''}
     </div>`;
@@ -208,7 +208,7 @@ async function createSession() {
   isCreatingSession = false;
   updateCheckoutButtonState();
   if (data.providerMode === 'external_http' && data.paymentSession?.redirectUrl) {
-    state.textContent = '주문 정보가 확인되었습니다. 외부 온라인 결제창으로 이동합니다.';
+    state.textContent = '주문 정보를 확인했습니다. 결제창으로 이동합니다.';
     const redirect = safeUrl(data.paymentSession.redirectUrl);
     if (!redirect) { setCheckoutState('외부 결제 URL 형식이 올바르지 않습니다.', 'warn'); return; }
     location.assign(redirect);
@@ -227,7 +227,7 @@ async function createSession() {
     }
     return;
   }
-  setCheckoutState(data.providerMode === 'demo' ? '주문 정보가 생성되었습니다. 결제 완료 확인 후 내 사이트 관리에서 결과물을 확인하세요.' : '주문 정보가 확인되었습니다. 외부 온라인 결제창으로 이동합니다.');
+  setCheckoutState(data.providerMode === 'demo' ? '주문 정보가 생성되었습니다. 결제 확인 후 내 사이트에서 리포트를 확인할 수 있습니다.' : '주문 정보를 확인했습니다. 결제창으로 이동합니다.');
 }
 async function completePayment() {
   if (isCompletingPayment) return;

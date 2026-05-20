@@ -1006,3 +1006,81 @@ body.nv0-clean-slate h1, body.nv0-clean-slate h2, body.nv0-clean-slate h3{color:
   .phase264-hero-metrics{grid-template-columns:1fr!important}
   .nv0-home-demo-kpis{grid-template-columns:1fr!important}
 }
+
+/* ======================================================================
+   PHASE274 customer-facing readability and copy polish layer
+   Purpose: remove build/operation-style presentation, improve contrast,
+   font sizing, card hierarchy, spacing, and customer readability.
+   ====================================================================== */
+:root{
+  --phase274-text:#1e293b;
+  --phase274-title:#07162f;
+  --phase274-muted:#475569;
+  --phase274-soft-muted:#64748b;
+  --phase274-border:#cbdced;
+  --phase274-border-soft:#e3edf8;
+  --phase274-blue:#174fd6;
+  --phase274-blue-2:#0b3aa9;
+  --phase274-bg:#f5f8fd;
+  --phase274-card:#ffffff;
+  --phase274-soft:#f8fbff;
+}
+body.nv0n-page,
+body.nv0-clean-slate{
+  color:var(--phase274-text)!important;
+  background:linear-gradient(180deg,#fbfdff 0%,var(--phase274-bg) 100%)!important;
+  font-size:16px!important;
+  line-height:1.72!important;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+body.nv0n-page p,
+body.nv0-clean-slate p,
+body.nv0n-page li,
+body.nv0-clean-slate li,
+body.nv0n-page dd,
+body.nv0-clean-slate dd{
+  color:var(--phase274-muted)!important;
+  font-size:clamp(15px,1.1vw,16.5px)!important;
+  line-height:1.76!important;
+}
+body.nv0n-page small,
+body.nv0-clean-slate small,
+.muted,
+.notice.muted{color:var(--phase274-soft-muted)!important}
+body.nv0n-page h1,body.nv0n-page h2,body.nv0n-page h3,
+body.nv0-clean-slate h1,body.nv0-clean-slate h2,body.nv0-clean-slate h3{
+  color:var(--phase274-title)!important;
+  letter-spacing:-.045em!important;
+}
+body.nv0n-page h1,body.nv0-clean-slate h1{font-size:clamp(34px,4.9vw,58px)!important;line-height:1.08!important;max-width:15ch!important}
+body.nv0n-page h2,body.nv0-clean-slate h2{font-size:clamp(25px,3.2vw,38px)!important;line-height:1.16!important}
+body.nv0n-page h3,body.nv0-clean-slate h3{font-size:clamp(18px,2vw,22px)!important;line-height:1.28!important}
+.nv0n-topbar,.nv0-topbar,.site-topbar{background:rgba(255,255,255,.94)!important;border-bottom:1px solid var(--phase274-border-soft)!important}
+.nv0n-nav-link,.nv0-nav a,.site-menu a{color:#334155!important;font-weight:850!important}
+.nv0n-nav-link:hover,.nv0-nav a:hover,.site-menu a:hover,.nv0n-nav-link.is-active,.nv0n-nav-link[aria-current="page"],.nv0-nav a[aria-current="page"]{background:#eaf2ff!important;color:var(--phase274-blue)!important;border-color:#c4d9ff!important}
+.nv0n-start-link,.cta,.phase264-btn.primary,.btn.primary,button[type="submit"],.portal-primary-action,#homeInstantDemoBtn{background:linear-gradient(135deg,var(--phase274-blue),var(--phase274-blue-2))!important;color:#fff!important;border-color:transparent!important;box-shadow:0 12px 26px rgba(23,79,214,.22)!important}
+.btn.secondary,.phase264-btn.secondary,.portal-secondary-action,.nv0-icon-link,.nv0n-login-link{background:#fff!important;border-color:#c7daf6!important;color:var(--phase274-blue)!important;font-weight:900!important}
+.phase264-card,.legal-card,.card,.result-card,.portal-card,.phase264-functional-panel,.phase264-auth-card,.phase264-insight-shell,.plan-card-clean,.plans-faq-grid article,.phase272-flow-card,.phase272-infocard,.phase272-plan-step,.phase272-auth-aside,.phase272-auth-note,.risk-card,.feature-card,.process-card,.article-card,.board-post{
+  border-color:var(--phase274-border-soft)!important;
+  box-shadow:0 10px 26px rgba(15,35,70,.06)!important;
+}
+.phase264-card,.legal-card,.portal-card,.phase264-auth-card,.phase264-insight-shell,.plan-card-clean,.phase272-infocard,.phase272-flow-card,.phase272-plan-step{padding:clamp(20px,2.2vw,28px)!important}
+.phase264-hero,.plans-hero,.portal-hero{border-color:var(--phase274-border-soft)!important;background:radial-gradient(circle at 92% 10%,rgba(23,79,214,.14),transparent 30%),linear-gradient(135deg,#fff 0%,#f8fbff 62%,#edf5ff 100%)!important;box-shadow:0 16px 42px rgba(15,35,70,.08)!important}
+.phase264-hero-copy,.portal-hero-copy,.hero-copy{gap:18px!important}
+.phase264-hero-copy > p,.portal-hero p:not(.portal-kicker),.plans-hero > p,.phase264-page-head p,.hero-copy p{font-size:clamp(16px,1.35vw,18px)!important;color:var(--phase274-muted)!important;max-width:820px!important}
+.phase264-kicker,.nv0-kicker,.portal-kicker,.plans-kicker,.pill.brand{background:#edf4ff!important;color:var(--phase274-blue)!important;border-color:#c8dcff!important;font-weight:950!important}
+input,select,textarea{border-color:#cdddee!important;color:#0f172a!important;background:#fff!important;font-size:16px!important}
+input::placeholder,textarea::placeholder{color:#8392a7!important;opacity:1!important}
+.notice{background:#f8fbff!important;border-color:var(--phase274-border-soft)!important;color:var(--phase274-muted)!important}
+.portal-metric-strip article b,.metric-card .value,.summary-card .value,.kpi,.plan-head h2,.phase272-infocard .mini-grid b{color:var(--phase274-title)!important}
+.portal-insight-strip,.phase272-infocard .mini-grid article,.phase272-auth-aside .phase272-auth-points article,.phase272-auth-note{background:#f8fbff!important;border-color:var(--phase274-border-soft)!important}
+.phase264-footer,.nv0n-footer,.business-footer{background:#07162f!important;color:#eaf2ff!important}
+.phase264-footer a,.nv0n-footer a,.business-footer a,.phase264-footer span,.nv0n-footer span,.business-footer span{color:#dbeafe!important}
+.business-footer .legal-disclaimer,.phase264-footer p,.nv0n-footer p{color:#bfd0e8!important}
+@media (max-width:720px){
+  body.nv0n-page,body.nv0-clean-slate{font-size:15.5px!important}
+  body.nv0n-page h1,body.nv0-clean-slate h1{font-size:32px!important;max-width:100%!important}
+  .phase264-hero,.plans-hero,.portal-hero{padding:22px!important}
+  .phase264-card,.legal-card,.portal-card,.phase264-auth-card,.phase264-insight-shell,.plan-card-clean,.phase272-infocard,.phase272-flow-card,.phase272-plan-step{padding:18px!important;border-radius:20px!important}
+}

@@ -4,7 +4,7 @@ const REQUEST_TIMEOUT_MS = 18000;
 const AUTO_PORTAL_DELAY_MS = 2200;
 const SCAN_ENDPOINTS = ['/api/diagnostics/start', '/api/public/diagnose'];
 const PROGRESS_STEPS = [
-  { percent: 18, label: 'URL 형식 확인', text: '입력한 주소를 공개 진단 형식으로 정리했습니다.' },
+  { percent: 18, label: 'URL 형식 확인', text: '입력한 주소를 공개 진단 형식으로 확인할 수 있습니다.' },
   { percent: 38, label: '공개 페이지 수집', text: '공개 페이지와 정책 링크 후보를 확인하고 있습니다.' },
   { percent: 62, label: '신뢰 공백 분류', text: '결제 전 안내, 개인정보, 환불 고지 공백을 분류합니다.' },
   { percent: 82, label: '결과 저장 준비', text: '내 사이트 관리 화면에서 이어 볼 수 있도록 결과를 저장합니다.' },
@@ -174,7 +174,7 @@ function renderCompleted(scan = {}, portalUrl = '/portal', endpoint = '') {
   const topFindings = Array.isArray(scan.topFindings) ? scan.topFindings.slice(0, 3) : [];
   const findingList = topFindings.length ? `<ul class="nv0-home-demo-findings">${topFindings.map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul>` : '';
   return `<div class="nv0-home-demo-card success">
-    <div class="nv0-home-demo-card-head"><span>무료 데모 완료</span><strong>${escapeHtml(domain)}</strong></div>
+    <div class="nv0-home-demo-card-head"><span>무료 진단 완료</span><strong>${escapeHtml(domain)}</strong></div>
     <div class="nv0-home-demo-progress complete"><i style="width:100%"></i></div>
     <div class="nv0-home-demo-kpis"><article><b>${escapeHtml(score)}</b><small>개선 우선도</small></article><article><b>${escapeHtml(findings)}</b><small>발견/검토 항목</small></article><article><b>자동</b><small>내 사이트 이동</small></article></div>
     <p>결과가 저장되었습니다. <b><span id="homeDemoRedirectCountdown">2</span>초 후</b> 내 사이트 관리 화면에서 같은 결과를 이어서 확인합니다.</p>

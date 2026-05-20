@@ -18,11 +18,11 @@ const authJs = read('apps/public/auth/app.js');
 const server = read('server/index.mjs');
 const publicRoutes = read('server/routes/public.mjs');
 
-add('01 phase271/phase272/phase273 package version', /phase271-site-ux-insight-polish|phase272-premium-redesign|phase273-package-100/.test(pkg.version));
+add('01 phase271/phase272/phase273 package version', /phase271-site-ux-insight-polish|phase272-premium-redesign|phase273-package-100|phase274-customer-copy-readability/.test(pkg.version));
 add('02 phase271 final gate exists', pkg.scripts?.['phase271:final']?.includes('npm run validate:phase271'));
-add('03 final review points phase271', ['npm run phase271:final','npm run phase272:final','npm run phase273:final'].includes(pkg.scripts?.['final:review']));
-add('04 CI uses phase271 final', read('.github/workflows/ci.yml').includes('npm run phase271:final') || read('.github/workflows/ci.yml').includes('npm run phase272:final') || read('.github/workflows/ci.yml').includes('npm run phase273:final'));
-add('05 RUN_ALL uses phase271 final', read('RUN_ALL_TESTS.sh').includes('npm run phase271:final') || read('RUN_ALL_TESTS.sh').includes('npm run phase272:final') || read('RUN_ALL_TESTS.sh').includes('npm run phase273:final'));
+add('03 final review points phase271', ['npm run phase271:final','npm run phase272:final','npm run phase273:final','npm run phase274:final'].includes(pkg.scripts?.['final:review']));
+add('04 CI uses phase271 final', read('.github/workflows/ci.yml').includes('npm run phase271:final') || read('.github/workflows/ci.yml').includes('npm run phase272:final') || read('.github/workflows/ci.yml').includes('npm run phase273:final') || read('.github/workflows/ci.yml').includes('npm run phase274:final'));
+add('05 RUN_ALL uses phase271 final', read('RUN_ALL_TESTS.sh').includes('npm run phase271:final') || read('RUN_ALL_TESTS.sh').includes('npm run phase272:final') || read('RUN_ALL_TESTS.sh').includes('npm run phase273:final') || read('RUN_ALL_TESTS.sh').includes('npm run phase274:final'));
 
 add('06 portal has two-column dashboard shell', portalHtml.includes('portal-dashboard-grid') && portalCss.includes('grid-template-columns:minmax(0,1fr) minmax(360px,430px)'));
 add('07 portal assigns main and side columns', ['portal-score-card,.portal-actions-card,.portal-site-card{grid-column:1}', '.nv74-work-card,.portal-feed-card,.portal-tools-card{grid-column:2}'].every(token => portalCss.includes(token)));
@@ -46,7 +46,7 @@ add('22 auth clears browser/autofill defaults repeatedly', authJs.includes('clea
 
 const failed = checks.filter(item => !item.ok);
 const passed = checks.length - failed.length;
-const report = { generatedAt: new Date().toISOString(), phase: 'phase271-site-ux-insight-polish|phase272-premium-redesign|phase273-package-100', ok: failed.length === 0, total: checks.length, passed, failed: failed.length, checks };
+const report = { generatedAt: new Date().toISOString(), phase: 'phase271-site-ux-insight-polish|phase272-premium-redesign|phase273-package-100|phase274-customer-copy-readability', ok: failed.length === 0, total: checks.length, passed, failed: failed.length, checks };
 fs.mkdirSync(path.join(root, 'docs/current'), { recursive: true });
 fs.writeFileSync(path.join(root, 'docs/current/PHASE271_SITE_UX_INSIGHT_POLISH_AUDIT.json'), JSON.stringify(report, null, 2));
 if (failed.length) {

@@ -78,7 +78,7 @@ function render() {
   tabs.forEach(btn => btn.classList.toggle('active', (btn.dataset.filter || 'all') === filter));
   const visible = posts;
   const totalLabel = Number(pagination.total || visible.length).toLocaleString('ko-KR');
-  if (state) state.textContent = `리스크 점검 게시판 · 조건에 맞는 ${totalLabel}개 글 중 현재 ${visible.length.toLocaleString('ko-KR')}개를 표시합니다. 모든 글은 문제 인식, 실무 체크리스트, 다음 행동 순서로 정리됩니다.`;
+  if (state) state.textContent = `리스크 점검 인사이트 · 조건에 맞는 ${totalLabel}개 글 중 현재 ${visible.length.toLocaleString('ko-KR')}개를 표시합니다. 모든 글은 문제 인식, 실무 체크리스트, 다음 행동 순서로 확인됩니다.`;
   if (list) {
     list.innerHTML = renderList(visible, '<div class="empty-state"><strong>조건에 맞는 칼럼이 없습니다.</strong><p>입력어를 줄이거나 전체 탭을 선택해 주세요.</p></div>', item => {
       const tagItems = (item.tags || item.hashtags || []).slice(0, 10).map(tag => `<span>#${escapeHtml(String(tag).replace(/^#/, ''))}</span>`).join('');
@@ -86,7 +86,7 @@ function render() {
       const faq = Array.isArray(item.faq) && item.faq.length ? `<section class="risk-meta-card"><h4>자주 묻는 질문</h4>${item.faq.slice(0, 3).map(entry => `<details class="faq-item"><summary>${escapeHtml(entry.question || '')}</summary><div class="faq-content">${escapeHtml(entry.answer || '')}</div></details>`).join('')}</section>` : '';
       const links = Array.isArray(item.internalLinks) && item.internalLinks.length ? `<nav class="internal-link-row" aria-label="관련 링크">${item.internalLinks.slice(0, 4).map(link => `<a class="btn secondary" href="${escapeAttr(safeLocalPath(link.href || '#'))}">${escapeHtml(link.label || '관련 링크')}</a>`).join('')}</nav>` : '';
       const riskSummary = `<div class="risk-meta-strip"><span>점검 의도: ${escapeHtml(item.searchIntent || item.primaryKeyword || '법률·규제 리스크 점검')}</span><span>핵심 주제: ${escapeHtml(item.primaryKeyword || '')}</span><span>분류 태그 ${Math.min(10, (item.tags || []).length)}개</span></div>`;
-      return `<article class="article-card board-post" id="${escapeAttr(safeBoardId(item.slug || item.id || ''))}"><div class="pill ${pillClass(item.boardType)}">${escapeHtml(item.category || typeLabel(item.boardType))}</div><h3>${escapeHtml(item.title)}</h3><p class="post-summary">${escapeHtml(item.summary || '')}</p>${riskSummary}${renderPostBody(item.body || '')}${checklist}${faq}<div class="post-tags">${tagItems}</div>${links}<div class="post-cta"><a class="btn primary" href="/products/veridion/demo">내 사이트 무료 진단</a><a class="btn secondary" href="/plans">요금제 확인</a><a class="btn secondary" href="/service">서비스·가이드 보기</a></div></article>`;
+      return `<article class="article-card board-post" id="${escapeAttr(safeBoardId(item.slug || item.id || ''))}"><div class="pill ${pillClass(item.boardType)}">${escapeHtml(item.category || typeLabel(item.boardType))}</div><h3>${escapeHtml(item.title)}</h3><p class="post-summary">${escapeHtml(item.summary || '')}</p>${riskSummary}${renderPostBody(item.body || '')}${checklist}${faq}<div class="post-tags">${tagItems}</div>${links}<div class="post-cta"><a class="btn primary" href="/products/veridion/demo">내 사이트 무료 진단</a><a class="btn secondary" href="/plans">요금 안내 보기</a><a class="btn secondary" href="/service">서비스 안내 보기</a></div></article>`;
     });
   }
   renderActivity();
