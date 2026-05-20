@@ -1,6 +1,6 @@
 {
   "name": "nv0-veridion-cleanroom",
-  "version": "1.0.0-commercial-phase270-full-package-verified-hardened",
+  "version": "1.0.0-commercial-phase273-package-100",
   "private": true,
   "type": "module",
   "scripts": {
@@ -28,7 +28,7 @@
     "test:phase258": "node tests/phase258-structural-hardening.mjs",
     "validate:phase258": "node scripts/validate-phase258-structural-hardening.mjs",
     "phase258:final": "npm run phase270:final",
-    "final:review": "npm run phase270:final",
+    "final:review": "npm run phase273:final",
     "ci:strict": "node scripts/ci-strict.mjs",
     "validate:commercial": "node scripts/validate-commercial-release.mjs",
     "validate:commercial-runtime": "node scripts/validate-commercial-runtime.mjs",
@@ -50,7 +50,13 @@
     "phase269:final": "npm run check:syntax && npm test && npm run check:pages && npm run test:routes && npm run check:links -- --summary && npm run smoke && npm run validate:phase264 && npm run validate:phase265 && npm run validate:commercial-runtime && npm run validate:phase268 && npm run validate:phase269",
     "validate:phase270": "node scripts/validate-phase270-full-package-verified.mjs",
     "phase270:runtime": "node scripts/validate-phase270-runtime-flow.mjs",
-    "phase270:final": "npm run check:syntax && npm test && npm run test:e2e && npm run check:pages && npm run test:routes && npm run check:links -- --summary && npm run smoke && npm run test:phase258 && npm run validate:phase258 && npm run test:phase259 && npm run validate:phase259 && npm run test:phase260 && npm run validate:phase260 && npm run validate:phase264 && npm run validate:phase265 && npm run validate:commercial && npm run validate:commercial-runtime && npm run validate:pipeline && npm run verify:security && npm run validate:deploy && npm run validate:phase268 && npm run validate:phase269 && npm run phase270:runtime && npm run validate:phase270 && node scripts/check-runtime-clean.mjs"
+    "phase270:final": "npm run check:syntax && npm test && npm run test:e2e && npm run check:pages && npm run test:routes && npm run check:links -- --summary && npm run smoke && npm run test:phase258 && npm run validate:phase258 && npm run test:phase259 && npm run validate:phase259 && npm run test:phase260 && npm run validate:phase260 && npm run validate:phase264 && npm run validate:phase265 && npm run validate:commercial && npm run validate:commercial-runtime && npm run validate:pipeline && npm run verify:security && npm run validate:deploy && npm run validate:phase268 && npm run validate:phase269 && npm run phase270:runtime && npm run validate:phase270 && node scripts/check-runtime-clean.mjs",
+    "validate:phase271": "node scripts/validate-phase271-site-ux-insight-polish.mjs",
+    "phase271:final": "npm run phase270:final && npm run validate:phase271",
+    "validate:phase272": "node scripts/validate-phase272-premium-redesign.mjs",
+    "phase272:final": "npm run phase271:final && npm run validate:phase272",
+    "validate:phase273": "node scripts/validate-phase273-package-score-100.mjs",
+    "phase273:final": "npm run phase272:final && npm run validate:phase273"
   },
-  "description": "NV0 phase270 package with full package recheck, e2e/legacy validator repairs, runtime API verification, stronger final gate, and verified phase269 instant homepage diagnosis/portal handoff."
+  "description": "NV0 phase273 100점 검수 패키지: premium redesign, factual-only copy, preserved runtime flow, full regression/security/deploy validation, and fixed package scoring."
 }

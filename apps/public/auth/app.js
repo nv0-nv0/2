@@ -18,16 +18,21 @@ const registerState = byId('registerState');
 const resetRequestState = byId('resetRequestState');
 const resetState = byId('resetState');
 
-function clearEmailDefaults() {
-  [loginEmail, registerEmail, resetEmail, resetConfirmEmail].forEach((input) => {
+function clearCredentialDefaults() {
+  [loginEmail, loginPassword, registerEmail, registerPassword, resetEmail, resetConfirmEmail, resetPassword].forEach((input) => {
     if (!input) return;
     input.defaultValue = '';
     input.value = '';
     input.removeAttribute('value');
-    input.setAttribute('autocomplete', 'off');
+    input.setAttribute('autocomplete', 'new-password');
+    input.setAttribute('data-nv0-empty-default', 'true');
   });
 }
-clearEmailDefaults();
+clearCredentialDefaults();
+requestAnimationFrame(clearCredentialDefaults);
+setTimeout(clearCredentialDefaults, 80);
+setTimeout(clearCredentialDefaults, 350);
+window.addEventListener('pageshow', clearCredentialDefaults);
 
 async function postJson(path, body){
   const res = await fetch(path, { method:'POST', headers:{'content-type':'application/json'}, credentials:'same-origin', body: JSON.stringify(body) });

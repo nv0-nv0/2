@@ -3057,6 +3057,13 @@ const subscription = site ? (db.subscriptions || []).find(item => item.siteId ==
 const scan = site ? (db.scans || []).find(item => item.siteId === site.id) || null : null;
 const guidance = site ? findLatestGuidanceForSite(db, site.id) : null;
 const autoFixJobs = site ? (db.autoFixJobs || []).filter(item => item.siteId === site.id).slice(0, 10) : [];
+const persistedBoardItems = [...(db.boards || []), ...(db.publications || [])]
+.filter(item => item && item.visibility !== 'private')
+.sort((a, b) => Date.parse(b.publishedAt || b.createdAt || 0) - Date.parse(a.publishedAt || a.createdAt || 0));
+const boardItems = persistedBoardItems.length
+? persistedBoardItems.slice(0, 10)
+: buildPublicColumnEnginePosts({ pageSize: 10 }).map((item, index) => ({ ...item, id: item.id || `portal-column-${index + 1}`, type: 'column', visibility: 'public', status: 'published', engine: 'public-column-engine-v1' }));
+const lastPublished = boardItems.find(item => item.autoPublished || item.type === 'column' || item.engine === 'public-column-engine-v1') || boardItems[0] || null;
 return {
 order,
 site,
@@ -3064,7 +3071,8 @@ subscription,
 latestScan: scan,
 guidance,
 autoFixJobs,
-boards: (db.boards || []).slice(0, 10),
+boards: boardItems,
+publicationCadence: { intervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000), label: `${Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000)}분마다 1건 발행`, engine: 'public-column-engine-v1', actualPublishing: true, lastPublishedAt: lastPublished?.publishedAt || lastPublished?.createdAt || null },
 legalUpdates: (db.legalUpdates || []).slice(0, 10),
 plans: buildPlanCatalog(scan?.recommendedPlan || subscription?.plan || 'Report')
 };

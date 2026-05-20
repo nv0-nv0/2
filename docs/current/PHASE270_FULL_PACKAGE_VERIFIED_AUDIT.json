@@ -1,23 +1,23 @@
 {
-  "generatedAt": "2026-05-20T00:24:05.787Z",
-  "phase": "phase270-full-package-verified-hardened",
+  "generatedAt": "2026-05-20T01:41:57.677Z",
+  "phase": "phase270-full-package-verified-hardened-compatible-phase272",
   "ok": true,
   "total": 20,
   "passed": 20,
   "failed": 0,
   "checks": [
     {
-      "name": "01 package version phase270",
+      "name": "01 package version phase270, phase271, phase272, or phase273",
       "ok": true,
       "detail": ""
     },
     {
-      "name": "02 final review points phase270",
+      "name": "02 final review points current final gate",
       "ok": true,
       "detail": ""
     },
     {
-      "name": "03 RUN_ALL uses phase270 final gate",
+      "name": "03 RUN_ALL uses current final gate",
       "ok": true,
       "detail": ""
     },
@@ -42,7 +42,7 @@
       "detail": ""
     },
     {
-      "name": "08 CI workflow uses phase270 final",
+      "name": "08 CI workflow uses current final",
       "ok": true,
       "detail": ""
     },
@@ -52,7 +52,7 @@
       "detail": ""
     },
     {
-      "name": "10 old validators accept phase270 release line",
+      "name": "10 old validators accept current release line",
       "ok": true,
       "detail": ""
     },

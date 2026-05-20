@@ -418,7 +418,7 @@ const activity = publicPosts.slice(0, 3).map(item => ({
 }));
 return json(req, res, 200, {
   ok: true,
-  publicationCadence: { intervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000), label: '20분마다 1건 발행', engine: 'public-column-engine-v1', actualPublishing: true, searchScope: 'server-side', dataSource: publicPosts[0]?.source || 'persisted-db' },
+  publicationCadence: { intervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000), label: `${Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000)}분마다 1건 발행`, engine: 'public-column-engine-v1', actualPublishing: true, searchScope: 'server-side', dataSource: publicPosts[0]?.source || 'persisted-db', lastPublishedAt: publicPosts[0]?.publishedAt || publicPosts[0]?.createdAt || null, createdOnThisRequest: !!createdNow },
   createdNow: !!createdNow,
   pageSize,
   activity,

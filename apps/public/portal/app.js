@@ -29,6 +29,9 @@ const portalSummaryDomain = document.getElementById('portalSummaryDomain');
 const portalIssueCount = document.getElementById('portalIssueCount');
 const portalPriorityCount = document.getElementById('portalPriorityCount');
 const portalContentStatus = document.getElementById('portalContentStatus');
+const portalPublishCadence = document.getElementById('portalPublishCadence');
+const portalLastPublishedAt = document.getElementById('portalLastPublishedAt');
+const portalPublishState = document.getElementById('portalPublishState');
 
 function getSavedScan() {
   try { return JSON.parse(localStorage.getItem('nv0:lastScan') || 'null'); } catch { return null; }
@@ -266,18 +269,44 @@ function renderNextActionCards(latest, account, summary) {
   ];
   nextActionCards.innerHTML = cards.map(item => `<article class="nv191-action-card"><div class="nv191-action-icon">${escapeHtml(item.no)}</div><div class="nv191-action-body"><div class="nv191-action-head"><h2>${escapeHtml(item.title)}</h2><span class="nv191-pill">${escapeHtml(item.pill)}</span></div><p>${escapeHtml(item.body)}</p><a class="btn secondary" href="${escapeAttr(item.href)}">${escapeHtml(item.cta)}</a></div></article>`).join('');
 }
-function renderBoardHighlights(boards = []) {
-  const items = (boards || []).filter(item => item && (item.boardType === 'cta' || item.autoPublished || item.type === 'cta')).slice(0, 3);
-  if (!items.length) return '<div class="muted">게시판 연결 글 없음</div>';
-  return items.map(item => {
-    const tags = Array.isArray(item.tags) ? item.tags.slice(0, 5) : [];
-    return `<div class="result-card stack"><div class="meta-row"><strong>${escapeHtml(item.title || '게시글')}</strong><span class="pill">진단 연결</span></div><div class="muted">${escapeHtml(formatDate(item.createdAt || '-'))}</div><p>${escapeHtml(clampText(item.summary || item.body || '', 170))}</p>${tags.length ? `<div class="asset-tags">${tags.map(tag => `<span>#${escapeHtml(String(tag).replace(/^#/, ''))}</span>`).join('')}</div>` : ''}<div class="topnav"><a class="btn secondary" href="/board">게시판에서 보기</a><a class="btn secondary" href="/products/veridion/demo">무료 진단</a></div></div>`;
+function publicBoardItems(items = []) {
+  const seen = new Set();
+  return (items || []).filter(Boolean).filter((item) => {
+    const key = `${item.id || ''}:${item.title || ''}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+function isCtaOrColumn(item = {}) {
+  const haystack = [item.type, item.boardType, item.boardPurpose, item.engine, item.category, item.source].join(' ');
+  return item.autoPublished || /cta|column|public-column|칼럼|진단|리스크/i.test(haystack);
+}
+function renderPublishStatus(boardApi = {}) {
+  const cadence = boardApi?.publicationCadence || {};
+  const posts = publicBoardItems(boardApi?.posts || []);
+  const latest = posts[0] || null;
+  const interval = Number(cadence.intervalMinutes || 20);
+  const cadenceLabel = cadence.label || `${interval}분마다 1건`;
+  const latestAt = latest?.publishedAt || latest?.createdAt || null;
+  const sourceLabel = cadence.dataSource === 'engine-emergency-fallback' ? '엔진 대체 생성' : '정상 연결';
+  if (portalPublishCadence) portalPublishCadence.textContent = cadenceLabel;
+  if (portalLastPublishedAt) portalLastPublishedAt.textContent = latestAt ? formatDate(latestAt) : '발행 대기';
+  if (portalPublishState) portalPublishState.textContent = cadence.actualPublishing === false ? '비활성' : sourceLabel;
+  return `<section class="portal-publish-status-card" aria-label="인사이트 발행 상태"><div class="meta-row"><strong>20분 발행 점검</strong><span class="pill brand">${escapeHtml(sourceLabel)}</span></div><div class="status-grid"><article><span>발행 주기</span><b>${escapeHtml(cadenceLabel)}</b></article><article><span>최근 글</span><b>${escapeHtml(latestAt ? formatDate(latestAt) : '발행 대기')}</b></article><article><span>이번 요청 발행</span><b>${escapeHtml(boardApi?.createdNow ? '새 글 생성됨' : '간격 확인')}</b></article><article><span>표시 글 수</span><b>${escapeHtml(posts.length)}건</b></article></div><p class="muted">게시판 API를 직접 확인해 내 사이트 화면에 최신 인사이트를 표시합니다.</p></section>`;
+}
+function renderBoardHighlights(items = []) {
+  const rows = publicBoardItems(items).filter(isCtaOrColumn).slice(0, 3);
+  if (!rows.length) return '<div class="muted">게시판 연결 글 없음</div>';
+  return rows.map(item => {
+    const tags = Array.isArray(item.tags || item.hashtags) ? (item.tags || item.hashtags).slice(0, 5) : [];
+    return `<div class="result-card stack"><div class="meta-row"><strong>${escapeHtml(item.title || '인사이트 칼럼')}</strong><span class="pill">진단 연결</span></div><div class="muted">${escapeHtml(formatDate(item.publishedAt || item.createdAt || '-'))}</div><p>${escapeHtml(clampText(item.summary || item.body || '', 170))}</p>${tags.length ? `<div class="asset-tags">${tags.map(tag => `<span>#${escapeHtml(String(tag).replace(/^#/, ''))}</span>`).join('')}</div>` : ''}<div class="topnav"><a class="btn secondary" href="/board">게시판에서 보기</a><a class="btn secondary" href="/products/veridion/demo">무료 진단</a></div></div>`;
   }).join('');
 }
-function renderInsightFeed(boards = []) {
-  const items = (boards || []).filter(item => item && item.boardType !== 'cta').slice(0, 4);
-  if (!items.length) return '<div class="muted">공지 없음</div>';
-  return items.map(item => `<div class="result-card"><div>${escapeHtml(item.title || '공지')}</div><div class="muted">${escapeHtml(formatDate(item.createdAt || '-'))}</div><p>${escapeHtml(clampText(item.summary || item.body || '', 120))}</p></div>`).join('');
+function renderInsightFeed(items = []) {
+  const rows = publicBoardItems(items).slice(0, 4);
+  if (!rows.length) return '<div class="muted">표시할 인사이트가 없습니다.</div>';
+  return rows.map(item => `<div class="result-card"><div class="meta-row"><strong>${escapeHtml(item.title || '인사이트')}</strong><span class="pill">${escapeHtml(item.category || item.boardType || '칼럼')}</span></div><div class="muted">${escapeHtml(formatDate(item.publishedAt || item.createdAt || '-'))}</div><p>${escapeHtml(clampText(item.summary || item.body || '', 130))}</p></div>`).join('');
 }
 function renderAsset(asset, order, accessToken) {
   if (!asset) return '';
@@ -363,7 +392,7 @@ function renderMemberValueBox(session, account) {
   if (!session?.authenticated) {
     return `<div class="card stack"><strong>회원가입하면 바로 쓸 수 있는 기능</strong><ul class="result-list"><li>내 사이트 저장</li><li>클릭 한 번으로 다시 검사</li><li>지난 검사 내역 5개 확인</li><li>검사 결과 자동 저장</li></ul><a class="btn primary" href="/auth?next=/portal">무료로 검사 결과 저장하기</a></div>`;
   }
-  return `<div class="card stack"><strong>회원 전용 기능 활성화됨</strong><p class="muted">${escapeHtml(account?.customer?.email || session.customer?.email || '')} 계정으로 사이트 저장, 원클릭 재검사, 최근 내역 관리가 가능합니다.</p></div>`;
+  return `<div class="card stack"><strong>회원 전용 기능 활성화됨</strong><p class="muted">로그인 계정으로 사이트 저장, 원클릭 재검사, 최근 내역 관리가 가능합니다.</p></div>`;
 }
 function updateStaticDashboard(session, account, summary) {
   const authenticated = !!session?.authenticated;
@@ -372,7 +401,7 @@ function updateStaticDashboard(session, account, summary) {
   const sitesCount = account?.savedSites?.length || 0;
   const dashboardAssets = collectDashboardAssets(account, summary, saved);
   updateDashboardSummary(dashboardAssets);
-  if (portalAccountState) portalAccountState.textContent = authenticated ? `${account?.customer?.email || session.customer?.email || '로그인 계정'} 계정으로 연결됨` : '비회원 · 최근 확인 기록';
+  if (portalAccountState) portalAccountState.textContent = authenticated ? '로그인 계정으로 연결됨' : '비회원 · 최근 확인 기록';
   if (planCard) planCard.innerHTML = `<div><b>${authenticated ? '회원 전용 관리' : '무료 계정 필요'}</b><small><span>사이트 ${sitesCount}개</span><span>최근 검사 ${account?.recentScans?.length || 0}개</span></small></div><a class="btn secondary" href="${authenticated ? '/plans' : '/auth?next=/portal'}">${authenticated ? '상품 보기' : '로그인·회원가입'}</a>`;
   if (topbarTitle) topbarTitle.textContent = '내 사이트 다음 조치';
   if (topbarCopy) topbarCopy.textContent = authenticated ? '저장한 사이트를 다시 검사하고 최근 결과를 한곳에서 확인하세요.' : '비회원도 이 브라우저의 최근 확인 기록을 볼 수 있고, 회원가입하면 계정에 저장됩니다.';
@@ -393,14 +422,18 @@ async function loadPortal() {
   if (!url.searchParams.get('siteId') && siteId) { url.searchParams.set('siteId', siteId); patchedUrl = true; }
   if (!url.searchParams.get('requestId') && requestId) { url.searchParams.set('requestId', requestId); patchedUrl = true; }
   if (patchedUrl) history.replaceState(null, '', `${url.pathname}?${url.searchParams.toString()}${url.hash || ''}`);
-  const [sessionRes, accountRes, summaryRes] = await Promise.allSettled([
+  const [sessionRes, accountRes, summaryRes, boardRes] = await Promise.allSettled([
     fetch('/api/public/auth/session').then(r => r.json()),
     fetch('/api/public/account').then(async r => ({ ok: r.ok, data: await r.json().catch(() => ({})) })),
-    fetch(`/api/public/portal-summary?${url.searchParams.toString()}`).then(r => r.json())
+    fetch(`/api/public/portal-summary?${url.searchParams.toString()}`).then(r => r.json()),
+    fetch('/api/public/board?page=1&pageSize=4&filter=all', { cache: 'no-store' }).then(r => r.json())
   ]);
   const session = sessionRes.status === 'fulfilled' ? sessionRes.value : { authenticated: false };
   const account = accountRes.status === 'fulfilled' && accountRes.value.ok ? accountRes.value.data : null;
   const summary = summaryRes.status === 'fulfilled' ? summaryRes.value.summary : {};
+  const boardApi = boardRes.status === 'fulfilled' && boardRes.value?.ok ? boardRes.value : { posts: [], publicationCadence: summary?.publicationCadence || {} };
+  const boardItems = publicBoardItems([...(boardApi.posts || []), ...(summary?.boards || [])]);
+  renderPublishStatus(boardApi);
   updateStaticDashboard(session, account, summary);
   let fulfillment = null;
   const orderId = url.searchParams.get('orderId') || summary?.order?.id || '';
@@ -409,7 +442,7 @@ async function loadPortal() {
   if (!session.authenticated) {
     state.innerHTML = '이 브라우저의 최근 확인 기록을 표시합니다. 계정 저장이 필요하면 <a href="/auth?next=/portal">로그인·회원가입</a>을 이용하세요.';
   } else {
-    state.textContent = `${account?.customer?.email || session.customer.email} 계정 · 저장 사이트 ${(account?.savedSites || []).length}개 · 최근 검사 ${(account?.recentScans || []).length}개`;
+    state.textContent = `로그인 계정 · 저장 사이트 ${(account?.savedSites || []).length}개 · 최근 검사 ${(account?.recentScans || []).length}개`;
   }
   primary.innerHTML = `
     ${renderPortalHandoffBanner(handoff, saved)}
@@ -422,8 +455,9 @@ async function loadPortal() {
     ${summary?.site ? `<div class="nv74-state"><strong>현재 선택 사이트</strong> · ${escapeHtml(summary.site.domain)} · ${escapeHtml(summary.site.latestRiskLevel || '검사 전')} · 최근 발견 ${escapeHtml(summary.site.latestFindings ?? summary.latestScan?.totalFindings ?? '-')}개</div>` : ''}
 `;
   feed.innerHTML = `
-    <div class="card stack"><div class="meta-row"><strong>게시판 연결 글</strong><a class="btn secondary" href="/board">게시판 보기</a></div>${renderBoardHighlights(summary?.boards || [])}</div>
-    <div class="card stack"><strong>공지·인사이트</strong>${renderInsightFeed(summary?.boards || [])}</div>`;
+    ${renderPublishStatus(boardApi)}
+    <div class="card stack"><div class="meta-row"><strong>진단 연결 칼럼</strong><a class="btn secondary" href="/board">게시판 보기</a></div>${renderBoardHighlights(boardItems)}</div>
+    <div class="card stack"><strong>최신 인사이트</strong>${renderInsightFeed(boardItems)}</div>`;
 }
 
 addSiteToggle?.addEventListener('click', () => {
