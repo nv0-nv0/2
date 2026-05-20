@@ -105,7 +105,7 @@ function resolveRuntimeDir(root, env = process.env) {
       env.NV0_RUNTIME_DIR = fallback;
       env.NV0_RUNTIME_EPHEMERAL = 'true';
       if (runtimeVerbose(env) && initial !== fallback) {
-        console.info(`nv0 runtime: using ephemeral scratch runtime '${fallback}' because requested runtime '${initial}' is not writable and durable state is external.`);
+        console.info(`VERIDION runtime: using ephemeral scratch runtime '${fallback}' because requested runtime '${initial}' is not writable and durable state is external.`);
       }
       return fallback;
     }
@@ -912,7 +912,7 @@ const lines = [
 `To: ${recipients.map(stripHeaderValue).join(', ')}`,
 `Subject: ${stripHeaderValue(subject)}`,
 `Date: ${new Date().toUTCString()}`,
-`Message-ID: <${stripHeaderValue(messageId || uid('mailmsg'))}@nv0.kr>`,
+`Message-ID: <${stripHeaderValue(messageId || uid('mailmsg'))}@VERIDION>`,
 'MIME-Version: 1.0',
 'Content-Type: text/plain; charset=UTF-8',
 'Content-Transfer-Encoding: 8bit',
@@ -989,15 +989,15 @@ setTimeout(() => reject(new Error('SMTP connect timed out')), 15_000).unref?.();
 });
 try {
 expect(await readResponse(), [220], 'SMTP greeting');
-let ehlo = await command(`EHLO ${requestHost({ headers: { host: 'nv0.kr' }, socket: { remoteAddress: '127.0.0.1' } }) || 'nv0.kr'}`);
-if (![250].includes(ehlo.code)) ehlo = await command('HELO nv0.kr');
+let ehlo = await command(`EHLO ${requestHost({ headers: { host: 'VERIDION' }, socket: { remoteAddress: '127.0.0.1' } }) || 'VERIDION'}`);
+if (![250].includes(ehlo.code)) ehlo = await command('HELO VERIDION');
 expect(ehlo, [250], 'SMTP EHLO');
 if (!config.secure && config.starttls && /STARTTLS/i.test(ehlo.text)) {
 expect(await command('STARTTLS'), [220], 'SMTP STARTTLS');
 const upgraded = tls.connect({ socket, servername: config.host, rejectUnauthorized: config.rejectUnauthorized });
 await new Promise((resolve, reject) => { upgraded.once('secureConnect', resolve); upgraded.once('error', reject); });
 attach(upgraded);
-expect(await command('EHLO nv0.kr'), [250], 'SMTP EHLO after STARTTLS');
+expect(await command('EHLO VERIDION'), [250], 'SMTP EHLO after STARTTLS');
 }
 if (config.user || config.pass) {
 const authPlain = Buffer.from(`\0${config.user}\0${config.pass}`).toString('base64');
@@ -1511,11 +1511,11 @@ function businessFooterHtml() {
 const types = BUSINESS_PROFILE.businessTypes.join(' · ');
 const mailOrderNumber = isSafePublicOptionalField(BUSINESS_PROFILE.mailOrderRegistrationNumber, { requireMailOrderShape: true }) ? BUSINESS_PROFILE.mailOrderRegistrationNumber : '';
 return '<footer class="business-footer" aria-label="사업자 정보">'
-+ '<div class="brand-col"><strong>nv0</strong><span>온라인 사업자의 법률·규제·과태료 리스크 후보를 공개 화면 기준으로 줄입니다.</span><span>© 2024 nv0.kr. All rights reserved.</span></div>'
++ '<div class="brand-col"><strong>VERIDION</strong><span>온라인 사업자의 법률·규제·과태료 리스크 후보를 공개 화면 기준으로 줄입니다.</span><span>© 2026 VERIDION. All rights reserved.</span></div>'
 + '<div class="footer-col"><strong>서비스</strong><a href="/service">서비스 소개</a><a href="/solutions">분석 프로세스</a><a href="/plans">요금제</a></div>'
 + '<div class="footer-col"><strong>정보</strong><a href="/board">게시판</a><a href="/service">서비스·가이드</a><a href="/business-info">고객지원</a></div>'
 + '<div class="footer-col"><strong>회사</strong><a href="/business-info">회사 소개</a><a href="/privacy">개인정보처리방침</a><a href="/terms">이용약관</a><a href="/refund">환불 정책</a></div>'
-+ `<div class="footer-col"><strong>문의</strong><a href="mailto:hello@nv0.kr">hello@nv0.kr</a><a href="mailto:${BUSINESS_PROFILE.contactEmail}">고객지원 이메일</a><span class="legal-disclaimer">${BUSINESS_PROFILE.tradeName} · 대표자 ${BUSINESS_PROFILE.representative} · 사업자등록번호 ${BUSINESS_PROFILE.registrationNumber}${mailOrderNumber ? ' · 통신판매업 신고번호 ' + mailOrderNumber : ''}</span><span class="legal-disclaimer">주소: ${BUSINESS_PROFILE.address}</span><span class="legal-disclaimer">업태·종목: ${types}</span><span class="legal-disclaimer">NV0는 공개 웹페이지 기반 구조 분석 서비스이며 법률 자문이나 성과 보장을 제공하지 않습니다.</span></div>`
++ `<div class="footer-col"><strong>문의</strong><a href="mailto:ct@nv0.kr">ct@nv0.kr</a><span class="legal-disclaimer">${BUSINESS_PROFILE.tradeName} · 대표자 ${BUSINESS_PROFILE.representative} · 사업자등록번호 ${BUSINESS_PROFILE.registrationNumber}${mailOrderNumber ? ' · 통신판매업 신고번호 ' + mailOrderNumber : ''}</span><span class="legal-disclaimer">주소: ${BUSINESS_PROFILE.address}</span><span class="legal-disclaimer">업태·종목: ${types}</span><span class="legal-disclaimer">VERIDION은 공개 웹페이지 기반 구조 분석 서비스이며 법률 자문이나 성과 보장을 제공하지 않습니다.</span></div>`
 + '</footer>';
 }
 
@@ -1927,7 +1927,7 @@ return fallback[index % fallback.length];
 function publicBoardBodyFor(item = {}, index = 0) {
 const keyword = item.primaryKeyword || item.seo?.primaryKeyword || item.title || '사이트 신뢰 안내';
 const source = [keyword, item.title, item.summary, item.body].join(' ');
-const target = item.target || item.normalizedTarget || 'nv0.kr';
+const target = item.target || item.normalizedTarget || 'VERIDION';
 const theme = (() => {
 if (/환불|취소|교환|청약/.test(source)) return { label: '환불·청약철회 안내', elements: ['환불 가능 조건', '취소 접수 위치', '처리 기간', '예외 기준', '문의 경로'], buttonCopy: '환불 가능 조건 먼저 확인', risk: '환불 기준이 흐릿하면 고객은 결제보다 분쟁 가능성을 먼저 떠올립니다.', cta: '환불 기준이 페이지마다 다르다면 무료 진단으로 먼저 공백을 확인해 보세요.' };
 if (/개인정보|동의|보관|파기|privacy/.test(source)) return { label: '개인정보 안내', elements: ['수집 항목', '수집 목적', '보관 기간', '파기 기준', '문의 이메일'], buttonCopy: '수집 목적과 보관 기간 확인', risk: '개인정보 안내가 입력 화면과 떨어져 있으면 고객은 정보를 남기기 전에 멈춥니다.', cta: '개인정보 안내가 입력 화면과 멀리 떨어져 있다면 위치부터 점검해 보세요.' };
@@ -2341,7 +2341,7 @@ auto: 'Expert', agency: 'Expert', subscription: 'Expert'
 return aliases[key] || (['Free','Report','Expert'].includes(raw) ? raw : fallback);
 }
 function buildCommercialOfferCatalog() {
-const commonAssurance = ['결제 전 받을 결과물과 환불 기준을 다시 확인합니다.', '결과물은 내 사이트 관리에서 확인합니다.', 'hello@nv0.kr 이메일 고객지원으로 문의할 수 있습니다.'];
+const commonAssurance = ['결제 전 받을 결과물과 환불 기준을 다시 확인합니다.', '결과물은 내 사이트 관리에서 확인합니다.', 'ct@nv0.kr 이메일 고객지원으로 문의할 수 있습니다.'];
 return [
   {
     code: 'Report',
@@ -4282,7 +4282,7 @@ if (AUTO_BACKUP_ENABLED && AUTO_BACKUP_ON_STARTUP) {
 setTimeout(() => { runAutomaticBackup('startup').catch(error => console.error('startup backup failed', error)); }, 15_000).unref();
 }
 server.listen(PORT, HOST, () => {
-console.log(`nv0 cleanroom server listening on http://${HOST}:${PORT} target=${PLATFORM.target} stage=${DEPLOYMENT_STAGE} launchReady=${COMMERCIAL_LAUNCH_READY} payment=${PAYMENT_PROVIDER}`);
+console.log(`VERIDION cleanroom server listening on http://${HOST}:${PORT} target=${PLATFORM.target} stage=${DEPLOYMENT_STAGE} launchReady=${COMMERCIAL_LAUNCH_READY} payment=${PAYMENT_PROVIDER}`);
 });
 }).catch((error) => {
 console.error('server startup failed', error);

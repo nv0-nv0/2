@@ -209,6 +209,11 @@ return json(req, res, 200, { ok: true, refundRequest });
 }
 if (pathname === '/api/public/portal-summary' && req.method === 'GET') {
 const db = await readDb();
+try {
+  const latestScan = (db.scans || [])[0] || null;
+  const created = createCtaPublicationIfDue(db, latestScan, { force: false, reason: 'portal-summary' });
+  if (created) await writeDb(db);
+} catch {}
 const orderId = String(url.searchParams.get('orderId') || '');
 if (orderId) {
 const order = (db.orders || []).find(item => item.id === orderId);

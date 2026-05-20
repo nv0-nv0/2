@@ -289,11 +289,14 @@ function renderPublishStatus(boardApi = {}) {
   const interval = Number(cadence.intervalMinutes || 20);
   const cadenceLabel = cadence.label || `${interval}분마다 1건`;
   const latestAt = latest?.publishedAt || latest?.createdAt || null;
-  const sourceLabel = cadence.dataSource === 'engine-emergency-fallback' ? '엔진 대체 생성' : '정상 연결';
+  const latestMs = latestAt ? Date.parse(latestAt) : NaN;
+  const isStale = Number.isFinite(latestMs) ? (Date.now() - latestMs > interval * 60000 * 1.35) : true;
+  const sourceLabel = cadence.dataSource === 'engine-emergency-fallback' ? '대체 생성 중' : '정상 연결';
+  const stateLabel = cadence.actualPublishing === false ? '비활성' : (isStale ? '발행 확인 필요' : '정상 작동');
   if (portalPublishCadence) portalPublishCadence.textContent = cadenceLabel;
   if (portalLastPublishedAt) portalLastPublishedAt.textContent = latestAt ? formatDate(latestAt) : '발행 대기';
-  if (portalPublishState) portalPublishState.textContent = cadence.actualPublishing === false ? '비활성' : sourceLabel;
-  return `<section class="portal-publish-status-card" aria-label="인사이트 발행 상태"><div class="meta-row"><strong>20분 발행 점검</strong><span class="pill brand">${escapeHtml(sourceLabel)}</span></div><div class="status-grid"><article><span>발행 주기</span><b>${escapeHtml(cadenceLabel)}</b></article><article><span>최근 글</span><b>${escapeHtml(latestAt ? formatDate(latestAt) : '발행 대기')}</b></article><article><span>이번 요청 발행</span><b>${escapeHtml(boardApi?.createdNow ? '새 글 생성됨' : '간격 확인')}</b></article><article><span>표시 글 수</span><b>${escapeHtml(posts.length)}건</b></article></div><p class="muted">인사이트 API를 직접 확인해 내 사이트 화면에 최신 인사이트를 표시합니다.</p></section>`;
+  if (portalPublishState) portalPublishState.textContent = stateLabel;
+  return `<section class="portal-publish-status-card" aria-label="인사이트 발행 상태"><div class="meta-row"><strong>인사이트 발행 상태</strong><span class="pill brand">${escapeHtml(sourceLabel)}</span></div><div class="status-grid"><article><span>발행 주기</span><b>${escapeHtml(cadenceLabel)}</b></article><article><span>최근 발행</span><b>${escapeHtml(latestAt ? formatDate(latestAt) : '발행 대기')}</b></article><article><span>현재 상태</span><b>${escapeHtml(stateLabel)}</b></article><article><span>표시 글 수</span><b>${escapeHtml(posts.length)}건</b></article></div><p class="muted">최근 발행 시간이 주기를 넘기면 발행 확인 필요 상태로 표시됩니다.</p></section>`;
 }
 function renderBoardHighlights(items = []) {
   const rows = publicBoardItems(items).filter(isCtaOrColumn).slice(0, 3);

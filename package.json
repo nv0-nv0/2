@@ -1,6 +1,6 @@
 {
-  "name": "nv0-veridion-cleanroom",
-  "version": "1.0.0-commercial-phase274-customer-copy-readability",
+  "name": "veridion-public-risk-diagnostic",
+  "version": "1.0.0-commercial-phase276-veridion-stitch-adopted",
   "private": true,
   "type": "module",
   "scripts": {
@@ -28,7 +28,7 @@
     "test:phase258": "node tests/phase258-structural-hardening.mjs",
     "validate:phase258": "node scripts/validate-phase258-structural-hardening.mjs",
     "phase258:final": "npm run phase270:final",
-    "final:review": "npm run phase274:final",
+    "final:review": "npm run phase276:final",
     "ci:strict": "node scripts/ci-strict.mjs",
     "validate:commercial": "node scripts/validate-commercial-release.mjs",
     "validate:commercial-runtime": "node scripts/validate-commercial-runtime.mjs",
@@ -58,7 +58,9 @@
     "validate:phase273": "node scripts/validate-phase273-package-score-100.mjs",
     "phase273:final": "npm run phase272:final && npm run validate:phase273",
     "validate:phase274": "node scripts/validate-phase274-customer-copy-readability.mjs",
-    "phase274:final": "npm run phase273:final && npm run validate:phase274"
+    "phase274:final": "npm run phase273:final && npm run validate:phase274",
+    "validate:phase276": "node scripts/validate-phase276-veridion-stitch-adopted.mjs",
+    "phase276:final": "npm run check:syntax && npm test && npm run check:pages && npm run test:routes && npm run validate:phase276"
   },
-  "description": "NV0 phase274 고객용 문구 전환 및 시인성 개선 패키지: 내부 제작 문구 제거, 고객 중심 안내 강화, 고대비 타이포그래피/카드/버튼 개선, 기존 즉시 진단·내 사이트·인사이트 기능 보존."
+  "description": "VERIDION phase276 package: customer-facing product naming, Stitch-inspired flat professional UI system, retained NV0 legal/company data where factual, preserved diagnostic and portal runtime features."
 }
