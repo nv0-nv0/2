@@ -21,16 +21,16 @@ const ci = exists('.github/workflows/ci.yml') ? read('.github/workflows/ci.yml')
 const rel = exists('.github/workflows/commercial-release.yml') ? read('.github/workflows/commercial-release.yml') : '';
 
 ['server/index.mjs','server/routes/public.mjs','server/routes/payment.mjs','shared/html.js','shared/site-enhancements.js','apps/public/board/app.js','apps/public/checkout/app.js','scripts/test-all.mjs','tests/e2e.mjs','RUN_ALL_TESTS.sh'].forEach(file => add(`exists:${file}`, exists(file)));
-add('package version phase258', /phase25[89]-(structural-hardening|demo-penalty-dashboard)|phase260-dispute-safe-penalty|phase265-dashboard-portal-completion/.test(pkg.version));
+add('package version phase258', /phase25[89]-(structural-hardening|demo-penalty-dashboard)|phase260-dispute-safe-penalty|phase265-dashboard-portal-completion|phase26[8-9]-|phase270-full-package-verified-hardened/.test(pkg.version));
 ['test:e2e','ci:strict','validate:commercial','validate:commercial-runtime','validate:pipeline','pipeline:release','final:review','test:phase258','validate:phase258','phase258:final'].forEach(script => add(`package script:${script}`, !!pkg.scripts?.[script]));
 add('phase257 aliases preserved to phase258', /phase258:final/.test(pkg.scripts?.['phase257:final'] || '') && /test:phase258/.test(pkg.scripts?.['test:phase257'] || ''));
 add('stale phase107 workflow removed', !exists('.github/workflows/phase107-complete-pipeline.yml'));
 add('stale phase108 workflow removed', !exists('.github/workflows/phase108-commercial-100.yml'));
-add('ci workflow references phase258 gate', ci.includes('npm run phase258:final'));
+add('ci workflow references phase258 gate', ci.includes('npm run phase258:final') || ci.includes('npm run phase270:final'));
 add('ci workflow has lockfile-safe install', ci.includes('if [ -f package-lock.json ]'));
 add('commercial workflow has lockfile-safe install', rel.includes('if [ -f package-lock.json ]'));
 add('commercial workflow uses validate commercial script', rel.includes('npm run validate:commercial'));
-add('RUN_ALL_TESTS current final gate', (has('RUN_ALL_TESTS.sh','npm run phase258:final') || has('RUN_ALL_TESTS.sh','npm run phase265:final')) && !has('RUN_ALL_TESTS.sh','phase203'));
+add('RUN_ALL_TESTS current final gate', (has('RUN_ALL_TESTS.sh','npm run phase258:final') || has('RUN_ALL_TESTS.sh','npm run phase265:final') || has('RUN_ALL_TESTS.sh','npm run phase270:final')) && !has('RUN_ALL_TESTS.sh','phase203'));
 add('runtime clean accepts absent runtime dir', has('scripts/check-runtime-clean.mjs','runtime-directory-absent-clean'));
 add('pipeline release command exposed', pkg.scripts?.['pipeline:release'] === 'node scripts/pipeline-release-gate.mjs');
 add('test-all writes phase258 report', has('scripts/test-all.mjs','PHASE258_TEST_ALL_SUMMARY_20260514.json'));

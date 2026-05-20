@@ -59,8 +59,8 @@ try {
   await ensureServer();
   await check('/healthz', 200, '"ok": true');
   await check('/readyz', 200, '"ready": true');
-  await check('/', 200, '고객이 결제 전에 망설이는 지점');
-  await check('/demo', 200, '주소 하나로');
+  await check('/', 200, '내 사이트의 고지·환불·개인정보 리스크를 먼저 확인하세요');
+  await check('/demo', 200, '리스크 진단 결과');
   await check('/products/veridion/demo', 200, '주소 하나로');
   await check('/admin', 200, '관리자');
   await check('/api/public/auth/session', 200, '"authenticated": false');

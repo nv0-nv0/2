@@ -191,7 +191,8 @@ return { requestId: scan?.requestId || null, siteId: scan?.siteId || null, targe
   if (!routeState || !routeState.requestUrl) return false;
   const url = routeState.requestUrl;
   const pathname = routeState.pathname;
-  if (!pathname.startsWith('/api/public/')) return false;
+  const isLegacyDiagnosticStart = pathname === '/api/diagnostics/start';
+  if (!pathname.startsWith('/api/public/') && !isLegacyDiagnosticStart) return false;
   const accountHandled = await accountRouteHandler(req, res, { requestUrl: url, pathname });
   if (accountHandled !== false) return accountHandled;
   const paymentHandled = await paymentRouteHandler(req, res, { requestUrl: url, pathname });
@@ -200,12 +201,16 @@ if (pathname === '/api/public/diagnosis-engine' && req.method === 'GET') {
 return json(req, res, 200, { ok: true, phase: RELEASE_PHASE, engine: 'NV0 Public Evidence Summary Check Engine', rulesVersion: RULES_VERSION, targetFetchEnabled: TARGET_FETCH_ENABLED, scanProvider: SCAN_PROVIDER, aiReviewProvider: AI_REVIEW_PROVIDER, geminiConfigured: AI_REVIEW_ENABLED, resultContract: { resultType: 'preliminary_check', legalConclusion: false, includesEvidenceSummary: true, includesConfidenceScore: true, includesManualReviewFlags: true, includesAutomationDisclosure: true, includesAutomatedActionPlan: true, includesAccuracyProfile: true, includesReportQualityGate: true, includesDemoAccuracyContract: true, includesPaidOutputQualityGate: true, phase220ServiceQualityVersion: PHASE220_SERVICE_QUALITY_VERSION, phase223RiskGuardVersion: PHASE223_RISK_GUARD_VERSION }, endpoints: { scan: 'POST /api/public/scan', diagnose: 'POST /api/public/diagnose', board: 'GET /api/public/board', engine: 'GET /api/public/diagnosis-engine', productIntelligence: 'GET /api/public/product-intelligence', productQuality: 'GET /api/public/product-quality' }, smartProduct: { version: 'p153-smart-ops-v1', nextBestAction: true, planFitScoring: true, journeyOrchestration: true, smartProductEndpoint: '/api/public/smart-product', userPath: ['무료 요약','요금제 선택','내 사이트 관리','게시판 재유입'] }, publicationCadence: { boardName: '게시판', intervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000), cadenceLabel: `${Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000)}분마다 1건 발행`, columnEngine: 'public-column-engine-v1' }, automation: { mode: TARGET_FETCH_AUTOMATION_LEVEL, robotsEnabled: TARGET_FETCH_ROBOTS_ENABLED, sitemapEnabled: TARGET_FETCH_SITEMAP_ENABLED, maxPages: TARGET_FETCH_MAX_PAGES, maxDiscoveryResources: TARGET_FETCH_MAX_DISCOVERY_RESOURCES, notice: '자동 확인 가능한 공개 항목은 모두 처리하고 자동 확정 불가 영역은 직접 확인으로 고지합니다.' }, checks: buildRuleCatalog().map(({ code, category, title, severity, penaltyMax }) => ({ code, category, title, severity, penaltyMax })) });
 }
 
-if ((pathname === '/api/public/diagnose' || pathname === '/api/public/scan') && req.method === 'POST') {
+if (((pathname === '/api/public/diagnose' || pathname === '/api/public/scan') && req.method === 'POST') || (isLegacyDiagnosticStart && req.method === 'POST')) {
 const rate = await hitRateLimit('public-diagnose', clientIp(req), { windowMs: PUBLIC_SCAN_WINDOW_MS, limit: PUBLIC_SCAN_LIMIT });
 if (rate.blocked) return json(req, res, 429, { ok: false, error: '요청이 너무 많습니다. 잠시 후 다시 시도해 주세요.' });
 let payload;
 try {
-payload = normalizeScanPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
+const rawPayload = await bodyJson(req, MAX_JSON_BODY_BYTES) || {};
+if (isLegacyDiagnosticStart && rawPayload.url && !rawPayload.target && !/^https?:\/\//i.test(String(rawPayload.url))) {
+  rawPayload.url = `https://${String(rawPayload.url).trim()}`;
+}
+payload = normalizeScanPayload(rawPayload);
 } catch (error) {
 return json(req, res, 400, { ok: false, error: error.message || '진단할 사이트 주소가 필요합니다.' });
 }
@@ -233,7 +238,13 @@ try { createCtaPublicationIfDue(db, scan, { force: false }); } catch {}
 appendAudit(db, req, 'public.diagnose.completed', { siteId: scan.siteId, requestId: scan.requestId, target: scan.target, customerId: session?.customer?.id || null });
 await writeDb(db);
 const portalUrl = `/portal?siteId=${encodeURIComponent(scan.siteId || '')}&requestId=${encodeURIComponent(scan.requestId || '')}`;
-return json(req, res, 200, cleanLegacyPublicTokens({ ok: true, portalUrl, result: { ...scan, portalUrl, diagnosis: buildPublicDiagnosisPackage(scan), demoIssueOverview: scan.demoIssueOverview || buildDemoIssueOverview(scan), conversionUrgency: scan.conversionUrgency || buildConversionUrgencyModel(scan, { plan: scan.recommendedPlan || 'Report' }), savedToAccount: !!session, paidAccess: false, locked: true } }));
+const reportUrl = `/products/veridion/demo?target=${encodeURIComponent(scan.target || payload.target)}`;
+const resultPayload = { ...scan, portalUrl, redirectUrl: portalUrl, reportUrl, diagnosis: buildPublicDiagnosisPackage(scan), demoIssueOverview: scan.demoIssueOverview || buildDemoIssueOverview(scan), conversionUrgency: scan.conversionUrgency || buildConversionUrgencyModel(scan, { plan: scan.recommendedPlan || 'Report' }), savedToAccount: !!session, paidAccess: false, locked: true, handoff: { next: 'portal', portalUrl, reportUrl, source: payload.source || (isLegacyDiagnosticStart ? 'legacy-diagnostics-start' : 'public-diagnose') } };
+if (isLegacyDiagnosticStart) {
+  const compatScan = { ...resultPayload, id: scan.requestId, scanId: scan.requestId, domain: site.domain || scan.domain || scan.target, targetUrl: scan.target, status: 'completed' };
+  return json(req, res, 200, cleanLegacyPublicTokens({ ok: true, status: 'completed', portalUrl, redirectUrl: portalUrl, reportUrl, result: resultPayload, scan: compatScan }), { 'cache-control': 'no-store' });
+}
+return json(req, res, 200, cleanLegacyPublicTokens({ ok: true, status: 'completed', portalUrl, redirectUrl: portalUrl, reportUrl, result: resultPayload, scan: { ...resultPayload, id: scan.requestId, scanId: scan.requestId, domain: site.domain || scan.domain || scan.target, targetUrl: scan.target, status: 'completed' } }), { 'cache-control': 'no-store' });
 }
 if (pathname === '/api/public/config' && req.method === 'GET') {
 return json(req, res, 200, { ok: true, turnstileEnabled: TURNSTILE_PUBLIC_ENABLED, turnstileConfigured: TURNSTILE_CONFIGURED, prelaunchMode: PRELAUNCH_MODE, turnstileSiteKey: TURNSTILE_PUBLIC_ENABLED ? TURNSTILE_SITE_KEY : '' });

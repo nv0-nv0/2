@@ -1518,6 +1518,12 @@ return '<footer class="business-footer" aria-label="사업자 정보">'
 + `<div class="footer-col"><strong>문의</strong><a href="mailto:hello@nv0.kr">hello@nv0.kr</a><a href="mailto:${BUSINESS_PROFILE.contactEmail}">고객지원 이메일</a><span class="legal-disclaimer">${BUSINESS_PROFILE.tradeName} · 대표자 ${BUSINESS_PROFILE.representative} · 사업자등록번호 ${BUSINESS_PROFILE.registrationNumber}${mailOrderNumber ? ' · 통신판매업 신고번호 ' + mailOrderNumber : ''}</span><span class="legal-disclaimer">주소: ${BUSINESS_PROFILE.address}</span><span class="legal-disclaimer">업태·종목: ${types}</span><span class="legal-disclaimer">NV0는 공개 웹페이지 기반 구조 분석 서비스이며 법률 자문이나 성과 보장을 제공하지 않습니다.</span></div>`
 + '</footer>';
 }
+
+function injectAdoptedUi(body, urlPath) {
+if (urlPath.startsWith('/admin') || body.includes('/shared/veridion-adopted-ui.css')) return body;
+return body.replace('</head>', '<link href="/shared/veridion-adopted-ui.css" rel="stylesheet"></head>');
+}
+
 function injectSiteEnhancementsScript(body, urlPath) {
 if (urlPath.startsWith('/admin') || body.includes('/shared/site-enhancements.js')) return body;
 return body.replace('</body>', '<script src="/shared/site-enhancements.js" defer></script></body>');
@@ -1547,7 +1553,7 @@ function renderPublicErrorPage(req, res, status, title, message, requestId = '')
 const safeTitle = escapeHtml(title);
 const safeMessage = escapeHtml(message);
 const safeRequestId = requestId ? escapeHtml(requestId) : '';
-const body = `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${safeTitle} | NV0 / Veridion</title><meta name="robots" content="noindex,nofollow,noarchive"><link rel="stylesheet" href="/shared/nv0-clean-slate-20260512.css"></head><body>${publicTopMenuHtml('/')}<main id="main" tabindex="-1" class="nv0-error-page"><section class="nv0-error-card"><p class="eyebrow">서비스 안내</p><h1>${safeTitle}</h1><p>${safeMessage}</p>${safeRequestId ? `<p class="nv0-error-request">요청 ID: ${safeRequestId}</p>` : ''}<div class="hero-actions"><a class="btn primary" href="/products/veridion/demo">무료 진단으로 이동</a><a class="btn secondary" href="/">홈으로 이동</a></div></section></main>${businessFooterHtml()}<script src="/shared/client-risk-guard.js" defer></script></body></html>`;
+const body = `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${safeTitle} | NV0 / Veridion</title><meta name="robots" content="noindex,nofollow,noarchive"><link rel="stylesheet" href="/shared/nv0-clean-slate-20260512.css"><link rel="stylesheet" href="/shared/veridion-adopted-ui.css"></head><body>${publicTopMenuHtml('/')}<main id="main" tabindex="-1" class="nv0-error-page"><section class="nv0-error-card"><p class="eyebrow">서비스 안내</p><h1>${safeTitle}</h1><p>${safeMessage}</p>${safeRequestId ? `<p class="nv0-error-request">요청 ID: ${safeRequestId}</p>` : ''}<div class="hero-actions"><a class="btn primary" href="/products/veridion/demo">무료 진단으로 이동</a><a class="btn secondary" href="/">홈으로 이동</a></div></section></main>${businessFooterHtml()}<script src="/shared/client-risk-guard.js" defer></script></body></html>`;
 return html(req, res, status, body, { 'cache-control': 'no-store' }, 'public-page');
 }
 function adminNav() {
@@ -1573,6 +1579,7 @@ let body = await fs.readFile(htmlPath, 'utf8');
 if (urlPath.startsWith('/admin/console')) body = body.replace('<!--ADMIN_NAV-->', adminNav());
 body = injectSeoMeta(body, urlPath);
 body = injectStructuredData(body, urlPath);
+body = injectAdoptedUi(body, urlPath);
 body = ensureMainId(body);
 body = injectNoScriptNotice(body, urlPath);
 body = injectPublicTopMenu(body, urlPath);
@@ -2072,9 +2079,11 @@ if (value.length > maxItems) throw invalidPayload(`${field} 항목 수가 너무
 return value.map((item) => asTrimmedString(item, { field, max: maxItemLength })).filter(Boolean);
 }
 function normalizeScanPayload(body = {}) {
+const targetCandidate = body.target || body.url || body.targetUrl || body.domain;
 return {
-target: asTrimmedString(body.target, { field: 'target', required: true, max: 2048, pattern: /^https?:\/\//i }),
-turnstileToken: asTrimmedString(body.turnstileToken, { field: 'turnstileToken', max: 2048 })
+target: asTrimmedString(targetCandidate, { field: 'target', required: true, max: 2048, pattern: /^https?:\/\//i }),
+turnstileToken: asTrimmedString(body.turnstileToken, { field: 'turnstileToken', max: 2048 }),
+source: asTrimmedString(body.source, { field: 'source', max: 80 })
 };
 }
 function normalizeCheckoutPayload(body = {}) {
@@ -4144,7 +4153,7 @@ return { body, cacheHit: false };
 async function handleApi(req, res, state = {}) {
 const routeState = state.requestUrl ? state : resolveNativeRouteState(req);
 const { pathname } = routeState;
-if (pathname.startsWith('/api/public/')) return publicRouteHandler(req, res, routeState);
+if (pathname.startsWith('/api/public/') || pathname === '/api/diagnostics/start') return publicRouteHandler(req, res, routeState);
 if (pathname.startsWith('/api/admin/')) return adminRouteHandler(req, res, routeState);
 if (pathname === '/healthz' || pathname === '/health' || pathname === '/livez') {
 return json(req, res, 200, buildHealthDetails({ service: 'nv0-veridion', phase: RELEASE_PHASE, integrations: { process: { ok: true }, commercialEnv: { ok: validateCommercialEnv(process.env, { strict: false }).ok }, deploymentRiskGuard: { ok: DEPLOYMENT_RISK_GUARD.ok, version: PHASE223_RISK_GUARD_VERSION } } }), { 'cache-control': 'no-store' });

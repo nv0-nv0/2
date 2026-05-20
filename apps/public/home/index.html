@@ -7,7 +7,7 @@
   <link href="/shared/nv0-clean-slate-20260512.css" rel="stylesheet"/>
   <link href="/shared/nv0n-generated.css" rel="stylesheet"/>
   <link href="/shared/nv0n-runtime.css" rel="stylesheet"/>
-  <link href="/shared/phase264-hardening.css" rel="stylesheet"/>
+  <link href="/shared/phase264-hardening.css" rel="stylesheet"/><link href="/shared/veridion-adopted-ui.css" rel="stylesheet"/>
 </head>
 <body class="nv0n-page phase264-theme" data-nv0n-page="true">
 <header class="nv0n-topbar" data-nv0n-visible-menu="true">
@@ -28,10 +28,14 @@
         <span class="phase264-kicker">국내 온라인 사업자 전용</span>
         <h1>내 사이트의 고지·환불·개인정보 리스크를 먼저 확인하세요</h1>
         <p>URL 하나로 공개 페이지를 확인하고, 국내 전자상거래 운영에서 자주 놓치는 안내 공백을 요약합니다. 이메일 입력 없이 바로 시작합니다.</p>
-        <div class="phase264-hero-search hero-search" aria-label="메인 무료 진단 이동">
-          <input autocomplete="url" inputmode="url" placeholder="https://your-store.kr" aria-label="진단할 사이트 주소"/>
-          <a class="phase264-btn primary" href="/products/veridion/demo">무료 진단 시작</a>
-        </div>
+        <form id="homeInstantDemoForm" class="phase264-hero-search hero-search nv0-instant-demo-box" aria-label="메인 즉시 무료 진단 실행" data-instant-demo="true" novalidate>
+          <input id="homeTargetUrl" autocomplete="url" inputmode="url" placeholder="https://your-store.kr" aria-label="진단할 사이트 주소" aria-describedby="homeDemoState homeDemoInputHint"/>
+          <button id="homeInstantDemoBtn" class="phase264-btn primary" type="submit" data-instant-demo-submit="true">무료 진단 시작</button>
+        </form>
+        <div id="homeDemoState" class="nv0-home-demo-state" role="status" aria-live="polite">주소를 입력하면 이 화면에서 바로 무료 데모 진단을 실행하고, 완료 후 내 사이트 관리 화면으로 자동 이동합니다.</div>
+        <section id="homeDemoResult" class="nv0-home-demo-result" aria-live="polite" hidden></section>
+        <div id="homeDemoOverlay" class="nv0-home-demo-overlay" aria-live="assertive" aria-modal="true" role="dialog" hidden></div>
+        <p class="nv0-home-demo-fallback"><a id="homeDemoFallbackLink" href="/products/veridion/demo">전용 데모 페이지에서 직접 실행</a></p>
         <div class="phase264-actions">
           <a class="phase264-btn secondary" href="/service">서비스 범위 보기</a>
           <a class="phase264-btn secondary" href="/board">인사이트 보기</a>

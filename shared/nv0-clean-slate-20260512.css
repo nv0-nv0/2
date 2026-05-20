@@ -619,3 +619,6 @@ input[aria-invalid="true"],textarea[aria-invalid="true"]{border-color:#f59e0b!im
 @media (max-width:560px){
   .portal-metric-strip{grid-template-columns:1fr}.portal-card{padding:14px}.portal-score-head{padding:18px}.portal-metric-strip{padding:14px}.portal-dashboard-asset-head{display:grid}.portal-dashboard-asset-actions .btn{width:100%}.portal-primary-detail .nv74-site-table{min-width:680px}.portal-hero h1{font-size:32px}
 }
+
+/* Phase268 home instant demo hint compatibility */
+.nv0-home-demo-state{margin-top:12px;max-width:720px;color:#64748b;font-size:13px;line-height:1.55}.nv0-home-demo-state.success{color:#166534;font-weight:700}.nv0-home-demo-state.warn{color:#92400e;font-weight:700}.nv0-home-demo-result{width:100%;max-width:760px;margin-top:18px;text-align:left}.nv0-home-demo-card{border:1px solid rgba(148,163,184,.28);background:rgba(255,255,255,.92);box-shadow:0 18px 50px rgba(15,23,42,.09);border-radius:24px;padding:22px;color:#0f172a}.nv0-home-demo-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}

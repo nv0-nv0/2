@@ -28,7 +28,7 @@ jobs:
       - name: Link and validation JSON gate
         run: npm run check:links -- --summary && node scripts/check-validation-json.mjs
       - name: Phase258 final gate
-        run: npm run phase258:final
+        run: npm run phase270:final
       - name: Strict commercial CI gate
         run: npm run ci:strict
       - name: Docker build gate

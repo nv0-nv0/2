@@ -14,9 +14,9 @@ const reportDoc = fs.existsSync(path.join(root, 'docs/current/PHASE260_DISPUTE_S
   : '';
 const joined = [demoJs, css, server, reportDoc].join('\n');
 
-add('package version phase260', /phase260-dispute-safe-penalty|phase265-dashboard-portal-completion/.test(pkg.version));
+add('package version phase260', /phase260-dispute-safe-penalty|phase265-dashboard-portal-completion|phase26[8-9]-|phase270-full-package-verified-hardened/.test(pkg.version));
 ['test:phase260','validate:phase260','phase260:final'].forEach(script => add(`package script:${script}`, !!pkg.scripts?.[script]));
-add('final review points to phase260', /phase26[05]:final/.test(pkg.scripts?.['final:review'] || ''));
+add('final review points to phase260', /phase26[05]:final|phase270:final/.test(pkg.scripts?.['final:review'] || ''));
 add('penalty label is explicitly reference-only', demoJs.includes('과태료 상한 후보') && demoJs.includes('참고용'));
 add('penalty strip denies certainty', demoJs.includes('확정 안내 아님 · 검토 필요'));
 add('warning title uses review-needed copy', demoJs.includes('과태료·행정조치 가능성 검토 필요'));

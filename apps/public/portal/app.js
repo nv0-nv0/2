@@ -33,6 +33,16 @@ const portalContentStatus = document.getElementById('portalContentStatus');
 function getSavedScan() {
   try { return JSON.parse(localStorage.getItem('nv0:lastScan') || 'null'); } catch { return null; }
 }
+function getAutoHandoff() {
+  try { return JSON.parse(sessionStorage.getItem('nv0:autoHandoff') || 'null'); } catch { return null; }
+}
+function renderPortalHandoffBanner(handoff, savedScan) {
+  const source = handoff || (savedScan?.handoffSource === 'home-instant-demo' ? savedScan : null);
+  if (!source) return '';
+  const target = readableDomain(source.target || savedScan?.target || savedScan?.domain || '최근 진단 사이트');
+  const requestId = source.requestId || savedScan?.requestId || '';
+  return `<div class="nv0-portal-handoff-banner" role="status" aria-live="polite"><strong>메인 진단 결과가 내 사이트로 자동 연결되었습니다.</strong><p>${escapeHtml(target)} 결과를 이 화면에서 이어서 확인합니다.${requestId ? ` 요청 ID: ${escapeHtml(requestId)}` : ''}</p></div>`;
+}
 async function jsonFetch(path, options = {}) {
   const res = await fetch(path, options);
   const data = await res.json().catch(() => ({}));
@@ -376,7 +386,13 @@ function updateStaticDashboard(session, account, summary) {
 async function loadPortal() {
   const url = new URL(location.href);
   const saved = getSavedScan();
-  if (!url.searchParams.get('siteId') && saved?.siteId) url.searchParams.set('siteId', saved.siteId);
+  const handoff = getAutoHandoff();
+  let patchedUrl = false;
+  const siteId = url.searchParams.get('siteId') || handoff?.siteId || saved?.siteId || '';
+  const requestId = url.searchParams.get('requestId') || handoff?.requestId || saved?.requestId || '';
+  if (!url.searchParams.get('siteId') && siteId) { url.searchParams.set('siteId', siteId); patchedUrl = true; }
+  if (!url.searchParams.get('requestId') && requestId) { url.searchParams.set('requestId', requestId); patchedUrl = true; }
+  if (patchedUrl) history.replaceState(null, '', `${url.pathname}?${url.searchParams.toString()}${url.hash || ''}`);
   const [sessionRes, accountRes, summaryRes] = await Promise.allSettled([
     fetch('/api/public/auth/session').then(r => r.json()),
     fetch('/api/public/account').then(async r => ({ ok: r.ok, data: await r.json().catch(() => ({})) })),
@@ -396,6 +412,7 @@ async function loadPortal() {
     state.textContent = `${account?.customer?.email || session.customer.email} 계정 · 저장 사이트 ${(account?.savedSites || []).length}개 · 최근 검사 ${(account?.recentScans || []).length}개`;
   }
   primary.innerHTML = `
+    ${renderPortalHandoffBanner(handoff, saved)}
     ${session.authenticated ? renderSavedSites(account?.savedSites || []) : ''}
     ${session.authenticated ? renderRecentScans(account?.recentScans || []) : renderGuestScan(saved)}
     ${renderMemberValueBox(session, account)}

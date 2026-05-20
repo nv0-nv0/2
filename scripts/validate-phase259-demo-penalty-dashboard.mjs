@@ -12,9 +12,9 @@ const css = read('shared/nv0-clean-slate-20260512.css');
 const server = read('server/index.mjs');
 const publicRoutes = read('server/routes/public.mjs');
 
-add('package version phase259', /phase259-demo-penalty-dashboard|phase260-dispute-safe-penalty|phase265-dashboard-portal-completion/.test(pkg.version));
+add('package version phase259', /phase259-demo-penalty-dashboard|phase260-dispute-safe-penalty|phase265-dashboard-portal-completion|phase26[8-9]-|phase270-full-package-verified-hardened/.test(pkg.version));
 ['test:phase259','validate:phase259','phase259:final','final:review'].forEach(script => add(`package script:${script}`, !!pkg.scripts?.[script]));
-add('phase258 final redirects to phase259', /phase259:final/.test(pkg.scripts?.['phase258:final'] || ''));
+add('phase258 final redirects to phase259', /phase259:final|phase270:final/.test(pkg.scripts?.['phase258:final'] || ''));
 add('demo JS has compact Korean penalty formatter', demoJs.includes('function formatPenaltyCompact') && demoJs.includes('만 원'));
 add('demo JS has penalty alert model', demoJs.includes('function buildPenaltyAlertModel'));
 add('demo JS uses explicit estimatedMaxPenalty first', demoJs.includes('view.estimatedMaxPenalty ?? view.raw?.estimatedMaxPenalty'));
