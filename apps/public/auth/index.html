@@ -21,7 +21,7 @@
   </div>
 </header>
 <main id="main" tabindex="-1" class="phase264-main">
-  <div class="sr-only">온라인 사업자 리스크 진단 · 법률·규제·과태료 리스크 · 로그인 회원가입 비밀번호 재설정</div>
+  <div class="sr-only">온라인 사업자 리스크 진단 · 고지·환불·개인정보 점검 · 로그인 회원가입 비밀번호 재설정</div>
   <section class="phase264-shell">
     <header class="phase264-page-head">
       <span class="phase264-kicker">계정 관리</span>
@@ -69,29 +69,24 @@
         </form>
       </article>
       <article class="phase264-auth-card">
-        <h2>새 비밀번호 설정</h2><p>재설정 링크의 토큰을 이용해 비밀번호를 바꿉니다.</p>
+        <h2>새 비밀번호 설정</h2><p>이메일로 받은 인증코드를 입력해 비밀번호를 변경합니다.</p>
         <form id="resetForm">
           <label>이메일 주소<input autocomplete="new-password" autocapitalize="none" spellcheck="false" data-nv0-empty-default="true" id="resetConfirmEmail" name="nv0_reset_confirm_email_manual" placeholder="이메일 주소를 입력하세요" required type="email"/></label>
-          <label>토큰<input autocomplete="one-time-code" id="resetToken" name="token" placeholder="토큰 입력" required type="text"/></label>
+          <label>토큰<input autocomplete="one-time-code" id="resetToken" name="token" placeholder="인증코드 입력" required type="text"/></label>
           <label>새 비밀번호<input autocomplete="new-password" data-nv0-empty-default="true" id="resetPassword" minlength="12" name="nv0_reset_password_manual" placeholder="12자 이상" required type="password"/></label>
           <button type="submit">비밀번호 변경</button>
-          <div class="notice muted" id="resetState">재설정 링크로 들어오면 토큰이 자동 입력됩니다.</div>
+          <div class="notice muted" id="resetState">이메일로 받은 인증코드를 입력하세요.</div>
         </form>
       </article>
     </div>
     </div>
   </section>
 </main>
-<footer class="phase264-footer nv0n-footer">
-  <div class="phase264-footer-inner">
-    <strong>VERIDION</strong>
-    <nav aria-label="하단 메뉴">
-      <a href="/privacy">개인정보 처리방침</a>
-      <a href="/terms">이용약관</a>
-      <a href="/refund">환불 정책</a>
-      <a href="/business-info">문의하기</a>
-    </nav>
-    <span>© 2026 VERIDION. 국내 온라인 사업자 리스크 점검.</span>
+<footer class="phase278-footer nv0n-footer">
+  <div class="phase278-footer-inner">
+    <div class="phase278-footer-brand"><strong>VERIDION</strong><p>국내 온라인 사업자의 고지, 환불, 개인정보 안내 공백을 공개 페이지 기준으로 점검합니다.</p></div>
+    <nav aria-label="하단 메뉴"><a href="/privacy">개인정보 처리방침</a><a href="/terms">이용약관</a><a href="/refund">환불 정책</a><a href="/business-info">문의하기</a><a href="mailto:ct@nv0.kr">ct@nv0.kr</a></nav>
+    <span>© 2026 VERIDION. All rights reserved.</span>
   </div>
 </footer>
 <script defer src="/shared/nv0n-runtime.js"></script><script src="/apps/public/auth/app.js" type="module"></script>

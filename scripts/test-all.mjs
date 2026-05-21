@@ -35,7 +35,7 @@ const demoJs=read('apps/public/veridion-demo/app.js');
 for (const token of ['무료 요약 진단 3회','사이트 주소 하나로','결제 전 신뢰 공백','무료 결과와 상품·요금 비교','상세 리포트 신청']) add(`demo:${token}`, demo.includes(token));
 for (const token of ['normalizedTarget','nv0:lastScan','renderPaywall','recommendedPlan','freeUsage']) add(`demo-js:${token}`, demoJs.includes(token));
 const plans=read('apps/public/plans/index.html');
-for (const token of ['상품·요금','기본 리포트','전문가 리포트','무료 진단 시작','29,000','89,000']) add(`plans:${token}`, plans.includes(token));
+for (const token of ['상품·요금','기본 리포트','전문가 리포트','무료 진단 시작','49,000','149,000']) add(`plans:${token}`, plans.includes(token));
 add('plans:no-legacy-auto-public-copy', !/Auto 정기 케어|39,000원|149,000원|FixPack|TemplatePack/.test(plans));
 add('plans:not-stuck-loading', !plans.includes('불러오는 중입니다'));
 const board=read('apps/public/board/index.html');
@@ -46,7 +46,7 @@ add('board:no-client-double-filter', !boardJs.includes('posts.filter(matchesQuer
 add('board:server-pagination-total', boardJs.includes('pagination?.total') || boardJs.includes('pagination.total'));
 const docs=read('apps/public/documents/index.html');
 add('documents:minimal-fields', docs.includes('전화번호와 주소는 실제 고지에 필요한 경우에만 선택 입력'));
-add('documents:template-pack', docs.includes('템플릿 팩 구매'));
+add('documents:template-pack', docs.includes('문서 초안 확인')); 
 const base=read('shared/base.css');
 for (const token of ['site-topbar','business-footer','cta-band','promo-banner','@media']) add(`base-css:${token}`, base.includes(token));
 const enhance=read('shared/site-enhancements.js');

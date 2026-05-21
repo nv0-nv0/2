@@ -1253,3 +1253,85 @@ body.nv0n-page p,body.nv0-clean-slate p,body.nv0n-page li,body.nv0-clean-slate l
 .plan-card-clean{border-radius:12px!important;padding:24px!important}.plan-card-clean.is-featured{transform:none!important;border-top:3px solid var(--veridion-primary)!important}.plan-badge{border-radius:var(--veridion-radius-sm)!important;background:var(--veridion-primary)!important}.plan-head h2{font-size:36px!important}.plans-footer-clean,.phase264-footer,.nv0n-footer,.business-footer{background:#e6e8ea!important;border-top:1px solid #d1d5db!important;color:var(--veridion-title)!important}.plans-footer-inner,.phase264-footer-inner,.portal-footer-inner,.business-footer{color:var(--veridion-title)!important}.phase264-footer-inner strong,.phase264-footer-inner a,.phase264-footer-inner span,.portal-footer-inner strong,.portal-footer-inner a,.portal-footer-inner span,.plans-footer-inner strong,.plans-footer-inner a,.plans-footer-inner span,.business-footer strong,.business-footer a,.business-footer span{color:var(--veridion-title)!important}.phase264-footer-inner p,.portal-footer-inner p,.plans-footer-inner p,.business-footer p{color:var(--veridion-text)!important}
 @media(max-width:1100px){.phase264-hero,.phase264-service-hero,.phase272-home-facts,.portal-dashboard-grid,.portal-score-head{grid-template-columns:1fr!important}.portal-score-card,.portal-actions-card,.portal-site-card,.portal-feed-card,.portal-tools-card,.nv74-work-card{grid-column:auto!important}.phase272-flow-grid,.plans-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.portal-publish-status-card .status-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
 @media(max-width:720px){.phase264-shell,.nv0-shell,.app-shell,.nv0-portal-main,.plans-main{width:min(100% - 24px,720px)!important}.phase264-hero,.portal-hero,.site-page-hero,.phase239-hero,.plans-hero{padding:24px!important}.phase264-hero h1,.portal-hero h1,.plans-hero h1,.phase264-page-head h1{font-size:32px!important}.phase272-flow-grid,.phase272-infocard .mini-grid,.portal-metric-strip,.portal-insight-strip,.portal-publish-status-card .status-grid{grid-template-columns:1fr!important}.phase264-hero-search,#homeInstantDemoForm,.hero-search,.bridge-grid{grid-template-columns:1fr!important}}
+
+
+/* ======================================================================
+   PHASE277 function-connection + original top menu preservation
+   Keeps the original menu order/labels while using the Stitch-inspired
+   VERIDION visual system. Also prevents visual layers from blocking forms.
+   ====================================================================== */
+.nv0n-primary-nav{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:6px!important;
+  flex:1 1 auto!important;
+  min-width:0!important;
+  overflow-x:auto!important;
+  scrollbar-width:none!important;
+  -webkit-overflow-scrolling:touch!important;
+}
+.nv0n-primary-nav::-webkit-scrollbar{display:none!important}
+.nv0n-primary-nav .nv0n-nav-link{
+  flex:0 0 auto!important;
+  white-space:nowrap!important;
+}
+.nv0n-topbar-actions{flex:0 0 auto!important}
+.nv0n-topbar,.nv0n-topbar *{pointer-events:auto!important}
+#homeInstantDemoForm,#homeInstantDemoForm *,
+.phase264-functional-panel,.phase264-functional-panel *,
+.portal-card,.portal-card *,
+.phase264-insight-shell,.phase264-insight-shell *,
+.phase264-auth-grid,.phase264-auth-grid *{pointer-events:auto!important}
+#homeDemoOverlay[hidden]{display:none!important;pointer-events:none!important}
+#homeDemoOverlay:not([hidden]){pointer-events:auto!important}
+.nv0-home-demo-result[hidden]{display:none!important}
+.phase264-hero-search button,.bridge-grid button,.portal-primary-action,.portal-secondary-action,.btn,.nv0n-start-link,.nv0n-login-link{cursor:pointer!important}
+@media (max-width:760px){
+  .nv0n-topbar-inner{width:min(100% - 20px,1280px)!important;gap:10px!important}
+  .nv0n-brand{font-size:15px!important}
+  .nv0n-primary-nav{justify-content:flex-start!important;order:3!important;flex-basis:100%!important;padding-bottom:8px!important}
+  .nv0n-topbar-inner{flex-wrap:wrap!important;min-height:72px!important;padding-top:8px!important}
+  body.nv0n-page,body.nv0-clean-slate{padding-top:112px!important}
+}
+
+
+/* ======================================================================
+   PHASE278 customer-perfect hardening
+   Keeps the Stitch-inspired VERIDION visual system, original menu order,
+   and improves public readability without changing functional IDs/routes.
+   ====================================================================== */
+:root{
+  --v278-bg:#f6f8fc;
+  --v278-surface:#ffffff;
+  --v278-soft:#f8fbff;
+  --v278-border:#d9e3f1;
+  --v278-title:#0b162f;
+  --v278-text:#3f506a;
+  --v278-muted:#65758d;
+  --v278-blue:#2357e5;
+  --v278-blue-deep:#1642b3;
+  --v278-shadow:0 14px 36px rgba(13,31,67,.07);
+  --v278-radius:22px;
+}
+body.nv0n-page,body.nv0-clean-slate{background:var(--v278-bg)!important;color:var(--v278-text)!important;font-family:Inter,"Pretendard","Noto Sans KR","Apple SD Gothic Neo",system-ui,sans-serif!important;letter-spacing:-.01em!important}
+body.nv0n-page h1,body.nv0n-page h2,body.nv0n-page h3,body.nv0-clean-slate h1,body.nv0-clean-slate h2,body.nv0-clean-slate h3{color:var(--v278-title)!important;letter-spacing:-.055em!important}
+body.nv0n-page p,body.nv0n-page li,body.nv0n-page small,body.nv0-clean-slate p,body.nv0-clean-slate li,body.nv0-clean-slate small{color:var(--v278-text)!important}
+.nv0n-topbar{background:rgba(255,255,255,.94)!important;border-bottom:1px solid rgba(217,227,241,.92)!important;box-shadow:0 8px 24px rgba(13,31,67,.045)!important}
+.nv0n-topbar-inner{width:min(1280px,calc(100% - 36px))!important;min-height:72px!important}
+.nv0n-brand{font-size:18px!important;letter-spacing:-.02em!important;color:var(--v278-title)!important}.nv0n-brand::before{width:32px!important;height:32px!important;border-radius:10px!important;background:linear-gradient(135deg,var(--v278-blue),#6aa2ff)!important}
+.nv0n-primary-nav{overflow-x:auto!important;scrollbar-width:none!important;justify-content:center!important}.nv0n-primary-nav::-webkit-scrollbar{display:none!important}
+.nv0n-nav-link{font-size:14px!important;font-weight:820!important;color:#40526b!important;border-radius:999px!important;padding:9px 12px!important;white-space:nowrap!important}
+.nv0n-nav-link:hover,.nv0n-nav-link.is-active,.nv0n-nav-link[aria-current="page"]{background:#edf4ff!important;border-color:#cfe0ff!important;color:var(--v278-blue)!important}
+.nv0n-login-link,.nv0n-start-link{border-radius:12px!important;font-weight:850!important;min-height:40px!important}.nv0n-start-link,.btn.primary,.phase264-btn.primary,button[type="submit"],#scanBtn,#homeInstantDemoBtn{background:linear-gradient(135deg,var(--v278-blue),var(--v278-blue-deep))!important;color:#fff!important;border:none!important;box-shadow:0 12px 22px rgba(35,87,229,.18)!important}
+.phase264-shell,.nv0-shell,.plans-main,.nv0-portal-main{width:min(1280px,calc(100% - 36px))!important;margin-inline:auto!important}
+.phase264-hero,.portal-hero,.plans-hero,.site-page-hero,.phase264-functional-panel,.phase264-card,.portal-card,.phase272-infocard,.phase272-flow-card,.plan-card-clean,.legal-card,.article-card,.board-post,.summary-card,.feature-card,.risk-card,.guide-card,.process-card{background:var(--v278-surface)!important;border:1px solid var(--v278-border)!important;border-radius:var(--v278-radius)!important;box-shadow:var(--v278-shadow)!important}
+.phase264-hero,.portal-hero,.plans-hero,.site-page-hero{padding:clamp(28px,4vw,54px)!important;background:radial-gradient(circle at 92% 8%,rgba(35,87,229,.11),transparent 30%),linear-gradient(135deg,#fff,#f8fbff 68%,#edf4ff)!important}
+.phase264-hero h1,.portal-hero h1,.plans-hero h1,.site-page-hero h1,.phase264-page-head h1{font-size:clamp(36px,5vw,64px)!important;line-height:1.05!important;max-width:13ch!important}.phase264-hero p,.portal-hero p,.plans-hero p,.site-page-hero p{font-size:16px!important;line-height:1.75!important;max-width:780px!important;color:var(--v278-text)!important}
+.phase264-kicker,.portal-kicker,.plans-kicker,.nv0-kicker,.phase264-pill,.pill.brand{background:#edf4ff!important;border:1px solid #cfe0ff!important;color:var(--v278-blue)!important;border-radius:999px!important;padding:8px 13px!important;font-size:12px!important;font-weight:900!important;letter-spacing:.04em!important;text-transform:uppercase!important}
+.phase264-hero-search,#homeInstantDemoForm,.bridge-grid{background:#fff!important;border:1px solid var(--v278-border)!important;border-radius:18px!important;box-shadow:0 10px 24px rgba(13,31,67,.055)!important}.phase264-hero-search input,#homeInstantDemoForm input,.bridge-grid input{border:1px solid var(--v278-border)!important;background:#fbfdff!important;border-radius:14px!important;color:var(--v278-title)!important}.phase264-hero-search input::placeholder,.bridge-grid input::placeholder{color:#7a8aa3!important}
+.phase264-metric,.portal-metric-strip article,.phase272-infocard .mini-grid article,.portal-insight-strip>div,.portal-publish-status-card article{background:#fff!important;border:1px solid var(--v278-border)!important;border-radius:18px!important;box-shadow:none!important}.phase264-metric strong,.portal-metric-strip article b,.phase272-infocard .mini-grid b,.portal-insight-strip b,.portal-publish-status-card b{color:var(--v278-title)!important}.phase264-metric span,.portal-metric-strip article small,.phase272-infocard .mini-grid p,.portal-insight-strip span,.portal-publish-status-card span{color:var(--v278-muted)!important}
+.portal-score-head{background:transparent!important;padding:0!important;color:var(--v278-title)!important}.portal-score-head h2,.portal-score-head p,.portal-last-scan,.portal-score-head .portal-score-value small{color:var(--v278-title)!important}.portal-score-value{background:conic-gradient(var(--v278-blue) 0 72%,#e5edf8 72% 100%)!important}.portal-score-value::before{background:#fff!important}.portal-score-value .nv74-score-number{color:var(--v278-title)!important}.portal-risk-pill{background:#edf4ff!important;color:var(--v278-blue)!important;border-color:#cfe0ff!important}
+.phase278-footer{background:#fff!important;border-top:1px solid var(--v278-border)!important;margin-top:auto!important}.phase278-footer-inner{width:min(1280px,calc(100% - 36px))!important;margin:0 auto!important;padding:34px 0!important;display:flex!important;align-items:flex-start!important;justify-content:space-between!important;gap:22px!important;flex-wrap:wrap!important}.phase278-footer-inner strong{color:var(--v278-title)!important;font-size:20px!important}.phase278-footer-inner p,.phase278-footer-inner span{color:#5e7089!important;font-size:14px!important}.phase278-footer-inner nav{display:flex!important;gap:14px!important;flex-wrap:wrap!important}.phase278-footer-inner a{color:#2e405a!important;font-weight:760!important}.phase278-footer-inner a[href^="mailto"]{color:var(--v278-blue)!important}
+@media (max-width:960px){.nv0n-topbar-inner{display:grid!important;grid-template-columns:auto 1fr!important;gap:10px!important;padding:10px 0!important}.nv0n-primary-nav{grid-column:1/-1;justify-content:flex-start!important}.nv0n-topbar-actions{position:absolute;right:18px;top:16px}.phase264-hero,.portal-hero,.plans-hero,.site-page-hero{padding:26px!important}.portal-dashboard-grid,.phase272-home-facts,.phase264-service-hero{grid-template-columns:1fr!important}.portal-metric-strip,.portal-insight-strip,.portal-publish-status-card .status-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media (max-width:640px){.phase264-shell,.nv0-shell,.plans-main,.nv0-portal-main{width:min(100% - 22px,720px)!important}.phase264-hero h1,.portal-hero h1,.plans-hero h1,.site-page-hero h1,.phase264-page-head h1{font-size:32px!important}.portal-metric-strip,.portal-insight-strip,.portal-publish-status-card .status-grid,.phase272-flow-grid,.plans-grid,.phase264-grid-3,.cols-2,.cols-3,.cols-4{grid-template-columns:1fr!important}.phase278-footer-inner{display:grid!important;width:min(100% - 22px,720px)!important}}

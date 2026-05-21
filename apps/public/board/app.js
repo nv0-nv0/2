@@ -85,7 +85,7 @@ function render() {
       const checklist = Array.isArray(item.checklist) && item.checklist.length ? `<section class="risk-meta-card"><h4>빠른 체크리스트</h4><ul class="check-list">${item.checklist.slice(0, 6).map(point => `<li><span class="check">✓</span>${escapeHtml(point)}</li>`).join('')}</ul></section>` : '';
       const faq = Array.isArray(item.faq) && item.faq.length ? `<section class="risk-meta-card"><h4>자주 묻는 질문</h4>${item.faq.slice(0, 3).map(entry => `<details class="faq-item"><summary>${escapeHtml(entry.question || '')}</summary><div class="faq-content">${escapeHtml(entry.answer || '')}</div></details>`).join('')}</section>` : '';
       const links = Array.isArray(item.internalLinks) && item.internalLinks.length ? `<nav class="internal-link-row" aria-label="관련 링크">${item.internalLinks.slice(0, 4).map(link => `<a class="btn secondary" href="${escapeAttr(safeLocalPath(link.href || '#'))}">${escapeHtml(link.label || '관련 링크')}</a>`).join('')}</nav>` : '';
-      const riskSummary = `<div class="risk-meta-strip"><span>점검 의도: ${escapeHtml(item.searchIntent || item.primaryKeyword || '법률·규제 리스크 점검')}</span><span>핵심 주제: ${escapeHtml(item.primaryKeyword || '')}</span><span>분류 태그 ${Math.min(10, (item.tags || []).length)}개</span></div>`;
+      const riskSummary = `<div class="risk-meta-strip"><span>점검 의도: ${escapeHtml(item.searchIntent || item.primaryKeyword || '고객 신뢰 점검')}</span><span>핵심 주제: ${escapeHtml(item.primaryKeyword || '')}</span><span>분류 태그 ${Math.min(10, (item.tags || []).length)}개</span></div>`;
       return `<article class="article-card board-post" id="${escapeAttr(safeBoardId(item.slug || item.id || ''))}"><div class="pill ${pillClass(item.boardType)}">${escapeHtml(item.category || typeLabel(item.boardType))}</div><h3>${escapeHtml(item.title)}</h3><p class="post-summary">${escapeHtml(item.summary || '')}</p>${riskSummary}${renderPostBody(item.body || '')}${checklist}${faq}<div class="post-tags">${tagItems}</div>${links}<div class="post-cta"><a class="btn primary" href="/products/veridion/demo">내 사이트 무료 진단</a><a class="btn secondary" href="/plans">요금 안내 보기</a><a class="btn secondary" href="/service">서비스 안내 보기</a></div></article>`;
     });
   }
@@ -98,7 +98,7 @@ async function loadBoard() {
   if (boardAbortController) boardAbortController.abort();
   boardAbortController = new AbortController();
   setLoading(true);
-  if (state) state.textContent = '새 칼럼 엔진이 발행한 글을 불러오는 중입니다.';
+  if (state) state.textContent = '최신 인사이트를 불러오는 중입니다.';
   try {
     const res = await fetch(`/api/public/board?page=${page}&pageSize=10&filter=${encodeURIComponent(filter)}&q=${encodeURIComponent(query)}`, { cache: 'no-store', signal: boardAbortController.signal });
     const data = await res.json().catch(() => ({}));

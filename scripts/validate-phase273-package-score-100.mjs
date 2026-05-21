@@ -46,7 +46,7 @@ const categories = [
       pkg.scripts?.['validate:phase273'] === 'node scripts/validate-phase273-package-score-100.mjs',
       ['npm run phase273:final','npm run phase274:final'].includes(pkg.scripts?.['final:review']),
       exists('scripts/validate-phase272-premium-redesign.mjs'),
-      ['tests/e2e.mjs','scripts/validate-phase258-structural-hardening.mjs','scripts/validate-phase259-demo-penalty-dashboard.mjs','scripts/validate-phase260-dispute-safe-penalty.mjs','scripts/validate-phase270-full-package-verified.mjs','scripts/validate-phase271-site-ux-insight-polish.mjs','scripts/validate-phase272-premium-redesign.mjs'].every(file => (read(file).includes('phase273-package-100') || read(file).includes('phase274-customer-copy-readability')))
+      ['tests/e2e.mjs','scripts/validate-phase258-structural-hardening.mjs','scripts/validate-phase259-demo-penalty-dashboard.mjs','scripts/validate-phase260-dispute-safe-penalty.mjs','scripts/validate-phase270-full-package-verified.mjs','scripts/validate-phase271-site-ux-insight-polish.mjs','scripts/validate-phase272-premium-redesign.mjs'].every(file => (read(file).includes('phase273-package-100') || read(file).includes('phase274-customer-copy-readability|phase278-customer-perfect')))
     ]
   },
   {
@@ -119,7 +119,7 @@ const categories = [
     name: '납품 패키징·문서화',
     weight: 5,
     checks: [
-      /phase273-package-100|phase274-customer-copy-readability/.test(pkg.version),
+      /phase273-package-100|phase274-customer-copy-readability|phase278-customer-perfect/.test(pkg.version),
       /100점/.test(read('docs/PHASE273_PACKAGE_SCORECARD_100.md')),
       exists('docs/PHASE273_PACKAGE_SCORECARD_100.md'),
       exists('docs/current/PHASE272_PREMIUM_REDESIGN_AUDIT.json'),

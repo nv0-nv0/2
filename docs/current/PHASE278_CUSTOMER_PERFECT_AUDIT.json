@@ -1,0 +1,510 @@
+{
+  "generatedAt": "2026-05-20T08:12:14.594Z",
+  "phase": "phase278-customer-perfect",
+  "ok": true,
+  "total": 100,
+  "passed": 100,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "apps/public/auth/index.html: brand VERIDION",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/auth/index.html: original menu structure",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/auth/index.html: public header",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/auth/index.html: common footer",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/board/index.html: brand VERIDION",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/board/index.html: original menu structure",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/board/index.html: public header",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/board/index.html: common footer",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/business-info/index.html: brand VERIDION",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/business-info/index.html: original menu structure",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/business-info/index.html: public header",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/business-info/index.html: common footer",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/cases/index.html: brand VERIDION",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/cases/index.html: original menu structure",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/cases/index.html: public header",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/cases/index.html: common footer",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/checkout/index.html: brand VERIDION",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/checkout/index.html: original menu structure",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/checkout/index.html: public header",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/checkout/index.html: common footer",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/demo/index.html: brand VERIDION",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/demo/index.html: original menu structure",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/demo/index.html: public header",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/demo/index.html: common footer",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/documents/index.html: brand VERIDION",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/documents/index.html: original menu structure",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/documents/index.html: public header",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/documents/index.html: common footer",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/guides/index.html: brand VERIDION",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/guides/index.html: original menu structure",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/guides/index.html: public header",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/guides/index.html: common footer",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/home/index.html: brand VERIDION",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/home/index.html: original menu structure",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/home/index.html: public header",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/home/index.html: common footer",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/plans/index.html: brand VERIDION",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/plans/index.html: original menu structure",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/plans/index.html: public header",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/plans/index.html: common footer",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/portal/index.html: brand VERIDION",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/portal/index.html: original menu structure",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/portal/index.html: public header",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/portal/index.html: common footer",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/privacy/index.html: brand VERIDION",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/privacy/index.html: original menu structure",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/privacy/index.html: public header",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/privacy/index.html: common footer",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/refund/index.html: brand VERIDION",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/refund/index.html: original menu structure",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/refund/index.html: public header",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/refund/index.html: common footer",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/service/index.html: brand VERIDION",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/service/index.html: original menu structure",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/service/index.html: public header",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/service/index.html: common footer",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/solutions/index.html: brand VERIDION",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/solutions/index.html: original menu structure",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/solutions/index.html: public header",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/solutions/index.html: common footer",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/terms/index.html: brand VERIDION",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/terms/index.html: original menu structure",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/terms/index.html: public header",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/terms/index.html: common footer",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/veridion-demo/index.html: brand VERIDION",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/veridion-demo/index.html: original menu structure",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/veridion-demo/index.html: public header",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/veridion-demo/index.html: common footer",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "forbidden removed: 작동되는 무료 진단 입력창을 맨 위에 배치했습니다",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "forbidden removed: 실제 진단 API",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "forbidden removed: 고정값은 제거",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "forbidden removed: 정적 예시 글",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "forbidden removed: 새 칼럼 엔진",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "forbidden removed: 검색 visibility",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "forbidden removed: AI 및 LLM 가시성",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "forbidden removed: AI 가시성 현황",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "forbidden removed: LLM 가시성",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "forbidden removed: 함께 성장합시다",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "forbidden removed: 새 액션 시작",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "forbidden removed: 무료 데모",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "forbidden removed: 29,000 89,000",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "forbidden removed: hello@nv0.kr",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "forbidden removed: 2024 VERIDION",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "forbidden removed: nv0는 공개 웹페이지",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "forbidden removed: 로그인 페이지를 2열",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "forbidden removed: 검색 visibility",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "forbidden removed: AI 및 LLM 가시성",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "forbidden removed: 법률·규제 리스크",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "forbidden removed: 리스크 후보",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "forbidden removed: 서비스·가이드",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "forbidden removed: 분석 프로세스",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "forbidden removed: Fix 문구 세트",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "forbidden removed: 무료 진단 진단",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "brand product title is VERIDION",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "support email single public address",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "portal AI purpose removed",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "board loading customer copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "diagnostic customer headline",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "stitch visual layer retained",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "phase278 visual correction layer",
+      "ok": true,
+      "detail": ""
+    }
+  ]
+}

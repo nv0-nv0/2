@@ -151,13 +151,13 @@ export function createPublicRouteHandler(ctx) {
 function cleanLegacyPublicTokens(value) {
   if (typeof value === 'string') {
     return value
-      .replace(/FixPack/g, '전문가 리포트')
+      .replace(/전문가 리포트/g, '전문가 리포트')
       .replace(/Auto\s*정기\s*케어/g, '전문가 리포트')
-      .replace(/TemplatePack/g, '전문가 리포트')
+      .replace(/문서 초안/g, '전문가 리포트')
       .replace(/상세 리포트/g, '기본 리포트')
-      .replace(/CTA\s*게시판/g, '게시판')
+      .replace(/다음 행동\s*게시판/g, '게시판')
       .replace(/자동\s*발행\s*200/g, '')
-      .replace(/자동발행/g, '20분 발행')
+      .replace(/자동 발행/g, '20분 발행')
       .replace(/contentFingerprint|combinationMode|publicDisplayVersion/gi, '공개 항목');
   }
   if (Array.isArray(value)) return value.map(cleanLegacyPublicTokens);
@@ -198,7 +198,7 @@ return { requestId: scan?.requestId || null, siteId: scan?.siteId || null, targe
   const paymentHandled = await paymentRouteHandler(req, res, { requestUrl: url, pathname });
   if (paymentHandled !== false) return paymentHandled;
 if (pathname === '/api/public/diagnosis-engine' && req.method === 'GET') {
-return json(req, res, 200, { ok: true, phase: RELEASE_PHASE, engine: 'NV0 Public Evidence Summary Check Engine', rulesVersion: RULES_VERSION, targetFetchEnabled: TARGET_FETCH_ENABLED, scanProvider: SCAN_PROVIDER, aiReviewProvider: AI_REVIEW_PROVIDER, geminiConfigured: AI_REVIEW_ENABLED, resultContract: { resultType: 'preliminary_check', legalConclusion: false, includesEvidenceSummary: true, includesConfidenceScore: true, includesManualReviewFlags: true, includesAutomationDisclosure: true, includesAutomatedActionPlan: true, includesAccuracyProfile: true, includesReportQualityGate: true, includesDemoAccuracyContract: true, includesPaidOutputQualityGate: true, phase220ServiceQualityVersion: PHASE220_SERVICE_QUALITY_VERSION, phase223RiskGuardVersion: PHASE223_RISK_GUARD_VERSION }, endpoints: { scan: 'POST /api/public/scan', diagnose: 'POST /api/public/diagnose', board: 'GET /api/public/board', engine: 'GET /api/public/diagnosis-engine', productIntelligence: 'GET /api/public/product-intelligence', productQuality: 'GET /api/public/product-quality' }, smartProduct: { version: 'p153-smart-ops-v1', nextBestAction: true, planFitScoring: true, journeyOrchestration: true, smartProductEndpoint: '/api/public/smart-product', userPath: ['무료 요약','요금제 선택','내 사이트 관리','게시판 재유입'] }, publicationCadence: { boardName: '게시판', intervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000), cadenceLabel: `${Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000)}분마다 1건 발행`, columnEngine: 'public-column-engine-v1' }, automation: { mode: TARGET_FETCH_AUTOMATION_LEVEL, robotsEnabled: TARGET_FETCH_ROBOTS_ENABLED, sitemapEnabled: TARGET_FETCH_SITEMAP_ENABLED, maxPages: TARGET_FETCH_MAX_PAGES, maxDiscoveryResources: TARGET_FETCH_MAX_DISCOVERY_RESOURCES, notice: '자동 확인 가능한 공개 항목은 모두 처리하고 자동 확정 불가 영역은 직접 확인으로 고지합니다.' }, checks: buildRuleCatalog().map(({ code, category, title, severity, penaltyMax }) => ({ code, category, title, severity, penaltyMax })) });
+return json(req, res, 200, { ok: true, phase: RELEASE_PHASE, engine: 'VERIDION Public Evidence Summary Check Engine', rulesVersion: RULES_VERSION, targetFetchEnabled: TARGET_FETCH_ENABLED, scanProvider: SCAN_PROVIDER, aiReviewProvider: AI_REVIEW_PROVIDER, geminiConfigured: AI_REVIEW_ENABLED, resultContract: { resultType: 'preliminary_check', legalConclusion: false, includesEvidenceSummary: true, includesConfidenceScore: true, includesManualReviewFlags: true, includesAutomationDisclosure: true, includesAutomatedActionPlan: true, includesAccuracyProfile: true, includesReportQualityGate: true, includesDemoAccuracyContract: true, includesPaidOutputQualityGate: true, phase220ServiceQualityVersion: PHASE220_SERVICE_QUALITY_VERSION, phase223RiskGuardVersion: PHASE223_RISK_GUARD_VERSION }, endpoints: { scan: 'POST /api/public/scan', diagnose: 'POST /api/public/diagnose', board: 'GET /api/public/board', engine: 'GET /api/public/diagnosis-engine', productIntelligence: 'GET /api/public/product-intelligence', productQuality: 'GET /api/public/product-quality' }, smartProduct: { version: 'p153-smart-ops-v1', nextBestAction: true, planFitScoring: true, journeyOrchestration: true, smartProductEndpoint: '/api/public/smart-product', userPath: ['무료 요약','요금제 선택','내 사이트 관리','게시판 재유입'] }, publicationCadence: { boardName: '게시판', intervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000), cadenceLabel: `${Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000)}분마다 1건 발행`, columnEngine: 'public-column-engine-v1' }, automation: { mode: TARGET_FETCH_AUTOMATION_LEVEL, robotsEnabled: TARGET_FETCH_ROBOTS_ENABLED, sitemapEnabled: TARGET_FETCH_SITEMAP_ENABLED, maxPages: TARGET_FETCH_MAX_PAGES, maxDiscoveryResources: TARGET_FETCH_MAX_DISCOVERY_RESOURCES, notice: '자동 확인 가능한 공개 항목은 모두 처리하고 자동 확정 불가 영역은 직접 확인으로 고지합니다.' }, checks: buildRuleCatalog().map(({ code, category, title, severity, penaltyMax }) => ({ code, category, title, severity, penaltyMax })) });
 }
 
 if (((pathname === '/api/public/diagnose' || pathname === '/api/public/scan') && req.method === 'POST') || (isLegacyDiagnosticStart && req.method === 'POST')) {

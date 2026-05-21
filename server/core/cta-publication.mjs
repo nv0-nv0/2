@@ -65,34 +65,34 @@ function tagsFor(industry, topic = {}, seed = '') {
 const TOPIC_PACKS = [
   { ctaType: 'diagnosis_summary', boardType: 'cta', primaryKeyword: '무료 사이트 진단', headline: '진단 결과 요약', angle: '현재 위험도를 빠르게 이해하고 다음 행동으로 연결', intent: '정보 탐색형', funnel: '인지', persona: '첫 방문 사이트 담당자', secondaryKeywords: ['사이트 신뢰도 점검', '고객 안내 공백'], intro: ['처음 방문한 고객은 상품보다 먼저 사이트가 믿을 만한지 확인합니다.', '진단 결과는 점수보다 고객이 멈추는 지점을 찾는 데 의미가 있습니다.'], problem: ['사업자 정보, 환불 기준, 개인정보 안내, 문의 경로가 흐릿하면 구매나 체험 신청 직전에 이탈할 수 있습니다.'], cta: '무료 진단으로 현재 안내 공백을 먼저 확인하세요.' },
   { ctaType: 'risk_alert', boardType: 'notice', primaryKeyword: '쇼핑몰 운영 리스크', headline: '운영 리스크 알림', angle: '민원과 분쟁 가능성을 줄이는 우선순위', intent: '문제 인식형', funnel: '인지', persona: '운영 책임자', secondaryKeywords: ['환불 배송 고지', '정책 누락 점검'], intro: ['환불, 배송, 개인정보, 약관은 평소에는 눈에 띄지 않지만 문의가 생기면 가장 먼저 확인됩니다.'], problem: ['기준이 명확하지 않으면 고객 응대 시간이 늘고 불필요한 오해가 생길 수 있습니다.'], cta: '리스크가 보이는 항목부터 상세 리포트에서 위치와 문구 후보를 확인하세요.' },
-  { ctaType: 'conversion_checklist', boardType: 'notice', primaryKeyword: '구매 전환 체크리스트', headline: '전환 전 체크리스트', angle: '광고·문의·결제 전 확인할 실무 점검표', intent: '실행 준비형', funnel: '고려', persona: '마케터', secondaryKeywords: ['CTA 점검', '첫 화면 점검'], intro: ['광고를 집행하기 전에 고객이 확인할 안내가 준비되어 있는지 먼저 봐야 합니다.'], problem: ['푸터, 상세 페이지, 결제 직전, 회원가입 단계가 서로 따로 움직이면 전환 흐름이 끊길 수 있습니다.'], cta: '체크리스트를 직접 적용하기 어렵다면 진단 결과를 저장하고 FixPack 또는 상세 리포트로 이어가세요.' },
-  { ctaType: 'before_after', boardType: 'case', primaryKeyword: '사이트 문구 수정 전후', headline: '수정 전후 비교', angle: '고객 안내 문구를 더 명확하게 바꾸는 예시', intent: '비교 검토형', funnel: '고려', persona: '콘텐츠 담당자', secondaryKeywords: ['광고 문구 개선', '상세페이지 문구'], intro: ['같은 내용이라도 표현 방식에 따라 고객이 느끼는 신뢰가 달라집니다.'], problem: ['조건 없는 표현은 운영 기준과 맞지 않을 때 오해를 만들 수 있으므로 범위와 예외를 분리해야 합니다.'], cta: '내 사이트 문구를 수정 전후로 비교하고 싶다면 FixPack 문구안을 확인하세요.' },
+  { ctaType: 'conversion_checklist', boardType: 'notice', primaryKeyword: '구매 전환 체크리스트', headline: '전환 전 체크리스트', angle: '광고·문의·결제 전 확인할 실무 점검표', intent: '실행 준비형', funnel: '고려', persona: '마케터', secondaryKeywords: ['다음 행동 점검', '첫 화면 점검'], intro: ['광고를 집행하기 전에 고객이 확인할 안내가 준비되어 있는지 먼저 봐야 합니다.'], problem: ['푸터, 상세 페이지, 결제 직전, 회원가입 단계가 서로 따로 움직이면 전환 흐름이 끊길 수 있습니다.'], cta: '체크리스트를 직접 적용하기 어렵다면 진단 결과를 저장하고 전문가 리포트 또는 상세 리포트로 이어가세요.' },
+  { ctaType: 'before_after', boardType: 'case', primaryKeyword: '사이트 문구 수정 전후', headline: '수정 전후 비교', angle: '고객 안내 문구를 더 명확하게 바꾸는 예시', intent: '비교 검토형', funnel: '고려', persona: '콘텐츠 담당자', secondaryKeywords: ['광고 문구 개선', '상세페이지 문구'], intro: ['같은 내용이라도 표현 방식에 따라 고객이 느끼는 신뢰가 달라집니다.'], problem: ['조건 없는 표현은 운영 기준과 맞지 않을 때 오해를 만들 수 있으므로 범위와 예외를 분리해야 합니다.'], cta: '내 사이트 문구를 수정 전후로 비교하고 싶다면 전문가 리포트 문구안을 확인하세요.' },
   { ctaType: 'case_study', boardType: 'case', primaryKeyword: '온라인 사업자 점검 사례', headline: '운영 사례 기반 안내', angle: '비슷한 사이트가 먼저 정리하는 항목', intent: '사례 탐색형', funnel: '고려', persona: '소상공인 사이트 담당자', secondaryKeywords: ['쇼핑몰 사례', '문의 감소'], intro: ['업종이 달라도 고객이 확인하는 기본 정보는 비슷합니다.'], problem: ['문제는 한 페이지가 아니라 여러 화면 사이의 연결에서 자주 생깁니다. 홈에는 안내가 있지만 결제 화면에는 없는 식입니다.'], cta: '비슷한 구조의 사이트가 어떤 항목부터 정리하는지 상세 리포트와 Auto 플랜을 함께 검토하세요.' },
-  { ctaType: 'plan_compare', boardType: 'cta', primaryKeyword: '사이트 진단 리포트 비교', headline: '플랜 선택 기준', angle: '무료 진단 이후 필요한 산출물을 고르는 방법', intent: '상업 조사형', funnel: '결정', persona: '구매 검토자', secondaryKeywords: ['상세 리포트', 'FixPack', 'Auto 정기 케어'], intro: ['무료 진단은 문제 발견에 집중하고, 유료 산출물은 실제 반영 기준을 정리하는 데 목적이 있습니다.'], problem: ['단순 확인, 문구 수정, 문서 초안, 반복 관리는 서로 다른 산출물이 필요합니다.'], cta: '무료 결과를 확인했다면 지금 필요한 산출물 유형을 기준으로 플랜을 비교하세요.' },
+  { ctaType: 'plan_compare', boardType: 'cta', primaryKeyword: '사이트 진단 리포트 비교', headline: '플랜 선택 기준', angle: '무료 진단 이후 필요한 산출물을 고르는 방법', intent: '상업 조사형', funnel: '결정', persona: '구매 검토자', secondaryKeywords: ['상세 리포트', '전문가 리포트', '전문가 플랜'], intro: ['무료 진단은 문제 발견에 집중하고, 유료 산출물은 실제 반영 기준을 정리하는 데 목적이 있습니다.'], problem: ['단순 확인, 문구 수정, 문서 초안, 반복 관리는 서로 다른 산출물이 필요합니다.'], cta: '무료 결과를 확인했다면 지금 필요한 산출물 유형을 기준으로 플랜을 비교하세요.' },
   { ctaType: 'privacy_tip', boardType: 'notice', primaryKeyword: '개인정보처리방침 위치', headline: '개인정보 안내 위치 점검', angle: '입력 직전 고지와 동의 흐름 정리', intent: '문제 해결형', funnel: '고려', persona: '회원가입 폼 사이트 담당자', secondaryKeywords: ['개인정보 수집 동의', '입력 폼 안내'], intro: ['개인정보 안내는 문서가 존재하는 것만으로 충분하지 않습니다. 입력하는 순간에 확인할 수 있어야 합니다.'], problem: ['푸터 링크가 있어도 입력 폼 주변에서 확인하기 어렵다면 고객은 불안감을 느낄 수 있습니다.'], cta: '개인정보 안내 문구 위치와 표현은 상세 리포트에서 페이지별로 확인하세요.' },
-  { ctaType: 'terms_tip', boardType: 'notice', primaryKeyword: '이용약관 연결 구조', headline: '약관 연결 구조 점검', angle: '서비스 이용 기준과 제한 조건을 고객 흐름에 맞게 연결', intent: '문제 해결형', funnel: '고려', persona: '서비스 사이트 담당자', secondaryKeywords: ['약관 링크', '결제 전 고지'], intro: ['이용약관은 사이트 하단에만 두면 고객이 실제 행동 전에 확인하기 어렵습니다.'], problem: ['주요 제한 조건이 결제 화면과 떨어져 있으면 분쟁 상황에서 설명 부담이 커질 수 있습니다.'], cta: '약관 구조와 결제 전 고지를 함께 정리하려면 TemplatePack 또는 FixPack 산출물을 확인하세요.' },
-  { ctaType: 'ad_copy_review', boardType: 'case', primaryKeyword: '광고 문구 점검', headline: '광고 표현 점검', angle: '확정형·보장형 표현을 완화하는 실무 가이드', intent: '문제 해결형', funnel: '고려', persona: '광고 담당자', secondaryKeywords: ['첫 화면 문구', '성과 보장 표현'], intro: ['광고나 첫 화면에서는 강한 표현이 전환에 도움이 될 것처럼 보입니다.'], problem: ['무조건, 완벽, 확정처럼 근거 확인이 필요한 표현은 범위를 분리해서 안내하는 편이 안전합니다.'], cta: '광고 문구와 버튼 안내를 더 안전하게 정리하려면 FixPack 수정 전후 문구안을 확인하세요.' },
+  { ctaType: 'terms_tip', boardType: 'notice', primaryKeyword: '이용약관 연결 구조', headline: '약관 연결 구조 점검', angle: '서비스 이용 기준과 제한 조건을 고객 흐름에 맞게 연결', intent: '문제 해결형', funnel: '고려', persona: '서비스 사이트 담당자', secondaryKeywords: ['약관 링크', '결제 전 고지'], intro: ['이용약관은 사이트 하단에만 두면 고객이 실제 행동 전에 확인하기 어렵습니다.'], problem: ['주요 제한 조건이 결제 화면과 떨어져 있으면 분쟁 상황에서 설명 부담이 커질 수 있습니다.'], cta: '약관 구조와 결제 전 고지를 함께 정리하려면 문서 초안 또는 전문가 리포트 산출물을 확인하세요.' },
+  { ctaType: 'ad_copy_review', boardType: 'case', primaryKeyword: '광고 문구 점검', headline: '광고 표현 점검', angle: '확정형·보장형 표현을 완화하는 실무 가이드', intent: '문제 해결형', funnel: '고려', persona: '광고 담당자', secondaryKeywords: ['첫 화면 문구', '성과 보장 표현'], intro: ['광고나 첫 화면에서는 강한 표현이 전환에 도움이 될 것처럼 보입니다.'], problem: ['무조건, 완벽, 확정처럼 근거 확인이 필요한 표현은 범위를 분리해서 안내하는 편이 안전합니다.'], cta: '광고 문구와 버튼 안내를 더 안전하게 정리하려면 전문가 리포트 수정 전후 문구안을 확인하세요.' },
   { ctaType: 'rescan', boardType: 'cta', primaryKeyword: '수정 후 재진단', headline: '수정 후 재진단', angle: '개선이 실제 화면에 반영됐는지 확인하는 절차', intent: '실행 검증형', funnel: '결정', persona: '개발·운영 담당자', secondaryKeywords: ['재점검', '개선 확인'], intro: ['사이트를 한 번 수정했다고 모든 화면이 동시에 정리되는 것은 아닙니다.'], problem: ['수정 후 재진단을 하지 않으면 어떤 부분이 개선됐고 어떤 항목이 남았는지 알기 어렵습니다.'], cta: '수정 후 상태를 관리하려면 내 사이트에 결과를 저장하고 재진단 기능을 사용하세요.' },
   { ctaType: 'saved_site', boardType: 'cta', primaryKeyword: '사이트 반복 관리', headline: '사이트 저장과 반복 관리', angle: '한 번의 진단을 운영 루틴으로 연결', intent: '유지 관리형', funnel: '결정', persona: '반복 사이트 담당자', secondaryKeywords: ['내 사이트 관리', '정기 점검'], intro: ['사이트 운영은 한 번 점검으로 끝나지 않습니다. 상품과 이벤트가 바뀌면 안내 문구도 함께 바뀌어야 합니다.'], problem: ['진단 결과를 저장하지 않으면 이전 상태와 현재 상태를 비교하기 어렵습니다.'], cta: '내 사이트 관리에 결과를 저장하고 반복 점검 루틴을 만들어 보세요.' },
-  { ctaType: 'weekly_ops', boardType: 'notice', primaryKeyword: '주간 사이트 운영 점검', headline: '주간 운영 루틴', angle: '정기적으로 안내와 버튼 안내를 점검하는 운영 방식', intent: '유지 관리형', funnel: '유지', persona: '운영 매니저', secondaryKeywords: ['운영 루틴', '게시판 관리'], intro: ['사이트는 오픈 직후보다 운영 중에 더 많은 공백이 생깁니다.'], problem: ['방치된 게시판, 오래된 공지, 맞지 않는 버튼 안내는 고객에게 운영이 멈춘 인상을 줄 수 있습니다.'], cta: '반복 운영이 필요하다면 Auto 정기 케어로 진단과 게시판 발행을 함께 관리하세요.' },
-  { ctaType: 'refund_policy', boardType: 'notice', primaryKeyword: '환불 정책 안내', headline: '환불 기준 정리', angle: '고객 문의를 줄이는 환불·청약철회 안내 구성', intent: '문제 해결형', funnel: '고려', persona: 'CS 담당자', secondaryKeywords: ['취소 안내', '교환 반품 정책'], intro: ['환불 기준은 고객이 불만을 느낀 뒤가 아니라 구매 전에 확인할 수 있어야 합니다.'], problem: ['조건, 기간, 예외가 분리되어 있지 않으면 같은 문의가 반복될 수 있습니다.'], cta: '환불 기준을 구매 흐름에 맞게 정리하려면 TemplatePack 초안을 확인하세요.' },
+  { ctaType: 'weekly_ops', boardType: 'notice', primaryKeyword: '주간 사이트 운영 점검', headline: '주간 운영 루틴', angle: '정기적으로 안내와 버튼 안내를 점검하는 운영 방식', intent: '유지 관리형', funnel: '유지', persona: '운영 매니저', secondaryKeywords: ['운영 루틴', '게시판 관리'], intro: ['사이트는 오픈 직후보다 운영 중에 더 많은 공백이 생깁니다.'], problem: ['방치된 게시판, 오래된 공지, 맞지 않는 버튼 안내는 고객에게 운영이 멈춘 인상을 줄 수 있습니다.'], cta: '반복 운영이 필요하다면 전문가 플랜로 진단과 게시판 발행을 함께 관리하세요.' },
+  { ctaType: 'refund_policy', boardType: 'notice', primaryKeyword: '환불 정책 안내', headline: '환불 기준 정리', angle: '고객 문의를 줄이는 환불·청약철회 안내 구성', intent: '문제 해결형', funnel: '고려', persona: 'CS 담당자', secondaryKeywords: ['취소 안내', '교환 반품 정책'], intro: ['환불 기준은 고객이 불만을 느낀 뒤가 아니라 구매 전에 확인할 수 있어야 합니다.'], problem: ['조건, 기간, 예외가 분리되어 있지 않으면 같은 문의가 반복될 수 있습니다.'], cta: '환불 기준을 구매 흐름에 맞게 정리하려면 문서 초안 초안을 확인하세요.' },
   { ctaType: 'footer_trust', boardType: 'notice', primaryKeyword: '푸터 사업자 정보', headline: '푸터 신뢰 정보 점검', angle: '하단 정보만 정리해도 고객 불안을 줄이는 방법', intent: '문제 해결형', funnel: '인지', persona: '초기 창업자', secondaryKeywords: ['사업자 정보 표시', '고객센터 안내'], intro: ['고객은 의심이 생겼을 때 상세 설명보다 먼저 푸터와 고객센터 정보를 확인합니다.'], problem: ['상호, 대표자, 연락 경로, 정책 링크가 흩어져 있으면 작은 불안도 이탈로 이어질 수 있습니다.'], cta: '푸터 신뢰 정보를 먼저 정리하고 무료 진단으로 누락 항목을 확인하세요.' },
-  { ctaType: 'mobile_readability', boardType: 'case', primaryKeyword: '모바일 상세페이지 점검', headline: '모바일 가독성 점검', angle: '작은 화면에서 CTA와 정책 링크가 보이는지 확인', intent: '실행 준비형', funnel: '고려', persona: '모바일 유입 사이트 담당자', secondaryKeywords: ['모바일 CTA', '상세페이지 개선'], intro: ['모바일 유입이 많은 사이트는 정책 링크와 CTA의 위치가 전환에 직접 영향을 줍니다.'], problem: ['PC에서는 보이던 안내가 모바일에서는 접히거나 버튼 아래로 밀리는 경우가 많습니다.'], cta: '모바일 기준으로 다시 확인하려면 진단 결과에서 화면별 우선순위를 확인하세요.' },
-  { ctaType: 'lead_form', boardType: 'case', primaryKeyword: '문의폼 전환 개선', headline: '문의폼 안내 개선', angle: '입력 부담을 줄이고 문의 완료율을 높이는 방법', intent: '전환 개선형', funnel: '결정', persona: '리드 수집 담당자', secondaryKeywords: ['결제', '폼 이탈'], intro: ['문의폼은 짧을수록 좋은 것이 아니라 고객이 왜 입력해야 하는지 이해할 수 있어야 합니다.'], problem: ['수집 항목의 목적, 응답 시간, 개인정보 안내가 부족하면 마지막 단계에서 이탈이 생깁니다.'], cta: '문의폼 주변 문구를 정리하려면 FixPack에서 수정 후보를 받아보세요.' },
+  { ctaType: 'mobile_readability', boardType: 'case', primaryKeyword: '모바일 상세페이지 점검', headline: '모바일 가독성 점검', angle: '작은 화면에서 버튼 안내와 정책 링크가 보이는지 확인', intent: '실행 준비형', funnel: '고려', persona: '모바일 유입 사이트 담당자', secondaryKeywords: ['모바일 CTA', '상세페이지 개선'], intro: ['모바일 유입이 많은 사이트는 정책 링크와 CTA의 위치가 전환에 직접 영향을 줍니다.'], problem: ['PC에서는 보이던 안내가 모바일에서는 접히거나 버튼 아래로 밀리는 경우가 많습니다.'], cta: '모바일 기준으로 다시 확인하려면 진단 결과에서 화면별 우선순위를 확인하세요.' },
+  { ctaType: 'lead_form', boardType: 'case', primaryKeyword: '문의폼 전환 개선', headline: '문의폼 안내 개선', angle: '입력 부담을 줄이고 문의 완료율을 높이는 방법', intent: '전환 개선형', funnel: '결정', persona: '리드 수집 담당자', secondaryKeywords: ['결제', '폼 이탈'], intro: ['문의폼은 짧을수록 좋은 것이 아니라 고객이 왜 입력해야 하는지 이해할 수 있어야 합니다.'], problem: ['수집 항목의 목적, 응답 시간, 개인정보 안내가 부족하면 마지막 단계에서 이탈이 생깁니다.'], cta: '문의폼 주변 문구를 정리하려면 전문가 리포트에서 수정 후보를 받아보세요.' },
   { ctaType: 'checkout_friction', boardType: 'case', primaryKeyword: '결제 이탈 점검', headline: '결제 직전 이탈 점검', angle: '결제 버튼 앞에서 고객이 멈추는 이유 정리', intent: '전환 개선형', funnel: '결정', persona: '커머스 사이트 담당자', secondaryKeywords: ['결제 전 고지', '구매 전환'], intro: ['결제 직전에는 가격보다 불확실성이 더 큰 이탈 요인이 될 수 있습니다.'], problem: ['환불, 배송, 디지털 산출물 제공 시점, 문의 경로가 결제 화면에 연결되지 않으면 고객이 확인을 미루게 됩니다.'], cta: '결제 전 안내를 정리하려면 상세 리포트에서 페이지별 개선 항목을 확인하세요.' },
   { ctaType: 'content_refresh', boardType: 'notice', primaryKeyword: '오래된 공지 정리', headline: '콘텐츠 최신성 점검', angle: '오래된 공지와 안내문을 운영 신뢰로 바꾸는 방법', intent: '유지 관리형', funnel: '유지', persona: '콘텐츠 사이트 담당자', secondaryKeywords: ['공지 관리', '게시판 운영'], intro: ['오래된 공지는 정보가 틀리지 않아도 운영이 멈춘 인상을 줄 수 있습니다.'], problem: ['이벤트 종료, 가격 변경, 정책 변경이 반영되지 않으면 고객은 최신 여부를 다시 문의하게 됩니다.'], cta: '정기 점검이 필요하다면 Auto 플랜으로 진단과 발행 루틴을 함께 관리하세요.' },
   { ctaType: 'local_service', boardType: 'case', primaryKeyword: '지역 서비스 사이트 점검', headline: '지역 기반 서비스 안내', angle: '방문·구매 문의 전환을 위한 신뢰 정보 구성', intent: '지역 탐색형', funnel: '고려', persona: '지역 서비스 사업자', secondaryKeywords: ['구매 문의 예약', '방문 문의'], intro: ['지역 기반 서비스는 가격보다 연락 가능성과 실제 운영 정보가 먼저 확인됩니다.'], problem: ['주소, 영업시간, 구매 문의 가능 시간, 문의 방법이 분리되어 있으면 전화나 예약 전환이 느려질 수 있습니다.'], cta: '지역 서비스형 사이트라면 무료 진단으로 문의 전환 흐름을 먼저 확인하세요.' },
-  { ctaType: 'b2b_service', boardType: 'case', primaryKeyword: 'B2B 서비스 첫 화면 점검', headline: 'B2B 문의 전환 점검', angle: '도입 검토자가 확인하는 자료와 CTA 구조', intent: '상업 조사형', funnel: '결정', persona: 'B2B 세일즈 담당자', secondaryKeywords: ['자료 요청', '도입 문의'], intro: ['B2B 고객은 즉시 구매보다 내부 검토에 필요한 근거를 찾습니다.'], problem: ['사례, 제공 범위, 문의 후 절차가 부족하면 검토자가 다음 단계로 넘기기 어렵습니다.'], cta: 'B2B 문의 흐름은 상세 리포트에서 자료·문의·정책 연결을 함께 확인하세요.' },
-  { ctaType: 'digital_product', boardType: 'notice', primaryKeyword: '디지털 상품 환불 고지', headline: '디지털 산출물 안내', angle: '제공 시작 시점과 환불 제한을 명확히 알리는 방법', intent: '문제 해결형', funnel: '결정', persona: '디지털 상품 판매자', secondaryKeywords: ['PDF 리포트', '템플릿 판매'], intro: ['PDF, 템플릿, 리포트 같은 디지털 산출물은 제공 시점 안내가 특히 중요합니다.'], problem: ['제공이 시작된 뒤 환불 제한이 있을 수 있다면 결제 전 고객이 이해할 수 있게 분리해서 보여줘야 합니다.'], cta: '디지털 산출물 판매 흐름은 TemplatePack과 FixPack으로 결제 전 문구를 정리하세요.' },
+  { ctaType: 'b2b_service', boardType: 'case', primaryKeyword: 'B2B 서비스 첫 화면 점검', headline: 'B2B 문의 전환 점검', angle: '도입 검토자가 확인하는 자료와 다음 행동 구조', intent: '상업 조사형', funnel: '결정', persona: 'B2B 세일즈 담당자', secondaryKeywords: ['자료 요청', '도입 문의'], intro: ['B2B 고객은 즉시 구매보다 내부 검토에 필요한 근거를 찾습니다.'], problem: ['사례, 제공 범위, 문의 후 절차가 부족하면 검토자가 다음 단계로 넘기기 어렵습니다.'], cta: 'B2B 문의 흐름은 상세 리포트에서 자료·문의·정책 연결을 함께 확인하세요.' },
+  { ctaType: 'digital_product', boardType: 'notice', primaryKeyword: '디지털 상품 환불 고지', headline: '디지털 산출물 안내', angle: '제공 시작 시점과 환불 제한을 명확히 알리는 방법', intent: '문제 해결형', funnel: '결정', persona: '디지털 상품 판매자', secondaryKeywords: ['PDF 리포트', '템플릿 판매'], intro: ['PDF, 템플릿, 리포트 같은 디지털 산출물은 제공 시점 안내가 특히 중요합니다.'], problem: ['제공이 시작된 뒤 환불 제한이 있을 수 있다면 결제 전 고객이 이해할 수 있게 분리해서 보여줘야 합니다.'], cta: '디지털 산출물 판매 흐름은 문서 초안과 전문가 리포트으로 결제 전 문구를 정리하세요.' },
   { ctaType: 'faq_conversion', boardType: 'cta', primaryKeyword: 'FAQ 전환 개선', headline: 'FAQ 기반 전환 설계', angle: '반복 문의를 구매 전 불안 제거 콘텐츠로 바꾸기', intent: '전환 개선형', funnel: '고려', persona: 'CS·마케팅 담당자', secondaryKeywords: ['자주 묻는 질문', '구매 불안 제거'], intro: ['FAQ는 고객센터용 문서가 아니라 구매 전 불안을 줄이는 전환 콘텐츠가 될 수 있습니다.'], problem: ['반복 문의를 글 하단에만 쌓아두면 고객이 결제 전에 필요한 답을 찾기 어렵습니다.'], cta: '자주 묻는 질문을 전환 흐름에 맞게 정리하려면 상세 리포트의 FAQ 후보를 확인하세요.' },
-  { ctaType: 'trust_notice_link', boardType: 'notice', primaryKeyword: '결제 전 안내 연결', headline: '정책 링크와 CTA 정리', angle: '고객이 결제 전 필요한 안내로 이동하는 구조', intent: '신뢰 점검형', funnel: '인지', persona: '운영 담당자', secondaryKeywords: ['정책 링크', '결제 전 고지'], intro: ['고객은 버튼을 누르기 전에 환불 기준, 제공 범위, 개인정보 안내를 빠르게 확인하려 합니다.'], problem: ['관련 글, 정책 페이지, 무료 진단 버튼 안내가 분리되어 있으면 사용자가 다음 행동을 찾기 어렵습니다.'], cta: '정책 링크와 CTA 구조는 Auto 발행 글을 통해 꾸준히 보강할 수 있습니다.' },
+  { ctaType: 'trust_notice_link', boardType: 'notice', primaryKeyword: '결제 전 안내 연결', headline: '정책 링크와 다음 행동 정리', angle: '고객이 결제 전 필요한 안내로 이동하는 구조', intent: '신뢰 점검형', funnel: '인지', persona: '운영 담당자', secondaryKeywords: ['정책 링크', '결제 전 고지'], intro: ['고객은 버튼을 누르기 전에 환불 기준, 제공 범위, 개인정보 안내를 빠르게 확인하려 합니다.'], problem: ['관련 글, 정책 페이지, 무료 진단 버튼 안내가 분리되어 있으면 사용자가 다음 행동을 찾기 어렵습니다.'], cta: '정책 링크와 다음 행동 구조는 Auto 발행 글을 통해 꾸준히 보강할 수 있습니다.' },
   { ctaType: 'seasonal_campaign', boardType: 'case', primaryKeyword: '이벤트 첫 화면 점검', headline: '캠페인 전 점검', angle: '프로모션 시작 전 반드시 확인할 안내 구조', intent: '실행 준비형', funnel: '결정', persona: '프로모션 담당자', secondaryKeywords: ['이벤트 페이지', '프로모션 CTA'], intro: ['이벤트 기간에는 유입이 늘어나는 만큼 작은 안내 공백도 문의로 이어지기 쉽습니다.'], problem: ['할인 조건, 적용 제외, 환불 기준, 종료일이 분산되어 있으면 고객이 혜택보다 조건을 더 오래 찾게 됩니다.'], cta: '캠페인 전에는 무료 진단으로 핵심 안내가 한 화면 안에 연결되는지 확인하세요.' }
 ];
 
 const PROCESS_STEPS = [
   ['고객 행동 직전 화면 확인', '누락·모호·과장 표현 분리', '수정 문구 적용', '모바일 화면 재확인', '같은 기준의 재진단'],
-  ['유입 경로 확인', '정책 링크 위치 점검', 'CTA 주변 불안 요소 제거', 'FAQ 보강', '발행 후 반응 확인'],
-  ['고객 질문 선정', '결제 전 확인 흐름 구성', '본문에서 고객 걱정에 답변', '정책·문의 페이지 연결', '다음 행동 CTA 배치'],
+  ['유입 경로 확인', '정책 링크 위치 점검', '다음 행동 주변 불안 요소 제거', 'FAQ 보강', '발행 후 반응 확인'],
+  ['고객 질문 선정', '결제 전 확인 흐름 구성', '본문에서 고객 걱정에 답변', '정책·문의 페이지 연결', '다음 행동 다음 행동 배치'],
   ['문의가 반복되는 항목 수집', '결제·구매 문의 직전 화면과 연결', '짧은 답변과 상세 기준 분리', '과장 표현 제거', '운영 변경 시 재발행']
 ];
 const TITLE_PATTERNS = [
@@ -170,7 +170,7 @@ function legacyBuildCtaBoardArticle(scan = {}, variant = {}, options = {}) {
     `해결 과정\n1) ${steps[0]}\n2) ${steps[1]}\n3) ${steps[2]}\n4) ${steps[3]}\n5) ${steps[4]}`,
     `신뢰 근거\n${trust} 요약 설명 후보는 “${metaDescription}”입니다. 중복 발행을 줄이기 위해 주제, 고객 의도, 고객 단계, FAQ 조합을 다르게 구성합니다. 예상 읽기 시간은 약 ${readingTimeMinutes}분입니다.`,
     `FAQ\n${faqSet.map(([q, a], index) => `Q${index + 1}. ${q}\n${a}`).join('\n\n')}`,
-    `자연스러운 다음 행동\n${topic.cta} 무료 진단으로 안내 공백을 확인하고, 결과를 저장하면 상세 리포트, 수정 문구안, Auto 정기 케어로 이어서 관리할 수 있습니다.`,
+    `자연스러운 다음 행동\n${topic.cta} 무료 진단으로 안내 공백을 확인하고, 결과를 저장하면 상세 리포트, 수정 문구안, 전문가 플랜로 이어서 관리할 수 있습니다.`,
     `내부링크\n${internalLinks.map(link => `${link.label}: ${link.href}`).join('\n')}`,
     `태그\n${tags.join(' ')}`
   ].join('\n\n');
@@ -228,7 +228,7 @@ const COMBO_ANGLES = [
   ['첫 방문자 신뢰 확보', '정보 탐색형', '인지', '첫 방문 신뢰도'],
   ['구매 직전 불안 제거', '전환 개선형', '결정', '구매 직전 이탈 방지'],
   ['모바일 화면 기준 재정리', '실행 준비형', '고려', '모바일 전환 점검'],
-  ['정책 문구와 CTA 연결', '문제 해결형', '고려', '정책 CTA 연결'],
+  ['정책 문구와 다음 행동 연결', '문제 해결형', '고려', '정책 다음 행동 연결'],
   ['광고 유입 첫 화면 최적화', '상업 조사형', '결정', '광고 첫 화면 점검'],
   ['재방문 고객 설득 흐름', '유지 관리형', '유지', '재방문 전환'],
   ['결제 전환 보강', '전환 개선형', '결정', '결제 개선'],
@@ -260,12 +260,12 @@ const COMBO_SECTION_SETS = [
 const COMBO_CTA_STYLES = [
   '무료 진단으로 현재 안내 공백을 먼저 확인하세요.',
   '결과를 저장한 뒤 상세 리포트에서 위치별 수정 우선순위를 확인하세요.',
-  'FixPack으로 고객이 보는 문구를 수정 전후 형태로 받아보세요.',
-  'Auto 정기 케어로 발행 글과 점검 기록을 반복 관리하세요.',
-  '상품·요금 페이지에서 무료 진단, 상세 리포트, FixPack, Auto의 차이를 확인하세요.',
+  '전문가 리포트으로 고객이 보는 문구를 수정 전후 형태로 받아보세요.',
+  '전문가 플랜로 발행 글과 점검 기록을 반복 관리하세요.',
+  '상품·요금 페이지에서 무료 진단, 상세 리포트, 전문가 리포트, Auto의 차이를 확인하세요.',
   '내 사이트 관리에 결과를 남기고 다음 수정 후 재진단까지 이어가세요.',
   '운영 문서 초안이 필요하면 문서 생성으로 결제 전 안내 문구를 정리하세요.',
-  '광고 집행 전 첫 화면과 CTA 주변 문구를 먼저 점검하세요.'
+  '광고 집행 전 첫 화면과 다음 행동 주변 문구를 먼저 점검하세요.'
 ];
 const COMBO_FAQS = [
   ['왜 같은 주제로 글을 계속 발행해도 되나요?', '같은 큰 주제라도 업종, 고객 단계, 고객 의도, 버튼 위치, FAQ가 달라지면 전혀 다른 목적의 글이 됩니다.'],
@@ -275,7 +275,7 @@ const COMBO_FAQS = [
   ['몇 개의 조합이 만들어지나요?', '고정 24개가 아니라 최소 수십만 개 이상의 조합 기반이며, 발행 시드와 사이트 입력값까지 포함하면 계속 확장됩니다.'],
   ['중복 게시글은 어떻게 피하나요?', '제목과 본문 fingerprint를 저장하고 최근 ctaType, 고객의도, 고객단계, 키워드가 겹치지 않도록 후보를 다시 뽑습니다.'],
   ['글 유형을 계속 추가해야 하나요?', '아닙니다. 주제팩은 뼈대이고 실제 다양성은 조합 엔진이 만듭니다. 필요하면 업종팩이나 시즌팩만 추가하면 됩니다.'],
-  ['버튼 안내가 매번 똑같아지지 않나요?', 'CTA도 무료 진단, 상세 리포트, FixPack, Auto 정기 케어, 내 사이트 관리, 상품·요금 페이지 등 고객 단계에 맞춰 달라집니다.']
+  ['버튼 안내가 매번 똑같아지지 않나요?', 'CTA도 무료 진단, 상세 리포트, 전문가 리포트, 전문가 플랜, 내 사이트 관리, 상품·요금 페이지 등 고객 단계에 맞춰 달라집니다.']
 ];
 const COMBO_MICRO_CASES = [
   '고객이 가격을 보기 전에 신뢰 정보를 먼저 찾는 상황', '문의폼 입력 직전에 개인정보 안내가 보이지 않는 상황',
@@ -612,7 +612,7 @@ ${expertEvidenceLine({ theme, top, findingCount, ctx })}
     `현장에서 자주 생기는 문제
 가장 흔한 문제는 정보가 없는 것이 아닙니다. 고객이 필요한 순간에 정보를 찾지 못하는 것입니다. ${theme.weakPoint}가 대표적입니다. 사이트 담당자는 푸터, 약관, 공지사항에 이미 적어 두었다고 생각합니다. 하지만 고객은 결제, 문의, 회원가입, 상담 신청 직전에 답을 찾습니다. 이 위치에서 답이 보이지 않으면 상품 설명을 끝까지 읽기 전에 비교 페이지로 이동합니다. 특히 모바일에서는 한 화면에 보이는 정보가 적습니다. 그래서 버튼 주변의 한 줄 안내가 실제 전환에 큰 영향을 줍니다.`,
     `매출과 신뢰에 영향을 주는 이유
-${ctx.industry} 사이트에서 ${theme.label}은 전환 흐름의 마지막 마찰을 줄이는 장치입니다. 광고비를 늘려도 결제 직전 안내가 약하면 고객은 “나중에 다시 보자”라고 판단할 수 있습니다. 반대로 버튼 가까이에 제공 범위, 문의 경로, 예외 기준, 처리 시간을 배치하면 고객은 다음 행동을 예측할 수 있습니다. 이 예측 가능성이 곧 신뢰입니다. 신뢰가 쌓여야 무료 진단에서 리포트, FixPack, Auto 정기 케어로 이어지는 결과물 선택 흐름도 자연스러워집니다. 실무에서는 한 문장 차이로 문의 품질이 달라집니다. 고객이 먼저 이해하고 들어오면 상담은 설득보다 확인에 가까워집니다.`,
+${ctx.industry} 사이트에서 ${theme.label}은 전환 흐름의 마지막 마찰을 줄이는 장치입니다. 광고비를 늘려도 결제 직전 안내가 약하면 고객은 “나중에 다시 보자”라고 판단할 수 있습니다. 반대로 버튼 가까이에 제공 범위, 문의 경로, 예외 기준, 처리 시간을 배치하면 고객은 다음 행동을 예측할 수 있습니다. 이 예측 가능성이 곧 신뢰입니다. 신뢰가 쌓여야 무료 진단에서 리포트, 전문가 리포트, 전문가 플랜로 이어지는 결과물 선택 흐름도 자연스러워집니다. 실무에서는 한 문장 차이로 문의 품질이 달라집니다. 고객이 먼저 이해하고 들어오면 상담은 설득보다 확인에 가까워집니다.`,
     `실무 적용 순서
 1. 고객이 행동하기 직전의 화면을 먼저 엽니다. 결제 버튼, 문의 버튼, 회원가입 버튼, 가격표, 신청 완료 화면을 우선 확인합니다.
 2. ${detected} 중 고객 질문과 직접 연결되는 항목을 버튼 주변에 배치합니다.
@@ -635,7 +635,7 @@ ${faq.map(([q, a], index) => `Q${index + 1}. ${sentence(q)}
 A. ${sentence(a)}`).join('\n\n')}
 FAQ는 단순한 꼬리말이 아닙니다. 고객이 구매 직전에 궁금해하는 질문을 본문 안으로 끌어오는 장치입니다. 답변은 짧게 쓰되, 다음 행동으로 이어지는 단서를 남기는 것이 좋습니다.`,
     `자연스러운 다음 행동
-이 글은 법률 판단이나 매출 상승을 보장하지 않습니다. 다만 고객이 멈추는 지점을 찾고, 판매 흐름을 정리하는 실무 기준으로 사용할 수 있습니다. 먼저 무료 진단으로 현재 사이트의 안내 공백을 확인합니다. 결과를 저장한 뒤 상세 리포트에서 페이지별 근거와 수정 우선순위를 확인하세요. 실제 문구 교체가 필요하면 FixPack이 적합합니다. 반복 점검과 게시판 발행까지 관리하려면 Auto 정기 케어로 연결하는 흐름이 자연스럽습니다. 자동 발행 칼럼은 20분마다 1회 자동 발행되는 것을 기준으로 운영합니다. 중요한 것은 빠른 발행보다 누적 품질입니다. 매 글이 하나의 작은 컨설팅 칼럼처럼 보여야 합니다.`,
+이 글은 법률 판단이나 매출 상승을 보장하지 않습니다. 다만 고객이 멈추는 지점을 찾고, 판매 흐름을 정리하는 실무 기준으로 사용할 수 있습니다. 먼저 무료 진단으로 현재 사이트의 안내 공백을 확인합니다. 결과를 저장한 뒤 상세 리포트에서 페이지별 근거와 수정 우선순위를 확인하세요. 실제 문구 교체가 필요하면 전문가 리포트이 적합합니다. 반복 점검과 게시판 발행까지 관리하려면 전문가 플랜로 연결하는 흐름이 자연스럽습니다. 자동 발행 칼럼은 20분마다 1회 자동 발행되는 것을 기준으로 운영합니다. 중요한 것은 빠른 발행보다 누적 품질입니다. 매 글이 하나의 작은 컨설팅 칼럼처럼 보여야 합니다.`,
     `관련 링크
 ${linksText}`
   ].join('\n\n');
@@ -811,7 +811,7 @@ export function rewriteExistingCtaPublication(item = {}, options = {}) {
     rewrittenBy: 'phase217_expert_editorial_rewriter',
     originalContentFingerprint: item.originalContentFingerprint || fingerprint(oldBody),
     contentFingerprint: fingerprint(`${rewritten.title}\n${rewritten.body}`),
-    migrationNote: '기존 자동 발행 칼럼을 전문가형 포스팅 구조와 수익화 CTA 흐름으로 다시 정리했습니다.'
+    migrationNote: '기존 자동 발행 칼럼을 전문가형 포스팅 구조와 수익화 다음 행동 흐름으로 다시 정리했습니다.'
   };
 }
 

@@ -1349,9 +1349,9 @@ return String(value ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;
 function routeMeta(urlPath) {
 const base = seoBaseUrl();
 const metas = {
-'/': { title: 'NV0 | 온라인 사업자 법률·규제 리스크 진단', description: '온라인 사업자가 놓치기 쉬운 전자상거래 고지, 개인정보 안내, 환불·청약철회, 표시광고 표현, 과태료 리스크 후보를 공개 화면 기준으로 점검합니다.', keywords: ['법률 리스크 진단','규제 리스크 점검','전자상거래 고지','개인정보 안내','무료 진단'] },
-'/products/veridion/demo': { title: '무료 진단 | NV0', description: '사이트 주소 하나로 온라인 사업자의 법률·규제 리스크 후보를 영역·요소·구분별 개수로 확인합니다.', keywords: ['무료 진단','법률 리스크','규제 리스크','전자상거래 점검'] },
-'/demo': { title: '무료 진단 안내 | NV0', description: '최신 무료 진단 화면으로 이동하여 공개 화면 기준의 법률·규제 리스크 후보를 확인합니다.', keywords: ['무료 진단','사이트 진단'] },
+'/': { title: 'NV0 | 온라인 사업자 고객 신뢰 점검 진단', description: '온라인 사업자가 놓치기 쉬운 전자상거래 고지, 개인정보 안내, 환불·청약철회, 표시광고 표현, 과태료 리스크 후보를 공개 화면 기준으로 점검합니다.', keywords: ['법률 리스크 진단','규제 리스크 점검','전자상거래 고지','개인정보 안내','무료 진단'] },
+'/products/veridion/demo': { title: '무료 진단 | NV0', description: '사이트 주소 하나로 온라인 사업자의 고객 신뢰 점검 후보를 영역·요소·구분별 개수로 확인합니다.', keywords: ['무료 진단','법률 리스크','규제 리스크','전자상거래 점검'] },
+'/demo': { title: '무료 진단 안내 | NV0', description: '최신 무료 진단 화면으로 이동하여 공개 화면 기준의 고객 신뢰 점검 후보를 확인합니다.', keywords: ['무료 진단','사이트 진단'] },
 '/plans': { title: '요금제 | NV0', description: '무료 진단, 기본 리포트, 전문가 리포트의 제공 범위와 가격을 명확하게 비교합니다.', keywords: ['요금제','기본 리포트','전문가 리포트','사이트 진단 요금'] },
 '/products': { title: '요금제 | NV0', description: '무료 진단, 기본 리포트, 전문가 리포트의 제공 범위와 가격을 명확하게 비교합니다.', keywords: ['요금제','기본 리포트','전문가 리포트'] },
 '/documents': { title: '문서 생성 | NV0', description: '고객 안내문, 정책 초안, 개선 요청서를 읽기 쉬운 구조로 정리합니다.', keywords: ['문서 생성','고객 안내문','정책 문서','개선 가이드'] },
@@ -1359,10 +1359,10 @@ const metas = {
 '/docs/veridion': { title: '문서 생성 | NV0', description: '진단 후 필요한 고객 안내문, 정책 문서, 개선 리포트 초안을 정리하는 문서 허브입니다.', keywords: ['문서 생성','정책 문서','진단 리포트','개선 문구'] },
 '/guides': { title: '가이드 | NV0', description: '진단 결과를 읽는 법과 전자상거래 고지, 개인정보 안내, 환불·청약철회 기준을 쉽게 안내합니다.', keywords: ['가이드','진단 결과','전자상거래 고지','환불 기준'] },
 '/resources': { title: '가이드 | NV0', description: '진단 결과를 읽는 법과 전자상거래 고지, 개인정보 안내, 환불·청약철회 기준을 쉽게 안내합니다.', keywords: ['가이드','진단 결과','규제 점검'] },
-'/solutions': { title: '분석 프로세스 | NV0', description: '입력부터 결과 정리까지 온라인 사업자의 법률·규제 리스크 후보를 영역·요소·구분별로 분석합니다.', keywords: ['분석 프로세스','법률 리스크 분석','규제 리스크 분석'] },
-'/service': { title: '서비스 소개 | NV0', description: '온라인 사업자의 법률·규제·과태료 리스크 후보를 줄이기 위해 전자상거래 고지, 개인정보 안내, 환불·청약철회, 표시광고 표현을 점검합니다.', keywords: ['서비스 소개','전자상거래 점검','개인정보 안내 점검'] },
+'/solutions': { title: '분석 프로세스 | NV0', description: '입력부터 결과 정리까지 온라인 사업자의 고객 신뢰 점검 후보를 영역·요소·구분별로 분석합니다.', keywords: ['분석 프로세스','법률 리스크 분석','규제 리스크 분석'] },
+'/service': { title: '서비스 소개 | NV0', description: '온라인 사업자의 고지·환불·개인정보 점검 후보를 줄이기 위해 전자상거래 고지, 개인정보 안내, 환불·청약철회, 표시광고 표현을 점검합니다.', keywords: ['서비스 소개','전자상거래 점검','개인정보 안내 점검'] },
 '/cases': { title: '개선 사례 | NV0', description: '진단 후 어떤 항목을 먼저 고쳤고 어떤 변화가 생겼는지 사례 형태로 정리했습니다.', keywords: ['개선 사례','고지 보완 사례','정책 안내 사례'] },
-'/board': { title: '게시판 | NV0', description: '온라인 사업자가 이해하기 쉬운 법률·규제·과태료 리스크 감소형 CTA 칼럼을 제공합니다.', keywords: ['게시판','법률 리스크','규제 점검','전자상거래 고지','개인정보 안내'] },
+'/board': { title: '게시판 | NV0', description: '온라인 사업자가 이해하기 쉬운 고지·환불·개인정보 점검 감소형 CTA 칼럼을 제공합니다.', keywords: ['게시판','법률 리스크','규제 점검','전자상거래 고지','개인정보 안내'] },
 '/business-info': { title: '사업자 정보와 고객지원 안내 | NV0', description: '결제 전 확인할 수 있는 NV0 사업자 정보와 고객지원 기준입니다.', keywords: ['사업자 정보','고객지원'] },
 '/terms': { title: '이용약관 | NV0', description: 'NV0 서비스 이용 조건과 기본 약관을 안내합니다.', keywords: ['이용약관'] },
 '/privacy': { title: '개인정보처리방침 | NV0', description: 'NV0 서비스의 개인정보 처리 기준과 입력 정보 최소화 원칙입니다.', keywords: ['개인정보처리방침'] },
@@ -1443,7 +1443,7 @@ const graph = [
 { '@type': 'Organization', '@id': `${base}/#organization`, name: BUSINESS_PROFILE.tradeName, url: base, email: BUSINESS_PROFILE.contactEmail },
 { '@type': 'WebSite', '@id': `${base}/#website`, name: 'NV0', url: base, inLanguage: 'ko-KR', publisher: { '@id': `${base}/#organization` }, potentialAction: { '@type': 'SearchAction', target: `${base}/board?q={search_term_string}`, 'query-input': 'required name=search_term_string' } },
 { '@type': 'SoftwareApplication', '@id': `${base}/#software`, name: 'NV0', applicationCategory: 'BusinessApplication', operatingSystem: 'Web', url: base, description: meta.description, offers: { '@type': 'Offer', priceCurrency: 'KRW', price: '0', availability: 'https://schema.org/InStock' }, provider: { '@id': `${base}/#organization` } },
-{ '@type': 'Service', '@id': `${base}/#service`, name: '온라인 사업자 법률·규제 리스크 점검', serviceType: 'Online business legal and regulatory risk screening', provider: { '@id': `${base}/#organization` }, areaServed: 'KR', audience: { '@type': 'Audience', audienceType: '온라인 사업자' } },
+{ '@type': 'Service', '@id': `${base}/#service`, name: '온라인 사업자 고객 신뢰 점검 점검', serviceType: 'Online business legal and regulatory risk screening', provider: { '@id': `${base}/#organization` }, areaServed: 'KR', audience: { '@type': 'Audience', audienceType: '온라인 사업자' } },
 { '@type': 'WebPage', '@id': `${pageUrl}#webpage`, url: pageUrl, name: meta.title, description: meta.description, isPartOf: { '@id': `${base}/#website` }, about: { '@id': `${base}/#software` }, inLanguage: 'ko-KR', dateModified: new Date().toISOString().slice(0, 10) },
 { '@type': 'BreadcrumbList', '@id': `${pageUrl}#breadcrumb`, itemListElement: [
 { '@type': 'ListItem', position: 1, name: '홈', item: `${base}/` },
@@ -1511,7 +1511,7 @@ function businessFooterHtml() {
 const types = BUSINESS_PROFILE.businessTypes.join(' · ');
 const mailOrderNumber = isSafePublicOptionalField(BUSINESS_PROFILE.mailOrderRegistrationNumber, { requireMailOrderShape: true }) ? BUSINESS_PROFILE.mailOrderRegistrationNumber : '';
 return '<footer class="business-footer" aria-label="사업자 정보">'
-+ '<div class="brand-col"><strong>VERIDION</strong><span>온라인 사업자의 법률·규제·과태료 리스크 후보를 공개 화면 기준으로 줄입니다.</span><span>© 2026 VERIDION. All rights reserved.</span></div>'
++ '<div class="brand-col"><strong>VERIDION</strong><span>온라인 사업자의 고지·환불·개인정보 점검 후보를 공개 화면 기준으로 줄입니다.</span><span>© 2026 VERIDION. All rights reserved.</span></div>'
 + '<div class="footer-col"><strong>서비스</strong><a href="/service">서비스 소개</a><a href="/solutions">분석 프로세스</a><a href="/plans">요금제</a></div>'
 + '<div class="footer-col"><strong>정보</strong><a href="/board">게시판</a><a href="/service">서비스·가이드</a><a href="/business-info">고객지원</a></div>'
 + '<div class="footer-col"><strong>회사</strong><a href="/business-info">회사 소개</a><a href="/privacy">개인정보처리방침</a><a href="/terms">이용약관</a><a href="/refund">환불 정책</a></div>'
@@ -2327,7 +2327,7 @@ function pickRecommendedPlan(riskScore) {
 if (riskScore >= 45) return 'Expert';
 return 'Report';
 }
-const PHASE255_LEGACY_PRODUCT_ALIASES = ['FixPack'];
+const PHASE255_LEGACY_PRODUCT_ALIASES = ['전문가 리포트'];
 function normalizePlanCode(value, fallback = 'Report') {
 const raw = String(value || '').trim();
 const key = raw.toLowerCase().replace(/[\s_-]+/g, '');

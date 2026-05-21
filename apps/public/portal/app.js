@@ -91,13 +91,13 @@ function riskProfileFromScore(score, level = '') {
   const normalizedLevel = String(level || '').trim();
   const n = numericScore(score);
   if (n == null) {
-    if (/치명|심각|위험|높음|high|critical/i.test(normalizedLevel)) return { key: 'critical', label: '치명적 위험', icon: 'priority_high', border: 'border-error', chip: 'bg-secondary-container text-on-error', action: '지금 해결하기' };
-    if (/준수|완료|안전|낮음|safe|ok/i.test(normalizedLevel)) return { key: 'safe', label: '규제 준수 완료', icon: 'verified', border: 'border-tertiary-fixed-dim', chip: 'bg-[#DCFCE7] text-[#166534]', action: '상세 리포트' };
-    return { key: 'warning', label: '수동 점검 필요', icon: 'warning', border: 'border-[#F59E0B]', chip: 'bg-[#FEF3C7] text-[#92400E]', action: '가이드라인 업데이트' };
+    if (/치명|심각|위험|높음|high|critical/i.test(normalizedLevel)) return { key: 'critical', label: '우선 확인', icon: 'priority_high', border: 'border-error', chip: 'bg-secondary-container text-on-error', action: '우선 확인하기' };
+    if (/준수|완료|안전|낮음|safe|ok/i.test(normalizedLevel)) return { key: 'safe', label: '확인 완료', icon: 'verified', border: 'border-tertiary-fixed-dim', chip: 'bg-[#DCFCE7] text-[#166534]', action: '상세 리포트' };
+    return { key: 'warning', label: '확인 필요', icon: 'warning', border: 'border-[#F59E0B]', chip: 'bg-[#FEF3C7] text-[#92400E]', action: '수정 방향 보기' };
   }
-  if (n >= 75) return { key: 'critical', label: '치명적 위험', icon: 'priority_high', border: 'border-error', chip: 'bg-secondary-container text-on-error', action: '지금 해결하기' };
-  if (n >= 55) return { key: 'warning', label: '수동 점검 필요', icon: 'warning', border: 'border-[#F59E0B]', chip: 'bg-[#FEF3C7] text-[#92400E]', action: '가이드라인 업데이트' };
-  return { key: 'safe', label: '규제 준수 완료', icon: 'verified', border: 'border-tertiary-fixed-dim', chip: 'bg-[#DCFCE7] text-[#166534]', action: '상세 리포트' };
+  if (n >= 75) return { key: 'critical', label: '우선 확인', icon: 'priority_high', border: 'border-error', chip: 'bg-secondary-container text-on-error', action: '우선 확인하기' };
+  if (n >= 55) return { key: 'warning', label: '확인 필요', icon: 'warning', border: 'border-[#F59E0B]', chip: 'bg-[#FEF3C7] text-[#92400E]', action: '수정 방향 보기' };
+  return { key: 'safe', label: '확인 완료', icon: 'verified', border: 'border-tertiary-fixed-dim', chip: 'bg-[#DCFCE7] text-[#166534]', action: '상세 리포트' };
 }
 function iconForDomain(domain = '') {
   if (/shop|store|mall|commerce|ecommerce|pay|cart/i.test(domain)) return 'shopping_cart';
@@ -166,8 +166,8 @@ function renderDashboardAssets(assets = []) {
     const secondaryHref = asset.risk.key === 'safe' ? `/products/veridion/demo?target=${encodeURIComponent(asset.domain || '')}` : checkoutHref;
     const meta = asset.lastScanAt ? `${formatDate(asset.lastScanAt)} · ${asset.source === 'site' ? '저장 사이트' : '최근 진단'}` : (asset.score == null ? '검사 전' : '최근 검사 기준');
     const score = asset.score == null ? '점수 확인 전' : `점수 ${asset.score}${asset.findings != null ? ` · 발견 ${asset.findings}개` : ''}`;
-    const actionText = asset.risk.key === 'critical' ? '지금 해결하기' : (asset.risk.key === 'warning' ? '가이드라인 업데이트' : '다시 진단');
-    return `<article class="portal-dashboard-asset"><div class="portal-dashboard-asset-head"><div><h3>${escapeHtml(asset.label || asset.domain)}</h3><p class="domain">${escapeHtml(asset.domain || '-')}</p></div><span class="chip">${escapeHtml(asset.risk.label)}</span></div><p class="meta">${escapeHtml(meta)} · ${escapeHtml(score)}</p><p class="meta">${escapeHtml(asset.domain || '선택 사이트')}의 검색 및 AI 가시성 현황을 한눈에 확인할 수 있습니다.</p><div class="portal-dashboard-asset-actions"><a class="btn primary" href="${escapeAttr(reportHref)}">기본 리포트 바로 보기</a><a class="btn secondary" href="${escapeAttr(reportHref)}">요약표 보기</a><a class="btn secondary" href="${escapeAttr(secondaryHref)}">${escapeHtml(actionText)}</a></div></article>`;
+    const actionText = asset.risk.key === 'critical' ? '우선 확인하기' : (asset.risk.key === 'warning' ? '수정 방향 보기' : '다시 진단');
+    return `<article class="portal-dashboard-asset"><div class="portal-dashboard-asset-head"><div><h3>${escapeHtml(asset.label || asset.domain)}</h3><p class="domain">${escapeHtml(asset.domain || '-')}</p></div><span class="chip">${escapeHtml(asset.risk.label)}</span></div><p class="meta">${escapeHtml(meta)} · ${escapeHtml(score)}</p><p class="meta">${escapeHtml(asset.domain || '선택 사이트')}의 고지, 환불, 개인정보 안내 상태를 한눈에 확인할 수 있습니다.</p><div class="portal-dashboard-asset-actions"><a class="btn primary" href="${escapeAttr(reportHref)}">기본 리포트 바로 보기</a><a class="btn secondary" href="${escapeAttr(reportHref)}">요약표 보기</a><a class="btn secondary" href="${escapeAttr(secondaryHref)}">${escapeHtml(actionText)}</a></div></article>`;
   }).join('');
 }
 function updateDashboardSummary(assets = []) {

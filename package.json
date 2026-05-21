@@ -1,6 +1,6 @@
 {
   "name": "veridion-public-risk-diagnostic",
-  "version": "1.0.0-commercial-phase276-veridion-stitch-adopted",
+  "version": "1.0.0-commercial-phase278-customer-perfect",
   "private": true,
   "type": "module",
   "scripts": {
@@ -28,7 +28,7 @@
     "test:phase258": "node tests/phase258-structural-hardening.mjs",
     "validate:phase258": "node scripts/validate-phase258-structural-hardening.mjs",
     "phase258:final": "npm run phase270:final",
-    "final:review": "npm run phase276:final",
+    "final:review": "npm run phase278:final",
     "ci:strict": "node scripts/ci-strict.mjs",
     "validate:commercial": "node scripts/validate-commercial-release.mjs",
     "validate:commercial-runtime": "node scripts/validate-commercial-runtime.mjs",
@@ -60,7 +60,11 @@
     "validate:phase274": "node scripts/validate-phase274-customer-copy-readability.mjs",
     "phase274:final": "npm run phase273:final && npm run validate:phase274",
     "validate:phase276": "node scripts/validate-phase276-veridion-stitch-adopted.mjs",
-    "phase276:final": "npm run check:syntax && npm test && npm run check:pages && npm run test:routes && npm run validate:phase276"
+    "phase276:final": "npm run check:syntax && npm test && npm run check:pages && npm run test:routes && npm run validate:phase276",
+    "validate:phase277": "node scripts/validate-phase277-function-menu-lock.mjs",
+    "phase277:final": "npm run check:syntax && npm test && npm run test:e2e && npm run check:pages && npm run test:routes && npm run check:links -- --summary && npm run smoke && npm run validate:commercial-runtime && npm run verify:security && npm run validate:deploy && npm run validate:phase276 && npm run validate:phase277",
+    "validate:phase278": "node scripts/validate-phase278-customer-perfect.mjs",
+    "phase278:final": "npm run phase277:final && npm run validate:phase278"
   },
-  "description": "VERIDION phase276 package: customer-facing product naming, Stitch-inspired flat professional UI system, retained NV0 legal/company data where factual, preserved diagnostic and portal runtime features."
+  "description": "VERIDION phase278 package: all confirmed customer-facing issues remediated, original top menu locked, Stitch-inspired design retained, brand/copy/footer/email unified, and functional routes revalidated."
 }

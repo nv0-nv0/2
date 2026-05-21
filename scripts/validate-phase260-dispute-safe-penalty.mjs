@@ -14,7 +14,7 @@ const reportDoc = fs.existsSync(path.join(root, 'docs/current/PHASE260_DISPUTE_S
   : '';
 const joined = [demoJs, css, server, reportDoc].join('\n');
 
-add('package version phase260', /phase260-dispute-safe-penalty|phase265-dashboard-portal-completion|phase26[8-9]-|phase270-full-package-verified-hardened|phase271-site-ux-insight-polish|phase272-premium-redesign|phase273-package-100|phase274-customer-copy-readability/.test(pkg.version));
+add('package version phase260', /phase260-dispute-safe-penalty|phase265-dashboard-portal-completion|phase26[8-9]-|phase270-full-package-verified-hardened|phase271-site-ux-insight-polish|phase272-premium-redesign|phase273-package-100|phase274-customer-copy-readability|phase278-customer-perfect/.test(pkg.version));
 ['test:phase260','validate:phase260','phase260:final'].forEach(script => add(`package script:${script}`, !!pkg.scripts?.[script]));
 add('final review points to phase260', /phase26[05]:final|phase27[01234]:final/.test(pkg.scripts?.['final:review'] || ''));
 add('penalty label is explicitly reference-only', demoJs.includes('과태료 상한 후보') && demoJs.includes('참고용'));

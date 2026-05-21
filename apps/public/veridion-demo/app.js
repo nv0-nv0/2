@@ -19,7 +19,7 @@ const PROGRESS_TICK_MS = 900;
 const PROGRESS_STEPS = [
   { title: 'URL 입력', detail: '주소 형식과 공개 접근 가능 여부 확인' },
   { title: '자동 수집', detail: '홈·정책·문의·robots·sitemap 후보 확인' },
-  { title: '법률·규제 신호 분류', detail: '전자상거래·개인정보·환불·표시광고 후보 확인' },
+  { title: '고객 안내 신호 분류', detail: '전자상거래·개인정보·환불·표시광고 후보 확인' },
   { title: '수동확인 분리', detail: '자동 단정하면 위험한 항목은 따로 표시' },
   { title: '결과 정렬', detail: '점수·근거·다음 행동을 읽기 쉬운 순서로 확인' }
 ];
@@ -399,7 +399,7 @@ function fallbackConversionUrgency(view) {
     primaryCta: '기본 리포트 결제하고 원인 확인',
     secondaryCta: '전문가 리포트로 수정 문구까지 받기',
     recommendedPlan: view.recommendedPlan,
-    disclaimer: '리스크 점수는 법률 위반이나 과태료를 확정하는 값이 아니라 공개 화면 기준 보완 우선순위입니다.'
+    disclaimer: '리스크 점수는 법률 위반이나 법적 판단을 확정하는 값이 아니라 공개 화면 기준 보완 우선순위입니다.'
   };
 }
 function conversionUrgencyFor(view) {
@@ -627,7 +627,7 @@ function renderDemoIssueOverview(view, options = {}) {
       <article><span>직접 확인</span><strong>${escapeHtml(overview.manualReviewCount ?? 0)}</strong><small>직접 확인 항목</small></article>
     </div>
     <div class="demo-area-grid">${rows.slice(0, compact ? 3 : 8).map((row) => `<article class="demo-area-card"><div class="meta-row"><b>${escapeHtml(row.area || '점검 영역')}</b><span class="pill">${escapeHtml(row.issueCount || 0)}개</span></div><p>${escapeHtml(row.reason || `${row.elementCount || 0}개 요소에 영향`)}</p><div class="demo-element-list">${(row.elements || []).slice(0, 6).map((el) => `<span>${escapeHtml(el)}</span>`).join('') || '<span>요소 확인 필요</span>'}</div>${compact ? '' : `<ul>${(row.previewFindings || []).slice(0, 3).map((item) => `<li><b>${escapeHtml(item.priority || 'P2')}</b> ${escapeHtml(item.title || '점검 항목')}</li>`).join('')}</ul>`}</article>`).join('')}</div>
-    <div class="notice muted">유료 리포트에서는 위 항목들의 전체 근거, URL, 상세 권장 조치, 수정 문구, 적용 위치, 재점검 기준을 제공합니다. 단, 법률 위반 여부와 과태료 부과 여부를 확정하지 않습니다.</div>
+    <div class="notice muted">유료 리포트에서는 위 항목들의 전체 근거, URL, 상세 권장 조치, 수정 문구, 적용 위치, 재점검 기준을 제공합니다. 단, 법적 판단이나 결과를 확정하지 않습니다.</div>
   </section>`;
 }
 
@@ -985,7 +985,7 @@ function renderQualityNotice(view) {
   const limits = Array.isArray(view.evidenceSummary?.limitations) ? view.evidenceSummary.limitations : [];
   return `<section class="quality-notice clean-quality-notice" aria-label="결과 해석 기준">
     <b>결과 해석 기준</b>
-    <p>${escapeHtml(view.evidenceSummary?.disclaimer || '이 결과는 입력 URL에서 확인 가능한 공개 신호와 진단 기준을 기반으로 구성됩니다. 실제 법률 판단, 과태료 부과 여부, 신고번호 진위, 비공개 설정값 상태는 단정하지 않고 확인 필요로 표시합니다.')}</p>
+    <p>${escapeHtml(view.evidenceSummary?.disclaimer || '이 결과는 입력 URL에서 확인 가능한 공개 신호와 진단 기준을 기반으로 구성됩니다. 실제 법률 판단, 법적 판단 여부, 신고번호 진위, 비공개 설정값 상태는 단정하지 않고 확인 필요로 표시합니다.')}</p>
     ${limits.length ? `<ul class="quality-limit-list">${limits.slice(0, 4).map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul>` : ''}
   </section>`;
 }

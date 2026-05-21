@@ -3,6 +3,6 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 cd "$ROOT"
 
-npm run phase274:final
+npm run phase278:final
 
-echo "PASS: PHASE273 100-point package final gate"
+echo "PASS: PHASE277 VERIDION function/menu locked package final gate"
