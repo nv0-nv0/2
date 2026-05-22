@@ -32,6 +32,14 @@ const portalContentStatus = document.getElementById('portalContentStatus');
 const portalPublishCadence = document.getElementById('portalPublishCadence');
 const portalLastPublishedAt = document.getElementById('portalLastPublishedAt');
 const portalPublishState = document.getElementById('portalPublishState');
+const portalRiskGauge = document.getElementById('portalRiskGauge');
+const portalRiskMeterFill = document.getElementById('portalRiskMeterFill');
+const portalRiskLabelText = document.getElementById('portalRiskLabelText');
+const portalRiskMeterCaption = document.getElementById('portalRiskMeterCaption');
+const portalStatusBanner = document.getElementById('portalStatusBanner');
+const portalStatusSummary = document.getElementById('portalStatusSummary');
+const portalStatusDetail = document.getElementById('portalStatusDetail');
+const portalShellProfileState = document.getElementById('portalShellProfileState');
 
 function getSavedScan() {
   try { return JSON.parse(localStorage.getItem('nv0:lastScan') || 'null'); } catch { return null; }
@@ -220,6 +228,7 @@ function renderScoreSummary(latest, account, summary) {
       ? `${findings ? `최근 검사에서 ${findings}개 항목이 확인되었습니다.` : '최근 검사에서 즉시 보완할 항목은 적었습니다.'} ${nextAction.note}`
       : '진단을 실행하면 최근 점수와 보완 우선순위가 이곳에 확인됩니다.';
   }
+  applyScoreInfographic(latest, findings, urgent);
 }
 
 function renderNextActionCards(latest, account, summary) {
@@ -300,16 +309,16 @@ function renderPublishStatus(boardApi = {}) {
 }
 function renderBoardHighlights(items = []) {
   const rows = publicBoardItems(items).filter(isCtaOrColumn).slice(0, 3);
-  if (!rows.length) return '<div class="muted">인사이트 연결 글 없음</div>';
+  if (!rows.length) return '<div class="portal-feed-empty"><strong>인사이트 연결 글 없음</strong><p>자동 발행 인사이트가 생성되면 이 영역에 최근 연결 글이 표시됩니다.</p></div>';
   return rows.map(item => {
     const tags = Array.isArray(item.tags || item.hashtags) ? (item.tags || item.hashtags).slice(0, 5) : [];
-    return `<div class="result-card stack"><div class="meta-row"><strong>${escapeHtml(item.title || '인사이트 칼럼')}</strong><span class="pill">진단 연결</span></div><div class="muted">${escapeHtml(formatDate(item.publishedAt || item.createdAt || '-'))}</div><p>${escapeHtml(clampText(item.summary || item.body || '', 170))}</p>${tags.length ? `<div class="asset-tags">${tags.map(tag => `<span>#${escapeHtml(String(tag).replace(/^#/, ''))}</span>`).join('')}</div>` : ''}<div class="topnav"><a class="btn secondary" href="/board">인사이트에서 보기</a><a class="btn secondary" href="/products/veridion/demo">무료 진단</a></div></div>`;
+    return `<article class="portal-feed-highlight result-card stack"><div class="meta-row"><strong>${escapeHtml(item.title || '인사이트 칼럼')}</strong><span class="pill">진단 연결</span></div><div class="portal-feed-meta"><span>${escapeHtml(formatDate(item.publishedAt || item.createdAt || '-'))}</span><span>${escapeHtml(item.category || item.boardType || '칼럼')}</span></div><p>${escapeHtml(clampText(item.summary || item.body || '', 170))}</p>${tags.length ? `<div class="asset-tags">${tags.map(tag => `<span>#${escapeHtml(String(tag).replace(/^#/, ''))}</span>`).join('')}</div>` : ''}<div class="topnav"><a class="btn secondary" href="/board">인사이트에서 보기</a><a class="btn secondary" href="/products/veridion/demo">무료 진단</a></div></article>`;
   }).join('');
 }
 function renderInsightFeed(items = []) {
   const rows = publicBoardItems(items).slice(0, 4);
-  if (!rows.length) return '<div class="muted">표시할 인사이트가 없습니다.</div>';
-  return rows.map(item => `<div class="result-card"><div class="meta-row"><strong>${escapeHtml(item.title || '인사이트')}</strong><span class="pill">${escapeHtml(item.category || item.boardType || '칼럼')}</span></div><div class="muted">${escapeHtml(formatDate(item.publishedAt || item.createdAt || '-'))}</div><p>${escapeHtml(clampText(item.summary || item.body || '', 130))}</p></div>`).join('');
+  if (!rows.length) return '<div class="portal-feed-empty"><strong>표시할 인사이트가 없습니다.</strong><p>자동 발행이 완료되면 최근 인사이트 목록이 채워집니다.</p></div>';
+  return rows.map(item => `<article class="portal-feed-item result-card"><div class="meta-row"><strong>${escapeHtml(item.title || '인사이트')}</strong><span class="pill">${escapeHtml(item.category || item.boardType || '칼럼')}</span></div><div class="portal-feed-meta"><span>${escapeHtml(formatDate(item.publishedAt || item.createdAt || '-'))}</span><span>${escapeHtml(item.autoPublished ? '자동 발행' : '수동 발행')}</span></div><p>${escapeHtml(clampText(item.summary || item.body || '', 130))}</p><a class="portal-inline-link" href="/board">자세히 보기 →</a></article>`).join('');
 }
 function renderAsset(asset, order, accessToken) {
   if (!asset) return '';
@@ -343,14 +352,16 @@ function renderSavedSites(sites = []) {
   if (!sites.length) {
     return `<div class="portal-empty"><strong>아직 저장된 사이트가 없습니다.</strong><p>무료 진단을 실행하거나 아래 입력창에서 사이트를 저장하면 재검사와 최근 내역 관리가 시작됩니다.</p><a class="btn primary" href="/products/veridion/demo">무료 진단 시작</a></div>`;
   }
-  const rows = sites.map(site => `<tr>
-    <td><div class="nv74-site-title"><span class="nv74-thumb"></span><div><b>${escapeHtml(site.label || site.domain)}</b><small>${escapeHtml(site.domain || '-')} · ${escapeHtml(site.industry || '업종 미지정')}</small></div></div></td>
-    <td><span class="nv74-mini-score">${escapeHtml(site.latestRiskScore ?? '-')}</span> <b class="nv74-status-warning">${escapeHtml(site.latestRiskLevel || '검사 전')}</b></td>
-    <td>${escapeHtml(formatDate(site.lastScanAt || site.updatedAt || site.createdAt))}</td>
-    <td><span class="nv74-chip">${site.latestRiskScore == null ? '검사 필요' : '관리 중'}</span></td>
-    <td><div class="nv74-actions"><button class="btn primary" data-rescan-site="${escapeAttr(site.siteId)}" type="button">다시 검사하기</button><a class="btn secondary" href="/products/veridion/demo?target=${escapeAttr(encodeURIComponent(site.domain || ''))}">진단하기</a><a class="btn secondary" href="/plans?siteId=${escapeAttr(encodeURIComponent(site.siteId || ''))}">요금 안내 보기</a><button class="btn secondary" data-remove-site="${escapeAttr(site.siteId)}" type="button">삭제</button></div></td>
-  </tr>`).join('');
-  return `<table class="nv74-site-table"><thead><tr><th>사이트</th><th>최근 점수</th><th>마지막 검사</th><th>상태</th><th>관리</th></tr></thead><tbody>${rows}</tbody></table>`;
+  const total = sites.length;
+  const managed = sites.filter(site => site.latestRiskScore != null).length;
+  const needScan = sites.filter(site => site.latestRiskScore == null).length;
+  const cards = sites.map(site => {
+    const score = site.latestRiskScore == null ? '-' : String(site.latestRiskScore);
+    const level = site.latestRiskLevel || '검사 전';
+    const status = site.latestRiskScore == null ? '검사 필요' : '관리 중';
+    return `<article class="portal-site-item"><div class="portal-site-item-head"><div><h3>${escapeHtml(site.label || site.domain)}</h3><p>${escapeHtml(site.domain || '-')} · ${escapeHtml(site.industry || '업종 미지정')}</p></div><div class="portal-site-score"><strong>${escapeHtml(score)}</strong><span>${escapeHtml(level)}</span></div></div><div class="portal-site-item-body"><div class="portal-site-data"><span>마지막 검사</span><b>${escapeHtml(formatDate(site.lastScanAt || site.updatedAt || site.createdAt))}</b></div><div class="portal-site-data"><span>관리 상태</span><b>${escapeHtml(status)}</b></div></div><div class="portal-site-actions"><button class="btn primary" data-rescan-site="${escapeAttr(site.siteId)}" type="button">다시 검사하기</button><a class="btn secondary" href="/products/veridion/demo?target=${escapeAttr(encodeURIComponent(site.domain || ''))}">진단하기</a><a class="btn secondary" href="/plans?siteId=${escapeAttr(encodeURIComponent(site.siteId || ''))}">요금 안내 보기</a><button class="btn secondary" data-remove-site="${escapeAttr(site.siteId)}" type="button">삭제</button></div></article>`;
+  }).join('');
+  return `<div class="portal-site-summary"><article><span>저장 사이트</span><b>${escapeHtml(total)}개</b></article><article><span>관리 중</span><b>${escapeHtml(managed)}개</b></article><article><span>검사 필요</span><b>${escapeHtml(needScan)}개</b></article></div><div class="portal-site-grid">${cards}</div>`;
 }
 function reportRiskCopy(score) {
   const n = Number(score);
@@ -358,6 +369,71 @@ function reportRiskCopy(score) {
   if (n >= 75) return '즉시 보완 필요';
   if (n >= 55) return '일부 운영 보완 후보 존재';
   return '비교적 안정적';
+}
+function scoreUiState(score, findings = 0, urgent = 0) {
+  const n = Number(score);
+  if (!Number.isFinite(n)) {
+    return {
+      key: 'empty',
+      label: '검사 전',
+      pillClass: '',
+      bannerClass: '',
+      bannerTitle: '최근 진단 결과를 아직 불러오지 못했습니다.',
+      bannerDetail: '새 진단을 시작하면 점수와 보완 우선순위를 한 화면에서 확인할 수 있습니다.',
+      meterCaption: '최근 점수 기반 상태'
+    };
+  }
+  if (n >= 75 || findings >= 6 || urgent >= 3) {
+    return {
+      key: 'critical',
+      label: '높음',
+      pillClass: 'is-critical',
+      bannerClass: 'state-critical',
+      bannerTitle: '즉시 보완이 필요한 상태입니다.',
+      bannerDetail: '결제·문의·개인정보 안내처럼 핵심 신뢰 구간을 먼저 수정하는 편이 좋습니다.',
+      meterCaption: '우선순위 보완이 필요한 상태'
+    };
+  }
+  if (n >= 55 || findings >= 3 || urgent >= 1) {
+    return {
+      key: 'warning',
+      label: '주의',
+      pillClass: 'is-warning',
+      bannerClass: 'state-warning',
+      bannerTitle: '중요 보완 후보가 확인되었습니다.',
+      bannerDetail: '급한 항목부터 순서대로 정리하면 전체 구조의 신뢰도를 더 빠르게 끌어올릴 수 있습니다.',
+      meterCaption: '관리와 추가 점검이 필요한 상태'
+    };
+  }
+  return {
+    key: 'safe',
+    label: '낮음',
+    pillClass: 'is-safe',
+    bannerClass: 'state-safe',
+    bannerTitle: '현재 상태는 양호합니다.',
+    bannerDetail: '정기적인 관리로 안정적인 구조를 유지하면서 신규 공백이 생기지 않는지 확인하세요.',
+    meterCaption: '안정적으로 유지 중인 상태'
+  };
+}
+function applyScoreInfographic(scan, findings = 0, urgent = 0) {
+  const score = Number(scan?.riskScore);
+  const safeScore = Number.isFinite(score) ? Math.max(0, Math.min(100, score)) : 0;
+  const ui = scoreUiState(score, findings, urgent);
+  if (portalRiskGauge) portalRiskGauge.style.setProperty('--gauge', `${Math.round(safeScore * 3.6)}deg`);
+  if (portalRiskMeterFill) portalRiskMeterFill.style.width = `${safeScore}%`;
+  if (portalRiskLabelText) portalRiskLabelText.textContent = ui.label;
+  if (portalRiskMeterCaption) portalRiskMeterCaption.textContent = ui.meterCaption;
+  if (scoreStatus) {
+    scoreStatus.textContent = scan?.riskLevel || ui.label;
+    scoreStatus.classList.remove('is-safe','is-warning','is-critical');
+    if (ui.pillClass) scoreStatus.classList.add(ui.pillClass);
+  }
+  if (portalStatusBanner) {
+    portalStatusBanner.classList.remove('state-safe','state-warning','state-critical');
+    if (ui.bannerClass) portalStatusBanner.classList.add(ui.bannerClass);
+  }
+  if (portalStatusSummary) portalStatusSummary.textContent = ui.bannerTitle;
+  if (portalStatusDetail) portalStatusDetail.textContent = ui.bannerDetail;
 }
 function reportProjectedScore(score, issueCount = 0) {
   const n = Number(score);
@@ -405,6 +481,7 @@ function updateStaticDashboard(session, account, summary) {
   const dashboardAssets = collectDashboardAssets(account, summary, saved);
   updateDashboardSummary(dashboardAssets);
   if (portalAccountState) portalAccountState.textContent = authenticated ? '로그인 계정으로 연결됨' : '비회원 · 최근 확인 기록';
+  if (portalShellProfileState) portalShellProfileState.textContent = authenticated ? `저장 사이트 ${sitesCount}개 · 최근 검사 ${account?.recentScans?.length || 0}개` : '로그인 후 저장 사이트와 최근 진단을 이어서 확인하세요.';
   if (planCard) planCard.innerHTML = `<div><b>${authenticated ? '회원 전용 관리' : '무료 계정 필요'}</b><small><span>사이트 ${sitesCount}개</span><span>최근 검사 ${account?.recentScans?.length || 0}개</span></small></div><a class="btn secondary" href="${authenticated ? '/plans' : '/auth?next=/portal'}">${authenticated ? '상품 보기' : '로그인·회원가입'}</a>`;
   if (topbarTitle) topbarTitle.textContent = '내 사이트 다음 조치';
   if (topbarCopy) topbarCopy.textContent = authenticated ? '저장한 사이트를 다시 검사하고 최근 결과를 한곳에서 확인하세요.' : '비회원도 이 브라우저의 최근 확인 기록을 볼 수 있고, 회원가입하면 계정에 저장됩니다.';
@@ -413,7 +490,7 @@ function updateStaticDashboard(session, account, summary) {
   if (scoreFooter) scoreFooter.textContent = `최근 진단일: ${formatDate(latest?.createdAt || latest?.generatedAt)}`;
   renderScoreSummary(latest, account, summary);
   renderNextActionCards(latest, account, summary);
-  if (workCard) workCard.innerHTML = `<div class="nv74-card-head"><h2>바로 할 수 있는 일</h2><a href="#saveSiteForm">사이트 등록 ›</a></div><div class="nv74-task-list"><div class="nv74-task"><i class="blue">01</i><div><b>내 사이트 저장</b><small>검사할 URL을 계정에 보관합니다.</small></div><progress value="100" max="100"></progress><span class="status ok">기본</span></div><div class="nv74-task"><i class="purple">02</i><div><b>다시 검사하기</b><small>저장된 URL을 바로 재검사합니다.</small></div><progress value="100" max="100"></progress><span class="status ok">기본</span></div><div class="nv74-task"><i class="orange">03</i><div><b>최근 결과 비교</b><small>최근 5개 검사를 한곳에서 확인합니다.</small></div><progress value="100" max="100"></progress><span class="status ok">기본</span></div></div>`;
+  if (workCard) workCard.innerHTML = `<div class="nv74-card-head"><h2>바로 할 수 있는 일</h2><a href="#saveSiteForm">사이트 등록 ›</a></div><div class="portal-work-grid"><article class="portal-work-item"><span class="portal-work-icon">01</span><div><b>내 사이트 저장</b><small>자주 점검할 URL을 저장해 관리 시작</small></div><a class="btn secondary" href="#saveSiteForm">지금 등록</a></article><article class="portal-work-item"><span class="portal-work-icon">02</span><div><b>원클릭 재진단</b><small>저장 사이트 기준으로 바로 다시 검사</small></div><a class="btn secondary" href="#portalPrimary">사이트 관리</a></article><article class="portal-work-item"><span class="portal-work-icon">03</span><div><b>최근 결과 비교</b><small>최근 5개 검사 이력과 추이 확인</small></div><a class="btn secondary" href="#portalPrimary">결과 보기</a></article><article class="portal-work-item"><span class="portal-work-icon">04</span><div><b>인사이트 연결</b><small>자동 발행 인사이트와 함께 운영 방향 확인</small></div><a class="btn secondary" href="#portalFeed">인사이트 보기</a></article></div>`;
 }
 async function loadPortal() {
   const url = new URL(location.href);
