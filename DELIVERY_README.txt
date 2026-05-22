@@ -43,3 +43,5 @@ Phase273 update: package promoted to 100-point verified delivery, with explicit 
 Phase274: 고객 화면 문구를 고객 관점으로 전환하고, 내부 제작 문구/검수/납품 표현을 제거했으며, 글자 크기·색상 대비·카드 간격을 재보정했습니다.
 
 Phase276: 제품명을 VERIDION으로 확정하고, stitch_nv0.zip의 디자인 참고 요소(밝은 슬레이트 배경, 1280px 그리드, 낮은 radius, flat card, primary blue CTA, compact navigation, light footer)를 VERIDION 목적에 맞게 반영했습니다. 도메인 등록/장바구니/TLD 등 목적이 다른 기능은 제외했습니다.
+
+Phase280: 인사이트 발행 로직을 제품 에이전트 기반 구조로 재구성했습니다. 기존 생성 직후 필터링으로 게시판 노출이 누락될 수 있던 구조를 제거하고, 제품 컨텍스트 엔진·인사이트 생성 엔진·품질 검수 에이전트·20분 발행 스케줄러·게시판 동기화 에이전트·패키지 감사 에이전트를 추가했습니다. 최종 검증 명령은 npm run phase280:final 입니다.

@@ -44,6 +44,7 @@ import { timingSafeStringEqual, hasValidOrderAccessToken } from './core/access-t
 import { putObjectToS3Compatible } from './infrastructure/storage/s3-compatible.mjs';
 import { PHASE229_PRICING_VERSION, buildPricingRecalculation } from './core/pricing-conversion-model.mjs';
 import { buildPublicColumnEnginePosts, publicColumnTypeLabel } from './core/public-column-engine.mjs';
+import { PRODUCT_AGENT_SUITE_VERSION, publishProductInsightNow, publishProductInsightIfDue, ensureProductAgentSettings, latestProductInsightPublication, productInsightDueStatus, buildProductAgentRuntimeStatus, runProductAgentPackageAudit } from './core/product-agent-suite.mjs';
 const COMMERCIAL_OFFER_COMPATIBILITY_MARKERS = ['전문가 리포트', 'IndustryGuide', 'Certified'];
 const ENV_CONFIG = readEnvConfig(process.env);
 const __filename = fileURLToPath(import.meta.url);
@@ -1183,13 +1184,13 @@ return buildPublicColumnEnginePosts({ pageSize: 20 });
 function buildFeedXml(db = {}) {
 const base = seoBaseUrl();
 const items = feedItems(db).map((item, index) => {
-const title = xmlEscape(item.title || `NV0 게시판 ${index + 1}`);
+const title = xmlEscape(item.title || `VERIDION 게시판 ${index + 1}`);
 const summary = xmlEscape(item.summary || stripHtml(item.body || '').slice(0, 240));
 const pubDate = new Date(item.createdAt || Date.now()).toUTCString();
 const guid = xmlEscape(item.id ? `${base}/board#${item.id}` : `${base}/board#item-${index + 1}`);
 return `<item><title>${title}</title><link>${xmlEscape(base + '/board')}</link><guid isPermaLink="false">${guid}</guid><description>${summary}</description><pubDate>${pubDate}</pubDate></item>`;
 }).join('');
-return `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>NV0 게시판</title><link>${xmlEscape(base + '/board')}</link><description>고지·환불·개인정보·전환 구조를 사람이 이해하기 쉬운 칼럼으로 정리한 공개 가이드입니다.</description><language>ko-KR</language><lastBuildDate>${new Date().toUTCString()}</lastBuildDate>${items}</channel></rss>`;
+return `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>VERIDION 게시판</title><link>${xmlEscape(base + '/board')}</link><description>고지·환불·개인정보·전환 구조를 사람이 이해하기 쉬운 칼럼으로 정리한 공개 가이드입니다.</description><language>ko-KR</language><lastBuildDate>${new Date().toUTCString()}</lastBuildDate>${items}</channel></rss>`;
 }
 function createPasswordResetToken(db, customer, req) {
 db.passwordResetTokens ||= [];
@@ -1349,27 +1350,27 @@ return String(value ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;
 function routeMeta(urlPath) {
 const base = seoBaseUrl();
 const metas = {
-'/': { title: 'NV0 | 온라인 사업자 고객 신뢰 점검 진단', description: '온라인 사업자가 놓치기 쉬운 전자상거래 고지, 개인정보 안내, 환불·청약철회, 표시광고 표현, 과태료 리스크 후보를 공개 화면 기준으로 점검합니다.', keywords: ['법률 리스크 진단','규제 리스크 점검','전자상거래 고지','개인정보 안내','무료 진단'] },
-'/products/veridion/demo': { title: '무료 진단 | NV0', description: '사이트 주소 하나로 온라인 사업자의 고객 신뢰 점검 후보를 영역·요소·구분별 개수로 확인합니다.', keywords: ['무료 진단','법률 리스크','규제 리스크','전자상거래 점검'] },
-'/demo': { title: '무료 진단 안내 | NV0', description: '최신 무료 진단 화면으로 이동하여 공개 화면 기준의 고객 신뢰 점검 후보를 확인합니다.', keywords: ['무료 진단','사이트 진단'] },
-'/plans': { title: '요금제 | NV0', description: '무료 진단, 기본 리포트, 전문가 리포트의 제공 범위와 가격을 명확하게 비교합니다.', keywords: ['요금제','기본 리포트','전문가 리포트','사이트 진단 요금'] },
-'/products': { title: '요금제 | NV0', description: '무료 진단, 기본 리포트, 전문가 리포트의 제공 범위와 가격을 명확하게 비교합니다.', keywords: ['요금제','기본 리포트','전문가 리포트'] },
-'/documents': { title: '문서 생성 | NV0', description: '고객 안내문, 정책 초안, 개선 요청서를 읽기 쉬운 구조로 정리합니다.', keywords: ['문서 생성','고객 안내문','정책 문서','개선 가이드'] },
-'/policy-documents': { title: '문서 생성 | NV0', description: '고객 안내문, 정책 초안, 개선 요청서를 읽기 쉬운 구조로 정리합니다.', keywords: ['문서 생성','고객 안내문','정책 문서'] },
-'/docs/veridion': { title: '문서 생성 | NV0', description: '진단 후 필요한 고객 안내문, 정책 문서, 개선 리포트 초안을 정리하는 문서 허브입니다.', keywords: ['문서 생성','정책 문서','진단 리포트','개선 문구'] },
-'/guides': { title: '가이드 | NV0', description: '진단 결과를 읽는 법과 전자상거래 고지, 개인정보 안내, 환불·청약철회 기준을 쉽게 안내합니다.', keywords: ['가이드','진단 결과','전자상거래 고지','환불 기준'] },
-'/resources': { title: '가이드 | NV0', description: '진단 결과를 읽는 법과 전자상거래 고지, 개인정보 안내, 환불·청약철회 기준을 쉽게 안내합니다.', keywords: ['가이드','진단 결과','규제 점검'] },
-'/solutions': { title: '분석 프로세스 | NV0', description: '입력부터 결과 정리까지 온라인 사업자의 고객 신뢰 점검 후보를 영역·요소·구분별로 분석합니다.', keywords: ['분석 프로세스','법률 리스크 분석','규제 리스크 분석'] },
-'/service': { title: '서비스 소개 | NV0', description: '온라인 사업자의 고지·환불·개인정보 점검 후보를 줄이기 위해 전자상거래 고지, 개인정보 안내, 환불·청약철회, 표시광고 표현을 점검합니다.', keywords: ['서비스 소개','전자상거래 점검','개인정보 안내 점검'] },
-'/cases': { title: '개선 사례 | NV0', description: '진단 후 어떤 항목을 먼저 고쳤고 어떤 변화가 생겼는지 사례 형태로 정리했습니다.', keywords: ['개선 사례','고지 보완 사례','정책 안내 사례'] },
-'/board': { title: '게시판 | NV0', description: '온라인 사업자가 이해하기 쉬운 고지·환불·개인정보 점검 감소형 CTA 칼럼을 제공합니다.', keywords: ['게시판','법률 리스크','규제 점검','전자상거래 고지','개인정보 안내'] },
-'/business-info': { title: '사업자 정보와 고객지원 안내 | NV0', description: '결제 전 확인할 수 있는 NV0 사업자 정보와 고객지원 기준입니다.', keywords: ['사업자 정보','고객지원'] },
-'/terms': { title: '이용약관 | NV0', description: 'NV0 서비스 이용 조건과 기본 약관을 안내합니다.', keywords: ['이용약관'] },
-'/privacy': { title: '개인정보처리방침 | NV0', description: 'NV0 서비스의 개인정보 처리 기준과 입력 정보 최소화 원칙입니다.', keywords: ['개인정보처리방침'] },
-'/refund': { title: '환불 정책 | NV0', description: '디지털 산출물 제공 시점과 환불 기준을 안내합니다.', keywords: ['환불 정책','청약철회'] },
-'/auth': { title: '로그인 | NV0', description: '내 사이트 저장과 진단 이력 관리를 위한 로그인 페이지입니다.', keywords: ['로그인','회원가입'] },
-'/portal': { title: '내 사이트 관리 | NV0', description: '내 사이트 저장, 최근 진단 결과, 보완 항목, 다음 작업을 한 화면에서 관리합니다.', keywords: ['내 사이트 관리','진단 이력'] },
-'/checkout': { title: '결제 확인 | NV0', description: '선택한 상품, 금액, 받을 결과물, 동의 항목을 결제 전에 확인합니다.', keywords: ['결제 확인','리포트 결제'] }
+'/': { title: 'VERIDION | 온라인 사업자 고객 신뢰 점검 진단', description: '온라인 사업자가 놓치기 쉬운 전자상거래 고지, 개인정보 안내, 환불·청약철회, 표시광고 표현, 과태료 리스크 후보를 공개 화면 기준으로 점검합니다.', keywords: ['법률 리스크 진단','규제 리스크 점검','전자상거래 고지','개인정보 안내','무료 진단'] },
+'/products/veridion/demo': { title: '무료 진단 | VERIDION', description: '사이트 주소 하나로 온라인 사업자의 고객 신뢰 점검 후보를 영역·요소·구분별 개수로 확인합니다.', keywords: ['무료 진단','법률 리스크','규제 리스크','전자상거래 점검'] },
+'/demo': { title: '무료 진단 안내 | VERIDION', description: '최신 무료 진단 화면으로 이동하여 공개 화면 기준의 고객 신뢰 점검 후보를 확인합니다.', keywords: ['무료 진단','사이트 진단'] },
+'/plans': { title: '요금제 | VERIDION', description: '무료 진단, 기본 리포트, 전문가 리포트의 제공 범위와 가격을 명확하게 비교합니다.', keywords: ['요금제','기본 리포트','전문가 리포트','사이트 진단 요금'] },
+'/products': { title: '요금제 | VERIDION', description: '무료 진단, 기본 리포트, 전문가 리포트의 제공 범위와 가격을 명확하게 비교합니다.', keywords: ['요금제','기본 리포트','전문가 리포트'] },
+'/documents': { title: '문서 생성 | VERIDION', description: '고객 안내문, 정책 초안, 개선 요청서를 읽기 쉬운 구조로 정리합니다.', keywords: ['문서 생성','고객 안내문','정책 문서','개선 가이드'] },
+'/policy-documents': { title: '문서 생성 | VERIDION', description: '고객 안내문, 정책 초안, 개선 요청서를 읽기 쉬운 구조로 정리합니다.', keywords: ['문서 생성','고객 안내문','정책 문서'] },
+'/docs/veridion': { title: '문서 생성 | VERIDION', description: '진단 후 필요한 고객 안내문, 정책 문서, 개선 리포트 초안을 정리하는 문서 허브입니다.', keywords: ['문서 생성','정책 문서','진단 리포트','개선 문구'] },
+'/guides': { title: '가이드 | VERIDION', description: '진단 결과를 읽는 법과 전자상거래 고지, 개인정보 안내, 환불·청약철회 기준을 쉽게 안내합니다.', keywords: ['가이드','진단 결과','전자상거래 고지','환불 기준'] },
+'/resources': { title: '가이드 | VERIDION', description: '진단 결과를 읽는 법과 전자상거래 고지, 개인정보 안내, 환불·청약철회 기준을 쉽게 안내합니다.', keywords: ['가이드','진단 결과','규제 점검'] },
+'/solutions': { title: '분석 프로세스 | VERIDION', description: '입력부터 결과 정리까지 온라인 사업자의 고객 신뢰 점검 후보를 영역·요소·구분별로 분석합니다.', keywords: ['분석 프로세스','법률 리스크 분석','규제 리스크 분석'] },
+'/service': { title: '서비스 소개 | VERIDION', description: '온라인 사업자의 고지·환불·개인정보 점검 후보를 줄이기 위해 전자상거래 고지, 개인정보 안내, 환불·청약철회, 표시광고 표현을 점검합니다.', keywords: ['서비스 소개','전자상거래 점검','개인정보 안내 점검'] },
+'/cases': { title: '개선 사례 | VERIDION', description: '진단 후 어떤 항목을 먼저 고쳤고 어떤 변화가 생겼는지 사례 형태로 정리했습니다.', keywords: ['개선 사례','고지 보완 사례','정책 안내 사례'] },
+'/board': { title: '게시판 | VERIDION', description: '온라인 사업자가 이해하기 쉬운 고지·환불·개인정보 점검 감소형 CTA 칼럼을 제공합니다.', keywords: ['게시판','법률 리스크','규제 점검','전자상거래 고지','개인정보 안내'] },
+'/business-info': { title: '사업자 정보와 고객지원 안내 | VERIDION', description: '결제 전 확인할 수 있는 VERIDION 사업자 정보와 고객지원 기준입니다.', keywords: ['사업자 정보','고객지원'] },
+'/terms': { title: '이용약관 | VERIDION', description: 'VERIDION 서비스 이용 조건과 기본 약관을 안내합니다.', keywords: ['이용약관'] },
+'/privacy': { title: '개인정보처리방침 | VERIDION', description: 'VERIDION 서비스의 개인정보 처리 기준과 입력 정보 최소화 원칙입니다.', keywords: ['개인정보처리방침'] },
+'/refund': { title: '환불 정책 | VERIDION', description: '디지털 산출물 제공 시점과 환불 기준을 안내합니다.', keywords: ['환불 정책','청약철회'] },
+'/auth': { title: '로그인 | VERIDION', description: '내 사이트 저장과 진단 이력 관리를 위한 로그인 페이지입니다.', keywords: ['로그인','회원가입'] },
+'/portal': { title: '내 사이트 관리 | VERIDION', description: '내 사이트 저장, 최근 진단 결과, 보완 항목, 다음 작업을 한 화면에서 관리합니다.', keywords: ['내 사이트 관리','진단 이력'] },
+'/checkout': { title: '결제 확인 | VERIDION', description: '선택한 상품, 금액, 받을 결과물, 동의 항목을 결제 전에 확인합니다.', keywords: ['결제 확인','리포트 결제'] }
 };
 const meta = metas[urlPath] || metas['/'];
 return { ...meta, canonical: `${base}${urlPath === '/' ? '/' : urlPath}`, locale: 'ko_KR' };
@@ -1397,10 +1398,10 @@ keywords ? `<meta name="keywords" content="${escapeHtml(keywords)}">` : '',
 `<meta name="naverbot" content="${robots}">`,
 `<link rel="canonical" href="${escapeHtml(meta.canonical)}">`,
 `<link rel="sitemap" type="application/xml" href="${escapeHtml(seoBaseUrl() + '/sitemap.xml')}">`,
-`<link rel="alternate" type="application/rss+xml" title="NV0 전문가형 사이트 점검 글" href="${escapeHtml(seoBaseUrl() + '/feed.xml')}">`,
+`<link rel="alternate" type="application/rss+xml" title="VERIDION 전문가형 사이트 점검 글" href="${escapeHtml(seoBaseUrl() + '/feed.xml')}">`,
 `<meta property="og:locale" content="${escapeHtml(meta.locale)}">`,
 `<meta property="og:type" content="website">`,
-`<meta property="og:site_name" content="NV0">`,
+`<meta property="og:site_name" content="VERIDION">`,
 `<meta property="og:title" content="${escapeHtml(meta.title)}">`,
 `<meta property="og:description" content="${escapeHtml(meta.description)}">`,
 `<meta property="og:url" content="${escapeHtml(meta.canonical)}">`,
@@ -1441,13 +1442,13 @@ const meta = routeMeta(urlPath);
 const pageUrl = `${base}${urlPath === '/' ? '/' : urlPath}`;
 const graph = [
 { '@type': 'Organization', '@id': `${base}/#organization`, name: BUSINESS_PROFILE.tradeName, url: base, email: BUSINESS_PROFILE.contactEmail },
-{ '@type': 'WebSite', '@id': `${base}/#website`, name: 'NV0', url: base, inLanguage: 'ko-KR', publisher: { '@id': `${base}/#organization` }, potentialAction: { '@type': 'SearchAction', target: `${base}/board?q={search_term_string}`, 'query-input': 'required name=search_term_string' } },
-{ '@type': 'SoftwareApplication', '@id': `${base}/#software`, name: 'NV0', applicationCategory: 'BusinessApplication', operatingSystem: 'Web', url: base, description: meta.description, offers: { '@type': 'Offer', priceCurrency: 'KRW', price: '0', availability: 'https://schema.org/InStock' }, provider: { '@id': `${base}/#organization` } },
+{ '@type': 'WebSite', '@id': `${base}/#website`, name: 'VERIDION', url: base, inLanguage: 'ko-KR', publisher: { '@id': `${base}/#organization` }, potentialAction: { '@type': 'SearchAction', target: `${base}/board?q={search_term_string}`, 'query-input': 'required name=search_term_string' } },
+{ '@type': 'SoftwareApplication', '@id': `${base}/#software`, name: 'VERIDION', applicationCategory: 'BusinessApplication', operatingSystem: 'Web', url: base, description: meta.description, offers: { '@type': 'Offer', priceCurrency: 'KRW', price: '0', availability: 'https://schema.org/InStock' }, provider: { '@id': `${base}/#organization` } },
 { '@type': 'Service', '@id': `${base}/#service`, name: '온라인 사업자 고객 신뢰 점검 점검', serviceType: 'Online business legal and regulatory risk screening', provider: { '@id': `${base}/#organization` }, areaServed: 'KR', audience: { '@type': 'Audience', audienceType: '온라인 사업자' } },
 { '@type': 'WebPage', '@id': `${pageUrl}#webpage`, url: pageUrl, name: meta.title, description: meta.description, isPartOf: { '@id': `${base}/#website` }, about: { '@id': `${base}/#software` }, inLanguage: 'ko-KR', dateModified: new Date().toISOString().slice(0, 10) },
 { '@type': 'BreadcrumbList', '@id': `${pageUrl}#breadcrumb`, itemListElement: [
 { '@type': 'ListItem', position: 1, name: '홈', item: `${base}/` },
-...(urlPath === '/' ? [] : [{ '@type': 'ListItem', position: 2, name: meta.title.replace(/\s*\|\s*NV0.*/, ''), item: pageUrl }])
+...(urlPath === '/' ? [] : [{ '@type': 'ListItem', position: 2, name: meta.title.replace(/\s*\|\s*(NV0|VERIDION).*/, ''), item: pageUrl }])
 ] }
 ];
 const faqs = pageFaqStructuredData(urlPath);
@@ -1553,7 +1554,7 @@ function renderPublicErrorPage(req, res, status, title, message, requestId = '')
 const safeTitle = escapeHtml(title);
 const safeMessage = escapeHtml(message);
 const safeRequestId = requestId ? escapeHtml(requestId) : '';
-const body = `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${safeTitle} | NV0 / Veridion</title><meta name="robots" content="noindex,nofollow,noarchive"><link rel="stylesheet" href="/shared/nv0-clean-slate-20260512.css"><link rel="stylesheet" href="/shared/veridion-adopted-ui.css"></head><body>${publicTopMenuHtml('/')}<main id="main" tabindex="-1" class="nv0-error-page"><section class="nv0-error-card"><p class="eyebrow">서비스 안내</p><h1>${safeTitle}</h1><p>${safeMessage}</p>${safeRequestId ? `<p class="nv0-error-request">요청 ID: ${safeRequestId}</p>` : ''}<div class="hero-actions"><a class="btn primary" href="/products/veridion/demo">무료 진단으로 이동</a><a class="btn secondary" href="/">홈으로 이동</a></div></section></main>${businessFooterHtml()}<script src="/shared/client-risk-guard.js" defer></script></body></html>`;
+const body = `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${safeTitle} | VERIDION / NV0</title><meta name="robots" content="noindex,nofollow,noarchive"><link rel="stylesheet" href="/shared/nv0-clean-slate-20260512.css"><link rel="stylesheet" href="/shared/veridion-adopted-ui.css"></head><body>${publicTopMenuHtml('/')}<main id="main" tabindex="-1" class="nv0-error-page"><section class="nv0-error-card"><p class="eyebrow">서비스 안내</p><h1>${safeTitle}</h1><p>${safeMessage}</p>${safeRequestId ? `<p class="nv0-error-request">요청 ID: ${safeRequestId}</p>` : ''}<div class="hero-actions"><a class="btn primary" href="/products/veridion/demo">무료 진단으로 이동</a><a class="btn secondary" href="/">홈으로 이동</a></div></section></main>${businessFooterHtml()}<script src="/shared/client-risk-guard.js" defer></script></body></html>`;
 return html(req, res, status, body, { 'cache-control': 'no-store' }, 'public-page');
 }
 function adminNav() {
@@ -3062,8 +3063,8 @@ const persistedBoardItems = [...(db.boards || []), ...(db.publications || [])]
 .sort((a, b) => Date.parse(b.publishedAt || b.createdAt || 0) - Date.parse(a.publishedAt || a.createdAt || 0));
 const boardItems = persistedBoardItems.length
 ? persistedBoardItems.slice(0, 10)
-: buildPublicColumnEnginePosts({ pageSize: 10 }).map((item, index) => ({ ...item, id: item.id || `portal-column-${index + 1}`, type: 'column', visibility: 'public', status: 'published', engine: 'public-column-engine-v1' }));
-const lastPublished = boardItems.find(item => item.autoPublished || item.type === 'column' || item.engine === 'public-column-engine-v1') || boardItems[0] || null;
+: buildPublicColumnEnginePosts({ pageSize: 10 }).map((item, index) => ({ ...item, id: item.id || `portal-column-${index + 1}`, type: 'column', visibility: 'public', status: 'published', engine: 'product-agent-insight-v1' }));
+const lastPublished = boardItems.find(item => item.autoPublished || item.type === 'column' || item.engine === 'public-column-engine-v1' || item.engine === 'product-agent-insight-v1') || boardItems[0] || null;
 return {
 order,
 site,
@@ -3072,7 +3073,7 @@ latestScan: scan,
 guidance,
 autoFixJobs,
 boards: boardItems,
-publicationCadence: { intervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000), label: `${Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000)}분마다 1건 발행`, engine: 'public-column-engine-v1', actualPublishing: true, lastPublishedAt: lastPublished?.publishedAt || lastPublished?.createdAt || null },
+publicationCadence: { intervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000), label: `${Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000)}분마다 1건 발행`, engine: 'product-agent-insight-v1', actualPublishing: true, lastPublishedAt: lastPublished?.publishedAt || lastPublished?.createdAt || null },
 legalUpdates: (db.legalUpdates || []).slice(0, 10),
 plans: buildPlanCatalog(scan?.recommendedPlan || subscription?.plan || 'Report')
 };
@@ -3777,79 +3778,53 @@ jobs.push(job);
 return jobs;
 }
 function createCtaPublication(db, scan, options = {}) {
-db.publications ||= [];
-db.boards ||= [];
-const existingCount = db.boards.filter(item => item && item.type === 'column').length;
-const enginePosts = buildPublicColumnEnginePosts({ pageSize: 50 });
-const article = enginePosts[existingCount % enginePosts.length];
-const record = {
-  id: uid('column'),
-  title: article.title,
-  status: 'published',
-  type: 'column',
-  boardType: article.boardType,
-  tags: article.tags,
-  primaryKeyword: article.primaryKeyword,
-  summary: article.summary,
-  body: article.body,
-  createdAt: nowIso(),
-  visibility: 'public',
+return publishProductInsightNow(db, {
+  uid,
+  nowIso,
+  businessProfile: BUSINESS_PROFILE,
+  scan,
+  intervalMs: CTA_AUTOPUBLISH_INTERVAL_MS,
   autoPublished: options.autoPublished === true,
-  publicationCadence: '20분마다 1건 발행',
-  publishedAt: nowIso(),
-  engine: 'public-column-engine-v1'
-};
-db.publications.unshift(record);
-db.boards.unshift({ ...record, id: uid('board') });
-db.publications = db.publications.filter(item => item && item.type !== 'cta' && item.boardType !== 'cta').slice(0, 60);
-db.boards = db.boards.filter(item => item && item.type !== 'cta' && item.boardType !== 'cta').slice(0, 60);
-return record;
+  reason: options.reason || (options.autoPublished === true ? 'auto_publication' : 'manual_publication'),
+  force: options.force === true
+});
 }
 
 function syncCtaAutopublishSettings(db = {}) {
-db.settings ||= {};
-let changed = false;
-if (db.settings.ctaAutopublishIntervalMs !== CTA_AUTOPUBLISH_INTERVAL_MS) {
-db.settings.ctaAutopublishIntervalMs = CTA_AUTOPUBLISH_INTERVAL_MS;
-changed = true;
-}
-if (!db.settings.columnTargetStructure) {
-db.settings.columnTargetStructure = 'expert-readable-search-column';
-changed = true;
-}
-return { changed, intervalMs: CTA_AUTOPUBLISH_INTERVAL_MS };
+const result = ensureProductAgentSettings(db, { intervalMs: CTA_AUTOPUBLISH_INTERVAL_MS });
+return { changed: result.changed, intervalMs: result.intervalMs };
 }
 function latestAutoCtaPublication(db = {}) {
-return [...(db.publications || []), ...(db.boards || [])]
-.filter(item => item && item.autoPublished && (item.type === 'column' || item.engine === 'public-column-engine-v1'))
-.sort((a, b) => Date.parse(b.createdAt || 0) - Date.parse(a.createdAt || 0))[0] || null;
+return latestProductInsightPublication(db);
 }
 function ctaAutopublishDueStatus(db = {}, intervalMs = CTA_AUTOPUBLISH_INTERVAL_MS) {
-const last = latestAutoCtaPublication(db);
-const lastTime = Date.parse(last?.createdAt || 0);
-if (!last || !Number.isFinite(lastTime)) return { due: true, last: null, remainingMs: 0, elapsedMs: null, intervalMs };
-const elapsedMs = Date.now() - lastTime;
-const remainingMs = Math.max(0, intervalMs - elapsedMs);
-return { due: elapsedMs >= intervalMs, last, remainingMs, elapsedMs, intervalMs };
+return productInsightDueStatus(db, { intervalMs });
 }
 function createCtaPublicationIfDue(db, scan, options = {}) {
 const settings = db.settings || {};
 const { intervalMs } = syncCtaAutopublishSettings(db);
-if (settings.ctaAutopublishEnabled === false && options.force !== true) return null;
-const due = ctaAutopublishDueStatus(db, intervalMs);
-if (!due.due && options.force !== true) return null;
-return createCtaPublication(db, scan, { ...options, autoPublished: true, publishIntervalMs: intervalMs });
+if ((settings.ctaAutopublishEnabled === false || settings.productInsightAutopublishEnabled === false) && options.force !== true) return null;
+return publishProductInsightIfDue(db, {
+  uid,
+  nowIso,
+  businessProfile: BUSINESS_PROFILE,
+  scan,
+  intervalMs,
+  autoPublished: true,
+  reason: options.reason || 'due_check',
+  force: options.force === true
+});
 }
 
 async function runCtaAutopublish(reason = 'interval') {
-const lockKey = 'public-column-engine-20min';
+const lockKey = 'product-agent-insight-20min';
 const locked = await distributedLock.acquire(lockKey, Math.max(30, Math.ceil(CTA_AUTOPUBLISH_INTERVAL_MS / 1000)));
 if (!locked) return { ok: true, skipped: 'locked' };
 try {
 const db = await readDb();
 const settings = db.settings || {};
 const synced = syncCtaAutopublishSettings(db);
-if (settings.ctaAutopublishEnabled === false) {
+if (settings.ctaAutopublishEnabled === false || settings.productInsightAutopublishEnabled === false) {
 if (synced.changed) await writeDb(db);
 return { ok: true, skipped: 'disabled' };
 }
@@ -3866,10 +3841,10 @@ riskScore: 55,
 totalFindings: 3,
 topFindings: ['지원 고지', '환불 정책 표시', '개인정보 처리방침 위치']
 };
-const item = createCtaPublication(db, scan, { autoPublished: true, publishIntervalMs: synced.intervalMs });
-appendAudit(db, { headers: {}, socket: {} }, 'system.column.published', { id: item.id, reason, intervalMs: synced.intervalMs });
+const item = publishProductInsightNow(db, { uid, nowIso, businessProfile: BUSINESS_PROFILE, scan, autoPublished: true, intervalMs: synced.intervalMs, reason });
+appendAudit(db, { headers: {}, socket: {} }, 'system.product_insight.published', { id: item.id, reason, intervalMs: synced.intervalMs, suiteVersion: PRODUCT_AGENT_SUITE_VERSION, qualityScore: item.quality?.score });
 await writeDb(db);
-return { ok: true, publication: item, intervalMs: synced.intervalMs };
+return { ok: true, publication: item, intervalMs: synced.intervalMs, suiteVersion: PRODUCT_AGENT_SUITE_VERSION };
 } finally {
 await distributedLock.release(lockKey);
 }
@@ -3962,6 +3937,7 @@ buildPlanCatalog,
 buildPolicyDocumentPreview,
 buildWorkOrderPreview,
 buildPortalSummary,
+buildProductAgentRuntimeStatus,
 buildProductDashboard,
 buildProductIntelligence,
 buildProductionLaunchChecklist,
@@ -3969,6 +3945,7 @@ buildPublicDiagnosisPackage,
 buildReleaseReadiness,
 buildRobotsTxt,
 buildRuleCatalog,
+runProductAgentPackageAudit,
 buildSitemapXml,
 buildSmartProductOrchestration,
 buildSmartPublicSnapshot,

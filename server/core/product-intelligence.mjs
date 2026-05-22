@@ -142,7 +142,7 @@ export function buildProductDashboard(db = {}) {
   const scans = list(db.scans);
   const latest = scans[0] || {};
   const score = clamp(latest.riskScore ?? latest.score?.value ?? 55);
-  const columnCount = list(db.boards).filter(item => item.type === 'column' || item.engine === 'public-column-engine-v1').length;
+  const columnCount = list(db.boards).filter(item => item.type === 'column' || item.engine === 'public-column-engine-v1' || item.engine === 'product-agent-insight-v1').length;
   const siteCount = list(db.sites).length;
   const orderCount = list(db.orders).length;
   return {

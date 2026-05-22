@@ -1,6 +1,6 @@
 {
   "name": "veridion-public-risk-diagnostic",
-  "version": "1.0.0-commercial-phase278-customer-perfect",
+  "version": "1.0.0-commercial-phase280-product-agent-insight",
   "private": true,
   "type": "module",
   "scripts": {
@@ -64,7 +64,11 @@
     "validate:phase277": "node scripts/validate-phase277-function-menu-lock.mjs",
     "phase277:final": "npm run check:syntax && npm test && npm run test:e2e && npm run check:pages && npm run test:routes && npm run check:links -- --summary && npm run smoke && npm run validate:commercial-runtime && npm run verify:security && npm run validate:deploy && npm run validate:phase276 && npm run validate:phase277",
     "validate:phase278": "node scripts/validate-phase278-customer-perfect.mjs",
-    "phase278:final": "npm run phase277:final && npm run validate:phase278"
+    "phase278:final": "npm run phase277:final && npm run validate:phase278",
+    "validate:phase279": "node scripts/validate-phase279-commercial-visual-qa.mjs",
+    "phase279:final": "npm run phase278:final && npm run validate:phase279",
+    "validate:phase280": "node scripts/validate-phase280-product-agent-insight.mjs",
+    "phase280:final": "npm run phase279:final && npm run validate:phase280"
   },
-  "description": "VERIDION phase278 package: all confirmed customer-facing issues remediated, original top menu locked, Stitch-inspired design retained, brand/copy/footer/email unified, and functional routes revalidated."
+  "description": "VERIDION phase278-compatible phase280 package: product-related engines and agents rebuilt for package-wide QA, insight generation, public board sync, and verified 20-minute automatic publication cadence."
 }

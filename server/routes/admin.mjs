@@ -54,6 +54,8 @@ export function createAdminRouteHandler(ctx) {
   buildProductionLaunchChecklist,
   buildReleaseReadiness,
   buildRuleCatalog,
+  buildProductAgentRuntimeStatus,
+  runProductAgentPackageAudit,
   buildSystemItemsFeed,
   canTransition,
   cleanupDataRetention,
@@ -341,6 +343,25 @@ db.settings = { ...db.settings, ...body };
 appendAudit(db, req, 'admin.settings.updated', { keys: Object.keys(body) });
 await writeDb(db);
 return json(req, res, 200, { ok: true, settings: db.settings });
+}
+if (pathname === '/api/admin/product-agents/audit' && req.method === 'GET') {
+if (!requireAdminPermission(req, res, session, 'ops.read')) return;
+const packageFiles = [
+  'apps/public/board/app.js',
+  'server/index.mjs',
+  'server/routes/public.mjs',
+  'server/routes/admin.mjs',
+  'shared/base.css',
+  'scripts/validate-phase280-product-agent-insight.mjs',
+  'tests/routes-smoke.mjs',
+  'deploy/docker-compose.commercial.yml',
+  'docs/PHASE280_PRODUCT_AGENT_INSIGHT_REPORT.md'
+];
+const audit = runProductAgentPackageAudit({ files: packageFiles, packageJson: { scripts: { 'validate:phase280': true, 'phase280:final': true } }, routes: ['/api/public/product-agent-status', '/api/admin/product-agents/audit'] });
+const status = buildProductAgentRuntimeStatus(db, { businessProfile: db.settings?.businessProfile });
+appendAudit(db, req, 'admin.product_agents.audit', { score: audit.score, ok: audit.ok });
+await writeDb(db);
+return json(req, res, 200, { ok: audit.ok, audit, status });
 }
 if (pathname === '/api/admin/publications' && req.method === 'GET') return json(req, res, 200, { ok: true, publications: db.publications.slice(0, 100) });
 if (pathname === '/api/admin/publications/publish-now' && req.method === 'POST') {

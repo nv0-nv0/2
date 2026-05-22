@@ -1335,3 +1335,100 @@ body.nv0n-page p,body.nv0n-page li,body.nv0n-page small,body.nv0-clean-slate p,b
 .phase278-footer{background:#fff!important;border-top:1px solid var(--v278-border)!important;margin-top:auto!important}.phase278-footer-inner{width:min(1280px,calc(100% - 36px))!important;margin:0 auto!important;padding:34px 0!important;display:flex!important;align-items:flex-start!important;justify-content:space-between!important;gap:22px!important;flex-wrap:wrap!important}.phase278-footer-inner strong{color:var(--v278-title)!important;font-size:20px!important}.phase278-footer-inner p,.phase278-footer-inner span{color:#5e7089!important;font-size:14px!important}.phase278-footer-inner nav{display:flex!important;gap:14px!important;flex-wrap:wrap!important}.phase278-footer-inner a{color:#2e405a!important;font-weight:760!important}.phase278-footer-inner a[href^="mailto"]{color:var(--v278-blue)!important}
 @media (max-width:960px){.nv0n-topbar-inner{display:grid!important;grid-template-columns:auto 1fr!important;gap:10px!important;padding:10px 0!important}.nv0n-primary-nav{grid-column:1/-1;justify-content:flex-start!important}.nv0n-topbar-actions{position:absolute;right:18px;top:16px}.phase264-hero,.portal-hero,.plans-hero,.site-page-hero{padding:26px!important}.portal-dashboard-grid,.phase272-home-facts,.phase264-service-hero{grid-template-columns:1fr!important}.portal-metric-strip,.portal-insight-strip,.portal-publish-status-card .status-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
 @media (max-width:640px){.phase264-shell,.nv0-shell,.plans-main,.nv0-portal-main{width:min(100% - 22px,720px)!important}.phase264-hero h1,.portal-hero h1,.plans-hero h1,.site-page-hero h1,.phase264-page-head h1{font-size:32px!important}.portal-metric-strip,.portal-insight-strip,.portal-publish-status-card .status-grid,.phase272-flow-grid,.plans-grid,.phase264-grid-3,.cols-2,.cols-3,.cols-4{grid-template-columns:1fr!important}.phase278-footer-inner{display:grid!important;width:min(100% - 22px,720px)!important}}
+
+
+/* ======================================================================
+   PHASE279 commercial visual QA hardening
+   - Prevents Korean text clipping/garbling-looking wrapping.
+   - Removes mobile topbar overlap risk caused by absolute actions/padding.
+   - Moves the portal site registration block into a high-priority position.
+   ====================================================================== */
+html{-webkit-text-size-adjust:100%!important;text-size-adjust:100%!important;scroll-padding-top:92px!important}
+body.nv0n-page,body.nv0-clean-slate{
+  word-break:keep-all!important;
+  overflow-wrap:break-word!important;
+  text-rendering:optimizeLegibility!important;
+  -webkit-font-smoothing:antialiased!important;
+}
+body.nv0n-page h1,body.nv0n-page h2,body.nv0n-page h3,
+body.nv0-clean-slate h1,body.nv0-clean-slate h2,body.nv0-clean-slate h3{
+  letter-spacing:-.035em!important;
+  line-height:1.16!important;
+  word-break:keep-all!important;
+  overflow-wrap:break-word!important;
+}
+body.nv0n-page p,body.nv0n-page li,body.nv0n-page small,
+body.nv0-clean-slate p,body.nv0-clean-slate li,body.nv0-clean-slate small,
+body.nv0n-page label,body.nv0-clean-slate label{
+  line-height:1.68!important;
+  word-break:keep-all!important;
+  overflow-wrap:break-word!important;
+}
+pre,.notice,.muted,.result-card,.card,.portal-card,.board-post,.article-card{white-space:normal;min-width:0!important;overflow-wrap:break-word!important}
+pre{white-space:pre-wrap!important;max-width:100%!important;overflow:auto!important}
+.nv0n-topbar-inner{
+  display:grid!important;
+  grid-template-columns:auto minmax(0,1fr) auto!important;
+  align-items:center!important;
+  gap:12px!important;
+  width:min(1280px,calc(100% - 36px))!important;
+}
+.nv0n-brand,.nv0n-primary-nav,.nv0n-topbar-actions{min-width:0!important}
+.nv0n-primary-nav{width:100%!important;justify-content:center!important;overflow-x:auto!important;overscroll-behavior-x:contain!important;padding:4px 0!important}
+.nv0n-topbar-actions{position:static!important;display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:8px!important}
+.nv0n-login-link,.nv0n-start-link,.btn,.cta,button,.portal-primary-action,.portal-secondary-action{max-width:100%!important;min-width:0!important}
+.phase264-hero h1,.portal-hero h1,.plans-hero h1,.site-page-hero h1,.phase264-page-head h1{max-width:760px!important}
+.phase264-hero,.portal-hero,.plans-hero,.site-page-hero{overflow:hidden!important}
+.phase264-hero-copy,.portal-hero-copy,.plans-hero-copy,.hero-copy{min-width:0!important;max-width:100%!important}
+.portal-dashboard-grid{margin-top:20px!important}
+.portal-site-registration-priority{
+  margin:20px 0 22px!important;
+  padding:clamp(20px,3vw,30px)!important;
+  background:linear-gradient(135deg,#fff,#f8fbff 72%,#edf4ff)!important;
+  border:1px solid var(--v278-border,#d9e3f1)!important;
+  border-radius:var(--v278-radius,22px)!important;
+  box-shadow:var(--v278-shadow,0 14px 36px rgba(13,31,67,.07))!important;
+}
+.portal-site-registration-priority .portal-site-form{border-top:0!important;padding-top:0!important;display:grid!important;gap:16px!important}
+.portal-site-registration-priority .phase264-functional-head{display:flex!important;align-items:flex-start!important;justify-content:space-between!important;gap:16px!important;flex-wrap:wrap!important}
+.portal-site-registration-priority h2{font-size:clamp(24px,3vw,34px)!important;margin:6px 0 0!important;color:var(--v278-title,#0b162f)!important}
+.portal-site-registration-priority .bridge-grid{
+  display:grid!important;
+  grid-template-columns:minmax(220px,1.15fr) minmax(180px,.9fr) minmax(220px,1fr) minmax(132px,.45fr)!important;
+  gap:12px!important;
+  align-items:end!important;
+  padding:14px!important;
+}
+.portal-site-registration-priority .bridge-grid label{min-width:0!important}
+.portal-site-registration-priority .bridge-grid .memo-field{grid-column:auto!important}
+.portal-site-registration-priority .bridge-grid button{grid-column:auto!important;width:100%!important;min-height:48px!important}
+.portal-site-registration-priority .bridge-grid #saveSiteState{grid-column:1/-1!important}
+.portal-score-head,.portal-score-head>*,.portal-metric-strip article,.portal-insight-strip>div,.phase239-action-grid>*,.portal-dashboard-asset,.portal-primary-detail,.portal-feed-card #portalFeed>*{min-width:0!important}
+.portal-score-head{overflow:hidden!important}
+.portal-score-cta{white-space:normal!important;text-align:center!important}
+.portal-dashboard-asset .domain,.portal-dashboard-asset h3,.nv191-action-head h2,.nv191-action-body p{overflow-wrap:anywhere!important}
+.portal-footer-clean.phase278-footer{background:#fff!important;color:var(--v278-title,#0b162f)!important;border-top:1px solid var(--v278-border,#d9e3f1)!important}
+.portal-footer-clean .portal-footer-inner{align-items:flex-start!important}
+.portal-footer-clean .portal-footer-inner p,.portal-footer-clean .portal-footer-inner span{color:#5e7089!important}
+.portal-footer-clean .portal-footer-inner a{color:#2e405a!important}
+@media (max-width:960px){
+  .nv0n-topbar-inner{grid-template-columns:1fr auto!important;grid-auto-flow:row!important;padding:10px 0!important;gap:8px 10px!important}
+  .nv0n-brand{grid-column:1!important;grid-row:1!important;align-self:center!important}
+  .nv0n-topbar-actions{grid-column:2!important;grid-row:1!important;position:static!important;right:auto!important;top:auto!important;align-self:center!important}
+  .nv0n-primary-nav{grid-column:1/-1!important;grid-row:2!important;justify-content:flex-start!important;flex-basis:auto!important;width:100%!important;padding-bottom:6px!important}
+  body.nv0n-page,body.nv0-clean-slate{padding-top:0!important}
+  .phase264-hero h1,.portal-hero h1,.plans-hero h1,.site-page-hero h1,.phase264-page-head h1{max-width:100%!important;font-size:clamp(30px,7vw,42px)!important;line-height:1.18!important}
+  .portal-site-registration-priority .bridge-grid{grid-template-columns:1fr 1fr!important}
+  .portal-site-registration-priority .bridge-grid .memo-field,.portal-site-registration-priority .bridge-grid button,.portal-site-registration-priority .bridge-grid #saveSiteState{grid-column:1/-1!important}
+}
+@media (max-width:640px){
+  .nv0n-topbar-inner{width:min(100% - 22px,720px)!important;grid-template-columns:1fr!important}
+  .nv0n-brand,.nv0n-topbar-actions,.nv0n-primary-nav{grid-column:1!important;grid-row:auto!important}
+  .nv0n-topbar-actions{width:100%!important;justify-content:space-between!important}
+  .nv0n-login-link,.nv0n-start-link{flex:1 1 0!important;min-height:38px!important;padding:8px 10px!important;font-size:13px!important}
+  .nv0n-nav-link{font-size:13px!important;padding:8px 10px!important}
+  .portal-site-registration-priority .phase264-functional-head{display:grid!important}
+  .portal-site-registration-priority .bridge-grid{grid-template-columns:1fr!important;padding:12px!important}
+  .portal-primary-action,.portal-secondary-action,.portal-hero-actions .btn{width:100%!important}
+  .portal-card,.phase264-card,.article-card,.board-post,.plan-card-clean{border-radius:18px!important}
+}

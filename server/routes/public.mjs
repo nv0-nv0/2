@@ -62,6 +62,7 @@ export function createPublicRouteHandler(ctx) {
   buildPolicyDocumentPreview,
   buildWorkOrderPreview,
   buildPortalSummary,
+  buildProductAgentRuntimeStatus,
   buildProductDashboard,
   buildProductIntelligence,
   buildProductionLaunchChecklist,
@@ -198,7 +199,7 @@ return { requestId: scan?.requestId || null, siteId: scan?.siteId || null, targe
   const paymentHandled = await paymentRouteHandler(req, res, { requestUrl: url, pathname });
   if (paymentHandled !== false) return paymentHandled;
 if (pathname === '/api/public/diagnosis-engine' && req.method === 'GET') {
-return json(req, res, 200, { ok: true, phase: RELEASE_PHASE, engine: 'VERIDION Public Evidence Summary Check Engine', rulesVersion: RULES_VERSION, targetFetchEnabled: TARGET_FETCH_ENABLED, scanProvider: SCAN_PROVIDER, aiReviewProvider: AI_REVIEW_PROVIDER, geminiConfigured: AI_REVIEW_ENABLED, resultContract: { resultType: 'preliminary_check', legalConclusion: false, includesEvidenceSummary: true, includesConfidenceScore: true, includesManualReviewFlags: true, includesAutomationDisclosure: true, includesAutomatedActionPlan: true, includesAccuracyProfile: true, includesReportQualityGate: true, includesDemoAccuracyContract: true, includesPaidOutputQualityGate: true, phase220ServiceQualityVersion: PHASE220_SERVICE_QUALITY_VERSION, phase223RiskGuardVersion: PHASE223_RISK_GUARD_VERSION }, endpoints: { scan: 'POST /api/public/scan', diagnose: 'POST /api/public/diagnose', board: 'GET /api/public/board', engine: 'GET /api/public/diagnosis-engine', productIntelligence: 'GET /api/public/product-intelligence', productQuality: 'GET /api/public/product-quality' }, smartProduct: { version: 'p153-smart-ops-v1', nextBestAction: true, planFitScoring: true, journeyOrchestration: true, smartProductEndpoint: '/api/public/smart-product', userPath: ['무료 요약','요금제 선택','내 사이트 관리','게시판 재유입'] }, publicationCadence: { boardName: '게시판', intervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000), cadenceLabel: `${Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000)}분마다 1건 발행`, columnEngine: 'public-column-engine-v1' }, automation: { mode: TARGET_FETCH_AUTOMATION_LEVEL, robotsEnabled: TARGET_FETCH_ROBOTS_ENABLED, sitemapEnabled: TARGET_FETCH_SITEMAP_ENABLED, maxPages: TARGET_FETCH_MAX_PAGES, maxDiscoveryResources: TARGET_FETCH_MAX_DISCOVERY_RESOURCES, notice: '자동 확인 가능한 공개 항목은 모두 처리하고 자동 확정 불가 영역은 직접 확인으로 고지합니다.' }, checks: buildRuleCatalog().map(({ code, category, title, severity, penaltyMax }) => ({ code, category, title, severity, penaltyMax })) });
+return json(req, res, 200, { ok: true, phase: RELEASE_PHASE, engine: 'VERIDION Public Evidence Summary Check Engine', rulesVersion: RULES_VERSION, targetFetchEnabled: TARGET_FETCH_ENABLED, scanProvider: SCAN_PROVIDER, aiReviewProvider: AI_REVIEW_PROVIDER, geminiConfigured: AI_REVIEW_ENABLED, resultContract: { resultType: 'preliminary_check', legalConclusion: false, includesEvidenceSummary: true, includesConfidenceScore: true, includesManualReviewFlags: true, includesAutomationDisclosure: true, includesAutomatedActionPlan: true, includesAccuracyProfile: true, includesReportQualityGate: true, includesDemoAccuracyContract: true, includesPaidOutputQualityGate: true, phase220ServiceQualityVersion: PHASE220_SERVICE_QUALITY_VERSION, phase223RiskGuardVersion: PHASE223_RISK_GUARD_VERSION }, endpoints: { scan: 'POST /api/public/scan', diagnose: 'POST /api/public/diagnose', board: 'GET /api/public/board', engine: 'GET /api/public/diagnosis-engine', productIntelligence: 'GET /api/public/product-intelligence', productQuality: 'GET /api/public/product-quality', productAgentStatus: 'GET /api/public/product-agent-status' }, smartProduct: { version: 'p153-smart-ops-v1', nextBestAction: true, planFitScoring: true, journeyOrchestration: true, smartProductEndpoint: '/api/public/smart-product', userPath: ['무료 요약','요금제 선택','내 사이트 관리','게시판 재유입'] }, publicationCadence: { boardName: '게시판', intervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000), cadenceLabel: `${Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000)}분마다 1건 발행`, columnEngine: 'product-agent-insight-v1' }, automation: { mode: TARGET_FETCH_AUTOMATION_LEVEL, robotsEnabled: TARGET_FETCH_ROBOTS_ENABLED, sitemapEnabled: TARGET_FETCH_SITEMAP_ENABLED, maxPages: TARGET_FETCH_MAX_PAGES, maxDiscoveryResources: TARGET_FETCH_MAX_DISCOVERY_RESOURCES, notice: '자동 확인 가능한 공개 항목은 모두 처리하고 자동 확정 불가 영역은 직접 확인으로 고지합니다.' }, checks: buildRuleCatalog().map(({ code, category, title, severity, penaltyMax }) => ({ code, category, title, severity, penaltyMax })) });
 }
 
 if (((pathname === '/api/public/diagnose' || pathname === '/api/public/scan') && req.method === 'POST') || (isLegacyDiagnosticStart && req.method === 'POST')) {
@@ -347,6 +348,11 @@ const preview = body.documentKind === 'work_order'
   : buildPolicyDocumentPreview(body, db.settings || {});
 return json(req, res, 200, { ok: true, preview });
 }
+if (pathname === '/api/public/product-agent-status' && req.method === 'GET') {
+const db = await readDb();
+const status = buildProductAgentRuntimeStatus(db, { businessProfile: BUSINESS_PROFILE });
+return json(req, res, 200, status);
+}
 if (pathname === '/api/public/board' && req.method === 'GET') {
 const requestedPageSize = clamp(Number(url.searchParams.get('pageSize') || 10) || 10, 1, 20);
 const pageSize = requestedPageSize;
@@ -368,7 +374,7 @@ try {
 const persisted = [...(db.boards || []), ...(db.publications || [])]
   .filter(item => item && item.visibility !== 'private')
   .filter(item => item.status === 'published' || item.visibility === 'public' || item.autoPublished === true)
-  .filter(item => item.type === 'column' || item.autoPublished === true || item.engine === 'public-column-engine-v1')
+  .filter(item => item.type === 'column' || item.autoPublished === true || item.engine === 'public-column-engine-v1' || item.engine === 'product-agent-insight-v1')
   .sort((a, b) => Date.parse(b.publishedAt || b.createdAt || 0) - Date.parse(a.publishedAt || a.createdAt || 0));
 const seen = new Set();
 let publicPosts = persisted.map((item, index) => ({
@@ -418,7 +424,7 @@ const activity = publicPosts.slice(0, 3).map(item => ({
 }));
 return json(req, res, 200, {
   ok: true,
-  publicationCadence: { intervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000), label: `${Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000)}분마다 1건 발행`, engine: 'public-column-engine-v1', actualPublishing: true, searchScope: 'server-side', dataSource: publicPosts[0]?.source || 'persisted-db', lastPublishedAt: publicPosts[0]?.publishedAt || publicPosts[0]?.createdAt || null, createdOnThisRequest: !!createdNow },
+  publicationCadence: { intervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000), label: `${Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000)}분마다 1건 발행`, engine: 'product-agent-insight-v1', actualPublishing: true, searchScope: 'server-side', dataSource: publicPosts[0]?.source || 'persisted-db', lastPublishedAt: publicPosts[0]?.publishedAt || publicPosts[0]?.createdAt || null, createdOnThisRequest: !!createdNow },
   createdNow: !!createdNow,
   pageSize,
   activity,
