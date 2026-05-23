@@ -350,6 +350,22 @@ const preview = body.documentKind === 'work_order'
   : buildPolicyDocumentPreview(body, db.settings || {});
 return json(req, res, 200, { ok: true, preview });
 }
+if (pathname === '/api/public/server-availability' && req.method === 'GET') {
+return json(req, res, 200, {
+  ok: true,
+  available: true,
+  service: 'VERIDION',
+  phase: 'phase288',
+  serverTime: nowIso(),
+  host: req.headers.host || '',
+  checks: {
+    router: true,
+    publicApi: true,
+    staticPages: true
+  },
+  next: ['/portal', '/products/veridion/demo', '/api/public/commercial-readiness']
+});
+}
 if (pathname === '/api/public/product-agent-status' && req.method === 'GET') {
 const db = await readDb();
 const status = buildProductAgentRuntimeStatus(db, { businessProfile: BUSINESS_PROFILE });

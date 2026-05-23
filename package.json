@@ -79,7 +79,12 @@
     "validate:phase286": "node scripts/validate-phase286-engine-agent-orchestration.mjs",
     "phase286:final": "npm run phase285:final && npm run validate:phase286",
     "validate:phase287": "node scripts/validate-phase287-commercial-readiness.mjs",
-    "phase287:final": "npm run phase286:final && npm run validate:phase287"
+    "phase287:final": "npm run phase286:final && npm run validate:phase287",
+    "start:local": "node scripts/start-local-server.mjs",
+    "dev": "npm run start:local",
+    "server:check": "node scripts/check-server-availability.mjs",
+    "validate:phase288": "node scripts/validate-phase288-server-availability.mjs",
+    "phase288:final": "npm run phase287:final && npm run validate:phase288"
   },
   "description": "VERIDION phase285 structure-optimized commercial package: approved portal dashboard, product-agent insight engine, 20-minute publication cadence, POSIX packaging, generated structure tree, and 100-point structure hardening gate."
 }

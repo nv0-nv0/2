@@ -1,0 +1,59 @@
+{
+  "ok": true,
+  "phase": "phase288",
+  "score": 100,
+  "total": 100,
+  "issue": "no available server",
+  "checks": [
+    {
+      "key": "localLauncher",
+      "weight": 16,
+      "pass": true,
+      "message": "원클릭 로컬 서버 실행 스크립트"
+    },
+    {
+      "key": "crossPlatformScripts",
+      "weight": 12,
+      "pass": true,
+      "message": "Windows/macOS/Linux 공통 로컬 실행 명령"
+    },
+    {
+      "key": "serverCheckScript",
+      "weight": 14,
+      "pass": true,
+      "message": "서버 가용성 진단 스크립트"
+    },
+    {
+      "key": "publicAvailabilityRoute",
+      "weight": 14,
+      "pass": true,
+      "message": "공개 서버 가용성 API"
+    },
+    {
+      "key": "runbook",
+      "weight": 12,
+      "pass": true,
+      "message": "no available server 대응 런북"
+    },
+    {
+      "key": "phase288Scripts",
+      "weight": 12,
+      "pass": true,
+      "message": "phase288 최종 검증 게이트"
+    },
+    {
+      "key": "previousGates",
+      "weight": 10,
+      "pass": true,
+      "message": "이전 상용 100점 게이트 유지"
+    },
+    {
+      "key": "posixPaths",
+      "weight": 10,
+      "pass": true,
+      "message": "POSIX 경로 구조 유지"
+    }
+  ],
+  "failed": [],
+  "report": "docs/current/PHASE288_SERVER_AVAILABILITY_AUDIT.json"
+}

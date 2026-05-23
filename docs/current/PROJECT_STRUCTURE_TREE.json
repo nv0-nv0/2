@@ -1,13 +1,13 @@
 {
   "ok": true,
-  "generatedAt": "2026-05-23T13:12:20.069Z",
-  "root": "VERIDION_phase286_engine_agent_optimized_100",
+  "generatedAt": "2026-05-23T13:28:26.685Z",
+  "root": "VERIDION_phase287_commercial_legal_payment_ops_100",
   "limits": {
     "maxDepth": 4,
     "maxChildrenPerDir": 80
   },
   "summary": {
-    "files": 318,
+    "files": 323,
     "dirs": 61
   },
   "keyFiles": [
@@ -55,7 +55,7 @@
     }
   ],
   "tree": {
-    "name": "VERIDION_phase286_engine_agent_optimized_100",
+    "name": "VERIDION_phase287_commercial_legal_payment_ops_100",
     "path": ".",
     "type": "dir",
     "note": "",
@@ -1152,7 +1152,7 @@
                 "name": "public.mjs",
                 "path": "server/routes/public.mjs",
                 "type": "file",
-                "size": 43681
+                "size": 44086
               }
             ]
           },
@@ -1409,6 +1409,12 @@
             "size": 1906
           },
           {
+            "name": "check-server-availability.mjs",
+            "path": "scripts/check-server-availability.mjs",
+            "type": "file",
+            "size": 1809
+          },
+          {
             "name": "check-source-syntax.mjs",
             "path": "scripts/check-source-syntax.mjs",
             "type": "file",
@@ -1545,6 +1551,12 @@
             "path": "scripts/smoke.mjs",
             "type": "file",
             "size": 2938
+          },
+          {
+            "name": "start-local-server.mjs",
+            "path": "scripts/start-local-server.mjs",
+            "type": "file",
+            "size": 1457
           },
           {
             "name": "stress-smoke.mjs",
@@ -1731,6 +1743,12 @@
             "path": "scripts/validate-phase287-commercial-readiness.mjs",
             "type": "file",
             "size": 7036
+          },
+          {
+            "name": "validate-phase288-server-availability.mjs",
+            "path": "scripts/validate-phase288-server-availability.mjs",
+            "type": "file",
+            "size": 3597
           },
           {
             "name": "validate-pipeline.mjs",
@@ -2043,10 +2061,16 @@
                 "size": 4992
               },
               {
+                "name": "PHASE288_SERVER_AVAILABILITY_AUDIT.json",
+                "path": "docs/current/PHASE288_SERVER_AVAILABILITY_AUDIT.json",
+                "type": "file",
+                "size": 1326
+              },
+              {
                 "name": "PROJECT_STRUCTURE_TREE.json",
                 "path": "docs/current/PROJECT_STRUCTURE_TREE.json",
                 "type": "file",
-                "size": 76960
+                "size": 78233
               }
             ]
           },
@@ -2067,6 +2091,12 @@
             "path": "docs/LEGAL_PAYMENT_OPS_CHECKLIST.md",
             "type": "file",
             "size": 2305
+          },
+          {
+            "name": "NO_AVAILABLE_SERVER_RUNBOOK.md",
+            "path": "docs/NO_AVAILABLE_SERVER_RUNBOOK.md",
+            "type": "file",
+            "size": 2025
           },
           {
             "name": "NV0_PHASE268_FULL_RECHECK_AND_IMPROVEMENT_REPORT.md",
@@ -2180,7 +2210,7 @@
             "name": "PROJECT_STRUCTURE_TREE.md",
             "path": "docs/PROJECT_STRUCTURE_TREE.md",
             "type": "file",
-            "size": 17303
+            "size": 17630
           }
         ]
       },
@@ -2320,7 +2350,7 @@
                     "name": "secure-records.dev.json",
                     "path": "runtime/data/secure-records/secure-records.dev.json",
                     "type": "file",
-                    "size": 797192
+                    "size": 797622
                   }
                 ]
               },
@@ -2328,7 +2358,7 @@
                 "name": "db.json",
                 "path": "runtime/data/db.json",
                 "type": "file",
-                "size": 21915
+                "size": 37110
               },
               {
                 "name": "db.seed.json",
@@ -2426,7 +2456,7 @@
         "name": "package.json",
         "path": "package.json",
         "type": "file",
-        "size": 7408
+        "size": 7726
       },
       {
         "name": "README.md",
