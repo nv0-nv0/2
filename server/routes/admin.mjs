@@ -56,6 +56,10 @@ export function createAdminRouteHandler(ctx) {
   buildRuleCatalog,
   buildProductAgentRuntimeStatus,
   runProductAgentPackageAudit,
+  buildEngineAgentRuntimeStatus,
+  runEngineAgentPackageAudit,
+  buildCommercialReadinessStatus,
+  runPhase287CommercialAudit,
   buildSystemItemsFeed,
   canTransition,
   cleanupDataRetention,
@@ -360,6 +364,56 @@ const packageFiles = [
 const audit = runProductAgentPackageAudit({ files: packageFiles, packageJson: { scripts: { 'validate:phase280': true, 'phase280:final': true } }, routes: ['/api/public/product-agent-status', '/api/admin/product-agents/audit'] });
 const status = buildProductAgentRuntimeStatus(db, { businessProfile: db.settings?.businessProfile });
 appendAudit(db, req, 'admin.product_agents.audit', { score: audit.score, ok: audit.ok });
+await writeDb(db);
+return json(req, res, 200, { ok: audit.ok, audit, status });
+}
+if (pathname === '/api/admin/engine-agents/audit' && req.method === 'GET') {
+if (!requireAdminPermission(req, res, session, 'ops.read')) return;
+const packageFiles = [
+  'server/core/engine-agent-orchestrator.mjs',
+  'server/core/product-agent-suite.mjs',
+  'server/routes/public.mjs',
+  'server/routes/admin.mjs',
+  'shared/portal-phase283-dashboard.css',
+  'scripts/validate-phase286-engine-agent-orchestration.mjs',
+  'scripts/validate-phase285-structure-optimization.mjs',
+  'docs/ENGINE_AGENT_ASSIGNMENT_MATRIX.md',
+  'docs/current/ENGINE_AGENT_ASSIGNMENT_MATRIX.json',
+  'docs/PROJECT_STRUCTURE_TREE.md',
+  'docs/current/PROJECT_STRUCTURE_TREE.json'
+];
+const audit = runEngineAgentPackageAudit({
+  files: packageFiles,
+  packageJson: { scripts: { 'validate:phase286': true, 'phase286:final': true } },
+  routes: ['/api/public/engine-agent-status', '/api/admin/engine-agents/audit']
+});
+const status = buildEngineAgentRuntimeStatus(db, { businessProfile: db.settings?.businessProfile, nowIso: nowIso() });
+appendAudit(db, req, 'admin.engine_agents.audit', { score: audit.score, ok: audit.ok, version: audit.version });
+await writeDb(db);
+return json(req, res, 200, { ok: audit.ok, audit, status });
+}
+if (pathname === '/api/admin/commercial-readiness/audit' && req.method === 'GET') {
+if (!requireAdminPermission(req, res, session, 'ops.read')) return;
+const packageFiles = [
+  'server/core/commercial-readiness-287.mjs',
+  'scripts/validate-phase287-commercial-readiness.mjs',
+  'docs/PHASE287_COMMERCIAL_READINESS_REPORT.md',
+  'docs/LEGAL_PAYMENT_OPS_CHECKLIST.md',
+  'docs/COMMERCIAL_LAUNCH_RUNBOOK.md',
+  'docs/current/PHASE287_COMMERCIAL_READINESS_AUDIT.json',
+  'apps/public/privacy/index.html',
+  'apps/public/terms/index.html',
+  'apps/public/refund/index.html',
+  'apps/public/business-info/index.html'
+];
+const audit = runPhase287CommercialAudit({
+  files: packageFiles,
+  packageJson: { scripts: { 'validate:phase287': true, 'phase287:final': true, 'phase286:final': true, 'phase285:final': true, 'phase284:final': true } },
+  routes: ['/api/public/commercial-readiness', '/api/admin/commercial-readiness/audit'],
+  envExample: await fs.readFile(path.join(process.cwd(), '.env.example'), 'utf8').catch(() => '')
+});
+const status = buildCommercialReadinessStatus(db, process.env);
+appendAudit(db, req, 'admin.commercial_readiness.audit', { score: audit.score, ok: audit.ok, version: audit.version, environmentScore: status.environmentScore });
 await writeDb(db);
 return json(req, res, 200, { ok: audit.ok, audit, status });
 }

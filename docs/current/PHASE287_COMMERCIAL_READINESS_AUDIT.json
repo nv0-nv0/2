@@ -1,0 +1,189 @@
+{
+  "ok": true,
+  "phase": "phase287",
+  "version": "phase287-commercial-legal-payment-ops-v1.0.0",
+  "score": 100,
+  "total": 100,
+  "packageAudit": {
+    "ok": true,
+    "phase": "phase287",
+    "version": "phase287-commercial-legal-payment-ops-v1.0.0",
+    "score": 100,
+    "total": 100,
+    "checks": [
+      {
+        "key": "commercialReadinessModule",
+        "pass": true,
+        "weight": 12,
+        "message": "상용 법무/결제/운영 게이트 모듈"
+      },
+      {
+        "key": "policyPages",
+        "pass": true,
+        "weight": 12,
+        "message": "정책/고지 공개 페이지 존재"
+      },
+      {
+        "key": "officialReferences",
+        "pass": true,
+        "weight": 10,
+        "message": "공식 법령/소비자 기준 매트릭스"
+      },
+      {
+        "key": "paymentGate",
+        "pass": true,
+        "weight": 12,
+        "message": "결제 실환경 승인/웹훅 strict 게이트"
+      },
+      {
+        "key": "legalGate",
+        "pass": true,
+        "weight": 12,
+        "message": "법무 검토 승인/정책 버전 게이트"
+      },
+      {
+        "key": "opsGate",
+        "pass": true,
+        "weight": 12,
+        "message": "운영 복구 리허설 게이트"
+      },
+      {
+        "key": "publicRoute",
+        "pass": true,
+        "weight": 8,
+        "message": "공개 상용 준비 상태 API"
+      },
+      {
+        "key": "adminRoute",
+        "pass": true,
+        "weight": 8,
+        "message": "관리자 상용 준비 감사 API"
+      },
+      {
+        "key": "phase287Scripts",
+        "pass": true,
+        "weight": 8,
+        "message": "phase287 최종 검증 게이트"
+      },
+      {
+        "key": "previousGates",
+        "pass": true,
+        "weight": 6,
+        "message": "이전 100점 게이트 유지"
+      }
+    ],
+    "failed": [],
+    "references": [
+      {
+        "id": "ecommerce-consumer-protection",
+        "name": "전자상거래 등에서의 소비자보호에 관한 법률",
+        "authority": "법제처 국가법령정보센터",
+        "url": "https://www.law.go.kr/",
+        "scope": "통신판매, 청약철회, 환불, 표시·고지"
+      },
+      {
+        "id": "privacy-protection-act",
+        "name": "개인정보 보호법",
+        "authority": "법제처 국가법령정보센터",
+        "url": "https://www.law.go.kr/",
+        "scope": "개인정보 처리방침, 처리 목적, 보유·파기, 안전조치"
+      },
+      {
+        "id": "electronic-financial-transactions",
+        "name": "전자금융거래법",
+        "authority": "법제처 국가법령정보센터",
+        "url": "https://www.law.go.kr/",
+        "scope": "전자결제, 전자지급거래, 결제 안전성"
+      },
+      {
+        "id": "consumer-dispute-examples",
+        "name": "소비자24 피해·분쟁 사례",
+        "authority": "공정거래위원회/한국소비자원 소비자24",
+        "url": "https://www.consumer.go.kr/",
+        "scope": "청약철회, 반품, 환불 분쟁 사례"
+      }
+    ]
+  },
+  "defaultStatus": {
+    "status": "package-ready-env-review-required",
+    "commercialReady": false,
+    "packageScore": 100,
+    "environmentScore": 52
+  },
+  "liveEnvStatus": {
+    "status": "commercial-live-ready",
+    "commercialReady": true,
+    "packageScore": 100,
+    "environmentScore": 100
+  },
+  "checks": [
+    {
+      "key": "moduleExists",
+      "weight": 10,
+      "pass": true,
+      "message": "상용 법무/결제/운영 게이트 모듈"
+    },
+    {
+      "key": "legalGate",
+      "weight": 10,
+      "pass": true,
+      "message": "법무 검토 승인 게이트"
+    },
+    {
+      "key": "paymentGate",
+      "weight": 12,
+      "pass": true,
+      "message": "결제 실환경 승인/웹훅 strict 게이트"
+    },
+    {
+      "key": "opsGate",
+      "weight": 12,
+      "pass": true,
+      "message": "운영 백업/복구 리허설 게이트"
+    },
+    {
+      "key": "publicPolicyPages",
+      "weight": 10,
+      "pass": true,
+      "message": "공개 정책 페이지"
+    },
+    {
+      "key": "officialReferences",
+      "weight": 8,
+      "pass": true,
+      "message": "공식 법령 기준 매트릭스"
+    },
+    {
+      "key": "routes",
+      "weight": 10,
+      "pass": true,
+      "message": "공개/관리자 상용 준비 API"
+    },
+    {
+      "key": "safeDefaultBlocksLive",
+      "weight": 8,
+      "pass": true,
+      "message": "기본 환경은 실결제/상용 출시 차단"
+    },
+    {
+      "key": "liveEnvCanPass",
+      "weight": 8,
+      "pass": true,
+      "message": "실환경 승인값 입력 시 상용 통과 가능"
+    },
+    {
+      "key": "docs",
+      "weight": 6,
+      "pass": true,
+      "message": "법무/결제/운영 납품 문서"
+    },
+    {
+      "key": "scripts",
+      "weight": 6,
+      "pass": true,
+      "message": "phase287 최종 게이트"
+    }
+  ],
+  "failed": [],
+  "report": "docs/current/PHASE287_COMMERCIAL_READINESS_AUDIT.json"
+}

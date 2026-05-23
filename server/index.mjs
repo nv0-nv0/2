@@ -45,6 +45,8 @@ import { putObjectToS3Compatible } from './infrastructure/storage/s3-compatible.
 import { PHASE229_PRICING_VERSION, buildPricingRecalculation } from './core/pricing-conversion-model.mjs';
 import { buildPublicColumnEnginePosts, publicColumnTypeLabel } from './core/public-column-engine.mjs';
 import { PRODUCT_AGENT_SUITE_VERSION, publishProductInsightNow, publishProductInsightIfDue, ensureProductAgentSettings, latestProductInsightPublication, productInsightDueStatus, buildProductAgentRuntimeStatus, runProductAgentPackageAudit } from './core/product-agent-suite.mjs';
+import { ENGINE_AGENT_ORCHESTRATOR_VERSION, buildEngineAgentRuntimeStatus, runEngineAgentPackageAudit } from './core/engine-agent-orchestrator.mjs';
+import { PHASE287_COMMERCIAL_READINESS_VERSION, buildCommercialReadinessStatus, runPhase287CommercialAudit } from './core/commercial-readiness-287.mjs';
 const COMMERCIAL_OFFER_COMPATIBILITY_MARKERS = ['전문가 리포트', 'IndustryGuide', 'Certified'];
 const ENV_CONFIG = readEnvConfig(process.env);
 const __filename = fileURLToPath(import.meta.url);
@@ -3938,6 +3940,8 @@ buildPolicyDocumentPreview,
 buildWorkOrderPreview,
 buildPortalSummary,
 buildProductAgentRuntimeStatus,
+buildEngineAgentRuntimeStatus,
+buildCommercialReadinessStatus,
 buildProductDashboard,
 buildProductIntelligence,
 buildProductionLaunchChecklist,
@@ -3946,6 +3950,8 @@ buildReleaseReadiness,
 buildRobotsTxt,
 buildRuleCatalog,
 runProductAgentPackageAudit,
+runEngineAgentPackageAudit,
+runPhase287CommercialAudit,
 buildSitemapXml,
 buildSmartProductOrchestration,
 buildSmartPublicSnapshot,

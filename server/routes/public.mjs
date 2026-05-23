@@ -63,6 +63,8 @@ export function createPublicRouteHandler(ctx) {
   buildWorkOrderPreview,
   buildPortalSummary,
   buildProductAgentRuntimeStatus,
+  buildEngineAgentRuntimeStatus,
+  buildCommercialReadinessStatus,
   buildProductDashboard,
   buildProductIntelligence,
   buildProductionLaunchChecklist,
@@ -352,6 +354,42 @@ if (pathname === '/api/public/product-agent-status' && req.method === 'GET') {
 const db = await readDb();
 const status = buildProductAgentRuntimeStatus(db, { businessProfile: BUSINESS_PROFILE });
 return json(req, res, 200, status);
+}
+if (pathname === '/api/public/engine-agent-status' && req.method === 'GET') {
+const db = await readDb();
+const status = buildEngineAgentRuntimeStatus(db, { businessProfile: BUSINESS_PROFILE, nowIso: nowIso() });
+return json(req, res, 200, status);
+}
+if (pathname === '/api/public/commercial-readiness' && req.method === 'GET') {
+const db = await readDb();
+const status = buildCommercialReadinessStatus(db, process.env);
+return json(req, res, 200, {
+  ok: true,
+  phase: status.phase,
+  version: status.version,
+  packageScore: status.packageScore,
+  environmentScore: status.environmentScore,
+  status: status.status,
+  commercialReady: status.commercialReady,
+  launchPolicy: status.launchPolicy,
+  legal: {
+    policyVersion: status.legal.policyVersion,
+    legalReviewApproved: status.legal.legalReviewApproved,
+    legalReviewRequired: status.legal.legalReviewRequired,
+    documents: status.legal.documents,
+    references: status.legal.references
+  },
+  payment: {
+    provider: status.payment.provider,
+    liveReady: status.payment.liveReady,
+    status: status.payment.status,
+    failed: status.payment.failed.map(item => ({ key: item.key, message: item.message }))
+  },
+  ops: {
+    status: status.ops.status,
+    failed: status.ops.failed.map(item => ({ key: item.key, message: item.message }))
+  }
+});
 }
 if (pathname === '/api/public/board' && req.method === 'GET') {
 const requestedPageSize = clamp(Number(url.searchParams.get('pageSize') || 10) || 10, 1, 20);

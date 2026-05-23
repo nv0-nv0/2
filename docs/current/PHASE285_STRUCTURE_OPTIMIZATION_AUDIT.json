@@ -1,0 +1,71 @@
+{
+  "ok": true,
+  "score": 100,
+  "total": 100,
+  "phase": "phase285",
+  "package": "VERIDION structure tree optimized hardening",
+  "checks": [
+    {
+      "key": "structureTreeDoc",
+      "weight": 14,
+      "pass": true,
+      "message": "구조 트리 문서와 책임 맵 생성"
+    },
+    {
+      "key": "structureTreeJson",
+      "weight": 12,
+      "pass": true,
+      "message": "기계 판독용 구조 트리 JSON 생성"
+    },
+    {
+      "key": "keyFileCoverage",
+      "weight": 14,
+      "pass": true,
+      "message": "핵심 파일 매트릭스 전부 존재 확인"
+    },
+    {
+      "key": "dashboardCssShared",
+      "weight": 10,
+      "pass": true,
+      "message": "포털 대시보드 CSS shared 경로 유지"
+    },
+    {
+      "key": "portalShellStable",
+      "weight": 10,
+      "pass": true,
+      "message": "승인 대시보드 쉘 구조 유지"
+    },
+    {
+      "key": "dynamicIdsStable",
+      "weight": 10,
+      "pass": true,
+      "message": "기존 동작 ID 유지"
+    },
+    {
+      "key": "gaugeRuntimeStable",
+      "weight": 8,
+      "pass": true,
+      "message": "인라인 style 없이 런타임 게이지 갱신 유지"
+    },
+    {
+      "key": "phase284Baseline",
+      "weight": 10,
+      "pass": true,
+      "message": "phase284 100점 기준 유지"
+    },
+    {
+      "key": "phase285Scripts",
+      "weight": 8,
+      "pass": true,
+      "message": "phase285 구조 최적화 게이트 연결"
+    },
+    {
+      "key": "packageDescriptionUpdated",
+      "weight": 4,
+      "pass": true,
+      "message": "패키지 설명 phase285 구조 최적화 반영"
+    }
+  ],
+  "failed": [],
+  "report": "docs/current/PHASE285_STRUCTURE_OPTIMIZATION_AUDIT.json"
+}
