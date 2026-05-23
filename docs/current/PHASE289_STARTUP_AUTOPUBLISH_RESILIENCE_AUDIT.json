@@ -1,0 +1,59 @@
+{
+  "ok": true,
+  "phase": "phase289",
+  "score": 100,
+  "total": 100,
+  "issue": "startup restart loop caused by duplicate product insight",
+  "checks": [
+    {
+      "key": "duplicateFailureReproduced",
+      "weight": 14,
+      "pass": true,
+      "message": "중복 인사이트 품질 실패 상황 재현"
+    },
+    {
+      "key": "runCtaDuplicateSkip",
+      "weight": 18,
+      "pass": true,
+      "message": "runCtaAutopublish 중복 발행 skip 처리"
+    },
+    {
+      "key": "startupNonFatal",
+      "weight": 18,
+      "pass": true,
+      "message": "부팅 중 자동발행 실패가 서버 시작을 중단하지 않음"
+    },
+    {
+      "key": "existingCadencePreserved",
+      "weight": 10,
+      "pass": true,
+      "message": "20분 자동 발행 구조 유지"
+    },
+    {
+      "key": "serverAvailabilityPreserved",
+      "weight": 10,
+      "pass": true,
+      "message": "서버 가용성 API 유지"
+    },
+    {
+      "key": "phase289Scripts",
+      "weight": 10,
+      "pass": true,
+      "message": "phase289 최종 검증 게이트"
+    },
+    {
+      "key": "runbook",
+      "weight": 10,
+      "pass": true,
+      "message": "재시작 루프 대응 문서"
+    },
+    {
+      "key": "previousGates",
+      "weight": 10,
+      "pass": true,
+      "message": "이전 100점 게이트 유지"
+    }
+  ],
+  "failed": [],
+  "report": "docs/current/PHASE289_STARTUP_AUTOPUBLISH_RESILIENCE_AUDIT.json"
+}

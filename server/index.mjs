@@ -3843,7 +3843,30 @@ riskScore: 55,
 totalFindings: 3,
 topFindings: ['지원 고지', '환불 정책 표시', '개인정보 처리방침 위치']
 };
-const item = publishProductInsightNow(db, { uid, nowIso, businessProfile: BUSINESS_PROFILE, scan, autoPublished: true, intervalMs: synced.intervalMs, reason });
+let item = null;
+try {
+  item = publishProductInsightNow(db, { uid, nowIso, businessProfile: BUSINESS_PROFILE, scan, autoPublished: true, intervalMs: synced.intervalMs, reason });
+} catch (error) {
+  const duplicateOnly = error?.code === 'PRODUCT_INSIGHT_QUALITY_FAILED'
+    && Array.isArray(error?.audit?.failed)
+    && error.audit.failed.length === 1
+    && error.audit.failed[0] === 'notDuplicate';
+  if (!duplicateOnly) throw error;
+  db.productAgentState ||= {};
+  db.productAgentState.lastRunAt = nowIso();
+  db.productAgentState.lastSkippedAt = nowIso();
+  db.productAgentState.lastSkipReason = 'duplicate-insight';
+  db.productAgentState.lastDraftAudit = error.audit;
+  appendAudit(db, { headers: {}, socket: {} }, 'system.product_insight.skipped_duplicate', {
+    reason,
+    intervalMs: synced.intervalMs,
+    suiteVersion: PRODUCT_AGENT_SUITE_VERSION,
+    qualityScore: error.audit?.score,
+    failed: error.audit?.failed || []
+  });
+  await writeDb(db);
+  return { ok: true, skipped: 'duplicate-insight', intervalMs: synced.intervalMs, suiteVersion: PRODUCT_AGENT_SUITE_VERSION, audit: error.audit };
+}
 appendAudit(db, { headers: {}, socket: {} }, 'system.product_insight.published', { id: item.id, reason, intervalMs: synced.intervalMs, suiteVersion: PRODUCT_AGENT_SUITE_VERSION, qualityScore: item.quality?.score });
 await writeDb(db);
 return { ok: true, publication: item, intervalMs: synced.intervalMs, suiteVersion: PRODUCT_AGENT_SUITE_VERSION };
@@ -4260,7 +4283,16 @@ await hydrateSessions();
 const db = await readDb();
 await ensureBootstrapAdmin(db, process.env, uid, nowIso);
 await writeDb(db);
-await runCtaAutopublish('startup');
+try {
+  const startupAutopublish = await runCtaAutopublish('startup');
+  if (startupAutopublish?.skipped) console.info('startup product insight autopublish skipped', startupAutopublish);
+} catch (error) {
+  console.error('startup product insight autopublish failed non-fatally', {
+    message: error?.message || String(error),
+    code: error?.code || null,
+    failed: error?.audit?.failed || []
+  });
+}
 if (AUTO_BACKUP_ENABLED && AUTO_BACKUP_ON_STARTUP) {
 setTimeout(() => { runAutomaticBackup('startup').catch(error => console.error('startup backup failed', error)); }, 15_000).unref();
 }

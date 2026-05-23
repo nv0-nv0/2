@@ -1,13 +1,13 @@
 {
   "ok": true,
-  "generatedAt": "2026-05-23T13:28:26.685Z",
-  "root": "VERIDION_phase287_commercial_legal_payment_ops_100",
+  "generatedAt": "2026-05-23T13:36:51.138Z",
+  "root": "VERIDION_phase288_server_available_100",
   "limits": {
     "maxDepth": 4,
     "maxChildrenPerDir": 80
   },
   "summary": {
-    "files": 323,
+    "files": 326,
     "dirs": 61
   },
   "keyFiles": [
@@ -55,7 +55,7 @@
     }
   ],
   "tree": {
-    "name": "VERIDION_phase287_commercial_legal_payment_ops_100",
+    "name": "VERIDION_phase288_server_available_100",
     "path": ".",
     "type": "dir",
     "note": "",
@@ -1192,7 +1192,7 @@
             "name": "index.mjs",
             "path": "server/index.mjs",
             "type": "file",
-            "size": 226708
+            "size": 228031
           }
         ]
       },
@@ -1751,6 +1751,12 @@
             "size": 3597
           },
           {
+            "name": "validate-phase289-startup-autopublish-resilience.mjs",
+            "path": "scripts/validate-phase289-startup-autopublish-resilience.mjs",
+            "type": "file",
+            "size": 4024
+          },
+          {
             "name": "validate-pipeline.mjs",
             "path": "scripts/validate-pipeline.mjs",
             "type": "file",
@@ -2067,10 +2073,16 @@
                 "size": 1326
               },
               {
+                "name": "PHASE289_STARTUP_AUTOPUBLISH_RESILIENCE_AUDIT.json",
+                "path": "docs/current/PHASE289_STARTUP_AUTOPUBLISH_RESILIENCE_AUDIT.json",
+                "type": "file",
+                "size": 1433
+              },
+              {
                 "name": "PROJECT_STRUCTURE_TREE.json",
                 "path": "docs/current/PROJECT_STRUCTURE_TREE.json",
                 "type": "file",
-                "size": 78233
+                "size": 79263
               }
             ]
           },
@@ -2207,10 +2219,16 @@
             "size": 2022
           },
           {
+            "name": "PHASE289_STARTUP_AUTOPUBLISH_RESILIENCE.md",
+            "path": "docs/PHASE289_STARTUP_AUTOPUBLISH_RESILIENCE.md",
+            "type": "file",
+            "size": 1454
+          },
+          {
             "name": "PROJECT_STRUCTURE_TREE.md",
             "path": "docs/PROJECT_STRUCTURE_TREE.md",
             "type": "file",
-            "size": 17630
+            "size": 17894
           }
         ]
       },
@@ -2456,7 +2474,7 @@
         "name": "package.json",
         "path": "package.json",
         "type": "file",
-        "size": 7726
+        "size": 7897
       },
       {
         "name": "README.md",

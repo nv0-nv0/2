@@ -4,7 +4,7 @@
   "total": 100,
   "phase": "phase284",
   "package": "VERIDION phase283 dashboard fixed + POSIX packaging hardening",
-  "checkedFiles": 323,
+  "checkedFiles": 326,
   "checks": [
     {
       "key": "posixSourcePaths",
