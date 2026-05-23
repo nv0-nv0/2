@@ -20,7 +20,7 @@ const css = read('shared/veridion-adopted-ui.css');
 const pkg = JSON.parse(read('package.json'));
 add('product-name:VERIDION-visible', /VERIDION/.test(allHtml));
 add('product-name:header-brand', /class="nv0n-brand"[^>]*>VERIDION<\/a>/.test(allHtml) || /nv0-brand-mark">VERIDION/.test(allHtml));
-add('product-name:package', pkg.name === 'veridion-public-risk-diagnostic' && (/phase276|phase277|phase278|phase280/.test(pkg.version)));
+add('product-name:package', pkg.name === 'veridion-public-risk-diagnostic' && (/phase276|phase277|phase278|phase280|phase283/.test(pkg.version)));
 add('legal-contact:single-email', allHtml.includes('ct@nv0.kr') && !allHtml.includes('hello@nv0.kr') && !allHtml.includes('ct@VERIDION'));
 add('legal-domain:not-broken', !read('server/index.mjs').includes('https://VERIDION') && !read('server/index.mjs').includes('ct@VERIDION'));
 add('stitch-css:tokens', css.includes('--veridion-bg:#f7f9fb') && css.includes('--veridion-max:1280px'));

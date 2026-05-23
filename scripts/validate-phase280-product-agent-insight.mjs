@@ -51,6 +51,13 @@ assert.equal(second, null, '19 minute duplicate publish must be blocked');
 const third = publishProductInsightIfDue(db, { nowMs: Date.parse(now) + 20 * 60_000, nowIso: () => new Date(Date.parse(now) + 20 * 60_000).toISOString(), uid: prefix => `${prefix}-phase280-c`, businessProfile: { domain: 'https://nv0.kr', tradeName: 'VERIDION' }, autoPublished: true, reason: 'validator' });
 assert.ok(third, '20 minute publish must be allowed');
 assert.equal(db.publications.length, 2, 'second due publication must be persisted');
+const duplicateDb = { settings: { productInsightAutopublishIntervalMs: 1_200_000 }, scans: [{ target: 'https://example.org', riskScore: 55, totalFindings: 3 }], sites: [], orders: [], boards: [], publications: [] };
+const duplicateDraft = buildProductInsightDraft(duplicateDb, { nowIso: () => now, businessProfile: { domain: 'https://nv0.kr', tradeName: 'VERIDION' }, autoPublished: true, reason: 'duplicate-retry-validator' });
+duplicateDb.publications.push({ ...duplicateDraft, id: 'existing-duplicate', status: 'published', visibility: 'public', createdAt: '2026-05-22T06:00:00.000Z', publishedAt: '2026-05-22T06:00:00.000Z' });
+const duplicateSafe = publishProductInsightIfDue(duplicateDb, { nowMs: Date.parse(now) + 40 * 60_000, nowIso: () => new Date(Date.parse(now) + 40 * 60_000).toISOString(), uid: prefix => `${prefix}-phase280-duplicate-safe`, businessProfile: { domain: 'https://nv0.kr', tradeName: 'VERIDION' }, autoPublished: true, reason: 'duplicate-retry-validator' });
+assert.ok(duplicateSafe, 'duplicate draft should retry with another topic instead of crashing');
+assert.notEqual(duplicateSafe.title, duplicateDraft.title, 'retry publication must avoid the duplicate title');
+assert.equal(duplicateSafe.quality.ok, true, 'retry publication must pass quality audit');
 const status = buildProductAgentRuntimeStatus(db, { businessProfile: { domain: 'https://nv0.kr', tradeName: 'VERIDION' } });
 assert.equal(status.version, PRODUCT_AGENT_SUITE_VERSION, 'runtime status version mismatch');
 assert.equal(status.cadence.intervalMinutes, 20, 'runtime cadence must be 20 minutes');
@@ -71,6 +78,7 @@ const report = {
     firstPublication: first.id,
     secondPublicationBlockedAt19Min: second === null,
     thirdPublication: third.id,
+    duplicateRetryPublication: duplicateSafe.id,
     draftQualityScore: quality.score
   },
   audit

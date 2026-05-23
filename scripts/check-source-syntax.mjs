@@ -17,7 +17,7 @@ function walk(dir){
     if(!/\.(js|mjs|sh)$/.test(entry.name)) continue;
     checkedCount += 1;
     const stat = fs.statSync(abs);
-    const relPath = path.relative(ROOT, abs);
+    const relPath = path.relative(ROOT, abs).replace(/\\/g, '/');
     const limit = MONOLITH_COMPAT_LIMITS.get(relPath) || DEFAULT_SOURCE_SIZE_LIMIT;
     if(stat.size > limit) failures.push({ file:relPath, error:`source file exceeds safety size limit (${stat.size}/${limit})` });
   }

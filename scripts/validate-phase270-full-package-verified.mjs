@@ -16,7 +16,7 @@ const server = read('server/index.mjs');
 const runtimeReport = exists('docs/current/PHASE270_RUNTIME_FLOW_AUDIT.json') ? JSON.parse(read('docs/current/PHASE270_RUNTIME_FLOW_AUDIT.json')) : null;
 const phase269Report = exists('docs/current/PHASE269_COMPLETE_20_IMPROVEMENTS_AUDIT.json') ? JSON.parse(read('docs/current/PHASE269_COMPLETE_20_IMPROVEMENTS_AUDIT.json')) : null;
 
-add('01 package version phase270, phase271, phase272, or phase273', /phase270-full-package-verified-hardened|phase271-site-ux-insight-polish|phase272-premium-redesign|phase273-package-100|phase274-customer-copy-readability|phase278-customer-perfect/.test(pkg.version));
+add('01 package version phase270, phase271, phase272, or phase273', /phase270-full-package-verified-hardened|phase271-site-ux-insight-polish|phase272-premium-redesign|phase273-package-100|phase274-customer-copy-readability|phase278-customer-perfect|phase283-dashboard-design-applied/.test(pkg.version));
 add('02 final review points current final gate', ['npm run phase270:final','npm run phase271:final','npm run phase272:final','npm run phase273:final','npm run phase274:final','npm run phase278:final'].includes(pkg.scripts?.['final:review']));
 add('03 RUN_ALL uses current final gate', read('RUN_ALL_TESTS.sh').includes('npm run phase270:final') || read('RUN_ALL_TESTS.sh').includes('npm run phase271:final') || read('RUN_ALL_TESTS.sh').includes('npm run phase272:final') || read('RUN_ALL_TESTS.sh').includes('npm run phase273:final') || read('RUN_ALL_TESTS.sh').includes('npm run phase274:final','npm run phase278:final'));
 add('04 phase270 final includes e2e', pkg.scripts?.['phase270:final']?.includes('npm run test:e2e'));

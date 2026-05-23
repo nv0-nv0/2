@@ -119,7 +119,7 @@ const categories = [
     name: '납품 패키징·문서화',
     weight: 5,
     checks: [
-      /phase273-package-100|phase274-customer-copy-readability|phase278-customer-perfect/.test(pkg.version),
+      /phase273-package-100|phase274-customer-copy-readability|phase278-customer-perfect|phase283-dashboard-design-applied/.test(pkg.version),
       /100점/.test(read('docs/PHASE273_PACKAGE_SCORECARD_100.md')),
       exists('docs/PHASE273_PACKAGE_SCORECARD_100.md'),
       exists('docs/current/PHASE272_PREMIUM_REDESIGN_AUDIT.json'),

@@ -50,7 +50,7 @@ const bannedVisible = [
 ];
 const bannedSourceStrings = ['무료 데모', '데모 신뢰 점수', '데모 정확도', '결제 후 납품 기준', '검수 기준'];
 
-add('01 package version is phase274', /phase274-customer-copy-readability|phase278-customer-perfect/.test(pkg.version));
+add('01 package version is phase274', /phase274-customer-copy-readability|phase278-customer-perfect|phase283-dashboard-design-applied/.test(pkg.version));
 add('02 final review points to phase274', pkg.scripts?.['final:review'] === 'npm run phase274:final');
 add('03 phase274 final gate exists', pkg.scripts?.['phase274:final']?.includes('npm run validate:phase274'));
 add('04 customer-facing HTML has no production/internal copy phrases', !bannedVisible.some(term => visibleText.includes(term)), bannedVisible.filter(term => visibleText.includes(term)).join(', '));

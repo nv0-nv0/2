@@ -33,7 +33,7 @@ for (const file of topbarFiles) {
 const allHtml = htmlFiles.map(file => read(file)).join('\n');
 const css = read('shared/veridion-adopted-ui.css');
 const pkg = JSON.parse(read('package.json'));
-add('package:phase277-version', /phase277|phase278|phase280/.test(pkg.version) && pkg.name === 'veridion-public-risk-diagnostic');
+add('package:phase277-version', /phase277|phase278|phase280|phase283/.test(pkg.version) && pkg.name === 'veridion-public-risk-diagnostic');
 add('brand:veridion-visible', /VERIDION/.test(allHtml));
 add('brand:business-legal-nv0-only', allHtml.includes('상호: 엔브이제로(NV0)'));
 add('copy:no-duplicate-demo', !allHtml.includes('무료 진단 진단') && !allHtml.includes('작동되는 무료 진단'));

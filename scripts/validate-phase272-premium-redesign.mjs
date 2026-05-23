@@ -19,7 +19,7 @@ const authJs = read('apps/public/auth/app.js');
 const board = read('apps/public/board/index.html');
 const allPublic = ['home','plans','portal','auth','board'].map(slug => read(`apps/public/${slug}/index.html`)).join('\n');
 
-add('01 package version is phase272 or phase273', /phase272-premium-redesign|phase273-package-100|phase274-customer-copy-readability/.test(pkg.version));
+add('01 package version is phase272 or phase273', /phase272-premium-redesign|phase273-package-100|phase274-customer-copy-readability|phase283-dashboard-design-applied/.test(pkg.version));
 add('02 final review points phase272 or later final', ['npm run phase272:final','npm run phase273:final','npm run phase274:final'].includes(pkg.scripts?.['final:review']));
 add('03 phase272 final gate exists', pkg.scripts?.['phase272:final']?.includes('npm run validate:phase272'));
 add('04 phase272 validation script registered', pkg.scripts?.['validate:phase272'] === 'node scripts/validate-phase272-premium-redesign.mjs');

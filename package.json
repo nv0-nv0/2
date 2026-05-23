@@ -1,6 +1,6 @@
 {
   "name": "veridion-public-risk-diagnostic",
-  "version": "1.0.0-commercial-phase280-product-agent-insight",
+  "version": "1.0.0-commercial-phase283-dashboard-design-applied",
   "private": true,
   "type": "module",
   "scripts": {
@@ -68,7 +68,11 @@
     "validate:phase279": "node scripts/validate-phase279-commercial-visual-qa.mjs",
     "phase279:final": "npm run phase278:final && npm run validate:phase279",
     "validate:phase280": "node scripts/validate-phase280-product-agent-insight.mjs",
-    "phase280:final": "npm run phase279:final && npm run validate:phase280"
+    "phase280:final": "npm run phase279:final && npm run validate:phase280",
+    "validate:phase283": "node scripts/validate-phase283-dashboard-design.mjs",
+    "phase283:final": "npm run check:syntax && npm test && npm run check:pages && npm run test:routes && npm run validate:phase280 && npm run validate:phase283",
+    "validate:phase284": "node scripts/validate-phase284-package-100.mjs",
+    "phase284:final": "npm run phase283:final && npm run validate:phase284"
   },
-  "description": "VERIDION phase278-compatible phase280 package: product-related engines and agents rebuilt for package-wide QA, insight generation, public board sync, and verified 20-minute automatic publication cadence."
+  "description": "VERIDION phase278-compatible phase283 package: product-related engines and agents with the approved portal dashboard shell, package-wide QA, insight generation, public board sync, and verified 20-minute automatic publication cadence."
 }

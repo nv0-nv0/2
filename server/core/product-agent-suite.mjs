@@ -340,8 +340,19 @@ export function publishProductInsightNow(db = {}, options = {}) {
   const uid = typeof options.uid === 'function' ? options.uid : (prefix = 'id') => `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
   const nowIso = typeof options.nowIso === 'function' ? options.nowIso : nowIsoDefault;
   const existing = [...list(db.publications), ...list(db.boards)];
-  const draft = buildProductInsightDraft(db, { ...options, nowIso, autoPublished: options.autoPublished === true });
-  const audit = auditProductInsightDraft(draft, existing);
+  let draft = buildProductInsightDraft(db, { ...options, nowIso, autoPublished: options.autoPublished === true });
+  let audit = auditProductInsightDraft(draft, existing);
+  if (!options.topic && !audit.ok && audit.failed.length === 1 && audit.failed[0] === 'notDuplicate') {
+    for (const topic of TOPICS) {
+      const retryDraft = buildProductInsightDraft(db, { ...options, topic, nowIso, autoPublished: options.autoPublished === true });
+      const retryAudit = auditProductInsightDraft(retryDraft, existing);
+      if (retryAudit.ok) {
+        draft = retryDraft;
+        audit = retryAudit;
+        break;
+      }
+    }
+  }
   db.productAgentState ||= {};
   db.productAgentState.lastDraftAudit = audit;
   db.productAgentState.lastRunAt = nowIso();

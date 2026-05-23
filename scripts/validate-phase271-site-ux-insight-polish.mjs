@@ -18,7 +18,7 @@ const authJs = read('apps/public/auth/app.js');
 const server = read('server/index.mjs');
 const publicRoutes = read('server/routes/public.mjs');
 
-add('01 phase271/phase272/phase273 package version', /phase271-site-ux-insight-polish|phase272-premium-redesign|phase273-package-100|phase274-customer-copy-readability/.test(pkg.version));
+add('01 phase271/phase272/phase273 package version', /phase271-site-ux-insight-polish|phase272-premium-redesign|phase273-package-100|phase274-customer-copy-readability|phase283-dashboard-design-applied/.test(pkg.version));
 add('02 phase271 final gate exists', pkg.scripts?.['phase271:final']?.includes('npm run validate:phase271'));
 add('03 final review points phase271', ['npm run phase271:final','npm run phase272:final','npm run phase273:final','npm run phase274:final'].includes(pkg.scripts?.['final:review']));
 add('04 CI uses phase271 final', read('.github/workflows/ci.yml').includes('npm run phase271:final') || read('.github/workflows/ci.yml').includes('npm run phase272:final') || read('.github/workflows/ci.yml').includes('npm run phase273:final') || read('.github/workflows/ci.yml').includes('npm run phase274:final'));
