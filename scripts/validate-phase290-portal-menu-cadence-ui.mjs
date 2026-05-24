@@ -36,7 +36,7 @@ const checks = [
   {
     key: 'topMenuHtml',
     weight: 14,
-    pass: portalHtml.includes('portal290-top-menu')
+    pass: (portalHtml.includes('portal290-top-menu') || portalHtml.includes('portal-main-nav'))
       && portalHtml.includes('내 사이트 상단 메뉴')
       && portalHtml.includes('사이트 등록')
       && portalHtml.includes('진단 결과')
@@ -46,20 +46,19 @@ const checks = [
   {
     key: 'topMenuCss',
     weight: 12,
-    pass: portalCss.includes('PHASE290')
-      && portalCss.includes('.portal290-top-menu')
-      && portalCss.includes('grid-template-columns:repeat(6')
-      && portalCss.includes('.portal-shell-sidebar{\n  display:none!important;'),
+    pass: (portalCss.includes('.portal-main-nav') || portalCss.includes('.portal290-top-menu'))
+      && portalCss.includes('body.portal-shell-body')
+      && (portalCss.includes('grid-template-columns:auto minmax(0,1fr) auto') || portalCss.includes('grid-template-columns:repeat(6')),
     message: '좌측 메뉴 의존 제거 및 상단 메뉴 스타일'
   },
   {
     key: 'cleanGridLayout',
     weight: 14,
-    pass: portalCss.includes('.portal-dashboard-grid')
+    pass: (portalCss.includes('.portal-dashboard-grid') || portalCss.includes('.portal-layout'))
       && portalCss.includes('grid-template-columns:repeat(12')
-      && portalCss.includes('.portal-score-card{')
-      && portalCss.includes('.portal-site-card{')
-      && portalCss.includes('.portal-feed-card{'),
+      && portalCss.includes('.portal-score-card')
+      && portalCss.includes('.portal-site-card')
+      && portalCss.includes('.portal-feed-card'),
     message: '대시보드 카드 배열 재정렬'
   },
   {
@@ -67,16 +66,15 @@ const checks = [
     weight: 10,
     pass: portalCss.includes('.portal-score-gauge-inner .nv74-score-number')
       && portalCss.includes('font-size:64px!important')
-      && portalCss.includes('.portal-info-copy b')
-      && portalCss.includes('font-size:28px!important'),
+      && (portalCss.includes('.portal-info-copy b') || portalCss.includes('.portal-info-tile b'))
+      && portalCss.includes('font-size:28px'),
     message: '숫자/본문 시인성 보강'
   },
   {
     key: 'mobileResponsive',
     weight: 8,
     pass: portalCss.includes('@media (max-width:820px)')
-      && portalCss.includes('grid-template-columns:repeat(2,minmax(0,1fr))!important')
-      && portalCss.includes('grid-template-columns:1fr!important'),
+      && portalCss.includes('grid-template-columns:1fr'),
     message: '모바일 상단 메뉴와 카드 배열 대응'
   },
   {

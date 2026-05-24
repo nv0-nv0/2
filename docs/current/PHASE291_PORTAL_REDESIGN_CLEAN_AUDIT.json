@@ -1,0 +1,72 @@
+{
+  "ok": true,
+  "phase": "phase291",
+  "score": 100,
+  "total": 100,
+  "issue": "portal page clean redesign with preserved functionality",
+  "checkedIds": 38,
+  "checks": [
+    {
+      "key": "cleanSingleShell",
+      "weight": 12,
+      "pass": true,
+      "message": "좌측/상단 혼합 구조 제거 후 단일 상단 대시보드 구조"
+    },
+    {
+      "key": "usableTopNavigation",
+      "weight": 12,
+      "pass": true,
+      "message": "내 사이트 상단 메뉴 명확화"
+    },
+    {
+      "key": "functionalIdsPreserved",
+      "weight": 16,
+      "pass": true,
+      "message": "기존 기능 연결 ID 전체 유지"
+    },
+    {
+      "key": "layoutGrid",
+      "weight": 12,
+      "pass": true,
+      "message": "카드 배열 12컬럼 기준으로 재설계"
+    },
+    {
+      "key": "readability",
+      "weight": 12,
+      "pass": true,
+      "message": "제목/점수/카드 숫자/본문 시인성 기준"
+    },
+    {
+      "key": "cssResetNoLegacyConflict",
+      "weight": 10,
+      "pass": true,
+      "message": "누적 CSS 충돌 제거"
+    },
+    {
+      "key": "twentyMinuteCadence",
+      "weight": 10,
+      "pass": true,
+      "message": "인사이트 20분에 1회 표시 유지"
+    },
+    {
+      "key": "dynamicQuickActionsClean",
+      "weight": 6,
+      "pass": true,
+      "message": "빠른 실행 동적 영역 정리"
+    },
+    {
+      "key": "mobileResponsive",
+      "weight": 5,
+      "pass": true,
+      "message": "반응형 배열 유지"
+    },
+    {
+      "key": "phase291Scripts",
+      "weight": 5,
+      "pass": true,
+      "message": "phase291 최종 검증 게이트"
+    }
+  ],
+  "failed": [],
+  "report": "docs/current/PHASE291_PORTAL_REDESIGN_CLEAN_AUDIT.json"
+}

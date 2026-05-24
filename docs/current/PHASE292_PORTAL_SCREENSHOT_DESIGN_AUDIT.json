@@ -1,0 +1,72 @@
+{
+  "ok": true,
+  "phase": "phase292",
+  "score": 100,
+  "total": 100,
+  "issue": "screenshot-inspired portal redesign integrated with existing VERIDION pages",
+  "checkedIds": 38,
+  "checks": [
+    {
+      "key": "screenshotInspiredTopbar",
+      "weight": 12,
+      "pass": true,
+      "message": "이미지 기준 상단 메뉴 구조"
+    },
+    {
+      "key": "dashboardGridComposition",
+      "weight": 12,
+      "pass": true,
+      "message": "등록/진단/빠른 실행/제안/현황/인사이트/계정 카드 구성"
+    },
+    {
+      "key": "visualRegisterCard",
+      "weight": 10,
+      "pass": true,
+      "message": "이미지와 유사한 강조형 내 사이트 등록 카드"
+    },
+    {
+      "key": "recentScanCard",
+      "weight": 10,
+      "pass": true,
+      "message": "최근 진단 결과 카드와 원형 점수 게이지"
+    },
+    {
+      "key": "quickActionsEightGrid",
+      "weight": 10,
+      "pass": true,
+      "message": "빠른 실행 8개 기능 그리드"
+    },
+    {
+      "key": "siteInsightAccountRows",
+      "weight": 8,
+      "pass": true,
+      "message": "하단 현황/인사이트/계정 카드 배열"
+    },
+    {
+      "key": "functionalityIdsPreserved",
+      "weight": 14,
+      "pass": true,
+      "message": "기존 기능 연결 ID 전체 유지"
+    },
+    {
+      "key": "twentyMinuteCadence",
+      "weight": 8,
+      "pass": true,
+      "message": "인사이트 발행 주기 20분에 1회 유지"
+    },
+    {
+      "key": "responsive",
+      "weight": 8,
+      "pass": true,
+      "message": "PC/태블릿/모바일 반응형 배열"
+    },
+    {
+      "key": "existingGates",
+      "weight": 8,
+      "pass": true,
+      "message": "기존 상용/서버/부팅/20분 게이트 유지"
+    }
+  ],
+  "failed": [],
+  "report": "docs/current/PHASE292_PORTAL_SCREENSHOT_DESIGN_AUDIT.json"
+}

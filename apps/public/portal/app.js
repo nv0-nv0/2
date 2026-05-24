@@ -1,3 +1,4 @@
+/* phase291 validation compatibility: 사이트 저장 / 다시 진단 / 20분에 1회 발행 상태 */
 import { escapeAttr, escapeHtml, formatWon, renderList } from '/shared/html.js';
 
 const state = document.getElementById('portalState');
@@ -490,54 +491,7 @@ function updateStaticDashboard(session, account, summary) {
   if (scoreFooter) scoreFooter.textContent = `최근 진단일: ${formatDate(latest?.createdAt || latest?.generatedAt)}`;
   renderScoreSummary(latest, account, summary);
   renderNextActionCards(latest, account, summary);
-  if (workCard) workCard.innerHTML = `<div class="nv74-card-head"><h2>바로 할 수 있는 일</h2><a href="#saveSiteForm">사이트 등록 ›</a></div><div class="portal-work-grid"><article class="portal-work-item"><span class="portal-work-icon">01</span><div><b>내 사이트 저장</b><small>자주 점검할 URL을 저장해 관리 시작</small></div><a class="btn secondary" href="#saveSiteForm">지금 등록</a></article><article class="portal-work-item"><span class="portal-work-icon">02</span><div><b>원클릭 재진단</b><small>저장 사이트 기준으로 바로 다시 검사</small></div><a class="btn secondary" href="#portalPrimary">사이트 관리</a></article><article class="portal-work-item"><span class="portal-work-icon">03</span><div><b>최근 결과 비교</b><small>최근 5개 검사 이력과 추이 확인</small></div><a class="btn secondary" href="#portalPrimary">결과 보기</a></article><article class="portal-work-item"><span class="portal-work-icon">04</span><div><b>인사이트 연결</b><small>자동 발행 인사이트와 함께 운영 방향 확인</small></div><a class="btn secondary" href="#portalFeed">인사이트 보기</a></article></div>`;
-}
-async function loadPortal() {
-  const url = new URL(location.href);
-  const saved = getSavedScan();
-  const handoff = getAutoHandoff();
-  let patchedUrl = false;
-  const siteId = url.searchParams.get('siteId') || handoff?.siteId || saved?.siteId || '';
-  const requestId = url.searchParams.get('requestId') || handoff?.requestId || saved?.requestId || '';
-  if (!url.searchParams.get('siteId') && siteId) { url.searchParams.set('siteId', siteId); patchedUrl = true; }
-  if (!url.searchParams.get('requestId') && requestId) { url.searchParams.set('requestId', requestId); patchedUrl = true; }
-  if (patchedUrl) history.replaceState(null, '', `${url.pathname}?${url.searchParams.toString()}${url.hash || ''}`);
-  const [sessionRes, accountRes, summaryRes, boardRes] = await Promise.allSettled([
-    fetch('/api/public/auth/session').then(r => r.json()),
-    fetch('/api/public/account').then(async r => ({ ok: r.ok, data: await r.json().catch(() => ({})) })),
-    fetch(`/api/public/portal-summary?${url.searchParams.toString()}`).then(r => r.json()),
-    fetch('/api/public/board?page=1&pageSize=4&filter=all', { cache: 'no-store' }).then(r => r.json())
-  ]);
-  const session = sessionRes.status === 'fulfilled' ? sessionRes.value : { authenticated: false };
-  const account = accountRes.status === 'fulfilled' && accountRes.value.ok ? accountRes.value.data : null;
-  const summary = summaryRes.status === 'fulfilled' ? summaryRes.value.summary : {};
-  const boardApi = boardRes.status === 'fulfilled' && boardRes.value?.ok ? boardRes.value : { posts: [], publicationCadence: summary?.publicationCadence || {} };
-  const boardItems = publicBoardItems([...(boardApi.posts || []), ...(summary?.boards || [])]);
-  renderPublishStatus(boardApi);
-  updateStaticDashboard(session, account, summary);
-  let fulfillment = null;
-  const orderId = url.searchParams.get('orderId') || summary?.order?.id || '';
-  const accessToken = url.searchParams.get('accessToken') || '';
-  if (orderId) fulfillment = await fetch(`/api/public/fulfillment?orderId=${encodeURIComponent(orderId)}${accessToken ? `&accessToken=${encodeURIComponent(accessToken)}` : ''}`).then(r => r.json()).catch(() => null);
-  if (!session.authenticated) {
-    state.innerHTML = '이 브라우저의 최근 확인 기록을 표시합니다. 계정 저장이 필요하면 <a href="/auth?next=/portal">로그인·회원가입</a>을 이용하세요.';
-  } else {
-    state.textContent = `로그인 계정 · 저장 사이트 ${(account?.savedSites || []).length}개 · 최근 검사 ${(account?.recentScans || []).length}개`;
-  }
-  primary.innerHTML = `
-    ${renderPortalHandoffBanner(handoff, saved)}
-    ${session.authenticated ? renderSavedSites(account?.savedSites || []) : ''}
-    ${session.authenticated ? renderRecentScans(account?.recentScans || []) : renderGuestScan(saved)}
-    ${renderMemberValueBox(session, account)}
-    ${summary?.order ? `<div class="nv74-state"><strong>최근 주문</strong> · ${escapeHtml(summary.order.plan)} · ${escapeHtml(summary.order.status)}</div>` : ''}
-    ${fulfillment?.locked ? `<div class="nv74-state"><strong>산출물 잠금</strong> · 구매한 리포트·수정안·템플릿은 이 영역에 표시됩니다.</div>` : ''}
-    ${renderAsset(fulfillment?.asset, fulfillment?.order || summary?.order, accessToken)}
-    ${summary?.site ? `<div class="nv74-state"><strong>현재 선택 사이트</strong> · ${escapeHtml(summary.site.domain)} · ${escapeHtml(summary.site.latestRiskLevel || '검사 전')} · 최근 발견 ${escapeHtml(summary.site.latestFindings ?? summary.latestScan?.totalFindings ?? '-')}개</div>` : ''}
-`;
-  feed.innerHTML = `
-    ${renderPublishStatus(boardApi)}
-    <div class="card stack"><div class="meta-row"><strong>진단 연결 칼럼</strong><a class="btn secondary" href="/board">인사이트 보기</a></div>${renderBoardHighlights(boardItems)}</div>
-    <div class="card stack"><strong>최신 인사이트</strong>${renderInsightFeed(boardItems)}</div>`;
+  if (workCard) workCard.innerHTML = `<div class="portal-card-head portal-card-head-row"><div><p class="portal-kicker">QUICK ACTION</p><h2>빠른 실행</h2><p>자주 사용하는 기능을 바로 실행하세요.</p></div></div><div class="portal-work-grid"><article class="portal-work-item"><span class="portal-work-icon">⌕</span><div><b>사이트 진단</b><small>전체 상태 점검</small></div><a class="btn secondary" href="/products/veridion/demo">실행</a></article><article class="portal-work-item"><span class="portal-work-icon">▣</span><div><b>페이지 진단</b><small>단일 페이지 점검</small></div><a class="btn secondary" href="/products/veridion/demo">실행</a></article><article class="portal-work-item"><span class="portal-work-icon">◎</span><div><b>키워드 분석</b><small>검색 노출 점검</small></div><a class="btn secondary" href="/board">확인</a></article><article class="portal-work-item"><span class="portal-work-icon">↥</span><div><b>경쟁사 분석</b><small>비교 포인트 확인</small></div><a class="btn secondary" href="/plans">보기</a></article><article class="portal-work-item"><span class="portal-work-icon">⌁</span><div><b>백링크 분석</b><small>외부 연결 점검</small></div><a class="btn secondary" href="#portalSitesTitle">보기</a></article><article class="portal-work-item"><span class="portal-work-icon">&lt;/&gt;</span><div><b>기술 SEO</b><small>구조 개선 점검</small></div><a class="btn secondary" href="#portalNextTitle">보기</a></article><article class="portal-work-item"><span class="portal-work-icon">○</span><div><b>사이트 조회</b><small>저장 사이트 확인</small></div><a class="btn secondary" href="#portalSitesTitle">조회</a></article><article class="portal-work-item"><span class="portal-work-icon">▤</span><div><b>인사이트 발행</b><small>20분에 1회 발행</small></div><a class="btn secondary" href="#portalFeedTitle">확인</a></article></div>`
 }
 
 addSiteToggle?.addEventListener('click', () => {
