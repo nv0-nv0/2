@@ -491,13 +491,8 @@ function updateStaticDashboard(session, account, summary) {
   if (scoreFooter) scoreFooter.textContent = `최근 진단일: ${formatDate(latest?.createdAt || latest?.generatedAt)}`;
   renderScoreSummary(latest, account, summary);
   renderNextActionCards(latest, account, summary);
-  if (workCard) workCard.innerHTML = `<div class="portal-card-head portal-card-head-row"><div><p class="portal-kicker">QUICK ACTION</p><h2>빠른 실행</h2><p>자주 사용하는 기능을 바로 실행하세요.</p></div></div><div class="portal-work-grid"><article class="portal-work-item"><span class="portal-work-icon">⌕</span><div><b>사이트 진단</b><small>전체 상태 점검</small></div><a class="btn secondary" href="/products/veridion/demo">실행</a></article><article class="portal-work-item"><span class="portal-work-icon">▣</span><div><b>페이지 진단</b><small>단일 페이지 점검</small></div><a class="btn secondary" href="/products/veridion/demo">실행</a></article><article class="portal-work-item"><span class="portal-work-icon">◎</span><div><b>키워드 분석</b><small>검색 노출 점검</small></div><a class="btn secondary" href="/board">확인</a></article><article class="portal-work-item"><span class="portal-work-icon">↥</span><div><b>경쟁사 분석</b><small>비교 포인트 확인</small></div><a class="btn secondary" href="/plans">보기</a></article><article class="portal-work-item"><span class="portal-work-icon">⌁</span><div><b>백링크 분석</b><small>외부 연결 점검</small></div><a class="btn secondary" href="#portalSitesTitle">보기</a></article><article class="portal-work-item"><span class="portal-work-icon">&lt;/&gt;</span><div><b>기술 SEO</b><small>구조 개선 점검</small></div><a class="btn secondary" href="#portalNextTitle">보기</a></article><article class="portal-work-item"><span class="portal-work-icon">○</span><div><b>사이트 조회</b><small>저장 사이트 확인</small></div><a class="btn secondary" href="#portalSitesTitle">조회</a></article><article class="portal-work-item"><span class="portal-work-icon">▤</span><div><b>인사이트 발행</b><small>20분에 1회 발행</small></div><a class="btn secondary" href="#portalFeedTitle">확인</a></article></div>`
+  if (workCard) workCard.innerHTML = `<div class="portal-card-head"><h2 id="portalQuickTitle">빠른 실행</h2></div><div class="portal-quick-grid"><a href="/products/veridion/demo"><i>⌕</i><span>새 진단</span></a><a href="#saveSiteForm"><i>▱</i><span>사이트 저장</span></a><a href="/products/veridion/demo"><i>↻</i><span>재진단</span></a><a href="#portalPrimary"><i>▤</i><span>리포트 보기</span></a><a href="#portalFeedTitle"><i>♢</i><span>인사이트 보기</span></a><a href="/keywords"><i>▥</i><span>키워드 분석</span></a><a href="/compare"><i>⚖</i><span>비교 분석</span></a><a href="/auth"><i>⚙</i><span>계정 설정</span></a></div>`;
 }
-
-addSiteToggle?.addEventListener('click', () => {
-  saveForm?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  document.getElementById('saveUrl')?.focus({ preventScroll: true });
-});
 
 saveForm?.addEventListener('submit', async (event) => {
   event.preventDefault();

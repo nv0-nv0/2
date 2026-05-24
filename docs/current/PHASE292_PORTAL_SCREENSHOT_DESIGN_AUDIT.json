@@ -22,7 +22,7 @@
       "key": "visualRegisterCard",
       "weight": 10,
       "pass": true,
-      "message": "이미지와 유사한 강조형 내 사이트 등록 카드"
+      "message": "이미지와 유사한 새 사이트 등록 행"
     },
     {
       "key": "recentScanCard",

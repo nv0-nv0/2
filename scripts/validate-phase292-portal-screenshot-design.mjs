@@ -51,7 +51,7 @@ const requiredIds = [
   'portalState'
 ];
 
-const quickActions = ['사이트 진단', '페이지 진단', '키워드 분석', '경쟁사 분석', '백링크 분석', '기술 SEO', '사이트 조회', '인사이트 발행'];
+const quickActions = ['새 진단', '사이트 저장', '재진단', '리포트 보기', '인사이트 보기', '키워드 분석', '비교 분석', '계정 설정'];
 
 const checks = [
   {
@@ -66,46 +66,31 @@ const checks = [
   {
     key: 'dashboardGridComposition',
     weight: 12,
-    pass: html.includes('portal-register-card')
-      && html.includes('portal-score-card')
-      && html.includes('portal-quick-card')
-      && html.includes('portal-actions-card')
-      && html.includes('portal-site-card')
-      && html.includes('portal-feed-card')
-      && html.includes('portal-tools-card'),
+    pass: html.includes('portal-score-card') && html.includes('portal-quick-card') && html.includes('portal-actions-card') && html.includes('portal-site-registration-priority') && html.includes('portal-site-card') && html.includes('portal-feed-card') && html.includes('portal-tools-card'),
     message: '등록/진단/빠른 실행/제안/현황/인사이트/계정 카드 구성'
   },
   {
     key: 'visualRegisterCard',
     weight: 10,
-    pass: css.includes('.portal-register-card')
-      && css.includes('linear-gradient(145deg')
-      && css.includes('.portal-register-art'),
-    message: '이미지와 유사한 강조형 내 사이트 등록 카드'
+    pass: html.includes('portal-site-registration-priority') && css.includes('.portal-site-registration-priority') && css.includes('.portal-register-form'),
+    message: '이미지와 유사한 새 사이트 등록 행'
   },
   {
     key: 'recentScanCard',
     weight: 10,
-    pass: html.includes('portal-score-main')
-      && html.includes('portal-mini-scores')
-      && css.includes('.portal-score-gauge')
-      && css.includes('.portal-mini-scores'),
+    pass: html.includes('portal-score-main') && html.includes('portal-score-breakdown') && css.includes('.portal-score-gauge') && css.includes('.portal-score-breakdown'),
     message: '최근 진단 결과 카드와 원형 점수 게이지'
   },
   {
     key: 'quickActionsEightGrid',
     weight: 10,
-    pass: quickActions.every((text) => js.includes(text))
-      && js.includes('portal-work-grid')
-      && css.includes('grid-template-columns:repeat(2,minmax(0,1fr))'),
+    pass: quickActions.every((text) => html.includes(text) || js.includes(text)) && html.includes('portal-quick-grid') && css.includes('.portal-quick-grid'),
     message: '빠른 실행 8개 기능 그리드'
   },
   {
     key: 'siteInsightAccountRows',
     weight: 8,
-    pass: css.includes('.portal-site-card{grid-column:1/span 6')
-      && css.includes('.portal-feed-card{grid-column:7/span 3')
-      && css.includes('.portal-tools-card{grid-column:10/span 3'),
+    pass: css.includes('.portal-site-card{grid-column:1/span 11') && css.includes('.portal-feed-card{grid-column:12/span 6') && css.includes('.portal-tools-card{grid-column:18/span 7'),
     message: '하단 현황/인사이트/계정 카드 배열'
   },
   {
@@ -126,10 +111,7 @@ const checks = [
   {
     key: 'responsive',
     weight: 8,
-    pass: css.includes('@media (max-width:1280px)')
-      && css.includes('@media (max-width:820px)')
-      && css.includes('grid-template-columns:repeat(8')
-      && css.includes('grid-template-columns:1fr'),
+    pass: css.includes('@media (max-width:1320px)') && css.includes('@media (max-width:720px)') && css.includes('grid-template-columns:1fr'),
     message: 'PC/태블릿/모바일 반응형 배열'
   },
   {

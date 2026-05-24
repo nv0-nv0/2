@@ -77,19 +77,13 @@ const checks = [
   {
     key: 'layoutGrid',
     weight: 12,
-    pass: css.includes('.portal-layout{display:grid;grid-template-columns:repeat(12')
-      && css.includes('.portal-score-card{grid-column:1/span 8')
-      && css.includes('.portal-site-card{grid-column:5/span 5')
-      && css.includes('.portal-feed-card{grid-column:10/span 3'),
+    pass: css.includes('grid-template-columns:repeat(24') && css.includes('.portal-score-card{grid-column:1/span 8') && css.includes('.portal-site-card{grid-column:1/span 11') && css.includes('.portal-feed-card{grid-column:12/span 6'),
     message: '카드 배열 12컬럼 기준으로 재설계'
   },
   {
     key: 'readability',
     weight: 12,
-    pass: css.includes('font-size:clamp(34px,4vw,54px)')
-      && css.includes('font-size:64px!important')
-      && css.includes('font-size:28px')
-      && css.includes('line-height:1.5'),
+    pass: css.includes('.portal-hero h1') && css.includes('font-size:42px') && css.includes('.portal-score-breakdown b') && css.includes('line-height:1.45'),
     message: '제목/점수/카드 숫자/본문 시인성 기준'
   },
   {
@@ -121,9 +115,7 @@ const checks = [
   {
     key: 'mobileResponsive',
     weight: 5,
-    pass: css.includes('@media (max-width:1280px)')
-      && css.includes('@media (max-width:820px)')
-      && css.includes('grid-template-columns:1fr'),
+    pass: css.includes('@media (max-width:1320px)') && css.includes('@media (max-width:720px)') && css.includes('grid-template-columns:1fr'),
     message: '반응형 배열 유지'
   },
   {

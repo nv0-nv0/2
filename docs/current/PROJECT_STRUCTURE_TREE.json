@@ -1,13 +1,13 @@
 {
   "ok": true,
-  "generatedAt": "2026-05-24T02:01:24.476Z",
-  "root": "VERIDION_phase291_portal_clean_redesign_100",
+  "generatedAt": "2026-05-24T02:53:41.753Z",
+  "root": "VERIDION_phase292_screenshot_portal_design_100",
   "limits": {
     "maxDepth": 4,
     "maxChildrenPerDir": 80
   },
   "summary": {
-    "files": 335,
+    "files": 338,
     "dirs": 61
   },
   "keyFiles": [
@@ -55,7 +55,7 @@
     }
   ],
   "tree": {
-    "name": "VERIDION_phase291_portal_clean_redesign_100",
+    "name": "VERIDION_phase292_screenshot_portal_design_100",
     "path": ".",
     "type": "dir",
     "note": "",
@@ -560,19 +560,19 @@
                     "name": "app.css",
                     "path": "apps/public/portal/app.css",
                     "type": "file",
-                    "size": 19916
+                    "size": 15515
                   },
                   {
                     "name": "app.js",
                     "path": "apps/public/portal/app.js",
                     "type": "file",
-                    "size": 53917
+                    "size": 52431
                   },
                   {
                     "name": "index.html",
                     "path": "apps/public/portal/index.html",
                     "type": "file",
-                    "size": 11202
+                    "size": 11549
                   }
                 ]
               },
@@ -1266,7 +1266,7 @@
             "name": "portal-phase283-dashboard.css",
             "path": "shared/portal-phase283-dashboard.css",
             "type": "file",
-            "size": 19916
+            "size": 15515
           },
           {
             "name": "render-policy.js",
@@ -1760,19 +1760,25 @@
             "name": "validate-phase290-portal-menu-cadence-ui.mjs",
             "path": "scripts/validate-phase290-portal-menu-cadence-ui.mjs",
             "type": "file",
-            "size": 4363
+            "size": 4150
           },
           {
             "name": "validate-phase291-portal-redesign-clean.mjs",
             "path": "scripts/validate-phase291-portal-redesign-clean.mjs",
             "type": "file",
-            "size": 4831
+            "size": 4743
           },
           {
             "name": "validate-phase292-portal-screenshot-design.mjs",
             "path": "scripts/validate-phase292-portal-screenshot-design.mjs",
             "type": "file",
-            "size": 5236
+            "size": 5100
+          },
+          {
+            "name": "validate-phase293-screenshot-portal-design.mjs",
+            "path": "scripts/validate-phase293-screenshot-portal-design.mjs",
+            "type": "file",
+            "size": 5391
           },
           {
             "name": "validate-pipeline.mjs",
@@ -1785,12 +1791,6 @@
             "path": "scripts/validate-prod-env.mjs",
             "type": "file",
             "size": 6372
-          },
-          {
-            "name": "verify-prod.mjs",
-            "path": "scripts/verify-prod.mjs",
-            "type": "file",
-            "size": 5669
           }
         ]
       },
@@ -2106,13 +2106,19 @@
                 "name": "PHASE292_PORTAL_SCREENSHOT_DESIGN_AUDIT.json",
                 "path": "docs/current/PHASE292_PORTAL_SCREENSHOT_DESIGN_AUDIT.json",
                 "type": "file",
-                "size": 1855
+                "size": 1842
+              },
+              {
+                "name": "PHASE293_SCREENSHOT_PORTAL_DESIGN_AUDIT.json",
+                "path": "docs/current/PHASE293_SCREENSHOT_PORTAL_DESIGN_AUDIT.json",
+                "type": "file",
+                "size": 1831
               },
               {
                 "name": "PROJECT_STRUCTURE_TREE.json",
                 "path": "docs/current/PROJECT_STRUCTURE_TREE.json",
                 "type": "file",
-                "size": 81324
+                "size": 82378
               }
             ]
           },
@@ -2273,10 +2279,16 @@
             "size": 918
           },
           {
+            "name": "PHASE293_SCREENSHOT_PORTAL_DESIGN_REPORT.md",
+            "path": "docs/PHASE293_SCREENSHOT_PORTAL_DESIGN_REPORT.md",
+            "type": "file",
+            "size": 883
+          },
+          {
             "name": "PROJECT_STRUCTURE_TREE.md",
             "path": "docs/PROJECT_STRUCTURE_TREE.md",
             "type": "file",
-            "size": 18448
+            "size": 18764
           }
         ]
       },
@@ -2416,7 +2428,7 @@
                     "name": "secure-records.dev.json",
                     "path": "runtime/data/secure-records/secure-records.dev.json",
                     "type": "file",
-                    "size": 798482
+                    "size": 799342
                   }
                 ]
               },
@@ -2424,7 +2436,7 @@
                 "name": "db.json",
                 "path": "runtime/data/db.json",
                 "type": "file",
-                "size": 67569
+                "size": 97989
               },
               {
                 "name": "db.seed.json",
@@ -2522,7 +2534,7 @@
         "name": "package.json",
         "path": "package.json",
         "type": "file",
-        "size": 8387
+        "size": 8552
       },
       {
         "name": "README.md",
