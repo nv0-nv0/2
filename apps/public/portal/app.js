@@ -491,7 +491,7 @@ function updateStaticDashboard(session, account, summary) {
   if (scoreFooter) scoreFooter.textContent = `최근 진단일: ${formatDate(latest?.createdAt || latest?.generatedAt)}`;
   renderScoreSummary(latest, account, summary);
   renderNextActionCards(latest, account, summary);
-  if (workCard) workCard.innerHTML = `<div class="portal-card-head"><h2 id="portalQuickTitle">빠른 실행</h2></div><div class="portal-quick-grid"><a href="/products/veridion/demo"><i>⌕</i><span>새 진단</span></a><a href="#saveSiteForm"><i>▱</i><span>사이트 저장</span></a><a href="/products/veridion/demo"><i>↻</i><span>재진단</span></a><a href="#portalPrimary"><i>▤</i><span>리포트 보기</span></a><a href="#portalFeedTitle"><i>♢</i><span>인사이트 보기</span></a><a href="/keywords"><i>▥</i><span>키워드 분석</span></a><a href="/compare"><i>⚖</i><span>비교 분석</span></a><a href="/auth"><i>⚙</i><span>계정 설정</span></a></div>`;
+  if (workCard) workCard.innerHTML = `<div class="portal-card-head"><div><p class="portal-card-kicker">SHORTCUT</p><h2 id="portalQuickTitle">빠른 실행</h2></div></div><div class="portal-quick-grid"><a href="/products/veridion/demo"><i>⌕</i><span>새 진단</span></a><a href="#saveSiteForm"><i>＋</i><span>사이트 저장</span></a><a href="/products/veridion/demo"><i>↻</i><span>재진단</span></a><a href="#portalPrimary"><i>▤</i><span>리포트 보기</span></a><a href="#portalFeedTitle"><i>◇</i><span>인사이트</span></a><a href="/keywords"><i>▥</i><span>키워드</span></a><a href="/compare"><i>≋</i><span>비교 분석</span></a><a href="/auth"><i>⚙</i><span>설정</span></a></div>`
 }
 
 saveForm?.addEventListener('submit', async (event) => {

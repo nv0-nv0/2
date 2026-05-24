@@ -1,0 +1,72 @@
+{
+  "ok": true,
+  "phase": "phase295",
+  "score": 100,
+  "total": 100,
+  "issue": "complete new portal page, not incremental patch",
+  "checkedIds": 41,
+  "checks": [
+    {
+      "key": "freshPortalStructure",
+      "weight": 12,
+      "pass": true,
+      "message": "기존 혼합 구조가 아닌 새 포털 단일 구조"
+    },
+    {
+      "key": "fullWidthDashboard",
+      "weight": 14,
+      "pass": true,
+      "message": "화면 폭을 제대로 사용하는 1440px / 12컬럼 대시보드"
+    },
+    {
+      "key": "topNavigation",
+      "weight": 10,
+      "pass": true,
+      "message": "이미지형 상단 메뉴"
+    },
+    {
+      "key": "heroReadable",
+      "weight": 8,
+      "pass": true,
+      "message": "크고 읽기 쉬운 내 사이트 헤더"
+    },
+    {
+      "key": "cardPlacement",
+      "weight": 16,
+      "pass": true,
+      "message": "진단/빠른실행/다음행동/등록/현황/인사이트/계정 카드 재배열"
+    },
+    {
+      "key": "notTinyCards",
+      "weight": 10,
+      "pass": true,
+      "message": "글자/점수/버튼/입력폼 시인성 개선"
+    },
+    {
+      "key": "quickActions",
+      "weight": 8,
+      "pass": true,
+      "message": "빠른 실행 8개 기능 사용 가능"
+    },
+    {
+      "key": "functionIds",
+      "weight": 10,
+      "pass": true,
+      "message": "기존 JS 기능 연결 ID 보존"
+    },
+    {
+      "key": "cadence",
+      "weight": 6,
+      "pass": true,
+      "message": "인사이트 발행 주기 20분에 1회"
+    },
+    {
+      "key": "responsive",
+      "weight": 6,
+      "pass": true,
+      "message": "태블릿/모바일 재배열"
+    }
+  ],
+  "failed": [],
+  "report": "docs/current/PHASE295_PORTAL_COMPLETE_REBUILD_AUDIT.json"
+}

@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
   <title>내 사이트 | VERIDION</title>
-  <meta name="description" content="VERIDION 내 사이트 대시보드에서 저장 사이트, 진단 결과, 인사이트, 계정 상태를 한 화면에서 관리합니다."/>
+  <meta name="description" content="VERIDION 내 사이트 대시보드"/>
   <link href="/shared/nv0-clean-slate-20260512.css" rel="stylesheet"/>
   <link href="/shared/nv0n-generated.css" rel="stylesheet"/>
   <link href="/shared/nv0n-runtime.css" rel="stylesheet"/>
@@ -12,21 +12,21 @@
   <link href="/shared/portal-phase283-dashboard.css" rel="stylesheet"/>
 </head>
 <body class="nv0n-page portal-shell-body" data-nv0n-page="true">
-<!-- legacy validation markers: portal-shell portal-shell-sidebar portal-shell-main portal-shell-topbar portal-shell-content -->
+<!-- legacy validation markers: portal-shell portal-shell-sidebar portal-shell-main portal-shell-topbar portal-shell-content portal-site-registration-priority -->
 <div class="portal-page">
   <header class="portal-topbar" aria-label="VERIDION 상단 메뉴">
     <a class="portal-brand" href="/" aria-label="VERIDION 홈">
-      <span class="portal-brand-mark">✓</span>
+      <span class="portal-brand-mark">V</span>
       <span>VERIDION</span>
     </a>
 
     <nav class="portal-main-nav" aria-label="내 사이트 상단 메뉴">
-      <a href="/dashboard"><span class="nav-icon">⌂</span>대시보드</a>
-      <a class="is-active" href="/portal"><span class="nav-icon">▦</span>내 사이트</a>
-      <a href="#portalSiteFormPanel"><span class="nav-icon">＋</span>사이트 등록</a>
-      <a href="#portalScoreTitle"><span class="nav-icon">⇄</span>진단 결과</a>
-      <a href="#portalFeedTitle"><span class="nav-icon">▥</span>인사이트</a>
-      <a href="/plans"><span class="nav-icon">▣</span>요금 안내</a>
+      <a href="/dashboard">대시보드</a>
+      <a class="is-active" href="/portal">내 사이트</a>
+      <a href="#portalSiteFormPanel">사이트 등록</a>
+      <a href="#portalScoreTitle">진단 결과</a>
+      <a href="#portalFeedTitle">인사이트</a>
+      <a href="/plans">요금 안내</a>
     </nav>
 
     <div class="portal-top-actions">
@@ -35,107 +35,126 @@
     </div>
   </header>
 
-  <!-- phase283-order-marker portal-site-registration-priority -->
   <main id="main" tabindex="-1" data-route-smoke="내 사이트 관리 확인 기록" class="portal-main">
     <section class="portal-hero" aria-labelledby="portalTitle">
       <div class="portal-hero-copy">
-        <span class="hero-bookmark" aria-hidden="true"></span>
-        <div>
-          <h1 id="portalTitle">내 사이트</h1>
-          <p>저장한 사이트와 진단 결과, 인사이트를 한 곳에서 관리하세요.</p>
-        </div>
+        <p class="portal-eyebrow">MY SITE DASHBOARD</p>
+        <h1 id="portalTitle">내 사이트</h1>
+        <p>사이트 등록, 진단 결과, 인사이트 발행, 계정 상태를 한 화면에서 바로 확인하고 실행합니다.</p>
       </div>
-      <div class="portal-hero-art" aria-hidden="true">
-        <span class="art-dots"></span>
-        <span class="art-card"><i>✓</i></span>
-        <span class="art-bars"><b></b><b></b><b></b></span>
+      <div class="portal-hero-actions">
+        <a class="portal-btn portal-btn-secondary" href="/board">인사이트 보기</a>
+        <a class="portal-btn portal-btn-primary" href="/products/veridion/demo">새 진단 시작</a>
       </div>
     </section>
 
     <section class="portal-dashboard-grid portal-layout" aria-label="내 사이트 대시보드">
       <section class="portal-card portal-score-card nv74-score-card" aria-labelledby="portalScoreTitle">
         <div class="portal-card-head">
-          <h2 id="portalScoreTitle">최근 진단 결과</h2>
+          <div>
+            <p class="portal-card-kicker">LATEST SCAN</p>
+            <h2 id="portalScoreTitle">최근 진단 결과</h2>
+          </div>
+          <a href="/products/veridion/demo">새 진단</a>
         </div>
 
         <div class="portal-score-main">
           <div class="portal-score-gauge-wrap">
             <div class="portal-score-gauge" id="portalRiskGauge">
               <div class="portal-score-gauge-inner">
-                <span class="nv74-score-number">82</span>
-                <small>/100</small>
+                <span class="nv74-score-number">-</span>
+                <small>최근 점수</small>
               </div>
             </div>
+            <div class="nv74-status-warning portal-risk-pill">검사 전</div>
           </div>
+
           <div class="portal-score-copy">
-            <div class="portal-domain-line"><b id="portalSummaryDomain">veridion.com</b><a href="/products/veridion/demo" aria-label="새 창에서 진단">↗</a></div>
-            <div class="nv74-status-warning portal-risk-pill">낮은 위험</div>
-            <span class="portal-muted-label">최근 진단</span>
-            <strong id="portalLatestScanAt" class="portal-date-text">2025.05.23 14:35</strong>
+            <span class="portal-muted-label">검사 대상</span>
+            <strong id="portalSummaryDomain" class="portal-domain-text">검사 전</strong>
+            <span class="portal-muted-label">최근 진단일</span>
+            <strong id="portalLatestScanAt" class="portal-date-text">검사 이력 없음</strong>
+            <p class="nv74-score-desc">최근 검사 기준으로 발견 항목, 주의 항목, 개선 제안을 요약합니다.</p>
           </div>
         </div>
 
-        <div class="portal-score-breakdown portal-infographic-grid" id="portalSummaryCards">
-          <article><span>보안 점수</span><b id="portalIssueCount">88</b></article>
-          <article><span>성능 점수</span><b id="portalWarningIssues" class="score-orange">76</b></article>
-          <article><span>SEO 점수</span><b id="portalActionRequiredCount">90</b></article>
-          <article><span>접근성 점수</span><b id="portalCriticalIssues" class="score-orange">75</b></article>
+        <div class="portal-info-grid portal-infographic-grid" id="portalSummaryCards">
+          <article><span>확인 항목</span><b id="portalIssueCount">0개</b></article>
+          <article><span>주의 항목</span><b id="portalWarningIssues">0개</b></article>
+          <article><span>개선 제안</span><b id="portalActionRequiredCount">0개</b></article>
+          <article><span>우선 보완</span><b id="portalCriticalIssues">0개</b></article>
         </div>
 
         <div class="portal-status-banner" id="portalStatusBanner">
           <span class="portal-status-banner-icon">🛡</span>
-          <div><b id="portalStatusSummary">현재 상태는 안정적입니다.</b><p id="portalStatusDetail">높은 위험 항목은 우선순위에 따라 점검하세요.</p></div>
+          <div><b id="portalStatusSummary">현재 상태를 확인하세요.</b><p id="portalStatusDetail">정기적인 점검으로 안정적인 구조를 유지할 수 있습니다.</p></div>
         </div>
 
         <div class="portal-risk-meter" aria-hidden="true">
           <div class="portal-risk-meter-track"><div class="portal-risk-meter-fill" id="portalRiskMeterFill"></div></div>
           <div class="portal-risk-meter-labels"><span>낮음</span><span>주의</span><span>높음</span></div>
         </div>
-        <span class="sr-only" id="portalRiskLabelText">낮은 위험</span>
+        <span class="sr-only" id="portalRiskLabelText">검사 전</span>
         <span class="sr-only" id="portalRiskMeterCaption">최근 점수 기반 상태</span>
 
-        <a class="portal-card-cta" href="/products/veridion/demo">진단 결과 상세 보기 →</a>
+        <div class="portal-insight-strip">
+          <div><span>인사이트 발행</span><b id="portalPublishCadence">20분에 1회 발행</b></div>
+          <div><span>최근 발행</span><b id="portalLastPublishedAt">확인 중</b></div>
+          <div><span>상태</span><b id="portalPublishState">점검 중</b></div>
+          <div><span>안정 사이트</span><b id="portalCompliantSites">0개</b></div>
+        </div>
 
         <span class="sr-only" id="portalTotalSites">0</span>
-        <span class="sr-only" id="portalCompliantSites">0개</span>
         <div class="sr-only" id="portalScoreMetrics"></div>
         <div class="sr-only" id="portalScoreBars"></div>
       </section>
 
       <section class="portal-card nv74-work-card portal-quick-card" aria-labelledby="portalQuickTitle">
-        <div class="portal-card-head"><h2 id="portalQuickTitle">빠른 실행</h2></div>
+        <div class="portal-card-head">
+          <div>
+            <p class="portal-card-kicker">SHORTCUT</p>
+            <h2 id="portalQuickTitle">빠른 실행</h2>
+          </div>
+        </div>
         <div class="portal-quick-grid">
           <a href="/products/veridion/demo"><i>⌕</i><span>새 진단</span></a>
-          <a href="#saveSiteForm"><i>▱</i><span>사이트 저장</span></a>
+          <a href="#saveSiteForm"><i>＋</i><span>사이트 저장</span></a>
           <a href="/products/veridion/demo"><i>↻</i><span>재진단</span></a>
           <a href="#portalPrimary"><i>▤</i><span>리포트 보기</span></a>
-          <a href="#portalFeedTitle"><i>♢</i><span>인사이트 보기</span></a>
-          <a href="/keywords"><i>▥</i><span>키워드 분석</span></a>
-          <a href="/compare"><i>⚖</i><span>비교 분석</span></a>
-          <a href="/auth"><i>⚙</i><span>계정 설정</span></a>
+          <a href="#portalFeedTitle"><i>◇</i><span>인사이트</span></a>
+          <a href="/keywords"><i>▥</i><span>키워드</span></a>
+          <a href="/compare"><i>≋</i><span>비교 분석</span></a>
+          <a href="/auth"><i>⚙</i><span>설정</span></a>
         </div>
       </section>
 
       <section class="portal-card portal-actions-card" aria-labelledby="portalNextTitle">
         <div class="portal-card-head">
-          <h2 id="portalNextTitle">다음 행동</h2>
-          <a href="#portalNextActions">전체 보기 →</a>
+          <div>
+            <p class="portal-card-kicker">ACTION</p>
+            <h2 id="portalNextTitle">다음 행동</h2>
+          </div>
+          <a href="#portalNextActions">전체 보기</a>
         </div>
         <div class="portal-action-list" id="portalNextActions">
-          <article><span>☑</span><b>높은 위험 보안 이슈 2건 확인하기</b><em class="risk-high">높음</em></article>
-          <article><span>☑</span><b>페이지 속도 개선 제안 적용하기</b><em class="risk-mid">중간</em></article>
-          <article><span>☑</span><b>사이트 메타 태그 최적화</b><em class="risk-mid">중간</em></article>
-          <article><span>☑</span><b>사이트 진단 예약 설정하기</b><em class="risk-low">낮음</em></article>
+          <article><span>1</span><b>최근 진단 결과 확인</b><em>높음</em></article>
+          <article><span>2</span><b>주의 항목 우선 보완</b><em>중간</em></article>
+          <article><span>3</span><b>사이트 등록 후 재검사</b><em>권장</em></article>
+          <article><span>4</span><b>인사이트 발행 상태 확인</b><em>낮음</em></article>
         </div>
-        <a class="portal-card-cta" href="#portalNextActions">추천 항목 더보기 →</a>
       </section>
 
       <section class="portal-card portal-site-registration-priority" aria-labelledby="portalRegisterTitle" id="portalSiteFormPanel">
-        <div class="portal-card-head"><h2 id="portalRegisterTitle">새 사이트 등록</h2></div>
+        <div class="portal-card-head">
+          <div>
+            <p class="portal-card-kicker">REGISTER SITE</p>
+            <h2 id="portalRegisterTitle">새 사이트 등록</h2>
+          </div>
+        </div>
         <form class="portal-register-form" id="saveSiteForm">
-          <label>사이트 주소<input autocomplete="url" id="saveUrl" placeholder="예) https://example.com"/></label>
-          <label>사이트 이름 <small>(선택)</small><input autocomplete="off" id="saveName" placeholder="예) 메인 사이트"/></label>
-          <label>메모 <small>(선택)</small><input autocomplete="off" id="saveMemo" placeholder="예) 마케팅 캠페인 사이트"/></label>
+          <label>사이트 주소<input autocomplete="url" id="saveUrl" placeholder="https://example.com"/></label>
+          <label>사이트 이름<input autocomplete="off" id="saveName" placeholder="메인 사이트"/></label>
+          <label>메모<input autocomplete="off" id="saveMemo" placeholder="캠페인 / 운영 메모"/></label>
           <button type="submit">사이트 등록</button>
           <div class="portal-form-state" id="saveSiteState">사이트를 저장하면 진단 이력을 이어서 관리할 수 있습니다.</div>
         </form>
@@ -143,7 +162,11 @@
 
       <section class="portal-card portal-site-card" aria-labelledby="portalSitesTitle">
         <div class="portal-card-head">
-          <h2 id="portalSitesTitle">내 사이트 현황 <span class="count-pill">3개 사이트</span></h2>
+          <div>
+            <p class="portal-card-kicker">SITES</p>
+            <h2 id="portalSitesTitle">내 사이트 현황</h2>
+          </div>
+          <a href="/products/veridion/demo">새 진단</a>
         </div>
         <div class="portal-asset-list" id="portalAssetList" aria-live="polite">
           <div class="portal-empty-card"><strong>내 사이트 정보를 불러오는 중입니다.</strong><p>잠시만 기다려 주세요.</p></div>
@@ -153,30 +176,30 @@
 
       <section class="portal-card portal-feed-card" aria-labelledby="portalFeedTitle">
         <div class="portal-card-head">
-          <h2 id="portalFeedTitle">최신 인사이트</h2>
-          <span class="count-pill" id="portalPublishCadence">20분에 1회 발행</span>
+          <div>
+            <p class="portal-card-kicker">INSIGHT</p>
+            <h2 id="portalFeedTitle">최신 인사이트</h2>
+          </div>
+          <a href="/board">전체 보기</a>
         </div>
         <div class="portal-publish-summary">
           <i>▤</i>
-          <div><b>20분에 1회 발행</b><span id="portalLastPublishedAt">다음 발행: 확인 중</span></div>
+          <div><b>20분에 1회 발행</b><span>사이트 상태 기반 자동 발행</span></div>
         </div>
-        <span class="sr-only" id="portalPublishState">점검 중</span>
         <div id="portalFeed"></div>
-        <a class="portal-card-cta" href="/board">모든 인사이트 보기 →</a>
       </section>
 
       <section class="portal-card portal-tools-card" aria-labelledby="portalToolsTitle">
-        <div class="portal-card-head"><h2 id="portalToolsTitle">계정 상태</h2></div>
-        <div class="portal-account-panel nv74-account">
-          <div class="account-plan"><span>플랜 정보</span><b>Pro 플랜</b><em>활성</em><small>다음 결제일: 2025.06.23</small></div>
-          <div class="account-usage">
-            <label>진단 횟수 <b>56 / 100회</b><progress value="56" max="100"></progress></label>
-            <label>페이지 분석 <b>142 / 500개</b><progress value="142" max="500"></progress></label>
-            <label>인사이트 조회 <b>28 / 무제한</b><progress value="28" max="100"></progress></label>
+        <div class="portal-card-head">
+          <div>
+            <p class="portal-card-kicker">ACCOUNT</p>
+            <h2 id="portalToolsTitle">계정 상태</h2>
           </div>
-          <div class="notice muted" id="portalAccountState">계정 연결 상태를 확인하는 중입니다.</div>
-          <div class="notice muted" id="portalState">내 사이트 정보를 안전하게 확인하세요.</div>
-          <div class="account-links"><a href="/checkout">결제 및 구독 관리</a><a href="/auth">API 키 관리</a><a href="/auth">계정 설정</a></div>
+        </div>
+        <div class="portal-account-panel nv74-account">
+          <div class="portal-account-summary"><b>계정 연결</b><span id="portalAccountState">계정 연결 상태를 확인하는 중입니다.</span></div>
+          <div class="portal-account-summary"><b>저장 상태</b><span id="portalState">내 사이트 정보를 안전하게 확인하세요.</span></div>
+          <div class="account-links"><a href="/auth">계정 설정</a><a href="/checkout">결제 관리</a><a href="/plans">요금제 보기</a></div>
           <span class="sr-only" id="portalShellProfileState">로그인 후 저장 사이트와 최근 진단을 이어서 확인하세요.</span>
         </div>
       </section>
@@ -184,9 +207,9 @@
   </main>
 
   <footer class="portal-footer-clean">
-    <a class="footer-brand" href="/"><span class="portal-brand-mark">✓</span>VERIDION</a>
+    <strong>VERIDION</strong>
     <span>© 2026 VERIDION. All rights reserved.</span>
-    <nav aria-label="하단 메뉴"><a href="/terms">이용약관</a><a href="/privacy">개인정보처리방침</a><a href="/business-info">문의하기</a><a href="/guides">가이드</a></nav>
+    <nav aria-label="하단 메뉴"><a href="/terms">이용약관</a><a href="/privacy">개인정보처리방침</a><a href="/business-info">문의하기</a></nav>
   </footer>
 </div>
 <script defer src="/shared/nv0n-runtime.js"></script><script src="/apps/public/portal/app.js" type="module"></script>
