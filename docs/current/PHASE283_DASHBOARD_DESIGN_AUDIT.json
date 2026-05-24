@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-23T13:36:49.634Z",
+  "generatedAt": "2026-05-24T01:00:49.163Z",
   "phase": "phase283-dashboard-design-applied",
   "ok": true,
   "score": 100,
@@ -47,7 +47,7 @@
       "ok": true,
       "points": 8,
       "awarded": 8,
-      "detail": "register=3611, dashboard=4594"
+      "detail": "register=4222, dashboard=5205"
     },
     {
       "name": "phase283 css carries approved shell block",

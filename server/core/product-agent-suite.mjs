@@ -255,7 +255,7 @@ export function buildProductInsightDraft(db = {}, options = {}) {
     engine: 'product-agent-insight-v1',
     agentSuiteVersion: SUITE_VERSION,
     autoPublished: options.autoPublished === true,
-    publicationCadence: '20분마다 1건 발행',
+    publicationCadence: '20분에 1회 발행',
     productContext: context,
     productPath: topic.productPath,
     quality: null
@@ -312,7 +312,7 @@ export function ensureProductAgentSettings(db = {}, options = {}) {
     changed = true;
   }
   db.productAgentState.registry = PRODUCT_ENGINE_REGISTRY;
-  db.productAgentState.cadence = { intervalMs, intervalMinutes: Math.round(intervalMs / 60000), label: `${Math.round(intervalMs / 60000)}분마다 1건 발행` };
+  db.productAgentState.cadence = { intervalMs, intervalMinutes: Math.round(intervalMs / 60000), label: `${Math.round(intervalMs / 60000)}분에 1회 발행` };
   return { changed, intervalMs, state: db.productAgentState };
 }
 

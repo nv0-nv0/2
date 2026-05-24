@@ -4,7 +4,7 @@
   "phase": "phase280",
   "suiteVersion": "phase280-product-agent-insight-suite-v1.0.0",
   "validation": {
-    "packageFiles": 326,
+    "packageFiles": 329,
     "routes": [
       "/api/public/product-agent-status",
       "/api/admin/product-agents/audit"

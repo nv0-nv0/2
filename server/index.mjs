@@ -196,10 +196,8 @@ const TARGET_FETCH_MAX_SITEMAP_URLS = Math.max(0, Math.min(80, Number(process.en
 const TARGET_FETCH_MAX_DISCOVERY_RESOURCES = Math.max(1, Math.min(6, Number(process.env.NV0_TARGET_FETCH_MAX_DISCOVERY_RESOURCES || 4)));
 const TARGET_FETCH_AUTOMATION_LEVEL = process.env.NV0_TARGET_FETCH_AUTOMATION_LEVEL || 'maximum_free_safe';
 const CTA_AUTOPUBLISH_DEFAULT_INTERVAL_MS = 20 * 60_000;
-function normalizeCtaAutopublishIntervalMs(value, fallback = CTA_AUTOPUBLISH_DEFAULT_INTERVAL_MS) {
-const n = Number(value);
-if (!Number.isFinite(n) || n <= 0) return fallback;
-return Math.max(60_000, Math.min(86_400_000, Math.round(n)));
+function normalizeCtaAutopublishIntervalMs(_value, fallback = CTA_AUTOPUBLISH_DEFAULT_INTERVAL_MS) {
+return fallback;
 }
 const CTA_AUTOPUBLISH_INTERVAL_MS = normalizeCtaAutopublishIntervalMs(process.env.NV0_CTA_AUTOPUBLISH_INTERVAL_MS, CTA_AUTOPUBLISH_DEFAULT_INTERVAL_MS);
 const AI_REVIEW_PROVIDER = String(process.env.NV0_AI_REVIEW_PROVIDER || 'disabled').trim().toLowerCase();
@@ -3075,7 +3073,7 @@ latestScan: scan,
 guidance,
 autoFixJobs,
 boards: boardItems,
-publicationCadence: { intervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000), label: `${Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000)}분마다 1건 발행`, engine: 'product-agent-insight-v1', actualPublishing: true, lastPublishedAt: lastPublished?.publishedAt || lastPublished?.createdAt || null },
+publicationCadence: { intervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000), label: `${Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000)}분에 1회 발행`, engine: 'product-agent-insight-v1', actualPublishing: true, lastPublishedAt: lastPublished?.publishedAt || lastPublished?.createdAt || null },
 legalUpdates: (db.legalUpdates || []).slice(0, 10),
 plans: buildPlanCatalog(scan?.recommendedPlan || subscription?.plan || 'Report')
 };

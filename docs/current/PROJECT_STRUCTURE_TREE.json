@@ -1,13 +1,13 @@
 {
   "ok": true,
-  "generatedAt": "2026-05-23T13:36:51.138Z",
-  "root": "VERIDION_phase288_server_available_100",
+  "generatedAt": "2026-05-24T01:00:50.080Z",
+  "root": "VERIDION_phase289_startup_resilience_100",
   "limits": {
     "maxDepth": 4,
     "maxChildrenPerDir": 80
   },
   "summary": {
-    "files": 326,
+    "files": 329,
     "dirs": 61
   },
   "keyFiles": [
@@ -55,7 +55,7 @@
     }
   ],
   "tree": {
-    "name": "VERIDION_phase288_server_available_100",
+    "name": "VERIDION_phase289_startup_resilience_100",
     "path": ".",
     "type": "dir",
     "note": "",
@@ -566,13 +566,13 @@
                     "name": "app.js",
                     "path": "apps/public/portal/app.js",
                     "type": "file",
-                    "size": 57023
+                    "size": 57027
                   },
                   {
                     "name": "index.html",
                     "path": "apps/public/portal/index.html",
                     "type": "file",
-                    "size": 13241
+                    "size": 13936
                   }
                 ]
               },
@@ -926,7 +926,7 @@
                 "name": "product-agent-suite.mjs",
                 "path": "server/core/product-agent-suite.mjs",
                 "type": "file",
-                "size": 26754
+                "size": 26748
               },
               {
                 "name": "product-intelligence.mjs",
@@ -1152,7 +1152,7 @@
                 "name": "public.mjs",
                 "path": "server/routes/public.mjs",
                 "type": "file",
-                "size": 44086
+                "size": 44080
               }
             ]
           },
@@ -1192,7 +1192,7 @@
             "name": "index.mjs",
             "path": "server/index.mjs",
             "type": "file",
-            "size": 228031
+            "size": 227907
           }
         ]
       },
@@ -1266,7 +1266,7 @@
             "name": "portal-phase283-dashboard.css",
             "path": "shared/portal-phase283-dashboard.css",
             "type": "file",
-            "size": 38128
+            "size": 53991
           },
           {
             "name": "render-policy.js",
@@ -1757,6 +1757,12 @@
             "size": 4024
           },
           {
+            "name": "validate-phase290-portal-menu-cadence-ui.mjs",
+            "path": "scripts/validate-phase290-portal-menu-cadence-ui.mjs",
+            "type": "file",
+            "size": 4290
+          },
+          {
             "name": "validate-pipeline.mjs",
             "path": "scripts/validate-pipeline.mjs",
             "type": "file",
@@ -2079,10 +2085,16 @@
                 "size": 1433
               },
               {
+                "name": "PHASE290_PORTAL_MENU_CADENCE_UI_AUDIT.json",
+                "path": "docs/current/PHASE290_PORTAL_MENU_CADENCE_UI_AUDIT.json",
+                "type": "file",
+                "size": 1592
+              },
+              {
                 "name": "PROJECT_STRUCTURE_TREE.json",
                 "path": "docs/current/PROJECT_STRUCTURE_TREE.json",
                 "type": "file",
-                "size": 79263
+                "size": 79955
               }
             ]
           },
@@ -2225,10 +2237,16 @@
             "size": 1454
           },
           {
+            "name": "PHASE290_PORTAL_MENU_CADENCE_UI_REPORT.md",
+            "path": "docs/PHASE290_PORTAL_MENU_CADENCE_UI_REPORT.md",
+            "type": "file",
+            "size": 1019
+          },
+          {
             "name": "PROJECT_STRUCTURE_TREE.md",
             "path": "docs/PROJECT_STRUCTURE_TREE.md",
             "type": "file",
-            "size": 17894
+            "size": 18071
           }
         ]
       },
@@ -2474,7 +2492,7 @@
         "name": "package.json",
         "path": "package.json",
         "type": "file",
-        "size": 7897
+        "size": 8060
       },
       {
         "name": "README.md",
