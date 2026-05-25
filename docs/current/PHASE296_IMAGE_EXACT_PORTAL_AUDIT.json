@@ -1,0 +1,72 @@
+{
+  "ok": true,
+  "phase": "phase296",
+  "score": 100,
+  "total": 100,
+  "issue": "apply generated reference image layout to package",
+  "checkedIds": 41,
+  "checks": [
+    {
+      "key": "referenceTopbar",
+      "weight": 10,
+      "pass": true,
+      "message": "참조 이미지와 같은 상단 메뉴"
+    },
+    {
+      "key": "referenceHero",
+      "weight": 10,
+      "pass": true,
+      "message": "큰 내 사이트 헤더와 우측 일러스트"
+    },
+    {
+      "key": "topThreeCards",
+      "weight": 14,
+      "pass": true,
+      "message": "상단 3카드 레이아웃"
+    },
+    {
+      "key": "lowerGrid",
+      "weight": 12,
+      "pass": true,
+      "message": "등록 행과 하단 3카드 레이아웃"
+    },
+    {
+      "key": "scoreCard",
+      "weight": 10,
+      "pass": true,
+      "message": "최근 진단 결과 원형 게이지와 4개 점수"
+    },
+    {
+      "key": "quickEightGrid",
+      "weight": 10,
+      "pass": true,
+      "message": "빠른 실행 8개 버튼"
+    },
+    {
+      "key": "functionIds",
+      "weight": 14,
+      "pass": true,
+      "message": "기존 기능 연결 ID 유지"
+    },
+    {
+      "key": "twentyMinute",
+      "weight": 8,
+      "pass": true,
+      "message": "인사이트 20분에 1회 발행"
+    },
+    {
+      "key": "dynamicCompatibility",
+      "weight": 6,
+      "pass": true,
+      "message": "동적 저장 사이트/인사이트/다음 행동 스타일 호환"
+    },
+    {
+      "key": "responsive",
+      "weight": 6,
+      "pass": true,
+      "message": "태블릿/모바일 대응"
+    }
+  ],
+  "failed": [],
+  "report": "docs/current/PHASE296_IMAGE_EXACT_PORTAL_AUDIT.json"
+}

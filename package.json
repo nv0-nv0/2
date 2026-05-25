@@ -98,7 +98,11 @@
     "validate:phase294": "node scripts/validate-phase294-portal-real-layout.mjs",
     "phase294:final": "npm run phase293:final && npm run validate:phase294",
     "validate:phase295": "node scripts/validate-phase295-portal-complete-rebuild.mjs",
-    "phase295:final": "npm run check:syntax && npm run validate:phase288 && npm run validate:phase289 && npm run validate:phase295"
+    "phase295:final": "npm run check:syntax && npm run validate:phase288 && npm run validate:phase289 && npm run validate:phase295",
+    "validate:phase296": "node scripts/validate-phase296-image-exact-portal.mjs",
+    "phase296:final": "npm run check:syntax && npm run validate:phase288 && npm run validate:phase289 && npm run validate:phase296",
+    "validate:phase297": "node scripts/validate-phase297-final-link-nav-audit.mjs",
+    "phase297:final": "npm run check:syntax && npm test && npm run check:pages && npm run test:routes && npm run check:links -- --summary && npm run verify:security && npm run validate:commercial && npm run validate:commercial-runtime && npm run validate:pipeline && npm run validate:phase288 && npm run validate:phase289 && npm run validate:phase297"
   },
   "description": "VERIDION phase285 structure-optimized commercial package: approved portal dashboard, product-agent insight engine, 20-minute publication cadence, POSIX packaging, generated structure tree, and 100-point structure hardening gate."
 }

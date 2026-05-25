@@ -1,0 +1,72 @@
+{
+  "ok": true,
+  "phase": "phase297",
+  "score": 100,
+  "total": 100,
+  "issue": "final portal navigation, route integrity, and release gate hardening",
+  "checkedIds": 41,
+  "checks": [
+    {
+      "key": "commonHeader",
+      "weight": 14,
+      "pass": true,
+      "message": "다른 페이지와 같은 공통 상단 메뉴 적용"
+    },
+    {
+      "key": "noBrokenPortalShortcuts",
+      "weight": 16,
+      "pass": true,
+      "message": "깨진 내부 링크 /dashboard /keywords /compare 제거"
+    },
+    {
+      "key": "portalLayoutPreserved",
+      "weight": 12,
+      "pass": true,
+      "message": "이미지형 포털 대시보드 핵심 섹션 유지"
+    },
+    {
+      "key": "existingRoutesOnly",
+      "weight": 10,
+      "pass": true,
+      "message": "실제 존재하는 공개 라우트로만 이동"
+    },
+    {
+      "key": "functionalIdsPreserved",
+      "weight": 14,
+      "pass": true,
+      "message": "기존 기능 연결 ID 유지"
+    },
+    {
+      "key": "cadence",
+      "weight": 8,
+      "pass": true,
+      "message": "인사이트 20분에 1회 발행 유지"
+    },
+    {
+      "key": "readabilityAndLayout",
+      "weight": 8,
+      "pass": true,
+      "message": "PC 기준 대시보드 카드 폭과 배열"
+    },
+    {
+      "key": "responsive",
+      "weight": 6,
+      "pass": true,
+      "message": "태블릿/모바일 반응형 유지"
+    },
+    {
+      "key": "linkGateInFinal",
+      "weight": 8,
+      "pass": true,
+      "message": "최종 게이트에 링크 검사 포함"
+    },
+    {
+      "key": "docs",
+      "weight": 4,
+      "pass": true,
+      "message": "수정 리포트 문서화"
+    }
+  ],
+  "failed": [],
+  "report": "docs/current/PHASE297_FINAL_LINK_NAV_AUDIT.json"
+}
