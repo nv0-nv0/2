@@ -1,6 +1,6 @@
 {
   "name": "veridion-public-risk-diagnostic",
-  "version": "1.0.0-commercial-phase283-dashboard-design-applied",
+  "version": "1.0.0-commercial-phase299-final-delivery",
   "private": true,
   "type": "module",
   "scripts": {
@@ -28,7 +28,7 @@
     "test:phase258": "node tests/phase258-structural-hardening.mjs",
     "validate:phase258": "node scripts/validate-phase258-structural-hardening.mjs",
     "phase258:final": "npm run phase270:final",
-    "final:review": "npm run phase278:final",
+    "final:review": "npm run phase299:final",
     "ci:strict": "node scripts/ci-strict.mjs",
     "validate:commercial": "node scripts/validate-commercial-release.mjs",
     "validate:commercial-runtime": "node scripts/validate-commercial-runtime.mjs",
@@ -102,7 +102,25 @@
     "validate:phase296": "node scripts/validate-phase296-image-exact-portal.mjs",
     "phase296:final": "npm run check:syntax && npm run validate:phase288 && npm run validate:phase289 && npm run validate:phase296",
     "validate:phase297": "node scripts/validate-phase297-final-link-nav-audit.mjs",
-    "phase297:final": "npm run check:syntax && npm test && npm run check:pages && npm run test:routes && npm run check:links -- --summary && npm run verify:security && npm run validate:commercial && npm run validate:commercial-runtime && npm run validate:pipeline && npm run validate:phase288 && npm run validate:phase289 && npm run validate:phase297"
+    "phase297:final": "npm run check:syntax && npm test && npm run check:pages && npm run test:routes && npm run check:links -- --summary && npm run verify:security && npm run validate:commercial && npm run validate:commercial-runtime && npm run validate:pipeline && npm run validate:phase288 && npm run validate:phase289 && npm run validate:phase297",
+    "validate:phase298": "node scripts/validate-phase298-insight-ui-ops.mjs",
+    "phase298:final": "npm run check:syntax && npm test && npm run test:e2e && npm run check:pages && npm run test:routes && npm run check:links -- --summary && npm run smoke && npm run verify:security && npm run validate:deploy && npm run validate:commercial && npm run validate:commercial-runtime && npm run validate:pipeline && npm run validate:phase288 && npm run validate:phase289 && npm run validate:phase297 && npm run validate:phase298",
+    "verify:prod": "node scripts/verify-prod.mjs",
+    "restore:drill": "node scripts/restore-drill.mjs",
+    "monitoring:rollback": "node scripts/monitoring-rollback-gate.mjs",
+    "ops:production-matrix": "node scripts/ops-production-verification.mjs",
+    "check:ast-placeholder": "node scripts/check-ast-placeholder-guard.mjs",
+    "check:content-completeness": "node scripts/check-content-completeness.mjs",
+    "check:data-integrity": "node scripts/check-data-integrity.mjs",
+    "check:commercial-flow": "node scripts/check-full-commercial-flow.mjs",
+    "check:handoff-docs": "node scripts/check-handoff-docs.mjs",
+    "check:storage-config": "node scripts/check-storage-config.mjs deploy/env.production.nv0.kr.example",
+    "validate:phase299": "node scripts/validate-phase299-final-delivery.mjs",
+    "phase299:final": "npm run check:syntax && npm run check:ast-placeholder && npm run check:content-completeness && npm run check:data-integrity && npm test && npm run test:e2e && npm run check:pages && npm run test:routes && npm run check:links -- --summary && npm run smoke && npm run check:commercial-flow && npm run check:handoff-docs && npm run check-no-debug-client && npm run check-client-render-safety && npm run check:storage-config && npm run check-validation-json && npm run monitoring:rollback && npm run restore:drill && npm run verify:prod && npm run verify:security && npm run validate:deploy && npm run validate:commercial && npm run validate:commercial-runtime && npm run validate:pipeline && npm run validate:phase288 && npm run validate:phase289 && npm run validate:phase297 && npm run validate:phase298 && npm run ops:production-matrix && npm run validate:phase299",
+    "delivery:final": "npm run phase299:final",
+    "check-no-debug-client": "node scripts/check-no-debug-client.mjs",
+    "check-client-render-safety": "node scripts/check-client-render-safety.mjs",
+    "check-validation-json": "node scripts/check-validation-json.mjs"
   },
-  "description": "VERIDION phase285 structure-optimized commercial package: approved portal dashboard, product-agent insight engine, 20-minute publication cadence, POSIX packaging, generated structure tree, and 100-point structure hardening gate."
+  "description": "VERIDION phase299 final delivery package: full insight autopublishing, UI visibility hardening, hidden quality gate closure, operational matrix, rollback and production verification commands."
 }

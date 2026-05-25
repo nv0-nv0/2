@@ -1,0 +1,72 @@
+{
+  "ok": true,
+  "phase": "phase298",
+  "score": 100,
+  "total": 100,
+  "suiteVersion": "phase280-phase298-product-agent-insight-ops-suite-v2.0.0",
+  "rulesetVersion": "phase298-korean-copy-special-char-guard-v1",
+  "generatedQualityScore": 100,
+  "checks": [
+    {
+      "key": "suiteVersion",
+      "weight": 8,
+      "pass": true,
+      "message": "phase298 suite version applied"
+    },
+    {
+      "key": "qualityRuleset",
+      "weight": 10,
+      "pass": true,
+      "message": "copy quality ruleset applied"
+    },
+    {
+      "key": "engineAgents",
+      "weight": 12,
+      "pass": true,
+      "message": "engine and agent registry expanded"
+    },
+    {
+      "key": "serverWatchdog",
+      "weight": 10,
+      "pass": true,
+      "message": "server watchdog blocks bad publication"
+    },
+    {
+      "key": "contentCleaner",
+      "weight": 12,
+      "pass": true,
+      "message": "content cleaner and audit checks exist"
+    },
+    {
+      "key": "portalNoOverlap",
+      "weight": 12,
+      "pass": true,
+      "message": "portal overlap hardening exists"
+    },
+    {
+      "key": "buttonVisibility",
+      "weight": 12,
+      "pass": true,
+      "message": "buttons have visible contrast and focus"
+    },
+    {
+      "key": "appCssSynced",
+      "weight": 6,
+      "pass": true,
+      "message": "portal app css synced"
+    },
+    {
+      "key": "phaseScript",
+      "weight": 8,
+      "pass": true,
+      "message": "phase298 npm scripts wired"
+    },
+    {
+      "key": "docs",
+      "weight": 10,
+      "pass": true,
+      "message": "phase298 delivery report exists"
+    }
+  ],
+  "failed": []
+}

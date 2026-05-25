@@ -3830,7 +3830,10 @@ return { ok: true, skipped: 'disabled' };
 }
 const due = ctaAutopublishDueStatus(db, synced.intervalMs);
 if (!due.due) {
-if (synced.changed) await writeDb(db);
+db.productAgentState ||= {};
+db.productAgentState.lastDueStatus = { due: false, remainingMs: due.remainingMs, elapsedMs: due.elapsedMs, intervalMs: synced.intervalMs, lastPublishedAt: due.last?.publishedAt || due.last?.createdAt || null };
+db.productAgentState.watchdog = { agent: 'cadence-watchdog-agent', decision: 'not-due-yet', remainingMs: due.remainingMs, intervalMs: synced.intervalMs, checkedAt: nowIso() };
+await writeDb(db);
 return { ok: true, skipped: 'interval', remainingMs: due.remainingMs, intervalMs: synced.intervalMs };
 }
 const scan = (db.scans || [])[0] || {
@@ -3849,22 +3852,35 @@ try {
     && Array.isArray(error?.audit?.failed)
     && error.audit.failed.length === 1
     && error.audit.failed[0] === 'notDuplicate';
-  if (!duplicateOnly) throw error;
   db.productAgentState ||= {};
   db.productAgentState.lastRunAt = nowIso();
   db.productAgentState.lastSkippedAt = nowIso();
-  db.productAgentState.lastSkipReason = 'duplicate-insight';
-  db.productAgentState.lastDraftAudit = error.audit;
-  appendAudit(db, { headers: {}, socket: {} }, 'system.product_insight.skipped_duplicate', {
+  if (duplicateOnly) db.productAgentState.lastSkipReason = 'duplicate-insight';
+  else db.productAgentState.lastSkipReason = 'quality-gate-failed';
+  db.productAgentState.lastDraftAudit = error.audit || null;
+  db.productAgentState.lastErrorMessage = error?.message || String(error);
+  db.productAgentState.lastErrorCode = error?.code || 'UNKNOWN_PUBLICATION_ERROR';
+  db.productAgentState.watchdog = {
+    agent: 'cadence-watchdog-agent',
+    decision: 'blocked-before-publication',
+    intervalMs: synced.intervalMs,
+    reason: db.productAgentState.lastSkipReason,
+    checkedAt: nowIso()
+  };
+  appendAudit(db, { headers: {}, socket: {} }, duplicateOnly ? 'system.product_insight.skipped_duplicate' : 'system.product_insight.blocked_quality_gate', {
     reason,
     intervalMs: synced.intervalMs,
     suiteVersion: PRODUCT_AGENT_SUITE_VERSION,
     qualityScore: error.audit?.score,
-    failed: error.audit?.failed || []
+    failed: error.audit?.failed || [],
+    errorCode: error?.code || null
   });
   await writeDb(db);
-  return { ok: true, skipped: 'duplicate-insight', intervalMs: synced.intervalMs, suiteVersion: PRODUCT_AGENT_SUITE_VERSION, audit: error.audit };
+  if (duplicateOnly) return { ok: true, skipped: 'duplicate-insight', intervalMs: synced.intervalMs, suiteVersion: PRODUCT_AGENT_SUITE_VERSION, audit: error.audit || null };
+  return { ok: true, skipped: 'quality-gate-failed', intervalMs: synced.intervalMs, suiteVersion: PRODUCT_AGENT_SUITE_VERSION, audit: error.audit || null };
 }
+db.productAgentState ||= {};
+db.productAgentState.watchdog = { agent: 'cadence-watchdog-agent', decision: 'published', publicationId: item.id, intervalMs: synced.intervalMs, checkedAt: nowIso() };
 appendAudit(db, { headers: {}, socket: {} }, 'system.product_insight.published', { id: item.id, reason, intervalMs: synced.intervalMs, suiteVersion: PRODUCT_AGENT_SUITE_VERSION, qualityScore: item.quality?.score });
 await writeDb(db);
 return { ok: true, publication: item, intervalMs: synced.intervalMs, suiteVersion: PRODUCT_AGENT_SUITE_VERSION };

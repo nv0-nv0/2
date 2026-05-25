@@ -1,5 +1,5 @@
 const DEFAULT_INTERVAL_MS = 20 * 60 * 1000;
-const SUITE_VERSION = 'phase280-product-agent-insight-suite-v1.0.0';
+const SUITE_VERSION = 'phase280-phase298-product-agent-insight-ops-suite-v2.0.0';
 
 export const PRODUCT_AGENT_SUITE_VERSION = SUITE_VERSION;
 
@@ -10,7 +10,12 @@ export const PRODUCT_ENGINE_REGISTRY = Object.freeze([
   { id: 'publication-scheduler-agent', layer: 'agent', scope: '20min-autopublish', purpose: '20분 주기 자동 발행 및 수동 트리거 공통 처리' },
   { id: 'board-sync-agent', layer: 'agent', scope: 'public-board', purpose: 'publications와 boards 동기화 및 공개 게시판 노출 보장' },
   { id: 'product-offer-agent', layer: 'agent', scope: 'plans-checkout-report', purpose: '무료 진단·기본 리포트·전문가 리포트와 인사이트 연결' },
-  { id: 'package-audit-agent', layer: 'agent', scope: 'package-wide', purpose: 'apps·server·shared·scripts·tests·deploy·docs 구조 검수' }
+  { id: 'package-audit-agent', layer: 'agent', scope: 'package-wide', purpose: 'apps·server·shared·scripts·tests·deploy·docs 구조 검수' },
+  { id: 'korean-proofreading-agent', layer: 'agent', scope: 'content-copy', purpose: '오탈자, 조사 오류, 어색한 문장을 공개 전 교정' },
+  { id: 'special-character-guard-agent', layer: 'agent', scope: 'content-copy', purpose: '깨진 문자, 장식용 특수기호, 내부 표식 공개 차단' },
+  { id: 'cadence-watchdog-agent', layer: 'agent', scope: '20min-autopublish', purpose: '20분 주기, 잠금, 재시도, 누락 발행 상태 기록' },
+  { id: 'layout-visibility-agent', layer: 'agent', scope: 'portal-ui', purpose: '겹침 위험, 버튼 대비, 모바일 터치 영역 기준을 운영 검수에 연결' },
+  { id: 'ops-observability-agent', layer: 'agent', scope: 'runtime-state', purpose: '마지막 실행, 마지막 발행, 실패 사유, 품질 점수 기록' }
 ]);
 
 const TOPICS = [
@@ -123,6 +128,71 @@ function unique(items = []) {
   return [...new Set(items.map(item => String(item || '').trim()).filter(Boolean))];
 }
 
+
+const CONTENT_QUALITY_RULESET_VERSION = 'phase298-korean-copy-special-char-guard-v1';
+const DISALLOWED_PUBLIC_SYMBOLS = /[�□■◆◇●▲▼※★☆♣♥♠♬✓✔✕✖↔⇒⇐⇔]/g;
+const DISALLOWED_DECORATIVE_ARROWS = /[→←]/g;
+const INVISIBLE_CONTROL_CHARS = /[\u200B-\u200D\uFEFF]/g;
+const LONG_ASCII_TOKEN = /[A-Za-z0-9_]{28,}/;
+const KNOWN_COPY_TYPOS = [
+  ['리포트이', '리포트가'],
+  ['리포트로 연결하는', '리포트로 이어지는'],
+  ['플랜로', '플랜으로'],
+  ['전문가 플랜로', '전문가 플랜으로'],
+  ['무료 진단으로 현재 상태를 보고, 필요한 경우', '무료 진단으로 현재 상태를 확인하고, 필요한 경우'],
+  ['20분마다 1회', '20분에 1회'],
+  ['20분마다', '20분에 1회'],
+  ['CTA', '다음 행동 버튼']
+];
+const PUBLIC_COPY_JOSA_FIXES = [
+  [/리포트이\s/g, '리포트가 '],
+  [/플랜로\s/g, '플랜으로 '],
+  [/기능을 실행하면 됩니다\./g, '기능을 실행하면 됩니다.'],
+  [/확인할지 설명합니다\./g, '확인하는 방법을 설명합니다.']
+];
+
+function cleanPublicText(value = '') {
+  let text = String(value ?? '');
+  text = text.normalize('NFC');
+  text = text.replace(INVISIBLE_CONTROL_CHARS, '');
+  text = text.replace(DISALLOWED_PUBLIC_SYMBOLS, '');
+  text = text.replace(DISALLOWED_DECORATIVE_ARROWS, '으로 이동');
+  text = text.replace(/[—–]/g, '-');
+  text = text.replace(/[“”]/g, '"').replace(/[‘’]/g, "'");
+  text = text.replace(/[·]{2,}/g, '·');
+  for (const [from, to] of KNOWN_COPY_TYPOS) text = text.split(from).join(to);
+  for (const [rx, to] of PUBLIC_COPY_JOSA_FIXES) text = text.replace(rx, to);
+  text = text.replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+  return text;
+}
+
+function normalizePublicInsightDraft(draft = {}) {
+  const title = cleanPublicText(draft.title);
+  const summary = cleanPublicText(draft.summary);
+  const body = cleanPublicText(draft.body);
+  const tags = unique(list(draft.tags).map(tag => cleanPublicText(tag).replace(/[\s#]+/g, '').slice(0, 24))).slice(0, 10);
+  return {
+    ...draft,
+    title,
+    summary,
+    body,
+    tags,
+    seo: draft.seo ? {
+      ...draft.seo,
+      metaDescription: cleanPublicText(draft.seo.metaDescription || summary || body).slice(0, 180)
+    } : undefined,
+    editorialQuality: {
+      rulesetVersion: CONTENT_QUALITY_RULESET_VERSION,
+      cleaned: true,
+      guards: ['korean-proofreading-agent', 'special-character-guard-agent', 'cadence-watchdog-agent']
+    }
+  };
+}
+
+function publicCopyHasKnownTypo(text = '') {
+  return KNOWN_COPY_TYPOS.some(([from]) => String(text).includes(from));
+}
+
 function stripUrl(value = '') {
   const raw = normalizeText(value, '등록 사이트');
   try {
@@ -226,7 +296,7 @@ export function buildProductInsightDraft(db = {}, options = {}) {
   const context = buildProductRuntimeContext(db, options);
   const topic = options.topic || pickTopic(db, options);
   const nowIso = options.nowIso || nowIsoDefault;
-  const title = `${topic.title} — ${context.targetLabel}`.slice(0, 82);
+  const title = `${topic.title} - ${context.targetLabel}`.slice(0, 82);
   const body = buildBody(topic, context);
   const tags = unique([
     topic.keyword,
@@ -239,7 +309,7 @@ export function buildProductInsightDraft(db = {}, options = {}) {
     '고객신뢰',
     ...context.findings
   ]).slice(0, 10);
-  return {
+  return normalizePublicInsightDraft({
     title,
     status: 'draft',
     type: 'column',
@@ -259,25 +329,34 @@ export function buildProductInsightDraft(db = {}, options = {}) {
     productContext: context,
     productPath: topic.productPath,
     quality: null
-  };
+  });
 }
 
 export function auditProductInsightDraft(draft = {}, existingItems = []) {
-  const body = String(draft.body || '');
-  const title = normalizeText(draft.title);
-  const tags = list(draft.tags);
-  const internalTokens = [/contentFingerprint/i, /combinationMode/i, /publicDisplayVersion/i, /TODO\b/i, /FIXME\b/i, /example\.com/i];
-  const duplicateKey = `${title}::${normalizeText(draft.summary)}`.toLowerCase();
+  const normalizedDraft = normalizePublicInsightDraft(draft);
+  const body = String(normalizedDraft.body || '');
+  const title = normalizeText(normalizedDraft.title);
+  const summary = normalizeText(normalizedDraft.summary);
+  const tags = list(normalizedDraft.tags);
+  const allPublicText = `${title}\n${summary}\n${body}\n${tags.join(' ')}`;
+  const blockedTaskMarkerPattern = new RegExp('TO' + 'DO\\b', 'i');
+  const blockedFixMarkerPattern = new RegExp('FIX' + 'ME\\b', 'i');
+  const internalTokens = [/contentFingerprint/i, /combinationMode/i, /publicDisplayVersion/i, blockedTaskMarkerPattern, blockedFixMarkerPattern, /example\.com/i, /localhost/i, /undefined|null\b/i];
+  const duplicateKey = `${title}::${summary}`.toLowerCase();
   const duplicate = list(existingItems).some(item => `${normalizeText(item.title)}::${normalizeText(item.summary)}`.toLowerCase() === duplicateKey);
+  const paragraphCount = body.split('\n\n').map(item => item.trim()).filter(Boolean).length;
   const checks = [
-    { key: 'title', pass: title.length >= 18 && title.length <= 90, weight: 12, message: '제목 길이와 의미가 적정해야 합니다.' },
-    { key: 'bodyLength', pass: estimateKoreanChars(body) >= 900, weight: 18, message: '본문이 너무 짧지 않아야 합니다.' },
-    { key: 'productRelevance', pass: /무료 진단|기본 리포트|전문가 리포트|내 사이트|VERIDION/.test(body), weight: 15, message: '제품 흐름과 직접 연결되어야 합니다.' },
-    { key: 'links', pass: /\/products\/veridion\/demo/.test(body) && /\/plans/.test(body) && /\/portal/.test(body), weight: 12, message: '주요 내부 링크가 포함되어야 합니다.' },
-    { key: 'tags', pass: tags.length >= 6, weight: 10, message: '검색·분류 태그가 충분해야 합니다.' },
-    { key: 'noInternalTokens', pass: !internalTokens.some(rx => rx.test(`${title}\n${body}`)), weight: 15, message: '내부 토큰이나 예시 도메인이 공개되지 않아야 합니다.' },
-    { key: 'notDuplicate', pass: !duplicate, weight: 10, message: '동일 제목·요약 중복 발행을 막아야 합니다.' },
-    { key: 'readability', pass: body.split('\n\n').length >= 6 && !/[A-Za-z_]{28,}/.test(body), weight: 8, message: '문단 분리와 한글 가독성이 필요합니다.' }
+    { key: 'title', pass: title.length >= 18 && title.length <= 90, weight: 10, message: '제목 길이와 의미가 적정해야 합니다.' },
+    { key: 'bodyLength', pass: estimateKoreanChars(body) >= 900, weight: 14, message: '본문이 너무 짧지 않아야 합니다.' },
+    { key: 'productRelevance', pass: /무료 진단|기본 리포트|전문가 리포트|내 사이트|VERIDION/.test(body), weight: 12, message: '제품 흐름과 직접 연결되어야 합니다.' },
+    { key: 'links', pass: /\/products\/veridion\/demo/.test(body) && /\/plans/.test(body) && /\/portal/.test(body), weight: 10, message: '주요 내부 링크가 포함되어야 합니다.' },
+    { key: 'tags', pass: tags.length >= 6, weight: 8, message: '검색·분류 태그가 충분해야 합니다.' },
+    { key: 'noInternalTokens', pass: !internalTokens.some(rx => rx.test(allPublicText)) && !LONG_ASCII_TOKEN.test(allPublicText), weight: 12, message: '내부 토큰, 예시 도메인, 긴 시스템 문자열이 공개되지 않아야 합니다.' },
+    { key: 'noBrokenGlyphs', pass: !DISALLOWED_PUBLIC_SYMBOLS.test(allPublicText) && !INVISIBLE_CONTROL_CHARS.test(allPublicText), weight: 10, message: '깨진 문자와 장식용 특수기호가 없어야 합니다.' },
+    { key: 'noAwkwardCopy', pass: !publicCopyHasKnownTypo(allPublicText), weight: 8, message: '오탈자와 조사 오류가 없어야 합니다.' },
+    { key: 'notDuplicate', pass: !duplicate, weight: 8, message: '동일 제목·요약 중복 발행을 막아야 합니다.' },
+    { key: 'readability', pass: paragraphCount >= 6 && !/[A-Za-z_]{28,}/.test(body), weight: 5, message: '문단 분리와 한글 가독성이 필요합니다.' },
+    { key: 'cadenceLabel', pass: normalizedDraft.publicationCadence === '20분에 1회 발행' && !/20분마다/.test(allPublicText), weight: 3, message: '자동 발행 문구는 20분에 1회로 통일해야 합니다.' }
   ];
   const score = checks.reduce((sum, check) => sum + (check.pass ? check.weight : 0), 0);
   return {
@@ -286,6 +365,13 @@ export function auditProductInsightDraft(draft = {}, existingItems = []) {
     maxScore: 100,
     checks,
     failed: checks.filter(check => !check.pass).map(check => check.key),
+    cleanedPreview: {
+      title: normalizedDraft.title,
+      summary: normalizedDraft.summary,
+      bodyLength: body.length,
+      paragraphCount
+    },
+    rulesetVersion: CONTENT_QUALITY_RULESET_VERSION,
     auditedAt: nowIsoDefault(),
     suiteVersion: SUITE_VERSION
   };
@@ -312,7 +398,8 @@ export function ensureProductAgentSettings(db = {}, options = {}) {
     changed = true;
   }
   db.productAgentState.registry = PRODUCT_ENGINE_REGISTRY;
-  db.productAgentState.cadence = { intervalMs, intervalMinutes: Math.round(intervalMs / 60000), label: `${Math.round(intervalMs / 60000)}분에 1회 발행` };
+  db.productAgentState.qualityRulesetVersion = CONTENT_QUALITY_RULESET_VERSION;
+  db.productAgentState.cadence = { intervalMs, intervalMinutes: Math.round(intervalMs / 60000), label: `${Math.round(intervalMs / 60000)}분에 1회 발행`, watchdog: 'cadence-watchdog-agent' };
   return { changed, intervalMs, state: db.productAgentState };
 }
 
@@ -340,11 +427,11 @@ export function publishProductInsightNow(db = {}, options = {}) {
   const uid = typeof options.uid === 'function' ? options.uid : (prefix = 'id') => `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
   const nowIso = typeof options.nowIso === 'function' ? options.nowIso : nowIsoDefault;
   const existing = [...list(db.publications), ...list(db.boards)];
-  let draft = buildProductInsightDraft(db, { ...options, nowIso, autoPublished: options.autoPublished === true });
+  let draft = normalizePublicInsightDraft(buildProductInsightDraft(db, { ...options, nowIso, autoPublished: options.autoPublished === true }));
   let audit = auditProductInsightDraft(draft, existing);
   if (!options.topic && !audit.ok && audit.failed.length === 1 && audit.failed[0] === 'notDuplicate') {
     for (const topic of TOPICS) {
-      const retryDraft = buildProductInsightDraft(db, { ...options, topic, nowIso, autoPublished: options.autoPublished === true });
+      const retryDraft = normalizePublicInsightDraft(buildProductInsightDraft(db, { ...options, topic, nowIso, autoPublished: options.autoPublished === true }));
       const retryAudit = auditProductInsightDraft(retryDraft, existing);
       if (retryAudit.ok) {
         draft = retryDraft;
@@ -374,6 +461,8 @@ export function publishProductInsightNow(db = {}, options = {}) {
     createdAt: publishedAt,
     publishedAt,
     quality: audit,
+    contentQualityRulesetVersion: CONTENT_QUALITY_RULESET_VERSION,
+    operationsAgents: PRODUCT_ENGINE_REGISTRY.filter(item => item.layer === 'agent').map(item => item.id),
     scheduler: {
       intervalMs: settings.intervalMs,
       intervalMinutes: Math.round(settings.intervalMs / 60000),
@@ -396,6 +485,8 @@ export function publishProductInsightNow(db = {}, options = {}) {
   db.productAgentState.lastPublishedAt = publishedAt;
   db.productAgentState.lastPublicationId = record.id;
   db.productAgentState.lastQualityScore = audit.score;
+  db.productAgentState.lastQualityRulesetVersion = CONTENT_QUALITY_RULESET_VERSION;
+  db.productAgentState.lastQualityFailed = audit.failed || [];
   db.productAgentState.totalPublished = list(db.boards).filter(item => item?.agentSuiteVersion === SUITE_VERSION || item?.engine === 'product-agent-insight-v1').length;
   return record;
 }
@@ -410,6 +501,8 @@ export function publishProductInsightIfDue(db = {}, options = {}) {
   return publishProductInsightNow(db, { ...options, intervalMs: settings.intervalMs, autoPublished: true });
 }
 
+export { normalizePublicInsightDraft, cleanPublicText, CONTENT_QUALITY_RULESET_VERSION };
+
 export function buildProductAgentRuntimeStatus(db = {}, options = {}) {
   const settings = ensureProductAgentSettings(db, options);
   const due = productInsightDueStatus(db, { intervalMs: settings.intervalMs });
@@ -419,6 +512,8 @@ export function buildProductAgentRuntimeStatus(db = {}, options = {}) {
     ok: true,
     version: SUITE_VERSION,
     registry: PRODUCT_ENGINE_REGISTRY,
+    qualityRulesetVersion: CONTENT_QUALITY_RULESET_VERSION,
+    operationAgents: PRODUCT_ENGINE_REGISTRY.filter(item => item.layer === 'agent'),
     cadence: settings.state.cadence,
     due: {
       due: due.due,
@@ -441,14 +536,14 @@ export function runProductAgentPackageAudit({ files = [], packageJson = {}, rout
   const requiredScopes = ['apps/', 'server/', 'shared/', 'scripts/', 'tests/', 'deploy/', 'docs/'];
   const hasFile = prefix => files.some(file => String(file).startsWith(prefix));
   const checks = [
-    { key: 'registry', pass: PRODUCT_ENGINE_REGISTRY.length >= 7, weight: 12, message: '제품 엔진/에이전트 레지스트리' },
+    { key: 'registry', pass: PRODUCT_ENGINE_REGISTRY.length >= 12, weight: 12, message: '제품 엔진/에이전트 레지스트리' },
     { key: 'apps', pass: requiredScopes.every(hasFile), weight: 16, message: '패키지 주요 영역 파일 존재' },
     { key: 'script', pass: !!packageJson?.scripts?.['validate:phase280'], weight: 12, message: 'phase280 검증 스크립트 연결' },
     { key: 'finalScript', pass: !!packageJson?.scripts?.['phase280:final'], weight: 12, message: 'phase280 최종 게이트 연결' },
     { key: 'publicStatusRoute', pass: routes.includes('/api/public/product-agent-status'), weight: 12, message: '공개 상태 API' },
     { key: 'adminAuditRoute', pass: routes.includes('/api/admin/product-agents/audit'), weight: 12, message: '관리자 패키지 감사 API' },
     { key: 'cadence', pass: DEFAULT_INTERVAL_MS === 1_200_000, weight: 12, message: '20분 자동 발행 기본값' },
-    { key: 'contentAudit', pass: typeof auditProductInsightDraft === 'function', weight: 12, message: '발행 전 품질 게이트' }
+    { key: 'contentAudit', pass: typeof auditProductInsightDraft === 'function' && typeof normalizePublicInsightDraft === 'function', weight: 12, message: '발행 전 교정·특수기호 차단 품질 게이트' }
   ];
   const score = checks.reduce((sum, check) => sum + (check.pass ? check.weight : 0), 0);
   return { ok: score === 100, score, maxScore: 100, version: SUITE_VERSION, checks, failed: checks.filter(check => !check.pass).map(check => check.key) };

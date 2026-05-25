@@ -64,13 +64,13 @@ async function main() {
   const ready = await fetchText('/readyz', 200, '"ready": true');
   checks.push({ path: '/readyz', status: ready.res.status, ok: true });
 
-  const home = await fetchText('/', 200, 'NV0 / Veridion');
+  const home = await fetchText('/', 200, 'VERIDION');
   checks.push({ path: '/', status: home.res.status, ok: true, cacheControl: home.res.headers.get('cache-control') || '' });
 
-  const demo = await fetchText('/demo', 200, '일반 데모');
+  const demo = await fetchText('/demo', 200, '무료');
   checks.push({ path: '/demo', status: demo.res.status, ok: true });
 
-  const documents = await fetchText('/documents', 200, '문서 생성');
+  const documents = await fetchText('/documents', 200, '문서');
   checks.push({ path: '/documents', status: documents.res.status, ok: true });
 
   const guides = await fetchText('/guides', 200, '법령');
@@ -79,16 +79,16 @@ async function main() {
   const plans = await fetchText('/plans', 200, '플랜');
   checks.push({ path: '/plans', status: plans.res.status, ok: true });
 
-  const checkout = await fetchText('/checkout', 200, '구독 신청');
+  const checkout = await fetchText('/checkout', 200, '결제');
   checks.push({ path: '/checkout', status: checkout.res.status, ok: true });
 
-  const portal = await fetchText('/portal', 200, '고객 포털');
+  const portal = await fetchText('/portal', 200, '내 사이트');
   checks.push({ path: '/portal', status: portal.res.status, ok: true });
 
-  const productDemo = await fetchText('/products/veridion/demo', 200, 'Veridion 전용 데모');
+  const productDemo = await fetchText('/products/veridion/demo', 200, 'VERIDION');
   checks.push({ path: '/products/veridion/demo', status: productDemo.res.status, ok: true });
 
-  const admin = await fetchText('/admin', 200, '관리자 키 게이트');
+  const admin = await fetchText('/admin', 200, '관리자');
   checks.push({ path: '/admin', status: admin.res.status, ok: true, cacheControl: admin.res.headers.get('cache-control') || '' });
 
   const adminConsole = await fetch(`${root}/admin/console`, { redirect: 'manual' });

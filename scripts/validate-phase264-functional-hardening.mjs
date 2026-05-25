@@ -1,7 +1,8 @@
 
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
-const ROOT = path.resolve(new URL('..', import.meta.url).pathname);
+import { fileURLToPath } from 'node:url';
+const ROOT = path.resolve(fileURLToPath(new URL('..', import.meta.url)));
 const read = (rel) => fs.readFile(path.join(ROOT, rel), 'utf8');
 const errors = [];
 const home = await read('apps/public/home/index.html');

@@ -1432,3 +1432,11 @@ pre{white-space:pre-wrap!important;max-width:100%!important;overflow:auto!import
   .portal-primary-action,.portal-secondary-action,.portal-hero-actions .btn{width:100%!important}
   .portal-card,.phase264-card,.article-card,.board-post,.plan-card-clean{border-radius:18px!important}
 }
+
+/* PHASE298: package-wide button visibility and text-overlap hardening */
+a,button,.btn,.cta,.top-cta,.phase264-btn,.portal-btn,.portal-card-cta,.nv0n-start-link,.nv0n-login-link,.nv0-icon-link,.login-link,.post-cta a,.bridge-actions button,.phase264-cta-row a,.phase264-cta-row button{min-height:42px;line-height:1.2;overflow-wrap:anywhere;word-break:keep-all;text-align:center;text-decoration:none}
+button,.btn,.cta,.top-cta,.phase264-btn.primary,.btn.primary,.portal-btn-primary,.nv0n-start-link,.bridge-actions button,button[type="submit"]{border:1px solid var(--vui-primary)!important;background:var(--vui-primary)!important;color:#fff!important;font-weight:900!important;box-shadow:0 8px 18px rgba(15,23,42,.12)!important}
+.btn.secondary,.phase264-btn.secondary,.portal-btn-secondary,.nv0n-login-link,.nv0-icon-link,.login-link,.portal-card-cta{border:1px solid #93c5fd!important;background:#fff!important;color:#1d4ed8!important;font-weight:900!important;box-shadow:0 1px 0 rgba(29,78,216,.08)!important}
+button:focus-visible,.btn:focus-visible,.cta:focus-visible,.top-cta:focus-visible,.phase264-btn:focus-visible,.portal-btn:focus-visible,.portal-card-cta:focus-visible,.nv0n-nav-link:focus-visible,.nv0-nav a:focus-visible,.site-menu a:focus-visible{outline:3px solid rgba(37,99,235,.28)!important;outline-offset:3px!important}
+.phase264-card,.legal-card,.card,.result-card,.portal-card,.pricing-card,.summary-card,.article-card{min-width:0!important;overflow-wrap:anywhere!important;word-break:keep-all!important}
+.phase264-grid-3,.cols-2,.nv0-grid-2,.phase239-checkout-layout,.phase239-board-layout,.two-col{min-width:0!important}

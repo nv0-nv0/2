@@ -1,7 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const root = path.resolve(new URL('..', import.meta.url).pathname);
+const root = path.resolve(fileURLToPath(new URL('..', import.meta.url)));
 const scanRoots = ['apps', 'server', 'shared', 'scripts'].map(p => path.join(root, p)).filter(fs.existsSync);
 const codeExt = new Set(['.js', '.mjs', '.cjs', '.ts', '.tsx', '.jsx', '.html', '.css']);
 const allowFiles = new Set([
@@ -33,7 +34,7 @@ function walk(dir, acc = []) {
   }
   return acc;
 }
-function rel(file) { return path.relative(root, file).replaceAll('\\\\', '/'); }
+function rel(file) { return path.relative(root, file).replaceAll('\\', '/'); }
 const findings = [];
 for (const file of scanRoots.flatMap(dir => walk(dir))) {
   const r = rel(file);

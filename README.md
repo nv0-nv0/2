@@ -1,3 +1,15 @@
+# VERIDION Phase299 Final Delivery
+
+최종 납품 검증 명령은 아래 하나입니다.
+
+```bash
+npm run phase299:final
+```
+
+이 명령은 인사이트 20분 자동발행, 오탈자·특수문자 방어, UI/버튼 시인성, 라우트·링크, E2E, 보안, 배포 번들, 로컬 운영 검증, 모니터링·롤백, 복구 리허설, 운영 매트릭스까지 통합 확인합니다. 실제 운영 서버·결제사·SMTP·R2/S3·도메인·브라우저 실기기에서만 확정 가능한 항목은 `npm run ops:production-matrix`와 `docs/current/PHASE299_OPERATIONAL_MATRIX.json`에 남습니다.
+
+---
+
 # NV0 Commercial Launch Build
 
 이 패키지는 공개 런칭 기준을 기본값으로 정리한 상용화 보강본입니다. 운영 모드는 `NV0_PLATFORM_TARGET=commercial`이며, shared admin key, demo payment, JSON primary persistence, builtin scan, local filesystem storage는 상용 런칭 경로에서 차단됩니다.

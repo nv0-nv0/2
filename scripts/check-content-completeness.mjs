@@ -23,7 +23,7 @@ function walk(dir) {
     const rel = path.join(dir, entry.name);
     const full = path.join(root, rel);
     if (entry.isDirectory()) out.push(...walk(rel));
-    else out.push(rel.replaceAll('\\\\', '/'));
+    else out.push(rel.replaceAll('\\', '/'));
   }
   return out;
 }

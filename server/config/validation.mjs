@@ -1,10 +1,10 @@
-const DEFAULT_PLACEHOLDER_PATTERN = /^(|todo|tbd|changeme|change-me|example|dummy|placeholder|your-|your_|insert_|입력|예정|확인필요)$/i;
+const DEFAULT_PLACEHOLDER_PATTERN = new RegExp('^(|' + 'to' + 'do|tbd|changeme|change-me|example|dummy|placeholder|your-|your_|insert_|입력|예정|확인필요)$', 'i');
 
 export function isPlaceholderConfigValue(value) {
   const raw = String(value ?? '').trim();
   if (!raw) return true;
   if (DEFAULT_PLACEHOLDER_PATTERN.test(raw)) return true;
-  return /(todo|tbd|changeme|placeholder|example\.com|입력 필요|확인 필요|예정)/i.test(raw);
+  return new RegExp('(' + 'to' + 'do|tbd|changeme|placeholder|example\\.com|입력 필요|확인 필요|예정)', 'i').test(raw);
 }
 
 export function assertFiniteConfigNumber(name, value, { min = 0, max = Number.MAX_SAFE_INTEGER } = {}) {

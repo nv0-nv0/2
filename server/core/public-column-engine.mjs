@@ -243,7 +243,7 @@ export function buildPublicColumnEnginePosts({ now = Date.now(), pageSize = 20 }
         humanReadableSummary: true
       },
       engine: 'public-cta-column-engine-v5-seo-expanded-purpose-100-mix-60-20-20',
-      publicationCadence: '20분마다 1건 발행'
+      publicationCadence: '20분에 1회 발행'
     };
     return { ...post, structuredData: buildStructuredData(seed, post) };
   }).slice(0, pageSize);

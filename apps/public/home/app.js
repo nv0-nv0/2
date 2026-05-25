@@ -157,7 +157,7 @@ function progressClass(index, currentIndex) {
 function renderProgress(target, currentIndex = 0) {
   const domain = compactDomain(target);
   const step = PROGRESS_STEPS[Math.min(currentIndex, PROGRESS_STEPS.length - 1)];
-  const steps = PROGRESS_STEPS.slice(0, 4).map((item, index) => `<li class="${progressClass(index, currentIndex)}"><b>${escapeHtml(item.label)}</b><span>${escapeHtml(index <= currentIndex ? item.text : '대기 중')}</span></li>`).join('');
+  const steps = PROGRESS_STEPS.slice(0, 4).map((item, index) => `<li class="${progressClass(index, currentIndex)}"><b>${escapeHtml(item.label)}</b><span>${escapeHtml(index <= currentIndex ? item.text : '다음 순서')}</span></li>`).join('');
   return `<div class="nv0-home-demo-card scanning">
     <div class="nv0-home-demo-card-head"><span>즉시 데모 실행 중</span><strong>${escapeHtml(domain)}</strong></div>
     <div class="nv0-home-demo-progress"><i style="width:${escapeAttr(step.percent)}%"></i></div>

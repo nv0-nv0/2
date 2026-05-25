@@ -1,0 +1,21 @@
+{
+  "generatedAt": "2026-05-25T02:01:04.866Z",
+  "ok": true,
+  "scope": [
+    "apps",
+    "server",
+    "shared",
+    "scripts"
+  ],
+  "rules": [
+    "todo-marker",
+    "fixme-marker",
+    "unfinished-marker",
+    "raw-loading-placeholder",
+    "raw-ready-placeholder",
+    "raw-waiting-placeholder",
+    "stub-js"
+  ],
+  "findingCount": 0,
+  "findings": []
+}

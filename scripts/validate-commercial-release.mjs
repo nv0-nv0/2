@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
-const root = path.resolve(new URL('..', import.meta.url).pathname);
+import { fileURLToPath } from 'node:url';
+const root = path.resolve(fileURLToPath(new URL('..', import.meta.url)));
 const fail = [];
 const read = rel => fs.readFileSync(path.join(root, rel), 'utf8');
 const server = read('server/index.mjs');

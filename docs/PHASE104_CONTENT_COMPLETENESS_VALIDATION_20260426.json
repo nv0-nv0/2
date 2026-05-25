@@ -1,0 +1,13 @@
+{
+  "generatedAt": "2026-05-25T02:01:05.169Z",
+  "ok": true,
+  "checkedFiles": 324,
+  "errors": [],
+  "warnings": [],
+  "rules": [
+    "empty files are blocked",
+    "stub-only files are blocked",
+    "runtime TODO/FIXME/stub tokens are blocked",
+    "Phase104 completion report must exist"
+  ]
+}

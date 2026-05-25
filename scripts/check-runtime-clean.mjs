@@ -1,7 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const root = path.resolve(new URL('..', import.meta.url).pathname);
+const root = path.resolve(fileURLToPath(new URL('..', import.meta.url)));
 const failures = [];
 function exists(rel) { return fs.existsSync(path.join(root, rel)); }
 function readJson(rel) { return JSON.parse(fs.readFileSync(path.join(root, rel), 'utf8')); }

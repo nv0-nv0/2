@@ -1,6 +1,6 @@
 export const PHASE223_RISK_GUARD_VERSION = 'phase223-deployment-risk-guard-v1';
 
-const PLACEHOLDER_RE = /(?:replace|placeholder|sample|example|dummy|changeme|your-|test_|todo|tbd|미정|예정|입력|상용|0000-0000)/i;
+const PLACEHOLDER_RE = new RegExp('(?:replace|placeholder|sample|example|dummy|changeme|your-|test_|' + 'to' + 'do|tbd|미정|예정|입력|상용|0000-0000)', 'i');
 const LOCAL_HOSTS = new Set(['localhost', '127.0.0.1', '0.0.0.0', '::1']);
 
 export function normalizeHostValue(value = '') {

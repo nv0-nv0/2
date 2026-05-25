@@ -1,7 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const root = path.resolve(new URL('..', import.meta.url).pathname);
+const root = path.resolve(fileURLToPath(new URL('..', import.meta.url)));
 const docsDir = path.join(root, 'docs');
 const scanRoots = ['apps', 'server', 'shared'].map(p => path.join(root, p)).filter(fs.existsSync);
 const ext = new Set(['.js', '.mjs', '.html', '.css']);

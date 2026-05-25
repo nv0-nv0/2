@@ -1,0 +1,38 @@
+{
+  "generatedAt": "2026-05-25T02:01:09.735Z",
+  "ok": true,
+  "checks": [
+    {
+      "name": "health endpoint available",
+      "ok": true,
+      "details": "server exposes health or production verification surface"
+    },
+    {
+      "name": "verify prod script available",
+      "ok": true,
+      "details": "verify:prod script exists"
+    },
+    {
+      "name": "runtime backup script available",
+      "ok": true,
+      "details": "backup:runtime script exists"
+    },
+    {
+      "name": "restore latest script available",
+      "ok": true,
+      "details": "restore:latest script exists"
+    },
+    {
+      "name": "rollback runbook present",
+      "ok": true,
+      "details": "phase106 rollback runbook written"
+    }
+  ],
+  "rollbackTriggers": [
+    "health check failure",
+    "5xx spike",
+    "core flow failure",
+    "completeness gate failure",
+    "runtime data integrity failure"
+  ]
+}

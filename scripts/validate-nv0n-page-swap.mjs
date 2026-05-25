@@ -1,6 +1,7 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
-const ROOT = path.resolve(new URL('..', import.meta.url).pathname);
+import { fileURLToPath } from 'node:url';
+const ROOT = path.resolve(fileURLToPath(new URL('..', import.meta.url)));
 const pages = [
   ['/', 'apps/public/home/index.html', ['data-nv0n-page="true"', '/shared/nv0n-generated.css', '/shared/nv0n-runtime.css', '/shared/nv0n-runtime.js', '/apps/public/home/app.js']],
   ['/service', 'apps/public/service/index.html', ['서비스 상세 정보', '/apps/public/service/app.js']],
