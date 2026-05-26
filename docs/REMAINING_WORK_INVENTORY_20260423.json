@@ -1,15 +1,38 @@
 {
-  "generatedAt": "2026-05-25T02:00:48.591Z",
+  "generatedAt": "2026-05-25T23:45:35.231Z",
+  "phase": "phase304",
   "counts": {
     "publicPages": 17,
     "adminPages": 7,
     "uniqueApiRoutes": 11,
-    "sharedModules": 17,
-    "scripts": 89,
-    "deployFiles": 12,
-    "docs": 47,
+    "sharedModules": 18,
+    "scripts": 97,
+    "deployFiles": 16,
+    "docs": 110,
     "tests": 13,
-    "totalTrackedFiles": 251
+    "totalTrackedFiles": 400,
+    "totalRemainingElements": 13,
+    "packageActionCompletedCount": 13,
+    "liveActionRequiredCount": 13,
+    "liveVerifiedCount": 0,
+    "categoryCounts": {
+      "live-verification": 1,
+      "environment": 1,
+      "data-migration": 1,
+      "deployment": 1,
+      "visual-qa": 2,
+      "ops-observation": 1,
+      "payment": 1,
+      "mail": 1,
+      "storage": 1,
+      "security-session": 1,
+      "backup-restore": 1,
+      "observability": 1
+    },
+    "statusCounts": {
+      "package-ready-live-check-required": 13
+    },
+    "sourceItemCount": 13
   },
   "uniqueRoutes": [
     "/",
@@ -26,74 +49,87 @@
   ],
   "remainingWork": [
     [
+      "배포 후 공개 페이지·가격·법적 고지 라이브 검증",
+      "package-ready-live-check-required",
+      "docs/current/VERIFY_PROD_REPORT.json live ok"
+    ],
+    [
       "운영 환경변수 실제값 주입",
-      "실서버 확인 필요",
-      "패키지는 validate:env와 운영 매트릭스로 차단"
+      "package-ready-live-check-required",
+      "NV0_COMMERCIAL_LAUNCH_READY=true"
     ],
     [
       "운영 DB 과거 게시글 정제·마이그레이션",
-      "실서버 확인 필요",
-      "운영 DB 접근 필요"
+      "package-ready-live-check-required",
+      "운영 DB 대상 dry-run 결과"
     ],
     [
       "배포 캐시 무효화",
-      "실배포 확인 필요",
-      "도메인·CDN 캐시 상태 필요"
+      "package-ready-live-check-required",
+      "배포 후 새 CSS/JS 해시 확인"
     ],
     [
       "Chrome·Edge·Safari 데스크톱 시각 QA",
-      "실브라우저 확인 필요",
-      "패키지는 CSS 정적 검증 제공"
+      "package-ready-live-check-required",
+      "브라우저 캡처 검수"
     ],
     [
       "모바일 실기기 시각 QA",
-      "실기기 확인 필요",
-      "360/390/430px 실제 렌더링 확인 필요"
+      "package-ready-live-check-required",
+      "실기기 360/390/430px 확인"
     ],
     [
       "20분 자동발행 2회 이상 관측",
-      "운영 로그 확인 필요",
-      "패키지는 20분 주기 검증 완료"
+      "package-ready-live-check-required",
+      "운영 로그 2회 이상"
     ],
     [
       "PortOne 결제 샌드박스·실결제 확인",
-      "외부 계정 확인 필요",
-      "운영 키와 웹훅 수신 필요"
+      "package-ready-live-check-required",
+      "결제 성공·웹훅 수신 로그"
     ],
     [
       "SMTP 발송 확인",
-      "외부 계정 확인 필요",
-      "운영 SMTP 수신함 필요"
+      "package-ready-live-check-required",
+      "운영 수신함 확인"
     ],
     [
       "R2/S3 업로드·다운로드 확인",
-      "외부 계정 확인 필요",
-      "버킷 권한과 키 필요"
+      "package-ready-live-check-required",
+      "업로드·다운로드 probe"
     ],
     [
       "HTTPS 도메인 쿠키·세션 확인",
-      "실도메인 확인 필요",
-      "운영 도메인·브라우저 쿠키 필요"
+      "package-ready-live-check-required",
+      "도메인 로그인 유지 확인"
     ],
     [
       "운영 백업·복구 리허설",
-      "실서버 확인 필요",
-      "운영 데이터 백업 경로 필요"
+      "package-ready-live-check-required",
+      "복구 리허설 승인 기록"
     ],
     [
       "운영 모니터링·알림 수신 확인",
-      "외부 수신 확인 필요",
-      "운영 알림 이메일/채널 필요"
+      "package-ready-live-check-required",
+      "알림 수신 기록"
     ]
   ],
   "statusSummary": {
-    "실서버 확인 필요": 3,
-    "실배포 확인 필요": 1,
-    "실브라우저 확인 필요": 1,
-    "실기기 확인 필요": 1,
-    "운영 로그 확인 필요": 1,
-    "외부 계정 확인 필요": 3,
-    "실도메인 확인 필요": 1,
-    "외부 수신 확인 필요": 1
-  }
+    "package-ready-live-check-required": 13
+  },
+  "categorySummary": {
+    "live-verification": 1,
+    "environment": 1,
+    "data-migration": 1,
+    "deployment": 1,
+    "visual-qa": 2,
+    "ops-observation": 1,
+    "payment": 1,
+    "mail": 1,
+    "storage": 1,
+    "security-session": 1,
+    "backup-restore": 1,
+    "observability": 1
+  },
+  "source": "docs/current/PHASE304_REMAINING_STAGE_INVENTORY.json"
 }

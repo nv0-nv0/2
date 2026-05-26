@@ -230,7 +230,7 @@ const customer = (db.customers || []).find(item => normalizeEmail(item.email) ==
 if (customer) {
 const { rawToken, record } = createPasswordResetToken(db, customer, req);
 const resetUrl = `${BUSINESS_PROFILE.domain.replace(/\/$/, '')}/auth?resetToken=${encodeURIComponent(rawToken)}&email=${encodeURIComponent(email)}`;
-enqueueTransactionalEmail(db, { to: email, customerId: customer.id, template: 'password_reset', subject: '[NV0] 비밀번호 재설정 안내', body: `30분 안에 아래 링크에서 비밀번호를 재설정하세요.\n${resetUrl}`, meta: { resetTokenId: record.id, resetUrl } });
+enqueueTransactionalEmail(db, { to: email, customerId: customer.id, template: 'password_reset', subject: '[VERIDION] 비밀번호 재설정 안내', body: `30분 안에 아래 링크에서 비밀번호를 재설정하세요.\n${resetUrl}`, meta: { resetTokenId: record.id, resetUrl } });
 appendAudit(db, req, 'public.customer.password_reset_requested', { customerId: customer.id, email });
 } else {
 appendAudit(db, req, 'public.customer.password_reset_requested_unknown', { email });
@@ -257,7 +257,7 @@ customer.passwordHash = await hashPassword(password);
 customer.updatedAt = nowIso();
 record.usedAt = nowIso();
 db.customerSessions = (db.customerSessions || []).filter(item => item.customerId !== customer.id);
-enqueueTransactionalEmail(db, { to: email, customerId: customer.id, template: 'password_changed', subject: '[NV0] 비밀번호가 변경되었습니다', body: '계정 비밀번호가 변경되었습니다. 본인이 요청하지 않았다면 즉시 고객센터로 문의하세요.' });
+enqueueTransactionalEmail(db, { to: email, customerId: customer.id, template: 'password_changed', subject: '[VERIDION] 비밀번호가 변경되었습니다', body: '계정 비밀번호가 변경되었습니다. 본인이 요청하지 않았다면 즉시 고객센터로 문의하세요.' });
 appendAudit(db, req, 'public.customer.password_reset_completed', { customerId: customer.id, email });
 await writeDb(db);
 return json(req, res, 200, { ok: true, message: '비밀번호가 변경되었습니다. 다시 로그인하세요.' }, { 'set-cookie': expiredCustomerSessionCookie(req) });

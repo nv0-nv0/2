@@ -52,7 +52,10 @@ for (const token of ['site-topbar','business-footer','cta-band','promo-banner','
 const enhance=read('shared/site-enhancements.js');
 for (const token of ['.hero-search', '.cta-input', 'aria-invalid', 'noopener', 'pageReady']) add(`enhancements:${token}`, enhance.includes(token));
 const checkout=read('apps/public/checkout/app.js');
+const productCatalog=read('shared/product-catalog.mjs');
 for (const token of ['setCheckoutState', 'safeUrl', 'orderId', 'window.PortOne?.requestPayment']) add(`checkout:${token}`, checkout.includes(token));
+add('pricing:single-source-catalog', productCatalog.includes('COMMERCIAL_PRICE_TABLE') && productCatalog.includes('Report: 49000') && productCatalog.includes('Expert: 149000') && checkout.includes('/shared/product-catalog.mjs') && server.includes('../shared/product-catalog.mjs'));
+add('pricing:no-legacy-checkout-price', !/29000|89000|29,000원|89,000원/.test(checkout + read('apps/public/veridion-demo/app.js') + read('README.md')));
 add('client:no-console-log', !/console\.log\(/.test(read('apps/public/veridion-demo/app.js')+read('apps/public/plans/app.js')+read('apps/public/home/app.js')+boardJs+checkout));
 add('client:no-inline-handler', !/on(click|submit|change)=/i.test(home+demo+plans+board));
 for (const dir of ['runtime/uploads','runtime/backups','runtime/reports']) { if (exists(dir)) add(`runtime:${dir}:empty`, fs.readdirSync(path.join(root,dir)).length===0); }

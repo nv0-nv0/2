@@ -3,7 +3,7 @@
   "phase": "phase299",
   "score": 100,
   "total": 100,
-  "engineVersion": "phase299-final-delivery-ops-engine-v1.0.0",
+  "engineVersion": "phase305-integrity-closeout-ops-engine-v5.0.0",
   "checks": [
     {
       "key": "packageVersion",
@@ -42,10 +42,10 @@
       "message": "final delivery engine and agents exist"
     },
     {
-      "key": "twelveOpsItemsPackaged",
+      "key": "liveOpsItemsPackaged",
       "pass": true,
       "weight": 12,
-      "message": "12 live-only operation items are packaged as a matrix"
+      "message": "live-only operation items are packaged as a matrix"
     },
     {
       "key": "insightCadenceStillLocked",
@@ -74,9 +74,9 @@
   ],
   "failed": [],
   "operationalMatrixSummary": {
-    "packageReadyCount": 12,
+    "packageReadyCount": 13,
     "liveVerifiedCount": 0,
-    "liveRequiredCount": 12,
+    "liveRequiredCount": 13,
     "finalJudgement": "package-delivery-ready-live-verification-required"
   }
 }

@@ -43,6 +43,7 @@ import { buildDeploymentRiskGuard, PHASE223_RISK_GUARD_VERSION } from './core/de
 import { timingSafeStringEqual, hasValidOrderAccessToken } from './core/access-token.mjs';
 import { putObjectToS3Compatible } from './infrastructure/storage/s3-compatible.mjs';
 import { PHASE229_PRICING_VERSION, buildPricingRecalculation } from './core/pricing-conversion-model.mjs';
+import { buildCommercialOfferCatalog as buildSharedCommercialOfferCatalog, buildPlanCatalog as buildSharedPlanCatalog, planPrice as sharedPlanPrice } from '../shared/product-catalog.mjs';
 import { buildPublicColumnEnginePosts, publicColumnTypeLabel } from './core/public-column-engine.mjs';
 import { PRODUCT_AGENT_SUITE_VERSION, publishProductInsightNow, publishProductInsightIfDue, ensureProductAgentSettings, latestProductInsightPublication, productInsightDueStatus, buildProductAgentRuntimeStatus, runProductAgentPackageAudit } from './core/product-agent-suite.mjs';
 import { ENGINE_AGENT_ORCHESTRATOR_VERSION, buildEngineAgentRuntimeStatus, runEngineAgentPackageAudit } from './core/engine-agent-orchestrator.mjs';
@@ -266,10 +267,10 @@ ctaTargetLengthKo: '4200-5200'
 },
 orders: [
 { id: 'ord-1001', customer: 'Acme Co', status: 'paid', stage: 'scan_requested', amount: 79000, createdAt: nowIso() },
-{ id: 'ord-1002', customer: 'Beta Labs', status: 'pending', stage: 'draft', amount: 29000, createdAt: nowIso() }
+{ id: 'ord-1002', customer: 'Beta Labs', status: 'pending', stage: 'draft', amount: sharedPlanPrice('Report'), createdAt: nowIso() }
 ],
 subscriptions: [
-{ id: 'sub-1001', siteId: 'site-seed-001', plan: 'Auto', status: 'active', monthlyPrice: 149000, createdAt: nowIso() }
+{ id: 'sub-1001', siteId: 'site-seed-001', plan: 'Expert', status: 'active', monthlyPrice: sharedPlanPrice('Expert'), createdAt: nowIso() }
 ],
 publications: [
 { id: 'pub-1001', title: '전자상거래 사이트 필수 고지 7가지', status: 'published', type: 'cta', createdAt: nowIso(), ctaType: 'free_scan' }
@@ -1469,15 +1470,16 @@ return `${className ? ` class="${className}"` : ''}${isCurrent ? ' aria-current=
 }
 function publicTopMenuHtml(urlPath = '/') {
 return `<a class="skip-link" href="#main">본문 바로가기</a><nav class="site-topbar" aria-label="주요 메뉴"><div class="site-topbar-inner">
-<a class="brand" href="/"><span class="brand-mark">nv0</span></a>
+<a class="brand" href="/"><span class="brand-mark">VERIDION</span></a>
 <div class="site-menu">
-<a href="/service"${navAttrs(urlPath, '/service')}>서비스·가이드</a>
-<a href="/solutions"${navAttrs(urlPath, '/solutions')}>분석 프로세스</a>
-<a href="/board"${navAttrs(urlPath, '/board')}>게시판</a>
-<a href="/plans"${navAttrs(urlPath, '/plans')}>요금제</a>
-<a href="/products/veridion/demo"${navAttrs(urlPath, '/products/veridion/demo')}>무료 진단</a>
+<a href="/products/veridion/demo"${navAttrs(urlPath, '/products/veridion/demo')}>위험 진단</a>
+<a href="/service"${navAttrs(urlPath, '/service')}>서비스</a>
+<a href="/plans"${navAttrs(urlPath, '/plans')}>요금 안내</a>
+<a href="/board"${navAttrs(urlPath, '/board')}>인사이트</a>
+<a href="/portal"${navAttrs(urlPath, '/portal')}>내 사이트</a>
+<a href="/business-info"${navAttrs(urlPath, '/business-info')}>문의하기</a>
 </div>
-<div class="site-actions"><a class="login-link" href="/auth"${navAttrs(urlPath, '/auth')}>로그인</a><a class="top-cta" href="/products/veridion/demo"${navAttrs(urlPath, '/products/veridion/demo')}>무료 진단 시작 →</a></div>
+<div class="site-actions"><a class="login-link" href="/auth"${navAttrs(urlPath, '/auth')}>로그인</a><a class="top-cta" href="/products/veridion/demo"${navAttrs(urlPath, '/products/veridion/demo')}>무료 진단</a></div>
 </div></nav>`;
 }
 function ensureMainId(body) {
@@ -1488,10 +1490,11 @@ function injectNoScriptNotice(body, urlPath) {
 return body;
 }
 function injectPublicTopMenu(body, urlPath) {
-if (urlPath.startsWith('/admin') || body.includes('data-nv0n-page="true"')) return body;
+if (urlPath.startsWith('/admin')) return body;
 let nextBody = body;
 nextBody = nextBody.replace(/<header class="nv0-topbar">[\s\S]*?<\/header>/, '');
-if (nextBody.includes('site-topbar')) return nextBody;
+// Phase301: native VERIDION pages already ship their own nv0n-topbar. Do not inject a second legacy topbar.
+if (nextBody.includes('data-nv0n-page="true"') || nextBody.includes('nv0n-topbar') || nextBody.includes('site-topbar')) return nextBody;
 return nextBody.replace(/<body\b([^>]*)>/i, `<body$1>${publicTopMenuHtml(urlPath)}`);
 }
 function isSafePublicOptionalField(value = '', { requireMailOrderShape = false } = {}) {
@@ -2342,49 +2345,14 @@ auto: 'Expert', agency: 'Expert', subscription: 'Expert'
 return aliases[key] || (['Free','Report','Expert'].includes(raw) ? raw : fallback);
 }
 function buildCommercialOfferCatalog() {
-const commonAssurance = ['결제 전 받을 결과물과 환불 기준을 다시 확인합니다.', '결과물은 내 사이트 관리에서 확인합니다.', 'ct@nv0.kr 이메일 고객지원으로 문의할 수 있습니다.'];
-return [
-  {
-    code: 'Report',
-    title: '기본 리포트',
-    group: 'paid',
-    price: 29000,
-    monthlyPrice: 29000,
-    period: '1회',
-    summary: '핵심 문제와 개선 우선순위를 한눈에 파악합니다.',
-    targetCustomer: '현재 사이트의 문제와 우선순위를 빠르게 확인하고 싶은 분',
-    deliverables: ['공개 접근 확인', '자동 수집 분석', '우선순위 점수 전체 제공', '실행 가이드 제공', ...commonAssurance],
-    referencePrice: 49000,
-    valuePackWorth: 69000
-  },
-  {
-    code: 'Expert',
-    title: '전문가 리포트',
-    group: 'paid',
-    price: 89000,
-    monthlyPrice: 89000,
-    period: '1회',
-    summary: '상세 근거와 전문가 해설, 맞춤 개선 방향까지 제공합니다.',
-    targetCustomer: '구조 개선안과 설명 가능한 근거가 필요한 대표·마케터·운영자',
-    deliverables: ['공개 접근 확인', '자동 수집 분석', '우선순위 점수 전체 제공', '상세 근거 정리', '전문가 해설 및 맞춤 제안', ...commonAssurance],
-    referencePrice: 129000,
-    valuePackWorth: 159000
-  }
-];
+return buildSharedCommercialOfferCatalog();
 }
 function getCommercialOffer(code) { const normalized = normalizePlanCode(code); return buildCommercialOfferCatalog().find(item => item.code === normalized) || null; }
 function buildPlanCatalog(recommendedPlan = 'Report') {
-const recommended = normalizePlanCode(recommendedPlan);
-const free = { code: 'Free', monthlyPrice: 0, price: 0, period: '무료', title: '무료 진단', group: 'free', summary: '사이트의 기본 상태를 빠르게 확인합니다.', features: ['공개 접근 확인', '자동 수집 분석', '우선순위 점수 일부 제공', 'URL 입력만으로 시작'], deliverables: ['공개 접근 확인', '자동 수집 분석', '우선순위 점수 일부 제공'], targetCustomer: '먼저 현재 상태를 확인하고 싶은 분', recommended: false };
-const paid = buildCommercialOfferCatalog().map(offer => ({ code: offer.code, monthlyPrice: offer.price, price: offer.price, period: offer.period, title: offer.title, group: offer.group, summary: offer.summary, features: offer.deliverables.slice(0, 5), deliverables: offer.deliverables, targetCustomer: offer.targetCustomer, referencePrice: offer.referencePrice, valuePackWorth: offer.valuePackWorth, dailyPrice: 0, recommended: offer.code === recommended }));
-return [free, ...paid];
+return buildSharedPlanCatalog(normalizePlanCode(recommendedPlan));
 }
 function planPrice(plan) {
-const normalized = normalizePlanCode(plan);
-if (normalized === 'Free') return 0;
-const offer = getCommercialOffer(normalized);
-if (offer) return offer.price;
-return normalized === 'Expert' ? 89000 : 29000;
+return sharedPlanPrice(normalizePlanCode(plan));
 }
 function findLatestGuidanceForSite(db, siteId) {
 return (db.guidanceDocuments || []).find(item => item.siteId === siteId) || null;
@@ -2668,6 +2636,8 @@ ruleVersion: RULES_VERSION,
 scanMode: 'zero_cost_full_auto_disclosure',
 scanScopeLabel: '무료 공개 페이지 최대 커버리지 무료진단',
 cached: false,
+resultStatus: payload?.resultStatus || 'completed_external_provider',
+resultLimitNotice: payload?.resultLimitNotice || '외부 진단 제공자 결과이며 법률 자문이나 성과 보장을 의미하지 않습니다.',
 riskScore,
 detectionScore: riskScore,
 riskLevel,
@@ -2687,7 +2657,7 @@ conversionUrgency,
 automationDisclosure,
 automatedActionPlan,
 qualityAssurance: {
-resultType: 'preliminary_check',
+resultType: fetched.fetched ? 'live_public_page_check' : 'limited_fallback_check',
 canGuaranteeLegalAccuracy: false,
 canGuaranteeBusinessOutcome: false,
 requiresManualReview: true,
@@ -3293,7 +3263,9 @@ if (!SCAN_PROVIDER_FALLBACK) throw error;
 const url = safeUrl(String(input).trim());
 if (url && isBlockedTargetUrl(url)) throw new Error('blocked target url');
 const fallback = await buildBuiltinScanResultWithFetchBudget(input, startedAt, 'builtin_fallback', error.message);
-fallback.summary = `${String(input).trim()} 외부 진단 실패로 내장 엔진으로 분석했습니다.`;
+fallback.resultStatus = fallback.fetched ? 'completed_live_fetch_after_provider_error' : 'completed_limited_fallback';
+fallback.resultLimitNotice = fallback.fetched ? '외부 진단 제공자는 실패했지만 공개 페이지 수집에 성공해 내장 엔진으로 분석했습니다.' : '외부 진단 제공자와 대상 사이트 수집이 모두 제한되어 제한 분석을 수행했습니다.';
+fallback.summary = `${String(input).trim()} 외부 진단 실패로 내장 엔진으로 분석했습니다. ${fallback.resultLimitNotice}`;
 return await enhanceScanWithAiReview(fallback);
 }
 }
@@ -3730,7 +3702,7 @@ function ensureSubscriptionForSite(db, site, plan) {
 db.subscriptions ||= [];
 let sub = db.subscriptions.find(item => item.siteId === site.id);
 if (!sub) {
-sub = { id: uid('sub'), siteId: site.id, plan, status: 'trial', monthlyPrice: plan === 'Expert' ? 89000 : plan === 'Free' ? 0 : 29000, createdAt: nowIso() };
+sub = { id: uid('sub'), siteId: site.id, plan, status: 'trial', monthlyPrice: planPrice(plan), createdAt: nowIso() };
 db.subscriptions.unshift(sub);
 } else {
 sub.plan = plan || sub.plan;

@@ -1,4 +1,5 @@
 import { escapeAttr, escapeHtml, formatWon, safeUrl } from '/shared/html.js';
+import { buildCommercialOfferCatalog as buildStaticCommercialOfferCatalog, normalizePlanCode as normalizeCatalogPlanCode } from '/shared/product-catalog.mjs';
 
 const state = document.getElementById('checkoutState');
 const targetBox = document.getElementById('checkoutTarget');
@@ -23,16 +24,13 @@ let offerMap = new Map();
 let paymentConfig = { ok: false, provider: 'unknown', paymentReady: false, reason: '온라인 결제 가능 상태를 확인하고 있습니다.' };
 // PHASE211 compatibility tokens: 결제창 로드 확인 중, PortOne으로 바로 결제, providerPaymentId: responsePaymentId, 선택한 상품코드를 확인하지 못했습니다
 
-const fallbackOffers = [
-  { code: 'Report', title: '기본 리포트', price: 29000, period: '1회', summary: '핵심 문제와 개선 우선순위를 한눈에 파악합니다.', targetCustomer: '현재 사이트의 문제와 우선순위를 빠르게 확인하고 싶은 분' },
-  { code: 'Expert', title: '전문가 리포트', price: 89000, period: '1회', summary: '상세 근거와 전문가 해설, 맞춤 개선 방향을 제공합니다.', targetCustomer: '구조 개선안과 설명 가능한 근거가 필요한 분' }
-];
+const fallbackOffers = buildStaticCommercialOfferCatalog();
 offerMap = new Map(fallbackOffers.map(item => [item.code, item]));
 
 function normalizePlanCode(value) {
   const key = String(value || '').trim().toLowerCase().replace(/[\s_-]+/g, '');
   const aliases = { report: 'Report', detailedreport: 'Report', proreport: 'Report', pro: 'Report', basic: 'Report', expert: 'Expert', expertreport: 'Expert', professional: 'Expert', fixpack: 'Expert', fix: 'Expert', copypack: 'Expert', templatepack: 'Expert', industryguide: 'Expert', auto: 'Expert', agency: 'Expert', subscription: 'Expert' };
-  return aliases[key] || 'Report';
+  return normalizeCatalogPlanCode(aliases[key] || value || 'Report');
 }
 function getSavedScan() {
   try { return JSON.parse(localStorage.getItem('nv0:lastScan') || 'null'); } catch { return null; }

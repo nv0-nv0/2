@@ -31,7 +31,7 @@ add('demo kpi warning grid class exists', demoJs.includes('phase259-warning-grid
 add('demo penalty card before summary cards', demoJs.indexOf('demo-penalty-card') > -1 && demoJs.indexOf('demo-penalty-card') < demoJs.indexOf('demo-summary-card danger'));
 add('demo old class side card removed from count result', !/demo-count-class-card/.test(demoJs));
 add('demo still keeps table card', demoJs.includes('demo-count-table-card'));
-add('demo still keeps paid gate CTAs', demoJs.includes('기본 리포트 29,000원') && demoJs.includes('전문가 리포트 89,000원'));
+add('demo still keeps paid gate CTAs', demoJs.includes('기본 리포트 49,000원') && demoJs.includes('전문가 플랜 149,000원'));
 add('CSS phase259 block appended', css.includes('PHASE259/260: demo reference penalty upper-bound dashboard'));
 add('CSS red orange penalty gradient', css.includes('.demo-penalty-card') && css.includes('linear-gradient(135deg,#b70404'));
 add('CSS siren icon exists', css.includes('.penalty-siren'));

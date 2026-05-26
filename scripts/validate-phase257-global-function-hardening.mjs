@@ -39,7 +39,7 @@ add('12 server injects enhancement script globally', t.server.includes('injectSi
 add('13 home JS forwards target query', t.homeJs.includes("searchParams.set('target'") && t.homeJs.includes('.hero-search'));
 add('14 plans JS forwards target query', t.plansJs.includes("searchParams.set('target'") && t.plansJs.includes('.hero-search'));
 add('15 plans legacy public names removed', !/Auto 정기 케어|39,000원|149,000원|FixPack|TemplatePack/.test(t.plans));
-add('16 plans current paid SKUs present', t.plans.includes('기본 리포트') && t.plans.includes('전문가 리포트') && t.plans.includes('29,000') && t.plans.includes('89,000'));
+add('16 plans current paid SKUs present', t.plans.includes('기본 리포트') && t.plans.includes('전문가 리포트') && t.plans.includes('49,000') && t.plans.includes('149,000'));
 add('17 board static old CTA labels removed', !/CTA 목적 칼럼|독자 의도|주요 키워드/.test(t.board));
 add('18 board dynamic old CTA labels removed', !/CTA 목적 칼럼|독자 의도|주요 키워드/.test(t.boardJs));
 add('19 board shows issue-domain labels', (t.board + t.boardJs).includes('점검 의도') && (t.board + t.boardJs).includes('핵심 주제'));

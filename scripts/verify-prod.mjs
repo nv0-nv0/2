@@ -1,6 +1,9 @@
 import { spawn } from 'node:child_process';
+import fs from 'node:fs';
+import path from 'node:path';
 
 const rawBase = String(process.env.NV0_BASE_URL || 'http://127.0.0.1:3210').trim();
+const verifyMode = String(process.env.NV0_VERIFY_MODE || (process.env.NV0_BASE_URL ? 'live' : 'local')).toLowerCase();
 
 function normalize(url) {
   return url.endsWith('/') ? url.slice(0, -1) : url;
@@ -24,6 +27,7 @@ async function canReach(url) {
 
 async function ensureServer() {
   if (await canReach(`${root}/healthz`)) return;
+  if (!localBase && await canReach(`${root}/`)) return;
   if (!localBase) throw new Error(`Server is not reachable at ${root}`);
   const port = localBase[1];
   child = spawn(process.execPath, ['server/index.mjs'], {
@@ -55,19 +59,48 @@ async function fetchText(path, expectedStatus = 200, mustInclude = '') {
   return { res, text };
 }
 
+function assertPublicPageHygiene(pagePath, text) {
+  const legacyBrandPattern = /<span class="brand-mark">\s*nv0\s*<\/span>|<a[^>]*class="nv0n-brand"[^>]*>\s*nv0\s*<\/a>/i;
+  if (legacyBrandPattern.test(text)) {
+    throw new Error(`${pagePath}: legacy nv0 topbar brand is still visible; use VERIDION only`);
+  }
+  const topbarCount = (text.match(/<(?:header|nav)[^>]+class=\"[^\"]*(?:nv0n-topbar|site-topbar)[^\"]*\"/g) || []).length;
+  if (topbarCount > 1) {
+    throw new Error(`${pagePath}: duplicate public topbar detected (${topbarCount})`);
+  }
+  if (/29,000원|89,000원|₩29,000|₩89,000|29000|89000/.test(text)) {
+    throw new Error(`${pagePath}: legacy 29,000/89,000 price text remains`);
+  }
+  if (/hello@nv0\.kr|© 2024/.test(text)) {
+    throw new Error(`${pagePath}: legacy contact or year remains`);
+  }
+}
+
+function persistReport(payload) {
+  fs.mkdirSync(path.join(process.cwd(), 'docs/current'), { recursive: true });
+  fs.writeFileSync(path.join(process.cwd(), 'docs/current/VERIFY_PROD_REPORT.json'), JSON.stringify(payload, null, 2) + '\n');
+}
+
 async function main() {
   await ensureServer();
 
-  const health = await fetchText('/healthz', 200, '"ok": true');
-  checks.push({ path: '/healthz', status: health.res.status, ok: true });
+  if (localBase || await canReach(`${root}/healthz`)) {
+    const health = await fetchText('/healthz', 200, '"ok": true');
+    checks.push({ path: '/healthz', status: health.res.status, ok: true });
 
-  const ready = await fetchText('/readyz', 200, '"ready": true');
-  checks.push({ path: '/readyz', status: ready.res.status, ok: true });
+    const ready = await fetchText('/readyz', 200, '"ready": true');
+    checks.push({ path: '/readyz', status: ready.res.status, ok: true });
+  } else {
+    checks.push({ path: '/healthz', ok: true, skipped: true, reason: 'not exposed on live public origin' });
+    checks.push({ path: '/readyz', ok: true, skipped: true, reason: 'not exposed on live public origin' });
+  }
 
   const home = await fetchText('/', 200, 'VERIDION');
+  assertPublicPageHygiene('/', home.text);
   checks.push({ path: '/', status: home.res.status, ok: true, cacheControl: home.res.headers.get('cache-control') || '' });
 
   const demo = await fetchText('/demo', 200, '무료');
+  assertPublicPageHygiene('/demo', demo.text);
   checks.push({ path: '/demo', status: demo.res.status, ok: true });
 
   const documents = await fetchText('/documents', 200, '문서');
@@ -77,15 +110,35 @@ async function main() {
   checks.push({ path: '/guides', status: guides.res.status, ok: true });
 
   const plans = await fetchText('/plans', 200, '플랜');
-  checks.push({ path: '/plans', status: plans.res.status, ok: true });
+  assertPublicPageHygiene('/plans', plans.text);
+  if (!plans.text.includes('₩49,000') || !plans.text.includes('₩149,000')) {
+    throw new Error('/plans: canonical 49,000/149,000 prices are missing');
+  }
+  checks.push({ path: '/plans', status: plans.res.status, ok: true, canonicalPrices: true });
+
+  const legalPages = [
+    ['/privacy', '제3자 제공과 처리위탁'],
+    ['/terms', '금지 행위'],
+    ['/refund', '중복 결제'],
+    ['/business-info', '사업자등록번호'],
+    ['/board', '인사이트 목록을 확인']
+  ];
+  for (const [pagePath, expectedText] of legalPages) {
+    const page = await fetchText(pagePath, 200, expectedText);
+    assertPublicPageHygiene(pagePath, page.text);
+    checks.push({ path: pagePath, status: page.res.status, ok: true, hygiene: true });
+  }
 
   const checkout = await fetchText('/checkout', 200, '결제');
+  assertPublicPageHygiene('/checkout', checkout.text);
   checks.push({ path: '/checkout', status: checkout.res.status, ok: true });
 
   const portal = await fetchText('/portal', 200, '내 사이트');
+  assertPublicPageHygiene('/portal', portal.text);
   checks.push({ path: '/portal', status: portal.res.status, ok: true });
 
   const productDemo = await fetchText('/products/veridion/demo', 200, 'VERIDION');
+  assertPublicPageHygiene('/products/veridion/demo', productDemo.text);
   checks.push({ path: '/products/veridion/demo', status: productDemo.res.status, ok: true });
 
   const admin = await fetchText('/admin', 200, '관리자');
@@ -119,11 +172,15 @@ async function main() {
     strictTransportSecurity: home.res.headers.get('strict-transport-security') || ''
   };
 
-  console.log(JSON.stringify({ ok: true, baseUrl: root, checks, headers }, null, 2));
+  const report = { ok: true, mode: verifyMode, baseUrl: root, checks, headers, checkedAt: new Date().toISOString() };
+  persistReport(report);
+  console.log(JSON.stringify(report, null, 2));
 }
 
 main().catch((error) => {
-  console.error(JSON.stringify({ ok: false, baseUrl: root, error: error.message, checks }, null, 2));
+  const report = { ok: false, mode: verifyMode, baseUrl: root, error: error.message, checks, checkedAt: new Date().toISOString() };
+  persistReport(report);
+  console.error(JSON.stringify(report, null, 2));
   process.exitCode = 1;
 }).finally(async () => {
   if (child) {

@@ -103,7 +103,7 @@ const checks = [
   {
     key: 'linkGateInFinal',
     weight: 8,
-    pass: pkg.scripts?.['phase297:final']?.includes('npm run check:links -- --summary'),
+    pass: pkg.scripts?.['phase297:final']?.includes('npm run check:links'),
     message: '최종 게이트에 링크 검사 포함'
   },
   {

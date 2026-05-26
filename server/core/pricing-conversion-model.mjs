@@ -1,16 +1,17 @@
+import { COMMERCIAL_PRICE_TABLE } from '../../shared/product-catalog.mjs';
 export const PHASE250_PRICING_VERSION = 'phase250-three-plan-public-catalog-lock-v1';
 export const PHASE229_PRICING_VERSION = PHASE250_PRICING_VERSION;
 
 export const PHASE250_PRICE_TABLE = Object.freeze({
   Free: 0,
-  Report: 29000,
-  Expert: 89000
+  Report: COMMERCIAL_PRICE_TABLE.Report,
+  Expert: COMMERCIAL_PRICE_TABLE.Expert
 });
 export const PHASE229_PRICE_TABLE = PHASE250_PRICE_TABLE;
 export const PHASE229_PREVIOUS_PRICE_TABLE = Object.freeze({
   Free: 0,
-  Report: 29000,
-  Expert: 129000
+  Report: 69000,
+  Expert: 199000
 });
 
 function number(value, fallback = 0) {
@@ -32,8 +33,8 @@ function conversionIndexFor(code, price) {
   const p = number(price, 0);
   const thresholds = {
     Free: { ideal: 0, ceiling: 1, base: 96 },
-    Report: { ideal: 29000, ceiling: 49000, base: 92 },
-    Expert: { ideal: 89000, ceiling: 129000, base: 88 }
+    Report: { ideal: COMMERCIAL_PRICE_TABLE.Report, ceiling: 69000, base: 92 },
+    Expert: { ideal: COMMERCIAL_PRICE_TABLE.Expert, ceiling: 199000, base: 88 }
   }[code] || { ideal: p || 1, ceiling: p || 1, base: 80 };
   const overIdeal = Math.max(0, p - thresholds.ideal);
   const underIdeal = Math.max(0, thresholds.ideal - p);
@@ -44,7 +45,7 @@ function revenueFitScore(code, price) {
   if (code === 'Free') return 100;
   const conversion = conversionIndexFor(code, price);
   const net = netAfterPg(price).netRevenue;
-  const netTarget = { Report: 28000, Expert: 86000 }[code] || Math.max(1, price);
+  const netTarget = { Report: 47000, Expert: 143000 }[code] || Math.max(1, price);
   const unitEconomics = clamp((net / Math.max(1, netTarget)) * 82, 40, 96);
   const qualityValue = code === 'Expert' ? 98 : 92;
   return clamp(conversion * 0.45 + unitEconomics * 0.35 + qualityValue * 0.20);
@@ -83,7 +84,7 @@ export function buildValuePricedOfferCatalog({ commonAssurance = [] } = {}) {
       deliverables: ['페이지별 문제 근거', '전체 문제 상세 공개', '우선순위 정리', '재확인 체크리스트', '다음 행동 제안'],
       operations: ['결제 확인 후 전체 문제 상세와 근거 공개', '진단 이력이 없을 경우 기본 점검 양식 제공', ...assurance],
       benefits: ['팀과 공유할 근거가 생깁니다.', '수정 전 우선순위를 정할 수 있습니다.'],
-      cta: '29,000원으로 기본 리포트 보기',
+      cta: '49,000원으로 기본 리포트 보기',
       referencePrice: 49000,
       valuePackWorth: 69000,
       pricingBasis: 'low-friction-paid-report',
@@ -92,18 +93,18 @@ export function buildValuePricedOfferCatalog({ commonAssurance = [] } = {}) {
     {
       code: 'Expert',
       group: 'one_time',
-      title: '전문가 리포트',
+      title: '전문가 플랜',
       price: PHASE250_PRICE_TABLE.Expert,
-      period: '1회',
+      period: '월',
       priority: 2,
       summary: '상세 근거와 전문가 해설, 맞춤 개선 방향까지 제공합니다.',
       targetCustomer: '구조 개선안과 설명 가능한 근거가 필요한 대표·마케터·운영자',
       deliverables: ['상세 근거 정리', '전문가 해설', '맞춤 개선 방향', '수정 문구 제안', '재점검 기준'],
       operations: ['우선순위가 높은 항목부터 전문가 해설 제공', '고객이 보는 화면 기준으로 정리', ...assurance],
       benefits: ['실제 개선 실행까지 이어가기 쉽습니다.', '고객 불안을 줄이는 구조를 만들 수 있습니다.'],
-      cta: '89,000원으로 전문가 리포트 보기',
-      referencePrice: 129000,
-      valuePackWorth: 159000,
+      cta: '149,000원으로 전문가 플랜 보기',
+      referencePrice: 199000,
+      valuePackWorth: 249000,
       pricingBasis: 'expert-execution-report',
       conversionRole: '전문 분석 전환'
     }
@@ -157,9 +158,9 @@ export function buildPricingRecalculation({ pgFeeRate = 0.032 } = {}) {
       freeDemoMustRemainLimited: true,
       freeDemoShowsCountsOnly: true,
       paidMustExposeAllIssueDetails: true,
-      reportPriceMustEqualCheckout: 29000,
-      expertPriceMustEqualCheckout: 89000
+      reportPriceMustEqualCheckout: COMMERCIAL_PRICE_TABLE.Report,
+      expertPriceMustEqualCheckout: COMMERCIAL_PRICE_TABLE.Expert
     },
-    conclusion: '공개 가격은 무료 진단 0원, 기본 리포트 29,000원, 전문가 리포트 89,000원으로 전 화면과 결제 흐름에서 일치합니다.'
+    conclusion: '공개 가격은 무료 진단 0원, 기본 리포트 49,000원, 전문가 플랜 149,000원으로 전 화면과 결제 흐름에서 일치합니다.'
   };
 }

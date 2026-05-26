@@ -98,7 +98,7 @@ async function loadBoard() {
   if (boardAbortController) boardAbortController.abort();
   boardAbortController = new AbortController();
   setLoading(true);
-  if (state) state.textContent = '최신 인사이트를 불러오는 중입니다.';
+  if (state) state.textContent = '인사이트 목록을 확인하고 있습니다. 네트워크 오류가 있으면 안내 문구로 전환됩니다.';
   try {
     const res = await fetch(`/api/public/board?page=${page}&pageSize=10&filter=${encodeURIComponent(filter)}&q=${encodeURIComponent(query)}`, { cache: 'no-store', signal: boardAbortController.signal });
     const data = await res.json().catch(() => ({}));

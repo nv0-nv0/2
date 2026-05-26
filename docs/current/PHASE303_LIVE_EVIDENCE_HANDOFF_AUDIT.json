@@ -1,0 +1,82 @@
+{
+  "ok": true,
+  "phase": "phase303",
+  "score": 100,
+  "total": 100,
+  "generatedAt": "2026-05-25T23:52:23.754Z",
+  "checks": [
+    {
+      "key": "phase303 version and final scripts",
+      "ok": true,
+      "weight": 12,
+      "message": "final delivery now points to phase303"
+    },
+    {
+      "key": "postdeploy passes live mode through both commands",
+      "ok": true,
+      "weight": 12,
+      "message": "postdeploy report can feed the operational matrix"
+    },
+    {
+      "key": "ops engine upgraded to phase303",
+      "ok": true,
+      "weight": 12,
+      "message": "ops matrix includes post-deploy public smoke evidence item"
+    },
+    {
+      "key": "ops script ingests verify-prod live report",
+      "ok": true,
+      "weight": 14,
+      "message": "ops matrix reads live verification output safely"
+    },
+    {
+      "key": "default package score remains honest",
+      "ok": true,
+      "weight": 12,
+      "message": "package validation still does not pretend live readiness"
+    },
+    {
+      "key": "single live public evidence increments only one item",
+      "ok": true,
+      "weight": 14,
+      "message": "successful live smoke is credited but not overstated"
+    },
+    {
+      "key": "previous phase validators remain forward compatible",
+      "ok": true,
+      "weight": 10,
+      "message": "legacy gates can run inside phase303"
+    },
+    {
+      "key": "README visible product heading cleaned",
+      "ok": true,
+      "weight": 8,
+      "message": "public package docs no longer start with the old product label"
+    },
+    {
+      "key": "phase303 report and delivery readme exist",
+      "ok": true,
+      "weight": 6,
+      "message": "handoff docs describe the final correction"
+    }
+  ],
+  "failed": [],
+  "matrixSummary": {
+    "default": {
+      "packageScore": 100,
+      "liveScore": 0,
+      "goLiveScore": 70,
+      "liveVerifiedCount": 0,
+      "liveRequiredCount": 13,
+      "finalJudgement": "package-delivery-ready-live-verification-required"
+    },
+    "withLivePublicSmokeEvidence": {
+      "packageScore": 100,
+      "liveScore": 8,
+      "goLiveScore": 72,
+      "liveVerifiedCount": 1,
+      "liveRequiredCount": 12,
+      "finalJudgement": "package-delivery-ready-live-verification-required"
+    }
+  }
+}

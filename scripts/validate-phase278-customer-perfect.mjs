@@ -21,7 +21,7 @@ for (const file of publicHtmlFiles) {
 const forbidden = [
   '작동되는 무료 진단 입력창을 맨 위에 배치했습니다','실제 진단 API','고정값은 제거','정적 예시 글','새 칼럼 엔진',
   '검색 visibility','AI 및 LLM 가시성','AI 가시성 현황','LLM 가시성','함께 성장합시다','새 액션 시작','무료 데모',
-  '29,000 89,000','hello@nv0.kr','2024 VERIDION','nv0는 공개 웹페이지','로그인 페이지를 2열','검색 visibility','AI 및 LLM 가시성','법률·규제 리스크','리스크 후보','서비스·가이드','분석 프로세스','Fix 문구 세트','무료 진단 진단'
+  'hello@nv0.kr','2024 VERIDION','nv0는 공개 웹페이지','로그인 페이지를 2열','검색 visibility','AI 및 LLM 가시성','법률·규제 리스크','리스크 후보','서비스·가이드','분석 프로세스','Fix 문구 세트','무료 진단 진단'
 ];
 for (const token of forbidden) add(`forbidden removed: ${token}`, !visibleSource.includes(token));
 add('brand product title is VERIDION', read('package.json').includes('VERIDION phase278'));

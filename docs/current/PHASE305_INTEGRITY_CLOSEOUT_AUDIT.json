@@ -1,0 +1,121 @@
+{
+  "ok": true,
+  "phase": "phase305",
+  "score": 100,
+  "total": 100,
+  "generatedAt": "2026-05-25T23:52:24.623Z",
+  "checks": [
+    {
+      "key": "phase305 version and final scripts wired",
+      "ok": true,
+      "weight": 12,
+      "message": "final entry points target phase305"
+    },
+    {
+      "key": "postdeploy propagates live mode into inventory generator",
+      "ok": true,
+      "weight": 12,
+      "message": "postdeploy keeps verify, matrix, and inventory in live mode"
+    },
+    {
+      "key": "remaining inventory generator reads verify-prod evidence",
+      "ok": true,
+      "weight": 14,
+      "message": "generator safely ingests live public smoke proof"
+    },
+    {
+      "key": "ops matrix writes phase305 report while keeping legacy path",
+      "ok": true,
+      "weight": 8,
+      "message": "operational report is phase-current and backward compatible"
+    },
+    {
+      "key": "ops engine phase305 with honest default scoring",
+      "ok": true,
+      "weight": 12,
+      "message": "default local package validation remains non-live"
+    },
+    {
+      "key": "default inventory remains honest without live evidence",
+      "ok": true,
+      "weight": 12,
+      "message": "normal package inventory still lists 13 live requirements"
+    },
+    {
+      "key": "simulated live public smoke updates inventory only by one item",
+      "ok": true,
+      "weight": 16,
+      "message": "live public proof is credited but does not overstate go-live readiness"
+    },
+    {
+      "key": "phase305 docs explain correction and limits",
+      "ok": true,
+      "weight": 8,
+      "message": "handoff docs explain the integrity fix"
+    },
+    {
+      "key": "previous phase gate still usable",
+      "ok": true,
+      "weight": 6,
+      "message": "previous closeout gate remains intact"
+    }
+  ],
+  "failed": [],
+  "defaultInventoryCounts": {
+    "totalRemainingElements": 13,
+    "packageActionCompletedCount": 13,
+    "liveActionRequiredCount": 13,
+    "liveVerifiedCount": 0,
+    "categoryCounts": {
+      "live-verification": 1,
+      "environment": 1,
+      "data-migration": 1,
+      "deployment": 1,
+      "visual-qa": 2,
+      "ops-observation": 1,
+      "payment": 1,
+      "mail": 1,
+      "storage": 1,
+      "security-session": 1,
+      "backup-restore": 1,
+      "observability": 1
+    },
+    "statusCounts": {
+      "package-ready-live-check-required": 13
+    },
+    "sourceItemCount": 13
+  },
+  "simulatedLiveInventoryCounts": {
+    "totalRemainingElements": 13,
+    "packageActionCompletedCount": 13,
+    "liveActionRequiredCount": 12,
+    "liveVerifiedCount": 1,
+    "categoryCounts": {
+      "live-verification": 1,
+      "environment": 1,
+      "data-migration": 1,
+      "deployment": 1,
+      "visual-qa": 2,
+      "ops-observation": 1,
+      "payment": 1,
+      "mail": 1,
+      "storage": 1,
+      "security-session": 1,
+      "backup-restore": 1,
+      "observability": 1
+    },
+    "statusCounts": {
+      "live-verified": 1,
+      "package-ready-live-check-required": 12
+    },
+    "sourceItemCount": 13
+  },
+  "matrixSummary": {
+    "packageScore": 100,
+    "liveScore": 0,
+    "goLiveScore": 70,
+    "liveVerifiedCount": 0,
+    "liveRequiredCount": 13,
+    "finalJudgement": "package-delivery-ready-live-verification-required"
+  }
+}

@@ -10,7 +10,7 @@ npm run phase299:final
 
 ---
 
-# NV0 Commercial Launch Build
+# VERIDION Commercial Launch Build
 
 이 패키지는 공개 런칭 기준을 기본값으로 정리한 상용화 보강본입니다. 운영 모드는 `NV0_PLATFORM_TARGET=commercial`이며, shared admin key, demo payment, JSON primary persistence, builtin scan, local filesystem storage는 상용 런칭 경로에서 차단됩니다.
 
@@ -63,7 +63,7 @@ npm run ci:strict
 
 실서버에서는 PortOne 운영키, PostgreSQL, Redis, S3-compatible storage, 외부 scan provider를 연결한 뒤 `/readyz`가 200을 반환해야 공개 전환합니다.
 
-# NV0 Cleanroom Rebuild Starter
+# VERIDION Cleanroom Rebuild Starter
 
 이 패키지는 기존 `site.js`, `site.css`, `site-data.js` 같은 공용 거대 프런트 의존을 끊고,
 공개 앱 / 관리자 앱 / API 앱을 분리하는 클린룸 스타터입니다.
@@ -368,9 +368,9 @@ Phase229는 무료 데모에서 확인한 위기도 점수와 문제 영역·요
 
 | 상품 | 기존 체감 가격 | Phase229 적용 가격 | 전환 역할 |
 |---|---:|---:|---|
-| 기본 리포트 | 29,000원 | 29,000원 | 상세 근거와 수정 방향을 여는 첫 결제 |
+| 기본 리포트 | 49,000원 | 49,000원 | 상세 근거와 수정 방향을 여는 첫 결제 |
 | FixPack | 99,000원 | 79,000원 | 전환율과 수익률 균형의 주력 상품 |
-| 전문가 리포트 | 89,000원 | 89,000원 | 전문가 해설과 맞춤 개선 제안 확인 |
+| 전문가 플랜 | 149,000원 | 149,000원/월 | 전문가 해설과 맞춤 개선 제안, 지속 점검 |
 
 ### 품질 잠금
 
@@ -420,7 +420,7 @@ The work order and closeout artifacts are included as:
 
 ## Phase233 contrast authority clean system
 
-Phase233 locks the public NV0 UI into a bright, professional, high-contrast design system.
+Phase233 locks the public VERIDION UI into a bright, professional, high-contrast design system.
 It adds `/shared/phase233-contrast-authority-clean-system.css` as the final stylesheet on every public page and applies the `phase233-clarity-authority` body class.
 
 ### What it fixes
@@ -440,3 +440,18 @@ npm run check:pages
 ```
 
 Phase233 validation writes `PHASE233_CONTRAST_AUTHORITY_VALIDATION_20260511.json` and reports 122 identified visual/contrast/readability issues addressed by the final authority layer.
+
+## Phase304 Final Handoff
+
+Final package command:
+
+```bash
+npm run phase304:final
+```
+
+Phase304 counts **13** remaining go-live elements and marks package-side controls complete. Actual `commercial-live-ready` status still requires `npm run release:postdeploy` on the deployed nv0.kr server with real provider credentials and live evidence.
+
+
+## Phase305 Integrity Closeout
+
+최종 납품 명령은 `npm run phase305:final`입니다. Phase305는 배포 후 live 검증 결과가 운영 매트릭스뿐 아니라 남은 단계 인벤토리에도 반영되도록 보강합니다. 실제 서버 배포 후에는 `npm run release:postdeploy`를 실행해 `VERIFY_PROD_REPORT.json`, `PHASE305_OPERATIONAL_MATRIX.json`, `PHASE304_REMAINING_STAGE_INVENTORY.json`을 함께 갱신해야 합니다.

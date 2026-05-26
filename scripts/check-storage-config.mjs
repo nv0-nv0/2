@@ -37,7 +37,7 @@ if (storageMode === 'local_fs') errors.push('NV0_STORAGE_MODE=local_fs is not al
 if (!['s3', 's3_compatible', 'object_storage'].includes(storageMode)) errors.push('NV0_STORAGE_MODE must be s3, s3_compatible, or object_storage.');
 for (const key of ['NV0_S3_ENDPOINT','NV0_S3_BUCKET','NV0_S3_ACCESS_KEY_ID','NV0_S3_SECRET_ACCESS_KEY']) {
   if (!val(key)) errors.push(`${key} is required.`);
-  if (isPlaceholder(val(key))) placeholders.push(key);
+  if (isPlaceholder(val(key))) { placeholders.push(key); errors.push(`${key} must be a real production value, not a placeholder.`); }
 }
 
 let endpointHost = '';

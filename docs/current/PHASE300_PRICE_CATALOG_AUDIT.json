@@ -1,0 +1,36 @@
+{
+  "ok": true,
+  "generatedAt": "2026-05-25T23:52:17.971Z",
+  "snapshot": {
+    "version": "phase300-commercial-catalog-lock-v1",
+    "prices": {
+      "Free": 0,
+      "Report": 49000,
+      "Expert": 149000
+    },
+    "labels": {
+      "Report": "49,000원",
+      "Expert": "149,000원"
+    },
+    "canonicalPlans": [
+      {
+        "code": "Free",
+        "title": "무료 진단",
+        "price": 0,
+        "period": "무료"
+      },
+      {
+        "code": "Report",
+        "title": "기본 리포트",
+        "price": 49000,
+        "period": "1회"
+      },
+      {
+        "code": "Expert",
+        "title": "전문가 플랜",
+        "price": 149000,
+        "period": "월"
+      }
+    ]
+  }
+}

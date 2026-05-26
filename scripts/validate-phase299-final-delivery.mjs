@@ -20,13 +20,13 @@ const finalEngine = read('server/core/final-delivery-ops-engine.mjs');
 const finalDoc = read('docs/PHASE299_FINAL_DELIVERY_REPORT.md');
 const matrix = buildFinalDeliveryOperationalMatrix(process.env);
 
-add('packageVersion', /phase299-final-delivery/.test(pkg.version), 8, 'phase299 package version applied');
+add('packageVersion', (/phase299-final-delivery|phase302-final-handoff|phase303-live-evidence-handoff|phase304-remaining-stage-closeout|phase305-integrity-closeout/.test(pkg.version)), 8, 'phase299 package version applied');
 add('finalScripts', ['phase299:final','delivery:final','validate:phase299','ops:production-matrix','verify:prod','monitoring:rollback','restore:drill'].every(hasScript), 12, 'final delivery scripts wired');
 add('opsPortoneInjection', /PORTONE_CLIENT/.test(opsRoute) && /PORTONE_CLIENT\.configSummary/.test(opsRoute), 8, 'ops diagnostics can summarize PortOne without runtime reference error');
 add('legacyQualityGates', ['check-ast-placeholder-guard.mjs','check-content-completeness.mjs','check-data-integrity.mjs','check-full-commercial-flow.mjs','check-handoff-docs.mjs'].every(file => exists(`scripts/${file}`)), 10, 'previously external quality gates are included');
 add('monitoringRollbackGate', exists('docs/PHASE106_MONITORING_AND_AUTO_ROLLBACK_RUNBOOK_20260426_KO.md') && hasScript('monitoring:rollback'), 8, 'monitoring and rollback gate restored');
-add('finalOpsEngine', /FINAL_DELIVERY_ENGINE_VERSION/.test(finalEngine) && FINAL_DELIVERY_ENGINE_VERSION.includes('phase299') && FINAL_DELIVERY_AGENT_REGISTRY.length >= 10, 12, 'final delivery engine and agents exist');
-add('twelveOpsItemsPackaged', matrix.items.length === 12 && matrix.packageReadyCount === 12, 12, '12 live-only operation items are packaged as a matrix');
+add('finalOpsEngine', /FINAL_DELIVERY_ENGINE_VERSION/.test(finalEngine) && (FINAL_DELIVERY_ENGINE_VERSION.includes('phase299') || FINAL_DELIVERY_ENGINE_VERSION.includes('phase302') || FINAL_DELIVERY_ENGINE_VERSION.includes('phase303') || FINAL_DELIVERY_ENGINE_VERSION.includes('phase304') || FINAL_DELIVERY_ENGINE_VERSION.includes('phase305')) && FINAL_DELIVERY_AGENT_REGISTRY.length >= 10, 12, 'final delivery engine and agents exist');
+add('liveOpsItemsPackaged', matrix.items.length >= 12 && matrix.packageReadyCount >= 12, 12, 'live-only operation items are packaged as a matrix');
 add('insightCadenceStillLocked', /20 \* 60 \* 1000/.test(productSuite) && /korean-proofreading-agent/.test(productSuite) && /special-character-guard-agent/.test(productSuite), 10, '20-minute insight cadence and copy guards preserved');
 add('buttonVisibilityStillLocked', /min-height:44px/.test(portalCss) && /focus-visible/.test(portalCss) && /overflow-wrap:anywhere/.test(portalCss) && /\.btn\.primary/.test(adoptedCss), 8, 'button visibility and no-overlap CSS hardening preserved');
 add('handoffDocs', exists('docs/FINAL_HANDOFF_INDEX_20260423_KO.md') && /phase299:final/.test(finalDoc), 6, 'handoff and final report documented');

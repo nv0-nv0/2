@@ -1,0 +1,33 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import { buildCatalogConsistencySnapshot } from '../shared/product-catalog.mjs';
+
+const root = process.cwd();
+const exists = rel => fs.existsSync(path.join(root, rel));
+const read = rel => fs.readFileSync(path.join(root, rel), 'utf8');
+const checks = [];
+function add(name, ok, weight, detail = '') { checks.push({ name, ok: Boolean(ok), weight, detail }); }
+const pkg = JSON.parse(read('package.json'));
+const catalog = buildCatalogConsistencySnapshot();
+const server = read('server/index.mjs');
+const checkout = read('apps/public/checkout/app.js');
+const demo = read('apps/public/veridion-demo/app.js');
+const finalReport = exists('docs/PHASE300_PRODUCTION_READINESS_REPORT.md') ? read('docs/PHASE300_PRODUCTION_READINESS_REPORT.md') : '';
+add('phase300 package version', /phase300-production-readiness|phase301-final-closeout|phase302-final-handoff|phase303-live-evidence-handoff|phase304-remaining-stage-closeout|phase305-integrity-closeout/.test(pkg.version), 8);
+add('single product catalog locked', catalog.prices.Report === 49000 && catalog.prices.Expert === 149000 && exists('shared/product-catalog.mjs'), 14);
+add('runtime prices synchronized', server.includes('../shared/product-catalog.mjs') && checkout.includes('/shared/product-catalog.mjs') && demo.includes('기본 리포트 49,000원') && demo.includes('전문가 플랜 149,000원'), 12);
+add('strict storage config uses ci env not placeholder example', pkg.scripts['check:storage-config']?.includes('ci-check.env') && read('scripts/check-storage-config.mjs').includes('must be a real production value'), 10);
+add('production env ci and example gates separated', Boolean(pkg.scripts['validate:env:ci'] && pkg.scripts['validate:env:example']) && exists('deploy/env.production.nv0.kr.ci-check.env'), 8);
+add('fallback transparency exposed', /resultStatus/.test(server) && /completed_limited_fallback/.test(server) && /resultLimitNotice/.test(server), 12);
+add('runtime sanitized', JSON.stringify(JSON.parse(read('runtime/data/db.json'))) === JSON.stringify(JSON.parse(read('runtime/data/db.seed.json'))) && Array.isArray(JSON.parse(read('runtime/data/sessions.json'))) && JSON.parse(read('runtime/data/sessions.json')).length === 0, 10);
+add('docs created', exists('docs/PHASE300_STRUCTURE_TREE.md') && exists('docs/PHASE300_WORK_ORDER.md') && exists('docs/PHASE300_PRODUCTION_READINESS_REPORT.md'), 10);
+add('delivery readme updated', (read('DELIVERY_README.txt').includes('Phase300') || read('DELIVERY_README.txt').includes('Phase301') || read('DELIVERY_README.txt').includes('Phase302') || read('DELIVERY_README.txt').includes('Phase303') || read('DELIVERY_README.txt').includes('Phase304') || read('DELIVERY_README.txt').includes('Phase305')) && (read('RUN_ALL_TESTS.sh').includes('phase300:final') || read('RUN_ALL_TESTS.sh').includes('phase301:final') || read('RUN_ALL_TESTS.sh').includes('release:predeploy') || read('RUN_ALL_TESTS.sh').includes('phase303:final') || read('RUN_ALL_TESTS.sh').includes('phase304:final') || read('RUN_ALL_TESTS.sh').includes('phase305:final')), 8);
+add('price validation wired', pkg.scripts['phase299:final']?.includes('validate:price-catalog') && pkg.scripts['phase300:final']?.includes('validate:phase300'), 8);
+const score = checks.reduce((sum, c) => sum + (c.ok ? c.weight : 0), 0);
+const failed = checks.filter(c => !c.ok);
+const report = { ok: failed.length === 0 && score === 100, score, total: 100, generatedAt: new Date().toISOString(), checks, failed };
+fs.mkdirSync(path.join(root, 'docs/current'), { recursive: true });
+fs.writeFileSync(path.join(root, 'docs/current/PHASE300_PRODUCTION_READINESS_AUDIT.json'), JSON.stringify(report, null, 2));
+console.log(JSON.stringify(report, null, 2));
+assert.equal(report.ok, true, `phase300 production readiness failed: ${failed.map(item => item.name).join(', ')}`);

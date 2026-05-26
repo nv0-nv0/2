@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-05-25T02:01:05.692Z",
+  "generatedAt": "2026-05-25T23:52:14.717Z",
   "ok": true,
   "phase": "phase258-structural-hardening-test-all",
-  "total": 105,
-  "passed": 105,
+  "total": 107,
+  "passed": 107,
   "failed": 0,
   "checks": [
     {
@@ -404,6 +404,14 @@
     },
     {
       "name": "checkout:window.PortOne?.requestPayment",
+      "ok": true
+    },
+    {
+      "name": "pricing:single-source-catalog",
+      "ok": true
+    },
+    {
+      "name": "pricing:no-legacy-checkout-price",
       "ok": true
     },
     {

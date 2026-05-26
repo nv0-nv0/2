@@ -1,4 +1,4 @@
-export const FINAL_DELIVERY_ENGINE_VERSION = 'phase299-final-delivery-ops-engine-v1.0.0';
+export const FINAL_DELIVERY_ENGINE_VERSION = 'phase305-integrity-closeout-ops-engine-v5.0.0';
 
 export const FINAL_DELIVERY_AGENT_REGISTRY = Object.freeze([
   { id: 'final-package-gate-engine', layer: 'engine', scope: 'package', purpose: '전체 패키지 검증 명령과 산출물 누락을 최종 차단' },
@@ -14,19 +14,24 @@ export const FINAL_DELIVERY_AGENT_REGISTRY = Object.freeze([
 ]);
 
 const EXTERNAL_OPERATION_ITEMS = Object.freeze([
-  { key: 'env-values', label: '운영 환경변수 실제값 주입', packageControl: 'validate:env, deploy/env.production.nv0.kr.example', liveSignal: 'NV0_COMMERCIAL_LAUNCH_READY=true' },
-  { key: 'legacy-content-migration', label: '운영 DB 과거 게시글 정제·마이그레이션', packageControl: 'product-agent quality gate and cleanPublicText', liveSignal: '운영 DB 대상 dry-run 결과' },
-  { key: 'deploy-cache-purge', label: '배포 캐시 무효화', packageControl: 'deployment runbook and cache checklist', liveSignal: '배포 후 새 CSS/JS 해시 확인' },
-  { key: 'desktop-visual-qa', label: 'Chrome·Edge·Safari 데스크톱 시각 QA', packageControl: 'button/layout static guard', liveSignal: '브라우저 캡처 검수' },
-  { key: 'mobile-visual-qa', label: '모바일 실기기 시각 QA', packageControl: 'responsive CSS hardening', liveSignal: '실기기 360/390/430px 확인' },
-  { key: 'autopublish-observation', label: '20분 자동발행 2회 이상 관측', packageControl: 'cadence watchdog and phase298 validator', liveSignal: '운영 로그 2회 이상' },
-  { key: 'portone-payment', label: 'PortOne 결제 샌드박스·실결제 확인', packageControl: 'payment provider gate', liveSignal: '결제 성공·웹훅 수신 로그' },
-  { key: 'smtp-delivery', label: 'SMTP 발송 확인', packageControl: 'email outbox and ops self-test', liveSignal: '운영 수신함 확인' },
-  { key: 'object-storage', label: 'R2/S3 업로드·다운로드 확인', packageControl: 'check-storage-config and storage adapter', liveSignal: '업로드·다운로드 probe' },
-  { key: 'https-cookie-session', label: 'HTTPS 도메인 쿠키·세션 확인', packageControl: 'verify:prod and security headers', liveSignal: '도메인 로그인 유지 확인' },
-  { key: 'backup-restore-drill', label: '운영 백업·복구 리허설', packageControl: 'backup:runtime, restore:drill, restore:latest', liveSignal: '복구 리허설 승인 기록' },
-  { key: 'monitoring-alert', label: '운영 모니터링·알림 수신 확인', packageControl: 'monitoring:rollback and ops report', liveSignal: '알림 수신 기록' }
+  { key: 'live-public-smoke', category: 'live-verification', blockingLevel: 'go-live', label: '배포 후 공개 페이지·가격·법적 고지 라이브 검증', packageControl: 'verify:prod expanded public/legal/price/admin checks', liveSignal: 'docs/current/VERIFY_PROD_REPORT.json live ok' },
+  { key: 'env-values', category: 'environment', blockingLevel: 'go-live', label: '운영 환경변수 실제값 주입', packageControl: 'validate:env, deploy/env.production.nv0.kr.example', liveSignal: 'NV0_COMMERCIAL_LAUNCH_READY=true' },
+  { key: 'legacy-content-migration', category: 'data-migration', blockingLevel: 'go-live', label: '운영 DB 과거 게시글 정제·마이그레이션', packageControl: 'product-agent quality gate and cleanPublicText', liveSignal: '운영 DB 대상 dry-run 결과' },
+  { key: 'deploy-cache-purge', category: 'deployment', blockingLevel: 'go-live', label: '배포 캐시 무효화', packageControl: 'deployment runbook and cache checklist', liveSignal: '배포 후 새 CSS/JS 해시 확인' },
+  { key: 'desktop-visual-qa', category: 'visual-qa', blockingLevel: 'go-live', label: 'Chrome·Edge·Safari 데스크톱 시각 QA', packageControl: 'button/layout static guard', liveSignal: '브라우저 캡처 검수' },
+  { key: 'mobile-visual-qa', category: 'visual-qa', blockingLevel: 'go-live', label: '모바일 실기기 시각 QA', packageControl: 'responsive CSS hardening', liveSignal: '실기기 360/390/430px 확인' },
+  { key: 'autopublish-observation', category: 'ops-observation', blockingLevel: 'go-live', label: '20분 자동발행 2회 이상 관측', packageControl: 'cadence watchdog and phase298 validator', liveSignal: '운영 로그 2회 이상' },
+  { key: 'portone-payment', category: 'payment', blockingLevel: 'go-live', label: 'PortOne 결제 샌드박스·실결제 확인', packageControl: 'payment provider gate', liveSignal: '결제 성공·웹훅 수신 로그' },
+  { key: 'smtp-delivery', category: 'mail', blockingLevel: 'go-live', label: 'SMTP 발송 확인', packageControl: 'email outbox and ops self-test', liveSignal: '운영 수신함 확인' },
+  { key: 'object-storage', category: 'storage', blockingLevel: 'go-live', label: 'R2/S3 업로드·다운로드 확인', packageControl: 'check-storage-config and storage adapter', liveSignal: '업로드·다운로드 probe' },
+  { key: 'https-cookie-session', category: 'security-session', blockingLevel: 'go-live', label: 'HTTPS 도메인 쿠키·세션 확인', packageControl: 'verify:prod and security headers', liveSignal: '도메인 로그인 유지 확인' },
+  { key: 'backup-restore-drill', category: 'backup-restore', blockingLevel: 'go-live', label: '운영 백업·복구 리허설', packageControl: 'backup:runtime, restore:drill, restore:latest', liveSignal: '복구 리허설 승인 기록' },
+  { key: 'monitoring-alert', category: 'observability', blockingLevel: 'go-live', label: '운영 모니터링·알림 수신 확인', packageControl: 'monitoring:rollback and ops report', liveSignal: '알림 수신 기록' }
 ]);
+
+export function getExternalOperationItems() {
+  return EXTERNAL_OPERATION_ITEMS.map((item) => ({ ...item }));
+}
 
 function text(value = '') {
   return String(value ?? '').trim();
@@ -50,6 +55,7 @@ function packageGateStatus() {
 
 export function buildFinalDeliveryOperationalMatrix(env = process.env, options = {}) {
   const liveMode = flag(env, 'NV0_COMMERCIAL_LAUNCH_READY') || options.liveMode === true;
+  const liveEvidence = options.liveEvidence || {};
   const liveSignals = {
     envReady: liveMode,
     portoneReady: has(env, 'NV0_PORTONE_API_SECRET') && has(env, 'NV0_PORTONE_WEBHOOK_SECRET'),
@@ -61,7 +67,8 @@ export function buildFinalDeliveryOperationalMatrix(env = process.env, options =
   const packageStatus = packageGateStatus();
   const items = EXTERNAL_OPERATION_ITEMS.map((item) => {
     let liveVerified = false;
-    if (item.key === 'env-values') liveVerified = liveSignals.envReady;
+    if (item.key === 'live-public-smoke') liveVerified = Boolean(liveEvidence['live-public-smoke']);
+    else if (item.key === 'env-values') liveVerified = liveSignals.envReady;
     else if (item.key === 'portone-payment') liveVerified = liveSignals.portoneReady;
     else if (item.key === 'smtp-delivery') liveVerified = liveSignals.smtpReady;
     else if (item.key === 'object-storage') liveVerified = liveSignals.storageReady;
@@ -76,17 +83,24 @@ export function buildFinalDeliveryOperationalMatrix(env = process.env, options =
     };
   });
   const liveVerifiedCount = items.filter((item) => item.liveVerified).length;
+  const packageReadyCount = items.filter((item) => item.packageReady).length;
+  const packageScore = Math.round((packageReadyCount / items.length) * 100);
+  const liveScore = Math.round((liveVerifiedCount / items.length) * 100);
+  const goLiveScore = liveVerifiedCount === items.length ? 100 : Math.round(packageScore * 0.7 + liveScore * 0.3);
   return {
     ok: true,
-    phase: 'phase299',
+    phase: 'phase305',
     version: FINAL_DELIVERY_ENGINE_VERSION,
     packageStatus,
     agents: FINAL_DELIVERY_AGENT_REGISTRY,
     items,
-    packageReadyCount: items.filter((item) => item.packageReady).length,
+    packageReadyCount,
     liveVerifiedCount,
     liveRequiredCount: items.length - liveVerifiedCount,
-    score: liveMode && liveVerifiedCount === items.length ? 100 : 98,
+    packageScore,
+    liveScore,
+    goLiveScore,
+    score: goLiveScore,
     finalJudgement: liveVerifiedCount === items.length ? 'commercial-live-ready' : 'package-delivery-ready-live-verification-required'
   };
 }
@@ -98,6 +112,9 @@ export function summarizeFinalDeliveryMatrix(matrix) {
     packageReadyCount: matrix.packageReadyCount,
     liveVerifiedCount: matrix.liveVerifiedCount,
     liveRequiredCount: matrix.liveRequiredCount,
+    packageScore: matrix.packageScore,
+    liveScore: matrix.liveScore,
+    goLiveScore: matrix.goLiveScore,
     score: matrix.score,
     finalJudgement: matrix.finalJudgement
   };

@@ -1250,7 +1250,7 @@ function renderDemoCountOnlyResult(view) {
       <article class="demo-count-table-card"><div class="meta-row"><h3>영역별 문제 개수</h3><span class="pill gray">상세 근거는 유료 리포트</span></div><table class="demo-count-table"><thead><tr><th>영역</th><th>문제</th><th>요소</th><th>검토 구분</th></tr></thead><tbody>${buckets.areas.map(row => `<tr><td>${escapeHtml(row.area)}</td><td><b>${escapeHtml(row.issueCount)}</b>개</td><td><b>${escapeHtml(row.elementCount)}</b>개</td><td><span>${escapeHtml(row.classification)}</span></td></tr>`).join('')}</tbody></table></article>
       ${renderPenaltyWarningPanel(penalty, classRows)}
     </div>
-    <div class="demo-paid-gate"><div><h3>상세 분석은 유료 서비스 영역입니다</h3><p>페이지별 근거, 실제 문구, 수정 전후안, 우선순위 로드맵, 재점검 기준은 기본 리포트 또는 전문가 리포트에서 제공합니다.</p></div><div class="nv0-cta-row"><a class="btn primary" href="/checkout?plan=Report&siteId=${escapeAttr(view.siteId)}">기본 리포트 29,000원</a><a class="btn secondary" href="/checkout?plan=Expert&siteId=${escapeAttr(view.siteId)}">전문가 리포트 89,000원</a></div></div>
+    <div class="demo-paid-gate"><div><h3>상세 분석은 유료 서비스 영역입니다</h3><p>페이지별 근거, 실제 문구, 수정 전후안, 우선순위 로드맵, 재점검 기준은 기본 리포트 또는 전문가 리포트에서 제공합니다.</p></div><div class="nv0-cta-row"><a class="btn primary" href="/checkout?plan=Report&siteId=${escapeAttr(view.siteId)}">기본 리포트 49,000원</a><a class="btn secondary" href="/checkout?plan=Expert&siteId=${escapeAttr(view.siteId)}">전문가 플랜 149,000원</a></div></div>
   </section>`;
 }
 

@@ -1,0 +1,69 @@
+{
+  "ok": true,
+  "score": 100,
+  "total": 100,
+  "generatedAt": "2026-05-25T23:52:22.476Z",
+  "checks": [
+    {
+      "name": "phase300 package version",
+      "ok": true,
+      "weight": 8,
+      "detail": ""
+    },
+    {
+      "name": "single product catalog locked",
+      "ok": true,
+      "weight": 14,
+      "detail": ""
+    },
+    {
+      "name": "runtime prices synchronized",
+      "ok": true,
+      "weight": 12,
+      "detail": ""
+    },
+    {
+      "name": "strict storage config uses ci env not placeholder example",
+      "ok": true,
+      "weight": 10,
+      "detail": ""
+    },
+    {
+      "name": "production env ci and example gates separated",
+      "ok": true,
+      "weight": 8,
+      "detail": ""
+    },
+    {
+      "name": "fallback transparency exposed",
+      "ok": true,
+      "weight": 12,
+      "detail": ""
+    },
+    {
+      "name": "runtime sanitized",
+      "ok": true,
+      "weight": 10,
+      "detail": ""
+    },
+    {
+      "name": "docs created",
+      "ok": true,
+      "weight": 10,
+      "detail": ""
+    },
+    {
+      "name": "delivery readme updated",
+      "ok": true,
+      "weight": 8,
+      "detail": ""
+    },
+    {
+      "name": "price validation wired",
+      "ok": true,
+      "weight": 8,
+      "detail": ""
+    }
+  ],
+  "failed": []
+}
