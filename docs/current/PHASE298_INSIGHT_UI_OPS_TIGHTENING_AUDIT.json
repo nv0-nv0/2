@@ -3,8 +3,8 @@
   "phase": "phase298",
   "score": 100,
   "total": 100,
-  "suiteVersion": "phase280-phase298-product-agent-insight-ops-suite-v2.0.0",
-  "rulesetVersion": "phase298-korean-copy-special-char-guard-v1",
+  "suiteVersion": "phase280-phase298-phase306-product-agent-insight-rebuild-v3.0.0",
+  "rulesetVersion": "phase298-phase306-korean-copy-special-char-guard-layout-glyph-v2",
   "generatedQualityScore": 100,
   "checks": [
     {

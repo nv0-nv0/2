@@ -9,7 +9,7 @@
       "key": "packageVersion",
       "pass": true,
       "weight": 8,
-      "message": "phase299 package version applied"
+      "message": "phase299+ package version line remains compatible with later closeout phases"
     },
     {
       "key": "finalScripts",

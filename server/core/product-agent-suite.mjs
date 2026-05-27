@@ -1,5 +1,5 @@
 const DEFAULT_INTERVAL_MS = 20 * 60 * 1000;
-const SUITE_VERSION = 'phase280-phase298-product-agent-insight-ops-suite-v2.0.0';
+const SUITE_VERSION = 'phase280-phase298-phase306-product-agent-insight-rebuild-v3.0.0';
 
 export const PRODUCT_AGENT_SUITE_VERSION = SUITE_VERSION;
 
@@ -129,8 +129,8 @@ function unique(items = []) {
 }
 
 
-const CONTENT_QUALITY_RULESET_VERSION = 'phase298-korean-copy-special-char-guard-v1';
-const DISALLOWED_PUBLIC_SYMBOLS = /[�□■◆◇●▲▼※★☆♣♥♠♬✓✔✕✖↔⇒⇐⇔]/g;
+const CONTENT_QUALITY_RULESET_VERSION = 'phase298-phase306-korean-copy-special-char-guard-layout-glyph-v2';
+const DISALLOWED_PUBLIC_SYMBOLS = /[�□■◆◇●▲▼※★☆♣♥♠♬✓✔✕✖↔⇒⇐⇔⌕▱↻▤▥♢⚖⚙☑⋮🛡█░›↗]/gu;
 const DISALLOWED_DECORATIVE_ARROWS = /[→←]/g;
 const INVISIBLE_CONTROL_CHARS = /[\u200B-\u200D\uFEFF]/g;
 const LONG_ASCII_TOKEN = /[A-Za-z0-9_]{28,}/;
@@ -142,7 +142,10 @@ const KNOWN_COPY_TYPOS = [
   ['무료 진단으로 현재 상태를 보고, 필요한 경우', '무료 진단으로 현재 상태를 확인하고, 필요한 경우'],
   ['20분마다 1회', '20분에 1회'],
   ['20분마다', '20분에 1회'],
-  ['CTA', '다음 행동 버튼']
+  ['CTA', '다음 행동 버튼'],
+  ['자동 발행과 품질 검수 방식', '20분 발행과 품질 검수 방식'],
+  ['자동 발행', '20분 발행'],
+  ['자동발행', '20분발행']
 ];
 const PUBLIC_COPY_JOSA_FIXES = [
   [/리포트이\s/g, '리포트가 '],
@@ -286,7 +289,7 @@ function buildBody(topic, context) {
     `제품 데이터로 보는 우선순위\n현재 패키지는 무료 진단, 기본 리포트, 전문가 리포트, 내 사이트 저장, 게시판 인사이트가 하나의 흐름으로 연결되어야 합니다. 진단 결과는 문제 후보를 찾고, 리포트는 근거와 수정 방향을 제공하며, 내 사이트 메뉴는 반복 점검을 관리합니다. 게시판 인사이트는 이 흐름을 고객이 다시 이해하도록 돕는 공개 콘텐츠 역할을 합니다.`,
     `실무 적용 순서\n${topic.checklist.map((item, index) => `${index + 1}. ${item}`).join('\n')}\n4. 관련 화면을 수정한 뒤 같은 URL로 재진단하여 남은 항목을 비교합니다.\n5. 결과가 반복적으로 쌓이면 내 사이트 메뉴에서 우선순위를 다시 정리합니다.`,
     `좋은 문구 구조\n버튼 주변 문구는 짧고 구체적이어야 합니다. 예를 들어 “자세히 보기”보다 “제공 범위와 환불 기준 확인 후 신청하기”처럼 고객이 다음에 확인할 내용을 알려주는 방식이 좋습니다. 환불, 개인정보, 문의 경로는 하단에만 두지 말고 고객 행동이 일어나는 화면 주변에 요약과 링크를 함께 배치해야 합니다.`,
-    `자동 발행과 품질 검수 방식\n이 인사이트는 제품 연관 엔진과 에이전트가 20분 주기로 발행 가능 여부를 확인한 뒤 생성합니다. 발행 전에는 제목 길이, 본문 길이, 제품 연결성, 내부 링크, 중복 여부, 공개 금지 토큰, 모바일 가독성 표현을 검수합니다. 검수에 실패한 글은 공개 게시판에 올리지 않는 구조로 설계되어야 합니다.`,
+    `자동 발행과 품질 검수 방식\n이 인사이트는 제품 연관 엔진과 에이전트가 20분에 1회 발행 가능 여부를 확인한 뒤 생성합니다. 발행 전에는 제목 길이, 본문 길이, 제품 연결성, 내부 링크, 중복 여부, 공개 금지 토큰, 모바일 가독성 표현을 검수합니다. 검수에 실패한 글은 공개 게시판에 올리지 않는 구조로 설계되어 있습니다.`,
     `다음 행동\n${topic.nextAction} 바로 확인하려면 ${topic.productPath} 경로에서 관련 기능을 실행하면 됩니다. 무료 진단으로 현재 상태를 보고, 필요한 경우 기본 리포트나 전문가 리포트로 실제 수정 기준을 정리하는 흐름이 가장 안정적입니다.`,
     `관련 링크\n무료 진단: /products/veridion/demo\n요금제: /plans\n내 사이트 관리: /portal\n게시판: /board`
   ].join('\n\n');
@@ -305,7 +308,7 @@ export function buildProductInsightDraft(db = {}, options = {}) {
     '무료진단',
     '사이트점검',
     '리포트상품',
-    '인사이트자동발행',
+    '인사이트20분발행',
     '고객신뢰',
     ...context.findings
   ]).slice(0, 10);
@@ -405,7 +408,7 @@ export function ensureProductAgentSettings(db = {}, options = {}) {
 
 export function latestProductInsightPublication(db = {}) {
   return [...list(db.publications), ...list(db.boards)]
-    .filter(item => item && (item.agentSuiteVersion === SUITE_VERSION || item.engine === 'product-agent-insight-v1' || item.autoPublished === true))
+    .filter(item => item && (item.agentSuiteVersion === SUITE_VERSION || item.engine === 'product-agent-insight-v1' || (item.autoPublished === true && item.type === 'column')))
     .sort((a, b) => Date.parse(b.publishedAt || b.createdAt || 0) - Date.parse(a.publishedAt || a.createdAt || 0))[0] || null;
 }
 

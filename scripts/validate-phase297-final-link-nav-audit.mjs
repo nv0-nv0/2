@@ -31,13 +31,17 @@ const commonNav = [
 ];
 
 const forbiddenLinks = ['/dashboard', '/keywords', '/compare'];
+function hasClassToken(className) {
+  return new RegExp(`class="[^"]*\\b${className}\\b[^"]*"`).test(html);
+}
+
 const checks = [
   {
     key: 'commonHeader',
     weight: 14,
-    pass: html.includes('class="nv0n-topbar"')
-      && html.includes('class="nv0n-topbar-inner"')
-      && html.includes('class="nv0n-primary-nav"')
+    pass: hasClassToken('nv0n-topbar')
+      && hasClassToken('nv0n-topbar-inner')
+      && hasClassToken('nv0n-primary-nav')
       && html.includes('aria-current="page" class="nv0n-nav-link is-active" href="/portal"')
       && commonNav.every(([label, href]) => html.includes(`href="${href}"`) && html.includes(label)),
     message: '다른 페이지와 같은 공통 상단 메뉴 적용'

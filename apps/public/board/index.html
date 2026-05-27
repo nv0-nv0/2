@@ -8,8 +8,9 @@
   <link href="/shared/nv0n-generated.css" rel="stylesheet"/>
   <link href="/shared/nv0n-runtime.css" rel="stylesheet"/>
   <link href="/shared/phase264-hardening.css" rel="stylesheet"/><link href="/shared/veridion-adopted-ui.css" rel="stylesheet"/>
+  <link href="/shared/phase307-professional-polish.css" rel="stylesheet"/>
 </head>
-<body class="nv0n-page phase264-theme" data-nv0n-page="true">
+<body class="nv0n-page phase264-theme phase307-premium-polish" data-nv0n-page="true">
 <header class="nv0n-topbar" data-nv0n-visible-menu="true">
   <div class="nv0n-topbar-inner">
     <a aria-label="VERIDION 홈으로 이동" class="nv0n-brand" href="/">VERIDION</a>
@@ -21,12 +22,12 @@
   </div>
 </header>
 <main id="main" tabindex="-1" class="phase264-main">
-  <div class="sr-only" data-phase263-compat="true">20분마다 1건 발행 고객 신뢰 인사이트</div>
+  <div class="sr-only" data-phase263-compat="true">20분에 1회 발행 고객 신뢰 인사이트</div>
   <section class="phase264-shell">
     <header class="phase264-page-head">
       <span class="phase264-kicker">인사이트</span>
-      <h1>온라인 사업자가 자주 묻는 신뢰 점검 인사이트</h1>
-      <p>결제 전 안내, 환불 기준, 개인정보 고지, 표시 문구처럼 고객이 실제로 확인하는 주제를 쉽게 정리합니다.</p>
+      <h1>온라인 사업자를 위한 신뢰 점검 인사이트</h1>
+      <p>결제 전 안내, 환불 기준, 개인정보 고지처럼 고객이 실제로 확인하는 신뢰 요소를 실무 기준으로 정리합니다.</p>
     </header>
     <section class="phase264-insight-shell nv0n-functional-bridge" aria-label="인사이트">
       <div class="phase264-board-toolbar">
@@ -36,9 +37,18 @@
           <button data-filter="conversion" type="button">전환</button>
         </div>
         <div class="bridge-grid"><input id="boardSearch" placeholder="검색어를 입력하세요" aria-label="인사이트 검색"/><button id="boardSearchBtn" type="button">찾기</button></div>
-        <div class="notice muted" id="boardState">인사이트 목록을 확인하고 있습니다. 표시되지 않으면 전체 탭을 다시 선택해 주세요.</div>
+        <div class="notice muted" id="boardState">인사이트 목록을 확인하고 있습니다. 연결이 지연되면 기본 인사이트를 먼저 표시합니다.</div>
       </div>
-      <div class="phase239-board-list" id="boardList"></div>
+      <div class="phase239-board-list" id="boardList">
+        <article class="article-card board-post">
+          <div class="pill brand">운영 인사이트</div>
+          <h3>20분에 1회 발행되는 고객 신뢰 인사이트 운영 방식</h3>
+          <p class="post-summary">목록 연결이 지연되어도 페이지가 비어 보이지 않도록 검수된 기본 인사이트를 먼저 표시합니다.</p>
+          <div class="risk-meta-strip"><span>점검 의도: 고객 신뢰 점검</span><span>핵심 주제: 20분 발행</span><span>분류 태그 5개</span></div>
+          <div class="post-body"><section class="post-section"><h3>운영 기준</h3><p>인사이트는 20분에 1회 발행 가능 여부를 확인하고, 제목·본문·내부 링크·중복·오탈자·깨진 문자를 검수한 뒤 공개합니다.</p></section></div>
+          <div class="post-cta"><a class="btn primary" href="/products/veridion/demo">내 사이트 무료 진단</a><a class="btn secondary" href="/portal">내 사이트 관리</a></div>
+        </article>
+      </div>
       <div class="board-pagination" id="boardPagination"></div>
       <aside class="phase264-card"><h2>최근 인사이트</h2><div class="stack muted" id="boardActivity"></div></aside>
     </section>

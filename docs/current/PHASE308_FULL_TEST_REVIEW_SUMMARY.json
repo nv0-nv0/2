@@ -1,0 +1,65 @@
+{
+  "phase": "phase308",
+  "packageVersion": "1.0.0-commercial-phase308-full-test-closeout",
+  "finalCommand": "npm run phase308:final",
+  "result": "PASS",
+  "checkedAt": "2026-05-27T02:21:35Z",
+  "initialFailuresFixed": [
+    {
+      "gate": "test:e2e",
+      "issue": "phase307 package version was missing from the E2E release-line allow-list",
+      "status": "fixed"
+    },
+    {
+      "gate": "validate:phase297",
+      "issue": "portal common header validation was too brittle for multi-class markup and menu label needed common wording",
+      "status": "fixed"
+    },
+    {
+      "gate": "validate:phase299",
+      "issue": "legacy final-delivery package version validation did not accept phase307/phase308 closeout versions",
+      "status": "fixed"
+    }
+  ],
+  "testResults": {
+    "syntax": "PASS / 200 files",
+    "contentCompleteness": "PASS / 369 files / warnings 0",
+    "dataIntegrity": "PASS",
+    "unitRegression": "PASS / 107 passed / 0 failed",
+    "e2e": "PASS",
+    "pageIntegrity": "PASS / 44 routes",
+    "routeSmoke": "PASS / 24 routes",
+    "linkCheck": "PASS / 389 links / 0 errors",
+    "smoke": "PASS",
+    "commercialFlow": "PASS / 12 pages / 2 offers / 7 APIs",
+    "handoffDocs": "PASS / 21 references",
+    "clientDebugGuard": "PASS",
+    "clientRenderSafety": "PASS",
+    "storageConfig": "PASS",
+    "prodEnvCi": "PASS",
+    "priceCatalog": "PASS",
+    "validationJson": "PASS",
+    "monitoringRollback": "PASS",
+    "restoreDrill": "PASS",
+    "localProductionVerify": "PASS / 23 checks",
+    "security": "PASS",
+    "deployBundle": "PASS",
+    "commercialRelease": "PASS",
+    "commercialRuntime": "PASS",
+    "pipeline": "PASS",
+    "phase288": "PASS / 100",
+    "phase289": "PASS / 100",
+    "phase295": "PASS / 100",
+    "phase297": "PASS / 100",
+    "phase298": "PASS / 100",
+    "phase299": "PASS / 100",
+    "phase307": "PASS / 100",
+    "phase308": "PASS / 100",
+    "releaseSecretHygiene": "PASS / findings 0",
+    "runtimeClean": "PASS"
+  },
+  "notes": [
+    "Package delivery is ready after local/full-gate verification.",
+    "Live production deployment to nv0.kr was not performed in this environment; live verification remains required after deployment."
+  ]
+}

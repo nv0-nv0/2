@@ -1,0 +1,14 @@
+{
+  "ok": true,
+  "phase": "phase308",
+  "score": 100,
+  "total": 100,
+  "failures": [],
+  "checked": {
+    "packageVersion": "1.0.0-commercial-phase308-full-test-closeout",
+    "deliveryFinal": "npm run phase308:final",
+    "releasePredeploy": "npm run phase308:final",
+    "e2eAllowListUpdated": true,
+    "phase299CompatUpdated": true
+  }
+}

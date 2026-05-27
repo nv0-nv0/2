@@ -40,7 +40,7 @@ add('plans:no-legacy-auto-public-copy', !/Auto 정기 케어|39,000원|149,000�
 add('plans:not-stuck-loading', !plans.includes('불러오는 중입니다'));
 const board=read('apps/public/board/index.html');
 const boardJs=read('apps/public/board/app.js');
-for (const token of ['리스크 점검 칼럼','20분마다 1건 발행','점검 의도','핵심 주제','분류 태그']) add(`board:${token}`, (board+boardJs).includes(token));
+for (const token of ['리스크 점검 칼럼','20분에 1회 발행','점검 의도','핵심 주제','분류 태그']) add(`board:${token}`, (board+boardJs).includes(token));
 add('board:no-old-cta-purpose-copy', !/CTA 목적 칼럼|독자 의도|주요 키워드/.test(board+boardJs));
 add('board:no-client-double-filter', !boardJs.includes('posts.filter(matchesQuery)'));
 add('board:server-pagination-total', boardJs.includes('pagination?.total') || boardJs.includes('pagination.total'));

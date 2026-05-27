@@ -195,7 +195,7 @@ function updateDashboardSummary(assets = []) {
 function nextActionFromScan(scan = {}) {
   const score = Number(scan?.riskScore);
   const findings = findCountFromScan(scan);
-  if (!Number.isFinite(score)) return { title: '새 진단 시작', note: '최근 결과가 없으므로 먼저 검사하세요.' };
+  if (!Number.isFinite(score)) return { title: '새 진단 시작', note: '최근 결과가 없으므로 먼저 공개 URL을 검사하세요.' };
   if (score >= 75 || findings >= 6) return { title: '핵심 문구 먼저 보완', note: '결제·문의 직전 안내를 우선 확인하는 편이 좋습니다.' };
   if (score >= 55 || findings >= 3) return { title: '상세 리포트 확인', note: '보완 우선순위와 수정 방향을 함께 확인하세요.' };
   return { title: '재검사로 유지 확인', note: '현재 구조를 유지하면서 새 공백이 생기지 않는지 확인하세요.' };
@@ -306,20 +306,20 @@ function renderPublishStatus(boardApi = {}) {
   if (portalPublishCadence) portalPublishCadence.textContent = cadenceLabel;
   if (portalLastPublishedAt) portalLastPublishedAt.textContent = latestAt ? formatDate(latestAt) : '발행 대기';
   if (portalPublishState) portalPublishState.textContent = stateLabel;
-  return `<section class="portal-publish-status-card" aria-label="인사이트 발행 상태"><div class="meta-row"><strong>인사이트 발행 상태</strong><span class="pill brand">${escapeHtml(sourceLabel)}</span></div><div class="status-grid"><article><span>발행 주기</span><b>${escapeHtml(cadenceLabel)}</b></article><article><span>최근 발행</span><b>${escapeHtml(latestAt ? formatDate(latestAt) : '발행 대기')}</b></article><article><span>현재 상태</span><b>${escapeHtml(stateLabel)}</b></article><article><span>표시 글 수</span><b>${escapeHtml(posts.length)}건</b></article></div><p class="muted">최근 발행 시간이 주기를 넘기면 발행 확인 필요 상태로 표시됩니다.</p></section>`;
+  return `<section class="portal-publish-status-card phase307-publish-status" aria-label="인사이트 발행 상태"><div class="meta-row"><strong>인사이트 발행 상태</strong><span class="pill brand">${escapeHtml(sourceLabel)}</span></div><div class="status-grid"><article><span>발행 주기</span><b>${escapeHtml(cadenceLabel)}</b></article><article><span>최근 발행</span><b>${escapeHtml(latestAt ? formatDate(latestAt) : '발행 대기')}</b></article><article><span>현재 상태</span><b>${escapeHtml(stateLabel)}</b></article><article><span>표시 글 수</span><b>${escapeHtml(posts.length)}건</b></article></div><p class="muted">20분 주기, 중복 차단, 깨진 문자 차단 기준을 통과한 글만 공개합니다.</p></section>`;
 }
 function renderBoardHighlights(items = []) {
   const rows = publicBoardItems(items).filter(isCtaOrColumn).slice(0, 3);
   if (!rows.length) return '<div class="portal-feed-empty"><strong>인사이트 연결 글 없음</strong><p>자동 발행 인사이트가 생성되면 이 영역에 최근 연결 글이 표시됩니다.</p></div>';
   return rows.map(item => {
     const tags = Array.isArray(item.tags || item.hashtags) ? (item.tags || item.hashtags).slice(0, 5) : [];
-    return `<article class="portal-feed-highlight result-card stack"><div class="meta-row"><strong>${escapeHtml(item.title || '인사이트 칼럼')}</strong><span class="pill">진단 연결</span></div><div class="portal-feed-meta"><span>${escapeHtml(formatDate(item.publishedAt || item.createdAt || '-'))}</span><span>${escapeHtml(item.category || item.boardType || '칼럼')}</span></div><p>${escapeHtml(clampText(item.summary || item.body || '', 170))}</p>${tags.length ? `<div class="asset-tags">${tags.map(tag => `<span>#${escapeHtml(String(tag).replace(/^#/, ''))}</span>`).join('')}</div>` : ''}<div class="topnav"><a class="btn secondary" href="/board">인사이트에서 보기</a><a class="btn secondary" href="/products/veridion/demo">무료 진단</a></div></article>`;
+    return `<article class="portal-feed-highlight result-card stack"><div class="meta-row"><strong>${escapeHtml(item.title || '인사이트 칼럼')}</strong><span class="pill">운영 연결</span></div><div class="portal-feed-meta"><span>${escapeHtml(formatDate(item.publishedAt || item.createdAt || '-'))}</span><span>${escapeHtml(item.category || item.boardType || '칼럼')}</span></div><p>${escapeHtml(clampText(item.summary || item.body || '', 170))}</p>${tags.length ? `<div class="asset-tags">${tags.map(tag => `<span>#${escapeHtml(String(tag).replace(/^#/, ''))}</span>`).join('')}</div>` : ''}<div class="topnav"><a class="btn secondary" href="/board">인사이트에서 보기</a><a class="btn secondary" href="/products/veridion/demo">무료 진단</a></div></article>`;
   }).join('');
 }
 function renderInsightFeed(items = []) {
   const rows = publicBoardItems(items).slice(0, 4);
   if (!rows.length) return '<div class="portal-feed-empty"><strong>표시할 인사이트가 없습니다.</strong><p>자동 발행이 완료되면 최근 인사이트 목록이 채워집니다.</p></div>';
-  return rows.map(item => `<article class="portal-feed-item result-card"><div class="meta-row"><strong>${escapeHtml(item.title || '인사이트')}</strong><span class="pill">${escapeHtml(item.category || item.boardType || '칼럼')}</span></div><div class="portal-feed-meta"><span>${escapeHtml(formatDate(item.publishedAt || item.createdAt || '-'))}</span><span>${escapeHtml(item.autoPublished ? '자동 발행' : '수동 발행')}</span></div><p>${escapeHtml(clampText(item.summary || item.body || '', 130))}</p><a class="portal-inline-link" href="/board">자세히 보기 →</a></article>`).join('');
+  return rows.map(item => `<article class="portal-feed-item result-card"><div class="meta-row"><strong>${escapeHtml(item.title || '인사이트')}</strong><span class="pill">${escapeHtml(item.category || item.boardType || '칼럼')}</span></div><div class="portal-feed-meta"><span>${escapeHtml(formatDate(item.publishedAt || item.createdAt || '-'))}</span><span>${escapeHtml(item.autoPublished ? '자동 발행' : '수동 발행')}</span></div><p>${escapeHtml(clampText(item.summary || item.body || '', 130))}</p><a class="portal-inline-link" href="/board">자세히 보기</a></article>`).join('');
 }
 function renderAsset(asset, order, accessToken) {
   if (!asset) return '';
@@ -380,7 +380,7 @@ function scoreUiState(score, findings = 0, urgent = 0) {
       pillClass: '',
       bannerClass: '',
       bannerTitle: '최근 진단 결과를 아직 불러오지 못했습니다.',
-      bannerDetail: '새 진단을 시작하면 점수와 보완 우선순위를 한 화면에서 확인할 수 있습니다.',
+      bannerDetail: '새 진단을 시작하면 핵심 지표와 다음 행동이 한 화면에 정리됩니다.',
       meterCaption: '최근 점수 기반 상태'
     };
   }
@@ -445,7 +445,7 @@ function reportBars(score) {
   const n = Number(score);
   if (!Number.isFinite(n)) return '확인 필요';
   const filled = Math.max(1, Math.min(10, Math.round(n / 10)));
-  return '█'.repeat(filled) + '░'.repeat(10 - filled);
+  return `${filled}/10`;
 }
 function renderPaidPortalDiagnosisReport(scan) {
   if (!scan) return '';
@@ -491,7 +491,7 @@ function updateStaticDashboard(session, account, summary) {
   if (scoreFooter) scoreFooter.textContent = `최근 진단일: ${formatDate(latest?.createdAt || latest?.generatedAt)}`;
   renderScoreSummary(latest, account, summary);
   renderNextActionCards(latest, account, summary);
-  if (workCard) workCard.innerHTML = `<div class="portal-card-head"><h2 id="portalQuickTitle">빠른 실행</h2></div><div class="portal-quick-grid"><a href="/products/veridion/demo"><i>⌕</i><span>새 진단</span></a><a href="#saveSiteForm"><i>▱</i><span>사이트 저장</span></a><a href="/products/veridion/demo"><i>↻</i><span>재진단</span></a><a href="#portalPrimary"><i>▤</i><span>리포트 보기</span></a><a href="#portalFeedTitle"><i>♢</i><span>인사이트</span></a><a href="/service"><i>▥</i><span>키워드</span></a><a href="/solutions"><i>⚖</i><span>비교 분석</span></a><a href="/auth"><i>⚙</i><span>설정</span></a></div>`
+  if (workCard) workCard.innerHTML = `<div class="portal-card-head"><h2 id="portalQuickTitle">빠른 실행</h2></div><div class="portal-quick-grid"><a href="/products/veridion/demo"><i>진단</i><span>새 진단</span></a><a href="#saveSiteForm"><i>저장</i><span>사이트 저장</span></a><a href="/products/veridion/demo"><i>다시</i><span>재진단</span></a><a href="#portalPrimary"><i>리포트</i><span>리포트 보기</span></a><a href="#portalFeedTitle"><i>글</i><span>인사이트</span></a><a href="/service"><i>문서</i><span>서비스 안내</span></a><a href="/solutions"><i>비교</i><span>비교 보기</span></a><a href="/auth"><i>설정</i><span>설정</span></a></div>`
 }
 
 saveForm?.addEventListener('submit', async (event) => {

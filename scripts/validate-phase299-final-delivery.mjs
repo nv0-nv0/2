@@ -20,7 +20,7 @@ const finalEngine = read('server/core/final-delivery-ops-engine.mjs');
 const finalDoc = read('docs/PHASE299_FINAL_DELIVERY_REPORT.md');
 const matrix = buildFinalDeliveryOperationalMatrix(process.env);
 
-add('packageVersion', (/phase299-final-delivery|phase302-final-handoff|phase303-live-evidence-handoff|phase304-remaining-stage-closeout|phase305-integrity-closeout/.test(pkg.version)), 8, 'phase299 package version applied');
+add('packageVersion', (/phase299-final-delivery|phase302-final-handoff|phase303-live-evidence-handoff|phase304-remaining-stage-closeout|phase305-integrity-closeout|phase307-professional-polish|phase308-full-test-closeout/.test(pkg.version)), 8, 'phase299+ package version line remains compatible with later closeout phases');
 add('finalScripts', ['phase299:final','delivery:final','validate:phase299','ops:production-matrix','verify:prod','monitoring:rollback','restore:drill'].every(hasScript), 12, 'final delivery scripts wired');
 add('opsPortoneInjection', /PORTONE_CLIENT/.test(opsRoute) && /PORTONE_CLIENT\.configSummary/.test(opsRoute), 8, 'ops diagnostics can summarize PortOne without runtime reference error');
 add('legacyQualityGates', ['check-ast-placeholder-guard.mjs','check-content-completeness.mjs','check-data-integrity.mjs','check-full-commercial-flow.mjs','check-handoff-docs.mjs'].every(file => exists(`scripts/${file}`)), 10, 'previously external quality gates are included');

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-25T23:52:14.717Z",
+  "generatedAt": "2026-05-27T02:22:05.725Z",
   "ok": true,
   "phase": "phase258-structural-hardening-test-all",
   "total": 107,
@@ -315,7 +315,7 @@
       "ok": true
     },
     {
-      "name": "board:20분마다 1건 발행",
+      "name": "board:20분에 1회 발행",
       "ok": true
     },
     {

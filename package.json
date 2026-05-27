@@ -1,6 +1,6 @@
 {
   "name": "veridion-public-risk-diagnostic",
-  "version": "1.0.0-commercial-phase305-integrity-closeout",
+  "version": "1.0.0-commercial-phase308-full-test-closeout",
   "private": true,
   "type": "module",
   "scripts": {
@@ -117,7 +117,7 @@
     "check:storage-config": "node scripts/check-storage-config.mjs deploy/env.production.nv0.kr.ci-check.env",
     "validate:phase299": "node scripts/validate-phase299-final-delivery.mjs",
     "phase299:final": "npm run check:syntax && npm run check:ast-placeholder && npm run check:content-completeness && npm run check:data-integrity && npm test && npm run test:e2e && npm run check:pages && npm run test:routes && npm run check:links && npm run smoke && npm run check:commercial-flow && npm run check:handoff-docs && npm run check-no-debug-client && npm run check-client-render-safety && npm run check:storage-config && npm run validate:env:ci && npm run validate:price-catalog && npm run check-validation-json && npm run monitoring:rollback && npm run restore:drill && npm run verify:prod && npm run verify:security && npm run validate:deploy && npm run validate:commercial && npm run validate:commercial-runtime && npm run validate:pipeline && npm run validate:phase288 && npm run validate:phase289 && npm run validate:phase297 && npm run validate:phase298 && npm run ops:production-matrix && npm run validate:phase299",
-    "delivery:final": "npm run phase305:final",
+    "delivery:final": "npm run phase308:final",
     "check-no-debug-client": "node scripts/check-no-debug-client.mjs",
     "check-client-render-safety": "node scripts/check-client-render-safety.mjs",
     "check-validation-json": "node scripts/check-validation-json.mjs",
@@ -134,7 +134,7 @@
     "check:release-secret-hygiene": "node scripts/check-release-secret-hygiene.mjs",
     "validate:phase302": "node scripts/validate-phase302-final-handoff.mjs",
     "phase302:final": "npm run phase301:final && npm run check:release-secret-hygiene && npm run ops:production-matrix && npm run validate:phase302",
-    "release:predeploy": "npm run phase305:final",
+    "release:predeploy": "npm run phase308:final",
     "release:postdeploy": "NV0_VERIFY_MODE=live NV0_BASE_URL=https://www.nv0.kr npm run verify:prod && NV0_VERIFY_MODE=live npm run ops:production-matrix && NV0_VERIFY_MODE=live npm run generate:remaining-stage",
     "validate:phase303": "node scripts/validate-phase303-live-evidence-handoff.mjs",
     "phase303:final": "npm run phase302:final && npm run validate:phase303",
@@ -142,7 +142,11 @@
     "validate:phase304": "node scripts/validate-phase304-remaining-stage-closeout.mjs",
     "phase304:final": "npm run phase303:final && npm run generate:remaining-stage && npm run validate:phase304",
     "validate:phase305": "node scripts/validate-phase305-integrity-closeout.mjs",
-    "phase305:final": "npm run phase304:final && npm run validate:phase305"
+    "phase305:final": "npm run phase304:final && npm run validate:phase305",
+    "validate:phase307": "node scripts/validate-phase307-professional-polish.mjs",
+    "phase307:final": "npm run check:syntax && npm test && npm run check:pages && npm run test:routes && npm run check:links && npm run validate:phase289 && npm run validate:phase295 && npm run validate:phase298 && npm run validate:phase307 && npm run clean:runtime && node scripts/check-runtime-clean.mjs",
+    "validate:phase308": "node scripts/validate-phase308-full-test-closeout.mjs",
+    "phase308:final": "npm run phase299:final && npm run check:release-secret-hygiene && npm run validate:phase295 && npm run validate:phase307 && npm run validate:phase308 && npm run clean:runtime && node scripts/check-runtime-clean.mjs"
   },
-  "description": "VERIDION phase303 final handoff package: post-deploy live evidence ingestion, honest package/live scoring, release secret hygiene, canonical price lock, runtime cleanup, and production handoff."
+  "description": "VERIDION phase308 full test closeout package: full release-gate review, E2E version gate repair, professional portal and insight polish, 20-minute publication cadence, and release cleanup verification."
 }

@@ -16,6 +16,33 @@ let pagination = { page: 1, pageSize: 6, total: 0, totalPages: 1 };
 let activities = [];
 let boardAbortController = null;
 
+const FALLBACK_POSTS = [
+  {
+    id: 'fallback-insight-cadence',
+    slug: 'fallback-insight-cadence',
+    title: '20분 주기 고객 신뢰 인사이트 운영 기준',
+    category: '운영 인사이트',
+    primaryKeyword: '인사이트 자동 발행',
+    searchIntent: '고객 신뢰 점검 콘텐츠 운영',
+    summary: '목록 연결이 지연되어도 공개 화면이 비어 보이지 않도록 검수된 기본 인사이트를 먼저 표시하고, 서버 응답이 도착하면 최신 글로 교체합니다.',
+    body: '핵심 요약\nVERIDION 인사이트는 무료 진단, 기본 리포트, 내 사이트 관리 흐름을 실무자가 바로 이해하도록 정리하는 공개 콘텐츠입니다. 목록 API가 지연되어도 페이지가 비어 보이지 않도록 기본 인사이트를 먼저 보여주고, 서버 응답이 도착하면 최신 글로 교체합니다.\n\n운영 기준\n발행 주기는 20분에 1회입니다. 발행 전에는 제목, 본문, 내부 링크, 중복 여부, 깨진 문자, 오탈자, 모바일 가독성, 표현 일관성, 깨진 문자 여부를 점검합니다. 품질 기준을 통과하지 못한 글은 공개하지 않습니다.\n\n다음 행동\n사이트를 진단한 뒤 내 사이트 메뉴에서 결과를 저장하고, 최신 인사이트를 통해 보완 순서를 다시 확인하세요.',
+    tags: ['20분발행', '고객신뢰', '무료진단', '내사이트', '리포트'],
+    checklist: ['목록 API 실패 시 대체 글 표시', '서버 응답 도착 후 최신 글 교체', '깨진 문자와 장식 기호 차단'],
+    faq: [{ question: '인사이트가 비어 보이면 어떻게 하나요?', answer: '페이지는 기본 글을 먼저 보여주고 서버 연결이 회복되면 최신 발행 글로 자동 교체합니다.' }],
+    internalLinks: [{ href: '/products/veridion/demo', label: '무료 진단' }, { href: '/portal', label: '내 사이트' }, { href: '/plans', label: '요금 안내' }],
+    createdAt: new Date().toISOString(),
+    publishedAt: new Date().toISOString()
+  }
+];
+
+function applyFallbackBoard(reason = '') {
+  posts = FALLBACK_POSTS;
+  activities = FALLBACK_POSTS.slice(0, 3).map(item => ({ title: item.title, type: '대체 인사이트', createdAt: item.publishedAt || item.createdAt }));
+  pagination = { page: 1, pageSize: posts.length, total: posts.length, totalPages: 1 };
+  if (state) state.textContent = reason || '최신 인사이트 연결 전 검수된 기본 인사이트를 표시합니다.';
+  render();
+}
+
 if (searchInput) { searchInput.value = query; searchInput.maxLength = 80; searchInput.setAttribute('autocomplete', 'off'); }
 
 function safeBoardId(value = '') {
@@ -78,11 +105,11 @@ function render() {
   tabs.forEach(btn => btn.classList.toggle('active', (btn.dataset.filter || 'all') === filter));
   const visible = posts;
   const totalLabel = Number(pagination.total || visible.length).toLocaleString('ko-KR');
-  if (state) state.textContent = `리스크 점검 인사이트 · 조건에 맞는 ${totalLabel}개 글 중 현재 ${visible.length.toLocaleString('ko-KR')}개를 표시합니다. 모든 글은 문제 인식, 실무 체크리스트, 다음 행동 순서로 확인됩니다.`;
+  if (state) state.textContent = `고객 신뢰 점검 인사이트 · 조건에 맞는 ${totalLabel}개 글 중 현재 ${visible.length.toLocaleString('ko-KR')}개를 표시합니다. 모든 글은 문제 인식, 실무 체크리스트, 다음 행동 순서로 정리됩니다.`;
   if (list) {
     list.innerHTML = renderList(visible, '<div class="empty-state"><strong>조건에 맞는 칼럼이 없습니다.</strong><p>입력어를 줄이거나 전체 탭을 선택해 주세요.</p></div>', item => {
       const tagItems = (item.tags || item.hashtags || []).slice(0, 10).map(tag => `<span>#${escapeHtml(String(tag).replace(/^#/, ''))}</span>`).join('');
-      const checklist = Array.isArray(item.checklist) && item.checklist.length ? `<section class="risk-meta-card"><h4>빠른 체크리스트</h4><ul class="check-list">${item.checklist.slice(0, 6).map(point => `<li><span class="check">✓</span>${escapeHtml(point)}</li>`).join('')}</ul></section>` : '';
+      const checklist = Array.isArray(item.checklist) && item.checklist.length ? `<section class="risk-meta-card"><h4>빠른 체크리스트</h4><ul class="check-list">${item.checklist.slice(0, 6).map(point => `<li><span class="check" aria-hidden="true">확인</span>${escapeHtml(point)}</li>`).join('')}</ul></section>` : '';
       const faq = Array.isArray(item.faq) && item.faq.length ? `<section class="risk-meta-card"><h4>자주 묻는 질문</h4>${item.faq.slice(0, 3).map(entry => `<details class="faq-item"><summary>${escapeHtml(entry.question || '')}</summary><div class="faq-content">${escapeHtml(entry.answer || '')}</div></details>`).join('')}</section>` : '';
       const links = Array.isArray(item.internalLinks) && item.internalLinks.length ? `<nav class="internal-link-row" aria-label="관련 링크">${item.internalLinks.slice(0, 4).map(link => `<a class="btn secondary" href="${escapeAttr(safeLocalPath(link.href || '#'))}">${escapeHtml(link.label || '관련 링크')}</a>`).join('')}</nav>` : '';
       const riskSummary = `<div class="risk-meta-strip"><span>점검 의도: ${escapeHtml(item.searchIntent || item.primaryKeyword || '고객 신뢰 점검')}</span><span>핵심 주제: ${escapeHtml(item.primaryKeyword || '')}</span><span>분류 태그 ${Math.min(10, (item.tags || []).length)}개</span></div>`;
@@ -103,13 +130,13 @@ async function loadBoard() {
     const res = await fetch(`/api/public/board?page=${page}&pageSize=10&filter=${encodeURIComponent(filter)}&q=${encodeURIComponent(query)}`, { cache: 'no-store', signal: boardAbortController.signal });
     const data = await res.json().catch(() => ({}));
     if (!res.ok || !data?.ok || !Array.isArray(data.posts)) throw new Error('칼럼을 불러오지 못했습니다.');
-    posts = data.posts;
-    activities = Array.isArray(data.activity) ? data.activity : [];
-    pagination = data.pagination || pagination;
+    posts = data.posts.length ? data.posts : FALLBACK_POSTS;
+    activities = Array.isArray(data.activity) && data.activity.length ? data.activity : posts.slice(0, 3).map(item => ({ title: item.title, type: '인사이트', createdAt: item.publishedAt || item.createdAt }));
+    pagination = data.posts.length ? (data.pagination || pagination) : { page: 1, pageSize: posts.length, total: posts.length, totalPages: 1 };
     render();
   } catch (error) {
     if (error?.name === 'AbortError') return;
-    if (state) state.textContent = error.message || '칼럼을 불러오지 못했습니다.';
+    applyFallbackBoard('최신 인사이트 연결이 지연되어 기본 인사이트를 먼저 표시합니다.');
   } finally {
     setLoading(false);
   }
