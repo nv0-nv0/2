@@ -1494,7 +1494,7 @@ if (urlPath.startsWith('/admin')) return body;
 let nextBody = body;
 nextBody = nextBody.replace(/<header class="nv0-topbar">[\s\S]*?<\/header>/, '');
 // Phase301: native VERIDION pages already ship their own nv0n-topbar. Do not inject a second legacy topbar.
-if (nextBody.includes('data-nv0n-page="true"') || nextBody.includes('nv0n-topbar') || nextBody.includes('site-topbar')) return nextBody;
+if (nextBody.includes('data-veridion-clean="v311"') || nextBody.includes('data-nv0n-page="true"') || nextBody.includes('nv0n-topbar') || nextBody.includes('site-topbar') || nextBody.includes('v311-topbar')) return nextBody;
 return nextBody.replace(/<body\b([^>]*)>/i, `<body$1>${publicTopMenuHtml(urlPath)}`);
 }
 function isSafePublicOptionalField(value = '', { requireMailOrderShape = false } = {}) {
@@ -1524,20 +1524,20 @@ return '<footer class="business-footer" aria-label="사업자 정보">'
 }
 
 function injectAdoptedUi(body, urlPath) {
-if (urlPath.startsWith('/admin') || body.includes('data-veridion-clean="v310"') || body.includes('/shared/veridion-adopted-ui.css')) return body;
-return body.replace('</head>', '<link href="/shared/veridion-adopted-ui.css" rel="stylesheet"></head>');
+if (urlPath.startsWith('/admin') || body.includes('data-veridion-clean="v311"') || body.includes('/shared/veridion-clean-v311.css')) return body;
+return body.replace('</head>', '<link href="/shared/veridion-clean-v311.css" rel="stylesheet"></head>');
 }
 
 function injectSiteEnhancementsScript(body, urlPath) {
-if (urlPath.startsWith('/admin') || body.includes('data-veridion-clean="v310"') || body.includes('/shared/site-enhancements.js')) return body;
+if (urlPath.startsWith('/admin') || body.includes('data-veridion-clean="v311"') || body.includes('/shared/site-enhancements.js')) return body;
 return body.replace('</body>', '<script src="/shared/site-enhancements.js" defer></script></body>');
 }
 function injectSessionNavScript(body, urlPath) {
-if (urlPath.startsWith('/admin') || body.includes('data-veridion-clean="v310"') || body.includes('/shared/session-nav.js')) return body;
+if (urlPath.startsWith('/admin') || body.includes('data-veridion-clean="v311"') || body.includes('/shared/session-nav.js')) return body;
 return body.replace('</body>', '<script type="module" src="/shared/session-nav.js"></script></body>');
 }
 function injectClientRiskGuard(body, urlPath) {
-if (urlPath.startsWith('/admin') || body.includes('data-veridion-clean="v310"') || body.includes('/shared/client-risk-guard.js')) return body;
+if (urlPath.startsWith('/admin') || body.includes('data-veridion-clean="v311"') || body.includes('/shared/client-risk-guard.js')) return body;
 return body.replace('</body>', '<script src="/shared/client-risk-guard.js" defer></script></body>');
 }
 function injectBusinessFooter(body, urlPath) {
@@ -1557,7 +1557,7 @@ function renderPublicErrorPage(req, res, status, title, message, requestId = '')
 const safeTitle = escapeHtml(title);
 const safeMessage = escapeHtml(message);
 const safeRequestId = requestId ? escapeHtml(requestId) : '';
-const body = `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${safeTitle} | VERIDION / NV0</title><meta name="robots" content="noindex,nofollow,noarchive"><link rel="stylesheet" href="/shared/nv0-clean-slate-20260512.css"><link rel="stylesheet" href="/shared/veridion-adopted-ui.css"></head><body>${publicTopMenuHtml('/')}<main id="main" tabindex="-1" class="nv0-error-page"><section class="nv0-error-card"><p class="eyebrow">서비스 안내</p><h1>${safeTitle}</h1><p>${safeMessage}</p>${safeRequestId ? `<p class="nv0-error-request">요청 ID: ${safeRequestId}</p>` : ''}<div class="hero-actions"><a class="btn primary" href="/products/veridion/demo">무료 진단으로 이동</a><a class="btn secondary" href="/">홈으로 이동</a></div></section></main>${businessFooterHtml()}<script src="/shared/client-risk-guard.js" defer></script></body></html>`;
+const body = `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${safeTitle} | VERIDION / NV0</title><meta name="robots" content="noindex,nofollow,noarchive"><link rel="stylesheet" href="/shared/veridion-clean-v311.css"></head><body>${publicTopMenuHtml('/')}<main id="main" tabindex="-1" class="nv0-error-page"><section class="nv0-error-card"><p class="eyebrow">서비스 안내</p><h1>${safeTitle}</h1><p>${safeMessage}</p>${safeRequestId ? `<p class="nv0-error-request">요청 ID: ${safeRequestId}</p>` : ''}<div class="hero-actions"><a class="btn primary" href="/products/veridion/demo">무료 진단으로 이동</a><a class="btn secondary" href="/">홈으로 이동</a></div></section></main>${businessFooterHtml()}<script src="/shared/client-risk-guard.js" defer></script></body></html>`;
 return html(req, res, status, body, { 'cache-control': 'no-store' }, 'public-page');
 }
 function adminNav() {

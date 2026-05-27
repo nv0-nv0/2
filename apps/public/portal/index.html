@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>내 사이트 관리 | VERIDION</title>
   <meta name="description" content="저장한 사이트, 최근 진단 결과, 인사이트 발행 상태를 한 화면에서 관리하는 VERIDION 운영 대시보드"/>
-  <link rel="stylesheet" href="/shared/veridion-clean-v310.css"/>
+  <link rel="stylesheet" href="/shared/veridion-clean-v311.css"/>
 </head>
-<body class="v310-clean-page" data-nv0n-page="true" data-veridion-clean="v310" data-page="portal">
+<body class="v311-clean-page" data-veridion-clean="v311" data-page="portal">
 <a class="skip-link" href="#main">본문 바로가기</a>
-<header class="v310-topbar">
-  <div class="v310-topbar-inner">
-    <a class="v310-brand" href="/" aria-label="VERIDION 홈"><span class="v310-brand-mark" aria-hidden="true"></span><span>VERIDION</span></a>
-    <nav class="v310-nav" aria-label="주요 메뉴">
+<header class="v311-topbar">
+  <div class="v311-topbar-inner">
+    <a class="v311-brand" href="/" aria-label="VERIDION 홈"><span class="v311-brand-mark" aria-hidden="true"></span><span>VERIDION</span></a>
+    <nav class="v311-nav" aria-label="주요 메뉴">
       <a href="/products/veridion/demo">위험 진단</a>
       <a href="/service">서비스</a>
       <a href="/plans">요금 안내</a>
@@ -20,59 +20,59 @@
       <a href="/portal" aria-current="page">내 사이트</a>
       <a href="/business-info">문의하기</a>
     </nav>
-    <div class="v310-actions">
-      <a class="v310-link" href="/auth">로그인</a>
-      <a class="v310-link primary" href="/products/veridion/demo">무료 진단</a>
+    <div class="v311-actions">
+      <a class="v311-link" href="/auth">로그인</a>
+      <a class="v311-link primary" href="/products/veridion/demo">무료 진단</a>
     </div>
   </div>
 </header>
-<main id="main" class="v310-main" tabindex="-1" data-route-smoke="내 사이트 관리 확인 기록">
-  <section class="v310-hero" aria-labelledby="portalTitle">
-    <div class="v310-hero-card">
-      <span class="v310-kicker">운영 대시보드</span>
+<main id="main" class="v311-main" tabindex="-1" data-route-smoke="내 사이트 관리 확인 기록">
+  <section class="v311-hero" aria-labelledby="portalTitle">
+    <div class="v311-hero-card">
+      <span class="v311-kicker">운영 대시보드</span>
       <h1 id="portalTitle">내 사이트 관리</h1>
       <p>저장한 사이트, 최근 진단 결과, 다음 보완 항목, 20분 인사이트 발행 상태를 한 화면에서 깔끔하게 확인합니다.</p>
-      <div class="v310-hero-actions">
-        <a class="v310-btn primary" href="/products/veridion/demo">새 진단 시작</a>
-        <a class="v310-btn" href="/board">인사이트 보기</a>
-        <a class="v310-btn" href="#saveSiteForm">사이트 등록</a>
+      <div class="v311-hero-actions">
+        <a class="v311-btn primary" href="/products/veridion/demo">새 진단 시작</a>
+        <a class="v311-btn" href="/board">인사이트 보기</a>
+        <a class="v311-btn" href="#saveSiteForm">사이트 등록</a>
       </div>
     </div>
-    <aside class="v310-hero-panel" aria-label="운영 상태 요약">
-      <div class="v310-status-row"><span class="v310-status-title">인사이트 발행</span><span class="v310-status-badge" id="portalPublishState">20분 주기</span></div>
-      <div class="v310-status-value" id="portalLastPublishedAt">상태 확인 중</div>
-      <div class="v310-metric-grid">
-        <div class="v310-metric"><span>관리 사이트</span><strong id="portalTotalSites">0개</strong></div>
-        <div class="v310-metric"><span>최근 진단</span><strong id="portalRecentScans">0개</strong></div>
-        <div class="v310-metric"><span>발견 항목</span><strong id="portalIssueCount">0개</strong></div>
-        <div class="v310-metric"><span>우선 보완</span><strong id="portalActionRequiredCount">0개</strong></div>
+    <aside class="v311-hero-panel" aria-label="운영 상태 요약">
+      <div class="v311-status-row"><span class="v311-status-title">인사이트 발행</span><span class="v311-status-badge" id="portalPublishState">20분 주기</span></div>
+      <div class="v311-status-value" id="portalLastPublishedAt">상태 확인 중</div>
+      <div class="v311-metric-grid">
+        <div class="v311-metric"><span>관리 사이트</span><strong id="portalTotalSites">0개</strong></div>
+        <div class="v311-metric"><span>최근 진단</span><strong id="portalRecentScans">0개</strong></div>
+        <div class="v311-metric"><span>발견 항목</span><strong id="portalIssueCount">0개</strong></div>
+        <div class="v311-metric"><span>우선 보완</span><strong id="portalActionRequiredCount">0개</strong></div>
       </div>
     </aside>
   </section>
 
-  <section class="v310-grid" aria-label="내 사이트 대시보드">
-    <section class="v310-card span-4" aria-labelledby="portalScoreTitle">
-      <div class="v310-card-head"><h2 id="portalScoreTitle">최근 진단 결과</h2><a class="v310-card-link" href="/products/veridion/demo">다시 진단</a></div>
-      <div class="v310-score-layout">
-        <div class="v310-gauge" id="portalRiskGauge"><div class="v310-gauge-inner"><span class="v310-gauge-number nv74-score-number">-</span><small>/100</small></div></div>
+  <section class="v311-grid" aria-label="내 사이트 대시보드">
+    <section class="v311-card span-4" aria-labelledby="portalScoreTitle">
+      <div class="v311-card-head"><h2 id="portalScoreTitle">최근 진단 결과</h2><a class="v311-card-link" href="/products/veridion/demo">다시 진단</a></div>
+      <div class="v311-score-layout">
+        <div class="v311-gauge" id="portalRiskGauge"><div class="v311-gauge-inner"><span class="v311-gauge-number nv74-score-number">-</span><small>/100</small></div></div>
         <div>
-          <span class="v310-pill" id="portalRiskPill">검사 대기</span>
+          <span class="v311-pill" id="portalRiskPill">검사 대기</span>
           <p><strong id="portalSummaryDomain">진단 전</strong></p>
           <p id="portalLatestScanAt">최근 진단 결과가 아직 없습니다.</p>
         </div>
       </div>
-      <div class="v310-breakdown" id="portalSummaryCards">
+      <div class="v311-breakdown" id="portalSummaryCards">
         <article><span>주의 항목</span><b id="portalWarningIssues">0개</b></article>
         <article><span>우선 보완</span><b id="portalCriticalIssues">0개</b></article>
         <article><span>관리 사이트</span><b id="portalManagedSites">0개</b></article>
         <article><span>최근 진단</span><b id="portalRecentScanCount">0개</b></article>
       </div>
-      <div class="v310-notice" id="portalStatusBanner"><div><strong id="portalStatusSummary">진단을 실행하면 점수와 보완 우선순위가 표시됩니다.</strong><p id="portalStatusDetail">로그인 후 사이트를 저장하면 반복 점검 이력을 이어서 관리할 수 있습니다.</p></div><a class="v310-card-link" href="/products/veridion/demo">진단</a></div>
+      <div class="v311-notice" id="portalStatusBanner"><div><strong id="portalStatusSummary">진단을 실행하면 점수와 보완 우선순위가 표시됩니다.</strong><p id="portalStatusDetail">로그인 후 사이트를 저장하면 반복 점검 이력을 이어서 관리할 수 있습니다.</p></div><a class="v311-card-link" href="/products/veridion/demo">진단</a></div>
     </section>
 
-    <section class="v310-card span-4" aria-labelledby="portalQuickTitle">
-      <div class="v310-card-head"><h2 id="portalQuickTitle">빠른 실행</h2></div>
-      <div class="v310-quick">
+    <section class="v311-card span-4" aria-labelledby="portalQuickTitle">
+      <div class="v311-card-head"><h2 id="portalQuickTitle">빠른 실행</h2></div>
+      <div class="v311-quick">
         <a href="/products/veridion/demo"><b>새 진단</b><span>사이트 주소로 바로 점검</span></a>
         <a href="#saveSiteForm"><b>사이트 저장</b><span>진단 이력 관리 시작</span></a>
         <a href="/board"><b>인사이트</b><span>20분 발행 글 확인</span></a>
@@ -80,54 +80,54 @@
       </div>
     </section>
 
-    <section class="v310-card span-4" aria-labelledby="portalNextTitle">
-      <div class="v310-card-head"><h2 id="portalNextTitle">다음 행동</h2><a class="v310-card-link" href="/products/veridion/demo">전체 점검</a></div>
-      <div class="v310-actions-list" id="portalNextActions">
-        <article class="v310-action"><span class="v310-action-num">1</span><b>결제·문의 직전 안내 문구 확인</b><span class="v310-pill danger">우선</span></article>
-        <article class="v310-action"><span class="v310-action-num">2</span><b>환불·개인정보 링크 위치 점검</b><span class="v310-pill warn">중요</span></article>
-        <article class="v310-action"><span class="v310-action-num">3</span><b>모바일 화면 겹침과 버튼 가독성 확인</b><span class="v310-pill warn">중요</span></article>
-        <article class="v310-action"><span class="v310-action-num">4</span><b>20분 인사이트 발행 상태 점검</b><span class="v310-pill success">운영</span></article>
+    <section class="v311-card span-4" aria-labelledby="portalNextTitle">
+      <div class="v311-card-head"><h2 id="portalNextTitle">다음 행동</h2><a class="v311-card-link" href="/products/veridion/demo">전체 점검</a></div>
+      <div class="v311-actions-list" id="portalNextActions">
+        <article class="v311-action"><span class="v311-action-num">1</span><b>결제·문의 직전 안내 문구 확인</b><span class="v311-pill danger">우선</span></article>
+        <article class="v311-action"><span class="v311-action-num">2</span><b>환불·개인정보 링크 위치 점검</b><span class="v311-pill warn">중요</span></article>
+        <article class="v311-action"><span class="v311-action-num">3</span><b>모바일 화면 겹침과 버튼 가독성 확인</b><span class="v311-pill warn">중요</span></article>
+        <article class="v311-action"><span class="v311-action-num">4</span><b>20분 인사이트 발행 상태 점검</b><span class="v311-pill success">운영</span></article>
       </div>
     </section>
 
-    <section class="v310-card span-12" aria-labelledby="portalRegisterTitle" id="portalSiteFormPanel">
-      <div class="v310-card-head"><h2 id="portalRegisterTitle">새 사이트 등록</h2><span class="v310-pill">로그인 후 저장</span></div>
-      <form class="v310-form" id="saveSiteForm">
+    <section class="v311-card span-12" aria-labelledby="portalRegisterTitle" id="portalSiteFormPanel">
+      <div class="v311-card-head"><h2 id="portalRegisterTitle">새 사이트 등록</h2><span class="v311-pill">로그인 후 저장</span></div>
+      <form class="v311-form" id="saveSiteForm">
         <label>사이트 주소<input id="saveUrl" autocomplete="url" placeholder="https://example.com"/></label>
         <label>사이트 이름<input id="saveName" autocomplete="off" placeholder="메인 사이트"/></label>
         <label>메모<input id="saveMemo" autocomplete="off" placeholder="마케팅 캠페인 사이트"/></label>
         <button type="submit">사이트 등록</button>
-        <div class="v310-form-state" id="saveSiteState">사이트를 저장하면 진단 이력과 리포트 상태를 이어서 관리할 수 있습니다.</div>
+        <div class="v311-form-state" id="saveSiteState">사이트를 저장하면 진단 이력과 리포트 상태를 이어서 관리할 수 있습니다.</div>
       </form>
     </section>
 
-    <section class="v310-card span-8" aria-labelledby="portalSitesTitle">
-      <div class="v310-card-head"><h2 id="portalSitesTitle">내 사이트 현황</h2><span class="v310-pill" id="portalConnectionState">연결 확인 중</span></div>
+    <section class="v311-card span-8" aria-labelledby="portalSitesTitle">
+      <div class="v311-card-head"><h2 id="portalSitesTitle">내 사이트 현황</h2><span class="v311-pill" id="portalConnectionState">연결 확인 중</span></div>
       <div id="portalAssetList" aria-live="polite">
-        <div class="v310-empty"><strong>등록된 사이트가 아직 없습니다.</strong><p>새 사이트를 등록하거나 무료 진단을 실행하면 결과가 이곳에 표시됩니다.</p></div>
+        <div class="v311-empty"><strong>등록된 사이트가 아직 없습니다.</strong><p>새 사이트를 등록하거나 무료 진단을 실행하면 결과가 이곳에 표시됩니다.</p></div>
       </div>
-      <div id="portalPrimary" class="v310-sr-only"></div>
+      <div id="portalPrimary" class="v311-sr-only"></div>
     </section>
 
-    <section class="v310-card span-4" aria-labelledby="portalFeedTitle">
-      <div class="v310-card-head"><h2 id="portalFeedTitle">최신 인사이트</h2><span class="v310-pill success" id="portalPublishCadence">20분에 1회 발행</span></div>
-      <div class="v310-feed" id="portalFeed">
-        <article><span class="v310-pill">운영 인사이트</span><h3>인사이트를 불러오는 중입니다</h3><p>연결이 지연되어도 기본 안내를 표시합니다.</p></article>
+    <section class="v311-card span-4" aria-labelledby="portalFeedTitle">
+      <div class="v311-card-head"><h2 id="portalFeedTitle">최신 인사이트</h2><span class="v311-pill success" id="portalPublishCadence">20분에 1회 발행</span></div>
+      <div class="v311-feed" id="portalFeed">
+        <article><span class="v311-pill">운영 인사이트</span><h3>인사이트를 불러오는 중입니다</h3><p>연결이 지연되어도 기본 안내를 표시합니다.</p></article>
       </div>
     </section>
 
-    <section class="v310-card span-12" aria-labelledby="portalAccountTitle">
-      <div class="v310-card-head"><h2 id="portalAccountTitle">계정 상태</h2><a class="v310-card-link" href="/auth">로그인</a></div>
-      <div class="v310-account-list">
-        <div class="v310-account-item"><span>계정 연결</span><strong id="portalAccountState">확인 중</strong></div>
-        <div class="v310-account-item"><span>구독·결제 관리</span><strong>로그인 후 확인</strong></div>
-        <div class="v310-account-item"><span>인사이트 발행</span><strong>20분 주기 점검</strong></div>
+    <section class="v311-card span-12" aria-labelledby="portalAccountTitle">
+      <div class="v311-card-head"><h2 id="portalAccountTitle">계정 상태</h2><a class="v311-card-link" href="/auth">로그인</a></div>
+      <div class="v311-account-list">
+        <div class="v311-account-item"><span>계정 연결</span><strong id="portalAccountState">확인 중</strong></div>
+        <div class="v311-account-item"><span>구독·결제 관리</span><strong>로그인 후 확인</strong></div>
+        <div class="v311-account-item"><span>인사이트 발행</span><strong>20분 주기 점검</strong></div>
       </div>
       <p id="portalState">내 사이트 정보를 안전하게 확인하세요.</p>
     </section>
   </section>
 </main>
-<footer class="v310-footer"><div class="v310-footer-inner"><strong>VERIDION</strong><nav aria-label="하단 메뉴"><a href="/terms">이용약관</a><a href="/privacy">개인정보처리방침</a><a href="/refund">환불 정책</a><a href="/business-info">문의하기</a></nav><span>© 2026 VERIDION. All rights reserved.</span></div></footer>
+<footer class="v311-footer"><div class="v311-footer-inner"><strong>VERIDION</strong><nav aria-label="하단 메뉴"><a href="/terms">이용약관</a><a href="/privacy">개인정보처리방침</a><a href="/refund">환불 정책</a><a href="/business-info">문의하기</a></nav><span>© 2026 VERIDION. All rights reserved.</span></div></footer>
 <script type="module" src="/apps/public/portal/app.js"></script>
 </body>
 </html>

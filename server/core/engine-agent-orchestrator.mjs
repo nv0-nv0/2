@@ -1,4 +1,4 @@
-const ORCHESTRATOR_VERSION = 'phase286-engine-agent-orchestrator-v1.0.0';
+const ORCHESTRATOR_VERSION = 'phase311-clean-redteam-orchestrator-v1.0.0';
 
 export const ENGINE_AGENT_ORCHESTRATOR_VERSION = ORCHESTRATOR_VERSION;
 
@@ -39,7 +39,7 @@ export const ENGINE_AGENT_ASSIGNMENT_MATRIX = Object.freeze({
       layer: 'engine',
       domain: 'portal-ui',
       ownerAgent: 'visual-readability-agent',
-      runtimeFile: 'shared/portal-phase283-dashboard.css',
+      runtimeFile: 'shared/veridion-clean-v311.css',
       serverFile: 'apps/public/portal/index.html',
       responsibility: '내 사이트 대시보드·인포그래픽·사이드바·점수 게이지 UI를 제공',
       optimization: ['숫자 시인성 강화', '카드 정보 구조 정리', 'retired CSS 참조 제거']
@@ -100,7 +100,7 @@ export const ENGINE_AGENT_ASSIGNMENT_MATRIX = Object.freeze({
       domain: 'release',
       ownerAgent: 'release-audit-agent',
       runtimeFile: 'scripts/generate-structure-tree.mjs',
-      serverFile: 'scripts/validate-phase285-structure-optimization.mjs',
+      serverFile: 'scripts/validate-phase311-redteam-global-audit.mjs',
       responsibility: '구조 트리·상용화 감사·패키지 무결성 검증을 수행',
       optimization: ['POSIX 압축 경로', '구조 문서 자동화', '최종 게이트 일원화']
     },
@@ -190,7 +190,7 @@ export const ENGINE_AGENT_ASSIGNMENT_MATRIX = Object.freeze({
       id: 'release-audit-agent',
       layer: 'agent',
       assignedEngine: 'release-structure-engine',
-      trigger: 'npm run phase286:final',
+      trigger: 'npm run phase311:final',
       duty: '구조·검증·압축·상용화 게이트를 최종 판정'
     },
     {
@@ -256,7 +256,7 @@ export function buildEngineAgentAssignment(db = {}, options = {}) {
     runtimeSignals,
     optimizationSummary: [
       '포털 UI·진단·리포트·결제·인사이트·보안·배포 검증을 전역 엔진/에이전트 단위로 배정했습니다.',
-      '각 엔진은 담당 에이전트와 파일 책임을 갖고, phase286 게이트에서 존재 여부와 연결 상태를 검증합니다.',
+      '각 엔진은 담당 에이전트와 파일 책임을 갖고, phase311 게이트에서 존재 여부와 연결 상태를 검증합니다.',
       '20분 자동 발행, shared 대시보드 CSS, POSIX 패키징, 구조 트리 검증을 유지합니다.'
     ]
   };
@@ -266,7 +266,7 @@ export function buildEngineAgentRuntimeStatus(db = {}, options = {}) {
   const assignment = buildEngineAgentAssignment(db, options);
   return {
     ok: assignment.ok,
-    phase: 'phase286',
+    phase: 'phase311',
     version: ORCHESTRATOR_VERSION,
     status: assignment.ok ? 'optimized' : 'needs-attention',
     engineCount: assignment.engineCount,
@@ -291,10 +291,10 @@ export function runEngineAgentPackageAudit({ files = [], packageJson = {}, route
     'server/core/engine-agent-orchestrator.mjs',
     'docs/ENGINE_AGENT_ASSIGNMENT_MATRIX.md',
     'docs/current/ENGINE_AGENT_ASSIGNMENT_MATRIX.json',
-    'scripts/validate-phase286-engine-agent-orchestration.mjs',
+    'scripts/validate-phase311-redteam-global-audit.mjs',
     'server/core/product-agent-suite.mjs',
-    'shared/portal-phase283-dashboard.css',
-    'scripts/validate-phase285-structure-optimization.mjs'
+    'shared/veridion-clean-v311.css',
+    'scripts/validate-phase311-redteam-global-audit.mjs'
   ];
   const assignment = buildEngineAgentAssignment({});
   const checks = [
@@ -323,10 +323,10 @@ export function runEngineAgentPackageAudit({ files = [], packageJson = {}, route
       message: '관리자 엔진/에이전트 감사 API'
     },
     {
-      key: 'phase286Scripts',
+      key: 'phase311Scripts',
       weight: 12,
-      pass: Boolean(scripts['validate:phase286']) && Boolean(scripts['phase286:final']),
-      message: 'phase286 최종 검증 스크립트'
+      pass: Boolean(scripts['validate:phase311']) && Boolean(scripts['phase311:final']),
+      message: 'phase311 최종 검증 스크립트'
     },
     {
       key: 'autopublishPreserved',
@@ -337,8 +337,8 @@ export function runEngineAgentPackageAudit({ files = [], packageJson = {}, route
     {
       key: 'dashboardPreserved',
       weight: 10,
-      pass: normalizedFiles.includes('shared/portal-phase283-dashboard.css'),
-      message: '승인 대시보드 UI 유지'
+      pass: normalizedFiles.includes('shared/veridion-clean-v311.css'),
+      message: '단일 v311 디자인 시스템 유지'
     },
     {
       key: 'structurePreserved',

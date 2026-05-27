@@ -24,7 +24,7 @@ function renderPosts(posts) {
   $('#boardList').innerHTML = safePosts.map((post) => {
     const tags = [post.primaryKeyword, ...(post.tags || []), ...(post.hashtags || [])].filter(Boolean).slice(0, 5);
     const body = String(post.body || '').replace(/<script[\s\S]*?<\/script>/gi, '').slice(0, 1200);
-    return `<article class="v310-board-card"><div class="v310-board-card-head"><span class="v310-pill">${escapeHtml(post.category || '인사이트')}</span><span class="v310-pill success">${escapeHtml(formatDate(post.publishedAt || post.createdAt))}</span></div><h2>${escapeHtml(post.title || '고객 신뢰 인사이트')}</h2><p>${escapeHtml(post.summary || '운영 기준에 맞춰 정리한 인사이트입니다.')}</p><div class="v310-tags">${tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join('')}</div><div class="v310-post-body">${body}</div><div class="v310-post-cta"><a class="v310-btn primary" href="/products/veridion/demo">무료 진단</a><a class="v310-btn" href="/portal">내 사이트 관리</a></div></article>`;
+    return `<article class="v311-board-card"><div class="v311-board-card-head"><span class="v311-pill">${escapeHtml(post.category || '인사이트')}</span><span class="v311-pill success">${escapeHtml(formatDate(post.publishedAt || post.createdAt))}</span></div><h2>${escapeHtml(post.title || '고객 신뢰 인사이트')}</h2><p>${escapeHtml(post.summary || '운영 기준에 맞춰 정리한 인사이트입니다.')}</p><div class="v311-tags">${tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join('')}</div><div class="v311-post-body">${body}</div><div class="v311-post-cta"><a class="v311-btn primary" href="/products/veridion/demo">무료 진단</a><a class="v311-btn" href="/portal">내 사이트 관리</a></div></article>`;
   }).join('');
 }
 function renderPagination(pagination = {}) {
@@ -69,8 +69,8 @@ async function loadBoard() {
     $('#boardState').textContent = '서버 연결이 지연되어 검수된 기본 인사이트를 표시합니다.';
   }
 }
-$$('.v310-tabs button').forEach((button) => button.addEventListener('click', () => {
-  $$('.v310-tabs button').forEach((item) => item.classList.remove('active'));
+$$('.v311-tabs button').forEach((button) => button.addEventListener('click', () => {
+  $$('.v311-tabs button').forEach((item) => item.classList.remove('active'));
   button.classList.add('active');
   state.filter = button.dataset.filter || 'all';
   state.page = 1;

@@ -36,8 +36,8 @@ for (const entry of mappedRoutes) {
       const abs = path.join(dir, file);
       await fs.access(abs);
     }
-    if (!html.includes('/shared/nv0-clean-slate-20260512.css') && !html.includes('/shared/veridion-clean-v310.css')) errors.push({ route: entry.route, slug: entry.slug, error: 'index.html missing approved shared stylesheet' });
-    if (html.includes('/shared/base.css') || html.includes(`/apps/${entry.area}/${entry.slug}/app.css`)) errors.push({ route: entry.route, slug: entry.slug, error: 'retired css reference detected' });
+    if (!html.includes('/shared/veridion-clean-v311.css')) errors.push({ route: entry.route, slug: entry.slug, error: 'index.html missing v311 shared stylesheet' });
+    if (/nv0-clean-slate|nv0n-generated|nv0n-runtime|phase264-hardening|veridion-adopted-ui|veridion-clean-v310|\/shared\/base\.css/.test(html) || html.includes(`/apps/${entry.area}/${entry.slug}/app.css`)) errors.push({ route: entry.route, slug: entry.slug, error: 'retired css reference detected' });
     if (!html.includes(`/apps/${entry.area}/${entry.slug}/app.js`)) errors.push({ route: entry.route, slug: entry.slug, error: 'index.html missing app.js reference' });
     if (/\son[a-z]+\s*=/.test(html)) errors.push({ route: entry.route, slug: entry.slug, error: 'inline event handler detected' });
     if (/style="/.test(html)) errors.push({ route: entry.route, slug: entry.slug, error: 'inline style attribute detected' });

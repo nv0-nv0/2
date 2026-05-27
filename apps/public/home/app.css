@@ -1,11 +1,1 @@
-/* page-specific overrides handled by /shared/nv0-clean-slate-20260512.css */
-
-
-/* phase255 compatibility aliases for current clean-slate layout */
-.hero-board, .dashboard-card { min-width: 0; }
-.hero-lead, .hero-copy { word-break: keep-all; overflow-wrap: anywhere; }
-.diagnosis-card, .dashboard-card { border-radius: 28px; }
-.problem-strip, .inline-benefits { display: grid; gap: 12px; }
-.offer-board, .pricing-grid { display: grid; gap: 18px; }
-.floating-cta, .cta-banner { position: relative; }
-@media (max-width: 720px) { .hero-board, .hero-lead { width: 100%; } }
+/* PHASE311: page-specific CSS intentionally empty; canonical styling is /shared/veridion-clean-v311.css. */

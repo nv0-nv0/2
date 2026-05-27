@@ -1,5 +1,5 @@
 const DEFAULT_INTERVAL_MS = 20 * 60 * 1000;
-const SUITE_VERSION = 'phase280-phase298-phase306-product-agent-insight-rebuild-v3.0.0';
+const SUITE_VERSION = 'phase311-product-agent-insight-redteam-v4.0.0';
 
 export const PRODUCT_AGENT_SUITE_VERSION = SUITE_VERSION;
 
@@ -129,7 +129,7 @@ function unique(items = []) {
 }
 
 
-const CONTENT_QUALITY_RULESET_VERSION = 'phase298-phase306-korean-copy-special-char-guard-layout-glyph-v2';
+const CONTENT_QUALITY_RULESET_VERSION = 'phase311-korean-copy-special-char-redteam-v3';
 const DISALLOWED_PUBLIC_SYMBOLS = /[�□■◆◇●▲▼※★☆♣♥♠♬✓✔✕✖↔⇒⇐⇔⌕▱↻▤▥♢⚖⚙☑⋮🛡█░›↗]/gu;
 const DISALLOWED_DECORATIVE_ARROWS = /[→←]/g;
 const INVISIBLE_CONTROL_CHARS = /[\u200B-\u200D\uFEFF]/g;

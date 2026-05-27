@@ -69,7 +69,7 @@ function renderSummary(account = {}) {
   text('.nv74-score-number', hasScore ? String(Math.round(score)) : '-');
   const pill = $('#portalRiskPill');
   if (pill) {
-    pill.className = `v310-pill ${risk.className}`.trim();
+    pill.className = `v311-pill ${risk.className}`.trim();
     pill.textContent = risk.label;
   }
   text('#portalStatusSummary', latest ? `${latest.target || '최근 사이트'} 기준으로 보완 우선순위를 정리했습니다.` : '진단을 실행하면 점수와 보완 우선순위가 표시됩니다.');
@@ -78,15 +78,15 @@ function renderSummary(account = {}) {
 function renderSites(account = {}) {
   const sites = Array.isArray(account.savedSites) ? account.savedSites : [];
   if (!sites.length) {
-    setHtml('#portalAssetList', '<div class="v310-empty"><strong>등록된 사이트가 아직 없습니다.</strong><p>새 사이트를 등록하거나 무료 진단을 실행하면 결과가 이곳에 표시됩니다.</p></div>');
+    setHtml('#portalAssetList', '<div class="v311-empty"><strong>등록된 사이트가 아직 없습니다.</strong><p>새 사이트를 등록하거나 무료 진단을 실행하면 결과가 이곳에 표시됩니다.</p></div>');
     return;
   }
   const rows = sites.slice(0, 8).map((site) => {
     const score = Number.isFinite(Number(site.latestRiskScore)) ? `${Math.round(Number(site.latestRiskScore))}/100` : '-';
     const risk = riskFromScore(site.latestRiskScore);
-    return `<div class="v310-row"><b>${escapeHtml(site.label || site.domain || '저장 사이트')}<small>${escapeHtml(site.domain || '')}</small></b><span>${escapeHtml(site.status || '저장됨')}</span><span>${escapeHtml(formatDate(site.lastScanAt))}</span><strong>${escapeHtml(score)}</strong><span><em class="v310-pill ${risk.className}">${escapeHtml(risk.label)}</em></span><span><a href="/products/veridion/demo?target=${encodeURIComponent(site.domain || '')}">진단</a><a href="/plans">리포트</a></span></div>`;
+    return `<div class="v311-row"><b>${escapeHtml(site.label || site.domain || '저장 사이트')}<small>${escapeHtml(site.domain || '')}</small></b><span>${escapeHtml(site.status || '저장됨')}</span><span>${escapeHtml(formatDate(site.lastScanAt))}</span><strong>${escapeHtml(score)}</strong><span><em class="v311-pill ${risk.className}">${escapeHtml(risk.label)}</em></span><span><a href="/products/veridion/demo?target=${encodeURIComponent(site.domain || '')}">진단</a><a href="/plans">리포트</a></span></div>`;
   }).join('');
-  setHtml('#portalAssetList', `<div class="v310-table"><div class="v310-row v310-row-head"><span>사이트</span><span>상태</span><span>최근 진단</span><span>종합 점수</span><span>위험 수준</span><span>관리</span></div>${rows}</div>`);
+  setHtml('#portalAssetList', `<div class="v311-table"><div class="v311-row v311-row-head"><span>사이트</span><span>상태</span><span>최근 진단</span><span>종합 점수</span><span>위험 수준</span><span>관리</span></div>${rows}</div>`);
 }
 function renderAccountState(accountResponse) {
   const authenticated = accountResponse?.ok === true;
@@ -101,7 +101,7 @@ function renderInsights(board = {}) {
   text('#portalPublishState', cadence.actualPublishing === false ? '확인 필요' : '20분 주기');
   text('#portalLastPublishedAt', cadence.lastPublishedAt ? formatDate(cadence.lastPublishedAt) : (cadence.label || '20분에 1회 발행'));
   if (!posts.length) return;
-  setHtml('#portalFeed', posts.map((post) => `<article><span class="v310-pill">${escapeHtml(post.category || '인사이트')}</span><h3>${escapeHtml(post.title || '고객 신뢰 인사이트')}</h3><p>${escapeHtml(post.summary || '운영 기준에 맞춰 정리한 인사이트입니다.')}</p></article>`).join(''));
+  setHtml('#portalFeed', posts.map((post) => `<article><span class="v311-pill">${escapeHtml(post.category || '인사이트')}</span><h3>${escapeHtml(post.title || '고객 신뢰 인사이트')}</h3><p>${escapeHtml(post.summary || '운영 기준에 맞춰 정리한 인사이트입니다.')}</p></article>`).join(''));
 }
 async function loadPortal() {
   const [account, board] = await Promise.allSettled([

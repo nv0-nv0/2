@@ -1,6 +1,6 @@
 {
   "name": "veridion-public-risk-diagnostic",
-  "version": "1.0.0-commercial-phase310-clean-rebuild",
+  "version": "1.0.0-commercial-phase311-clean-redteam",
   "private": true,
   "type": "module",
   "scripts": {
@@ -8,6 +8,7 @@
     "dev": "node scripts/start-local-server.mjs",
     "test": "node scripts/test-all.mjs",
     "test:all": "node scripts/test-all.mjs",
+    "test:e2e": "node tests/e2e.mjs",
     "check:syntax": "node scripts/check-source-syntax.mjs",
     "check:pages": "node scripts/check-page-integrity.mjs",
     "check:links": "node scripts/check-links.mjs --summary",
@@ -17,10 +18,11 @@
     "validate:deploy": "node scripts/validate-deploy-bundle.mjs",
     "clean:runtime": "node scripts/clean-release-runtime.mjs",
     "check:release-secret-hygiene": "node scripts/check-release-secret-hygiene.mjs",
-    "validate:phase310": "node scripts/validate-phase310-clean-rebuild.mjs",
-    "phase310:final": "npm run check:syntax && npm test && npm run check:pages && npm run test:routes && npm run check:links && npm run verify:security && npm run validate:deploy && npm run check:release-secret-hygiene && npm run validate:phase310 && npm run clean:runtime && node scripts/check-runtime-clean.mjs",
-    "delivery:final": "npm run phase310:final",
-    "release:predeploy": "npm run phase310:final"
+    "redteam:global": "node scripts/redteam-global-audit.mjs",
+    "validate:phase311": "node scripts/validate-phase311-redteam-global-audit.mjs",
+    "phase311:final": "npm run check:syntax && npm test && npm run test:e2e && npm run check:pages && npm run test:routes && npm run check:links && npm run verify:security && npm run validate:deploy && npm run check:release-secret-hygiene && npm run redteam:global && npm run validate:phase311 && npm run clean:runtime && node scripts/check-runtime-clean.mjs",
+    "delivery:final": "npm run phase311:final",
+    "release:predeploy": "npm run phase311:final"
   },
-  "description": "VERIDION phase310 clean rebuild: portal and insight pages rebuilt from a single clean design system, accumulated phase CSS/JS conflicts removed, and 20-minute insight publishing retained."
+  "description": "VERIDION phase311 clean redteam: global clean rebuild, 50-role redteam audit, legacy artifact deletion, single v311 design system, and 100 hardening actions."
 }

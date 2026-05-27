@@ -374,7 +374,7 @@ const packageFiles = [
   'server/core/product-agent-suite.mjs',
   'server/routes/public.mjs',
   'server/routes/admin.mjs',
-  'shared/portal-phase283-dashboard.css',
+  'shared/veridion-clean-v311.css',
   'scripts/validate-phase286-engine-agent-orchestration.mjs',
   'scripts/validate-phase285-structure-optimization.mjs',
   'docs/ENGINE_AGENT_ASSIGNMENT_MATRIX.md',
@@ -384,7 +384,7 @@ const packageFiles = [
 ];
 const audit = runEngineAgentPackageAudit({
   files: packageFiles,
-  packageJson: { scripts: { 'validate:phase286': true, 'phase286:final': true } },
+  packageJson: { scripts: { 'validate:phase311': true, 'phase311:final': true } },
   routes: ['/api/public/engine-agent-status', '/api/admin/engine-agents/audit']
 });
 const status = buildEngineAgentRuntimeStatus(db, { businessProfile: db.settings?.businessProfile, nowIso: nowIso() });

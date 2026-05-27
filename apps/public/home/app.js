@@ -179,13 +179,13 @@ function renderCompleted(scan = {}, portalUrl = '/portal', endpoint = '') {
     <div class="nv0-home-demo-kpis"><article><b>${escapeHtml(score)}</b><small>개선 우선도</small></article><article><b>${escapeHtml(findings)}</b><small>발견/검토 항목</small></article><article><b>자동</b><small>내 사이트 이동</small></article></div>
     <p>결과가 저장되었습니다. <b><span id="homeDemoRedirectCountdown">2</span>초 후</b> 내 사이트 관리 화면에서 같은 결과를 이어서 확인합니다.</p>
     ${findingList}
-    <div class="nv0-home-demo-actions"><a class="phase264-btn primary" href="${escapeAttr(safePortal)}">내 사이트에서 보기</a><a class="phase264-btn secondary" href="${escapeAttr(demoPageUrl(scan.target || domain))}">전용 데모로 자세히 보기</a></div>
+    <div class="nv0-home-demo-actions"><a class="v311-button primary" href="${escapeAttr(safePortal)}">내 사이트에서 보기</a><a class="v311-button secondary" href="${escapeAttr(demoPageUrl(scan.target || domain))}">전용 데모로 자세히 보기</a></div>
     ${endpoint ? `<small class="nv0-home-demo-endpoint">실행 API: ${escapeHtml(endpoint)}</small>` : ''}
   </div>`;
 }
 
 function renderWarning(message, normalized = '') {
-  return `<div class="nv0-home-demo-card warn"><div class="nv0-home-demo-card-head"><span>계속 진행 필요</span><strong>${escapeHtml(compactDomain(normalized || '진단 주소'))}</strong></div><p>${escapeHtml(message)}</p><div class="nv0-home-demo-actions"><a class="phase264-btn primary" href="${escapeAttr(demoPageUrl(normalized))}">전용 데모 페이지에서 계속</a><a class="phase264-btn secondary" href="/service">서비스 범위 보기</a></div></div>`;
+  return `<div class="nv0-home-demo-card warn"><div class="nv0-home-demo-card-head"><span>계속 진행 필요</span><strong>${escapeHtml(compactDomain(normalized || '진단 주소'))}</strong></div><p>${escapeHtml(message)}</p><div class="nv0-home-demo-actions"><a class="v311-button primary" href="${escapeAttr(demoPageUrl(normalized))}">전용 데모 페이지에서 계속</a><a class="v311-button secondary" href="/service">서비스 범위 보기</a></div></div>`;
 }
 
 function overlayHtml(target, currentIndex = 0, done = false) {

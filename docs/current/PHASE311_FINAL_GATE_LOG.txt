@@ -1,0 +1,476 @@
+
+> veridion-public-risk-diagnostic@1.0.0-commercial-phase311-clean-redteam phase311:final
+> npm run check:syntax && npm test && npm run test:e2e && npm run check:pages && npm run test:routes && npm run check:links && npm run verify:security && npm run validate:deploy && npm run check:release-secret-hygiene && npm run redteam:global && npm run validate:phase311 && npm run clean:runtime && node scripts/check-runtime-clean.mjs
+
+
+> veridion-public-risk-diagnostic@1.0.0-commercial-phase311-clean-redteam check:syntax
+> node scripts/check-source-syntax.mjs
+
+{
+  "ok": true,
+  "checkedCount": 151,
+  "failures": []
+}
+
+> veridion-public-risk-diagnostic@1.0.0-commercial-phase311-clean-redteam test
+> node scripts/test-all.mjs
+
+{
+  "ok": true,
+  "passed": 186,
+  "failed": 0,
+  "report": "docs/current/PHASE311_CLEAN_REDTEAM_TEST_SUMMARY.json"
+}
+
+> veridion-public-risk-diagnostic@1.0.0-commercial-phase311-clean-redteam test:e2e
+> node tests/e2e.mjs
+
+E2E passed: phase311 structural/commercial flow
+
+> veridion-public-risk-diagnostic@1.0.0-commercial-phase311-clean-redteam check:pages
+> node scripts/check-page-integrity.mjs
+
+{
+  "ok": true,
+  "mappedRouteCount": 44,
+  "checked": [
+    {
+      "route": "/",
+      "area": "public",
+      "slug": "home",
+      "ok": true
+    },
+    {
+      "route": "/guides",
+      "area": "public",
+      "slug": "guides",
+      "ok": true
+    },
+    {
+      "route": "/resources",
+      "area": "public",
+      "slug": "guides",
+      "ok": true
+    },
+    {
+      "route": "/board",
+      "area": "public",
+      "slug": "board",
+      "ok": true
+    },
+    {
+      "route": "/board/post",
+      "area": "public",
+      "slug": "board",
+      "ok": true
+    },
+    {
+      "route": "/cases",
+      "area": "public",
+      "slug": "cases",
+      "ok": true
+    },
+    {
+      "route": "/documents",
+      "area": "public",
+      "slug": "documents",
+      "ok": true
+    },
+    {
+      "route": "/policy-documents",
+      "area": "public",
+      "slug": "documents",
+      "ok": true
+    },
+    {
+      "route": "/docs/veridion",
+      "area": "public",
+      "slug": "documents",
+      "ok": true
+    },
+    {
+      "route": "/solutions",
+      "area": "public",
+      "slug": "solutions",
+      "ok": true
+    },
+    {
+      "route": "/service",
+      "area": "public",
+      "slug": "service",
+      "ok": true
+    },
+    {
+      "route": "/products",
+      "area": "public",
+      "slug": "plans",
+      "ok": true
+    },
+    {
+      "route": "/demo",
+      "area": "public",
+      "slug": "demo",
+      "ok": true
+    },
+    {
+      "route": "/products/veridion/demo",
+      "area": "public",
+      "slug": "veridion-demo",
+      "ok": true
+    },
+    {
+      "route": "/plans",
+      "area": "public",
+      "slug": "plans",
+      "ok": true
+    },
+    {
+      "route": "/checkout",
+      "area": "public",
+      "slug": "checkout",
+      "ok": true
+    },
+    {
+      "route": "/portal",
+      "area": "public",
+      "slug": "portal",
+      "ok": true
+    },
+    {
+      "route": "/auth",
+      "area": "public",
+      "slug": "auth",
+      "ok": true
+    },
+    {
+      "route": "/terms",
+      "area": "public",
+      "slug": "terms",
+      "ok": true
+    },
+    {
+      "route": "/privacy",
+      "area": "public",
+      "slug": "privacy",
+      "ok": true
+    },
+    {
+      "route": "/refund",
+      "area": "public",
+      "slug": "refund",
+      "ok": true
+    },
+    {
+      "route": "/business-info",
+      "area": "public",
+      "slug": "business-info",
+      "ok": true
+    },
+    {
+      "route": "/risk_result.html",
+      "area": "public",
+      "slug": "demo",
+      "ok": true
+    },
+    {
+      "route": "/demo_risk_result.html",
+      "area": "public",
+      "slug": "veridion-demo",
+      "ok": true
+    },
+    {
+      "route": "/service_detail.html",
+      "area": "public",
+      "slug": "service",
+      "ok": true
+    },
+    {
+      "route": "/pricing.html",
+      "area": "public",
+      "slug": "plans",
+      "ok": true
+    },
+    {
+      "route": "/insight_board.html",
+      "area": "public",
+      "slug": "board",
+      "ok": true
+    },
+    {
+      "route": "/mypage.html",
+      "area": "public",
+      "slug": "portal",
+      "ok": true
+    },
+    {
+      "route": "/auth_management.html",
+      "area": "public",
+      "slug": "auth",
+      "ok": true
+    },
+    {
+      "route": "/risk-result",
+      "area": "public",
+      "slug": "demo",
+      "ok": true
+    },
+    {
+      "route": "/insight-board",
+      "area": "public",
+      "slug": "board",
+      "ok": true
+    },
+    {
+      "route": "/my-page",
+      "area": "public",
+      "slug": "portal",
+      "ok": true
+    },
+    {
+      "route": "/admin",
+      "area": "admin",
+      "slug": "gate",
+      "ok": true
+    },
+    {
+      "route": "/admin/console",
+      "area": "admin",
+      "slug": "console",
+      "ok": true
+    },
+    {
+      "route": "/admin/orders",
+      "area": "admin",
+      "slug": "orders",
+      "ok": true
+    },
+    {
+      "route": "/admin/publications",
+      "area": "admin",
+      "slug": "publications",
+      "ok": true
+    },
+    {
+      "route": "/admin/library",
+      "area": "admin",
+      "slug": "library",
+      "ok": true
+    },
+    {
+      "route": "/admin/settings",
+      "area": "admin",
+      "slug": "settings",
+      "ok": true
+    },
+    {
+      "route": "/admin/diagnostics",
+      "area": "admin",
+      "slug": "diagnostics",
+      "ok": true
+    },
+    {
+      "route": "/admin/console/orders",
+      "area": "admin",
+      "slug": "orders",
+      "ok": true
+    },
+    {
+      "route": "/admin/console/publications",
+      "area": "admin",
+      "slug": "publications",
+      "ok": true
+    },
+    {
+      "route": "/admin/console/library",
+      "area": "admin",
+      "slug": "library",
+      "ok": true
+    },
+    {
+      "route": "/admin/console/settings",
+      "area": "admin",
+      "slug": "settings",
+      "ok": true
+    },
+    {
+      "route": "/admin/console/diagnostics",
+      "area": "admin",
+      "slug": "diagnostics",
+      "ok": true
+    }
+  ],
+  "errors": []
+}
+
+> veridion-public-risk-diagnostic@1.0.0-commercial-phase311-clean-redteam test:routes
+> node tests/routes-smoke.mjs
+
+{
+  "ok": true,
+  "checked": 24
+}
+
+> veridion-public-risk-diagnostic@1.0.0-commercial-phase311-clean-redteam check:links
+> node scripts/check-links.mjs --summary
+
+{
+  "ok": true,
+  "checkedCount": 336,
+  "errorCount": 0,
+  "errors": []
+}
+
+> veridion-public-risk-diagnostic@1.0.0-commercial-phase311-clean-redteam verify:security
+> node scripts/verify-security.mjs
+
+{
+  "ok": true,
+  "baseUrl": null,
+  "checks": [
+    {
+      "name": "security:csp-no-unsafe-inline",
+      "ok": true,
+      "note": "server source does not allow unsafe-inline"
+    },
+    {
+      "name": "security:trusted-types-report-only",
+      "ok": true,
+      "note": "Trusted Types kept report-only to avoid production render breakage"
+    },
+    {
+      "name": "security:nosniff",
+      "ok": true
+    },
+    {
+      "name": "security:frame-deny",
+      "ok": true
+    },
+    {
+      "name": "security:admin-cookie-httponly",
+      "ok": true
+    },
+    {
+      "name": "security:csrf-header-required",
+      "ok": true
+    },
+    {
+      "name": "security:admin-public-hidden",
+      "ok": true
+    },
+    {
+      "name": "security:readyz-runtime-writable",
+      "ok": true
+    },
+    {
+      "name": "security:env-placeholder-guard",
+      "ok": true
+    },
+    {
+      "name": "security:turnstile-gate-supported",
+      "ok": true
+    },
+    {
+      "name": "client:no-inline-event-handlers",
+      "ok": true
+    },
+    {
+      "name": "client:no-debug-console-log",
+      "ok": true
+    },
+    {
+      "name": "client:html-escape-helper",
+      "ok": true
+    }
+  ]
+}
+
+> veridion-public-risk-diagnostic@1.0.0-commercial-phase311-clean-redteam validate:deploy
+> node scripts/validate-deploy-bundle.mjs
+
+Deploy bundle validation passed
+
+> veridion-public-risk-diagnostic@1.0.0-commercial-phase311-clean-redteam check:release-secret-hygiene
+> node scripts/check-release-secret-hygiene.mjs
+
+{
+  "ok": true,
+  "checkedAt": "2026-05-27T03:23:56.209Z",
+  "ruleVersion": "phase310-release-secret-hygiene-v1",
+  "findings": []
+}
+
+> veridion-public-risk-diagnostic@1.0.0-commercial-phase311-clean-redteam redteam:global
+> node scripts/redteam-global-audit.mjs
+
+{
+  "ok": true,
+  "counts": {
+    "filesTotal": 238,
+    "publicPages": 17,
+    "adminPages": 7,
+    "mappedRoutes": 44,
+    "publicApiRoutePatterns": 41,
+    "adminApiRoutePatterns": 59,
+    "scripts": 56,
+    "tests": 9,
+    "serverModules": 53,
+    "cssFiles": 2,
+    "docs": 7,
+    "oldArtifactsChecked": 10,
+    "oldArtifactsRemaining": 0,
+    "legacyRefFiles": 0,
+    "appGlyphRefFiles": 0,
+    "todoRefFiles": 3,
+    "improvementItems": 100,
+    "meetingRoles": 50
+  },
+  "report": "docs/current/PHASE311_REDTEAM_GLOBAL_AUDIT.json"
+}
+
+> veridion-public-risk-diagnostic@1.0.0-commercial-phase311-clean-redteam validate:phase311
+> node scripts/validate-phase311-redteam-global-audit.mjs
+
+{
+  "ok": true,
+  "phase": "phase311-clean-redteam",
+  "counts": {
+    "filesTotal": 238,
+    "publicPages": 17,
+    "adminPages": 7,
+    "mappedRoutes": 44,
+    "publicApiRoutePatterns": 41,
+    "adminApiRoutePatterns": 59,
+    "scripts": 56,
+    "tests": 9,
+    "serverModules": 53,
+    "cssFiles": 2,
+    "docs": 7,
+    "oldArtifactsChecked": 10,
+    "oldArtifactsRemaining": 0,
+    "legacyRefFiles": 0,
+    "appGlyphRefFiles": 0,
+    "todoRefFiles": 3,
+    "improvementItems": 100,
+    "meetingRoles": 50
+  }
+}
+
+> veridion-public-risk-diagnostic@1.0.0-commercial-phase311-clean-redteam clean:runtime
+> node scripts/clean-release-runtime.mjs
+
+{
+  "ok": true,
+  "cleaned": [
+    "runtime/uploads",
+    "runtime/backups",
+    "runtime/reports",
+    "runtime/stress-smoke",
+    "runtime/data/secure-records"
+  ],
+  "resetDb": true
+}
+{
+  "ok": true,
+  "checked": "runtime-clean-release",
+  "mode": "runtime-directory-present-clean"
+}
