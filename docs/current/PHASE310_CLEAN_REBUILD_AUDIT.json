@@ -1,0 +1,13 @@
+{
+  "generatedAt": "2026-05-27T03:04:59.619Z",
+  "ok": true,
+  "phase": "phase310-clean-rebuild",
+  "cleaned": {
+    "portalLegacyCssRemoved": true,
+    "boardLegacyCssRemoved": true,
+    "legacyInjectionBypass": true,
+    "cleanCss": "shared/veridion-clean-v310.css",
+    "visualGlyphRiskRemoved": true,
+    "oldStaticDateRemoved": true
+  }
+}

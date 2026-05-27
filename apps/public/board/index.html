@@ -2,64 +2,78 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8"/>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <title>인사이트 - VERIDION</title>
-  <link href="/shared/nv0-clean-slate-20260512.css" rel="stylesheet"/>
-  <link href="/shared/nv0n-generated.css" rel="stylesheet"/>
-  <link href="/shared/nv0n-runtime.css" rel="stylesheet"/>
-  <link href="/shared/phase264-hardening.css" rel="stylesheet"/><link href="/shared/veridion-adopted-ui.css" rel="stylesheet"/>
-  <link href="/shared/phase307-professional-polish.css" rel="stylesheet"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>인사이트 | VERIDION</title>
+  <meta name="description" content="고객 신뢰, 결제 전 안내, 환불 기준, 개인정보 고지를 다루는 VERIDION 인사이트"/>
+  <link rel="stylesheet" href="/shared/veridion-clean-v310.css"/>
 </head>
-<body class="nv0n-page phase264-theme phase307-premium-polish" data-nv0n-page="true">
-<header class="nv0n-topbar" data-nv0n-visible-menu="true">
-  <div class="nv0n-topbar-inner">
-    <a aria-label="VERIDION 홈으로 이동" class="nv0n-brand" href="/">VERIDION</a>
-    <nav aria-label="상단 메뉴" class="nv0n-primary-nav"><a class="nv0n-nav-link" href="/products/veridion/demo">위험 진단</a><a class="nv0n-nav-link" href="/service">서비스</a><a class="nv0n-nav-link" href="/plans">요금 안내</a><a aria-current="page" class="nv0n-nav-link is-active" href="/board">인사이트</a><a class="nv0n-nav-link" href="/portal">내 사이트</a><a class="nv0n-nav-link" href="/business-info">문의하기</a></nav>
-    <div aria-label="계정 및 진단 바로가기" class="nv0n-topbar-actions">
-      <a class="nv0n-login-link" href="/auth">로그인</a>
-      <a class="nv0n-start-link" href="/products/veridion/demo">무료 진단</a>
+<body class="v310-clean-page" data-nv0n-page="true" data-veridion-clean="v310" data-page="board">
+<a class="skip-link" href="#main">본문 바로가기</a>
+<header class="v310-topbar">
+  <div class="v310-topbar-inner">
+    <a class="v310-brand" href="/" aria-label="VERIDION 홈"><span class="v310-brand-mark" aria-hidden="true"></span><span>VERIDION</span></a>
+    <nav class="v310-nav" aria-label="주요 메뉴">
+      <a href="/products/veridion/demo">위험 진단</a>
+      <a href="/service">서비스</a>
+      <a href="/plans">요금 안내</a>
+      <a href="/board" aria-current="page">인사이트</a>
+      <a href="/portal">내 사이트</a>
+      <a href="/business-info">문의하기</a>
+    </nav>
+    <div class="v310-actions">
+      <a class="v310-link" href="/auth">로그인</a>
+      <a class="v310-link primary" href="/products/veridion/demo">무료 진단</a>
     </div>
   </div>
 </header>
-<main id="main" tabindex="-1" class="phase264-main">
-  <div class="sr-only" data-phase263-compat="true">20분에 1회 발행 고객 신뢰 인사이트</div>
-  <section class="phase264-shell">
-    <header class="phase264-page-head">
-      <span class="phase264-kicker">인사이트</span>
-      <h1>온라인 사업자를 위한 신뢰 점검 인사이트</h1>
-      <p>결제 전 안내, 환불 기준, 개인정보 고지처럼 고객이 실제로 확인하는 신뢰 요소를 실무 기준으로 정리합니다.</p>
-    </header>
-    <section class="phase264-insight-shell nv0n-functional-bridge" aria-label="인사이트">
-      <div class="phase264-board-toolbar">
-        <div class="segment-tabs" aria-label="인사이트 필터">
+<main id="main" class="v310-main" tabindex="-1">
+  <section class="v310-hero v310-board-hero" aria-labelledby="boardTitle">
+    <div class="v310-hero-card">
+      <span class="v310-kicker">인사이트</span>
+      <h1 id="boardTitle">온라인 사업자를 위한 신뢰 점검 인사이트</h1>
+      <p>결제 전 안내, 환불 기준, 개인정보 고지, 모바일 가독성처럼 고객이 실제로 확인하는 요소를 실무 기준으로 정리합니다.</p>
+      <div class="v310-hero-actions">
+        <a class="v310-btn primary" href="/products/veridion/demo">내 사이트 무료 진단</a>
+        <a class="v310-btn" href="/portal">내 사이트 관리</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="v310-grid" aria-label="인사이트 목록">
+    <section class="v310-card span-8">
+      <div class="v310-card-head"><div><h2>최신 인사이트</h2><p id="boardState">20분에 1회 발행 상태를 확인하고 있습니다.</p></div><span class="v310-pill success" id="boardCadence">20분에 1회 발행</span></div>
+      <div class="v310-toolbar">
+        <div class="v310-tabs" aria-label="인사이트 필터">
           <button class="active" data-filter="all" type="button">전체</button>
           <button data-filter="policy" type="button">정책·결제</button>
           <button data-filter="conversion" type="button">전환</button>
+          <button data-filter="diagnosis" type="button">진단</button>
         </div>
-        <div class="bridge-grid"><input id="boardSearch" placeholder="검색어를 입력하세요" aria-label="인사이트 검색"/><button id="boardSearchBtn" type="button">찾기</button></div>
-        <div class="notice muted" id="boardState">인사이트 목록을 확인하고 있습니다. 연결이 지연되면 기본 인사이트를 먼저 표시합니다.</div>
+        <form class="v310-search" id="boardSearchForm">
+          <input id="boardSearch" placeholder="검색어를 입력하세요" aria-label="인사이트 검색"/>
+          <button id="boardSearchBtn" type="submit">찾기</button>
+        </form>
+        <a class="v310-card-link" href="/products/veridion/demo">진단 시작</a>
       </div>
-      <div class="phase239-board-list" id="boardList">
-        <article class="article-card board-post">
-          <div class="pill brand">운영 인사이트</div>
-          <h3>20분에 1회 발행되는 고객 신뢰 인사이트 운영 방식</h3>
-          <p class="post-summary">목록 연결이 지연되어도 페이지가 비어 보이지 않도록 검수된 기본 인사이트를 먼저 표시합니다.</p>
-          <div class="risk-meta-strip"><span>점검 의도: 고객 신뢰 점검</span><span>핵심 주제: 20분 발행</span><span>분류 태그 5개</span></div>
-          <div class="post-body"><section class="post-section"><h3>운영 기준</h3><p>인사이트는 20분에 1회 발행 가능 여부를 확인하고, 제목·본문·내부 링크·중복·오탈자·깨진 문자를 검수한 뒤 공개합니다.</p></section></div>
-          <div class="post-cta"><a class="btn primary" href="/products/veridion/demo">내 사이트 무료 진단</a><a class="btn secondary" href="/portal">내 사이트 관리</a></div>
+      <div class="v310-board-list" id="boardList" aria-live="polite">
+        <article class="v310-board-card">
+          <div class="v310-board-card-head"><span class="v310-pill">운영 인사이트</span><span class="v310-pill success">20분 주기</span></div>
+          <h2>20분에 1회 발행되는 고객 신뢰 인사이트 운영 방식</h2>
+          <p>목록 연결이 지연되어도 페이지가 비어 보이지 않도록 검수된 기본 인사이트를 먼저 표시합니다.</p>
+          <div class="v310-tags"><span>점검 의도: 고객 신뢰 점검</span><span>핵심 주제: 20분 발행</span><span>분류 태그 5개</span></div>
+          <div class="v310-post-body">인사이트는 제목, 본문, 내부 링크, 중복 여부, 오탈자, 깨진 문자를 검수한 뒤 공개합니다.</div>
+          <div class="v310-post-cta"><a class="v310-btn primary" href="/products/veridion/demo">무료 진단</a><a class="v310-btn" href="/portal">내 사이트 관리</a></div>
         </article>
       </div>
-      <div class="board-pagination" id="boardPagination"></div>
-      <aside class="phase264-card"><h2>최근 인사이트</h2><div class="stack muted" id="boardActivity"></div></aside>
+      <div class="v310-pagination" id="boardPagination"></div>
     </section>
+    <aside class="v310-card span-4" aria-labelledby="boardActivityTitle">
+      <div class="v310-card-head"><h2 id="boardActivityTitle">최근 발행</h2></div>
+      <div class="v310-side-list" id="boardActivity"><a href="/board"><b>발행 상태 확인 중</b><span>인사이트 서버 연결 후 업데이트됩니다.</span></a></div>
+    </aside>
   </section>
 </main>
-<footer class="phase278-footer nv0n-footer">
-  <div class="phase278-footer-inner">
-    <div class="phase278-footer-brand"><strong>VERIDION</strong><p>국내 온라인 사업자의 고지, 환불, 개인정보 안내 공백을 공개 페이지 기준으로 점검합니다.</p></div>
-    <nav aria-label="하단 메뉴"><a href="/privacy">개인정보 처리방침</a><a href="/terms">이용약관</a><a href="/refund">환불 정책</a><a href="/business-info">문의하기</a><a href="mailto:ct@nv0.kr">ct@nv0.kr</a></nav>
-    <span>© 2026 VERIDION. All rights reserved.</span>
-  </div>
-</footer>
-<script defer src="/shared/nv0n-runtime.js"></script><script src="/apps/public/board/app.js" type="module"></script>
-</body></html>
+<footer class="v310-footer"><div class="v310-footer-inner"><strong>VERIDION</strong><nav aria-label="하단 메뉴"><a href="/terms">이용약관</a><a href="/privacy">개인정보처리방침</a><a href="/refund">환불 정책</a><a href="/business-info">문의하기</a></nav><span>© 2026 VERIDION. All rights reserved.</span></div></footer>
+<script type="module" src="/apps/public/board/app.js"></script>
+</body>
+</html>

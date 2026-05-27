@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 set -euo pipefail
-npm run phase305:final
+npm run phase310:final

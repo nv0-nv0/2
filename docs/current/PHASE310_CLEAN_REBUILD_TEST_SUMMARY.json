@@ -1,0 +1,355 @@
+{
+  "generatedAt": "2026-05-27T03:04:57.578Z",
+  "ok": true,
+  "phase": "phase310-clean-rebuild",
+  "total": 69,
+  "passed": 69,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "exists:server/index.mjs",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "exists:server/routes/public.mjs",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "exists:shared/veridion-clean-v310.css",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "exists:apps/public/portal/index.html",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "exists:apps/public/portal/app.js",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "exists:apps/public/board/index.html",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "exists:apps/public/board/app.js",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "exists:apps/public/home/index.html",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "exists:apps/public/veridion-demo/index.html",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "exists:apps/public/plans/index.html",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "exists:Dockerfile",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "exists:package.json",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "package:phase310-version",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "portal:data-veridion-clean=\"v310\"",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "portal:/shared/veridion-clean-v310.css",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "portal:내 사이트 관리",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "portal:20분 인사이트 발행",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "portal:새 사이트 등록",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "portal:portalRiskGauge",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "portal:saveSiteForm",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "portal:portalFeed",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "portal:no-phase307",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "portal:no-phase309",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "portal:no-portal-phase283-dashboard",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "portal:no-nv0n-generated.css",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "portal:no-visual-dots",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "portal:no-hero-bookmark",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "board:data-veridion-clean=\"v310\"",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "board:/shared/veridion-clean-v310.css",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "board:온라인 사업자를 위한 신뢰 점검 인사이트",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "board:20분에 1회 발행",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "board:boardList",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "board:boardSearchForm",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "board:no-phase264",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "board:no-phase307",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "board:no-nv0n-generated.css",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "board:no-CTA 목적 칼럼",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "portal-js:requestJson",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "portal-js:/api/public/account",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "portal-js:/api/public/board?page=1&pageSize=3",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "portal-js:renderSummary",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "portal-js:renderSites",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "portal-js:로그인 후 사이트를 저장",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "board-js:fallbackPosts",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "board-js:/api/public/board?",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "board-js:renderPagination",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "board-js:20분에 1회 발행",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "board-js:AbortController",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "css:v310-topbar",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "css:v310-hero",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "css:v310-grid",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "css:v310-card",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "css:@media (max-width:720px)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "css:overflow-x:hidden",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:skip-legacy-css-clean-pages",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "route:/",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "route:/portal",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "route:/board",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "route:/products/veridion/demo",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "route:/plans",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "route:/business-info",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "api:/api/public/account",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "api:/api/public/account/sites",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "api:/api/public/board",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "api:20min-cadence",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "client:no-inline-event-handlers",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "client:no-console-log",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "client:no-broken-glyph-source",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "client:no-old-static-date",
+      "ok": true,
+      "detail": ""
+    }
+  ]
+}

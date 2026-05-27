@@ -1524,20 +1524,20 @@ return '<footer class="business-footer" aria-label="사업자 정보">'
 }
 
 function injectAdoptedUi(body, urlPath) {
-if (urlPath.startsWith('/admin') || body.includes('/shared/veridion-adopted-ui.css')) return body;
+if (urlPath.startsWith('/admin') || body.includes('data-veridion-clean="v310"') || body.includes('/shared/veridion-adopted-ui.css')) return body;
 return body.replace('</head>', '<link href="/shared/veridion-adopted-ui.css" rel="stylesheet"></head>');
 }
 
 function injectSiteEnhancementsScript(body, urlPath) {
-if (urlPath.startsWith('/admin') || body.includes('/shared/site-enhancements.js')) return body;
+if (urlPath.startsWith('/admin') || body.includes('data-veridion-clean="v310"') || body.includes('/shared/site-enhancements.js')) return body;
 return body.replace('</body>', '<script src="/shared/site-enhancements.js" defer></script></body>');
 }
 function injectSessionNavScript(body, urlPath) {
-if (urlPath.startsWith('/admin') || body.includes('/shared/session-nav.js')) return body;
+if (urlPath.startsWith('/admin') || body.includes('data-veridion-clean="v310"') || body.includes('/shared/session-nav.js')) return body;
 return body.replace('</body>', '<script type="module" src="/shared/session-nav.js"></script></body>');
 }
 function injectClientRiskGuard(body, urlPath) {
-if (urlPath.startsWith('/admin') || body.includes('/shared/client-risk-guard.js')) return body;
+if (urlPath.startsWith('/admin') || body.includes('data-veridion-clean="v310"') || body.includes('/shared/client-risk-guard.js')) return body;
 return body.replace('</body>', '<script src="/shared/client-risk-guard.js" defer></script></body>');
 }
 function injectBusinessFooter(body, urlPath) {

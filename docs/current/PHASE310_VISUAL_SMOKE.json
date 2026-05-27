@@ -1,0 +1,76 @@
+{
+  "ok": true,
+  "method": "static render with v310 CSS inlined",
+  "results": {
+    "portal": {
+      "topbar": {
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 73,
+        "top": 0,
+        "right": 1440,
+        "bottom": 73,
+        "left": 0
+      },
+      "hero": {
+        "x": 130,
+        "y": 107,
+        "width": 1180,
+        "height": 336.953125,
+        "top": 107,
+        "right": 1310,
+        "bottom": 443.953125,
+        "left": 130
+      },
+      "main": {
+        "x": 130,
+        "y": 73,
+        "width": 1180,
+        "height": 1748.90625,
+        "top": 73,
+        "right": 1310,
+        "bottom": 1821.90625,
+        "left": 130
+      },
+      "overflow": false,
+      "scrollWidth": 1440,
+      "clientWidth": 1440
+    },
+    "board": {
+      "topbar": {
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 73,
+        "top": 0,
+        "right": 1440,
+        "bottom": 73,
+        "left": 0
+      },
+      "hero": {
+        "x": 130,
+        "y": 107,
+        "width": 1180,
+        "height": 376.71875,
+        "top": 107,
+        "right": 1310,
+        "bottom": 483.71875,
+        "left": 130
+      },
+      "main": {
+        "x": 130,
+        "y": 73,
+        "width": 1180,
+        "height": 1037.890625,
+        "top": 73,
+        "right": 1310,
+        "bottom": 1110.890625,
+        "left": 130
+      },
+      "overflow": false,
+      "scrollWidth": 1440,
+      "clientWidth": 1440
+    }
+  }
+}

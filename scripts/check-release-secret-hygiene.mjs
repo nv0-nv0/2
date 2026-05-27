@@ -42,10 +42,10 @@ walk(root);
 const report = {
   ok: findings.length === 0,
   checkedAt: new Date().toISOString(),
-  ruleVersion: 'phase302-release-secret-hygiene-v1',
+  ruleVersion: 'phase310-release-secret-hygiene-v1',
   findings
 };
 fs.mkdirSync(path.join(root, 'docs/current'), { recursive: true });
-fs.writeFileSync(path.join(root, 'docs/current/PHASE302_SECRET_HYGIENE_AUDIT.json'), JSON.stringify(report, null, 2) + '\n');
+fs.writeFileSync(path.join(root, 'docs/current/PHASE310_SECRET_HYGIENE_AUDIT.json'), JSON.stringify(report, null, 2) + '\n');
 console.log(JSON.stringify(report, null, 2));
 if (!report.ok) process.exitCode = 1;
