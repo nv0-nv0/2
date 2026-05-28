@@ -946,7 +946,7 @@ function renderPremiumUpgradePanel(view) {
       </article>
       <article>
         <b>결제 방식</b>
-        <p>prelaunch 단계에서는 상품 선택과 고객지원 신청 흐름으로 안내하고, 정식 오픈 후에는 설정된 결제 채널로 연결합니다.</p>
+        <p>현재는 상품 선택과 고객지원 신청 흐름으로 안내하고, 결제 채널이 활성화되면 결제 화면으로 연결합니다.</p>
         <div class="payment-badges"><span>상품 선택</span><span>고객지원 신청</span><span>정식 오픈 후 결제</span></div>
       </article>
     </div>

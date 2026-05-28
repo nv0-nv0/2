@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-05-28T02:19:31.293Z",
+  "generatedAt": "2026-05-28T03:20:16.910Z",
   "ok": true,
   "phase": "phase324-complete-delivery",
-  "total": 194,
-  "passed": 194,
+  "total": 195,
+  "passed": 195,
   "failed": 0,
   "checks": [
     {
@@ -82,7 +82,7 @@
       "detail": ""
     },
     {
-      "name": "package:phase317-version",
+      "name": "package:phase331-version",
       "ok": true,
       "detail": ""
     },
@@ -692,17 +692,22 @@
       "detail": ""
     },
     {
+      "name": "portal:data-veridion-brand=\"v331\"",
+      "ok": true,
+      "detail": ""
+    },
+    {
       "name": "portal:/shared/veridion-clean-v311.css",
       "ok": true,
       "detail": ""
     },
     {
-      "name": "portal:내 사이트 관리",
+      "name": "portal:고객 포털",
       "ok": true,
       "detail": ""
     },
     {
-      "name": "portal:20분 인사이트 발행",
+      "name": "portal:내 사이트 관리",
       "ok": true,
       "detail": ""
     },

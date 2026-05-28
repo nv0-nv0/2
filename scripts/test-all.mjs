@@ -27,7 +27,7 @@ const requiredFiles = [
 for (const file of requiredFiles) add(`exists:${file}`, exists(file));
 
 const pkg = JSON.parse(read('package.json'));
-add('package:phase317-version', /phase31[3-9]-|phase32[0-9]-/.test(pkg.version));
+add('package:phase331-version', /phase33[0-9]-|phase32[0-9]-|phase31[3-9]-/.test(pkg.version));
 
 const appHtmlFiles = [];
 for (const area of ['apps/public', 'apps/admin']) {
@@ -55,7 +55,7 @@ const cleanCss = read('shared/veridion-clean-v311.css');
 const server = read('server/index.mjs');
 const publicRoutes = read('server/routes/public.mjs');
 
-for (const token of ['data-veridion-clean="v311"', '/shared/veridion-clean-v311.css', '내 사이트 관리', '20분 인사이트 발행', '새 사이트 등록', 'portalRiskGauge', 'saveSiteForm', 'portalFeed']) add(`portal:${token}`, portal.includes(token));
+for (const token of ['data-veridion-clean="v311"', 'data-veridion-brand="v331"', '/shared/veridion-clean-v311.css', '고객 포털', '내 사이트 관리', '새 사이트 등록', 'portalRiskGauge', 'saveSiteForm', 'portalFeed']) add(`portal:${token}`, portal.includes(token));
 for (const token of ['data-veridion-clean="v311"', '/shared/veridion-clean-v311.css', '온라인 사업자를 위한 신뢰 점검 인사이트', '20분에 1회 발행', 'boardList', 'boardSearchForm']) add(`board:${token}`, board.includes(token));
 for (const token of ['requestJson', '/api/public/account', '/api/public/board?page=1&pageSize=3', 'renderSummary', 'renderSites', '로그인 후 사이트를 저장']) add(`portal-js:${token}`, portalJs.includes(token));
 for (const token of ['fallbackPosts', '/api/public/board?', 'renderPagination', '20분에 1회 발행', 'AbortController']) add(`board-js:${token}`, boardJs.includes(token));

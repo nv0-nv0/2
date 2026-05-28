@@ -1,146 +1,57 @@
 <!doctype html>
-
-<html lang="ko"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>리스크 진단 대시보드 - VERIDION</title>  <link rel="stylesheet" href="/shared/veridion-clean-v311.css"/>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>무료 진단 실행 - VERIDION</title>
+  <meta name="description" content="사이트 주소 하나로 웹사이트 신뢰, 준법, 전환 요소를 진단합니다."/>
+  <link rel="stylesheet" href="/shared/veridion-clean-v311.css"/>
 </head>
-<body class="bg-background text-on-background min-h-screen flex flex-col" data-veridion-clean="v311">
-<header class="nv0n-topbar" data-nv0n-visible-menu="true">
-  <div class="nv0n-topbar-inner">
-    <a aria-label="VERIDION 홈으로 이동" class="nv0n-brand" href="/">VERIDION</a>
-    <nav aria-label="상단 메뉴" class="nv0n-primary-nav"><a aria-current="page" class="nv0n-nav-link is-active" href="/products/veridion/demo">위험 진단</a><a class="nv0n-nav-link" href="/service">서비스</a><a class="nv0n-nav-link" href="/plans">요금 안내</a><a class="nv0n-nav-link" href="/board">인사이트</a><a class="nv0n-nav-link" href="/portal">내 사이트</a><a class="nv0n-nav-link" href="/business-info">문의하기</a></nav>
-    <div aria-label="계정 및 진단 바로가기" class="nv0n-topbar-actions">
-      <a class="nv0n-login-link" href="/auth">로그인</a>
-      <a class="nv0n-start-link" href="/products/veridion/demo">무료 진단</a>
+<body data-veridion-clean="v311" data-veridion-brand="v331" data-page="diagnosis">
+<a class="skip-link" href="#main">본문 바로가기</a>
+<header class="v331-topbar" data-v331-public-nav="true">
+  <div class="v331-topbar-inner">
+    <a class="v331-brand" href="/" aria-label="VERIDION 홈">VERIDION</a>
+    <nav class="v331-nav" aria-label="주요 메뉴">
+      <a href="/service">서비스</a>
+      <a href="/solutions">솔루션</a>
+      <a href="/plans">요금</a>
+      <a href="/products/veridion/demo">진단</a>
+      <a href="/portal">고객 포털</a>
+    </nav>
+    <div class="v331-nav-actions">
+      <a class="v331-login" href="/auth">로그인</a>
+      <a class="v331-cta" href="/products/veridion/demo">무료 진단 시작</a>
     </div>
   </div>
 </header>
-
-<main data-route-smoke="최신 무료 진단 화면" class="flex-grow w-full max-w-container-max mx-auto px-gutter py-section-padding-mobile md:py-section-padding-desktop flex flex-col gap-[64px]" id="main" tabindex="-1"><section class="flex flex-col gap-8">
-<div class="flex flex-col gap-2">
-<h1 class="font-display-lg text-display-lg text-on-surface">리스크 진단 결과</h1>
-<p class="font-body-lg text-body-lg text-on-surface-variant">귀하의 사이트에서 발견된 심각한 법적 리스크를 확인하세요.</p>
-</div>
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-<div class="col-span-1 md:col-span-2 bg-[#ffffff] rounded-xl p-8 shadow-[0px_4px_20px_rgba(0,51,153,0.05)] border-l-[4px] border-error flex flex-col justify-center items-start gap-4">
-<div class="flex items-center gap-3">
-<span class="material-symbols-outlined text-error">warning</span>
-<h2 class="font-headline-lg text-headline-lg text-on-surface">귀하의 사이트에서 발견된 법적 리스크: 총 <span class="text-error">12</span>건</h2>
-</div>
-<p class="font-body-md text-body-md text-on-surface-variant">즉각적인 조치가 필요한 심각한 위반 사항이 감지되었습니다. 벌금 및 운영 중단 위험이 높습니다.</p>
-<div class="inline-flex items-center gap-2 bg-error text-on-error px-4 py-2 rounded-full font-label-md text-label-md mt-4">
-<span class="material-symbols-outlined">gavel</span>
-<span>고위험 완화 조치 필요</span>
-</div>
-</div>
-<div class="col-span-1 bg-[#ffffff] rounded-xl p-8 shadow-[0px_4px_20px_rgba(0,51,153,0.05)] flex flex-col items-center justify-center gap-4 border border-surface-variant">
-<h3 class="font-headline-sm text-headline-sm text-on-surface">위험 지수</h3>
-<div class="relative w-40 h-40 flex items-center justify-center">
-<svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36">
-<path class="text-surface-variant" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="100, 100" stroke-width="3"></path>
-<path class="text-secondary-container" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="85, 100" stroke-width="3"></path>
-</svg>
-<div class="absolute flex flex-col items-center">
-<span class="font-display-lg text-display-lg text-secondary-container">85<span class="font-headline-md text-headline-md">%</span></span>
-</div>
-</div>
-<p class="font-label-sm text-label-sm text-secondary-container font-bold uppercase tracking-wider">위험 구역 (Critical Zone)</p>
-</div>
-</div>
-</section>
-<section class="flex flex-col gap-6">
-<h2 class="font-headline-md text-headline-md text-on-surface">발견된 문제 요소 요약</h2>
-<div class="bg-[#ffffff] rounded-xl shadow-[0px_4px_20px_rgba(0,51,153,0.05)] overflow-hidden border border-surface-variant">
-<table class="w-full text-left border-collapse">
-<thead class="bg-surface-container-low border-b border-surface-variant">
-<tr>
-<th class="p-4 font-label-md text-label-md text-on-surface-variant">카테고리</th>
-<th class="p-4 font-label-md text-label-md text-on-surface-variant">위험도</th>
-<th class="p-4 font-label-md text-label-md text-on-surface-variant">발견 건수</th>
-<th class="p-4 font-label-md text-label-md text-on-surface-variant">상태</th>
-</tr>
-</thead>
-<tbody class="divide-y divide-surface-variant">
-<tr class="hover:bg-surface/50 transition-colors">
-<td class="p-4 font-body-md text-body-md text-on-surface">개인정보 처리방침 누락</td>
-<td class="p-4">
-<span class="inline-flex items-center gap-1 bg-error text-on-error px-2 py-1 rounded font-label-sm text-label-sm">
-<span class="material-symbols-outlined">error</span> 치명적
-                                </span>
-</td>
-<td class="p-4 font-body-md text-body-md text-on-surface font-bold">3건</td>
-<td class="p-4 font-label-sm text-label-sm text-error">법적 제재 대상</td>
-</tr>
-<tr class="hover:bg-surface/50 transition-colors">
-<td class="p-4 font-body-md text-body-md text-on-surface">결제 및 환불 규정 불명확</td>
-<td class="p-4">
-<span class="inline-flex items-center gap-1 bg-secondary-container text-on-secondary px-2 py-1 rounded font-label-sm text-label-sm">
-<span class="material-symbols-outlined">warning</span> 높음
-                                </span>
-</td>
-<td class="p-4 font-body-md text-body-md text-on-surface font-bold">5건</td>
-<td class="p-4 font-label-sm text-label-sm text-secondary-container">분쟁 소지 다분</td>
-</tr>
-<tr class="hover:bg-surface/50 transition-colors">
-<td class="p-4 font-body-md text-body-md text-on-surface">쿠키 동의 배너 부재</td>
-<td class="p-4">
-<span class="inline-flex items-center gap-1 bg-surface-tint text-on-primary px-2 py-1 rounded font-label-sm text-label-sm">
-<span class="material-symbols-outlined">info</span> 중간
-                                </span>
-</td>
-<td class="p-4 font-body-md text-body-md text-on-surface font-bold">4건</td>
-<td class="p-4 font-label-sm text-label-sm text-surface-tint">개선 권고</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="flex justify-center mt-4">
-<button class="bg-primary text-on-primary font-label-md text-label-md px-8 py-4 rounded-xl shadow-lg hover:-translate-y-1 transition-all duration-200 flex items-center gap-2 border-2 border-primary hover:shadow-[0px_8px_24px_rgba(0,32,104,0.2)]">
-                    전체 내용 확인하기 (유료 리포트)
-                    <span class="material-symbols-outlined">arrow_forward</span>
-</button>
-</div>
-</section>
-<section class="flex flex-col gap-6 pt-8 border-t border-surface-variant relative overflow-hidden">
-<h2 class="font-headline-md text-headline-md text-on-surface">맞춤형 가이드라인 샘플 미리보기</h2>
-<p class="font-body-md text-body-md text-on-surface-variant">프리미엄 리포트를 통해 제공되는 실제 해결 방안의 예시입니다.</p>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
-<div class="absolute inset-0 bg-surface/40 backdrop-blur-[2px] z-10 flex items-center justify-center rounded-xl">
-<div class="bg-[#ffffff] p-6 rounded-xl shadow-lg border border-surface-variant text-center flex flex-col gap-4 max-w-sm">
-<span class="material-symbols-outlined text-primary text-4xl">lock</span>
-<h3 class="font-headline-sm text-headline-sm text-on-surface">상세 솔루션 잠금 해제</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant">유료 플랜으로 전환하여 모든 리스크에 대한 구체적인 수정 가이드라인과 템플릿을 받아보세요.</p>
-<button class="bg-primary text-on-primary font-label-md text-label-md px-4 py-2 rounded-lg mt-2">프리미엄 전환하기</button>
-</div>
-</div>
-<div class="bg-[#ffffff] rounded-xl p-6 shadow-[0px_4px_20px_rgba(0,51,153,0.05)] border border-surface-variant opacity-70">
-<div class="flex items-center gap-2 mb-4">
-<span class="material-symbols-outlined text-outline">description</span>
-<h4 class="font-headline-sm text-headline-sm text-on-surface">개인정보 처리방침 수정안</h4>
-</div>
-<p class="font-body-md text-body-md text-on-surface-variant mb-4">제 3자 제공 동의 항목이 법적 기준을 충족하지 못합니다. 다음 텍스트를 이용약관 하단에 삽입하십시오.</p>
-<div class="bg-surface-container-low p-4 rounded text-sm text-outline-variant font-mono">
-                        "회사는 고객의 동의 없이 개인정보를 외부... [내용 블러 처리됨]"
-                    </div>
-</div>
-<div class="bg-[#ffffff] rounded-xl p-6 shadow-[0px_4px_20px_rgba(0,51,153,0.05)] border border-surface-variant opacity-70">
-<div class="flex items-center gap-2 mb-4">
-<span class="material-symbols-outlined text-outline">shopping_cart</span>
-<h4 class="font-headline-sm text-headline-sm text-on-surface">환불 규정 체크리스트</h4>
-</div>
-<ul class="space-y-2 font-body-md text-body-md text-on-surface-variant">
-<li class="flex items-center gap-2"><span class="material-symbols-outlined text-outline">check_box_outline_blank</span> 전자상거래법 제17조 명시 여부</li>
-<li class="flex items-center gap-2"><span class="material-symbols-outlined text-outline">check_box_outline_blank</span> 청약철회 기한 (7일) 고지 [내용 블러 처리됨]</li>
-</ul>
-</div>
-</div>
-</section>
+<main id="main" tabindex="-1" class="v331-main" data-route-smoke="무료 진단 사이트 주소 하나 최신 무료 진단 화면 리스크 진단 결과">
+  <section class="v331-report-header" aria-labelledby="demoTitle">
+    <div class="v331-report-header-inner">
+      <div><span class="v331-kicker">무료 진단</span><h1 id="demoTitle">사이트 주소 하나로 신뢰, 준법, 전환 요소를 확인하세요</h1><p>고객이 결제 전 확인하는 고지, 환불, 개인정보 안내를 중심으로 공개 페이지를 빠르게 점검합니다.</p></div>
+      <aside class="v331-report-score" aria-label="리포트 예시"><div><strong>리포트 예시</strong><p>선택한 웹사이트, 생성일, 종합 점수, 우선 개선 항목을 한 화면에서 확인합니다.</p></div><div><div class="v331-arc" aria-hidden="true"></div><strong>82 / 100</strong></div></aside>
+    </div>
+  </section>
+  <section class="v331-shell">
+    <section aria-label="무료 진단 실행" class="nv0n-functional-bridge">
+      <div class="v331-section-head"><span class="v331-kicker">진단 시작</span><h2>사이트 주소를 입력하세요</h2><p>입력한 주소를 바탕으로 실제 진단 결과와 다음 조치를 바로 확인할 수 있습니다.</p></div>
+      <div><div class="notice" id="freeUsageLead"><strong>오늘 이용 가능한 무료 진단 확인 중</strong></div><div class="notice muted" id="freeUsageBadge">잠시 후 이용 가능 여부를 안내합니다.</div></div>
+      <div class="bridge-grid"><input autocomplete="url" id="targetUrl" inputmode="url" placeholder="https://your-store.kr" aria-label="진단할 사이트 주소"/><button id="scanBtn" type="button">무료 진단 시작</button></div>
+      <div id="turnstileBox"></div><input id="turnstileToken" type="hidden"/>
+      <div class="notice muted" id="turnstileState">안전한 이용을 위해 보안 확인을 준비하고 있습니다.</div>
+      <div class="notice muted" id="demoState">사이트 주소를 입력하면 요약 결과가 아래에 표시됩니다.</div>
+      <div class="bridge-actions"><button id="retryBtn" type="button">다시 점검</button><button id="unlockBtn" type="button">고객 포털에서 이어보기</button></div>
+      <div class="demo-result-surface" id="demoResult"><p class="notice muted">진단을 시작하면 발견 항목, 우선순위, 다음 조치가 이곳에 표시됩니다.</p></div>
+    </section>
+  </section>
 </main>
-<footer class="v311-footer nv0n-footer">
-  <div class="v311-footer-inner">
-    <div class="v311-footer-brand"><strong>VERIDION</strong><p>국내 온라인 사업자의 고지, 환불, 개인정보 안내 공백을 공개 페이지 기준으로 점검합니다.</p></div>
-    <nav aria-label="하단 메뉴"><a href="/privacy">개인정보 처리방침</a><a href="/terms">이용약관</a><a href="/refund">환불 정책</a><a href="/business-info">문의하기</a><a href="mailto:ct@nv0.kr">ct@nv0.kr</a></nav>
-    <span>© 2026 VERIDION. All rights reserved.</span>
+<footer class="v331-footer" aria-label="하단 정보">
+  <div class="v331-footer-inner">
+    <div class="v331-footer-brand"><strong>VERIDION</strong><p>온라인 비즈니스의 신뢰와 성장을 진단으로 더 쉽게.</p><span>© 2026 VERIDION. All rights reserved.</span></div>
+    <nav aria-label="서비스"><strong>서비스</strong><a href="/products/veridion/demo">신뢰 진단</a><a href="/service">준법 점검</a><a href="/solutions">전환 개선</a><a href="/plans">리포트 상품</a></nav>
+    <nav aria-label="고객 지원"><strong>고객 지원</strong><a href="/portal">고객 포털</a><a href="/board">인사이트</a><a href="/business-info">문의하기</a><a href="/refund">환불 정책</a></nav>
+    <div class="v331-footer-legal"><strong>안전한 데이터 처리</strong><p>VERIDION은 공개 웹페이지 기반의 구조 분석 서비스이며 법률 자문이나 성과 보장을 제공하지 않습니다.</p><p>엔브이제로(NV0) · 대표자 나금상 · 사업자등록번호 584-77-00586</p><p>경기도 남양주시 와부읍 덕소로97번길 34, 105동 402호</p><p><a href="/terms">이용약관</a> · <a href="/privacy">개인정보처리방침</a></p></div>
   </div>
-</footer><script src="/apps/public/demo/app.js" type="module"></script></body></html>
+</footer>
+<script src="/apps/public/demo/app.js" type="module"></script>
+</body></html>
