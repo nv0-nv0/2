@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "phase": "phase324-operational-readiness-contract",
+  "requiredEnvCount": 11,
+  "envTemplates": [
+    "deploy/env.production.template",
+    "deploy/env.production.nv0.kr.example",
+    ".env.example"
+  ],
+  "failures": []
+}

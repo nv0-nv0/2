@@ -1,0 +1,21 @@
+{
+  "ok": true,
+  "phase": "phase315",
+  "delivery": "VERIDION_phase315_paid_redteam_hardening_delivery.zip",
+  "checkedAt": "2026-05-27T05:20:17Z",
+  "finalCommand": "npm run phase315:final",
+  "counts": {
+    "roles": 50,
+    "improvements": 100,
+    "files": 266,
+    "publicRoutes": 44
+  },
+  "criticalFixes": [
+    "builtin diagnosis undefined payload 500 fixed",
+    "guidance endpoint requires paid order token or owner session",
+    "fulfillment/download access expiration gate added",
+    "payment session and provider payment public response sanitizers added",
+    "baseHeaders route context fixed for PDF download",
+    "phase315 paid redteam integration test added"
+  ]
+}

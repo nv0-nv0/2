@@ -3,6 +3,15 @@ import { createAccountRouteHandler } from './account.mjs';
 import { createPaymentRouteHandler } from './payment.mjs';
 import { buildDemoAccuracyContract, buildDemoIssueOverview, buildPaidDeliverableBlueprint, buildPaidOutputQualityGate, buildPaidFullDetailContract, buildSiteOperationsDocument, buildConversionUrgencyModel, PHASE220_SERVICE_QUALITY_VERSION } from '../core/service-quality-220.mjs';
 import { buildPublicColumnEnginePosts, publicColumnTypeLabel } from '../core/public-column-engine.mjs';
+import { buildPaidServiceOperatingModel } from '../core/paid-service-operating-model.mjs';
+import { buildTrustOpsGrowthBlueprint, buildFixGeneratorPayload, buildMonitoringPlan, buildRevenueOptimizationPlan, buildIndustryTemplates, buildStructuredDataPackage } from '../core/trustops-growth-engine.mjs';
+import { buildTrustOpsAutopilotCockpit, buildCustomerLifecyclePlan, buildAutomationWorkQueue } from '../core/trustops-autopilot-engine.mjs';
+import { buildTrustOpsLaunchControl, buildLifecycleMessageSequence } from '../core/trustops-launch-control.mjs';
+import { buildProductionSentinel, buildLiveVerificationChecklist } from '../core/trustops-production-sentinel.mjs';
+import { buildTrustOpsFinalHandoff } from '../core/trustops-final-handoff.mjs';
+import { buildTrustOps100PointFinalScorecard } from '../core/trustops-100-point-finalizer.mjs';
+import { buildTrustOpsCompleteDelivery } from '../core/trustops-complete-delivery.mjs';
+import { applyEngineAgentGate, appendEngineAgentEvent } from '../core/engine-agent-orchestrator.mjs';
 
 export function createPublicRouteHandler(ctx) {
   const {
@@ -70,6 +79,7 @@ export function createPublicRouteHandler(ctx) {
   buildProductionLaunchChecklist,
   buildPublicDiagnosisPackage,
   buildReleaseReadiness,
+  buildPhase313GovernanceSnapshot,
   buildRobotsTxt,
   buildRuleCatalog,
   buildSitemapXml,
@@ -130,6 +140,7 @@ export function createPublicRouteHandler(ctx) {
   path,
   persistence,
   publicCustomer,
+  pseudonymizeIp,
   sanitizeOrderForPublic,
   rateLimitStore,
   readDb,
@@ -238,11 +249,21 @@ else db.scans.unshift(scan);
 db.scans = db.scans.slice(0, 120);
 if (session?.customer && site?.id) linkCustomerToSite(db, session.customer.id, site, { label: site.domain || scan.target, memo: '무료 진단 결과 저장' });
 try { createCtaPublicationIfDue(db, scan, { force: false }); } catch {}
-appendAudit(db, req, 'public.diagnose.completed', { siteId: scan.siteId, requestId: scan.requestId, target: scan.target, customerId: session?.customer?.id || null });
+const diagnosisAgentGate = applyEngineAgentGate('diagnosis.completed', {
+  target: scan.target,
+  requestId: scan.requestId,
+  siteId: scan.siteId,
+  locked: scan.locked,
+  legalConclusion: scan.legalConclusion === true
+}, { stage: 'public-diagnose', nowIso: nowIso() });
+appendEngineAgentEvent(db, diagnosisAgentGate);
+if (!diagnosisAgentGate.ok) return json(req, res, 500, { ok: false, error: '진단 엔진 에이전트 게이트를 통과하지 못했습니다.', gate: diagnosisAgentGate });
+appendAudit(db, req, 'public.diagnose.completed', { siteId: scan.siteId, requestId: scan.requestId, target: scan.target, customerId: session?.customer?.id || null, engineAgentGate: diagnosisAgentGate.ok });
 await writeDb(db);
 const portalUrl = `/portal?siteId=${encodeURIComponent(scan.siteId || '')}&requestId=${encodeURIComponent(scan.requestId || '')}`;
 const reportUrl = `/products/veridion/demo?target=${encodeURIComponent(scan.target || payload.target)}`;
-const resultPayload = { ...scan, portalUrl, redirectUrl: portalUrl, reportUrl, diagnosis: buildPublicDiagnosisPackage(scan), demoIssueOverview: scan.demoIssueOverview || buildDemoIssueOverview(scan), conversionUrgency: scan.conversionUrgency || buildConversionUrgencyModel(scan, { plan: scan.recommendedPlan || 'Report' }), savedToAccount: !!session, paidAccess: false, locked: true, handoff: { next: 'portal', portalUrl, reportUrl, source: payload.source || (isLegacyDiagnosticStart ? 'legacy-diagnostics-start' : 'public-diagnose') } };
+const trustOpsBlueprint = buildTrustOpsGrowthBlueprint({ scan, site, offers: buildCommercialOfferCatalog(), siteUrl: scan.target || payload.target });
+const resultPayload = { ...scan, portalUrl, redirectUrl: portalUrl, reportUrl, diagnosis: buildPublicDiagnosisPackage(scan), demoIssueOverview: scan.demoIssueOverview || buildDemoIssueOverview(scan), conversionUrgency: scan.conversionUrgency || buildConversionUrgencyModel(scan, { plan: scan.recommendedPlan || 'Report' }), trustOpsBlueprint: { positioning: trustOpsBlueprint.positioning, trustScores: trustOpsBlueprint.trustScores, conversionFunnel: trustOpsBlueprint.conversionFunnel, fixPreview: trustOpsBlueprint.fixPack.fixes.slice(0, 2), monitoring: trustOpsBlueprint.monitoring, improvementBacklogCount: trustOpsBlueprint.improvementBacklogCount }, savedToAccount: !!session, paidAccess: false, locked: true, handoff: { next: 'portal', portalUrl, reportUrl, source: payload.source || (isLegacyDiagnosticStart ? 'legacy-diagnostics-start' : 'public-diagnose') } };
 if (isLegacyDiagnosticStart) {
   const compatScan = { ...resultPayload, id: scan.requestId, scanId: scan.requestId, domain: site.domain || scan.domain || scan.target, targetUrl: scan.target, status: 'completed' };
   return json(req, res, 200, cleanLegacyPublicTokens({ ok: true, status: 'completed', portalUrl, redirectUrl: portalUrl, reportUrl, result: resultPayload, scan: compatScan }), { 'cache-control': 'no-store' });
@@ -253,7 +274,17 @@ if (pathname === '/api/public/config' && req.method === 'GET') {
 return json(req, res, 200, { ok: true, turnstileEnabled: TURNSTILE_PUBLIC_ENABLED, turnstileConfigured: TURNSTILE_CONFIGURED, prelaunchMode: PRELAUNCH_MODE, turnstileSiteKey: TURNSTILE_PUBLIC_ENABLED ? TURNSTILE_SITE_KEY : '' });
 }
 if (pathname === '/api/public/health' && req.method === 'GET') {
-return json(req, res, 200, { ok: true, area: 'public', time: nowIso(), phase: RELEASE_PHASE, privacy: 'minimum_required_only', deploymentRiskGuard: { ok: DEPLOYMENT_RISK_GUARD?.ok !== false, version: PHASE223_RISK_GUARD_VERSION, redirectOwner: DEPLOYMENT_RISK_GUARD?.redirectOwner || 'edge' } });
+return json(req, res, 200, { ok: true, area: 'public', time: nowIso(), phase: RELEASE_PHASE, privacy: privacyComplianceSummary(process.env), deploymentRiskGuard: { ok: DEPLOYMENT_RISK_GUARD?.ok !== false, version: PHASE223_RISK_GUARD_VERSION, redirectOwner: DEPLOYMENT_RISK_GUARD?.redirectOwner || 'edge' } });
+}
+if (pathname === '/api/public/privacy-status' && req.method === 'GET') {
+return json(req, res, 200, { ok: true, ...privacyComplianceSummary(process.env) }, { 'cache-control': 'no-store' });
+}
+if (pathname === '/api/public/governance-status' && req.method === 'GET') {
+const db = await readDb();
+const readiness = buildReleaseReadiness(db);
+const privacy = privacyComplianceSummary(process.env);
+const governance = buildPhase313GovernanceSnapshot({ privacy, readiness, env: process.env });
+return json(req, res, governance.ok ? 200 : 503, { ok: governance.ok, privacy, readiness: { ready: readiness.ready, gates: readiness.gates }, governance }, { 'cache-control': 'no-store' });
 }
 if (pathname === '/api/public/risk-guard' && req.method === 'GET') {
 const guard = DEPLOYMENT_RISK_GUARD?.public || { ok: true, version: PHASE223_RISK_GUARD_VERSION };
@@ -293,6 +324,20 @@ intelligence = buildProductIntelligence({ scan, site, riskScore: requestedRiskSc
 }
 return json(req, res, 200, buildSmartPublicSnapshot(db, { offers, intelligence }));
 }
+
+if (pathname === '/api/public/paid-service-model' && req.method === 'GET') {
+const portone = PORTONE_CLIENT?.configSummary ? PORTONE_CLIENT.configSummary() : { enabled: false };
+const externalHttpReady = PAYMENT_PROVIDER !== 'external_http' || !!process.env.NV0_PAYMENT_PROVIDER_URL;
+const paymentReady = (!PRELAUNCH_MODE || ALLOW_PRELAUNCH_ONLINE_PAYMENT) && PAYMENT_PROVIDER !== 'disabled' && externalHttpReady && (PAYMENT_PROVIDER !== 'portone_v2' || !!portone.enabled);
+return json(req, res, 200, buildPaidServiceOperatingModel({
+  paymentProvider: PAYMENT_PROVIDER,
+  paymentReady,
+  prelaunchMode: PRELAUNCH_MODE,
+  commercialLaunchReady: COMMERCIAL_LAUNCH_READY,
+  offers: buildCommercialOfferCatalog(),
+  generatedAt: nowIso()
+}), { 'cache-control': 'no-store' });
+}
 if (pathname === '/api/public/product-intelligence' && req.method === 'GET') {
 const db = await readDb();
 const requestedRiskScore = Number(url.searchParams.get('riskScore') || 0);
@@ -327,7 +372,10 @@ const riskScore = Number(url.searchParams.get('riskScore') || 55);
 const offers = buildCommercialOfferCatalog();
 const intelligence = buildProductIntelligence({ riskScore, offers, source: 'products' });
 const orchestration = buildSmartProductOrchestration({ intelligence, offers, source: 'products' });
-return json(req, res, 200, { ok: true, offers: annotateOffersWithIntelligence(offers, intelligence), intelligence, orchestration });
+const annotated = annotateOffersWithIntelligence(offers, intelligence);
+const annotatedByCode = new Map(annotated.map(item => [item.code, item]));
+const orderedOffers = offers.map(item => annotatedByCode.get(item.code) || item);
+return json(req, res, 200, { ok: true, offers: orderedOffers, intelligence, orchestration });
 }
 if (pathname === '/api/public/plans' && req.method === 'GET') {
 const db = await readDb();
@@ -342,6 +390,162 @@ const recommendedPlan = intelligence.recommendedPlan;
 const orchestration = buildSmartProductOrchestration({ scan, site, intelligence, offers, dashboard: buildProductDashboard(db), source: 'plans' });
 return json(req, res, 200, { ok: true, recommendedPlan, plans: buildPlanCatalog(recommendedPlan), riskScore, intelligence, orchestration, smartOffers: intelligence.offerFit });
 }
+
+if (pathname === '/api/public/trustops-blueprint' && req.method === 'GET') {
+const db = await readDb();
+const siteId = String(url.searchParams.get('siteId') || '').trim();
+const industry = String(url.searchParams.get('industry') || '').trim();
+const riskScore = Number(url.searchParams.get('riskScore') || 0) || undefined;
+const site = siteId ? findSiteByAny(db, siteId) : null;
+const scan = site ? (db.scans || []).find(item => item.siteId === site.id) || {} : (db.scans || [])[0] || {};
+const blueprint = buildTrustOpsGrowthBlueprint({ scan, site, industry, riskScore, offers: buildCommercialOfferCatalog(), siteUrl: site?.domain || scan?.target || url.searchParams.get('target') || '' });
+const gate = applyEngineAgentGate('trustops.blueprint', { improvementBacklogCount: blueprint.improvementBacklogCount, conversionFunnel: blueprint.conversionFunnel, fixCount: blueprint.fixPack?.fixes?.length || 0 }, { stage: 'trustops-blueprint', nowIso: nowIso() });
+appendEngineAgentEvent(db, gate);
+await writeDb(db);
+if (!gate.ok) return json(req, res, 500, { ok: false, error: 'TrustOps 고도화 엔진 게이트를 통과하지 못했습니다.', gate });
+return json(req, res, 200, { ok: true, blueprint });
+}
+if (pathname === '/api/public/fix-generator' && req.method === 'POST') {
+const body = await bodyJson(req, MAX_JSON_BODY_BYTES) || {};
+const db = await readDb();
+const fixPack = buildFixGeneratorPayload({
+  industry: body.industry,
+  siteUrl: body.siteUrl || body.domain || body.target,
+  brandName: body.brandName || body.businessName,
+  supportEmail: body.supportEmail || body.email || BUSINESS_PROFILE.contactEmail
+});
+const gate = applyEngineAgentGate('fix.generate', { copyReadyCount: fixPack.copyReadyCount, industry: fixPack.industry?.code || fixPack.industry?.label, legalConclusion: false }, { stage: 'fix-generator', nowIso: nowIso() });
+appendEngineAgentEvent(db, gate);
+await writeDb(db);
+if (!gate.ok) return json(req, res, 500, { ok: false, error: '개선 문구 생성 게이트를 통과하지 못했습니다.', gate });
+return json(req, res, 200, { ok: true, fixPack });
+}
+if (pathname === '/api/public/monitoring-plan' && req.method === 'POST') {
+const body = await bodyJson(req, MAX_JSON_BODY_BYTES) || {};
+const db = await readDb();
+const monitoring = buildMonitoringPlan({ industry: body.industry, siteUrl: body.siteUrl || body.domain || body.target, cadence: body.cadence });
+const gate = applyEngineAgentGate('monitoring.plan', { target: monitoring.target, scheduleCount: monitoring.schedule?.length || 0, alertCount: monitoring.alertRules?.length || 0 }, { stage: 'monitoring-plan', nowIso: nowIso() });
+appendEngineAgentEvent(db, gate);
+await writeDb(db);
+if (!gate.ok) return json(req, res, 500, { ok: false, error: '모니터링 설계 게이트를 통과하지 못했습니다.', gate });
+return json(req, res, 200, { ok: true, monitoring });
+}
+if (pathname === '/api/public/revenue-optimization' && req.method === 'GET') {
+const db = await readDb();
+const plan = buildRevenueOptimizationPlan({ offers: buildCommercialOfferCatalog() });
+const gate = applyEngineAgentGate('revenue.optimize', { ladderCount: plan.ladder?.length || 0, kpiCount: plan.kpis?.length || 0 }, { stage: 'revenue-optimization', nowIso: nowIso() });
+appendEngineAgentEvent(db, gate);
+await writeDb(db);
+if (!gate.ok) return json(req, res, 500, { ok: false, error: '수익 최적화 게이트를 통과하지 못했습니다.', gate });
+return json(req, res, 200, { ok: true, plan });
+}
+if (pathname === '/api/public/industry-templates' && req.method === 'GET') {
+return json(req, res, 200, { ok: true, templates: buildIndustryTemplates() });
+}
+if (pathname === '/api/public/structured-data-package' && req.method === 'GET') {
+const db = await readDb();
+const structuredData = buildStructuredDataPackage({ name: url.searchParams.get('name') || BUSINESS_PROFILE.tradeName, url: url.searchParams.get('url') || BUSINESS_PROFILE.domain });
+const gate = applyEngineAgentGate('structured-data.package', { hasJsonLd: Boolean(structuredData.jsonLd), hasFaq: Boolean(structuredData.faqJsonLd) }, { stage: 'structured-data-package', nowIso: nowIso() });
+appendEngineAgentEvent(db, gate);
+await writeDb(db);
+if (!gate.ok) return json(req, res, 500, { ok: false, error: '구조화 데이터 게이트를 통과하지 못했습니다.', gate });
+return json(req, res, 200, { ok: true, structuredData });
+}
+
+
+if (pathname === '/api/public/trustops-autopilot' && req.method === 'GET') {
+const db = await readDb();
+const cockpit = buildTrustOpsAutopilotCockpit(db, { nowIso: nowIso() });
+const gate = applyEngineAgentGate('trustops.autopilot', { queueCount: cockpit.counts.queue, backlogCount: cockpit.backlogCount, hasNextOffer: Boolean(cockpit.nextBestOffer?.code), safeguards: cockpit.safeguards?.length || 0 }, { stage: 'trustops-autopilot', nowIso: nowIso() });
+appendEngineAgentEvent(db, gate);
+await writeDb(db);
+if (!gate.ok) return json(req, res, 500, { ok: false, error: 'TrustOps 오토파일럿 게이트를 통과하지 못했습니다.', gate });
+return json(req, res, 200, { ok: true, cockpit });
+}
+if (pathname === '/api/public/customer-lifecycle' && req.method === 'POST') {
+const body = await bodyJson(req, MAX_JSON_BODY_BYTES) || {};
+const db = await readDb();
+const lifecycle = buildCustomerLifecyclePlan(body, db);
+const gate = applyEngineAgentGate('customer.lifecycle', { stageCount: lifecycle.stages?.length || 0, hasNextOffer: Boolean(lifecycle.nextBestOffer?.code), riskScore: lifecycle.riskScore }, { stage: 'customer-lifecycle', nowIso: nowIso() });
+appendEngineAgentEvent(db, gate);
+await writeDb(db);
+if (!gate.ok) return json(req, res, 500, { ok: false, error: '고객 생애주기 게이트를 통과하지 못했습니다.', gate });
+return json(req, res, 200, { ok: true, lifecycle });
+}
+if (pathname === '/api/public/automation-workqueue' && req.method === 'GET') {
+const db = await readDb();
+const queue = buildAutomationWorkQueue(db, { nowIso: nowIso() }).slice(0, 20).map(item => ({ type: item.type, priority: item.priority, title: item.title, reason: item.reason, automation: item.automation, recommendedOffer: item.recommendedOffer ? { code: item.recommendedOffer.code, title: item.recommendedOffer.title, price: item.recommendedOffer.price } : null }));
+return json(req, res, 200, { ok: true, queue });
+}
+
+
+if (pathname === '/api/public/trustops-launch-control' && req.method === 'GET') {
+const db = await readDb();
+const launch = buildTrustOpsLaunchControl(db, { nowIso: nowIso() });
+const gate = applyEngineAgentGate('trustops.launch_control', { readinessScore: launch.readiness.score, backlogCount: launch.backlogCount, phase319BacklogCount: launch.phase319BacklogCount, experimentCount: launch.experiments.length, playbookCount: launch.incidentPlaybooks.length }, { stage: 'trustops-launch-control', nowIso: nowIso() });
+appendEngineAgentEvent(db, gate);
+await writeDb(db);
+if (!gate.ok) return json(req, res, 500, { ok: false, error: 'TrustOps 런칭 컨트롤 게이트를 통과하지 못했습니다.', gate });
+return json(req, res, 200, { ok: true, launch });
+}
+if (pathname === '/api/public/lifecycle-message-sequence' && req.method === 'POST') {
+const body = await bodyJson(req, MAX_JSON_BODY_BYTES) || {};
+const db = await readDb();
+const sequence = buildLifecycleMessageSequence(body, db, { nowIso: nowIso() });
+const gate = applyEngineAgentGate('lifecycle.message_sequence', { hasSubject: Boolean(sequence.message?.subject), hasSafeguard: Boolean(sequence.message?.safeguard), hasSuppressionRules: (sequence.suppressionRules || []).length >= 3, hasNextOffer: Boolean(sequence.nextBestOffer?.code) }, { stage: 'lifecycle-message-sequence', nowIso: nowIso() });
+appendEngineAgentEvent(db, gate);
+await writeDb(db);
+if (!gate.ok) return json(req, res, 500, { ok: false, error: '생애주기 메시지 게이트를 통과하지 못했습니다.', gate });
+return json(req, res, 200, { ok: true, sequence });
+}
+
+
+if (pathname === '/api/public/trustops-production-sentinel' && req.method === 'GET') {
+const db = await readDb();
+const sentinel = buildProductionSentinel(db, { nowIso: nowIso(), env: process.env, baseUrl: BUSINESS_PROFILE.domain, maxPages: TARGET_FETCH_MAX_PAGES });
+const gate = applyEngineAgentGate('trustops.production_sentinel', { sentinelScore: sentinel.score, backlogCount: sentinel.backlogCount, phase320BacklogCount: sentinel.phase320BacklogCount, liveCheckCount: sentinel.liveVerification.checks.length, rollbackCount: sentinel.rollbackMatrix.length, slaCount: sentinel.slaMatrix.length }, { stage: 'trustops-production-sentinel', nowIso: nowIso() });
+appendEngineAgentEvent(db, gate);
+await writeDb(db);
+if (!gate.ok) return json(req, res, 500, { ok: false, error: 'TrustOps 프로덕션 센티널 게이트를 통과하지 못했습니다.', gate });
+return json(req, res, 200, { ok: true, sentinel });
+}
+if (pathname === '/api/public/live-verification-checklist' && req.method === 'GET') {
+const checklist = buildLiveVerificationChecklist({ baseUrl: url.searchParams.get('baseUrl') || BUSINESS_PROFILE.domain }, { nowIso: nowIso() });
+return json(req, res, 200, { ok: true, checklist });
+}
+
+if (pathname === '/api/public/trustops-final-handoff' && req.method === 'GET') {
+const db = await readDb();
+const handoff = buildTrustOpsFinalHandoff(db, { nowIso: nowIso(), env: process.env, baseUrl: BUSINESS_PROFILE.domain, maxPages: TARGET_FETCH_MAX_PAGES, allowMvp: PLATFORM?.target !== 'commercial' });
+const gate = applyEngineAgentGate('trustops.final_handoff', { acceptanceScore: handoff.acceptanceScore, backlogCount: handoff.summary.backlogCount, phase321BacklogCount: handoff.summary.phase321BacklogCount, checklistCount: handoff.acceptanceChecklist.length, runbookCount: handoff.operatorRunbook.length, safeModeCount: handoff.safeModeMatrix.length, kpiCount: handoff.goLiveKpi.length }, { stage: 'trustops-final-handoff', nowIso: nowIso() });
+appendEngineAgentEvent(db, gate);
+await writeDb(db);
+if (!gate.ok) return json(req, res, 500, { ok: false, error: 'TrustOps 최종 인수인계 게이트를 통과하지 못했습니다.', gate });
+return json(req, res, 200, { ok: true, handoff });
+}
+
+
+if (pathname === '/api/public/trustops-100-final' && req.method === 'GET') {
+const db = await readDb();
+const scorecard = buildTrustOps100PointFinalScorecard(db, { nowIso: nowIso(), env: process.env, baseUrl: BUSINESS_PROFILE.domain, packageGateReady: true, runtimeClean: true, secretHygienePassed: true, files: [], scripts: {}, routes: ['/api/public/trustops-100-final'], sourceText: '' });
+const gate = applyEngineAgentGate('trustops.100_final', { packageScore: scorecard.packageScore, failedAreaCount: scorecard.failed.length, operatorItemCount: scorecard.externalOperatorItems.length, engineCount: scorecard.linkedSystems.engineCount, agentCount: scorecard.linkedSystems.agentCount }, { stage: 'trustops-100-final', nowIso: nowIso() });
+appendEngineAgentEvent(db, gate);
+await writeDb(db);
+if (!gate.ok) return json(req, res, 500, { ok: false, error: 'TrustOps 100점 최종 게이트를 통과하지 못했습니다.', gate, scorecard });
+return json(req, res, 200, { ok: true, scorecard });
+}
+
+
+if (pathname === '/api/public/trustops-complete-delivery' && req.method === 'GET') {
+const db = await readDb();
+const delivery = buildTrustOpsCompleteDelivery(db, { nowIso: nowIso(), env: process.env, baseUrl: BUSINESS_PROFILE.domain, packageGateReady: true, runtimeClean: true, secretHygienePassed: true, files: [], scripts: {}, routes: ['/api/public/trustops-complete-delivery'], sourceText: '' });
+const gate = applyEngineAgentGate('trustops.100_final', { packageScore: delivery.packageScore, failedAreaCount: delivery.failed.length, operatorItemCount: delivery.finalOperatorPack.length, engineCount: delivery.linkedScores.engineCount, agentCount: delivery.linkedScores.agentCount }, { stage: 'trustops-complete-delivery', nowIso: nowIso() });
+appendEngineAgentEvent(db, gate);
+await writeDb(db);
+if (!gate.ok || !delivery.ok) return json(req, res, 500, { ok: false, error: 'TrustOps 최종 완성 납품 게이트를 통과하지 못했습니다.', gate, delivery });
+return json(req, res, 200, { ok: true, delivery });
+}
+
 if (pathname === '/api/public/document-preview' && req.method === 'POST') {
 const body = normalizeDocumentPreviewPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
 const db = await readDb();
@@ -476,6 +680,18 @@ const activity = publicPosts.slice(0, 3).map(item => ({
   createdAt: item.publishedAt || item.createdAt || null,
   label: '새 글 발행'
 }));
+const boardAgentGate = applyEngineAgentGate('board.render', {
+  postCount: publicPosts.length,
+  intervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000),
+  sample: publicPosts.slice(0, 5).map(item => `${item.title} ${item.summary}`).join(' ')
+}, { stage: 'public-board', nowIso: nowIso() });
+appendEngineAgentEvent(db, boardAgentGate);
+if (!boardAgentGate.ok) {
+  appendAudit(db, req, 'public.board.engine_agent_gate_failed', { failures: boardAgentGate.failures });
+  await writeDb(db);
+  return json(req, res, 500, { ok: false, error: '인사이트 엔진 에이전트 게이트를 통과하지 못했습니다.', gate: boardAgentGate });
+}
+await writeDb(db);
 return json(req, res, 200, {
   ok: true,
   publicationCadence: { intervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000), label: `${Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000)}분에 1회 발행`, engine: 'product-agent-insight-v1', actualPublishing: true, searchScope: 'server-side', dataSource: publicPosts[0]?.source || 'persisted-db', lastPublishedAt: publicPosts[0]?.publishedAt || publicPosts[0]?.createdAt || null, createdOnThisRequest: !!createdNow },
@@ -517,7 +733,7 @@ const customer = { id: uid('cus'), email, status: 'active', passwordHash: await 
 const sid = uid('csess') + crypto.randomBytes(16).toString('hex');
 const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 14).toISOString();
 db.customers.unshift(customer);
-db.customerSessions.unshift({ sid, customerId: customer.id, createdAt: nowIso(), lastSeenAt: nowIso(), expiresAt, ip: clientIp(req) });
+db.customerSessions.unshift({ sid, customerId: customer.id, createdAt: nowIso(), lastSeenAt: nowIso(), expiresAt, ipHash: pseudonymizeIp(clientIp(req)) });
 for (const order of db.orders || []) {
 if (!order.customerId && normalizeEmail(order.email) === email) { order.customerId = customer.id; generateOrderAccessToken(order); }
 }
@@ -544,7 +760,7 @@ customer.lastLoginAt = nowIso();
 customer.updatedAt = nowIso();
 const sid = uid('csess') + crypto.randomBytes(16).toString('hex');
 const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 14).toISOString();
-db.customerSessions.unshift({ sid, customerId: customer.id, createdAt: nowIso(), lastSeenAt: nowIso(), expiresAt, ip: clientIp(req) });
+db.customerSessions.unshift({ sid, customerId: customer.id, createdAt: nowIso(), lastSeenAt: nowIso(), expiresAt, ipHash: pseudonymizeIp(clientIp(req)) });
 db.customerSessions = db.customerSessions.slice(0, 2000);
 appendAudit(db, req, 'public.customer.login_succeeded', { customerId: customer.id, email });
 await writeDb(db);

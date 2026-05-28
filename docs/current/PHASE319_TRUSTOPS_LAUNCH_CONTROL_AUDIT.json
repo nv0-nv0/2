@@ -1,0 +1,318 @@
+{
+  "ok": true,
+  "phase": "phase319-trustops-launch-control",
+  "checkedAt": "2026-05-27T23:39:10.201Z",
+  "passed": 21,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "package phase319",
+      "ok": true
+    },
+    {
+      "name": "phase319 script present",
+      "ok": true
+    },
+    {
+      "name": "release predeploy phase319",
+      "ok": true
+    },
+    {
+      "name": "launch version phase319",
+      "ok": true
+    },
+    {
+      "name": "orchestrator phase319",
+      "ok": true
+    },
+    {
+      "name": "launch public route",
+      "ok": true
+    },
+    {
+      "name": "message public route",
+      "ok": true
+    },
+    {
+      "name": "admin route",
+      "ok": true
+    },
+    {
+      "name": "launch cockpit ok",
+      "ok": true
+    },
+    {
+      "name": "rollout stages",
+      "ok": true
+    },
+    {
+      "name": "incident playbooks",
+      "ok": true
+    },
+    {
+      "name": "experiments",
+      "ok": true
+    },
+    {
+      "name": "phase319 backlog 40",
+      "ok": true
+    },
+    {
+      "name": "total backlog 170",
+      "ok": true
+    },
+    {
+      "name": "message safeguards",
+      "ok": true
+    },
+    {
+      "name": "engine count expanded",
+      "ok": true
+    },
+    {
+      "name": "agent count expanded",
+      "ok": true
+    },
+    {
+      "name": "event policies expanded",
+      "ok": true
+    },
+    {
+      "name": "phase319 audit ok",
+      "ok": true
+    },
+    {
+      "name": "engine audit ok",
+      "ok": true
+    },
+    {
+      "name": "portal fetches launch control",
+      "ok": true
+    }
+  ],
+  "audit": {
+    "ok": true,
+    "version": "phase319-trustops-launch-control-v1",
+    "score": 100,
+    "checks": [
+      {
+        "key": "required files present",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "key": "package script phase319",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "key": "release predeploy phase319",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "key": "public routes present",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "key": "admin route present",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "key": "launch control ok",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "key": "phase319 backlog 40",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "key": "total backlog 170",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "key": "experiments 8",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "key": "incident playbooks 5",
+        "ok": true,
+        "detail": ""
+      }
+    ]
+  },
+  "engineAudit": {
+    "ok": true,
+    "score": 100,
+    "total": 100,
+    "phase": "phase324",
+    "version": "phase324-complete-delivery-engine-agent-v8.1.0",
+    "checks": [
+      {
+        "key": "matrixCoverage",
+        "weight": 12,
+        "pass": true,
+        "message": "전역 엔진/에이전트 배정표"
+      },
+      {
+        "key": "eventPolicies",
+        "weight": 12,
+        "pass": true,
+        "message": "핵심 서비스 이벤트 정책"
+      },
+      {
+        "key": "requiredFiles",
+        "weight": 12,
+        "pass": true,
+        "message": "phase317 핵심 파일 존재"
+      },
+      {
+        "key": "publicRoute",
+        "weight": 8,
+        "pass": true,
+        "message": "공개 엔진/에이전트 상태 API"
+      },
+      {
+        "key": "adminRoute",
+        "weight": 8,
+        "pass": true,
+        "message": "관리자 엔진/에이전트 감사 API"
+      },
+      {
+        "key": "phaseLatestScripts",
+        "weight": 12,
+        "pass": true,
+        "message": "최신 phase 최종 검증 스크립트"
+      },
+      {
+        "key": "runtimeGateExport",
+        "weight": 8,
+        "pass": true,
+        "message": "런타임 게이트 함수 적용"
+      },
+      {
+        "key": "runtimeEventStore",
+        "weight": 8,
+        "pass": true,
+        "message": "에이전트 이벤트 저장 적용"
+      },
+      {
+        "key": "autopublishPreserved",
+        "weight": 8,
+        "pass": true,
+        "message": "20분 자동 발행 엔진 유지"
+      },
+      {
+        "key": "dashboardPreserved",
+        "weight": 6,
+        "pass": true,
+        "message": "단일 디자인 시스템 유지"
+      },
+      {
+        "key": "packageOptimization",
+        "weight": 6,
+        "pass": true,
+        "message": "POSIX 패키지 경로 최적화"
+      }
+    ],
+    "failed": [],
+    "assignment": {
+      "engineCount": 50,
+      "agentCount": 108,
+      "eventPolicyCount": 19,
+      "domains": [
+        "site-intake",
+        "diagnosis",
+        "risk-score",
+        "portal-ui",
+        "content-publication",
+        "plans-checkout",
+        "checkout",
+        "payment",
+        "fulfillment",
+        "refund",
+        "privacy",
+        "legal",
+        "security",
+        "admin-ops",
+        "observability",
+        "release",
+        "backup",
+        "abuse-control",
+        "seo",
+        "retention",
+        "quality-ui",
+        "support",
+        "contract",
+        "redteam",
+        "growth",
+        "fix-generation",
+        "monitoring",
+        "agency",
+        "revenue",
+        "seo-advanced",
+        "autopilot",
+        "lifecycle",
+        "operator-queue",
+        "forecast",
+        "launch-control",
+        "lifecycle-message",
+        "experiment",
+        "incident",
+        "production-sentinel",
+        "live-verification",
+        "rollback-sla",
+        "cost-quality",
+        "final-handoff",
+        "env-lock",
+        "operator-handoff",
+        "go-live-kpi",
+        "hundred-point",
+        "test-gate",
+        "ui-contract",
+        "operations"
+      ]
+    }
+  },
+  "assignment": {
+    "engineCount": 50,
+    "agentCount": 108,
+    "eventPolicyCount": 19
+  },
+  "launch": {
+    "readiness": {
+      "score": 75,
+      "decision": "hold",
+      "blockers": [
+        {
+          "code": "p0_operator_queue",
+          "severity": "P0",
+          "count": 1,
+          "message": "P0 운영 큐가 남아 있습니다."
+        }
+      ],
+      "counts": {
+        "p0Queue": 1,
+        "openRefunds": 0,
+        "paidWithoutFulfillment": 0,
+        "paidOrders": 0,
+        "activeSubscriptions": 0
+      },
+      "minimumGoLiveConditions": [
+        "P0 운영 큐 0개",
+        "결제 완료 주문 산출물 누락 0개",
+        "개인정보·보안 필수 환경변수 입력",
+        "환불 요청 처리 SLA 큐 가시화",
+        "release:predeploy 통과 후 실서버 live verification 수행"
+      ]
+    },
+    "backlogCount": 170,
+    "phase319BacklogCount": 40
+  }
+}

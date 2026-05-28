@@ -1,0 +1,98 @@
+{
+  "ok": true,
+  "phase": "phase314",
+  "checkedAt": "2026-05-27T05:12:46.793Z",
+  "passed": 18,
+  "checks": [
+    {
+      "key": "catalog version phase314",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "report service scope",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "expert manual renewal explicit",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "catalog has unlock rules",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "paid service operating model exists",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "public paid service API",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "checkout target input exists",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "checkout target client gate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "checkout sends domain",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "checkout rejects free plan",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "checkout requires target",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "portal order auth is strict",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "public order auth is strict",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "fulfillment auth is strict",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "subscription only for subscription billing",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "paid sync creates fulfillment",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "phase314 package scripts",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "key": "phase314 docs present",
+      "ok": true,
+      "detail": ""
+    }
+  ]
+}

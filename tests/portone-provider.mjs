@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import http from 'node:http';
 import { spawn } from 'node:child_process';
 import path from 'node:path';
@@ -10,6 +11,9 @@ const root = path.resolve(__dirname, '..');
 const appPort = 3215;
 const payPort = 4312;
 const wait = ms => new Promise(r => setTimeout(r, ms));
+
+const testRuntimeDir = path.join(root, 'runtime-test-portone-provider');
+fs.rmSync(testRuntimeDir, { recursive: true, force: true });
 
 let paid = false;
 const seen = [];
@@ -29,8 +33,8 @@ const portoneServer = http.createServer(async (req, res) => {
     return res.end(JSON.stringify({
       id: paymentId,
       status: paid ? 'PAID' : 'READY',
-      amount: { total: 39000 },
-      customData: { orderId: paymentId, plan: 'Report', amount: 39000 },
+      amount: { total: 49000 },
+      customData: { orderId: paymentId, plan: 'Report', amount: 49000 },
       paidAt: paid ? new Date().toISOString() : null,
       paymentMethod: { type: 'CARD' }
     }));
@@ -52,6 +56,7 @@ const child = spawn(process.execPath, ['server/index.mjs'], {
     NV0_ADMIN_KEY: 'test-key',
     NV0_TRUST_PROXY_HEADERS: 'true',
     NODE_ENV: 'production',
+    NV0_RUNTIME_DIR: testRuntimeDir,
     NV0_PAYMENT_PROVIDER: 'portone_v2',
     NV0_PORTONE_API_BASE_URL: `http://127.0.0.1:${payPort}`,
     NV0_PORTONE_API_SECRET: 'secret',
@@ -63,6 +68,18 @@ const child = spawn(process.execPath, ['server/index.mjs'], {
   },
   stdio: 'ignore'
 });
+
+
+async function stopChild(child) {
+  if (!child || child.exitCode !== null) return;
+  await new Promise(resolve => {
+    const timer = setTimeout(() => {
+      try { child.kill('SIGKILL'); } catch {}
+    }, 500);
+    child.once('exit', () => { clearTimeout(timer); resolve(); });
+    try { child.kill('SIGTERM'); } catch { resolve(); }
+  });
+}
 
 async function waitUntilReady() {
   for (let i = 0; i < 50; i += 1) {
@@ -87,9 +104,9 @@ try {
   assert.equal(config.res.status, 200);
   assert.equal(config.data.paymentReady, true);
   assert.equal(config.data.provider, 'portone_v2');
-  assert.ok(config.data.productCodes.some(item => item.code === 'Report' && item.price === 39000));
+  assert.ok(config.data.productCodes.some(item => item.code === 'Report' && item.price === 49000));
 
-  let x = await j('/api/public/checkout-session', { method:'POST', headers:{ 'content-type':'application/json' }, body: JSON.stringify({ plan:'Report', buyerEmail:'portone@example.com', privacyConsent:true, termsConsent:true, refundConsent:true, deliveryConsent:true }) });
+  let x = await j('/api/public/checkout-session', { method:'POST', headers:{ 'content-type':'application/json' }, body: JSON.stringify({ plan:'Report', buyerEmail:'portone@example.com', domain:'https://paid-test.example', privacyConsent:true, termsConsent:true, refundConsent:true, deliveryConsent:true }) });
   assert.equal(x.res.status, 200);
   assert.equal(x.data.paymentSession.provider, 'portone_v2');
   assert.equal(x.data.paymentSession.providerPaymentId, x.data.order.id);

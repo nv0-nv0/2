@@ -1,0 +1,136 @@
+{
+  "ok": true,
+  "phase": "phase323-one-hundred-point-closeout",
+  "mode": "split-verified-in-tool-environment",
+  "checkedAt": "2026-05-27T12:02:47.702839Z",
+  "passed": 31,
+  "failed": 0,
+  "total": 31,
+  "results": [
+    {
+      "name": "check:syntax",
+      "ok": true
+    },
+    {
+      "name": "test",
+      "ok": true
+    },
+    {
+      "name": "test:e2e",
+      "ok": true
+    },
+    {
+      "name": "test:commerce",
+      "ok": true
+    },
+    {
+      "name": "test:paid-redteam",
+      "ok": true
+    },
+    {
+      "name": "test:trustops",
+      "ok": true
+    },
+    {
+      "name": "test:autopilot",
+      "ok": true
+    },
+    {
+      "name": "test:launch-control",
+      "ok": true
+    },
+    {
+      "name": "test:production-sentinel",
+      "ok": true
+    },
+    {
+      "name": "test:final-handoff",
+      "ok": true
+    },
+    {
+      "name": "test:100-final",
+      "ok": true
+    },
+    {
+      "name": "check:pages",
+      "ok": true
+    },
+    {
+      "name": "test:routes",
+      "ok": true
+    },
+    {
+      "name": "check:links",
+      "ok": true
+    },
+    {
+      "name": "verify:security",
+      "ok": true
+    },
+    {
+      "name": "validate:deploy",
+      "ok": true
+    },
+    {
+      "name": "check:release-secret-hygiene",
+      "ok": true
+    },
+    {
+      "name": "check:accessibility",
+      "ok": true
+    },
+    {
+      "name": "check:performance-budget",
+      "ok": true
+    },
+    {
+      "name": "check:responsive-contract",
+      "ok": true
+    },
+    {
+      "name": "check:operational-contract",
+      "ok": true
+    },
+    {
+      "name": "validate:phase315",
+      "ok": true
+    },
+    {
+      "name": "validate:phase316",
+      "ok": true
+    },
+    {
+      "name": "validate:phase317",
+      "ok": true
+    },
+    {
+      "name": "validate:phase318",
+      "ok": true
+    },
+    {
+      "name": "validate:phase319",
+      "ok": true
+    },
+    {
+      "name": "validate:phase320",
+      "ok": true
+    },
+    {
+      "name": "validate:phase321",
+      "ok": true
+    },
+    {
+      "name": "validate:phase322",
+      "ok": true
+    },
+    {
+      "name": "validate:phase323",
+      "ok": true
+    },
+    {
+      "name": "check-runtime-clean",
+      "ok": true
+    }
+  ],
+  "note": "The long single phase323 runner is provided in package.json. In this execution environment the final gate was verified by splitting the same steps to avoid tool timeout."
+}

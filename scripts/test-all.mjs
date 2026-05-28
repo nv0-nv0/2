@@ -11,6 +11,8 @@ const requiredFiles = [
   'server/index.mjs',
   'server/routes/public.mjs',
   'shared/veridion-clean-v311.css',
+  'server/core/privacy-compliance-guard.mjs',
+  'server/core/phase313-operations-governance.mjs',
   'apps/public/home/index.html',
   'apps/public/portal/index.html',
   'apps/public/portal/app.js',
@@ -25,7 +27,7 @@ const requiredFiles = [
 for (const file of requiredFiles) add(`exists:${file}`, exists(file));
 
 const pkg = JSON.parse(read('package.json'));
-add('package:phase311-version', /phase311-clean-redteam/.test(pkg.version));
+add('package:phase317-version', /phase31[3-9]-|phase320-|phase321-|phase322-|phase323-|phase324-/.test(pkg.version));
 
 const appHtmlFiles = [];
 for (const area of ['apps/public', 'apps/admin']) {
@@ -63,6 +65,12 @@ add('server:clean-css-injection', server.includes('/shared/veridion-clean-v311.c
 for (const route of ['/', '/portal', '/board', '/products/veridion/demo', '/plans', '/business-info']) add(`route:${route}`, server.includes(`'${route}'`) || server.includes(`"${route}"`));
 for (const api of ['/api/public/account', '/api/public/account/sites', '/api/public/board']) add(`api:${api}`, publicRoutes.includes(api));
 add('api:20min-cadence', publicRoutes.includes('intervalMinutes') && publicRoutes.includes('actualPublishing'));
+add('privacy:guard-module', exists('server/core/privacy-compliance-guard.mjs'));
+add('privacy:pseudonymous-ip', server.includes('ipHash: pseudonymizeIp(clientIp(req))'));
+add('privacy:no-raw-persistent-ip', !/(^|[,{}]\s*)ip:\s*clientIp\(req\)/.test(server + '\n' + publicRoutes));
+add('privacy:status-endpoint', server.includes('/api/public/privacy-status') || publicRoutes.includes('/api/public/privacy-status'));
+add('governance:status-endpoint', publicRoutes.includes('/api/public/governance-status'));
+add('governance:phase313-module', exists('server/core/phase313-operations-governance.mjs') && read('server/core/phase313-operations-governance.mjs').includes('PHASE313_IMPROVEMENT_BACKLOG'));
 
 const oldSharedFiles = ['shared/nv0-clean-slate-20260512.css', 'shared/nv0n-generated.css', 'shared/nv0n-runtime.css', 'shared/nv0n-runtime.js', 'shared/phase264-hardening.css', 'shared/veridion-adopted-ui.css', 'shared/veridion-clean-v310.css'];
 for (const file of oldSharedFiles) add(`deleted:${file}`, !exists(file));
@@ -74,8 +82,8 @@ add('client:no-console-log', !/console\.log\(/.test(combinedClient));
 
 const passed = checks.filter((check) => check.ok).length;
 const failed = checks.length - passed;
-const report = { generatedAt: new Date().toISOString(), ok: failed === 0, phase: 'phase311-clean-redteam', total: checks.length, passed, failed, checks };
+const report = { generatedAt: new Date().toISOString(), ok: failed === 0, phase: 'phase324-complete-delivery', total: checks.length, passed, failed, checks };
 fs.mkdirSync(path.join(root, 'docs/current'), { recursive: true });
-fs.writeFileSync(path.join(root, 'docs/current/PHASE311_CLEAN_REDTEAM_TEST_SUMMARY.json'), JSON.stringify(report, null, 2));
-console.log(JSON.stringify({ ok: report.ok, passed, failed, report: 'docs/current/PHASE311_CLEAN_REDTEAM_TEST_SUMMARY.json' }, null, 2));
+fs.writeFileSync(path.join(root, 'docs/current/PHASE324_TEST_SUMMARY.json'), JSON.stringify(report, null, 2));
+console.log(JSON.stringify({ ok: report.ok, passed, failed, report: 'docs/current/PHASE324_TEST_SUMMARY.json' }, null, 2));
 if (!report.ok) process.exit(1);

@@ -8,6 +8,7 @@ const planInput = document.getElementById('plan');
 const checkoutBtn = document.getElementById('checkoutBtn');
 const completeBtn = document.getElementById('completeBtn');
 const paymentConfigState = document.getElementById('paymentConfigState');
+const targetInput = document.getElementById('targetDomain');
 
 const summaryPlanName = document.getElementById('summaryPlanName');
 const summaryPlanPeriod = document.getElementById('summaryPlanPeriod');
@@ -29,7 +30,7 @@ offerMap = new Map(fallbackOffers.map(item => [item.code, item]));
 
 function normalizePlanCode(value) {
   const key = String(value || '').trim().toLowerCase().replace(/[\s_-]+/g, '');
-  const aliases = { report: 'Report', detailedreport: 'Report', proreport: 'Report', pro: 'Report', basic: 'Report', expert: 'Expert', expertreport: 'Expert', professional: 'Expert', fixpack: 'Expert', fix: 'Expert', copypack: 'Expert', templatepack: 'Expert', industryguide: 'Expert', auto: 'Expert', agency: 'Expert', subscription: 'Expert' };
+  const aliases = { report: 'Report', detailedreport: 'Report', proreport: 'Report', pro: 'Report', basic: 'Report', fixpack: 'FixPack', fix: 'FixPack', copypack: 'FixPack', templatepack: 'FixPack', industryguide: 'FixPack', monitoring: 'Monitoring', monitor: 'Monitoring', auto: 'Monitoring', subscription: 'Monitoring', expert: 'Expert', expertreport: 'Expert', professional: 'Expert', agency: 'Agency', whitelabel: 'Agency', b2b: 'Agency' };
   return normalizeCatalogPlanCode(aliases[key] || value || 'Report');
 }
 function getSavedScan() {
@@ -102,12 +103,13 @@ function renderPriceSummary() {
 function updateCheckoutButtonState() {
   if (!checkoutBtn) return;
   const email = document.getElementById('buyerEmail')?.value.trim() || '';
-  const formReady = requiredConsentReady() && isValidEmail(email);
+  const targetReady = !!(prefill.siteId || targetInput?.value.trim());
+  const formReady = requiredConsentReady() && isValidEmail(email) && targetReady;
   const providerReady = isPaymentProviderReady();
   const ready = formReady && providerReady;
   checkoutBtn.disabled = !ready || isCreatingSession;
   checkoutBtn.setAttribute('aria-disabled', String(checkoutBtn.disabled));
-  if (!formReady) checkoutBtn.textContent = '필수 동의 후 바로 결제';
+  if (!formReady) checkoutBtn.textContent = '사이트·이메일·필수 동의 확인';
   else if (!providerReady) checkoutBtn.textContent = paymentConfig.provider === 'portone_v2' ? '결제창 준비 중' : '온라인 결제 준비 중';
   else checkoutBtn.textContent = '바로 결제';
 }
@@ -122,7 +124,8 @@ function getPrefill() {
 }
 const prefill = getPrefill();
 if (prefill.plan && planInput) planInput.value = normalizePlanCode(prefill.plan);
-if (targetBox) targetBox.textContent = prefill.domain ? `진단 대상 사이트: ${prefill.domain}` : '진단 이력이 없어도 온라인 결제를 진행할 수 있습니다.';
+if (targetInput && prefill.domain) targetInput.value = prefill.domain;
+if (targetBox) targetBox.textContent = prefill.domain ? `진단 대상 사이트: ${prefill.domain}` : '유료 산출물은 대상 사이트 URL이 확정되어야 결제할 수 있습니다.';
 
 function renderOrder(order, paymentSession) {
   currentOrder = order;
@@ -157,13 +160,18 @@ async function createSession() {
   const payload = {
     buyerEmail: document.getElementById('buyerEmail')?.value.trim() || '',
     siteId: prefill.siteId,
-    domain: prefill.domain,
+    domain: targetInput?.value.trim() || prefill.domain,
     plan: normalizePlanCode(planInput?.value || 'Report'),
     privacyConsent: !!document.getElementById('privacyConsent')?.checked,
     termsConsent: !!document.getElementById('termsConsent')?.checked,
     refundConsent: !!document.getElementById('refundConsent')?.checked,
     deliveryConsent: !!document.getElementById('deliveryConsent')?.checked
   };
+  if (!payload.siteId && !payload.domain) {
+    setCheckoutState('유료 리포트의 대상 사이트 URL을 입력해 주세요. 대상이 확정되지 않은 결제는 진행하지 않습니다.', 'warn');
+    updateCheckoutButtonState();
+    return;
+  }
   if (!isValidEmail(payload.buyerEmail)) {
     setCheckoutState('결제 연락처 이메일을 정확히 입력해 주세요. 결과물은 내 사이트 관리에 저장됩니다.', 'warn');
     updateCheckoutButtonState();
@@ -311,6 +319,7 @@ async function loadOffers() {
 }
 
 document.getElementById('buyerEmail')?.addEventListener('input', updateCheckoutButtonState);
+targetInput?.addEventListener('input', updateCheckoutButtonState);
 ['privacyConsent', 'termsConsent', 'refundConsent', 'deliveryConsent'].forEach(id => document.getElementById(id)?.addEventListener('change', updateCheckoutButtonState));
 planInput?.addEventListener('change', () => { renderPriceSummary(); updateCheckoutButtonState(); });
 checkoutBtn?.addEventListener('click', createSession);

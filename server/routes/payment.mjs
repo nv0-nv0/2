@@ -1,4 +1,6 @@
 // Phase166 payment/commerce route split for the native http.createServer dispatcher.
+import { paidAccessWindow, sanitizePaymentSessionForPublic, sanitizeProviderPaymentForPublic } from '../core/paid-service-redteam-control.mjs';
+import { applyEngineAgentGate, appendEngineAgentEvent } from '../core/engine-agent-orchestrator.mjs';
 // Framework-free: the parent public dispatcher calls this handler directly.
 /**
  * Builds the commerce route handler used by the public API dispatcher.
@@ -48,6 +50,7 @@ export function createPaymentRouteHandler(ctx) {
   annotateOffersWithIntelligence,
   appendAudit,
   appendWebhookInbox,
+  baseHeaders,
   asTrimmedString,
   assertCommercialRouteAllowed,
   bodyJson,
@@ -124,6 +127,8 @@ export function createPaymentRouteHandler(ctx) {
   nowIso,
   ownsOrder,
   parseCookies,
+  privacyHash,
+  pseudonymizeIp,
   path,
   persistence,
   sanitizeOrderForPublic,
@@ -196,8 +201,13 @@ const order = (db.orders || []).find(item => item.id === body.orderId);
 if (!order) return json(req, res, 404, { ok: false, error: '주문을 찾을 수 없습니다.' });
 const customerSession = await getCustomerSession(req, db);
 const tokenAllowed = timingSafeStringEqual(order.accessToken, body.accessToken);
-if (!tokenAllowed && !ownsOrder(customerSession?.customer, order)) return json(req, res, 403, { ok: false, error: '환불 요청 권한이 없습니다.' });
-if (!isRefundRequestAllowed(order)) return json(req, res, 400, { ok: false, error: '환불 요청 가능 기간이 지났거나 결제 완료 주문이 아닙니다.' });
+const refundAuthorized = tokenAllowed || ownsOrder(customerSession?.customer, order);
+if (!refundAuthorized) return json(req, res, 403, { ok: false, error: '환불 요청 권한이 없습니다.' });
+const refundAllowed = isRefundRequestAllowed(order);
+if (!refundAllowed) return json(req, res, 400, { ok: false, error: '환불 요청 가능 기간이 지났거나 결제 완료 주문이 아닙니다.' });
+const refundAgentGate = applyEngineAgentGate('refund.request', { orderId: order.id, authorized: refundAuthorized, allowed: refundAllowed }, { stage: 'refund-request', nowIso: nowIso() });
+appendEngineAgentEvent(db, refundAgentGate);
+if (!refundAgentGate.ok) return json(req, res, 500, { ok: false, error: '환불 엔진 에이전트 게이트를 통과하지 못했습니다.', gate: refundAgentGate });
 const existing = db.refundRequests.find(item => item.orderId === order.id && ['requested','reviewing'].includes(item.status));
 if (existing) return json(req, res, 200, { ok: true, refundRequest: existing, duplicate: true });
 const refundRequest = { id: uid('refund'), orderId: order.id, customerId: order.customerId || null, email: order.email || null, reason: body.reason, status: 'requested', requestedAt: nowIso(), amount: order.amount, plan: order.plan };
@@ -209,6 +219,7 @@ return json(req, res, 200, { ok: true, refundRequest });
 }
 if (pathname === '/api/public/portal-summary' && req.method === 'GET') {
 const db = await readDb();
+const customerSession = await getCustomerSession(req, db);
 try {
   const latestScan = (db.scans || [])[0] || null;
   const created = createCtaPublicationIfDue(db, latestScan, { force: false, reason: 'portal-summary' });
@@ -217,12 +228,11 @@ try {
 const orderId = String(url.searchParams.get('orderId') || '');
 if (orderId) {
 const order = (db.orders || []).find(item => item.id === orderId);
-const customerSession = await getCustomerSession(req, db);
 if (!order) return json(req, res, 404, { ok: false, error: '주문을 찾을 수 없습니다.' });
-if (order.customerId && !canAccessOrder(req, order) && !ownsOrder(customerSession?.customer, order)) return json(req, res, 403, { ok: false, error: '내 사이트 관리 접근 권한이 없습니다.' });
+if (!canAccessOrder(req, order) && !ownsOrder(customerSession?.customer, order)) return json(req, res, 403, { ok: false, error: '내 사이트 관리 접근 권한이 없습니다.' });
 }
 const summary = buildPortalSummary(db, { orderId, siteId: url.searchParams.get('siteId') });
-summary.order = sanitizeOrderForPublic(summary.order, { includeAccessToken: !!summary.order && canAccessOrder(req, summary.order) });
+summary.order = sanitizeOrderForPublic(summary.order, { includeAccessToken: !!summary.order && (canAccessOrder(req, summary.order) || ownsOrder(customerSession?.customer, summary.order)) });
 return json(req, res, 200, { ok: true, summary });
 }
 if (pathname === '/api/public/order' && req.method === 'GET') {
@@ -231,9 +241,9 @@ const orderId = String(url.searchParams.get('orderId') || '');
 const order = (db.orders || []).find(item => item.id === orderId);
 if (!order) return json(req, res, 404, { ok: false, error: '주문을 찾을 수 없습니다.' });
 const customerSession = await getCustomerSession(req, db);
-if (order.customerId && !canAccessOrder(req, order) && !ownsOrder(customerSession?.customer, order)) return json(req, res, 403, { ok: false, error: '주문 접근 권한이 없습니다.' });
+if (!canAccessOrder(req, order) && !ownsOrder(customerSession?.customer, order)) return json(req, res, 403, { ok: false, error: '주문 접근 권한이 없습니다.' });
 const paymentSession = (db.paymentSessions || []).find(item => item.orderId === order.id) || null;
-return json(req, res, 200, { ok: true, order: sanitizeOrderForPublic(order, { includeAccessToken: canAccessOrder(req, order) || ownsOrder(customerSession?.customer, order) }), paymentSession });
+return json(req, res, 200, { ok: true, order: sanitizeOrderForPublic(order, { includeAccessToken: canAccessOrder(req, order) || ownsOrder(customerSession?.customer, order) }), paymentSession: sanitizePaymentSessionForPublic(paymentSession) });
 }
 if (pathname === '/api/public/fulfillment' && req.method === 'GET') {
 const db = await readDb();
@@ -242,10 +252,12 @@ if (!orderId) return json(req, res, 400, { ok: false, error: 'orderId가 필요�
 const order = (db.orders || []).find(item => item.id === orderId);
 if (!order) return json(req, res, 404, { ok: false, error: '주문을 찾을 수 없습니다.' });
 const customerSession = await getCustomerSession(req, db);
-if ((order.customerId || order.status === 'paid') && !canAccessOrder(req, order) && !ownsOrder(customerSession?.customer, order)) return json(req, res, 403, { ok: false, error: '산출물 접근 권한이 없습니다.' });
+if (!canAccessOrder(req, order) && !ownsOrder(customerSession?.customer, order)) return json(req, res, 403, { ok: false, error: '산출물 접근 권한이 없습니다.' });
+const accessWindow = paidAccessWindow(order);
+if (order.status === 'paid' && !accessWindow.active) return json(req, res, 410, { ok: false, error: '구매 산출물 접근 기간이 만료되었습니다.', accessWindow });
 const asset = order.status === 'paid' ? ensureFulfillmentForOrder(db, order) : null;
 if (asset || !order.accessToken) await writeDb(db);
-return json(req, res, 200, { ok: true, order: { ...order, accessToken: generateOrderAccessToken(order) }, asset, locked: order.status !== 'paid' });
+return json(req, res, 200, { ok: true, order: sanitizeOrderForPublic(order, { includeAccessToken: canAccessOrder(req, order) || ownsOrder(customerSession?.customer, order) }), asset, accessWindow, locked: order.status !== 'paid' });
 }
 if (pathname === '/api/public/fulfillment-download' && req.method === 'GET') {
 const db = await readDb();
@@ -253,8 +265,14 @@ const orderId = String(url.searchParams.get('orderId') || '').trim();
 const order = (db.orders || []).find(item => item.id === orderId);
 if (!order) return json(req, res, 404, { ok: false, error: '주문을 찾을 수 없습니다.' });
 const customerSession = await getCustomerSession(req, db);
-if ((order.customerId || order.status === 'paid') && !canAccessOrder(req, order) && !ownsOrder(customerSession?.customer, order)) return json(req, res, 403, { ok: false, error: '산출물 접근 권한이 없습니다.' });
+if (!canAccessOrder(req, order) && !ownsOrder(customerSession?.customer, order)) return json(req, res, 403, { ok: false, error: '산출물 접근 권한이 없습니다.' });
 if (order.status !== 'paid') return json(req, res, 402, { ok: false, error: '결제 완료 후 다운로드할 수 있습니다.' });
+const accessWindow = paidAccessWindow(order);
+if (!accessWindow.active) return json(req, res, 410, { ok: false, error: '구매 산출물 다운로드 기간이 만료되었습니다.', accessWindow });
+const downloadAuthorized = canAccessOrder(req, order) || ownsOrder(customerSession?.customer, order);
+const downloadAgentGate = applyEngineAgentGate('fulfillment.download', { orderId: order.id, orderStatus: order.status, accessActive: accessWindow.active, authorized: downloadAuthorized }, { stage: 'fulfillment-download', nowIso: nowIso() });
+appendEngineAgentEvent(db, downloadAgentGate);
+if (!downloadAgentGate.ok) return json(req, res, 500, { ok: false, error: '산출물 엔진 에이전트 게이트를 통과하지 못했습니다.', gate: downloadAgentGate });
 const asset = ensureFulfillmentForOrder(db, order);
 await writeDb(db);
 const pdf = buildAssetPdfBuffer(asset, order);
@@ -270,10 +288,25 @@ return json(req, res, 200, { ok: true, offer });
 }
 if (pathname === '/api/public/guidance' && req.method === 'GET') {
 const db = await readDb();
-const siteId = String(url.searchParams.get('siteId') || '');
-const guidance = siteId ? findLatestGuidanceForSite(db, siteId) : db.guidanceDocuments[0] || null;
+const requestedSiteId = String(url.searchParams.get('siteId') || '').trim();
+const orderId = String(url.searchParams.get('orderId') || '').trim();
+const order = orderId ? (db.orders || []).find(item => item.id === orderId) : null;
+const siteId = requestedSiteId || order?.siteId || '';
+if (!siteId && !orderId) return json(req, res, 400, { ok: false, error: 'siteId 또는 orderId가 필요합니다.' });
+const customerSession = await getCustomerSession(req, db);
+const relatedOrders = (db.orders || []).filter(item => item.siteId === siteId || (!!orderId && item.id === orderId));
+const authorizedOrder = relatedOrders.find(item => (canAccessOrder(req, item) || ownsOrder(customerSession?.customer, item)) && item.status === 'paid' && paidAccessWindow(item).active);
+if (!authorizedOrder) return json(req, res, 403, { ok: false, error: '구매 완료 주문 또는 활성 접근권이 있어야 지침 문서를 확인할 수 있습니다.' });
+let guidance = findLatestGuidanceForSite(db, siteId);
+if (!guidance) {
+const site = findSiteByAny(db, siteId, authorizedOrder.domain);
+const scan = (db.scans || []).find(item => item.siteId === siteId) || null;
+if (site && scan) guidance = createGuidanceDocument(db, site, scan);
+}
 if (!guidance) return json(req, res, 404, { ok: false, error: '지침 문서를 찾을 수 없습니다.' });
-return json(req, res, 200, { ok: true, guidance });
+appendAudit(db, req, 'public.guidance.viewed', { siteId, orderId: authorizedOrder.id });
+await writeDb(db);
+return json(req, res, 200, { ok: true, guidance, accessWindow: paidAccessWindow(authorizedOrder) });
 }
 if ((pathname === '/api/public/scan' || pathname === '/api/public/diagnose') && req.method === 'POST') {
 const rate = await hitRateLimit('scan', clientIp(req), { windowMs: PUBLIC_SCAN_WINDOW_MS, limit: PUBLIC_SCAN_LIMIT });
@@ -314,6 +347,13 @@ if (rate.blocked) {
 return json(req, res, 429, { ok: false, error: '결제 세션 생성 요청이 너무 많습니다. 잠시 후 다시 시도하세요.' }, { 'retry-after': String(Math.ceil((rate.resetAt - Date.now()) / 1000)) });
 }
 const body = normalizeCheckoutPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
+const selectedOffer = getCommercialOffer(body.plan);
+if (!selectedOffer || Number(selectedOffer.price || selectedOffer.monthlyPrice || 0) <= 0) {
+return json(req, res, 400, { ok: false, error: '유료 결제는 기본 리포트 또는 전문가 플랜만 진행할 수 있습니다. 무료 진단은 결제 없이 이용해 주세요.' });
+}
+if (!body.siteId && !body.domain) {
+return json(req, res, 400, { ok: false, error: '유료 산출물의 대상 사이트 URL이 필요합니다. 먼저 무료 진단을 실행하거나 결제 화면에서 사이트 주소를 입력해 주세요.' });
+}
 const idempotencyKey = getIdempotencyKey(req, body);
 const requestHash = hashRequestPayload({ plan: body.plan, email: normalizeEmail(body.email || body.buyerEmail || ''), domain: body.domain, siteId: body.siteId });
 const db = await readDb();
@@ -331,6 +371,24 @@ if (!isValidEmail(body.buyerEmail || '')) return json(req, res, 400, { ok: false
 if (!body.privacyConsent || !body.termsConsent || !body.refundConsent || !body.deliveryConsent) {
 return json(req, res, 400, { ok: false, error: '개인정보처리방침, 이용약관, 환불정책, 디지털 산출물 제공 및 청약철회 제한 고지 확인이 필요합니다.' });
 }
+body.consentEvidence = {
+  ipHash: pseudonymizeIp(clientIp(req)),
+  userAgentHash: privacyHash(req.headers['user-agent'] || '', { purpose: 'checkout-consent-user-agent', length: 16 })
+};
+const checkoutAgentGate = applyEngineAgentGate('checkout.session.create', {
+  plan: body.plan,
+  amount: selectedOffer.price || selectedOffer.monthlyPrice || 0,
+  siteId: body.siteId,
+  domain: body.domain,
+  buyerEmail: body.buyerEmail,
+  privacyConsent: body.privacyConsent === true,
+  termsConsent: body.termsConsent === true,
+  refundConsent: body.refundConsent === true,
+  deliveryConsent: body.deliveryConsent === true,
+  idempotencyKey: idempotencyKey || requestHash
+}, { stage: 'checkout-session', nowIso: nowIso() });
+appendEngineAgentEvent(db, checkoutAgentGate);
+if (!checkoutAgentGate.ok) return json(req, res, 400, { ok: false, error: '체크아웃 엔진 에이전트 게이트를 통과하지 못했습니다.', gate: checkoutAgentGate });
 const lockKey = `checkout:${body.siteId || body.domain || body.buyerEmail || clientIp(req)}`;
 if (!await distributedLock.acquire(lockKey, 10)) {
 return json(req, res, 409, { ok: false, error: '동일 대상의 결제 세션 생성이 이미 진행 중입니다.' });
@@ -341,9 +399,9 @@ created = await createCheckoutOrder(db, body);
 } finally {
 await distributedLock.release(lockKey);
 }
-const checkoutResult = { order: { ...created.order, accessToken: generateOrderAccessToken(created.order) }, paymentSession: created.paymentSession, providerMode: PAYMENT_PROVIDER };
+const checkoutResult = { order: sanitizeOrderForPublic(created.order, { includeAccessToken: true }), paymentSession: sanitizePaymentSessionForPublic(created.paymentSession, { includePaymentRequest: true }), providerMode: PAYMENT_PROVIDER };
 storeIdempotencyRecord(db, { scope: 'checkout', key: idempotencyKey, requestHash, result: checkoutResult });
-appendAudit(db, req, 'public.checkout.created', { orderId: created.order.id, provider: PAYMENT_PROVIDER, siteId: created.order.siteId || null, plan: created.order.plan, idempotency: !!idempotencyKey });
+appendAudit(db, req, 'public.checkout.created', { orderId: created.order.id, provider: PAYMENT_PROVIDER, siteId: created.order.siteId || null, plan: created.order.plan, idempotency: !!idempotencyKey, engineAgentGate: checkoutAgentGate.ok });
 await writeDb(db);
 return json(req, res, 200, { ok: true, ...checkoutResult });
 }
@@ -361,7 +419,7 @@ const paymentSession = { id: uid('pay'), orderId: order.id, provider: PAYMENT_PR
 db.paymentSessions ||= []; db.paymentSessions.unshift(paymentSession); order.paymentSessionId = paymentSession.id;
 appendAudit(db, req, 'public.payment.retry_requested', { orderId: order.id, retryCount: order.retryCount });
 await writeDb(db);
-return json(req, res, 200, { ok: true, order: { ...sanitizeOrderForPublic(order), accessToken: generateOrderAccessToken(order) }, paymentSession });
+return json(req, res, 200, { ok: true, order: sanitizeOrderForPublic(order, { includeAccessToken: true }), paymentSession: sanitizePaymentSessionForPublic(paymentSession) });
 }
 if (pathname === '/api/public/payment/complete' && req.method === 'POST') {
 const rate = await hitRateLimit('payment-complete', clientIp(req), { windowMs: PUBLIC_SCAN_WINDOW_MS, limit: Math.max(8, PUBLIC_SCAN_LIMIT) });
@@ -376,6 +434,12 @@ if (!await distributedLock.acquire(lockKey, 15)) {
 return json(req, res, 409, { ok: false, error: '동일 주문의 결제 완료 처리가 이미 진행 중입니다.' });
 }
 const db = await readDb();
+const paymentAgentGate = applyEngineAgentGate('payment.complete', { orderId, lockKey, provider: PAYMENT_PROVIDER }, { stage: 'payment-complete', nowIso: nowIso() });
+appendEngineAgentEvent(db, paymentAgentGate);
+if (!paymentAgentGate.ok) {
+  await writeDb(db);
+  return json(req, res, 400, { ok: false, error: '결제 엔진 에이전트 게이트를 통과하지 못했습니다.', gate: paymentAgentGate });
+}
 try {
 if (PAYMENT_PROVIDER === 'portone_v2') {
 let synced;
@@ -387,12 +451,12 @@ await writeDb(db);
 return json(req, res, 502, { ok: false, error: '결제사 확인 응답을 받지 못했습니다. 잠시 후 결제 완료 확인을 다시 실행해 주세요.', reason: error.message });
 }
 if (!synced.order) return json(req, res, 404, { ok: false, error: '주문을 찾을 수 없습니다.' });
-appendAudit(db, req, synced.ok ? 'public.payment.portone.completed' : 'public.payment.portone.verification_failed', { orderId, paymentId: body.paymentId || orderId, reason: synced.reason || null });
+appendAudit(db, req, synced.ok ? 'public.payment.portone.completed' : 'public.payment.portone.verification_failed', { orderId, paymentId: body.paymentId || orderId, reason: synced.reason || null, engineAgentGate: paymentAgentGate.ok });
 await writeDb(db);
 if (!synced.ok && synced.reason !== 'payment_not_completed') {
-return json(req, res, 400, { ok: false, error: `결제 검증에 실패했습니다: ${synced.reason}`, order: synced.order, paymentSession: synced.paymentSession });
+return json(req, res, 400, { ok: false, error: `결제 검증에 실패했습니다: ${synced.reason}`, order: sanitizeOrderForPublic(synced.order), paymentSession: sanitizePaymentSessionForPublic(synced.paymentSession) });
 }
-return json(req, res, 200, { ok: true, order: { ...synced.order, accessToken: generateOrderAccessToken(synced.order) }, paymentSession: synced.paymentSession, payment: synced.payment || null, pendingSettlement: !!synced.pendingSettlement });
+return json(req, res, 200, { ok: true, order: sanitizeOrderForPublic(synced.order, { includeAccessToken: true }), paymentSession: sanitizePaymentSessionForPublic(synced.paymentSession), payment: sanitizeProviderPaymentForPublic(synced.payment), pendingSettlement: !!synced.pendingSettlement });
 }
 try {
 assertCommercialRouteAllowed(PLATFORM, 'demo_payment_complete');
@@ -402,9 +466,9 @@ return json(req, res, 403, { ok: false, error: '상용 타깃에서는 확인용
 if (PAYMENT_PROVIDER === 'external_http') return json(req, res, 400, { ok: false, error: '외부 결제 방식에서는 결제 확인 절차가 필요합니다.' });
 const completed = completeCheckoutOrder(db, orderId);
 if (!completed) return json(req, res, 404, { ok: false, error: '주문을 찾을 수 없습니다.' });
-appendAudit(db, req, 'public.payment.completed', { orderId: completed.order.id, provider: PAYMENT_PROVIDER });
+appendAudit(db, req, 'public.payment.completed', { orderId: completed.order.id, provider: PAYMENT_PROVIDER, engineAgentGate: paymentAgentGate.ok });
 await writeDb(db);
-return json(req, res, 200, { ok: true, order: { ...completed.order, accessToken: generateOrderAccessToken(completed.order) }, paymentSession: completed.paymentSession });
+return json(req, res, 200, { ok: true, order: sanitizeOrderForPublic(completed.order, { includeAccessToken: true }), paymentSession: sanitizePaymentSessionForPublic(completed.paymentSession) });
 } finally {
 await distributedLock.release(lockKey);
 }
@@ -477,7 +541,7 @@ try {
 synced = await syncPortOneCheckoutOrder(db, paymentId, paymentId, 'webhook');
 } catch (error) {
 synced = { ok: false, reason: error.message || 'provider_sync_failed', order: null, paymentSession: null };
-appendAudit(db, 'public.payment.webhook.provider_sync_error', { paymentId, reason: synced.reason });
+appendAudit(db, req, 'public.payment.webhook.provider_sync_error', { paymentId, reason: synced.reason });
 }
 const inbox = db.webhookInbox?.[0];
 if (inbox) {

@@ -29,6 +29,7 @@ import { createRateLimitStore } from './infrastructure/ratelimit/rate-limit-stor
 import { createDistributedLock } from './infrastructure/lock/distributed-lock.mjs';
 import { createPortOneV2Client, verifyPortOnePaymentAgainstOrder } from './infrastructure/payments/portone-v2.mjs';
 import { sanitizeAuditPayload } from './infrastructure/security/secure-record-store.mjs';
+import { PRIVACY_COMPLIANCE_GUARD_VERSION, privacyComplianceSummary, privacyHash, pseudonymizeIp, sanitizePrivacyPayload, prunePrivacyRetention } from './core/privacy-compliance-guard.mjs';
 import { verifyPortOneWebhook } from './infrastructure/payments/portone-webhook-verify.mjs';
 import { createPublicRouteHandler } from './routes/public.mjs';
 import { createAdminRouteHandler } from './routes/admin.mjs';
@@ -44,6 +45,7 @@ import { timingSafeStringEqual, hasValidOrderAccessToken } from './core/access-t
 import { putObjectToS3Compatible } from './infrastructure/storage/s3-compatible.mjs';
 import { PHASE229_PRICING_VERSION, buildPricingRecalculation } from './core/pricing-conversion-model.mjs';
 import { buildCommercialOfferCatalog as buildSharedCommercialOfferCatalog, buildPlanCatalog as buildSharedPlanCatalog, planPrice as sharedPlanPrice } from '../shared/product-catalog.mjs';
+import { PHASE313_GOVERNANCE_VERSION, buildPhase313GovernanceSnapshot } from './core/phase313-operations-governance.mjs';
 import { buildPublicColumnEnginePosts, publicColumnTypeLabel } from './core/public-column-engine.mjs';
 import { PRODUCT_AGENT_SUITE_VERSION, publishProductInsightNow, publishProductInsightIfDue, ensureProductAgentSettings, latestProductInsightPublication, productInsightDueStatus, buildProductAgentRuntimeStatus, runProductAgentPackageAudit } from './core/product-agent-suite.mjs';
 import { ENGINE_AGENT_ORCHESTRATOR_VERSION, buildEngineAgentRuntimeStatus, runEngineAgentPackageAudit } from './core/engine-agent-orchestrator.mjs';
@@ -125,10 +127,10 @@ const SESSIONS_FILE = path.join(DATA_DIR, 'sessions.json');
 const PUBLIC_DIR = path.join(ROOT, 'apps', 'public');
 const ADMIN_DIR = path.join(ROOT, 'apps', 'admin');
 const BUSINESS_PROFILE = Object.freeze({
-tradeName: '엔브이제로(NV0)',
-representative: '나금상',
-registrationNumber: '584-77-00586',
-address: '경기도 남양주시 와부읍 덕소로97번길 34, 105동 402호',
+tradeName: process.env.NV0_BUSINESS_TRADE_NAME || '엔브이제로(NV0)',
+representative: process.env.NV0_BUSINESS_REPRESENTATIVE || '운영자',
+registrationNumber: process.env.NV0_BUSINESS_REGISTRATION_NUMBER || '상용 배포 시 환경변수 입력',
+address: process.env.NV0_BUSINESS_ADDRESS || '상용 배포 시 환경변수 입력',
 businessTypes: ['정보통신업', '소프트웨어 개발 및 공급업', '전자상거래업', '데이터베이스 및 온라인 정보 제공업', '광고 대행업'],
 contactEmail: process.env.NV0_SUPPORT_EMAIL || 'ct@nv0.kr',
 domain: process.env.NV0_PUBLIC_BASE_URL || 'https://nv0.kr',
@@ -206,6 +208,10 @@ const GEMINI_API_KEY = String(process.env.NV0_GEMINI_API_KEY || '').trim();
 const GEMINI_MODEL = String(process.env.NV0_GEMINI_MODEL || 'gemini-2.5-flash').trim();
 const AI_REVIEW_ENABLED = AI_REVIEW_PROVIDER === 'gemini' && !!GEMINI_API_KEY;
 const RELEASE_PHASE = 'commercial-final-phase180-quality-performance-functionality-max-phase181-zero-blocker-closeout';
+const LEGAL_EVIDENCE_VERSION = process.env.NV0_LEGAL_EVIDENCE_VERSION || 'phase313-legal-evidence-v1';
+const PRIVACY_POLICY_VERSION = process.env.NV0_PRIVACY_POLICY_VERSION || LEGAL_EVIDENCE_VERSION;
+const TERMS_VERSION = process.env.NV0_TERMS_VERSION || LEGAL_EVIDENCE_VERSION;
+const REFUND_POLICY_VERSION = process.env.NV0_REFUND_POLICY_VERSION || LEGAL_EVIDENCE_VERSION;
 const DATA_RETENTION_DAYS = Number(process.env.NV0_DATA_RETENTION_DAYS || 1095);
 const REFUND_REQUEST_WINDOW_DAYS = Number(process.env.NV0_REFUND_REQUEST_WINDOW_DAYS || 7);
 const OPERATOR_ALERT_EMAIL = process.env.NV0_OPERATOR_ALERT_EMAIL || BUSINESS_PROFILE.contactEmail;
@@ -397,6 +403,9 @@ throw new Error('NV0_ADMIN_AUTH_MODE=shared_key is not allowed in production. Us
 if (ENABLE_TURNSTILE && COMMERCIAL_LAUNCH_READY && !TURNSTILE_CONFIGURED) {
 throw new Error('Real NV0_TURNSTILE_SECRET and NV0_TURNSTILE_SITE_KEY are required when commercial launch is ready.');
 }
+if (COMMERCIAL_LAUNCH_READY && !TURNSTILE_PUBLIC_ENABLED) {
+throw new Error('Commercial launch requires Turnstile public protection: set NV0_ENABLE_TURNSTILE=true and real Turnstile keys.');
+}
 const commercialFailures = PLATFORM.requireCommercialControls();
 if (commercialFailures.length) {
 throw new Error(commercialFailures.join(' | '));
@@ -406,6 +415,9 @@ throw new Error('NV0_DATABASE_URL is required when NV0_PERSISTENCE_MODE enables 
 }
 if (BACKUP_REMOTE_REQUIRE_ENCRYPTION && !BACKUP_ENCRYPTION_SECRET) {
 throw new Error('NV0_BACKUP_ENCRYPTION_SECRET is required when NV0_BACKUP_REMOTE_REQUIRE_ENCRYPTION=true.');
+}
+if (PLATFORM.commercial && (!BACKUP_REMOTE_REQUIRE_ENCRYPTION || !BACKUP_ENCRYPTION_SECRET)) {
+throw new Error('Commercial launch requires encrypted remote backups: set NV0_BACKUP_REMOTE_REQUIRE_ENCRYPTION=true and NV0_BACKUP_ENCRYPTION_SECRET.');
 }
 if (PLATFORM.commercial) {
 if (PERSISTENCE_MODE !== 'postgres_primary') throw new Error('Commercial launch requires NV0_PERSISTENCE_MODE=postgres_primary.');
@@ -793,7 +805,7 @@ return parts.join('; ');
 }
 function publicCustomer(db, customer) {
 if (!customer) return null;
-return { id: customer.id, email: customer.email, createdAt: customer.createdAt || null, lastLoginAt: customer.lastLoginAt || null, privacyConsentAt: customer.privacyConsentAt || null, dataMinimizationVersion: customer.dataMinimizationVersion || null, marketingConsentAt: customer.marketingConsentAt || null, dataRetentionDays: DATA_RETENTION_DAYS };
+return { id: customer.id, email: customer.email, emailMasked: maskEmail(customer.email), createdAt: customer.createdAt || null, lastLoginAt: customer.lastLoginAt || null, privacyConsentAt: customer.privacyConsentAt || null, dataMinimizationVersion: customer.dataMinimizationVersion || PRIVACY_COMPLIANCE_GUARD_VERSION, marketingConsentAt: customer.marketingConsentAt || null, dataRetentionDays: DATA_RETENTION_DAYS };
 }
 function normalizeEmail(value) { return String(value || '').trim().toLowerCase(); }
 function maskEmail(value) {
@@ -1078,6 +1090,11 @@ const retained = db.auditLogs.filter(item => Date.parse(item.at || 0) >= retenti
 summary.removed.auditLogs = before - retained.length;
 if (!dryRun) db.auditLogs = retained;
 }
+if (!dryRun) {
+const privacyRetention = prunePrivacyRetention(db);
+summary.privacyRetention = privacyRetention;
+for (const [key, value] of Object.entries(privacyRetention.removed || {})) summary.removed[key] = (summary.removed[key] || 0) + value;
+}
 if (Array.isArray(db.customers)) {
 for (const customer of db.customers) {
 const disabledAt = Date.parse(customer.disabledAt || 0);
@@ -1199,7 +1216,7 @@ const rawToken = crypto.randomBytes(24).toString('base64url');
 const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');
 const expiresAt = new Date(Date.now() + 1000 * 60 * 30).toISOString();
 db.passwordResetTokens = db.passwordResetTokens.filter(item => item.customerId !== customer.id || item.usedAt);
-const record = { id: uid('reset'), customerId: customer.id, tokenHash, createdAt: nowIso(), expiresAt, usedAt: null, ip: clientIp(req) };
+const record = { id: uid('reset'), customerId: customer.id, tokenHash, createdAt: nowIso(), expiresAt, usedAt: null, ipHash: pseudonymizeIp(clientIp(req)) };
 db.passwordResetTokens.unshift(record);
 return { rawToken, record };
 }
@@ -1519,7 +1536,7 @@ return '<footer class="business-footer" aria-label="사업자 정보">'
 + '<div class="footer-col"><strong>서비스</strong><a href="/service">서비스 소개</a><a href="/solutions">분석 프로세스</a><a href="/plans">요금제</a></div>'
 + '<div class="footer-col"><strong>정보</strong><a href="/board">게시판</a><a href="/service">서비스·가이드</a><a href="/business-info">고객지원</a></div>'
 + '<div class="footer-col"><strong>회사</strong><a href="/business-info">회사 소개</a><a href="/privacy">개인정보처리방침</a><a href="/terms">이용약관</a><a href="/refund">환불 정책</a></div>'
-+ `<div class="footer-col"><strong>문의</strong><a href="mailto:ct@nv0.kr">ct@nv0.kr</a><span class="legal-disclaimer">${BUSINESS_PROFILE.tradeName} · 대표자 ${BUSINESS_PROFILE.representative} · 사업자등록번호 ${BUSINESS_PROFILE.registrationNumber}${mailOrderNumber ? ' · 통신판매업 신고번호 ' + mailOrderNumber : ''}</span><span class="legal-disclaimer">주소: ${BUSINESS_PROFILE.address}</span><span class="legal-disclaimer">업태·종목: ${types}</span><span class="legal-disclaimer">VERIDION은 공개 웹페이지 기반 구조 분석 서비스이며 법률 자문이나 성과 보장을 제공하지 않습니다.</span></div>`
++ `<div class="footer-col"><strong>문의</strong><a href="mailto:${BUSINESS_PROFILE.contactEmail}">${BUSINESS_PROFILE.contactEmail}</a><span class="legal-disclaimer">${BUSINESS_PROFILE.tradeName} · 대표자 ${BUSINESS_PROFILE.representative} · 사업자등록번호 ${BUSINESS_PROFILE.registrationNumber}${mailOrderNumber ? ' · 통신판매업 신고번호 ' + mailOrderNumber : ''}</span><span class="legal-disclaimer">주소: ${BUSINESS_PROFILE.address}</span><span class="legal-disclaimer">업태·종목: ${types}</span><span class="legal-disclaimer">VERIDION은 공개 웹페이지 기반 구조 분석 서비스이며 법률 자문이나 성과 보장을 제공하지 않습니다.</span></div>`
 + '</footer>';
 }
 
@@ -2338,11 +2355,12 @@ const key = raw.toLowerCase().replace(/[\s_-]+/g, '');
 const aliases = {
 free: 'Free', trial: 'Free', demo: 'Free',
 report: 'Report', basicreport: 'Report', detailedreport: 'Report', proreport: 'Report', pro: 'Report', basic: 'Report',
+fixpack: 'FixPack', fix: 'FixPack', copypack: 'FixPack', templatepack: 'FixPack', industryguide: 'FixPack',
+monitoring: 'Monitoring', monitor: 'Monitoring', auto: 'Monitoring', watch: 'Monitoring', subscription: 'Monitoring',
 expert: 'Expert', expertreport: 'Expert', premium: 'Expert', professional: 'Expert',
-fixpack: 'Expert', fix: 'Expert', copypack: 'Expert', templatepack: 'Expert', industryguide: 'Expert',
-auto: 'Expert', agency: 'Expert', subscription: 'Expert'
+agency: 'Agency', whitelabel: 'Agency', b2b: 'Agency'
 };
-return aliases[key] || (['Free','Report','Expert'].includes(raw) ? raw : fallback);
+return aliases[key] || (['Free','Report','FixPack','Monitoring','Expert','Agency'].includes(raw) ? raw : fallback);
 }
 function buildCommercialOfferCatalog() {
 return buildSharedCommercialOfferCatalog();
@@ -2636,8 +2654,8 @@ ruleVersion: RULES_VERSION,
 scanMode: 'zero_cost_full_auto_disclosure',
 scanScopeLabel: '무료 공개 페이지 최대 커버리지 무료진단',
 cached: false,
-resultStatus: payload?.resultStatus || 'completed_external_provider',
-resultLimitNotice: payload?.resultLimitNotice || '외부 진단 제공자 결과이며 법률 자문이나 성과 보장을 의미하지 않습니다.',
+resultStatus: 'completed_builtin_provider',
+resultLimitNotice: '내장 공개 페이지 진단 결과이며 법률 자문이나 성과 보장을 의미하지 않습니다.',
 riskScore,
 detectionScore: riskScore,
 riskLevel,
@@ -2804,7 +2822,7 @@ stage: 'checkout_ready',
 amount: planPrice(plan),
 paymentProvider: PAYMENT_PROVIDER,
 createdAt: nowIso(),
-consent: { privacy: !!payload.privacyConsent, terms: !!payload.termsConsent, refund: !!payload.refundConsent, delivery: !!payload.deliveryConsent, consentedAt: nowIso(), dataMinimizationVersion: RELEASE_PHASE, withdrawalNoticeVersion: 'digital-output-v1' }
+consent: { privacy: !!payload.privacyConsent, terms: !!payload.termsConsent, refund: !!payload.refundConsent, delivery: !!payload.deliveryConsent, consentedAt: nowIso(), dataMinimizationVersion: RELEASE_PHASE, privacyPolicyVersion: PRIVACY_POLICY_VERSION, termsVersion: TERMS_VERSION, refundPolicyVersion: REFUND_POLICY_VERSION, withdrawalNoticeVersion: 'digital-output-v1', evidenceVersion: LEGAL_EVIDENCE_VERSION, ipHash: payload.consentEvidence?.ipHash || '', userAgentHash: payload.consentEvidence?.userAgentHash || '' }
 };
 let paymentSession;
 if (PAYMENT_PROVIDER === 'external_http') {
@@ -2883,14 +2901,18 @@ if (!canTransition(paymentSession.providerState, 'captured', PAYMENT_SESSION_TRA
 paymentSession.providerState = 'captured';
 paymentSession.completedAt = nowIso();
 }
-if (order.siteId) {
+const offer = getCommercialOffer(order.plan);
+if (order.siteId && offer?.billingType === 'subscription') {
 const site = findSiteByAny(db, order.siteId);
 if (site) {
-const sub = ensureSubscriptionForSite(db, site, normalizePlanCode(order.plan, 'Auto'));
+const sub = ensureSubscriptionForSite(db, site, normalizePlanCode(order.plan, 'Expert'));
 sub.status = 'active';
 sub.plan = order.plan || sub.plan;
 sub.monthlyPrice = planPrice(sub.plan);
 sub.activatedAt = nowIso();
+sub.renewalMode = offer.renewalMode || 'manual_renewal_until_recurring_billing_enabled';
+sub.autoRecurringBilling = offer.autoRecurringBilling === true;
+sub.expiresAt = new Date(Date.now() + Number(offer.accessDurationDays || 30) * 24 * 60 * 60 * 1000).toISOString();
 }
 }
 ensureFulfillmentForOrder(db, order);
@@ -2951,16 +2973,21 @@ return { ok: false, reason: 'invalid_order_transition', order, paymentSession, p
 order.status = 'paid';
 order.stage = 'completed';
 order.paidAt = payment?.paidAt || nowIso();
-if (order.siteId) {
+const offer = getCommercialOffer(order.plan);
+if (order.siteId && offer?.billingType === 'subscription') {
 const site = findSiteByAny(db, order.siteId);
 if (site) {
-const sub = ensureSubscriptionForSite(db, site, normalizePlanCode(order.plan, 'Auto'));
+const sub = ensureSubscriptionForSite(db, site, normalizePlanCode(order.plan, 'Expert'));
 sub.status = 'active';
 sub.plan = order.plan || sub.plan;
 sub.monthlyPrice = planPrice(sub.plan);
 sub.activatedAt = order.paidAt;
+sub.renewalMode = offer.renewalMode || 'manual_renewal_until_recurring_billing_enabled';
+sub.autoRecurringBilling = offer.autoRecurringBilling === true;
+sub.expiresAt = new Date(Date.parse(order.paidAt || nowIso()) + Number(offer.accessDurationDays || 30) * 24 * 60 * 60 * 1000).toISOString();
 }
 }
+ensureFulfillmentForOrder(db, order);
 recordPaymentStateEvent(db, {
 order,
 paymentSession,
@@ -3337,7 +3364,10 @@ const gates = [
 { key: 'support_email', ok: isValidEmail(BUSINESS_PROFILE.contactEmail), label: '지원 이메일 유효성' },
 { key: 'operator_alert_email', ok: isValidEmail(OPERATOR_ALERT_EMAIL), label: '운영 알림 이메일 유효성' },
 { key: 'hardening_matrix_50', ok: buildHardeningMatrix(db).checks.length === 50, label: '50개 보안·운영·QA 하드닝 매트릭스 유지' },
-{ key: 'data_retention_cleanup_ready', ok: true, label: '만료 세션·토큰·탈퇴 계정 정리 로직 준비' }
+{ key: 'data_retention_cleanup_ready', ok: true, label: '만료 세션·토큰·탈퇴 계정 정리 로직 준비' },
+{ key: 'backup_encryption_required', ok: !PLATFORM.commercial || (BACKUP_REMOTE_REQUIRE_ENCRYPTION && !!BACKUP_ENCRYPTION_SECRET), label: '상용 백업 암호화 필수' },
+{ key: 'legal_evidence_versioned', ok: true, label: '동의·약관·환불·개인정보 버전 증적 기록' },
+{ key: 'phase313_governance', ok: PHASE313_GOVERNANCE_VERSION.includes('phase313'), label: 'phase313 거버넌스 게이트 적용' }
 ];
 return { phase: RELEASE_PHASE, target: PLATFORM.target, commercial: PLATFORM.commercial, deploymentStage: DEPLOYMENT_STAGE, commercialLaunchReady: COMMERCIAL_LAUNCH_READY, prelaunchMode: PRELAUNCH_MODE, paymentProvider: PAYMENT_PROVIDER, persistenceMode: PERSISTENCE_MODE, storageMode: STORAGE_MODE, secureRecordStore: persistence.secureRecordStore || null, dataRetentionDays: DATA_RETENTION_DAYS, refundRequestWindowDays: REFUND_REQUEST_WINDOW_DAYS, missingEnv, placeholderEnv, counts, gates, ready: gates.every(g => g.ok), checkedAt: nowIso() };
 }
@@ -3414,10 +3444,10 @@ const entry = {
 id: uid('audit'),
 at: nowIso(),
 event,
-ip: clientIp(req),
+ipHash: pseudonymizeIp(clientIp(req)),
 method: req.method,
 path: req._nv0RouteState?.pathname || requestUrlFrom(req).pathname,
-meta: sanitizeAuditPayload(maskSensitive(meta))
+meta: sanitizePrivacyPayload(sanitizeAuditPayload(maskSensitive(meta)))
 };
 db.auditLogs.unshift(entry);
 db.auditLogs = db.auditLogs.slice(0, AUDIT_LOG_RETENTION_COUNT);
@@ -3436,7 +3466,7 @@ paymentId: event.paymentId || null,
 providerStatus: event.providerStatus || null,
 orderStatus: event.orderStatus || null,
 source: event.source || 'system',
-payload: sanitizeAuditPayload(event.payload || {})
+payload: sanitizePrivacyPayload(sanitizeAuditPayload(event.payload || {}))
 };
 const existingIndex = db.paymentEvents.findIndex(item => item.id === normalized.id);
 if (existingIndex >= 0) db.paymentEvents.splice(existingIndex, 1);
@@ -3459,7 +3489,7 @@ status: record.status || 'received',
 rawSha256: record.rawSha256 || null,
 orderId: record.orderId || null,
 reason: record.reason || null,
-payload: sanitizeAuditPayload(record.payload || {})
+payload: sanitizePrivacyPayload(sanitizeAuditPayload(record.payload || {}))
 };
 db.webhookInbox.unshift(normalized);
 db.webhookInbox = db.webhookInbox.slice(0, 1000);
@@ -3933,6 +3963,7 @@ backupSecurityConfigSummary,
 bodyBuffer,
 bodyJson,
 bodyText,
+baseHeaders,
 buildAssetPdfBuffer,
 buildAdminOperatingProfile,
 buildDiagnosisAccuracyProfile,
@@ -3956,6 +3987,7 @@ buildProductIntelligence,
 buildProductionLaunchChecklist,
 buildPublicDiagnosisPackage,
 buildReleaseReadiness,
+buildPhase313GovernanceSnapshot,
 buildRobotsTxt,
 buildRuleCatalog,
 runProductAgentPackageAudit,
@@ -4044,6 +4076,9 @@ persistence,
 processEmailOutbox,
 pruneBackupSnapshots,
 publicCustomer,
+pseudonymizeIp,
+privacyComplianceSummary,
+privacyHash,
 putObjectToS3Compatible,
 rateLimitStore,
 readDb,
@@ -4091,6 +4126,7 @@ if (!PLATFORM.commercial || STORAGE_MODE === 'local_fs') await fs.access(UPLOADS
 const redisSessionReady = READYZ_REDIS_STRICT ? await sessionStore.ping() : Boolean(sessionStore.redisEnabled);
 const redisRateLimitReady = READYZ_REDIS_STRICT ? await rateLimitStore.ping() : Boolean(rateLimitStore.redisEnabled);
 const redisLockReady = READYZ_REDIS_STRICT ? await distributedLock.ping() : Boolean(distributedLock.redisEnabled);
+const privacy = privacyComplianceSummary(process.env);
 const probePath = path.join(REPORTS_DIR, `.readyz-${process.pid}.tmp`);
 await fs.writeFile(probePath, JSON.stringify({ checkedAt: nowIso() }));
 await fs.unlink(probePath);
@@ -4099,6 +4135,7 @@ return {
   ok: true,
   ready: true,
   runtimeWritable: true,
+privacy,
   platformTarget: PLATFORM.target,
   deploymentStage: DEPLOYMENT_STAGE,
   commercialLaunchReady: COMMERCIAL_LAUNCH_READY,
@@ -4226,7 +4263,7 @@ method: req.method,
 path: pathname,
 statusCode: res.statusCode,
 elapsedMs,
-ip: clientIp(req)
+ipHash: pseudonymizeIp(clientIp(req))
 }));
 }
 }

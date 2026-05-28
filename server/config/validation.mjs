@@ -102,13 +102,20 @@ export function validateRuntimeConfig(input = {}) {
     requireRealValue(env, 'NV0_REDIS_URL');
     if (!['s3', 's3_compatible', 'object_storage'].includes(storageMode)) throw new Error('Commercial deployments require S3-compatible object storage.');
     for (const key of ['NV0_S3_ENDPOINT', 'NV0_S3_BUCKET', 'NV0_S3_ACCESS_KEY_ID', 'NV0_S3_SECRET_ACCESS_KEY']) requireRealValue(env, key);
-    for (const key of ['NV0_PUBLIC_BASE_URL', 'NV0_SUPPORT_EMAIL', 'NV0_HOSTING_PROVIDER', 'NV0_CUSTOMER_SERVICE_PHONE', 'NV0_PRIVACY_OFFICER_EMAIL', 'NV0_SMTP_URL', 'NV0_ADMIN_IP_ALLOWLIST']) requireRealValue(env, key);
+    for (const key of ['NV0_PUBLIC_BASE_URL', 'NV0_SUPPORT_EMAIL', 'NV0_HOSTING_PROVIDER', 'NV0_CUSTOMER_SERVICE_PHONE', 'NV0_PRIVACY_OFFICER_EMAIL', 'NV0_SMTP_URL', 'NV0_ADMIN_IP_ALLOWLIST', 'NV0_SECURE_RECORDS_KEY', 'NV0_PRIVACY_HASH_KEY', 'NV0_BUSINESS_TRADE_NAME', 'NV0_BUSINESS_REPRESENTATIVE', 'NV0_BUSINESS_REGISTRATION_NUMBER', 'NV0_BUSINESS_ADDRESS']) requireRealValue(env, key);
     assertHttpsUrl('NV0_PUBLIC_BASE_URL', env.NV0_PUBLIC_BASE_URL);
     assertEmailConfig('NV0_SUPPORT_EMAIL', env.NV0_SUPPORT_EMAIL);
     assertEmailConfig('NV0_PRIVACY_OFFICER_EMAIL', env.NV0_PRIVACY_OFFICER_EMAIL);
     if (commercialLaunchReady) requireRealValue(env, 'NV0_MAIL_ORDER_REGISTRATION_NUMBER');
     if (prelaunchMode && paymentProvider === 'portone_v2' && !allowPrelaunchOnlinePayment) throw new Error('Prelaunch deployments must not enable PortOne before NV0_COMMERCIAL_LAUNCH_READY=true or NV0_ALLOW_PRELAUNCH_ONLINE_PAYMENT=true.');
     if (commercialLaunchReady && paymentProvider !== 'portone_v2') throw new Error('Commercial launch requires NV0_PAYMENT_PROVIDER=portone_v2.');
+    if (commercialLaunchReady && String(env.NV0_ENABLE_TURNSTILE || '').trim().toLowerCase() !== 'true') throw new Error('Commercial launch requires NV0_ENABLE_TURNSTILE=true.');
+    if (commercialLaunchReady) {
+      requireRealValue(env, 'NV0_TURNSTILE_SECRET');
+      requireRealValue(env, 'NV0_TURNSTILE_SITE_KEY');
+    }
+    if (String(env.NV0_BACKUP_REMOTE_REQUIRE_ENCRYPTION || '').trim().toLowerCase() !== 'true') throw new Error('Commercial deployments require NV0_BACKUP_REMOTE_REQUIRE_ENCRYPTION=true.');
+    requireRealValue(env, 'NV0_BACKUP_ENCRYPTION_SECRET');
     if (/\b0\.0\.0\.0\b|\*|0\.0\.0\.0\/0/.test(String(env.NV0_ADMIN_IP_ALLOWLIST || ''))) {
       throw new Error('NV0_ADMIN_IP_ALLOWLIST must not contain wildcard IP ranges in commercial mode.');
     }

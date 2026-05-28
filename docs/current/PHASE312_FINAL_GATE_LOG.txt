@@ -1,0 +1,430 @@
+
+> veridion-public-risk-diagnostic@1.0.0-commercial-phase312-privacy-compliance-hardening phase312:final
+> npm run check:syntax && npm test && npm run test:e2e && npm run check:pages && npm run test:routes && npm run check:links && npm run verify:security && npm run validate:deploy && npm run check:release-secret-hygiene && npm run validate:phase312 && npm run clean:runtime && node scripts/check-runtime-clean.mjs
+
+
+> veridion-public-risk-diagnostic@1.0.0-commercial-phase312-privacy-compliance-hardening check:syntax
+> node scripts/check-source-syntax.mjs
+
+{
+  "ok": true,
+  "checkedCount": 153,
+  "failures": []
+}
+
+> veridion-public-risk-diagnostic@1.0.0-commercial-phase312-privacy-compliance-hardening test
+> node scripts/test-all.mjs
+
+{
+  "ok": true,
+  "passed": 191,
+  "failed": 0,
+  "report": "docs/current/PHASE312_PRIVACY_TEST_SUMMARY.json"
+}
+
+> veridion-public-risk-diagnostic@1.0.0-commercial-phase312-privacy-compliance-hardening test:e2e
+> node tests/e2e.mjs
+
+E2E passed: phase312 structural/privacy/commercial flow
+
+> veridion-public-risk-diagnostic@1.0.0-commercial-phase312-privacy-compliance-hardening check:pages
+> node scripts/check-page-integrity.mjs
+
+{
+  "ok": true,
+  "mappedRouteCount": 44,
+  "checked": [
+    {
+      "route": "/",
+      "area": "public",
+      "slug": "home",
+      "ok": true
+    },
+    {
+      "route": "/guides",
+      "area": "public",
+      "slug": "guides",
+      "ok": true
+    },
+    {
+      "route": "/resources",
+      "area": "public",
+      "slug": "guides",
+      "ok": true
+    },
+    {
+      "route": "/board",
+      "area": "public",
+      "slug": "board",
+      "ok": true
+    },
+    {
+      "route": "/board/post",
+      "area": "public",
+      "slug": "board",
+      "ok": true
+    },
+    {
+      "route": "/cases",
+      "area": "public",
+      "slug": "cases",
+      "ok": true
+    },
+    {
+      "route": "/documents",
+      "area": "public",
+      "slug": "documents",
+      "ok": true
+    },
+    {
+      "route": "/policy-documents",
+      "area": "public",
+      "slug": "documents",
+      "ok": true
+    },
+    {
+      "route": "/docs/veridion",
+      "area": "public",
+      "slug": "documents",
+      "ok": true
+    },
+    {
+      "route": "/solutions",
+      "area": "public",
+      "slug": "solutions",
+      "ok": true
+    },
+    {
+      "route": "/service",
+      "area": "public",
+      "slug": "service",
+      "ok": true
+    },
+    {
+      "route": "/products",
+      "area": "public",
+      "slug": "plans",
+      "ok": true
+    },
+    {
+      "route": "/demo",
+      "area": "public",
+      "slug": "demo",
+      "ok": true
+    },
+    {
+      "route": "/products/veridion/demo",
+      "area": "public",
+      "slug": "veridion-demo",
+      "ok": true
+    },
+    {
+      "route": "/plans",
+      "area": "public",
+      "slug": "plans",
+      "ok": true
+    },
+    {
+      "route": "/checkout",
+      "area": "public",
+      "slug": "checkout",
+      "ok": true
+    },
+    {
+      "route": "/portal",
+      "area": "public",
+      "slug": "portal",
+      "ok": true
+    },
+    {
+      "route": "/auth",
+      "area": "public",
+      "slug": "auth",
+      "ok": true
+    },
+    {
+      "route": "/terms",
+      "area": "public",
+      "slug": "terms",
+      "ok": true
+    },
+    {
+      "route": "/privacy",
+      "area": "public",
+      "slug": "privacy",
+      "ok": true
+    },
+    {
+      "route": "/refund",
+      "area": "public",
+      "slug": "refund",
+      "ok": true
+    },
+    {
+      "route": "/business-info",
+      "area": "public",
+      "slug": "business-info",
+      "ok": true
+    },
+    {
+      "route": "/risk_result.html",
+      "area": "public",
+      "slug": "demo",
+      "ok": true
+    },
+    {
+      "route": "/demo_risk_result.html",
+      "area": "public",
+      "slug": "veridion-demo",
+      "ok": true
+    },
+    {
+      "route": "/service_detail.html",
+      "area": "public",
+      "slug": "service",
+      "ok": true
+    },
+    {
+      "route": "/pricing.html",
+      "area": "public",
+      "slug": "plans",
+      "ok": true
+    },
+    {
+      "route": "/insight_board.html",
+      "area": "public",
+      "slug": "board",
+      "ok": true
+    },
+    {
+      "route": "/mypage.html",
+      "area": "public",
+      "slug": "portal",
+      "ok": true
+    },
+    {
+      "route": "/auth_management.html",
+      "area": "public",
+      "slug": "auth",
+      "ok": true
+    },
+    {
+      "route": "/risk-result",
+      "area": "public",
+      "slug": "demo",
+      "ok": true
+    },
+    {
+      "route": "/insight-board",
+      "area": "public",
+      "slug": "board",
+      "ok": true
+    },
+    {
+      "route": "/my-page",
+      "area": "public",
+      "slug": "portal",
+      "ok": true
+    },
+    {
+      "route": "/admin",
+      "area": "admin",
+      "slug": "gate",
+      "ok": true
+    },
+    {
+      "route": "/admin/console",
+      "area": "admin",
+      "slug": "console",
+      "ok": true
+    },
+    {
+      "route": "/admin/orders",
+      "area": "admin",
+      "slug": "orders",
+      "ok": true
+    },
+    {
+      "route": "/admin/publications",
+      "area": "admin",
+      "slug": "publications",
+      "ok": true
+    },
+    {
+      "route": "/admin/library",
+      "area": "admin",
+      "slug": "library",
+      "ok": true
+    },
+    {
+      "route": "/admin/settings",
+      "area": "admin",
+      "slug": "settings",
+      "ok": true
+    },
+    {
+      "route": "/admin/diagnostics",
+      "area": "admin",
+      "slug": "diagnostics",
+      "ok": true
+    },
+    {
+      "route": "/admin/console/orders",
+      "area": "admin",
+      "slug": "orders",
+      "ok": true
+    },
+    {
+      "route": "/admin/console/publications",
+      "area": "admin",
+      "slug": "publications",
+      "ok": true
+    },
+    {
+      "route": "/admin/console/library",
+      "area": "admin",
+      "slug": "library",
+      "ok": true
+    },
+    {
+      "route": "/admin/console/settings",
+      "area": "admin",
+      "slug": "settings",
+      "ok": true
+    },
+    {
+      "route": "/admin/console/diagnostics",
+      "area": "admin",
+      "slug": "diagnostics",
+      "ok": true
+    }
+  ],
+  "errors": []
+}
+
+> veridion-public-risk-diagnostic@1.0.0-commercial-phase312-privacy-compliance-hardening test:routes
+> node tests/routes-smoke.mjs
+
+{
+  "ok": true,
+  "checked": 24
+}
+
+> veridion-public-risk-diagnostic@1.0.0-commercial-phase312-privacy-compliance-hardening check:links
+> node scripts/check-links.mjs --summary
+
+{
+  "ok": true,
+  "checkedCount": 336,
+  "errorCount": 0,
+  "errors": []
+}
+
+> veridion-public-risk-diagnostic@1.0.0-commercial-phase312-privacy-compliance-hardening verify:security
+> node scripts/verify-security.mjs
+
+{
+  "ok": true,
+  "baseUrl": null,
+  "checks": [
+    {
+      "name": "security:csp-no-unsafe-inline",
+      "ok": true,
+      "note": "server source does not allow unsafe-inline"
+    },
+    {
+      "name": "security:trusted-types-report-only",
+      "ok": true,
+      "note": "Trusted Types kept report-only to avoid production render breakage"
+    },
+    {
+      "name": "security:nosniff",
+      "ok": true
+    },
+    {
+      "name": "security:frame-deny",
+      "ok": true
+    },
+    {
+      "name": "security:admin-cookie-httponly",
+      "ok": true
+    },
+    {
+      "name": "security:csrf-header-required",
+      "ok": true
+    },
+    {
+      "name": "security:admin-public-hidden",
+      "ok": true
+    },
+    {
+      "name": "security:readyz-runtime-writable",
+      "ok": true
+    },
+    {
+      "name": "security:env-placeholder-guard",
+      "ok": true
+    },
+    {
+      "name": "security:turnstile-gate-supported",
+      "ok": true
+    },
+    {
+      "name": "client:no-inline-event-handlers",
+      "ok": true
+    },
+    {
+      "name": "client:no-debug-console-log",
+      "ok": true
+    },
+    {
+      "name": "client:html-escape-helper",
+      "ok": true
+    }
+  ]
+}
+
+> veridion-public-risk-diagnostic@1.0.0-commercial-phase312-privacy-compliance-hardening validate:deploy
+> node scripts/validate-deploy-bundle.mjs
+
+Deploy bundle validation passed
+
+> veridion-public-risk-diagnostic@1.0.0-commercial-phase312-privacy-compliance-hardening check:release-secret-hygiene
+> node scripts/check-release-secret-hygiene.mjs
+
+{
+  "ok": true,
+  "checkedAt": "2026-05-27T04:47:26.327Z",
+  "ruleVersion": "phase310-release-secret-hygiene-v1",
+  "findings": []
+}
+
+> veridion-public-risk-diagnostic@1.0.0-commercial-phase312-privacy-compliance-hardening validate:phase312
+> node scripts/validate-phase312-privacy-compliance.mjs
+
+{
+  "ok": true,
+  "phase": "phase312-privacy-compliance-hardening",
+  "total": 23,
+  "report": "docs/current/PHASE312_PRIVACY_COMPLIANCE_AUDIT.json"
+}
+
+> veridion-public-risk-diagnostic@1.0.0-commercial-phase312-privacy-compliance-hardening clean:runtime
+> node scripts/clean-release-runtime.mjs
+
+{
+  "ok": true,
+  "cleaned": [
+    "runtime/uploads",
+    "runtime/backups",
+    "runtime/reports",
+    "runtime/stress-smoke",
+    "runtime/data/secure-records"
+  ],
+  "resetDb": true
+}
+{
+  "ok": true,
+  "checked": "runtime-clean-release",
+  "mode": "runtime-directory-present-clean"
+}

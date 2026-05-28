@@ -5,26 +5,39 @@ const root = process.cwd();
 const runtimeDir = path.join(root, 'runtime');
 const dataDir = path.join(runtimeDir, 'data');
 const seedPath = path.join(dataDir, 'db.seed.json');
-const dbPath = path.join(dataDir, 'db.json');
-const sessionsPath = path.join(dataDir, 'sessions.json');
-const secureRecordsDir = path.join(dataDir, 'secure-records');
-const secureRecordsDevPath = path.join(secureRecordsDir, 'secure-records.dev.json');
 
 fs.mkdirSync(dataDir, { recursive: true });
-if (fs.existsSync(seedPath)) {
-  const seed = fs.readFileSync(seedPath, 'utf8');
-  fs.writeFileSync(dbPath, seed.endsWith('\n') ? seed : `${seed}\n`);
-} else if (!fs.existsSync(dbPath)) {
-  fs.writeFileSync(dbPath, '{}\n');
+if (!fs.existsSync(seedPath)) fs.writeFileSync(seedPath, '{}\n', { mode: 0o600 });
+
+const removed = [];
+function removeRel(rel) {
+  const abs = path.join(root, rel);
+  if (fs.existsSync(abs)) removed.push(rel);
+  fs.rmSync(abs, { recursive: true, force: true });
 }
-fs.writeFileSync(sessionsPath, '[]\n');
-fs.rmSync(secureRecordsDir, { recursive: true, force: true });
-fs.mkdirSync(secureRecordsDir, { recursive: true, mode: 0o700 });
-fs.writeFileSync(secureRecordsDevPath, JSON.stringify({ collections: {}, metadata: { secureCollections: [], encrypted: false, cleanedAt: new Date().toISOString() }, warning: 'development mode only: set NV0_SECURE_RECORDS_KEY in production' }, null, 2) + '\n', { mode: 0o600 });
-for (const rel of ['runtime/uploads', 'runtime/backups', 'runtime/reports', 'runtime/stress-smoke']) {
-  fs.rmSync(path.join(root, rel), { recursive: true, force: true });
+
+for (const rel of [
+  'runtime/data/db.json',
+  'runtime/data/sessions.json',
+  'runtime/data/secure-records',
+  'runtime/uploads',
+  'runtime/backups',
+  'runtime/reports',
+  'runtime/stress-smoke'
+]) removeRel(rel);
+
+for (const entry of fs.readdirSync(root, { withFileTypes: true })) {
+  if (entry.isDirectory() && /^runtime-test-/.test(entry.name)) removeRel(entry.name);
 }
+
 for (const rel of ['runtime/uploads', 'runtime/backups', 'runtime/reports']) {
   fs.mkdirSync(path.join(root, rel), { recursive: true });
 }
-console.log(JSON.stringify({ ok: true, cleaned: ['runtime/uploads', 'runtime/backups', 'runtime/reports', 'runtime/stress-smoke', 'runtime/data/secure-records'], resetDb: fs.existsSync(seedPath) }, null, 2));
+
+console.log(JSON.stringify({
+  ok: true,
+  phase: 'phase322-clean-release-runtime-state-excluded',
+  retained: ['runtime/data/db.seed.json'],
+  removedActiveState: removed,
+  note: 'Release packages must not include local runtime state or runtime-test-* directories. Server recreates local runtime files on first non-commercial JSON-mode start; commercial mode must use PostgreSQL/Redis/object storage.'
+}, null, 2));

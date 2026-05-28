@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import http from 'node:http';
 import { spawn } from 'node:child_process';
 import path from 'node:path';
@@ -11,6 +12,9 @@ const appPort = 3214;
 const scanPort = 4310;
 const payPort = 4311;
 const wait = ms => new Promise(r => setTimeout(r, ms));
+
+const testRuntimeDir = path.join(root, 'runtime-test-provider-adapters');
+fs.rmSync(testRuntimeDir, { recursive: true, force: true });
 
 function startJsonServer(port, handler) {
   const server = http.createServer(async (req, res) => {
@@ -61,6 +65,7 @@ const child = spawn(process.execPath, ['server/index.mjs'], {
   cwd: root,
   env: {
     ...process.env,
+    NV0_RUNTIME_DIR: testRuntimeDir,
     PORT: String(appPort),
     NV0_ADMIN_KEY: 'ext-key',
     NV0_TRUST_PROXY_HEADERS: 'true',
@@ -71,6 +76,18 @@ const child = spawn(process.execPath, ['server/index.mjs'], {
   },
   stdio: 'ignore'
 });
+
+
+async function stopChild(child) {
+  if (!child || child.exitCode !== null) return;
+  await new Promise(resolve => {
+    const timer = setTimeout(() => {
+      try { child.kill('SIGKILL'); } catch {}
+    }, 500);
+    child.once('exit', () => { clearTimeout(timer); resolve(); });
+    try { child.kill('SIGTERM'); } catch { resolve(); }
+  });
+}
 
 async function waitUntilReady() {
   for (let i = 0; i < 40; i += 1) {
@@ -104,9 +121,7 @@ try {
 
   console.log('provider adapters ok');
 } finally {
-  child.kill('SIGTERM');
-  setTimeout(() => child.kill('SIGKILL'), 250).unref?.();
-  if (typeof child.unref === 'function') child.unref();
+  await stopChild(child);
   await new Promise(resolve => scanServer.close(resolve));
   await new Promise(resolve => paymentServer.close(resolve));
 }

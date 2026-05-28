@@ -118,6 +118,7 @@ export function createAccountRouteHandler(ctx) {
   path,
   persistence,
   publicCustomer,
+  pseudonymizeIp,
   sanitizeOrderForPublic,
   rateLimitStore,
   readDb,
@@ -179,7 +180,7 @@ const customer = { id: uid('cus'), email, status: 'active', passwordHash: await 
 const sid = uid('csess') + crypto.randomBytes(16).toString('hex');
 const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 14).toISOString();
 db.customers.unshift(customer);
-db.customerSessions.unshift({ sid, customerId: customer.id, createdAt: nowIso(), lastSeenAt: nowIso(), expiresAt, ip: clientIp(req) });
+db.customerSessions.unshift({ sid, customerId: customer.id, createdAt: nowIso(), lastSeenAt: nowIso(), expiresAt, ipHash: pseudonymizeIp(clientIp(req)) });
 for (const order of db.orders || []) {
 if (!order.customerId && normalizeEmail(order.email) === email) { order.customerId = customer.id; generateOrderAccessToken(order); }
 }
@@ -206,7 +207,7 @@ customer.lastLoginAt = nowIso();
 customer.updatedAt = nowIso();
 const sid = uid('csess') + crypto.randomBytes(16).toString('hex');
 const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 14).toISOString();
-db.customerSessions.unshift({ sid, customerId: customer.id, createdAt: nowIso(), lastSeenAt: nowIso(), expiresAt, ip: clientIp(req) });
+db.customerSessions.unshift({ sid, customerId: customer.id, createdAt: nowIso(), lastSeenAt: nowIso(), expiresAt, ipHash: pseudonymizeIp(clientIp(req)) });
 db.customerSessions = db.customerSessions.slice(0, 2000);
 appendAudit(db, req, 'public.customer.login_succeeded', { customerId: customer.id, email });
 await writeDb(db);

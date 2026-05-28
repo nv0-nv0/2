@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import fs from "node:fs";
 import http from "node:http";
 import { spawn } from "node:child_process";
 import path from "node:path";
@@ -13,6 +14,9 @@ const payPort = 4313;
 // Test fixture only. Build the prefix at runtime so repository secret scanners do not flag it as an exposed Stripe secret.
 const webhookSecret = 'wh' + 'sec_' + 'dGVzdF93ZWJob29rX3NlY3JldF8xMjM0NTY=';
 const wait = ms => new Promise(r => setTimeout(r, ms));
+
+const testRuntimeDir = path.join(root, 'runtime-test-portone-events');
+fs.rmSync(testRuntimeDir, { recursive: true, force: true });
 let paid = true;
 const server = http.createServer(async (req, res) => {
   const chunks = [];
@@ -24,18 +28,30 @@ const server = http.createServer(async (req, res) => {
   if (req.method === 'GET' && /\/payments\/[^/]+$/.test(req.url || '')) {
     const paymentId = decodeURIComponent(String(req.url).split('/').pop());
     res.writeHead(200, { 'content-type': 'application/json' });
-    return res.end(JSON.stringify({ id: paymentId, status: paid ? 'PAID' : 'READY', amount: { total: 39000 }, customData: { orderId: paymentId, plan: 'Report' }, paidAt: new Date().toISOString() }));
+    return res.end(JSON.stringify({ id: paymentId, status: paid ? 'PAID' : 'READY', amount: { total: 49000 }, customData: { orderId: paymentId, plan: 'Report' }, paidAt: new Date().toISOString() }));
   }
   res.writeHead(404, { 'content-type': 'application/json' });
   res.end(JSON.stringify({ message: 'not found' }));
 });
 await new Promise(resolve => server.listen(payPort, '127.0.0.1', resolve));
-const child = spawn(process.execPath, ['server/index.mjs'], { cwd: root, env: { ...process.env, PORT: String(appPort), NV0_ADMIN_KEY:'test-key', NODE_ENV:'production', NV0_PAYMENT_PROVIDER:'portone_v2', NV0_PORTONE_API_BASE_URL:`http://127.0.0.1:${payPort}`, NV0_PORTONE_API_SECRET:'secret', NV0_PORTONE_STORE_ID:'store-1', NV0_PORTONE_CHANNEL_KEY:'channel-1', NV0_PUBLIC_BASE_URL:`http://127.0.0.1:${appPort}`, NV0_PORTONE_WEBHOOK_SECRET: webhookSecret }, stdio:'ignore' });
+const child = spawn(process.execPath, ['server/index.mjs'], { cwd: root, env: { ...process.env, PORT: String(appPort), NV0_ADMIN_KEY:'test-key', NODE_ENV:'production', NV0_RUNTIME_DIR: testRuntimeDir, NV0_PAYMENT_PROVIDER:'portone_v2', NV0_PORTONE_API_BASE_URL:`http://127.0.0.1:${payPort}`, NV0_PORTONE_API_SECRET:'secret', NV0_PORTONE_STORE_ID:'store-1', NV0_PORTONE_CHANNEL_KEY:'channel-1', NV0_PUBLIC_BASE_URL:`http://127.0.0.1:${appPort}`, NV0_PORTONE_WEBHOOK_SECRET: webhookSecret }, stdio:'ignore' });
+
+async function stopChild(child) {
+  if (!child || child.exitCode !== null) return;
+  await new Promise(resolve => {
+    const timer = setTimeout(() => {
+      try { child.kill('SIGKILL'); } catch {}
+    }, 500);
+    child.once('exit', () => { clearTimeout(timer); resolve(); });
+    try { child.kill('SIGTERM'); } catch { resolve(); }
+  });
+}
+
 async function waitUntilReady() { for (let i=0;i<50;i+=1) { try { const res = await fetch(`http://127.0.0.1:${appPort}/readyz`); if (res.ok) return; } catch {} await wait(200);} throw new Error('server not ready'); }
 await waitUntilReady();
 async function j(url, options={}) { const res=await fetch(`http://127.0.0.1:${appPort}${url}`, options); const data=await res.json(); return {res,data}; }
 try {
-  const created = await j('/api/public/checkout-session', { method:'POST', headers:{ 'content-type':'application/json' }, body: JSON.stringify({ plan:'Report', buyerEmail:'event@example.com', privacyConsent:true, termsConsent:true, refundConsent:true, deliveryConsent:true }) });
+  const created = await j('/api/public/checkout-session', { method:'POST', headers:{ 'content-type':'application/json' }, body: JSON.stringify({ plan:'Report', buyerEmail:'event@example.com', domain:'https://paid-test.example', privacyConsent:true, termsConsent:true, refundConsent:true, deliveryConsent:true }) });
   assert.equal(created.res.status, 200);
   const orderId = created.data.order.id;
   const completed = await j('/api/public/payment/complete', { method:'POST', headers:{ 'content-type':'application/json' }, body: JSON.stringify({ orderId, paymentId: orderId }) });

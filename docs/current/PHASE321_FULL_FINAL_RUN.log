@@ -1,0 +1,54 @@
+
+> veridion-public-risk-diagnostic@1.0.0-commercial-phase321-trustops-final-completion phase321:final
+> npm run check:syntax && npm test && npm run test:e2e && npm run test:commerce && npm run test:paid-redteam && npm run test:trustops && npm run test:autopilot && npm run test:launch-control && npm run test:production-sentinel && npm run test:final-handoff && npm run check:pages && npm run test:routes && npm run check:links && npm run verify:security && npm run validate:deploy && npm run check:release-secret-hygiene && npm run check:accessibility && npm run check:performance-budget && npm run validate:phase315 && npm run validate:phase316 && npm run validate:phase317 && npm run validate:phase318 && npm run validate:phase319 && npm run validate:phase320 && npm run validate:phase321 && npm run clean:runtime && node scripts/check-runtime-clean.mjs
+
+
+> veridion-public-risk-diagnostic@1.0.0-commercial-phase321-trustops-final-completion check:syntax
+> node scripts/check-source-syntax.mjs
+
+{
+  "ok": true,
+  "checkedCount": 178,
+  "failures": []
+}
+
+> veridion-public-risk-diagnostic@1.0.0-commercial-phase321-trustops-final-completion test
+> node scripts/test-all.mjs
+
+{
+  "ok": true,
+  "passed": 194,
+  "failed": 0,
+  "report": "docs/current/PHASE313_TEST_SUMMARY.json"
+}
+
+> veridion-public-risk-diagnostic@1.0.0-commercial-phase321-trustops-final-completion test:e2e
+> node tests/e2e.mjs
+
+E2E passed: phase320 TrustOps production sentinel flow
+
+> veridion-public-risk-diagnostic@1.0.0-commercial-phase321-trustops-final-completion test:commerce
+> node tests/portone-provider.mjs && node tests/provider-adapters.mjs && node tests/portone-events.mjs
+
+portone provider ok
+provider adapters ok
+portone events ok
+
+> veridion-public-risk-diagnostic@1.0.0-commercial-phase321-trustops-final-completion test:paid-redteam
+> node tests/paid-service-redteam.mjs
+
+phase315 paid redteam integration ok
+
+> veridion-public-risk-diagnostic@1.0.0-commercial-phase321-trustops-final-completion test:trustops
+> node tests/trustops-growth.mjs
+
+phase317 trustops growth integration ok
+
+> veridion-public-risk-diagnostic@1.0.0-commercial-phase321-trustops-final-completion test:autopilot
+> node tests/trustops-autopilot.mjs
+
+phase318 trustops autopilot integration ok
+
+> veridion-public-risk-diagnostic@1.0.0-commercial-phase321-trustops-final-completion test:launch-control
+> node tests/trustops-launch-control.mjs
+

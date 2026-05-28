@@ -1,0 +1,79 @@
+{
+  "ok": true,
+  "phase": "phase322-final-test-closeout",
+  "checkedAt": "2026-05-27T23:39:18.032Z",
+  "passed": 13,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "package version phase322 or superseding phase323",
+      "ok": true
+    },
+    {
+      "name": "delivery and release gates point to phase322",
+      "ok": true
+    },
+    {
+      "name": "phase322 scripts exist",
+      "ok": true
+    },
+    {
+      "name": "phase322 final includes previous critical gates",
+      "ok": true
+    },
+    {
+      "name": "e2e accepts phase322 and reports current closeout",
+      "ok": true
+    },
+    {
+      "name": "runtime-test directories absent before packaging",
+      "ok": true
+    },
+    {
+      "name": "clean script removes runtime-test directories",
+      "ok": true
+    },
+    {
+      "name": "runtime clean check fails on runtime-test directories",
+      "ok": true
+    },
+    {
+      "name": "phase321 handoff remains valid",
+      "ok": true
+    },
+    {
+      "name": "engine audit remains valid",
+      "ok": true
+    },
+    {
+      "name": "final handoff data remains operational",
+      "ok": true
+    },
+    {
+      "name": "engine assignment remains expanded",
+      "ok": true
+    },
+    {
+      "name": "phase322 docs exist",
+      "ok": true
+    }
+  ],
+  "runtimeTestDirs": [],
+  "phase321Audit": {
+    "ok": true,
+    "score": 100,
+    "failed": []
+  },
+  "engineAudit": {
+    "ok": true,
+    "score": 100,
+    "engineCount": 50,
+    "agentCount": 108,
+    "eventPolicyCount": 19
+  },
+  "handoff": {
+    "decision": "go",
+    "acceptanceScore": 100,
+    "backlogCount": 280
+  }
+}

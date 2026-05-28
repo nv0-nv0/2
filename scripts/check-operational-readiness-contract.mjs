@@ -1,0 +1,52 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const read = rel => fs.readFileSync(path.join(root, rel), 'utf8');
+const exists = rel => fs.existsSync(path.join(root, rel));
+const failures = [];
+const packageJson = JSON.parse(read('package.json'));
+const envTemplates = ['deploy/env.production.template','deploy/env.production.nv0.kr.example','.env.example'].filter(exists).map(file => [file, read(file)]);
+const combinedEnv = envTemplates.map(([, text]) => text).join('\n');
+const requiredEnv = [
+  'NV0_PUBLIC_BASE_URL',
+  'NV0_PAYMENT_PROVIDER',
+  'NV0_SECURE_RECORDS_KEY',
+  'NV0_PRIVACY_HASH_KEY',
+  'NV0_PRIVACY_OFFICER_EMAIL',
+  'NV0_BUSINESS_TRADE_NAME',
+  'NV0_BUSINESS_REPRESENTATIVE',
+  'NV0_BUSINESS_REGISTRATION_NUMBER',
+  'NV0_BUSINESS_ADDRESS',
+  'NV0_HOSTING_PROVIDER',
+  'NV0_CUSTOMER_SERVICE_PHONE'
+];
+for (const key of requiredEnv) {
+  if (!combinedEnv.includes(key)) failures.push(`missing required env contract: ${key}`);
+}
+const requiredScripts = ['phase323:final','validate:phase323','phase324:final','validate:phase324','release:predeploy','delivery:final','check:responsive-contract','check:operational-contract'];
+for (const key of requiredScripts) {
+  if (!packageJson.scripts?.[key]) failures.push(`missing package script: ${key}`);
+}
+if (!['npm run phase323:final','npm run phase324:final'].includes(packageJson.scripts?.['release:predeploy'])) failures.push('release:predeploy must point to phase323:final or phase324:final');
+if (!['npm run phase323:final','npm run phase324:final'].includes(packageJson.scripts?.['delivery:final'])) failures.push('delivery:final must point to phase323:final or phase324:final');
+for (const file of [
+  'scripts/run-phase323-final.mjs',
+  'scripts/run-phase324-final.mjs',
+  'scripts/check-live-public.mjs',
+  'scripts/check-runtime-clean.mjs',
+  'scripts/check-release-secret-hygiene.mjs',
+  'docs/PHASE323_100_POINT_FINAL_WORK_ORDER.md',
+  'docs/PHASE323_100_POINT_FINAL_DELIVERY_REPORT.md'
+]) {
+  if (!exists(file)) failures.push(`missing operational artifact: ${file}`);
+}
+const report = { ok: failures.length === 0, phase: 'phase324-operational-readiness-contract', requiredEnvCount: requiredEnv.length, envTemplates: envTemplates.map(([file]) => file), failures };
+fs.mkdirSync(path.join(root, 'docs/current'), { recursive: true });
+fs.writeFileSync(path.join(root, 'docs/current/PHASE323_OPERATIONAL_READINESS_CONTRACT.json'), JSON.stringify(report, null, 2));
+if (failures.length) {
+  console.error(JSON.stringify(report, null, 2));
+  process.exit(1);
+}
+console.log(JSON.stringify(report, null, 2));

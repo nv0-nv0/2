@@ -1,0 +1,94 @@
+{
+  "ok": true,
+  "generatedAt": "2026-05-27T04:55:42.294Z",
+  "phase": "phase313-comprehensive-governance",
+  "checks": [
+    {
+      "name": "package:phase313-version",
+      "ok": true,
+      "detail": "1.0.0-commercial-phase313-comprehensive-governance-hardening"
+    },
+    {
+      "name": "governance:version",
+      "ok": true,
+      "detail": "phase313-comprehensive-governance-redteam-v1"
+    },
+    {
+      "name": "governance:50-roles",
+      "ok": true,
+      "detail": 50
+    },
+    {
+      "name": "governance:100-improvements",
+      "ok": true,
+      "detail": 100
+    },
+    {
+      "name": "governance:snapshot",
+      "ok": true,
+      "detail": "{\"roleCount\":50,\"improvementCount\":100}"
+    },
+    {
+      "name": "consent:policy-version",
+      "ok": true,
+      "detail": "order consent stores legal document versions"
+    },
+    {
+      "name": "consent:pseudonymous-evidence",
+      "ok": true,
+      "detail": "checkout consent evidence is hashed"
+    },
+    {
+      "name": "api:governance-status",
+      "ok": true,
+      "detail": "public governance status endpoint"
+    },
+    {
+      "name": "commercial:turnstile-required",
+      "ok": true,
+      "detail": "commercial launch blocks missing Turnstile"
+    },
+    {
+      "name": "commercial:backup-encryption-required",
+      "ok": true,
+      "detail": "commercial blocks unencrypted backups"
+    },
+    {
+      "name": "runtime:active-state-excluded",
+      "ok": true,
+      "detail": "active runtime files removed after clean"
+    },
+    {
+      "name": "runtime:seed-retained",
+      "ok": true,
+      "detail": "seed retained"
+    },
+    {
+      "name": "docs:work-order",
+      "ok": true,
+      "detail": "phase313 work order"
+    },
+    {
+      "name": "docs:redteam",
+      "ok": true,
+      "detail": "phase313 redteam report"
+    },
+    {
+      "name": "scripts:accessibility",
+      "ok": true,
+      "detail": "accessibility check"
+    },
+    {
+      "name": "scripts:performance",
+      "ok": true,
+      "detail": "performance budget check"
+    }
+  ],
+  "failures": [],
+  "governance": {
+    "version": "phase313-comprehensive-governance-redteam-v1",
+    "roleCount": 50,
+    "improvementCount": 100,
+    "blockers": []
+  }
+}

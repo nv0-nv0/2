@@ -1,0 +1,321 @@
+{
+  "ok": true,
+  "phase": "phase318-trustops-autopilot-cockpit",
+  "checkedAt": "2026-05-27T23:39:09.917Z",
+  "passed": 23,
+  "failed": 0,
+  "checks": [
+    {
+      "key": "package phase318",
+      "ok": true
+    },
+    {
+      "key": "product catalog phase318",
+      "ok": true
+    },
+    {
+      "key": "autopilot version phase318",
+      "ok": true
+    },
+    {
+      "key": "orchestrator phase318",
+      "ok": true
+    },
+    {
+      "key": "engine count >=34",
+      "ok": true
+    },
+    {
+      "key": "agent count >=76",
+      "ok": true
+    },
+    {
+      "key": "event policies >=14",
+      "ok": true
+    },
+    {
+      "key": "backlog >=130",
+      "ok": true
+    },
+    {
+      "key": "phase318 backlog 30",
+      "ok": true
+    },
+    {
+      "key": "cockpit ok",
+      "ok": true
+    },
+    {
+      "key": "cockpit exposes revenue",
+      "ok": true
+    },
+    {
+      "key": "work queue has P0",
+      "ok": true
+    },
+    {
+      "key": "lifecycle stages 6",
+      "ok": true
+    },
+    {
+      "key": "next best offer present",
+      "ok": true
+    },
+    {
+      "key": "public routes present",
+      "ok": true
+    },
+    {
+      "key": "admin route present",
+      "ok": true
+    },
+    {
+      "key": "portal autopilot panel present",
+      "ok": true
+    },
+    {
+      "key": "portal fetches autopilot",
+      "ok": true
+    },
+    {
+      "key": "test script exists",
+      "ok": true
+    },
+    {
+      "key": "release predeploy phase318",
+      "ok": true
+    },
+    {
+      "key": "phase318 audit ok",
+      "ok": true
+    },
+    {
+      "key": "engine audit ok",
+      "ok": true
+    },
+    {
+      "key": "docs exist",
+      "ok": true
+    }
+  ],
+  "audit": {
+    "ok": true,
+    "version": "phase318-trustops-autopilot-cockpit-v1",
+    "score": 100,
+    "checks": [
+      {
+        "key": "required files present",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "key": "package script phase318",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "key": "autopilot routes present",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "key": "admin cockpit route present",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "key": "engine agent policy present",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "key": "backlog exceeds 120",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "key": "cockpit ok",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "key": "next offer present",
+        "ok": true,
+        "detail": ""
+      }
+    ]
+  },
+  "engineAudit": {
+    "ok": true,
+    "score": 100,
+    "total": 100,
+    "phase": "phase324",
+    "version": "phase324-complete-delivery-engine-agent-v8.1.0",
+    "checks": [
+      {
+        "key": "matrixCoverage",
+        "weight": 12,
+        "pass": true,
+        "message": "전역 엔진/에이전트 배정표"
+      },
+      {
+        "key": "eventPolicies",
+        "weight": 12,
+        "pass": true,
+        "message": "핵심 서비스 이벤트 정책"
+      },
+      {
+        "key": "requiredFiles",
+        "weight": 12,
+        "pass": true,
+        "message": "phase317 핵심 파일 존재"
+      },
+      {
+        "key": "publicRoute",
+        "weight": 8,
+        "pass": true,
+        "message": "공개 엔진/에이전트 상태 API"
+      },
+      {
+        "key": "adminRoute",
+        "weight": 8,
+        "pass": true,
+        "message": "관리자 엔진/에이전트 감사 API"
+      },
+      {
+        "key": "phaseLatestScripts",
+        "weight": 12,
+        "pass": true,
+        "message": "최신 phase 최종 검증 스크립트"
+      },
+      {
+        "key": "runtimeGateExport",
+        "weight": 8,
+        "pass": true,
+        "message": "런타임 게이트 함수 적용"
+      },
+      {
+        "key": "runtimeEventStore",
+        "weight": 8,
+        "pass": true,
+        "message": "에이전트 이벤트 저장 적용"
+      },
+      {
+        "key": "autopublishPreserved",
+        "weight": 8,
+        "pass": true,
+        "message": "20분 자동 발행 엔진 유지"
+      },
+      {
+        "key": "dashboardPreserved",
+        "weight": 6,
+        "pass": true,
+        "message": "단일 디자인 시스템 유지"
+      },
+      {
+        "key": "packageOptimization",
+        "weight": 6,
+        "pass": true,
+        "message": "POSIX 패키지 경로 최적화"
+      }
+    ],
+    "failed": [],
+    "assignment": {
+      "engineCount": 50,
+      "agentCount": 108,
+      "eventPolicyCount": 19,
+      "domains": [
+        "site-intake",
+        "diagnosis",
+        "risk-score",
+        "portal-ui",
+        "content-publication",
+        "plans-checkout",
+        "checkout",
+        "payment",
+        "fulfillment",
+        "refund",
+        "privacy",
+        "legal",
+        "security",
+        "admin-ops",
+        "observability",
+        "release",
+        "backup",
+        "abuse-control",
+        "seo",
+        "retention",
+        "quality-ui",
+        "support",
+        "contract",
+        "redteam",
+        "growth",
+        "fix-generation",
+        "monitoring",
+        "agency",
+        "revenue",
+        "seo-advanced",
+        "autopilot",
+        "lifecycle",
+        "operator-queue",
+        "forecast",
+        "launch-control",
+        "lifecycle-message",
+        "experiment",
+        "incident",
+        "production-sentinel",
+        "live-verification",
+        "rollback-sla",
+        "cost-quality",
+        "final-handoff",
+        "env-lock",
+        "operator-handoff",
+        "go-live-kpi",
+        "hundred-point",
+        "test-gate",
+        "ui-contract",
+        "operations"
+      ]
+    }
+  },
+  "assignment": {
+    "engineCount": 50,
+    "agentCount": 108,
+    "eventPolicyCount": 19
+  },
+  "cockpit": {
+    "counts": {
+      "sites": 1,
+      "scans": 1,
+      "paidOrders": 1,
+      "activeSubscriptions": 1,
+      "refundsOpen": 1,
+      "queue": 6,
+      "p0": 4,
+      "p1": 1,
+      "p2": 1
+    },
+    "health": {
+      "averageRisk": 78,
+      "automationCoverage": 100,
+      "queueHealth": "action_required",
+      "revenueStage": "recurring_revenue"
+    },
+    "nextBestOffer": {
+      "code": "FixPack",
+      "title": "개선 문구팩",
+      "price": 79000,
+      "period": "1회",
+      "reason": "위험 점수가 높아 바로 적용 가능한 개선 문구가 우선입니다.",
+      "expectedOutcome": "환불, 개인정보, 고객센터, 결제 전 안내 문구를 바로 복사해 적용합니다.",
+      "unlocks": [
+        "copy_ready_fixes",
+        "html_snippets",
+        "industry_faq",
+        "placement_guide"
+      ],
+      "confidence": "high"
+    },
+    "backlogCount": 130
+  }
+}

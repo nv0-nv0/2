@@ -1,6 +1,12 @@
 import { isSafeHttpMethod } from '../core/native-route-state.mjs';
 // Phase166 admin API dispatcher for native http.createServer routing.
 import { createOpsRouteHandler } from './ops.mjs';
+import { buildTrustOpsAutopilotCockpit } from '../core/trustops-autopilot-engine.mjs';
+import { buildTrustOpsLaunchControl } from '../core/trustops-launch-control.mjs';
+import { buildProductionSentinel } from '../core/trustops-production-sentinel.mjs';
+import { buildTrustOpsFinalHandoff } from '../core/trustops-final-handoff.mjs';
+import { buildTrustOps100PointFinalScorecard } from '../core/trustops-100-point-finalizer.mjs';
+import { buildTrustOpsCompleteDelivery } from '../core/trustops-complete-delivery.mjs';
 
 export function createAdminRouteHandler(ctx) {
   const {
@@ -102,6 +108,7 @@ export function createAdminRouteHandler(ctx) {
   processEmailOutbox,
   pruneBackupSnapshots,
   publicCustomer,
+  pseudonymizeIp,
   putObjectToS3Compatible,
   readDb,
   requireAdminCsrf,
@@ -172,7 +179,7 @@ markSessionsDirty();
 await writeSessionsToDisk();
 auth.user.lastLoginAt = nowIso();
 auth.user.updatedAt = nowIso();
-db.adminSessions.unshift({ id: uid('admsess'), sessionId: sid, userId: auth.user.id, createdAt: nowIso(), expiresAt: new Date(Date.now() + SESSION_TTL_MS).toISOString(), ip: clientIp(req) });
+db.adminSessions.unshift({ id: uid('admsess'), sessionId: sid, userId: auth.user.id, createdAt: nowIso(), expiresAt: new Date(Date.now() + SESSION_TTL_MS).toISOString(), ipHash: pseudonymizeIp(clientIp(req)) });
 appendAudit(db, req, 'admin.auth.succeeded', { mode: 'account_rbac', userId: auth.user.id, email: auth.user.email, roles: auth.roles });
 await writeDb(db);
 return json(req, res, 200, { ok: true, csrfToken, adminUser: { id: auth.user.id, email: auth.user.email, displayName: auth.user.displayName, roles: auth.roles, permissions: auth.permissions } }, { 'set-cookie': sessionCookie(req, sid, Math.floor(SESSION_TTL_MS / 1000)) });
@@ -287,6 +294,61 @@ pendingAutoFixJobs: db.autoFixJobs.filter(item => item.status === 'pending').sli
 });
 }
 
+
+if (pathname === '/api/admin/trustops-autopilot' && req.method === 'GET') {
+if (!requireAdminPermission(req, res, session, 'ops.read')) return;
+const cockpit = buildTrustOpsAutopilotCockpit(db, { nowIso: nowIso() });
+appendAudit(db, req, 'admin.trustops_autopilot.checked', { queue: cockpit.counts.queue, mrr: cockpit.revenue.monthlyRecurringRevenue, stage: cockpit.health.revenueStage });
+await writeDb(db);
+return json(req, res, 200, { ok: true, cockpit });
+}
+
+
+if (pathname === '/api/admin/trustops-launch-control' && req.method === 'GET') {
+if (!requireAdminPermission(req, res, session, 'ops.read')) return;
+const launch = buildTrustOpsLaunchControl(db, { nowIso: nowIso(), env: process.env });
+appendAudit(db, req, 'admin.trustops_launch_control.checked', { decision: launch.readiness.decision, score: launch.readiness.score, blockers: launch.readiness.blockers.length });
+await writeDb(db);
+return json(req, res, 200, { ok: true, launch });
+}
+
+
+
+if (pathname === '/api/admin/trustops-production-sentinel' && req.method === 'GET') {
+if (!requireAdminPermission(req, res, session, 'ops.read')) return;
+const sentinel = buildProductionSentinel(db, { nowIso: nowIso(), env: process.env, baseUrl: process.env.NV0_PUBLIC_BASE_URL || '' });
+appendAudit(db, req, 'admin.trustops_production_sentinel.checked', { decision: sentinel.decision, score: sentinel.score, blockers: sentinel.blockers.length, liveChecks: sentinel.liveVerification.checks.length });
+await writeDb(db);
+return json(req, res, 200, { ok: true, sentinel });
+}
+
+
+if (pathname === '/api/admin/trustops-final-handoff' && req.method === 'GET') {
+if (!requireAdminPermission(req, res, session, 'ops.read')) return;
+const handoff = buildTrustOpsFinalHandoff(db, { nowIso: nowIso(), env: process.env, baseUrl: process.env.NV0_PUBLIC_BASE_URL || '', packageGateReady: true });
+appendAudit(db, req, 'admin.trustops_final_handoff.checked', { decision: handoff.decision, acceptanceScore: handoff.acceptanceScore, blockers: handoff.blockers.length, warnings: handoff.warnings.length });
+await writeDb(db);
+return json(req, res, 200, { ok: true, handoff });
+}
+
+
+if (pathname === '/api/admin/trustops-100-final' && req.method === 'GET') {
+if (!requireAdminPermission(req, res, session, 'ops.read')) return;
+const scorecard = buildTrustOps100PointFinalScorecard(db, { nowIso: nowIso(), env: process.env, baseUrl: process.env.NV0_PUBLIC_BASE_URL || '', packageGateReady: true, runtimeClean: true, secretHygienePassed: true });
+appendAudit(db, req, 'admin.trustops_100_final.checked', { decision: scorecard.decision, packageScore: scorecard.packageScore, failed: scorecard.failed.length });
+await writeDb(db);
+return json(req, res, 200, { ok: scorecard.ok, scorecard });
+}
+
+
+if (pathname === '/api/admin/trustops-complete-delivery' && req.method === 'GET') {
+if (!requireAdminPermission(req, res, session, 'ops.read')) return;
+const delivery = buildTrustOpsCompleteDelivery(db, { nowIso: nowIso(), env: process.env, baseUrl: process.env.NV0_PUBLIC_BASE_URL || '', packageGateReady: true, runtimeClean: true, secretHygienePassed: true });
+appendAudit(db, req, 'admin.trustops_complete_delivery.checked', { decision: delivery.decision, packageScore: delivery.packageScore, failed: delivery.failed.length });
+await writeDb(db);
+return json(req, res, delivery.ok ? 200 : 207, { ok: delivery.ok, delivery });
+}
+
 if (pathname === '/api/admin/product-quality' && req.method === 'GET') {
 if (!requireAdminPermission(req, res, session, 'ops.read')) return;
 const profile = buildAdminOperatingProfile(db);
@@ -373,18 +435,17 @@ const packageFiles = [
   'server/core/engine-agent-orchestrator.mjs',
   'server/core/product-agent-suite.mjs',
   'server/routes/public.mjs',
+  'server/routes/payment.mjs',
   'server/routes/admin.mjs',
   'shared/veridion-clean-v311.css',
-  'scripts/validate-phase286-engine-agent-orchestration.mjs',
-  'scripts/validate-phase285-structure-optimization.mjs',
-  'docs/ENGINE_AGENT_ASSIGNMENT_MATRIX.md',
-  'docs/current/ENGINE_AGENT_ASSIGNMENT_MATRIX.json',
-  'docs/PROJECT_STRUCTURE_TREE.md',
-  'docs/current/PROJECT_STRUCTURE_TREE.json'
+  'scripts/validate-phase316-engine-agent-application.mjs',
+  'docs/PHASE316_ENGINE_AGENT_APPLICATION_WORK_ORDER.md',
+  'docs/PHASE316_ENGINE_AGENT_APPLICATION_REPORT.md',
+  'docs/current/PHASE316_ENGINE_AGENT_APPLICATION_AUDIT.json'
 ];
 const audit = runEngineAgentPackageAudit({
   files: packageFiles,
-  packageJson: { scripts: { 'validate:phase311': true, 'phase311:final': true } },
+  packageJson: { scripts: { 'validate:phase316': true, 'phase316:final': true, 'release:predeploy': 'npm run phase316:final' } },
   routes: ['/api/public/engine-agent-status', '/api/admin/engine-agents/audit']
 });
 const status = buildEngineAgentRuntimeStatus(db, { businessProfile: db.settings?.businessProfile, nowIso: nowIso() });

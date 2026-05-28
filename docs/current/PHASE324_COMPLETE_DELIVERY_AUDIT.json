@@ -1,0 +1,267 @@
+{
+  "ok": true,
+  "phase": "phase324-complete-delivery",
+  "checkedAt": "2026-05-27T23:39:18.665Z",
+  "passed": 11,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "package version phase324",
+      "ok": true
+    },
+    {
+      "name": "delivery and release gates point phase324",
+      "ok": true
+    },
+    {
+      "name": "phase324 scripts exist",
+      "ok": true
+    },
+    {
+      "name": "phase324 core version",
+      "ok": true
+    },
+    {
+      "name": "package delivery score 100",
+      "ok": true
+    },
+    {
+      "name": "delivery failed zero",
+      "ok": true
+    },
+    {
+      "name": "audit score 100",
+      "ok": true
+    },
+    {
+      "name": "routes present",
+      "ok": true
+    },
+    {
+      "name": "engine-agent maintained",
+      "ok": true
+    },
+    {
+      "name": "operator proof pack explicit",
+      "ok": true
+    },
+    {
+      "name": "phase324 docs exist",
+      "ok": true
+    }
+  ],
+  "delivery": {
+    "ok": true,
+    "version": "phase324-complete-delivery-v1",
+    "phase": "phase324-complete-delivery",
+    "decision": "delivery-complete-package-ready",
+    "packageScore": 100,
+    "totalScore": 100,
+    "failed": [],
+    "checks": [
+      {
+        "id": "packageGate",
+        "title": "패키지 내부 100점 게이트 통과",
+        "detail": "phase323 점수판과 phase324 최종 납품 게이트를 모두 통과해야 합니다.",
+        "pass": true,
+        "sealScore": 10,
+        "externalDoneRequiredForLive100": false,
+        "liveEvidenceDone": false
+      },
+      {
+        "id": "runtimeClean",
+        "title": "런타임 찌꺼기 제거",
+        "detail": "runtime-test, uploads, reports, backups 같은 실행 산출물이 납품 ZIP에 남지 않아야 합니다.",
+        "pass": true,
+        "sealScore": 10,
+        "externalDoneRequiredForLive100": false,
+        "liveEvidenceDone": false
+      },
+      {
+        "id": "secretClean",
+        "title": "시크릿 위생",
+        "detail": "운영 키, 결제 secret, 개인정보 hash key 원문이 패키지에 포함되지 않아야 합니다.",
+        "pass": true,
+        "sealScore": 10,
+        "externalDoneRequiredForLive100": false,
+        "liveEvidenceDone": false
+      },
+      {
+        "id": "paidFlow",
+        "title": "유료 흐름 폐쇄성",
+        "detail": "상품, 결제, 검증, 산출물, 권한, 환불 요청 흐름이 우회 불가능해야 합니다.",
+        "pass": true,
+        "sealScore": 10,
+        "externalDoneRequiredForLive100": false,
+        "liveEvidenceDone": false
+      },
+      {
+        "id": "privacyLegalGate",
+        "title": "개인정보·법률 게이트",
+        "detail": "개인정보 최소화, 가명처리, 약관·환불·사업자 정보 페이지가 고정되어야 합니다.",
+        "pass": true,
+        "sealScore": 10,
+        "externalDoneRequiredForLive100": false,
+        "liveEvidenceDone": false
+      },
+      {
+        "id": "uiContract",
+        "title": "UI 계약",
+        "detail": "모바일·태블릿·데스크톱 기본 폭에서 겹침, 깨진 도형, 레거시 CSS 재유입이 없어야 합니다.",
+        "pass": true,
+        "sealScore": 10,
+        "externalDoneRequiredForLive100": false,
+        "liveEvidenceDone": false
+      },
+      {
+        "id": "operatorRunbook",
+        "title": "운영자 런북",
+        "detail": "배포, 캐시 삭제, 실결제, 산출물, 환불, 장애 보류 절차가 포함되어야 합니다.",
+        "pass": true,
+        "sealScore": 10,
+        "externalDoneRequiredForLive100": false,
+        "liveEvidenceDone": false
+      },
+      {
+        "id": "liveVerification",
+        "title": "실서버 검증 계획",
+        "detail": "실서버 live verification 항목이 자동 API와 문서로 확인 가능해야 합니다.",
+        "pass": true,
+        "sealScore": 10,
+        "externalDoneRequiredForLive100": false,
+        "liveEvidenceDone": false
+      },
+      {
+        "id": "rollbackSafeMode",
+        "title": "롤백·고객 안전 모드",
+        "detail": "결제, 개인정보, 산출물, 진단, 인사이트 장애 시 보류/제한공개 절차가 있어야 합니다.",
+        "pass": true,
+        "sealScore": 10,
+        "externalDoneRequiredForLive100": false,
+        "liveEvidenceDone": false
+      },
+      {
+        "id": "deliveryEvidence",
+        "title": "납품 증적",
+        "detail": "작업지시서, 보고서, 감사 JSON, 최종 게이트 로그가 포함되어야 합니다.",
+        "pass": true,
+        "sealScore": 10,
+        "externalDoneRequiredForLive100": false,
+        "liveEvidenceDone": false
+      }
+    ],
+    "linkedScores": {
+      "phase323PackageScore": 100,
+      "phase323AuditOk": true,
+      "handoffDecision": "go",
+      "sentinelDecision": "go",
+      "engineCount": 50,
+      "agentCount": 108,
+      "eventPolicyCount": 19
+    },
+    "finalOperatorPack": [
+      {
+        "id": "deploy-package",
+        "step": 1,
+        "title": "ZIP 반영",
+        "action": "운영 서버에 이 ZIP을 반영한다.",
+        "owner": "operator",
+        "requiredForLive100": true
+      },
+      {
+        "id": "env-lock",
+        "step": 2,
+        "title": "환경값 주입",
+        "action": "실제 사업자, 개인정보 보호책임자, 결제, 저장소, Redis 값을 운영 환경에만 주입한다.",
+        "owner": "operator",
+        "requiredForLive100": true
+      },
+      {
+        "id": "predeploy-gate",
+        "step": 3,
+        "title": "배포 전 게이트",
+        "action": "npm run release:predeploy를 운영 서버에서 실행한다.",
+        "owner": "operator",
+        "requiredForLive100": true
+      },
+      {
+        "id": "cache-reset",
+        "step": 4,
+        "title": "캐시 삭제",
+        "action": "CDN과 브라우저 캐시를 삭제한 뒤 /portal /board /checkout /privacy /business-info를 확인한다.",
+        "owner": "operator",
+        "requiredForLive100": true
+      },
+      {
+        "id": "payment-proof",
+        "step": 5,
+        "title": "실결제 증명",
+        "action": "PortOne 소액 결제, 웹훅, paid 전이, 산출물 생성을 확인한다.",
+        "owner": "operator",
+        "requiredForLive100": true
+      },
+      {
+        "id": "artifact-proof",
+        "step": 6,
+        "title": "산출물 증명",
+        "action": "구매자 세션과 accessToken 기준 다운로드 권한을 확인한다.",
+        "owner": "operator",
+        "requiredForLive100": true
+      },
+      {
+        "id": "refund-proof",
+        "step": 7,
+        "title": "환불 증명",
+        "action": "환불 요청과 관리자 상태 변경, 감사 로그를 확인한다.",
+        "owner": "operator",
+        "requiredForLive100": true
+      },
+      {
+        "id": "mobile-proof",
+        "step": 8,
+        "title": "모바일 증명",
+        "action": "Android Chrome, iOS Safari, PC Chrome/Edge 화면을 확인한다.",
+        "owner": "operator",
+        "requiredForLive100": true
+      },
+      {
+        "id": "legal-proof",
+        "step": 9,
+        "title": "법무 증명",
+        "action": "개인정보처리방침, 약관, 환불정책, 사업자 정보 최종 검토 증적을 남긴다.",
+        "owner": "operator",
+        "requiredForLive100": true
+      },
+      {
+        "id": "go-live-freeze",
+        "step": 10,
+        "title": "오픈 기준선 고정",
+        "action": "최종 API 결과와 실서버 증적을 기준선으로 저장한다.",
+        "owner": "operator",
+        "requiredForLive100": true
+      }
+    ],
+    "operationalTruth": {
+      "packageInternalScore": 100,
+      "liveServerScore": null,
+      "externalDone": false,
+      "note": "패키지 내부는 자동 검증 가능하며, 운영 서버 배포·실결제·법무 검토 증적은 운영 환경에서만 확정됩니다."
+    },
+    "releaseCommands": [
+      "npm run release:predeploy",
+      "npm run check:responsive-contract",
+      "npm run check:operational-contract",
+      "npm run validate:phase324",
+      "node scripts/check-runtime-clean.mjs"
+    ]
+  },
+  "audit": {
+    "ok": true,
+    "score": 100
+  },
+  "assignment": {
+    "engineCount": 50,
+    "agentCount": 108,
+    "eventPolicyCount": 19
+  }
+}

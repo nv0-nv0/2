@@ -1,0 +1,9 @@
+PHASE321 final completion gate prepared.
+Run order:
+1. npm run phase321:final
+2. npm run release:predeploy
+3. Deploy package to production server
+4. Purge CDN/browser cache
+5. GET /api/public/trustops-final-handoff
+6. GET /api/admin/trustops-final-handoff
+7. Perform live payment and fulfillment verification

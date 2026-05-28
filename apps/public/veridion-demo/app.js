@@ -1196,7 +1196,7 @@ function renderPenaltyWarningPanel(model, classRows = []) {
   return `<aside class="demo-count-warning-card ${escapeAttr(model.classification)}" aria-label="참고용 과태료 상한 후보 안내">
     <div class="warning-title-row"><span class="warning-icon" aria-hidden="true">!</span><h3>${escapeHtml(model.warningTitle)}</h3></div>
     <div class="warning-message">${escapeHtml(model.warningText)}</div>
-    <div class="warning-bullet-box"><div class="warning-subtitle"><span aria-hidden="true">🛡</span><b>이런 항목을 우선 검토하세요</b></div><ul>${model.bullets.map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul></div>
+    <div class="warning-bullet-box"><div class="warning-subtitle"><b>이런 항목을 우선 검토하세요</b></div><ul>${model.bullets.map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul></div>
     ${classificationRows}
     <p class="penalty-disclaimer">${escapeHtml(model.disclaimer)}</p>
   </aside>`;
