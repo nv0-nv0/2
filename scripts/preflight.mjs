@@ -55,6 +55,7 @@ if (commercial || env.NODE_ENV === 'production') {
     'NV0_SCAN_PROVIDER_URL',
     'NV0_PAYMENT_PROVIDER'
   ]) finalized(key);
+  for (const key of ['NV0_S3_ENDPOINT','NV0_S3_BUCKET','NV0_S3_ACCESS_KEY_ID','NV0_S3_SECRET_ACCESS_KEY','NV0_BACKUP_ENCRYPTION_SECRET','NV0_SECURE_RECORDS_KEY','NV0_PRIVACY_HASH_KEY']) finalized(key);
   if (commercialLaunchReady) {
     for (const key of ['NV0_PORTONE_API_SECRET','NV0_PORTONE_STORE_ID','NV0_PORTONE_CHANNEL_KEY','NV0_PORTONE_WEBHOOK_SECRET']) finalized(key);
   }
@@ -64,11 +65,12 @@ if (commercial || env.NODE_ENV === 'production') {
   }
   if (env.NV0_ADMIN_AUTH_MODE !== 'account_rbac') errors.push('NV0_ADMIN_AUTH_MODE must be account_rbac');
   if (env.NV0_PERSISTENCE_MODE !== 'postgres_primary') errors.push('NV0_PERSISTENCE_MODE must be postgres_primary');
+  if (env.NV0_BACKUP_REMOTE_REQUIRE_ENCRYPTION !== 'true') errors.push('NV0_BACKUP_REMOTE_REQUIRE_ENCRYPTION must be true');
   if (env.NV0_SESSION_STORE !== 'redis' || env.NV0_RATE_LIMIT_STORE !== 'redis' || env.NV0_LOCK_PROVIDER !== 'redis') errors.push('Redis-backed session, rate limit, and lock are required');
   if (commercialLaunchReady && env.NV0_PAYMENT_PROVIDER !== 'portone_v2') errors.push('NV0_PAYMENT_PROVIDER must be portone_v2');
   if (prelaunch && env.NV0_PAYMENT_PROVIDER !== 'disabled') errors.push('NV0_PAYMENT_PROVIDER must be disabled when NV0_DEPLOYMENT_STAGE=prelaunch');
   if (env.NV0_SCAN_PROVIDER !== 'external_http') errors.push('NV0_SCAN_PROVIDER must be external_http');
-  const publicKeys = ['NV0_PUBLIC_BASE_URL','NV0_SUPPORT_EMAIL','NV0_HOSTING_PROVIDER','NV0_CUSTOMER_SERVICE_PHONE','NV0_PRIVACY_OFFICER_EMAIL','NV0_SMTP_URL','NV0_ADMIN_IP_ALLOWLIST'];
+  const publicKeys = ['NV0_PUBLIC_BASE_URL','NV0_SUPPORT_EMAIL','NV0_HOSTING_PROVIDER','NV0_CUSTOMER_SERVICE_PHONE','NV0_PRIVACY_OFFICER_EMAIL','NV0_SMTP_URL','NV0_ADMIN_IP_ALLOWLIST','NV0_BUSINESS_TRADE_NAME','NV0_BUSINESS_REPRESENTATIVE','NV0_BUSINESS_REGISTRATION_NUMBER','NV0_BUSINESS_ADDRESS'];
   if (commercialLaunchReady) publicKeys.push('NV0_MAIL_ORDER_REGISTRATION_NUMBER');
   for (const key of publicKeys) finalized(key);
 } else {

@@ -1,10 +1,11 @@
 {
   "name": "veridion-public-risk-diagnostic",
-  "version": "1.0.0-commercial-phase326-admin-key-preflight-recovery",
+  "version": "1.0.1-commercial-phase327-privacy-hash-boot-recovery",
   "private": true,
   "type": "module",
   "scripts": {
     "start": "node server/index.mjs",
+    "secrets:generate": "node scripts/generate-commercial-secrets.mjs",
     "dev": "node scripts/start-local-server.mjs",
     "test": "node scripts/test-all.mjs",
     "test:all": "node scripts/test-all.mjs",
@@ -68,5 +69,5 @@
     "validate:phase326": "node scripts/validate-phase326-admin-key-preflight.mjs",
     "phase326:final": "npm run check:no-available-server && npm run validate:phase325 && npm run validate:phase326 && npm run check:syntax && npm run check:pages && npm run test:routes && npm run check:links && npm run verify:security && npm run validate:deploy && npm run check:release-secret-hygiene && npm run check:responsive-contract && npm run clean:runtime && node scripts/check-runtime-clean.mjs"
   },
-  "description": "VERIDION phase326 admin-key preflight recovery: commercial prelaunch ignores sanitized legacy NV0_ADMIN_KEY while commercial launch still blocks shared-key admin."
+  "description": "VERIDION phase327 privacy-hash boot recovery: Coolify compose and preflight now pass and require commercial privacy, secure-record, business, backup, S3, Redis, and SMTP runtime keys before server boot."
 }

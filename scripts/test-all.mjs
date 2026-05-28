@@ -27,7 +27,7 @@ const requiredFiles = [
 for (const file of requiredFiles) add(`exists:${file}`, exists(file));
 
 const pkg = JSON.parse(read('package.json'));
-add('package:phase317-version', /phase31[3-9]-|phase320-|phase321-|phase322-|phase323-|phase324-/.test(pkg.version));
+add('package:phase317-version', /phase31[3-9]-|phase32[0-9]-/.test(pkg.version));
 
 const appHtmlFiles = [];
 for (const area of ['apps/public', 'apps/admin']) {

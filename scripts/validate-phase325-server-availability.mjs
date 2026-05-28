@@ -15,7 +15,7 @@ for (const file of requiredFiles) {
 }
 
 const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-if (!/phase32[5-6]/.test(pkg.version)) failures.push('package version must include phase325 or newer phase326');
+if (!/phase32[5-9]/.test(pkg.version)) failures.push('package version must include phase325 or newer phase327');
 for (const script of ['check:no-available-server', 'validate:phase325', 'phase325:final']) {
   if (!pkg.scripts?.[script]) failures.push(`missing package script: ${script}`);
 }
