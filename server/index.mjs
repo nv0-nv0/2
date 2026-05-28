@@ -4,6 +4,7 @@ import fsSync from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import net from 'node:net';
+import { lookup } from 'node:dns/promises';
 import tls from 'node:tls';
 import { fileURLToPath } from 'node:url';
 import { assertCommercialRouteAllowed, createPlatformProfile } from './core/platform.mjs';
@@ -191,12 +192,15 @@ const TARGET_FETCH_ENABLED = process.env.NV0_TARGET_FETCH_ENABLED !== 'false';
 const PAYMENT_PROVIDER = process.env.NV0_PAYMENT_PROVIDER || (PRELAUNCH_MODE ? 'disabled' : (PLATFORM.commercial ? 'portone_v2' : 'demo'));
 const PAYMENT_PROVIDER_URL = process.env.NV0_PAYMENT_PROVIDER_URL || '';
 const PAYMENT_PROVIDER_TOKEN = process.env.NV0_PAYMENT_PROVIDER_TOKEN || '';
+const PAYMENT_REDIRECT_ALLOWED_HOSTS = String(process.env.NV0_PAYMENT_REDIRECT_ALLOWED_HOSTS || '').split(',').map(item => item.trim().toLowerCase()).filter(Boolean);
 const PORTONE_CLIENT = createPortOneV2Client(process.env);
 const PORTONE_WEBHOOK_SECRET = process.env.NV0_PORTONE_WEBHOOK_SECRET || '';
 const PORTONE_WEBHOOK_VERIFY_MODE = process.env.NV0_PORTONE_WEBHOOK_VERIFY_MODE || (PLATFORM.target === 'commercial' || NODE_ENV === 'production' ? 'strict' : 'optional');
 const RULES_VERSION = process.env.NV0_RULES_VERSION || '2026.05.02-phase164-zero-cost-hardening-50';
 const SCAN_CACHE_TTL_MS = Number(process.env.NV0_SCAN_CACHE_TTL_MS || 10 * 60_000);
 const TARGET_FETCH_TIMEOUT_MS = Number(process.env.NV0_TARGET_FETCH_TIMEOUT_MS || 3000);
+const TARGET_FETCH_MAX_BYTES = Math.max(32 * 1024, Math.min(1_048_576, Number(process.env.NV0_TARGET_FETCH_MAX_BYTES || 512 * 1024)));
+const TARGET_FETCH_MAX_REDIRECTS = Math.max(0, Math.min(5, Number(process.env.NV0_TARGET_FETCH_MAX_REDIRECTS || 3)));
 const SCAN_SOFT_TIMEOUT_MS = Math.max(2500, Math.min(15000, Number(process.env.NV0_SCAN_SOFT_TIMEOUT_MS || 6500)));
 const TARGET_FETCH_MAX_PAGES = Math.max(4, Math.min(24, Number(process.env.NV0_TARGET_FETCH_MAX_PAGES || 12)));
 const TARGET_FETCH_CONCURRENCY = Math.max(1, Math.min(6, Number(process.env.NV0_TARGET_FETCH_CONCURRENCY || 4)));
@@ -399,6 +403,9 @@ assertFiniteConfigNumber('NV0_BACKUP_RETENTION_COUNT', BACKUP_RETENTION_COUNT, {
 assertFiniteConfigNumber('NV0_AUTO_BACKUP_INTERVAL_MS', AUTO_BACKUP_INTERVAL_MS, { min: 300_000, max: 7 * 24 * 60 * 60_000 });
 assertFiniteConfigNumber('NV0_AUDIT_LOG_RETENTION_COUNT', AUDIT_LOG_RETENTION_COUNT, { min: 1, max: 10000 });
 assertFiniteConfigNumber('NV0_SCAN_CACHE_TTL_MS', SCAN_CACHE_TTL_MS, { min: 0, max: 86_400_000 });
+assertFiniteConfigNumber('NV0_TARGET_FETCH_TIMEOUT_MS', TARGET_FETCH_TIMEOUT_MS, { min: 500, max: 30_000 });
+assertFiniteConfigNumber('NV0_TARGET_FETCH_MAX_BYTES', TARGET_FETCH_MAX_BYTES, { min: 32 * 1024, max: 1_048_576 });
+assertFiniteConfigNumber('NV0_TARGET_FETCH_MAX_REDIRECTS', TARGET_FETCH_MAX_REDIRECTS, { min: 0, max: 10 });
 assertFiniteConfigNumber('NV0_CTA_AUTOPUBLISH_INTERVAL_MS', CTA_AUTOPUBLISH_INTERVAL_MS, { min: 60_000, max: 86_400_000 });
 assertFiniteConfigNumber('NV0_PUBLIC_CACHE_SECONDS', PUBLIC_CACHE_SECONDS, { min: 0, max: 86_400 });
 assertFiniteConfigNumber('NV0_REQUEST_TIMEOUT_MS', REQUEST_TIMEOUT_MS, { min: 1000, max: 120_000 });
@@ -574,9 +581,6 @@ const headers = {
 'origin-agent-cluster': '?1',
 'x-permitted-cross-domain-policies': 'none',
 'x-download-options': 'noopen',
-'server': SERVER_HEADER,
-'x-vr-risk-guard': PHASE223_RISK_GUARD_VERSION,
-'x-vr-redirect-owner': DEPLOYMENT_RISK_GUARD.redirectOwner,
 'content-security-policy': cspParts.join('; '),
 'content-security-policy-report-only': ["trusted-types vr-default", "require-trusted-types-for 'script'"].join('; ')
 };
@@ -1170,10 +1174,6 @@ return [
 'Disallow: /checkout',
 'Disallow: /runtime',
 'Disallow: /api/',
-'Allow: /api/public/health',
-'Allow: /api/public/board',
-'Allow: /api/public/plans',
-'Allow: /api/public/smart-product',
 `Sitemap: ${base}/sitemap.xml`,
 `Sitemap: ${base}/feed.xml`,
 ''
@@ -1186,9 +1186,15 @@ const staticEntries = [
 { path: '/products/veridion/demo', priority: '0.95', changefreq: 'weekly', lastmod: today },
 { path: '/plans', priority: '0.9', changefreq: 'weekly', lastmod: today },
 { path: '/board', priority: '0.85', changefreq: 'daily', lastmod: today },
+{ path: '/insights', priority: '0.84', changefreq: 'daily', lastmod: today },
+{ path: '/insights/refund-policy-checklist', priority: '0.8', changefreq: 'monthly', lastmod: today },
+{ path: '/insights/privacy-policy-checklist', priority: '0.8', changefreq: 'monthly', lastmod: today },
+{ path: '/insights/ecommerce-trust-checklist', priority: '0.8', changefreq: 'monthly', lastmod: today },
+{ path: '/insights/conversion-before-payment', priority: '0.8', changefreq: 'monthly', lastmod: today },
+{ path: '/insights/business-info-display', priority: '0.8', changefreq: 'monthly', lastmod: today },
+{ path: '/insights/mobile-checkout-trust', priority: '0.8', changefreq: 'monthly', lastmod: today },
 { path: '/documents', priority: '0.82', changefreq: 'weekly', lastmod: today },
 { path: '/guides', priority: '0.78', changefreq: 'weekly', lastmod: today },
-{ path: '/resources', priority: '0.72', changefreq: 'weekly', lastmod: today },
 { path: '/solutions', priority: '0.74', changefreq: 'weekly', lastmod: today },
 { path: '/terms', priority: '0.45', changefreq: 'monthly', lastmod: today },
 { path: '/privacy', priority: '0.45', changefreq: 'monthly', lastmod: today },
@@ -1326,6 +1332,13 @@ const m = {
 '/guides': [PUBLIC_DIR, 'guides'],
 '/resources': [PUBLIC_DIR, 'guides'],
 '/board': [PUBLIC_DIR, 'board'],
+'/insights': [PUBLIC_DIR, 'insights'],
+'/insights/refund-policy-checklist': [PUBLIC_DIR, 'insights/refund-policy-checklist'],
+'/insights/privacy-policy-checklist': [PUBLIC_DIR, 'insights/privacy-policy-checklist'],
+'/insights/ecommerce-trust-checklist': [PUBLIC_DIR, 'insights/ecommerce-trust-checklist'],
+'/insights/conversion-before-payment': [PUBLIC_DIR, 'insights/conversion-before-payment'],
+'/insights/business-info-display': [PUBLIC_DIR, 'insights/business-info-display'],
+'/insights/mobile-checkout-trust': [PUBLIC_DIR, 'insights/mobile-checkout-trust'],
 '/board/post': [PUBLIC_DIR, 'board'],
 '/cases': [PUBLIC_DIR, 'cases'],
 '/documents': [PUBLIC_DIR, 'documents'],
@@ -1372,23 +1385,49 @@ return m[urlPath] || null;
 function escapeHtml(value = '') {
 return String(value ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
 }
+
+function canonicalPagePath(urlPath = '/') {
+const aliases = {
+'/resources': '/guides',
+'/products': '/plans',
+'/risk_result.html': '/demo',
+'/demo_risk_result.html': '/products/veridion/demo',
+'/service_detail.html': '/service',
+'/pricing.html': '/plans',
+'/insight_board.html': '/board',
+'/mypage.html': '/portal',
+'/auth_management.html': '/auth',
+'/risk-result': '/demo',
+'/insight-board': '/board',
+'/my-page': '/portal'
+};
+return aliases[urlPath] || urlPath || '/';
+}
 function routeMeta(urlPath) {
 const base = seoBaseUrl();
+const canonicalPath = canonicalPagePath(urlPath);
 const metas = {
-'/': { title: 'VERIDION | 온라인 사업자 고객 신뢰 점검 진단', description: '온라인 사업자가 놓치기 쉬운 전자상거래 고지, 개인정보 안내, 환불·청약철회, 표시광고 표현, 과태료 리스크 후보를 공개 화면 기준으로 점검합니다.', keywords: ['법률 리스크 진단','규제 리스크 점검','전자상거래 고지','개인정보 안내','무료 진단'] },
-'/products/veridion/demo': { title: '무료 진단 | VERIDION', description: '사이트 주소 하나로 온라인 사업자의 고객 신뢰 점검 후보를 영역·요소·구분별 개수로 확인합니다.', keywords: ['무료 진단','법률 리스크','규제 리스크','전자상거래 점검'] },
+'/': { title: 'VERIDION | 온라인 사업자 고객 신뢰 점검 진단', description: '온라인 사업자가 놓치기 쉬운 전자상거래 고지, 개인정보 안내, 환불·청약철회, 표시광고 표현, 문의·사업자 정보를 공개 화면 기준으로 점검합니다.', keywords: ['고객 신뢰 진단','준법 체크','전자상거래 고지','개인정보 안내','무료 진단'] },
+'/products/veridion/demo': { title: '무료 진단 | VERIDION', description: '사이트 주소 하나로 신뢰·준법·전환 보완 후보, 확인 URL, 다음 조치, 유료 리포트 제공 범위를 확인합니다.', keywords: ['무료 진단','신뢰 점검','준법 점검','전환 개선','전자상거래 점검'] },
 '/demo': { title: '무료 진단 안내 | VERIDION', description: '최신 무료 진단 화면으로 이동하여 공개 화면 기준의 고객 신뢰 점검 후보를 확인합니다.', keywords: ['무료 진단','사이트 진단'] },
-'/plans': { title: '요금제 | VERIDION', description: '무료 진단, 기본 리포트, 전문가 리포트의 제공 범위와 가격을 명확하게 비교합니다.', keywords: ['요금제','기본 리포트','전문가 리포트','사이트 진단 요금'] },
-'/products': { title: '요금제 | VERIDION', description: '무료 진단, 기본 리포트, 전문가 리포트의 제공 범위와 가격을 명확하게 비교합니다.', keywords: ['요금제','기본 리포트','전문가 리포트'] },
+'/plans': { title: '요금제 | VERIDION', description: '무료 진단, 기본 리포트, 전문가 플랜의 제공 범위와 차이를 비교해 필요한 단계만 선택할 수 있습니다.', keywords: ['요금제','무료 진단','기본 리포트','전문가 플랜','사이트 진단 요금'] },
+'/products': { title: '요금제 | VERIDION', description: '무료 진단, 기본 리포트, 전문가 플랜의 제공 범위와 가격을 명확하게 비교합니다.', keywords: ['요금제','기본 리포트','전문가 플랜'] },
 '/documents': { title: '문서 생성 | VERIDION', description: '고객 안내문, 정책 초안, 개선 요청서를 읽기 쉬운 구조로 정리합니다.', keywords: ['문서 생성','고객 안내문','정책 문서','개선 가이드'] },
 '/policy-documents': { title: '문서 생성 | VERIDION', description: '고객 안내문, 정책 초안, 개선 요청서를 읽기 쉬운 구조로 정리합니다.', keywords: ['문서 생성','고객 안내문','정책 문서'] },
 '/docs/veridion': { title: '문서 생성 | VERIDION', description: '진단 후 필요한 고객 안내문, 정책 문서, 개선 리포트 초안을 정리하는 문서 허브입니다.', keywords: ['문서 생성','정책 문서','진단 리포트','개선 문구'] },
 '/guides': { title: '가이드 | VERIDION', description: '진단 결과를 읽는 법과 전자상거래 고지, 개인정보 안내, 환불·청약철회 기준을 쉽게 안내합니다.', keywords: ['가이드','진단 결과','전자상거래 고지','환불 기준'] },
 '/resources': { title: '가이드 | VERIDION', description: '진단 결과를 읽는 법과 전자상거래 고지, 개인정보 안내, 환불·청약철회 기준을 쉽게 안내합니다.', keywords: ['가이드','진단 결과','규제 점검'] },
-'/solutions': { title: '분석 프로세스 | VERIDION', description: '입력부터 결과 정리까지 온라인 사업자의 고객 신뢰 점검 후보를 영역·요소·구분별로 분석합니다.', keywords: ['분석 프로세스','법률 리스크 분석','규제 리스크 분석'] },
+'/solutions': { title: '분석 프로세스 | VERIDION', description: '입력부터 결과 정리까지 온라인 사업자의 고객 신뢰 점검 후보를 영역·요소·구분별로 분석합니다.', keywords: ['분석 프로세스','고객 신뢰 분석','준법 체크'] },
 '/service': { title: '서비스 소개 | VERIDION', description: '온라인 사업자의 고지·환불·개인정보 점검 후보를 줄이기 위해 전자상거래 고지, 개인정보 안내, 환불·청약철회, 표시광고 표현을 점검합니다.', keywords: ['서비스 소개','전자상거래 점검','개인정보 안내 점검'] },
 '/cases': { title: '개선 사례 | VERIDION', description: '진단 후 어떤 항목을 먼저 고쳤고 어떤 변화가 생겼는지 사례 형태로 정리했습니다.', keywords: ['개선 사례','고지 보완 사례','정책 안내 사례'] },
-'/board': { title: '게시판 | VERIDION', description: '온라인 사업자가 이해하기 쉬운 고지·환불·개인정보 점검 감소형 CTA 칼럼을 제공합니다.', keywords: ['게시판','법률 리스크','규제 점검','전자상거래 고지','개인정보 안내'] },
+'/board': { title: '인사이트 | VERIDION', description: '온라인 사업자를 위한 신뢰·준법·전환 체크리스트와 환불·개인정보·사업자 정보·검색 최적화 실무 인사이트를 제공합니다.', keywords: ['인사이트','신뢰 점검','검색 최적화','환불 정책','개인정보 안내','결제 전환'] },
+'/insights': { title: '인사이트 | VERIDION', description: '온라인 사업자를 위한 신뢰·준법·전환 체크리스트 허브입니다.', keywords: ['인사이트','신뢰 점검','환불 정책','개인정보 안내'] },
+'/insights/refund-policy-checklist': { title: '쇼핑몰 환불정책 체크리스트 | VERIDION', description: '환불·교환·취소 기준을 결제 전 고객이 이해할 수 있게 정리하는 실무 체크리스트입니다.', keywords: ['환불정책 체크리스트','청약철회','쇼핑몰 환불 안내'] },
+'/insights/privacy-policy-checklist': { title: '개인정보처리방침 필수 항목 체크리스트 | VERIDION', description: '수집 항목, 이용 목적, 보관 기간, 파기 기준, 문의 경로를 입력 화면과 정책 페이지에 맞추는 방법입니다.', keywords: ['개인정보처리방침','개인정보 필수 항목','입력폼 고지'] },
+'/insights/ecommerce-trust-checklist': { title: '전자상거래 사이트 신뢰 요소 체크리스트 | VERIDION', description: '사업자 정보, 고객지원, 정책 링크, 결제 전 안내 등 고객 신뢰를 만드는 공개 화면 요소를 점검합니다.', keywords: ['전자상거래 신뢰 요소','사업자 정보','고객지원'] },
+'/insights/conversion-before-payment': { title: '결제 전환율을 낮추는 불안 요소 | VERIDION', description: '가격·제공 범위·환불 기준·문의 경로가 결제 버튼 주변에서 어떻게 전환 이탈을 줄이는지 설명합니다.', keywords: ['결제 전환율','결제 불안 요소','CTA 개선'] },
+'/insights/business-info-display': { title: '사업자 정보 표시 방법 | VERIDION', description: '상호, 대표자, 사업자등록번호, 주소, 이메일 등 사업자 정보를 고객이 찾기 쉬운 구조로 표시하는 방법입니다.', keywords: ['사업자 정보 표시','푸터 사업자 정보','고객지원'] },
+'/insights/mobile-checkout-trust': { title: '모바일 결제 페이지 신뢰 개선 | VERIDION', description: '모바일 결제 화면에서 가격, 제공 범위, 환불 기준, 문의 경로를 읽기 쉽게 배치하는 체크리스트입니다.', keywords: ['모바일 결제','신뢰 개선','모바일 CTA'] },
 '/business-info': { title: '사업자 정보와 고객지원 안내 | VERIDION', description: '결제 전 확인할 수 있는 VERIDION 사업자 정보와 고객지원 기준입니다.', keywords: ['사업자 정보','고객지원'] },
 '/terms': { title: '이용약관 | VERIDION', description: 'VERIDION 서비스 이용 조건과 기본 약관을 안내합니다.', keywords: ['이용약관'] },
 '/privacy': { title: '개인정보처리방침 | VERIDION', description: 'VERIDION 서비스의 개인정보 처리 기준과 입력 정보 최소화 원칙입니다.', keywords: ['개인정보처리방침'] },
@@ -1397,8 +1436,8 @@ const metas = {
 '/portal': { title: '고객 포털 | VERIDION', description: '저장 사이트, 최근 진단 결과, 보완 항목, 다음 작업을 한 화면에서 관리합니다.', keywords: ['고객 포털','진단 이력'] },
 '/checkout': { title: '결제 확인 | VERIDION', description: '선택한 상품, 금액, 받을 결과물, 동의 항목을 결제 전에 확인합니다.', keywords: ['결제 확인','리포트 결제'] }
 };
-const meta = metas[urlPath] || metas['/'];
-return { ...meta, canonical: `${base}${urlPath === '/' ? '/' : urlPath}`, locale: 'ko_KR' };
+const meta = metas[canonicalPath] || metas[urlPath] || metas['/'];
+return { ...meta, canonicalPath, canonical: `${base}${canonicalPath === '/' ? '/' : canonicalPath}`, locale: 'ko_KR' };
 }
 function stripManagedSeoTags(body) {
 return body
@@ -1412,7 +1451,8 @@ return body
 }
 function injectSeoMeta(body, urlPath) {
 const meta = routeMeta(urlPath);
-const privateRoute = urlPath.startsWith('/admin') || ['/auth','/portal','/checkout'].includes(urlPath);
+const canonicalPath = canonicalPagePath(urlPath);
+const privateRoute = canonicalPath.startsWith('/admin') || ['/auth','/portal','/checkout'].includes(canonicalPath);
 const robots = privateRoute ? 'noindex,nofollow,noarchive' : 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1';
 const keywords = (meta.keywords || []).join(', ');
 const tags = [
@@ -1442,7 +1482,7 @@ return out;
 function pageFaqStructuredData(urlPath) {
 const faqMap = {
 '/': [
-['NV0는 무엇을 점검하나요?', '온라인 사업자가 공개 화면에서 갖춰야 할 전자상거래 고지, 개인정보 안내, 환불·청약철회, 표시광고 표현, 문의·사업자 정보를 쉽게 점검합니다.'],
+['VERIDION은 무엇을 점검하나요?', '온라인 사업자가 공개 화면에서 갖춰야 할 전자상거래 고지, 개인정보 안내, 환불·청약철회, 표시광고 표현, 문의·사업자 정보를 쉽게 점검합니다.'],
 ['무료진단 후 무엇을 보면 되나요?', '탐지 점수가 높은 항목과 먼저 고칠 안내 문구를 확인한 뒤 필요한 상품을 비교하면 됩니다.']
 ],
 '/products/veridion/demo': [
@@ -1450,26 +1490,26 @@ const faqMap = {
 ['로그인하면 무엇이 달라지나요?', '무료진단 횟수 관리, 저장 사이트, 원클릭 재검사, 최근 진단 이력 확인을 이용할 수 있습니다.']
 ],
 '/plans': [
-['어떤 상품을 먼저 선택해야 하나요?', '먼저 무료진단을 보고, 근거가 필요하면 기본 리포트, 바로 붙여넣을 문구가 필요하면 전문가 리포트, 구조 개선안이 필요하면 전문가 리포트를 비교하면 됩니다.'],
+['어떤 상품을 먼저 선택해야 하나요?', '먼저 무료진단을 보고, 근거가 필요하면 기본 리포트, 바로 붙여넣을 문구와 검토 기준이 필요하면 전문가 플랜을 비교하면 됩니다.'],
 ['결제 전 어떤 내용을 확인해야 하나요?', '제공 범위, 디지털 산출물 제공 시점, 환불 제한, 고객지원 경로를 확인해야 합니다.']
 ],
 '/board': [
-['게시판 글은 어떤 역할을 하나요?', '진단 결과를 전문가형 포스팅으로 풀어 재방문, 요금제, 유료 산출물 검토 흐름을 돕습니다.'],
-['글이 전문가처럼 보이나요?', '문제 진단, 매출 영향, 실무 체크리스트, 문구 개선 예시, 자연스러운 다음 행동 순서로 작성됩니다.']
+['인사이트 글은 어떤 역할을 하나요?', '진단 결과를 실무 체크리스트로 풀어 무료 진단, 요금제, 고객 포털 검토 흐름을 돕습니다.'],
+['글의 구성은 어떻게 되어 있나요?', '문제 상황, 고객 신뢰에 미치는 영향, 실무 체크리스트, 문구 개선 예시, 자연스러운 다음 행동 순서로 작성됩니다.']
 ]
 };
 return faqMap[urlPath] || [];
 }
 function buildStructuredData(urlPath) {
-if (urlPath.startsWith('/admin') || ['/auth','/portal','/checkout'].includes(urlPath)) return '';
+if (urlPath.startsWith('/admin')) return '';
 const base = seoBaseUrl();
 const meta = routeMeta(urlPath);
-const pageUrl = `${base}${urlPath === '/' ? '/' : urlPath}`;
+const pageUrl = meta.canonical;
 const graph = [
 { '@type': 'Organization', '@id': `${base}/#organization`, name: BUSINESS_PROFILE.tradeName, url: base, email: BUSINESS_PROFILE.contactEmail },
 { '@type': 'WebSite', '@id': `${base}/#website`, name: 'VERIDION', url: base, inLanguage: 'ko-KR', publisher: { '@id': `${base}/#organization` }, potentialAction: { '@type': 'SearchAction', target: `${base}/board?q={search_term_string}`, 'query-input': 'required name=search_term_string' } },
 { '@type': 'SoftwareApplication', '@id': `${base}/#software`, name: 'VERIDION', applicationCategory: 'BusinessApplication', operatingSystem: 'Web', url: base, description: meta.description, offers: { '@type': 'Offer', priceCurrency: 'KRW', price: '0', availability: 'https://schema.org/InStock' }, provider: { '@id': `${base}/#organization` } },
-{ '@type': 'Service', '@id': `${base}/#service`, name: '온라인 사업자 고객 신뢰 점검 점검', serviceType: 'Online business legal and regulatory risk screening', provider: { '@id': `${base}/#organization` }, areaServed: 'KR', audience: { '@type': 'Audience', audienceType: '온라인 사업자' } },
+{ '@type': 'Service', '@id': `${base}/#service`, name: '온라인 사업자 고객 신뢰 점검', serviceType: 'Online business trust, compliance and conversion diagnostic', provider: { '@id': `${base}/#organization` }, areaServed: 'KR', audience: { '@type': 'Audience', audienceType: '온라인 사업자' } },
 { '@type': 'WebPage', '@id': `${pageUrl}#webpage`, url: pageUrl, name: meta.title, description: meta.description, isPartOf: { '@id': `${base}/#website` }, about: { '@id': `${base}/#software` }, inLanguage: 'ko-KR', dateModified: new Date().toISOString().slice(0, 10) },
 { '@type': 'BreadcrumbList', '@id': `${pageUrl}#breadcrumb`, itemListElement: [
 { '@type': 'ListItem', position: 1, name: '홈', item: `${base}/` },
@@ -1658,22 +1698,64 @@ return new URL(target);
 return null;
 }
 }
+function ipv4Parts(address = '') {
+const raw = String(address || '').trim().toLowerCase();
+const mapped = raw.startsWith('::ffff:') ? raw.slice(7) : raw;
+const dotted = mapped.split('.');
+if (dotted.length === 4 && dotted.every(part => /^\d{1,3}$/.test(part))) {
+  const parts = dotted.map(Number);
+  return parts.every(value => Number.isInteger(value) && value >= 0 && value <= 255) ? parts : null;
+}
+if (/^\d+$/.test(mapped)) {
+  const value = Number(mapped);
+  if (Number.isSafeInteger(value) && value >= 0 && value <= 0xffffffff) return [(value >>> 24) & 255, (value >>> 16) & 255, (value >>> 8) & 255, value & 255];
+}
+return null;
+}
+function isBlockedIpAddress(address = '') {
+const normalized = String(address || '').trim().toLowerCase().replace(/^\[|\]$/g, '');
+const v4 = ipv4Parts(normalized);
+if (v4) {
+  const [a, b, c] = v4;
+  if (a === 0 || a === 10 || a === 127) return true;
+  if (a === 169 && b === 254) return true;
+  if (a === 172 && b >= 16 && b <= 31) return true;
+  if (a === 192 && b === 168) return true;
+  if (a === 100 && b >= 64 && b <= 127) return true;
+  if (a === 192 && b === 0 && c === 0) return true;
+  if (a === 192 && b === 0 && c === 2) return true;
+  if (a === 198 && (b === 18 || b === 19)) return true;
+  if (a === 198 && b === 51 && c === 100) return true;
+  if (a === 203 && b === 0 && c === 113) return true;
+  if (a >= 224) return true;
+  return false;
+}
+if (!net.isIP(normalized)) return false;
+if (normalized === '::' || normalized === '::1') return true;
+if (normalized.startsWith('fc') || normalized.startsWith('fd') || normalized.startsWith('fe80:')) return true;
+if (normalized.startsWith('ff')) return true;
+return false;
+}
 function isBlockedTargetUrl(url) {
 if (!url || !['http:', 'https:'].includes(url.protocol)) return true;
 const host = String(url.hostname || '').toLowerCase().replace(/^\[|\]$/g, '');
 if (!host) return true;
 const blockedNames = new Set(['localhost', '0.0.0.0', 'metadata.google.internal']);
-if (blockedNames.has(host) || host.endsWith('.localhost') || host.endsWith('.local')) return true;
-if (host === '::1' || host.startsWith('fc') || host.startsWith('fd') || host.startsWith('fe80:')) return true;
-const parts = host.split('.').map(v => Number(v));
-if (parts.length === 4 && parts.every(v => Number.isInteger(v) && v >= 0 && v <= 255)) {
-const [a, b] = parts;
-if (a === 10 || a === 127 || a === 0) return true;
-if (a === 169 && b === 254) return true;
-if (a === 172 && b >= 16 && b <= 31) return true;
-if (a === 192 && b === 168) return true;
-}
+if (blockedNames.has(host) || host.endsWith('.localhost') || host.endsWith('.local') || host.endsWith('.internal')) return true;
+if (isBlockedIpAddress(host)) return true;
 return false;
+}
+async function isBlockedTargetUrlResolved(url) {
+if (isBlockedTargetUrl(url)) return true;
+const host = String(url.hostname || '').toLowerCase().replace(/^\[|\]$/g, '');
+if (net.isIP(host)) return isBlockedIpAddress(host);
+try {
+  const records = await lookup(host, { all: true, verbatim: true });
+  if (!Array.isArray(records) || records.length === 0) return true;
+  return records.some(record => isBlockedIpAddress(record.address));
+} catch {
+  return true;
+}
 }
 function toKrw(num) {
 return new Intl.NumberFormat('ko-KR').format(Math.round(num || 0));
@@ -2038,8 +2120,10 @@ return String(value || '')
 .replace(/\b전문가 리포트\b/g, '전문가 리포트')
 .replace(/\bAuto\b/g, '전문가 리포트')
 .replace(/자동\s*발행/g, '정기 업데이트')
-.replace(/20분 공개/g, '정기 업데이트')
+.replace(/20분에\s*1회|20분\s*주기|20분 공개|20분 발행|20분마다/g, '정기 업데이트')
 .replace(/자동 글/g, '정기 칼럼')
+.replace(/내 사이트 관리/g, '고객 포털')
+.replace(/상품·요금/g, '요금제')
 .replace(/고객 단계/g, '고객 단계')
 .replace(/첫 화면/g, '첫 화면')
 .replace(/메타 설명/g, '요약 설명')
@@ -2060,8 +2144,10 @@ const sections = String(body || '')
 .replace(/\b전문가 리포트\b/g, '전문가 리포트')
 .replace(/\bAuto\b/g, '전문가 리포트')
 .replace(/자동\s*발행/g, '정기 업데이트')
-.replace(/20분 공개/g, '정기 업데이트')
+.replace(/20분에\s*1회|20분\s*주기|20분 공개|20분 발행|20분마다/g, '정기 업데이트')
 .replace(/자동 글/g, '정기 칼럼')
+.replace(/내 사이트 관리/g, '고객 포털')
+.replace(/상품·요금/g, '요금제')
 .replace(/고객 단계/g, '고객 단계')
 .replace(/첫 화면/g, '첫 화면')
 .split(/\n{2,}/)
@@ -2759,8 +2845,11 @@ if (session?.redirectUrl) {
   try {
     const redirect = new URL(session.redirectUrl);
     if (!['http:', 'https:'].includes(redirect.protocol)) throw new Error('invalid_protocol');
+    const host = redirect.hostname.toLowerCase();
+    const allowed = PAYMENT_REDIRECT_ALLOWED_HOSTS.some(pattern => pattern === host || (pattern.startsWith('*.') && host.endsWith(pattern.slice(1))) || (pattern.startsWith('.') && host.endsWith(pattern)));
+    if (!allowed) throw new Error('host_not_allowlisted');
   } catch {
-    throw new Error('Invalid external payment redirectUrl: 외부 결제사가 유효한 결제 URL을 반환하지 않았습니다.');
+    throw new Error('Invalid external payment redirectUrl: 허용된 결제 도메인의 URL만 사용할 수 있습니다.');
   }
 }
 return session;
@@ -3114,12 +3203,40 @@ legalUpdates: (db.legalUpdates || []).slice(0, 10),
 plans: buildPlanCatalog(scan?.recommendedPlan || subscription?.plan || 'Report')
 };
 }
+async function readLimitedResponseText(res, maxBytes = TARGET_FETCH_MAX_BYTES) {
+const declaredLength = Number(res.headers.get('content-length') || 0);
+if (Number.isFinite(declaredLength) && declaredLength > maxBytes) throw new Error('target_response_too_large');
+if (!res.body || typeof res.body.getReader !== 'function') {
+const text = await res.text();
+if (Buffer.byteLength(text, 'utf8') > maxBytes) throw new Error('target_response_too_large');
+return text;
+}
+const reader = res.body.getReader();
+const decoder = new TextDecoder();
+let total = 0;
+let text = '';
+while (true) {
+const { done, value } = await reader.read();
+if (done) break;
+total += value.byteLength;
+if (total > maxBytes) {
+try { await reader.cancel(); } catch {}
+throw new Error('target_response_too_large');
+}
+text += decoder.decode(value, { stream: true });
+}
+text += decoder.decode();
+return text;
+}
 async function fetchTargetHtml(target) {
 const controller = new AbortController();
 const timeout = setTimeout(() => controller.abort(), TARGET_FETCH_TIMEOUT_MS);
+let current = safeUrl(String(target || '').trim());
 try {
-const res = await fetch(target, {
-redirect: 'follow',
+if (!current || await isBlockedTargetUrlResolved(current)) return { fetched: false, error: 'blocked_target_url', html: '', finalUrl: String(target || ''), status: 0, contentType: '' };
+for (let redirectCount = 0; redirectCount <= TARGET_FETCH_MAX_REDIRECTS; redirectCount += 1) {
+const res = await fetch(current.toString(), {
+redirect: 'manual',
 signal: controller.signal,
 headers: {
 'user-agent': 'Mozilla/5.0 (compatible; NV0/0.1; +https://nv0.kr/bot)',
@@ -3127,11 +3244,20 @@ headers: {
 'accept-language': 'ko-KR,ko;q=0.9,en;q=0.6'
 }
 });
+const location = res.headers.get('location');
+if ([301, 302, 303, 307, 308].includes(res.status) && location) {
+const next = new URL(location, current);
+if (await isBlockedTargetUrlResolved(next)) return { fetched: false, error: 'blocked_redirect_target', html: '', finalUrl: next.toString(), status: res.status, contentType: '' };
+current = next;
+continue;
+}
 const contentType = String(res.headers.get('content-type') || '');
-const html = contentType.includes('text/html') ? await res.text() : '';
-return { fetched: true, status: res.status, html, finalUrl: res.url, contentType, error: null };
+const html = contentType.includes('text/html') ? await readLimitedResponseText(res, TARGET_FETCH_MAX_BYTES) : '';
+return { fetched: true, status: res.status, html, finalUrl: current.toString(), contentType, error: null };
+}
+return { fetched: false, error: 'too_many_redirects', html: '', finalUrl: current.toString(), status: 0, contentType: '' };
 } catch (error) {
-return { fetched: false, error: error.message, html: '', finalUrl: target, status: 0, contentType: '' };
+return { fetched: false, error: error.message, html: '', finalUrl: current?.toString?.() || target, status: 0, contentType: '' };
 } finally {
 clearTimeout(timeout);
 }
@@ -3252,7 +3378,7 @@ const url = safeUrl(String(target || '').trim());
 if (!url) return { fetched: false, error: 'invalid url', html: '', finalUrl: target, status: 0, contentType: '', pages: [], probeCount: 0 };
 const primaryUrl = canonicalProbeUrl(url.toString(), url.pathname || '/') || url.toString();
 const primaryFetch = await fetchTargetHtml(primaryUrl);
-const discovery = await discoverTargetAutomationLinks(url.toString(), primaryFetch, { timeoutMs: TARGET_FETCH_TIMEOUT_MS, concurrency: TARGET_FETCH_CONCURRENCY, robotsEnabled: TARGET_FETCH_ROBOTS_ENABLED, sitemapEnabled: TARGET_FETCH_SITEMAP_ENABLED, maxSitemapUrls: TARGET_FETCH_MAX_SITEMAP_URLS, maxDiscoveryResources: TARGET_FETCH_MAX_DISCOVERY_RESOURCES, automationLevel: TARGET_FETCH_AUTOMATION_LEVEL });
+const discovery = await discoverTargetAutomationLinks(url.toString(), primaryFetch, { timeoutMs: TARGET_FETCH_TIMEOUT_MS, concurrency: TARGET_FETCH_CONCURRENCY, robotsEnabled: TARGET_FETCH_ROBOTS_ENABLED, sitemapEnabled: TARGET_FETCH_SITEMAP_ENABLED, maxSitemapUrls: TARGET_FETCH_MAX_SITEMAP_URLS, maxDiscoveryResources: TARGET_FETCH_MAX_DISCOVERY_RESOURCES, maxBytes: TARGET_FETCH_MAX_BYTES, maxRedirects: TARGET_FETCH_MAX_REDIRECTS, automationLevel: TARGET_FETCH_AUTOMATION_LEVEL });
 const discovered = discovery.discoveredLinks || [];
 const urls = buildProbeUrls(target, discovered);
 if (!urls.length) return { fetched: false, error: 'invalid url', html: '', finalUrl: target, status: 0, contentType: '', pages: [], probeCount: 0 };
@@ -3327,7 +3453,7 @@ return await enhanceScanWithAiReview(external);
 } catch (error) {
 if (!SCAN_PROVIDER_FALLBACK) throw error;
 const url = safeUrl(String(input).trim());
-if (url && isBlockedTargetUrl(url)) throw new Error('blocked target url');
+if (url && await isBlockedTargetUrlResolved(url)) throw new Error('blocked target url');
 const fallback = await buildBuiltinScanResultWithFetchBudget(input, startedAt, 'builtin_fallback', error.message);
 fallback.resultStatus = fallback.fetched ? 'completed_live_fetch_after_provider_error' : 'completed_limited_fallback';
 fallback.resultLimitNotice = fallback.fetched ? '외부 진단 제공자는 실패했지만 공개 페이지 수집에 성공해 내장 엔진으로 분석했습니다.' : '외부 진단 제공자와 대상 사이트 수집이 모두 제한되어 제한 분석을 수행했습니다.';
@@ -3336,7 +3462,7 @@ return await enhanceScanWithAiReview(fallback);
 }
 }
 const url = safeUrl(String(input).trim());
-if (url && isBlockedTargetUrl(url)) {
+if (url && await isBlockedTargetUrlResolved(url)) {
 return await enhanceScanWithAiReview(buildBuiltinScanResult(input, { fetched: false, html: '', error: 'blocked target url', finalUrl: input, status: 0 }, startedAt));
 }
 const builtin = await buildBuiltinScanResultWithFetchBudget(input, startedAt, 'builtin');
@@ -3983,6 +4109,8 @@ STORAGE_MODE,
 TARGET_FETCH_AUTOMATION_LEVEL,
 TARGET_FETCH_ENABLED,
 TARGET_FETCH_MAX_DISCOVERY_RESOURCES,
+TARGET_FETCH_MAX_BYTES,
+TARGET_FETCH_MAX_REDIRECTS,
 TARGET_FETCH_MAX_PAGES,
 TARGET_FETCH_ROBOTS_ENABLED,
 TARGET_FETCH_SITEMAP_ENABLED,
@@ -4123,6 +4251,7 @@ rateLimitStore,
 readDb,
 requireAdminCsrf,
 requireAdminPermission,
+sameOriginAllowed,
 restoreBackupSnapshot,
 sanitizeOrderForPublic,
 scanResultFor,
@@ -4365,4 +4494,3 @@ console.log(`VERIDION cleanroom server listening on http://${HOST}:${PORT} targe
 console.error('server startup failed', error);
 process.exit(1);
 });
-

@@ -124,6 +124,7 @@ export function createAccountRouteHandler(ctx) {
   readDb,
   scanResultFor,
   seedAutoFixJobs,
+  sameOriginAllowed,
   sessionStore,
   storeIdempotencyRecord,
   syncPortOneCheckoutOrder,
@@ -157,6 +158,9 @@ return { requestId: scan?.requestId || null, siteId: scan?.siteId || null, targe
     const url = routeState.requestUrl;
     const pathname = routeState.pathname;
     if (!(pathname.startsWith('/api/public/auth/') || pathname === '/api/public/account' || pathname.startsWith('/api/public/account/'))) return false;
+    if (!['GET', 'HEAD', 'OPTIONS'].includes(req.method || 'GET') && typeof sameOriginAllowed === 'function' && !sameOriginAllowed(req)) {
+      return json(req, res, 403, { ok: false, error: '허용되지 않은 origin 입니다.' }, { 'cache-control': 'no-store' });
+    }
 if (pathname === '/api/public/auth/session' && req.method === 'GET') {
 const db = await readDb();
 const session = await getCustomerSession(req, db);

@@ -1,0 +1,12 @@
+{
+  "ok": true,
+  "phase": "phase343-operational-readiness-contract",
+  "requiredEnvCount": 11,
+  "envTemplates": [
+    "deploy/env.production.template",
+    "deploy/env.production.nv0.kr.example",
+    ".env.example"
+  ],
+  "terminalGate": "npm run phase343:final",
+  "failures": []
+}

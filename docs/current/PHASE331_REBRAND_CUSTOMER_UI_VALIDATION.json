@@ -1,25 +1,25 @@
 {
   "ok": true,
   "phase": "phase331-rebrand-customer-ui",
-  "checkedAt": "2026-05-28T03:20:15.491Z",
+  "checkedAt": "2026-05-28T10:10:44.239Z",
   "checks": [
     {
-      "name": "version:phase331",
+      "name": "version:current-rebrand-lineage",
       "ok": true,
-      "detail": "1.0.1-commercial-phase331-rebrand-customer-ui"
+      "detail": "1.0.3-commercial-phase337-full-product-evolution-phase335-unified-organism"
     },
     {
-      "name": "home:v331-brand-marker",
-      "ok": true,
-      "detail": ""
-    },
-    {
-      "name": "portal:v331-brand-marker",
+      "name": "home:vr-brand-marker",
       "ok": true,
       "detail": ""
     },
     {
-      "name": "demo:v331-brand-marker",
+      "name": "portal:vr-brand-marker",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "demo:vr-brand-marker",
       "ok": true,
       "detail": ""
     },
@@ -29,37 +29,37 @@
       "detail": ""
     },
     {
-      "name": "css:.v331-topbar",
+      "name": "css:.vr-topbar",
       "ok": true,
       "detail": ""
     },
     {
-      "name": "css:.v331-hero",
+      "name": "css:.vr-hero",
       "ok": true,
       "detail": ""
     },
     {
-      "name": "css:.v331-preview",
+      "name": "css:.vr-preview",
       "ok": true,
       "detail": ""
     },
     {
-      "name": "css:.v331-app-shell",
+      "name": "css:.vr-app-shell",
       "ok": true,
       "detail": ""
     },
     {
-      "name": "css:.v331-dashboard",
+      "name": "css:.vr-dashboard",
       "ok": true,
       "detail": ""
     },
     {
-      "name": "css:.v331-report-header",
+      "name": "css:.vr-report-header",
       "ok": true,
       "detail": ""
     },
     {
-      "name": "css:.v331-footer",
+      "name": "css:.vr-footer",
       "ok": true,
       "detail": ""
     },

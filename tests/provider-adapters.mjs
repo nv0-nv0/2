@@ -72,7 +72,8 @@ const child = spawn(process.execPath, ['server/index.mjs'], {
     NV0_SCAN_PROVIDER: 'external_http',
     NV0_SCAN_PROVIDER_URL: `http://127.0.0.1:${scanPort}`,
     NV0_PAYMENT_PROVIDER: 'external_http',
-    NV0_PAYMENT_PROVIDER_URL: `http://127.0.0.1:${payPort}`
+    NV0_PAYMENT_PROVIDER_URL: `http://127.0.0.1:${payPort}`,
+    NV0_PAYMENT_REDIRECT_ALLOWED_HOSTS: 'pay.example.test'
   },
   stdio: 'ignore'
 });

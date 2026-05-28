@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-05-28T05:09:10.710Z",
+  "generatedAt": "2026-05-28T12:36:12.579Z",
   "ok": true,
   "phase": "phase335-unified-organism-test",
-  "total": 863,
-  "passed": 863,
+  "total": 904,
+  "passed": 904,
   "failed": 0,
   "checks": [
     {
@@ -1918,6 +1918,211 @@
     },
     {
       "name": "apps/public/home/index.html:no-old-copy:prelaunch",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/insights/index.html:rebrand-css",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/insights/index.html:clean-marker",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/insights/index.html:single-main",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/insights/index.html:single-footer",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/insights/index.html:no-inline-event",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/insights/index.html:no-inline-script",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/insights/index.html:no-old-source:veridion-clean-v311.css",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/insights/index.html:no-old-source:data-veridion-clean=\"v311\"",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/insights/index.html:no-old-source:data-veridion-brand=\"v331\"",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/insights/index.html:no-old-source:data-veridion-rebrand=\"v333\"",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/insights/index.html:no-old-source:v311-",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/insights/index.html:no-old-source:v331-",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/insights/index.html:no-old-source:v332-",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/insights/index.html:no-old-source:v333-",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/insights/index.html:no-old-source:nv0n-",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/insights/index.html:no-old-source:nv74-",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/insights/index.html:no-old-copy:위험 진단",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/insights/index.html:no-old-copy:요금 안내",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/insights/index.html:no-old-copy:내 사이트",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/insights/index.html:no-old-copy:보안 점수88",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/insights/index.html:no-old-copy:성능 점수76",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/insights/index.html:no-old-copy:SEO 점수90",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/insights/index.html:no-old-copy:접근성 점수75",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/insights/index.html:no-old-copy:API 키 관리",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/insights/index.html:no-old-copy:20분에 1회",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/insights/index.html:no-old-copy:20분마다",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/insights/index.html:no-old-copy:자동 발행",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/insights/index.html:no-old-copy:TrustOps",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/insights/index.html:no-old-copy:프로덕션 센티널",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/insights/index.html:no-old-copy:런칭 컨트롤",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/insights/index.html:no-old-copy:운영 큐",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/insights/index.html:no-old-copy:자동화 백로그",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/insights/index.html:no-old-copy:rollback",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/insights/index.html:no-old-copy:canary",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/insights/index.html:no-old-copy:live verification",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/insights/index.html:no-old-copy:SLA",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/insights/index.html:no-old-copy:MRR",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/insights/index.html:no-old-copy:phase319",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/insights/index.html:no-old-copy:phase320",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/insights/index.html:no-old-copy:phase321",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apps/public/insights/index.html:no-old-copy:prelaunch",
       "ok": true,
       "detail": ""
     },

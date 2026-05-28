@@ -142,6 +142,7 @@ export function createPublicRouteHandler(ctx) {
   persistence,
   publicCustomer,
   pseudonymizeIp,
+  privacyComplianceSummary,
   sanitizeOrderForPublic,
   rateLimitStore,
   readDb,
@@ -172,7 +173,10 @@ function cleanLegacyPublicTokens(value) {
       .replace(/상세 리포트/g, '기본 리포트')
       .replace(/다음 행동\s*게시판/g, '게시판')
       .replace(/자동\s*발행\s*200/g, '')
-      .replace(/자동 발행/g, '정기 업데이트')
+      .replace(/자동 발행|20분에\s*1회|20분\s*주기|20분 발행|20분마다/g, '정기 업데이트')
+      .replace(/내 사이트 관리/g, '고객 포털')
+      .replace(/상품·요금/g, '요금제')
+      .replace(/TrustOps|rollback|canary|sentinel|prelaunch|phase\d+/gi, '')
       .replace(/contentFingerprint|combinationMode|publicDisplayVersion/gi, '공개 항목');
   }
   if (Array.isArray(value)) return value.map(cleanLegacyPublicTokens);
@@ -212,6 +216,41 @@ return { requestId: scan?.requestId || null, siteId: scan?.siteId || null, targe
   if (accountHandled !== false) return accountHandled;
   const paymentHandled = await paymentRouteHandler(req, res, { requestUrl: url, pathname });
   if (paymentHandled !== false) return paymentHandled;
+  const customerHiddenOperationalEndpoints = new Set([
+    '/api/public/diagnosis-engine',
+    '/api/public/privacy-status',
+    '/api/public/governance-status',
+    '/api/public/risk-guard',
+    '/api/public/openapi.json',
+    '/api/public/hardening-matrix',
+    '/api/public/release-readiness',
+    '/api/public/launch-checklist',
+    '/api/public/commercial-final-gate',
+    '/api/public/commercial-readiness',
+    '/api/public/product-agent-status',
+    '/api/public/engine-agent-status',
+    '/api/public/organism-status',
+    '/api/public/product-intelligence',
+    '/api/public/product-quality',
+    '/api/public/trustops-blueprint',
+    '/api/public/fix-generator',
+    '/api/public/monitoring-plan',
+    '/api/public/revenue-optimization',
+    '/api/public/structured-data-package',
+    '/api/public/trustops-autopilot',
+    '/api/public/customer-lifecycle',
+    '/api/public/automation-workqueue',
+    '/api/public/trustops-launch-control',
+    '/api/public/lifecycle-message-sequence',
+    '/api/public/trustops-production-sentinel',
+    '/api/public/live-verification-checklist',
+    '/api/public/trustops-final-handoff',
+    '/api/public/trustops-100-final',
+    '/api/public/trustops-complete-delivery'
+  ]);
+  if (customerHiddenOperationalEndpoints.has(pathname)) {
+    return json(req, res, 404, { ok: false, error: 'Not found' }, { 'cache-control': 'no-store' });
+  }
 if (pathname === '/api/public/diagnosis-engine' && req.method === 'GET') {
 return json(req, res, 200, { ok: true, phase: RELEASE_PHASE, engine: 'VERIDION Public Evidence Summary Check Engine', rulesVersion: RULES_VERSION, targetFetchEnabled: TARGET_FETCH_ENABLED, scanProvider: SCAN_PROVIDER, aiReviewProvider: AI_REVIEW_PROVIDER, geminiConfigured: AI_REVIEW_ENABLED, resultContract: { resultType: 'preliminary_check', legalConclusion: false, includesEvidenceSummary: true, includesConfidenceScore: true, includesManualReviewFlags: true, includesAutomationDisclosure: true, includesAutomatedActionPlan: true, includesAccuracyProfile: true, includesReportQualityGate: true, includesDemoAccuracyContract: true, includesPaidOutputQualityGate: true, phase220ServiceQualityVersion: PHASE220_SERVICE_QUALITY_VERSION, phase223RiskGuardVersion: PHASE223_RISK_GUARD_VERSION }, endpoints: { scan: 'POST /api/public/scan', diagnose: 'POST /api/public/diagnose', board: 'GET /api/public/board', engine: 'GET /api/public/diagnosis-engine', productIntelligence: 'GET /api/public/product-intelligence', productQuality: 'GET /api/public/product-quality', productAgentStatus: 'GET /api/public/product-agent-status' }, smartProduct: { version: 'p153-smart-ops-v1', nextBestAction: true, planFitScoring: true, journeyOrchestration: true, smartProductEndpoint: '/api/public/smart-product', userPath: ['무료 요약','요금제 선택','고객 포털','인사이트 확인'] }, insightUpdate: { boardName: '인사이트', cadenceLabel: '정기 업데이트' }, automation: { mode: TARGET_FETCH_AUTOMATION_LEVEL, robotsEnabled: TARGET_FETCH_ROBOTS_ENABLED, sitemapEnabled: TARGET_FETCH_SITEMAP_ENABLED, maxPages: TARGET_FETCH_MAX_PAGES, maxDiscoveryResources: TARGET_FETCH_MAX_DISCOVERY_RESOURCES, notice: '자동 확인 가능한 공개 항목은 모두 처리하고 자동 확정 불가 영역은 직접 확인으로 고지합니다.' }, checks: buildRuleCatalog().map(({ code, category, title, severity, penaltyMax }) => ({ code, category, title, severity, penaltyMax })) });
 }
@@ -272,10 +311,10 @@ if (isLegacyDiagnosticStart) {
 return json(req, res, 200, cleanLegacyPublicTokens({ ok: true, status: 'completed', portalUrl, redirectUrl: portalUrl, reportUrl, result: resultPayload, scan: { ...resultPayload, id: scan.requestId, scanId: scan.requestId, domain: site.domain || scan.domain || scan.target, targetUrl: scan.target, status: 'completed' } }), { 'cache-control': 'no-store' });
 }
 if (pathname === '/api/public/config' && req.method === 'GET') {
-return json(req, res, 200, { ok: true, turnstileEnabled: TURNSTILE_PUBLIC_ENABLED, turnstileConfigured: TURNSTILE_CONFIGURED, prelaunchMode: PRELAUNCH_MODE, turnstileSiteKey: TURNSTILE_PUBLIC_ENABLED ? TURNSTILE_SITE_KEY : '' });
+return json(req, res, 200, { ok: true, turnstileEnabled: TURNSTILE_PUBLIC_ENABLED, turnstileConfigured: TURNSTILE_CONFIGURED, turnstileSiteKey: TURNSTILE_PUBLIC_ENABLED ? TURNSTILE_SITE_KEY : '' });
 }
 if (pathname === '/api/public/health' && req.method === 'GET') {
-return json(req, res, 200, { ok: true, area: 'public', time: nowIso(), phase: RELEASE_PHASE, privacy: privacyComplianceSummary(process.env), deploymentRiskGuard: { ok: DEPLOYMENT_RISK_GUARD?.ok !== false, version: PHASE223_RISK_GUARD_VERSION, redirectOwner: DEPLOYMENT_RISK_GUARD?.redirectOwner || 'edge' } });
+return json(req, res, 200, { ok: true, area: 'public', service: 'VERIDION', time: nowIso() }, { 'cache-control': 'no-store' });
 }
 if (pathname === '/api/public/privacy-status' && req.method === 'GET') {
 return json(req, res, 200, { ok: true, ...privacyComplianceSummary(process.env) }, { 'cache-control': 'no-store' });
@@ -454,19 +493,8 @@ return json(req, res, 200, { ok: true, structuredData });
 }
 
 
-const customerHiddenOperationalEndpoints = new Set([
-  '/api/public/trustops-autopilot',
-  '/api/public/automation-workqueue',
-  '/api/public/trustops-launch-control',
-  '/api/public/trustops-production-sentinel',
-  '/api/public/live-verification-checklist',
-  '/api/public/trustops-final-handoff',
-  '/api/public/trustops-100-final',
-  '/api/public/trustops-complete-delivery'
-]);
-if (customerHiddenOperationalEndpoints.has(pathname)) {
-  return json(req, res, 404, { ok: false, error: 'Not found' }, { 'cache-control': 'no-store' });
-}
+// Operational endpoint isolation is enforced before public handlers run.
+
 
 
 if (pathname === '/api/public/trustops-autopilot' && req.method === 'GET') {

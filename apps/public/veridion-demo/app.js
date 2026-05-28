@@ -156,7 +156,7 @@ function formatDate(value) {
   const date = new Date(value);
   return Number.isNaN(date.getTime()) ? String(value) : date.toLocaleString('ko-KR');
 }
-function formatPenalty(value) {
+function formatPriority(value) {
   const n = Number(value);
   if (!Number.isFinite(n) || n <= 0) return '확인 필요';
   return formatWon(n);
@@ -258,8 +258,8 @@ function normalizeScan(scan = {}) {
     riskScore,
     health,
     riskLevel: scan.riskLevel || health.label,
-    estimatedMaxPenalty: scan.estimatedMaxPenalty,
-    penaltyDisclaimer: scan.penaltyDisclaimer || scan.diagnosis?.penaltyDisclaimer || '과태료 상한 후보는 자동진단 기반 참고 정보이며, 실제 부과 여부·금액·적용 법령은 관할기관 판단과 전문가 검토에 따라 달라집니다.',
+    estimatedPriorityScore: scan.estimatedPriorityScore,
+    priorityDisclaimer: scan.priorityDisclaimer || scan.diagnosis?.priorityDisclaimer || '이 값은 공개 화면 기준 보완 우선순위입니다. 법률 판단이나 성과 보장을 의미하지 않습니다.',
     evidenceSummary: scan.evidenceSummary || {},
     scoreModel: scan.scoreModel || {},
     qualityAssurance: scan.qualityAssurance || {},
@@ -1158,7 +1158,7 @@ function buildDangerItems(view) {
 
 
 
-function formatPenaltyCompact(value) {
+function formatPriorityCompact(value) {
   const amount = Number(value);
   if (!Number.isFinite(amount) || amount <= 0) return '확인 필요';
   if (amount >= 10000 && amount % 10000 === 0) return `${formatWon(amount / 10000)}만 원`;
@@ -1166,39 +1166,39 @@ function formatPenaltyCompact(value) {
   return `${formatWon(amount)}원`;
 }
 
-function buildPenaltyAlertModel(view, buckets) {
-  const explicit = Number(view.estimatedMaxPenalty ?? view.raw?.estimatedMaxPenalty ?? 0);
+function buildPriorityAlertModel(view, buckets) {
   const issueCount = Number(buckets?.totalIssues || view.demoIssueOverview?.totalIssueCount || 0);
-  const derived = issueCount > 0 ? Math.min(30000000, Math.max(3000000, issueCount * 10000000)) : 0;
-  const amount = explicit > 0 ? explicit : derived;
-  const classification = amount >= 30000000 ? 'critical' : amount >= 10000000 ? 'danger' : amount > 0 ? 'warn' : 'muted';
+  const areaCount = Number(buckets?.areaCount || view.demoIssueOverview?.areaCount || 0);
+  const elementCount = Number(buckets?.totalElements || view.demoIssueOverview?.elementCount || 0);
+  const priority = Math.min(100, Math.max(10, issueCount * 9 + areaCount * 8 + elementCount * 2));
+  const classification = priority >= 78 ? 'critical' : priority >= 58 ? 'danger' : priority >= 35 ? 'warn' : 'muted';
   return {
-    amount,
-    display: formatPenaltyCompact(amount),
+    amount: priority,
+    display: `${priority}점`,
     classification,
-    source: explicit > 0 ? 'engine' : 'fallback-risk-band',
-    disclaimer: view.penaltyDisclaimer || '과태료 상한 후보는 자동진단 기반 참고 정보이며, 실제 부과 여부·금액·적용 법령은 관할기관 판단과 전문가 검토에 따라 달라집니다.',
-    warningTitle: '과태료·행정조치 가능성 검토 필요',
-    warningText: '아래 금액은 공개 화면 자동진단 기반의 참고 상한 후보입니다. 실제 부과 여부와 금액은 관할기관 판단, 적용 법령, 사실관계, 전문가 검토에 따라 달라집니다.',
+    source: 'free-demo-trust-gap-priority',
+    disclaimer: '이 점수는 공개 화면 기준 보완 우선순위입니다. 법률 위반, 행정처분, 매출 개선을 확정하거나 보장하지 않습니다.',
+    warningTitle: '구매 전 신뢰 공백 우선 검토 필요',
+    warningText: '무료 진단은 고객이 결제 전에 불안해할 수 있는 안내 공백을 먼저 보여줍니다. 실제 수정 위치와 문구는 기본 리포트에서 확인할 수 있습니다.',
     bullets: [
-      `${formatPenaltyCompact(amount)} 범위 검토 가능성`,
-      '시정명령·재점검 요구 가능성',
-      '공표·제재 등 행정처분 검토 가능성',
-      '고객 신뢰도 및 매출 영향 가능성'
+      `발견 문제 ${issueCount}개`,
+      `리스크 영역 ${areaCount}개`,
+      `점검 요소 ${elementCount}개`,
+      '정책·문의·환불 안내 우선 확인'
     ]
   };
 }
 
-function renderPenaltyWarningPanel(model, classRows = []) {
+function renderPriorityWarningPanel(model, classRows = []) {
   const classificationRows = classRows.length
     ? `<div class="demo-class-mini" aria-label="법령 구분별 문제 개수">${classRows.map(([label, count]) => `<span>${escapeHtml(label)} <b>${escapeHtml(count)}</b></span>`).join('')}</div>`
     : '';
-  return `<aside class="demo-count-warning-card ${escapeAttr(model.classification)}" aria-label="참고용 과태료 상한 후보 안내">
+  return `<aside class="demo-count-warning-card ${escapeAttr(model.classification)}" aria-label="구매 전 신뢰 공백 우선순위 안내">
     <div class="warning-title-row"><span class="warning-icon" aria-hidden="true">!</span><h3>${escapeHtml(model.warningTitle)}</h3></div>
     <div class="warning-message">${escapeHtml(model.warningText)}</div>
     <div class="warning-bullet-box"><div class="warning-subtitle"><b>이런 항목을 우선 검토하세요</b></div><ul>${model.bullets.map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul></div>
     ${classificationRows}
-    <p class="penalty-disclaimer">${escapeHtml(model.disclaimer)}</p>
+    <p class="priority-disclaimer">${escapeHtml(model.disclaimer)}</p>
   </aside>`;
 }
 
@@ -1233,24 +1233,35 @@ function renderDemoCountOnlyResult(view) {
   const classRows = Object.entries(buckets.classCounts).length
     ? Object.entries(buckets.classCounts)
     : [['누락 의심', buckets.totalIssues]];
-  const penalty = buildPenaltyAlertModel(view, buckets);
-  return `<section class="demo-count-result vr-penalty-dashboard" aria-label="무료 진단 결과 요약">
+  const priority = buildPriorityAlertModel(view, buckets);
+  const visibleAreas = buckets.areas.slice(0, 6);
+  const topActions = (view.recommendedActions || []).slice(0, 4);
+  const evidencePages = (view.pages || []).slice(0, 4).map((page) => typeof page === 'string' ? page : (page.finalUrl || page.url || '')).filter(Boolean);
+  return `<section class="demo-count-result vr-priority-dashboard" aria-label="무료 진단 결과 요약">
     <div class="demo-count-head">
-      <div><span class="pill brand">무료 진단 결과</span><h2>문제 개수만 한눈에 확인하세요</h2><p>${escapeHtml(view.target)}</p></div>
+      <div><span class="pill brand">무료 진단 결과</span><h2>고객이 결제 전에 불안해할 지점을 먼저 보여드립니다</h2><p>${escapeHtml(view.target)}</p></div>
       <button class="btn secondary" type="button" id="dashboardRetryBtn">다시 점검</button>
     </div>
     <div class="demo-count-kpis vr-warning-grid">
-      <article class="demo-penalty-card ${escapeAttr(penalty.classification)}"><div class="penalty-copy"><span>과태료 상한 후보 <em>참고용</em></span><strong>${escapeHtml(penalty.display)}</strong><small><i aria-hidden="true">주의</i> 확정 안내 아님 · 검토 필요</small></div><div class="penalty-siren" aria-hidden="true"><span></span></div></article>
+      <article class="demo-priority-card ${escapeAttr(priority.classification)}"><div class="priority-copy"><span>신뢰 공백 우선도 <em>무료 기준</em></span><strong>${escapeHtml(priority.display)}</strong><small><i aria-hidden="true">주의</i> 공개 화면 기준 · 상세 근거는 리포트 제공</small></div><div class="priority-siren" aria-hidden="true"><span></span></div></article>
       <article class="demo-summary-card danger"><span><i aria-hidden="true">!</i> 문제 합계</span><strong>${escapeHtml(buckets.totalIssues)}</strong><small>무료 진단 공개 범위</small></article>
-      <article class="demo-summary-card"><span><i aria-hidden="true"></i> 리스크 영역</span><strong>${escapeHtml(buckets.areaCount)}</strong><small>몇 개 영역에서 문제가 보이는지</small></article>
+      <article class="demo-summary-card"><span><i aria-hidden="true"></i> 리스크 영역</span><strong>${escapeHtml(buckets.areaCount)}</strong><small>어느 영역에서 문제가 보이는지</small></article>
       <article class="demo-summary-card"><span><i aria-hidden="true"></i> 점검 요소</span><strong>${escapeHtml(buckets.totalElements)}</strong><small>문제가 걸린 요소 수</small></article>
       <article class="demo-summary-card"><span><i aria-hidden="true"></i> 검토 구분</span><strong>${escapeHtml(classRows.length)}</strong><small>확인됨·누락 의심·검토 필요</small></article>
     </div>
     <div class="demo-count-layout vr-warning-layout">
-      <article class="demo-count-table-card"><div class="meta-row"><h3>영역별 문제 개수</h3><span class="pill gray">상세 근거는 유료 리포트</span></div><table class="demo-count-table"><thead><tr><th>영역</th><th>문제</th><th>요소</th><th>검토 구분</th></tr></thead><tbody>${buckets.areas.map(row => `<tr><td>${escapeHtml(row.area)}</td><td><b>${escapeHtml(row.issueCount)}</b>개</td><td><b>${escapeHtml(row.elementCount)}</b>개</td><td><span>${escapeHtml(row.classification)}</span></td></tr>`).join('')}</tbody></table></article>
-      ${renderPenaltyWarningPanel(penalty, classRows)}
+      <article class="demo-count-table-card"><div class="meta-row"><h3>영역별 문제 개수</h3><span class="pill gray">상세 근거는 유료 리포트</span></div><table class="demo-count-table"><thead><tr><th>영역</th><th>문제</th><th>요소</th><th>검토 구분</th></tr></thead><tbody>${visibleAreas.map(row => `<tr><td>${escapeHtml(row.area)}</td><td><b>${escapeHtml(row.issueCount)}</b>개</td><td><b>${escapeHtml(row.elementCount)}</b>개</td><td><span>${escapeHtml(row.classification)}</span></td></tr>`).join('')}</tbody></table></article>
+      ${renderPriorityWarningPanel(priority, classRows)}
     </div>
-    <div class="demo-paid-gate"><div><h3>상세 분석은 유료 서비스 영역입니다</h3><p>페이지별 근거, 실제 문구, 수정 전후안, 우선순위 로드맵, 재점검 기준은 기본 리포트 또는 전문가 리포트에서 제공합니다.</p></div><div class="vr-cta-row"><a class="btn primary" href="/checkout?plan=Report&siteId=${escapeAttr(view.siteId)}">기본 리포트 49,000원</a><a class="btn secondary" href="/checkout?plan=Expert&siteId=${escapeAttr(view.siteId)}">전문가 플랜 149,000원</a></div></div>
+    <div class="demo-result-explain-grid" aria-label="무료 결과에서 바로 알 수 있는 정보">
+      <article><span class="pill green">확인 범위</span><h3>어디를 봤는지</h3><p>${escapeHtml(evidencePages.length ? evidencePages.join(' · ') : '홈, 연결 링크, robots.txt, sitemap 후보를 기준으로 확인합니다.')}</p></article>
+      <article><span class="pill gold">직접 확인</span><h3>자동 단정 제외</h3><p>로그인 후 화면, 외부 결제창, 업종별 법률 판단은 무료 결과에서 검토 필요로 분리합니다.</p></article>
+      <article><span class="pill brand">다음 조치</span><h3>무엇부터 고칠지</h3><p>${escapeHtml(topActions[0]?.nextStep || topActions[0]?.reason || '정책 링크, 환불 기준, 개인정보 안내, 문의 경로를 우선 확인하세요.')}</p></article>
+    </div>
+    <div class="demo-result-explain-grid" aria-label="유료 전환 가치">
+      ${topActions.map((item, index) => `<article><span class="pill gray">STEP ${escapeHtml(index + 1)}</span><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.nextStep || item.reason || '상세 리포트에서 적용 위치와 수정 기준을 확인하세요.')}</p></article>`).join('')}
+    </div>
+    <div class="demo-paid-gate"><div><h3>상세 분석은 유료 리포트에서 열립니다</h3><p>무료 결과는 문제 개수와 방향을 보여주고, 유료 리포트는 페이지별 근거, 실제 문구, 수정 전후안, 우선순위 로드맵, 재점검 기준까지 제공합니다.</p></div><div class="vr-cta-row"><a class="btn primary" href="/checkout?plan=Report&siteId=${escapeAttr(view.siteId)}">기본 리포트 49,000원</a><a class="btn secondary" href="/checkout?plan=Expert&siteId=${escapeAttr(view.siteId)}">전문가 플랜 149,000원</a></div></div>
   </section>`;
 }
 

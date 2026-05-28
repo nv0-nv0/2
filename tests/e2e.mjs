@@ -15,7 +15,7 @@ const checkoutJs = read('apps/public/checkout/app.js');
 const boardJs = read('apps/public/board/app.js');
 const allRoutes = [server, publicRoutes, paymentRoutes, accountRoutes, adminRoutes].join('\n');
 
-assert.match(pkg.version, /phase33[45]-(clean-rebrand|unified-organism)/);
+assert.match(pkg.version, /phase33[45]-(clean-rebrand|unified-organism)|phase340-redteam-100-closeout|phase341-final-closeout|phase342-merged-best|phase343-final-perfect/);
 for (const script of ['test:e2e','phase335:final','validate:phase335','check:responsive-contract','test:routes','check:links','verify:security']) {
   assert.ok(pkg.scripts[script], `missing script ${script}`);
 }

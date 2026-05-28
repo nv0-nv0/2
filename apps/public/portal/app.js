@@ -26,7 +26,7 @@ async function requestJson(path, options = {}) {
 }
 function healthFromScore(score) {
   const numeric = Number(score);
-  if (!Number.isFinite(numeric)) return { label: '검사 대기', className: '' };
+  if (!Number.isFinite(numeric)) return { label: '샘플 보기', className: 'success' };
   if (numeric >= 80) return { label: '양호', className: 'success' };
   if (numeric >= 60) return { label: '보통', className: 'warn' };
   return { label: '주의', className: 'danger' };
@@ -45,34 +45,35 @@ function renderSummary(account = {}) {
   const sites = Array.isArray(account.savedSites) ? account.savedSites : [];
   const scans = Array.isArray(account.recentScans) ? account.recentScans : [];
   const latest = scans[0] || null;
-  const score = Number(latest?.riskScore);
+  const sampleMode = !latest;
+  const score = Number(sampleMode ? 82 : latest?.riskScore);
   const hasScore = Number.isFinite(score);
-  const findings = latest ? findingCount(latest) : 0;
-  const urgent = latest ? urgentCount(latest) : 0;
+  const findings = latest ? findingCount(latest) : 7;
+  const urgent = latest ? urgentCount(latest) : 3;
   const health = healthFromScore(score);
   text('#portalTotalSites', `${sites.length}개`);
-  text('#portalManagedSites', `${sites.length}개`);
-  text('#portalRecentScans', `${scans.length}개`);
-  text('#portalRecentScanCount', `${scans.length}개`);
+  text('#portalManagedSites', sampleMode ? '예시 1개' : `${sites.length}개`);
+  text('#portalRecentScans', sampleMode ? '샘플' : `${scans.length}개`);
+  text('#portalRecentScanCount', sampleMode ? '샘플' : `${scans.length}개`);
   text('#portalIssueCount', `${findings}개`);
   text('#portalWarningIssues', `${Math.max(0, findings - urgent)}개`);
   text('#portalActionRequiredCount', `${urgent}개`);
   text('#portalCriticalIssues', `${urgent}개`);
-  text('#portalSummaryDomain', latest?.target || sites[0]?.domain || '진단 전');
-  text('#portalLatestScanAt', latest ? formatDate(latest.generatedAt || latest.createdAt || sites[0]?.lastScanAt) : '최근 진단 결과가 아직 없습니다.');
-  text('.vr-score-number', hasScore ? String(Math.round(score)) : '-');
+  text('#portalSummaryDomain', latest?.target || sites[0]?.domain || '샘플 사이트');
+  text('#portalLatestScanAt', latest ? formatDate(latest.generatedAt || latest.createdAt || sites[0]?.lastScanAt) : '무료 진단 후 실제 이력으로 전환됩니다.');
+  text('.vr-score-number', String(Math.round(score))); 
   const pill = $('#portalRiskPill');
   if (pill) {
     pill.className = `vr-chip ${health.className}`.trim();
     pill.textContent = health.label;
   }
-  text('#portalStatusSummary', latest ? `${latest.target || '최근 사이트'} 기준으로 보완 우선순위를 정리했습니다.` : '진단을 실행하면 점수와 보완 우선순위가 표시됩니다.');
-  text('#portalStatusDetail', latest ? `발견 항목 ${findings}개, 우선 조치 ${urgent}개를 기준으로 다음 행동을 제안합니다.` : '로그인 후 사이트를 저장하면 반복 점검 이력을 이어서 관리할 수 있습니다.');
+  text('#portalStatusSummary', latest ? `${latest.target || '최근 사이트'} 기준으로 보완 우선순위를 정리했습니다.` : '샘플 리포트 기준으로 포털에서 확인할 수 있는 정보를 먼저 보여드립니다.');
+  text('#portalStatusDetail', latest ? `발견 항목 ${findings}개, 우선 조치 ${urgent}개를 기준으로 다음 행동을 제안합니다.` : '무료 진단을 실행하면 샘플 수치가 실제 사이트 결과로 바뀝니다.');
 }
 function renderSites(account = {}) {
   const sites = Array.isArray(account.savedSites) ? account.savedSites : [];
   if (!sites.length) {
-    setHtml('#portalAssetList', '<div class="vr-empty"><strong>등록된 사이트가 아직 없습니다.</strong><p>새 사이트를 등록하거나 무료 진단을 실행하면 결과가 이곳에 표시됩니다.</p></div>');
+    setHtml('#portalAssetList', '<div class="vr-dark-table"><div class="vr-dark-row vr-dark-row-head"><span>사이트</span><span>URL</span><span>최근 진단일</span><span>종합 점수</span><span>상태</span><span>관리</span></div><div class="vr-dark-row"><b>샘플 쇼핑몰</b><span>https://example-store.kr</span><span>무료 진단 후 표시</span><strong>82/100</strong><span><em class="vr-chip success">샘플</em></span><span><a href="/products/veridion/demo">진단</a></span></div></div>');
     return;
   }
   const rows = sites.slice(0, 8).map((site) => {
@@ -86,7 +87,7 @@ function renderAccountState(accountResponse) {
   const authenticated = accountResponse?.ok === true;
   text('#portalConnectionState', authenticated ? '계정 연결됨' : '로그인 필요');
   text('#portalAccountState', authenticated ? '계정 연결됨' : '로그인');
-  text('#portalState', authenticated ? '저장 사이트와 최근 진단 이력을 불러왔습니다.' : '로그인하면 저장 사이트와 최근 진단 이력을 이어서 확인할 수 있습니다.');
+  text('#portalState', authenticated ? '저장 사이트와 최근 진단 이력을 불러왔습니다.' : '로그인 전에도 샘플 리포트로 확인 가능한 정보와 유료 전환 흐름을 먼저 볼 수 있습니다.');
 }
 function renderInsights(board = {}) {
   const posts = Array.isArray(board.posts) ? board.posts.slice(0, 3) : [];

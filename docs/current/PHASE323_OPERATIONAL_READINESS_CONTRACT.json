@@ -1,5 +1,5 @@
 {
-  "ok": true,
+  "ok": false,
   "phase": "phase324-operational-readiness-contract",
   "requiredEnvCount": 11,
   "envTemplates": [
@@ -7,5 +7,8 @@
     "deploy/env.production.nv0.kr.example",
     ".env.example"
   ],
-  "failures": []
+  "failures": [
+    "release:predeploy must point to phase323:final or phase324:final",
+    "delivery:final must point to phase323:final or phase324:final"
+  ]
 }

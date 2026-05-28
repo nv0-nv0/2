@@ -20,11 +20,11 @@ const demoJs = read('apps/public/veridion-demo/app.js');
 const css = read('shared/veridion-rebrand.css');
 const pkg = JSON.parse(read('package.json'));
 
-check('version:phase331', /phase331-rebrand-customer-ui/.test(pkg.version), pkg.version);
+check('version:current-rebrand-lineage', /phase33[1-7]/.test(pkg.version), pkg.version);
 check('home:vr-brand-marker', home.includes('data-veridion-rebrand="clean"'));
 check('portal:vr-brand-marker', portal.includes('data-veridion-rebrand="clean"'));
 check('demo:vr-brand-marker', demo.includes('data-veridion-rebrand="clean"'));
-check('css:rebrand-system', css.includes('VERIDION rebrand system v331'));
+check('css:rebrand-system', css.includes('VERIDION Rebrand Design System'));
 for (const selector of ['.vr-topbar', '.vr-hero', '.vr-preview', '.vr-app-shell', '.vr-dashboard', '.vr-report-header', '.vr-footer']) {
   check(`css:${selector}`, css.includes(selector));
 }

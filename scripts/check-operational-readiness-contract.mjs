@@ -25,12 +25,13 @@ const requiredEnv = [
 for (const key of requiredEnv) {
   if (!combinedEnv.includes(key)) failures.push(`missing required env contract: ${key}`);
 }
-const requiredScripts = ['phase323:final','validate:phase323','phase324:final','validate:phase324','release:predeploy','delivery:final','check:responsive-contract','check:operational-contract'];
+const requiredScripts = ['phase323:final','validate:phase323','phase324:final','validate:phase324','phase342:final','validate:phase342','phase343:final','validate:phase343','release:predeploy','delivery:final','check:responsive-contract','check:operational-contract'];
 for (const key of requiredScripts) {
   if (!packageJson.scripts?.[key]) failures.push(`missing package script: ${key}`);
 }
-if (!['npm run phase323:final','npm run phase324:final'].includes(packageJson.scripts?.['release:predeploy'])) failures.push('release:predeploy must point to phase323:final or phase324:final');
-if (!['npm run phase323:final','npm run phase324:final'].includes(packageJson.scripts?.['delivery:final'])) failures.push('delivery:final must point to phase323:final or phase324:final');
+const allowedTerminalGates = ['npm run phase323:final','npm run phase324:final','npm run phase340:final','npm run phase341:final','npm run phase342:final','npm run phase343:final'];
+if (!allowedTerminalGates.includes(packageJson.scripts?.['release:predeploy'])) failures.push('release:predeploy must point to a current terminal final gate');
+if (!allowedTerminalGates.includes(packageJson.scripts?.['delivery:final'])) failures.push('delivery:final must point to a current terminal final gate');
 for (const file of [
   'scripts/run-phase323-final.mjs',
   'scripts/run-phase324-final.mjs',
@@ -42,9 +43,9 @@ for (const file of [
 ]) {
   if (!exists(file)) failures.push(`missing operational artifact: ${file}`);
 }
-const report = { ok: failures.length === 0, phase: 'phase324-operational-readiness-contract', requiredEnvCount: requiredEnv.length, envTemplates: envTemplates.map(([file]) => file), failures };
+const report = { ok: failures.length === 0, phase: 'phase343-operational-readiness-contract', requiredEnvCount: requiredEnv.length, envTemplates: envTemplates.map(([file]) => file), terminalGate: packageJson.scripts?.['delivery:final'], failures };
 fs.mkdirSync(path.join(root, 'docs/current'), { recursive: true });
-fs.writeFileSync(path.join(root, 'docs/current/PHASE323_OPERATIONAL_READINESS_CONTRACT.json'), JSON.stringify(report, null, 2));
+fs.writeFileSync(path.join(root, 'docs/current/PHASE343_OPERATIONAL_READINESS_CONTRACT.json'), JSON.stringify(report, null, 2));
 if (failures.length) {
   console.error(JSON.stringify(report, null, 2));
   process.exit(1);

@@ -1,0 +1,100 @@
+{
+  "ok": true,
+  "phase": "phase341-final-closeout|phase342-merged-best|phase343-final-perfect",
+  "checked": 21,
+  "failed": 0,
+  "closedItems": 18,
+  "checks": [
+    {
+      "name": "package:phase341-version",
+      "ok": true
+    },
+    {
+      "name": "package:delivery-final-current",
+      "ok": true
+    },
+    {
+      "name": "package:release-predeploy-current",
+      "ok": true
+    },
+    {
+      "name": "package:phase341-final-chains-phase340",
+      "ok": true
+    },
+    {
+      "name": "package:phase341-final-runs-validator",
+      "ok": true
+    },
+    {
+      "name": "validator:phase337-accepts-terminal-closeout",
+      "ok": true
+    },
+    {
+      "name": "validator:phase340-accepts-phase341",
+      "ok": true
+    },
+    {
+      "name": "server:canonical-alias-function",
+      "ok": true
+    },
+    {
+      "name": "server:route-meta-uses-canonical-path",
+      "ok": true
+    },
+    {
+      "name": "server:structured-data-uses-canonical-url",
+      "ok": true
+    },
+    {
+      "name": "server:sitemap-excludes-resources-alias",
+      "ok": true
+    },
+    {
+      "name": "live:robots-disallows-private-surfaces",
+      "ok": true
+    },
+    {
+      "name": "live:sitemap-canonical-only",
+      "ok": true
+    },
+    {
+      "name": "live:canonical:/pricing.html->/plans",
+      "ok": true
+    },
+    {
+      "name": "live:canonical:/resources->/guides",
+      "ok": true
+    },
+    {
+      "name": "live:canonical:/demo_risk_result.html->/products/veridion/demo",
+      "ok": true
+    },
+    {
+      "name": "live:canonical:/mypage.html->/portal",
+      "ok": true
+    },
+    {
+      "name": "live:canonical:/auth_management.html->/auth",
+      "ok": true
+    },
+    {
+      "name": "live:public-json-clean-and-minimal",
+      "ok": true
+    },
+    {
+      "name": "live:hidden-operational-endpoint-stays-hidden",
+      "ok": true
+    },
+    {
+      "name": "live:public-headers-minimized",
+      "ok": true
+    }
+  ],
+  "failedChecks": [],
+  "summary": [
+    "delivery:final and release:predeploy now point at the terminal Phase341+ gate",
+    "legacy public aliases render canonical SEO metadata instead of duplicate home metadata",
+    "sitemap contains canonical indexable URLs only",
+    "public JSON/API and response headers remain clean in live runtime audit"
+  ]
+}

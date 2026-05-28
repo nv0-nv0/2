@@ -20,6 +20,13 @@ add('security:admin-public-hidden', !read('apps/public/home/index.html').include
 add('security:readyz-runtime-writable', /runtimeWritable/.test(server) && /readyz/.test(server));
 add('security:env-placeholder-guard', /replace-with|changeme|dummy|test_/.test(server));
 add('security:turnstile-gate-supported', /NV0_ENABLE_TURNSTILE/.test(server) && fs.existsSync(path.join(root, 'shared/turnstile.js')));
+add('security:url-fetch-manual-redirect', /fetchTargetHtml[\s\S]*redirect:\s*'manual'/.test(server) && /blocked_redirect_target/.test(server));
+add('security:url-fetch-response-size-limit', /TARGET_FETCH_MAX_BYTES/.test(server) && /readLimitedResponseText/.test(server) && /target_response_too_large/.test(server));
+add('security:url-fetch-private-network-block', /metadata\.google\.internal/.test(server) && /169/.test(server) && /192/.test(server) && /172/.test(server));
+add('security:url-fetch-dns-resolution', /from 'node:dns\/promises'/.test(server) && /lookup\(host/.test(server) && /isBlockedTargetUrlResolved/.test(server));
+add('security:payment-redirect-allowlist', /PAYMENT_REDIRECT_ALLOWED_HOSTS/.test(server) && /허용된 결제 도메인/.test(server));
+add('security:public-info-leak-headers-minimized', !/x-vr-risk-guard|x-vr-redirect-owner|server':\s*'VERIDION/i.test(server));
+add('security:customer-same-origin-guard', /sameOriginAllowed/.test(read('server/routes/account.mjs')) && /허용되지 않은 origin/.test(read('server/routes/account.mjs')));
 
 const clientFiles = [];
 function walk(dir) {

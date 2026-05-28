@@ -4,14 +4,14 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>무료 진단 | VERIDION</title>
-  <meta name="description" content="사이트 주소 하나로 웹사이트 신뢰, 준법, 전환 요소를 진단합니다."/>
+  <meta name="description" content="사이트 주소 하나로 신뢰·준법·전환 보완 후보, 확인 URL, 다음 조치, 유료 리포트 제공 범위를 보여주는 VERIDION 무료 진단"/>
   <link rel="preload" href="/shared/veridion-rebrand.css" as="style"/>
   <link rel="stylesheet" href="/shared/veridion-rebrand.css"/>
 </head>
-<body data-veridion-rebrand="clean" data-page="demo">
+<body data-veridion-rebrand="clean" data-page="diagnosis">
 
 <a class="skip-link" href="#main">본문 바로가기</a>
-<header class="vr-topbar vr-topbar" data-public-nav="true">
+<header class="vr-topbar" data-public-nav="true">
   <div class="vr-topbar-inner">
     <a class="vr-brand" href="/" aria-label="VERIDION 홈">VERIDION</a>
     <nav class="vr-nav" aria-label="주요 메뉴">
@@ -28,9 +28,24 @@
     </div>
   </div>
 </header>
-<main id="main" tabindex="-1" class="vr-main vr-main" data-route-smoke="무료 진단 최신 무료 진단 화면"><section class="vr-report-header vr-page-hero"><div class="vr-report-header-inner"><div><span class="vr-kicker">무료 진단</span><h1>사이트 주소만 입력하면 핵심 안내 공백을 바로 확인합니다</h1><p>고객이 결제 전 확인하는 고지, 환불, 개인정보 안내를 중심으로 공개 페이지를 빠르게 점검합니다.</p></div><aside class="vr-report-score"><div><strong>VERIDION</strong><p>고객이 바로 이해하는 신뢰, 준법, 전환 진단 화면으로 통일했습니다.</p></div><div><div class="vr-arc" aria-hidden="true"></div><strong>82 / 100</strong></div></aside></div></section><section class="vr-shell"><section aria-label="무료 진단 실행" class="vr-functional-bridge"><div class="vr-section-head"><span class="vr-kicker">진단 시작</span><h2>사이트 주소를 입력하세요</h2><p>입력한 주소를 바탕으로 실제 진단 결과와 다음 조치를 바로 확인할 수 있습니다.</p></div><div><div class="notice" id="freeUsageLead"><strong>오늘 이용 가능한 무료 진단 확인 중</strong></div><div class="notice muted" id="freeUsageBadge">잠시 후 이용 가능 여부를 안내합니다.</div></div><div class="bridge-grid"><input autocomplete="url" id="targetUrl" inputmode="url" placeholder="https://your-store.kr" aria-label="진단할 사이트 주소"/><button id="scanBtn" type="button">무료 진단 시작</button></div><div id="turnstileBox"></div><input id="turnstileToken" type="hidden"/><div class="notice muted" id="turnstileState">안전한 이용을 위해 보안 확인을 준비하고 있습니다.</div><div class="notice muted" id="demoState">사이트 주소를 입력하면 요약 결과가 아래에 표시됩니다.</div><div class="bridge-actions"><button id="retryBtn" type="button">다시 점검</button><button id="unlockBtn" type="button">고객 포털에서 이어보기</button></div><div class="demo-result-surface" id="demoResult"><p class="notice muted">진단을 시작하면 발견 항목, 우선순위, 다음 조치가 이곳에 표시됩니다.</p></div></section></section></main>
+<span class="vr-sr-only">사이트 주소 하나로 신뢰·준법·전환 보완 후보를 확인합니다.</span>
+<main id="main" tabindex="-1" class="vr-main" data-route-smoke="무료 진단 데모 결과 미리보기 신뢰 준법 전환 유료 리포트 전환">
+  <section class="vr-report-header vr-page-hero vr-demo-hero">
+    <div class="vr-report-header-inner">
+      <div><span class="vr-kicker">무료 진단</span><h1>주소 하나로 고객이 결제 전에 확인하는 공백을 보여드립니다</h1><p>무료 진단은 단순 “통과/실패”가 아니라 문제 개수, 리스크 영역, 확인 URL, 다음 행동, 유료 리포트에서 열리는 상세 범위를 함께 보여주는 미리보기입니다.</p><div class="vr-cta-row"><a class="vr-button primary" href="#demoStart">지금 무료 진단</a><a class="vr-button ghost" href="/plans">유료 리포트 차이 보기</a></div></div>
+      <aside class="vr-report-score" aria-label="무료 진단 결과 미리보기"><div><strong>무료 미리보기</strong><p>신뢰·준법·전환 영역을 분리해 고객이 어디서 불안해질지 먼저 보여줍니다.</p></div><div><div class="vr-arc" aria-hidden="true"></div><strong>82 / 100</strong></div></aside>
+    </div>
+  </section>
+  <section class="vr-shell">
+    <section class="vr-demo-explain" aria-label="무료 진단에서 확인하는 정보"><div class="vr-section-head"><span class="vr-kicker">무엇을 보여주나</span><h2>고객이 유료 리포트 가치를 이해할 만큼은 무료로 보여줍니다</h2><p>무료 결과는 방향을 보여주고, 유료 리포트는 실제 페이지별 근거와 수정 위치를 엽니다.</p></div><div class="demo-value-grid"><article class="demo-value-card"><span class="vr-pill">1</span><strong>문제 개수와 영역</strong><p>개인정보, 환불, 사업자 정보, 결제 전 안내 등 어떤 영역에 보완 후보가 있는지 보여줍니다.</p></article><article class="demo-value-card"><span class="vr-pill">2</span><strong>확인 URL과 범위</strong><p>공개 페이지 기준으로 어디까지 확인했는지와 자동 단정하지 않은 항목을 구분합니다.</p></article><article class="demo-value-card"><span class="vr-pill">3</span><strong>다음 조치</strong><p>바로 고칠 수 있는 항목과 유료 리포트에서 열리는 상세 범위를 분리합니다.</p></article></div></section>
+    <section id="demoStart" aria-label="무료 진단 실행" class="vr-functional-bridge vr-demo-start"><div class="vr-section-head"><span class="vr-kicker">진단 시작</span><h2>사이트 주소를 입력하세요</h2><p>입력한 주소를 바탕으로 발견 항목 수, 리스크 영역, 확인 URL, 다음 조치, 유료 리포트에서 열리는 상세 범위를 확인합니다.</p></div><div><div class="notice" id="freeUsageLead"><strong>무료 진단 준비 완료</strong></div><div class="notice muted" id="freeUsageBadge">비회원은 하루 이용 횟수 안에서 바로 실행할 수 있습니다.</div></div><div class="bridge-grid"><input autocomplete="url" id="targetUrl" inputmode="url" placeholder="https://your-store.kr" aria-label="진단할 사이트 주소"/><button id="scanBtn" type="button">무료 진단 시작</button></div><div id="turnstileBox"></div><input id="turnstileToken" type="hidden"/><div class="notice muted" id="turnstileState">보안 확인이 필요한 경우 이 영역에 표시됩니다.</div><div class="notice muted" id="demoState">사이트 주소를 입력하면 아래 미리보기 영역이 실제 결과로 바뀝니다.</div><div class="bridge-actions"><button id="retryBtn" type="button">다시 점검</button><button id="unlockBtn" type="button">고객 포털에서 이어보기</button></div>
+      <div class="demo-preview-grid" aria-label="무료와 유료 결과 차이"><article class="demo-preview-card"><span class="vr-pill">무료 결과</span><strong>문제 합계·영역·요소</strong><p>구체적인 문제 수와 고객이 먼저 확인하는 영역을 빠르게 보여줍니다.</p></article><article class="demo-preview-card"><span class="vr-pill success">기본 리포트</span><strong>상세 근거·수정 위치</strong><p>페이지별 근거, 적용 위치, 우선순위 로드맵을 확인합니다.</p></article><article class="demo-preview-card"><span class="vr-pill gold">전문가 플랜</span><strong>수정 문구·재점검</strong><p>실제 문구안, 수정 전후 기준, 반복 관리 문서를 함께 제공합니다.</p></article></div>
+      <div class="demo-result-surface" id="demoResult"><section class="demo-sample-result" aria-label="진단 전 샘플 결과"><div class="demo-count-head"><div><span class="pill brand">샘플 결과</span><h2>실행하면 이런 형태로 결과가 표시됩니다</h2><p>https://example-store.kr</p></div></div><div class="demo-count-kpis"><article class="demo-summary-card"><span>문제 합계</span><strong>7</strong><small>무료 미리보기 기준</small></article><article class="demo-summary-card"><span>리스크 영역</span><strong>3</strong><small>신뢰·준법·전환</small></article><article class="demo-summary-card"><span>확인 URL</span><strong>4</strong><small>공개 페이지</small></article><article class="demo-summary-card"><span>다음 조치</span><strong>5</strong><small>우선순위 제안</small></article></div><div class="demo-result-explain-grid"><article><h3>무료에서 보이는 내용</h3><p>문제 개수, 영역, 확인 범위, 첫 번째 조치 방향을 보여줍니다.</p></article><article><h3>유료에서 열리는 내용</h3><p>페이지별 근거, 수정 위치, 적용 문구, 재점검 기준을 제공합니다.</p></article><article><h3>전환 연결</h3><p>불안을 확인한 즉시 기본 리포트 또는 전문가 플랜으로 이동합니다.</p></article></div></section></div>
+    </section>
+  </section>
+</main>
 
-<footer class="vr-footer vr-footer" aria-label="하단 정보">
+<footer class="vr-footer" aria-label="하단 정보">
   <div class="vr-footer-inner">
     <div class="vr-footer-brand"><strong>VERIDION</strong><p>온라인 비즈니스의 신뢰와 성장을 진단으로 더 쉽게.</p><span>© 2026 VERIDION. All rights reserved.</span></div>
     <nav aria-label="서비스"><strong>서비스</strong><a href="/products/veridion/demo">신뢰 진단</a><a href="/service">준법 점검</a><a href="/solutions">전환 개선</a><a href="/plans">리포트 상품</a></nav>
