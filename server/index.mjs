@@ -146,6 +146,13 @@ const PLATFORM = createPlatformProfile(process.env);
 const DEPLOYMENT_STAGE = String(process.env.NV0_DEPLOYMENT_STAGE || (PLATFORM.commercial ? 'prelaunch' : 'mvp')).trim().toLowerCase();
 const COMMERCIAL_LAUNCH_READY = process.env.NV0_COMMERCIAL_LAUNCH_READY === 'true' || DEPLOYMENT_STAGE === 'commercial_launch';
 const PRELAUNCH_MODE = PLATFORM.commercial && !COMMERCIAL_LAUNCH_READY;
+
+function prelaunchPostgresFallbackAllowed(env = process.env) {
+const explicit = String(env.NV0_POSTGRES_FALLBACK_MODE || env.NV0_PRELAUNCH_DB_FALLBACK || env.NV0_ALLOW_DB_FALLBACK || '').trim().toLowerCase();
+if (['0', 'false', 'no', 'off', 'strict'].includes(explicit)) return false;
+if (['1', 'true', 'yes', 'on', 'fallback'].includes(explicit)) return true;
+return PRELAUNCH_MODE || !COMMERCIAL_LAUNCH_READY;
+}
 const ALLOW_PRELAUNCH_ONLINE_PAYMENT = process.env.NV0_ALLOW_PRELAUNCH_ONLINE_PAYMENT === 'true';
 const TRUST_PROXY_HEADERS = ENV_CONFIG.trustProxyHeaders;
 const ADMIN_KEY = process.env.NV0_ADMIN_KEY || ''; // legacy MVP-only shared key
@@ -410,7 +417,7 @@ const commercialFailures = PLATFORM.requireCommercialControls();
 if (commercialFailures.length) {
 throw new Error(commercialFailures.join(' | '));
 }
-if (['dual_write', 'postgres_primary'].includes(PERSISTENCE_MODE) && !DATABASE_URL) {
+if (['dual_write', 'postgres_primary'].includes(PERSISTENCE_MODE) && !DATABASE_URL && !prelaunchPostgresFallbackAllowed(process.env)) {
 throw new Error('NV0_DATABASE_URL is required when NV0_PERSISTENCE_MODE enables PostgreSQL.');
 }
 if (BACKUP_REMOTE_REQUIRE_ENCRYPTION && !BACKUP_ENCRYPTION_SECRET) {
@@ -1540,6 +1547,37 @@ return '<footer class="business-footer" aria-label="사업자 정보">'
 + '</footer>';
 }
 
+function injectBusinessInfoPageProfile(body, urlPath) {
+if (urlPath !== '/business-info') return body;
+const serviceName = escapeHtml(BUSINESS_PROFILE.tradeName || 'VERIDION');
+const tradeName = escapeHtml(BUSINESS_PROFILE.tradeName || '');
+const representative = escapeHtml(BUSINESS_PROFILE.representative || '');
+const registrationNumber = escapeHtml(BUSINESS_PROFILE.registrationNumber || '');
+const address = escapeHtml(BUSINESS_PROFILE.address || '');
+const types = escapeHtml(BUSINESS_PROFILE.businessTypes.join(' / '));
+const domain = escapeHtml(String(BUSINESS_PROFILE.domain || '').replace(/\/+$/, ''));
+const contactEmail = escapeHtml(BUSINESS_PROFILE.contactEmail || '');
+const mailOrderNumber = isSafePublicOptionalField(BUSINESS_PROFILE.mailOrderRegistrationNumber, { requireMailOrderShape: true }) ? escapeHtml(BUSINESS_PROFILE.mailOrderRegistrationNumber) : '';
+const check = '<span class="check" aria-hidden="true"></span>';
+const replaceLine = (source, label, htmlValue) => source.replace(new RegExp(`(<li>${check.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}${label}:\\s*)(?:<a[^>]*>)?[^<]*(?:</a>)?`), `$1${htmlValue}`);
+let next = body;
+next = replaceLine(next, '서비스명', serviceName || 'VERIDION');
+next = replaceLine(next, '상호', tradeName || '엔브이제로(NV0)');
+next = replaceLine(next, '대표자', representative || '');
+next = replaceLine(next, '사업자등록번호', registrationNumber || '');
+next = replaceLine(next, '주소', address || '');
+next = replaceLine(next, '업태·종목', types || '정보통신업 / 소프트웨어 개발 및 공급업');
+next = replaceLine(next, '도메인', domain || 'https://nv0.kr');
+if (contactEmail) {
+  next = next.replace(/이메일:\s*<a href="mailto:[^"]+">[^<]+<\/a>/, `이메일: <a href="mailto:${contactEmail}">${contactEmail}</a>`);
+}
+const mailOrderLine = mailOrderNumber ? `<li>${check}통신판매업 신고번호: ${mailOrderNumber}</li>` : '';
+if (mailOrderLine && !next.includes('통신판매업 신고번호:')) {
+  next = next.replace(/(<li><span class="check" aria-hidden="true"><\/span>사업자등록번호:[\s\S]*?<\/li>)/, `$1${mailOrderLine}`);
+}
+return next;
+}
+
 function injectAdoptedUi(body, urlPath) {
 if (urlPath.startsWith('/admin') || body.includes('data-veridion-clean="v311"') || body.includes('/shared/veridion-clean-v311.css')) return body;
 return body.replace('</head>', '<link href="/shared/veridion-clean-v311.css" rel="stylesheet"></head>');
@@ -1604,6 +1642,7 @@ body = injectAdoptedUi(body, urlPath);
 body = ensureMainId(body);
 body = injectNoScriptNotice(body, urlPath);
 body = injectPublicTopMenu(body, urlPath);
+body = injectBusinessInfoPageProfile(body, urlPath);
 body = injectSessionNavScript(body, urlPath);
 body = injectSiteEnhancementsScript(body, urlPath);
 body = injectClientRiskGuard(body, urlPath);

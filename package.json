@@ -1,6 +1,6 @@
 {
   "name": "veridion-public-risk-diagnostic",
-  "version": "1.0.1-commercial-phase327-privacy-hash-boot-recovery",
+  "version": "1.0.1-commercial-phase330-postgres-prelaunch-fallback",
   "private": true,
   "type": "module",
   "scripts": {
@@ -22,8 +22,8 @@
     "redteam:global": "node scripts/redteam-global-audit.mjs",
     "validate:phase311": "node scripts/validate-phase311-redteam-global-audit.mjs",
     "phase311:final": "npm run check:syntax && npm test && npm run test:e2e && npm run check:pages && npm run test:routes && npm run check:links && npm run verify:security && npm run validate:deploy && npm run check:release-secret-hygiene && npm run redteam:global && npm run validate:phase311 && npm run clean:runtime && node scripts/check-runtime-clean.mjs",
-    "delivery:final": "npm run phase326:final",
-    "release:predeploy": "npm run phase326:final",
+    "delivery:final": "npm run phase330:final",
+    "release:predeploy": "npm run phase330:final",
     "validate:phase312": "node scripts/validate-phase312-privacy-compliance.mjs",
     "phase312:final": "npm run check:syntax && npm test && npm run test:e2e && npm run check:pages && npm run test:routes && npm run check:links && npm run verify:security && npm run validate:deploy && npm run check:release-secret-hygiene && npm run validate:phase312 && npm run clean:runtime && node scripts/check-runtime-clean.mjs",
     "check:accessibility": "node scripts/check-accessibility-basics.mjs",
@@ -67,7 +67,13 @@
     "validate:phase325": "node scripts/validate-phase325-server-availability.mjs",
     "phase325:final": "npm run check:no-available-server && npm run validate:phase325 && npm run check:syntax && npm run check:pages && npm run test:routes && npm run check:links && npm run verify:security && npm run validate:deploy && npm run check:release-secret-hygiene && npm run check:responsive-contract && npm run clean:runtime && node scripts/check-runtime-clean.mjs",
     "validate:phase326": "node scripts/validate-phase326-admin-key-preflight.mjs",
-    "phase326:final": "npm run check:no-available-server && npm run validate:phase325 && npm run validate:phase326 && npm run check:syntax && npm run check:pages && npm run test:routes && npm run check:links && npm run verify:security && npm run validate:deploy && npm run check:release-secret-hygiene && npm run check:responsive-contract && npm run clean:runtime && node scripts/check-runtime-clean.mjs"
+    "phase326:final": "npm run check:no-available-server && npm run validate:phase325 && npm run validate:phase326 && npm run check:syntax && npm run check:pages && npm run test:routes && npm run check:links && npm run verify:security && npm run validate:deploy && npm run check:release-secret-hygiene && npm run check:responsive-contract && npm run clean:runtime && node scripts/check-runtime-clean.mjs",
+    "validate:phase328": "node scripts/validate-phase328-prelaunch-business-gate.mjs",
+    "phase328:final": "npm run check:no-available-server && npm run validate:phase325 && npm run validate:phase326 && npm run validate:phase328 && npm run check:syntax && npm run check:pages && npm run test:routes && npm run check:links && npm run verify:security && npm run validate:deploy && npm run check:release-secret-hygiene && npm run check:responsive-contract && npm run clean:runtime && node scripts/check-runtime-clean.mjs",
+    "validate:phase329": "node scripts/validate-phase329-business-profile-without-mail-order.mjs",
+    "phase329:final": "npm run check:no-available-server && npm run validate:phase325 && npm run validate:phase326 && npm run validate:phase328 && npm run validate:phase329 && npm run check:syntax && npm run check:pages && npm run test:routes && npm run check:links && npm run verify:security && npm run validate:deploy && npm run check:release-secret-hygiene && npm run check:responsive-contract && npm run clean:runtime && node scripts/check-runtime-clean.mjs",
+    "validate:phase330": "node scripts/validate-phase330-postgres-prelaunch-fallback.mjs",
+    "phase330:final": "npm run check:no-available-server && npm run validate:phase325 && npm run validate:phase326 && npm run validate:phase328 && npm run validate:phase329 && npm run validate:phase330 && npm run check:syntax && npm run check:pages && npm run test:routes && npm run check:links && npm run verify:security && npm run validate:deploy && npm run check:release-secret-hygiene && npm run check:responsive-contract && npm run clean:runtime && node scripts/check-runtime-clean.mjs"
   },
-  "description": "VERIDION phase327 privacy-hash boot recovery: Coolify compose and preflight now pass and require commercial privacy, secure-record, business, backup, S3, Redis, and SMTP runtime keys before server boot."
+  "description": "VERIDION phase330 recovery: prelaunch no longer crashes when PostgreSQL host postgres is unavailable; JSON fallback is enabled for prelaunch while commercial_launch remains strict."
 }

@@ -1,0 +1,14 @@
+{
+  "ok": true,
+  "phase": 330,
+  "score": 100,
+  "guard": "prelaunch-postgres-json-fallback-strict-launch-boundary",
+  "checks": [
+    "prelaunch PostgreSQL DNS failure falls back to JSON db",
+    "prelaunch session persistence falls back to JSON sessions",
+    "fallback warning marker is logged once",
+    "commercial_launch remains strict",
+    "compose exposes NV0_PRELAUNCH_DB_FALLBACK",
+    "full server boot probe passes under simulated postgres DNS failure"
+  ]
+}

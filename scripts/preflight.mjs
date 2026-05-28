@@ -14,6 +14,14 @@ function placeholder(value) {
   return ['replace-with', 'example.com', 'localhost', '127.0.0.1', 'changeme', 'your-', 'dummy', 'test_', 'long-random', 'password@smtp', 'smtp.your-provider'].some(token => text.includes(token));
 }
 
+
+function prelaunchPostgresFallbackAllowed() {
+  const explicit = String(env.NV0_POSTGRES_FALLBACK_MODE || env.NV0_PRELAUNCH_DB_FALLBACK || env.NV0_ALLOW_DB_FALLBACK || '').trim().toLowerCase();
+  if (['0', 'false', 'no', 'off', 'strict'].includes(explicit)) return false;
+  if (['1', 'true', 'yes', 'on', 'fallback'].includes(explicit)) return true;
+  return prelaunch;
+}
+
 function required(name) {
   if (!String(env[name] || '').trim()) errors.push(`${name} is required`);
 }
@@ -45,7 +53,6 @@ if (commercial || env.NODE_ENV === 'production') {
     'NV0_BOOTSTRAP_ADMIN_EMAIL',
     'NV0_BOOTSTRAP_ADMIN_PASSWORD',
     'NV0_PERSISTENCE_MODE',
-    'NV0_DATABASE_URL',
     'NV0_REDIS_URL',
     'NV0_SESSION_STORE',
     'NV0_RATE_LIMIT_STORE',
@@ -55,6 +62,8 @@ if (commercial || env.NODE_ENV === 'production') {
     'NV0_SCAN_PROVIDER_URL',
     'NV0_PAYMENT_PROVIDER'
   ]) finalized(key);
+  if (commercialLaunchReady || !prelaunchPostgresFallbackAllowed()) finalized('NV0_DATABASE_URL');
+  else if (placeholder(env.NV0_DATABASE_URL)) warnings.push('NV0_DATABASE_URL is missing or placeholder. Prelaunch will continue with JSON fallback; commercial_launch still requires PostgreSQL.');
   for (const key of ['NV0_S3_ENDPOINT','NV0_S3_BUCKET','NV0_S3_ACCESS_KEY_ID','NV0_S3_SECRET_ACCESS_KEY','NV0_BACKUP_ENCRYPTION_SECRET','NV0_SECURE_RECORDS_KEY','NV0_PRIVACY_HASH_KEY']) finalized(key);
   if (commercialLaunchReady) {
     for (const key of ['NV0_PORTONE_API_SECRET','NV0_PORTONE_STORE_ID','NV0_PORTONE_CHANNEL_KEY','NV0_PORTONE_WEBHOOK_SECRET']) finalized(key);
@@ -70,8 +79,15 @@ if (commercial || env.NODE_ENV === 'production') {
   if (commercialLaunchReady && env.NV0_PAYMENT_PROVIDER !== 'portone_v2') errors.push('NV0_PAYMENT_PROVIDER must be portone_v2');
   if (prelaunch && env.NV0_PAYMENT_PROVIDER !== 'disabled') errors.push('NV0_PAYMENT_PROVIDER must be disabled when NV0_DEPLOYMENT_STAGE=prelaunch');
   if (env.NV0_SCAN_PROVIDER !== 'external_http') errors.push('NV0_SCAN_PROVIDER must be external_http');
-  const publicKeys = ['NV0_PUBLIC_BASE_URL','NV0_SUPPORT_EMAIL','NV0_HOSTING_PROVIDER','NV0_CUSTOMER_SERVICE_PHONE','NV0_PRIVACY_OFFICER_EMAIL','NV0_SMTP_URL','NV0_ADMIN_IP_ALLOWLIST','NV0_BUSINESS_TRADE_NAME','NV0_BUSINESS_REPRESENTATIVE','NV0_BUSINESS_REGISTRATION_NUMBER','NV0_BUSINESS_ADDRESS'];
-  if (commercialLaunchReady) publicKeys.push('NV0_MAIL_ORDER_REGISTRATION_NUMBER');
+  const publicKeys = ['NV0_PUBLIC_BASE_URL','NV0_SUPPORT_EMAIL','NV0_HOSTING_PROVIDER','NV0_CUSTOMER_SERVICE_PHONE','NV0_PRIVACY_OFFICER_EMAIL','NV0_SMTP_URL','NV0_ADMIN_IP_ALLOWLIST'];
+  const launchBusinessKeys = ['NV0_BUSINESS_TRADE_NAME','NV0_BUSINESS_REPRESENTATIVE','NV0_BUSINESS_REGISTRATION_NUMBER','NV0_BUSINESS_ADDRESS'];
+  if (commercialLaunchReady) {
+    publicKeys.push(...launchBusinessKeys, 'NV0_MAIL_ORDER_REGISTRATION_NUMBER');
+  } else {
+    const missingBusinessKeys = launchBusinessKeys.filter((key) => placeholder(env[key]));
+    if (missingBusinessKeys.length) warnings.push(`Prelaunch legal business profile is incomplete: ${missingBusinessKeys.join(', ')}. The server may boot for private prelaunch, but commercial launch remains blocked.`);
+    if (placeholder(env.NV0_MAIL_ORDER_REGISTRATION_NUMBER)) warnings.push('Prelaunch mail-order registration number is not set. Keep NV0_PAYMENT_PROVIDER=disabled and add NV0_MAIL_ORDER_REGISTRATION_NUMBER before commercial_launch.');
+  }
   for (const key of publicKeys) finalized(key);
 } else {
   warnings.push('preflight running in non-commercial mode');

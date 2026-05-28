@@ -37,7 +37,6 @@ const required = [
   'NV0_REDIS_URL', 'NV0_SESSION_STORE', 'NV0_RATE_LIMIT_STORE', 'NV0_LOCK_PROVIDER',
   'NV0_STORAGE_MODE', 'NV0_S3_ENDPOINT', 'NV0_S3_BUCKET', 'NV0_S3_ACCESS_KEY_ID', 'NV0_S3_SECRET_ACCESS_KEY',
   'NV0_SECURE_RECORDS_KEY', 'NV0_PRIVACY_HASH_KEY', 'NV0_BACKUP_ENCRYPTION_SECRET',
-  'NV0_BUSINESS_TRADE_NAME', 'NV0_BUSINESS_REPRESENTATIVE', 'NV0_BUSINESS_REGISTRATION_NUMBER', 'NV0_BUSINESS_ADDRESS',
   'NV0_SCAN_PROVIDER', 'NV0_SCAN_PROVIDER_URL',
   'NV0_PAYMENT_PROVIDER', 'NV0_PORTONE_WEBHOOK_VERIFY_MODE'
 ];
@@ -52,12 +51,23 @@ for (const key of ['NV0_SUPPORT_EMAIL','NV0_PRIVACY_OFFICER_EMAIL','NV0_OPERATOR
   const value = String(process.env[key] || '').trim();
   if (value && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(value)) errors.push(`${key} must be a valid email address`);
 }
-const requiredBusinessKeys = ['NV0_HOSTING_PROVIDER','NV0_CUSTOMER_SERVICE_PHONE','NV0_ADMIN_IP_ALLOWLIST','NV0_SMTP_URL','NV0_SECURE_RECORDS_KEY','NV0_PRIVACY_HASH_KEY','NV0_BACKUP_ENCRYPTION_SECRET','NV0_BUSINESS_TRADE_NAME','NV0_BUSINESS_REPRESENTATIVE','NV0_BUSINESS_REGISTRATION_NUMBER','NV0_BUSINESS_ADDRESS'];
-if (commercialLaunchReady) requiredBusinessKeys.push('NV0_MAIL_ORDER_REGISTRATION_NUMBER');
-for (const key of requiredBusinessKeys) {
+const requiredOperationalKeys = ['NV0_HOSTING_PROVIDER','NV0_CUSTOMER_SERVICE_PHONE','NV0_ADMIN_IP_ALLOWLIST','NV0_SMTP_URL','NV0_SECURE_RECORDS_KEY','NV0_PRIVACY_HASH_KEY','NV0_BACKUP_ENCRYPTION_SECRET'];
+for (const key of requiredOperationalKeys) {
+  const value = String(process.env[key] || '').trim();
+  if (!value) errors.push(`${key} is required`);
+  if (value && isPlaceholderConfigValue(value)) errors.push(`${key} must be finalized before commercial launch`);
+}
+const launchBusinessKeys = ['NV0_BUSINESS_TRADE_NAME','NV0_BUSINESS_REPRESENTATIVE','NV0_BUSINESS_REGISTRATION_NUMBER','NV0_BUSINESS_ADDRESS'];
+const launchOnlyKeys = commercialLaunchReady ? [...launchBusinessKeys, 'NV0_MAIL_ORDER_REGISTRATION_NUMBER'] : [];
+for (const key of launchOnlyKeys) {
   const value = String(process.env[key] || '').trim();
   if (!value) errors.push(`${key} is required for commercial launch`);
   if (value && isPlaceholderConfigValue(value)) errors.push(`${key} must be finalized before commercial launch`);
+}
+if (!commercialLaunchReady) {
+  const missingBusinessKeys = launchBusinessKeys.filter((key) => isPlaceholderConfigValue(process.env[key]));
+  if (missingBusinessKeys.length) warnings.push(`Prelaunch legal business profile is incomplete: ${missingBusinessKeys.join(', ')}. Commercial launch remains blocked until finalized.`);
+  if (isPlaceholderConfigValue(process.env.NV0_MAIL_ORDER_REGISTRATION_NUMBER)) warnings.push('Prelaunch mail-order registration number is not set. Commercial launch remains blocked until NV0_MAIL_ORDER_REGISTRATION_NUMBER is issued and configured.');
 }
 
 const nodeEnv = String(process.env.NODE_ENV || '').trim();

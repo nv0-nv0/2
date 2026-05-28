@@ -36,6 +36,14 @@ export function assertEmailConfig(name, value) {
   }
 }
 
+
+function allowsPrelaunchPostgresFallback(env, commercialLaunchReady) {
+  const explicit = String(env.NV0_POSTGRES_FALLBACK_MODE || env.NV0_PRELAUNCH_DB_FALLBACK || env.NV0_ALLOW_DB_FALLBACK || '').trim().toLowerCase();
+  if (['0', 'false', 'no', 'off', 'strict'].includes(explicit)) return false;
+  if (['1', 'true', 'yes', 'on', 'fallback'].includes(explicit)) return true;
+  return !commercialLaunchReady;
+}
+
 function requireRealValue(env, key) {
   const raw = String(env[key] || '').trim();
   if (!raw || isPlaceholderConfigValue(raw)) throw new Error(`Real ${key} is required.`);
@@ -89,7 +97,11 @@ export function validateRuntimeConfig(input = {}) {
     assertEmailConfig('NV0_BOOTSTRAP_ADMIN_EMAIL', env.NV0_BOOTSTRAP_ADMIN_EMAIL);
   }
   if (['dual_write', 'postgres_primary'].includes(persistenceMode)) {
-    requireRealValue(env, 'NV0_DATABASE_URL');
+    if (commercialLaunchReady || !allowsPrelaunchPostgresFallback(env, commercialLaunchReady)) {
+      requireRealValue(env, 'NV0_DATABASE_URL');
+    } else if (isPlaceholderConfigValue(env.NV0_DATABASE_URL)) {
+      warnings.push('prelaunch PostgreSQL URL is not set. Server will use JSON fallback until PostgreSQL is configured; commercial launch remains blocked.');
+    }
   }
   if (scanProvider === 'external_http') requireRealValue(env, 'NV0_SCAN_PROVIDER_URL');
   if (paymentProvider === 'external_http') requireRealValue(env, 'NV0_PAYMENT_PROVIDER_URL');
@@ -102,11 +114,23 @@ export function validateRuntimeConfig(input = {}) {
     requireRealValue(env, 'NV0_REDIS_URL');
     if (!['s3', 's3_compatible', 'object_storage'].includes(storageMode)) throw new Error('Commercial deployments require S3-compatible object storage.');
     for (const key of ['NV0_S3_ENDPOINT', 'NV0_S3_BUCKET', 'NV0_S3_ACCESS_KEY_ID', 'NV0_S3_SECRET_ACCESS_KEY']) requireRealValue(env, key);
-    for (const key of ['NV0_PUBLIC_BASE_URL', 'NV0_SUPPORT_EMAIL', 'NV0_HOSTING_PROVIDER', 'NV0_CUSTOMER_SERVICE_PHONE', 'NV0_PRIVACY_OFFICER_EMAIL', 'NV0_SMTP_URL', 'NV0_ADMIN_IP_ALLOWLIST', 'NV0_SECURE_RECORDS_KEY', 'NV0_PRIVACY_HASH_KEY', 'NV0_BUSINESS_TRADE_NAME', 'NV0_BUSINESS_REPRESENTATIVE', 'NV0_BUSINESS_REGISTRATION_NUMBER', 'NV0_BUSINESS_ADDRESS']) requireRealValue(env, key);
+    for (const key of ['NV0_PUBLIC_BASE_URL', 'NV0_SUPPORT_EMAIL', 'NV0_HOSTING_PROVIDER', 'NV0_CUSTOMER_SERVICE_PHONE', 'NV0_PRIVACY_OFFICER_EMAIL', 'NV0_SMTP_URL', 'NV0_ADMIN_IP_ALLOWLIST', 'NV0_SECURE_RECORDS_KEY', 'NV0_PRIVACY_HASH_KEY']) requireRealValue(env, key);
+    const businessProfileKeys = ['NV0_BUSINESS_TRADE_NAME', 'NV0_BUSINESS_REPRESENTATIVE', 'NV0_BUSINESS_REGISTRATION_NUMBER', 'NV0_BUSINESS_ADDRESS'];
+    if (commercialLaunchReady) {
+      for (const key of businessProfileKeys) requireRealValue(env, key);
+    } else {
+      const missingBusinessKeys = businessProfileKeys.filter((key) => isPlaceholderConfigValue(env[key]));
+      if (missingBusinessKeys.length) {
+        warnings.push(`prelaunch business profile is incomplete: ${missingBusinessKeys.join(', ')}. Commercial launch remains blocked until these values are finalized.`);
+      }
+    }
     assertHttpsUrl('NV0_PUBLIC_BASE_URL', env.NV0_PUBLIC_BASE_URL);
     assertEmailConfig('NV0_SUPPORT_EMAIL', env.NV0_SUPPORT_EMAIL);
     assertEmailConfig('NV0_PRIVACY_OFFICER_EMAIL', env.NV0_PRIVACY_OFFICER_EMAIL);
     if (commercialLaunchReady) requireRealValue(env, 'NV0_MAIL_ORDER_REGISTRATION_NUMBER');
+    else if (isPlaceholderConfigValue(env.NV0_MAIL_ORDER_REGISTRATION_NUMBER)) {
+      warnings.push('prelaunch mail-order registration number is not set. Commercial launch remains blocked until NV0_MAIL_ORDER_REGISTRATION_NUMBER is issued and configured.');
+    }
     if (prelaunchMode && paymentProvider === 'portone_v2' && !allowPrelaunchOnlinePayment) throw new Error('Prelaunch deployments must not enable PortOne before NV0_COMMERCIAL_LAUNCH_READY=true or NV0_ALLOW_PRELAUNCH_ONLINE_PAYMENT=true.');
     if (commercialLaunchReady && paymentProvider !== 'portone_v2') throw new Error('Commercial launch requires NV0_PAYMENT_PROVIDER=portone_v2.');
     if (commercialLaunchReady && String(env.NV0_ENABLE_TURNSTILE || '').trim().toLowerCase() !== 'true') throw new Error('Commercial launch requires NV0_ENABLE_TURNSTILE=true.');
