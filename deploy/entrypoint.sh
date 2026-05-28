@@ -96,6 +96,15 @@ if external_durable_mode && [ "$RUNTIME_DIR" = "$FALLBACK_RUNTIME_DIR" ]; then
   export NV0_RUNTIME_EPHEMERAL="true"
 fi
 
+ADMIN_AUTH_MODE_NORMALIZED="$(normalize_mode_value "${NV0_ADMIN_AUTH_MODE:-account_rbac}")"
+DEPLOYMENT_STAGE_NORMALIZED="$(normalize_mode_value "${NV0_DEPLOYMENT_STAGE:-prelaunch}")"
+COMMERCIAL_LAUNCH_READY_NORMALIZED="$(normalize_mode_value "${NV0_COMMERCIAL_LAUNCH_READY:-false}")"
+if [ "$PLATFORM_TARGET" = "commercial" ] && [ "$ADMIN_AUTH_MODE_NORMALIZED" = "account_rbac" ] && [ -n "${NV0_ADMIN_KEY:-}" ]; then
+  warn "legacy NV0_ADMIN_KEY is set in commercial account_rbac mode; unsetting it so preflight and the server cannot use the deprecated shared-key admin path."
+  unset NV0_ADMIN_KEY
+  export NV0_LEGACY_ADMIN_KEY_SANITIZED="true"
+fi
+
 if [ "${NV0_RUN_PREFLIGHT:-false}" = "true" ]; then
   node scripts/preflight.mjs
 fi

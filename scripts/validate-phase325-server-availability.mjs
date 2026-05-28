@@ -15,12 +15,12 @@ for (const file of requiredFiles) {
 }
 
 const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-if (!pkg.version.includes('phase325')) failures.push('package version must include phase325');
+if (!/phase32[5-6]/.test(pkg.version)) failures.push('package version must include phase325 or newer phase326');
 for (const script of ['check:no-available-server', 'validate:phase325', 'phase325:final']) {
   if (!pkg.scripts?.[script]) failures.push(`missing package script: ${script}`);
 }
-if (pkg.scripts?.['delivery:final'] !== 'npm run phase325:final') failures.push('delivery:final must point to phase325:final');
-if (pkg.scripts?.['release:predeploy'] !== 'npm run phase325:final') failures.push('release:predeploy must point to phase325:final');
+if (!['npm run phase325:final','npm run phase326:final'].includes(pkg.scripts?.['delivery:final'])) failures.push('delivery:final must point to phase325:final or newer phase326:final');
+if (!['npm run phase325:final','npm run phase326:final'].includes(pkg.scripts?.['release:predeploy'])) failures.push('release:predeploy must point to phase325:final or newer phase326:final');
 
 const audit = fs.existsSync('docs/current/PHASE325_SERVER_AVAILABILITY_AUDIT.json')
   ? JSON.parse(fs.readFileSync('docs/current/PHASE325_SERVER_AVAILABILITY_AUDIT.json', 'utf8'))

@@ -37,7 +37,8 @@ services:
       NV0_ALLOWED_HOSTS: ${NV0_ALLOWED_HOSTS:-nv0.kr,www.nv0.kr,localhost,127.0.0.1,0.0.0.0,::1}
       NV0_CANONICAL_HOST_REDIRECT: ${NV0_CANONICAL_HOST_REDIRECT:-false}
       NV0_ADMIN_AUTH_MODE: ${NV0_ADMIN_AUTH_MODE:-shared_key}
-      NV0_ADMIN_KEY: ${NV0_ADMIN_KEY:-dev-admin-change-me-after-boot}
+      # NV0_ADMIN_KEY is intentionally not injected by boot-safe compose.
+      # In commercial/prelaunch use account_rbac; legacy shared-key admin is MVP-only.
       NV0_ENABLE_TURNSTILE: ${NV0_ENABLE_TURNSTILE:-false}
       NV0_PERSISTENCE_MODE: ${NV0_PERSISTENCE_MODE:-json}
       NV0_SESSION_STORE: ${NV0_SESSION_STORE:-file}

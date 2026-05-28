@@ -25,6 +25,8 @@ for (const file of files) {
   must(text, 'expose:', file, 'service port must be exposed for proxy discovery');
   must(text, 'healthcheck:', file, 'container must expose healthcheck for availability routing');
   must(text, '/healthz', file, 'healthcheck must use /healthz');
+  must(text, 'legacy shared-key admin is MVP-only', file, 'boot-safe compose must document that NV0_ADMIN_KEY is not for commercial/prelaunch');
+  mustNot(text, 'NV0_ADMIN_KEY:', file, 'boot-safe compose must not inject legacy NV0_ADMIN_KEY');
   mustNot(text, ':?', file, 'boot-safe compose must not include required env blockers like ${VAR:?set ...}');
   mustNot(text, 'depends_on:', file, 'boot-safe compose must not wait on optional infrastructure services');
 }

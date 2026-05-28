@@ -58,7 +58,10 @@ if (commercial || env.NODE_ENV === 'production') {
   if (commercialLaunchReady) {
     for (const key of ['NV0_PORTONE_API_SECRET','NV0_PORTONE_STORE_ID','NV0_PORTONE_CHANNEL_KEY','NV0_PORTONE_WEBHOOK_SECRET']) finalized(key);
   }
-  if (env.NV0_ADMIN_KEY) errors.push('NV0_ADMIN_KEY must not be used for commercial launch');
+  if (env.NV0_ADMIN_KEY) {
+    if (commercialLaunchReady) errors.push('NV0_ADMIN_KEY must not be used for commercial launch');
+    else warnings.push('NV0_ADMIN_KEY is ignored in commercial prelaunch. Remove it before NV0_COMMERCIAL_LAUNCH_READY=true.');
+  }
   if (env.NV0_ADMIN_AUTH_MODE !== 'account_rbac') errors.push('NV0_ADMIN_AUTH_MODE must be account_rbac');
   if (env.NV0_PERSISTENCE_MODE !== 'postgres_primary') errors.push('NV0_PERSISTENCE_MODE must be postgres_primary');
   if (env.NV0_SESSION_STORE !== 'redis' || env.NV0_RATE_LIMIT_STORE !== 'redis' || env.NV0_LOCK_PROVIDER !== 'redis') errors.push('Redis-backed session, rate limit, and lock are required');
