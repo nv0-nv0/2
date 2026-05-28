@@ -60,11 +60,11 @@ async function fetchText(path, expectedStatus = 200, mustInclude = '') {
 }
 
 function assertPublicPageHygiene(pagePath, text) {
-  const legacyBrandPattern = /<span class="brand-mark">\s*nv0\s*<\/span>|<a[^>]*class="nv0n-brand"[^>]*>\s*nv0\s*<\/a>/i;
+  const legacyBrandPattern = /<span class="brand-mark">\s*nv0\s*<\/span>|<a[^>]*class="vr-brand"[^>]*>\s*nv0\s*<\/a>/i;
   if (legacyBrandPattern.test(text)) {
     throw new Error(`${pagePath}: legacy nv0 topbar brand is still visible; use VERIDION only`);
   }
-  const topbarCount = (text.match(/<(?:header|nav)[^>]+class=\"[^\"]*(?:nv0n-topbar|site-topbar)[^\"]*\"/g) || []).length;
+  const topbarCount = (text.match(/<(?:header|nav)[^>]+class=\"[^\"]*(?:vr-topbar|site-topbar)[^\"]*\"/g) || []).length;
   if (topbarCount > 1) {
     throw new Error(`${pagePath}: duplicate public topbar detected (${topbarCount})`);
   }

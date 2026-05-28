@@ -10,7 +10,7 @@ const ROOT = path.resolve(__dirname, '..');
 const runtimeDir = path.resolve(process.env.NV0_RUNTIME_DIR || path.join(ROOT, 'runtime'));
 const dataDir = path.join(runtimeDir, 'data');
 const sourceDb = path.join(dataDir, 'db.json');
-const drillRoot = path.resolve(process.env.NV0_RESTORE_DRILL_DIR || path.join(os.tmpdir(), 'nv0-restore-drill'));
+const drillRoot = path.resolve(process.env.NV0_RESTORE_DRILL_DIR || path.join(os.tmpdir(), 'vr-restore-drill'));
 const stamp = new Date().toISOString().replace(/[:.]/g, '-');
 const drillDir = path.join(drillRoot, stamp);
 

@@ -2,85 +2,57 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8"/>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>VERIDION - 온라인 사업자 신뢰 진단</title>
   <meta name="description" content="웹사이트의 신뢰, 준법, 전환 요소를 진단하고 개선 우선순위를 제안하는 VERIDION"/>
-  <link rel="stylesheet" href="/shared/veridion-clean-v311.css"/>
+  <link rel="preload" href="/shared/veridion-rebrand.css" as="style"/>
+  <link rel="stylesheet" href="/shared/veridion-rebrand.css"/>
 </head>
-<body data-veridion-clean="v311" data-veridion-brand="v331" data-page="home">
+<body data-veridion-rebrand="clean" data-page="home">
+
 <a class="skip-link" href="#main">본문 바로가기</a>
-<header class="v331-topbar" data-v331-public-nav="true">
-  <div class="v331-topbar-inner">
-    <a class="v331-brand" href="/" aria-label="VERIDION 홈">VERIDION</a>
-    <nav class="v331-nav" aria-label="주요 메뉴">
+<header class="vr-topbar vr-topbar" data-public-nav="true">
+  <div class="vr-topbar-inner">
+    <a class="vr-brand" href="/" aria-label="VERIDION 홈">VERIDION</a>
+    <nav class="vr-nav" aria-label="주요 메뉴">
       <a href="/service">서비스</a>
       <a href="/solutions">솔루션</a>
       <a href="/plans">요금</a>
       <a href="/products/veridion/demo">진단</a>
+      <a href="/board">인사이트</a>
       <a href="/portal">고객 포털</a>
     </nav>
-    <div class="v331-nav-actions">
-      <a class="v331-login" href="/auth">로그인</a>
-      <a class="v331-cta" href="/products/veridion/demo">무료 진단 시작</a>
+    <div class="vr-nav-actions">
+      <a class="vr-login" href="/auth">로그인</a>
+      <a class="vr-cta" href="/products/veridion/demo">무료 진단 시작</a>
     </div>
   </div>
 </header>
-<main id="main" tabindex="-1" class="v331-main" data-route-smoke="온라인 사업자 리스크 진단 법률·규제·과태료 리스크 신뢰 준법 전환">
-  <section class="v331-hero" aria-labelledby="homeTitle">
-    <div class="v331-hero-inner">
-      <div>
-        <span class="v331-kicker">AI 기반 웹사이트 진단</span>
-        <h1 id="homeTitle">웹사이트의 신뢰와 준법을 진단하고, <span class="v331-accent">전환율을 높이세요.</span></h1>
-        <p>판매자와 소상공인을 위한 웹사이트 진단 서비스입니다. 신뢰, 준법, 전환의 핵심 이슈를 자동으로 찾아 개선 방향을 제안합니다.</p>
-        <form id="homeInstantDemoForm" class="v331-search hero-search nv0-instant-demo-box" aria-label="메인 즉시 무료 진단 실행" data-instant-demo="true" novalidate>
-          <input id="homeTargetUrl" autocomplete="url" inputmode="url" placeholder="https://내 웹사이트 주소 입력" aria-label="진단할 사이트 주소" aria-describedby="homeDemoState homeDemoInputHint"/>
-          <button id="homeInstantDemoBtn" type="submit" data-instant-demo-submit="true">무료 진단 시작</button>
-        </form>
-        <div id="homeDemoState" class="nv0-home-demo-state" role="status" aria-live="polite">주소를 입력하면 무료 진단을 시작하고, 결과를 고객 포털에서 이어서 관리할 수 있습니다.</div>
-        <section id="homeDemoResult" class="nv0-home-demo-result" aria-live="polite" hidden></section>
-        <div id="homeDemoOverlay" class="nv0-home-demo-overlay" aria-live="assertive" aria-modal="true" role="dialog" hidden></div>
-        <p class="nv0-home-demo-fallback"><a id="homeDemoFallbackLink" href="/products/veridion/demo">무료 진단 페이지에서 직접 실행</a></p>
-        <div class="v331-actions"><a class="v331-button ghost" href="/products/veridion/demo">데모 보기</a><a class="v331-button ghost" href="/service">서비스 범위 보기</a></div>
-        <div class="v331-trustline"><span>무료로 빠르게 진단</span><span>회원가입 없이 바로 확인</span><span>민감정보 입력 없음</span></div>
-      </div>
-      <aside class="v331-preview" aria-label="진단 리포트 미리보기">
-        <div class="v331-preview-head">
-          <div class="v331-score"><small>종합 신뢰 점수</small><strong>82</strong><small>/ 100 · 좋음</small><div class="v331-progress"><i></i></div></div>
-          <div class="v331-checks"><div><span>개인정보 처리방침</span><span class="v331-chip">적합</span></div><div><span>이용약관</span><span class="v331-chip">적합</span></div><div><span>사업자 정보 표기</span><span class="v331-chip">적합</span></div><div><span>전자상거래법 준수</span><span class="v331-chip warn">보완 필요</span></div></div>
-        </div>
-        <div class="v331-list">
-          <article><span class="v331-icon">1</span><div><h3>신뢰 요소 보완 필요</h3><p>고객 리뷰와 인증 요소를 강화하면 전환에 도움이 됩니다.</p></div><span class="v331-chip">개선 제안</span></article>
-          <article><span class="v331-icon">2</span><div><h3>준법 리스크 발견</h3><p>필수 정보 일부가 부족해 보완이 필요합니다.</p></div><span class="v331-chip warn">보완 필요</span></article>
-          <article><span class="v331-icon">3</span><div><h3>전환 개선 기회</h3><p>CTA 가독성과 배치 개선을 권장합니다.</p></div><span class="v331-chip">개선 제안</span></article>
-        </div>
-      </aside>
+<main id="main" tabindex="-1" class="vr-main vr-main" data-route-smoke="온라인 사업자 리스크 진단 신뢰 준법 전환 보완 후보 신뢰 준법 전환">
+  <section class="vr-hero vr-hero" aria-labelledby="homeTitle"><div class="vr-hero-inner">
+    <div><span class="vr-kicker">자동화 기반 웹사이트 진단</span><h1 id="homeTitle">웹사이트의 신뢰와 준법을 진단하고, <span class="vr-accent">전환율을 높이세요.</span></h1><p>판매자와 소상공인을 위한 웹사이트 진단 서비스입니다. 공개 페이지에서 확인 가능한 신뢰, 준법, 전환의 보완 후보를 정리하고 실행 우선순위를 제안합니다.</p>
+      <form id="homeInstantDemoForm" class="vr-search hero-search vr-instant-demo-box" aria-label="메인 즉시 무료 진단 실행" data-instant-demo="true" novalidate><input id="homeTargetUrl" autocomplete="url" inputmode="url" placeholder="https://내 웹사이트 주소 입력" aria-label="진단할 사이트 주소" aria-describedby="homeDemoState homeDemoInputHint"/><button id="homeInstantDemoBtn" type="submit" data-instant-demo-submit="true">무료 진단 시작</button></form>
+      <div id="homeDemoState" class="vr-home-demo-state" role="status" aria-live="polite">주소를 입력하면 무료 진단을 시작하고, 결과를 고객 포털에서 이어서 관리할 수 있습니다.</div><section id="homeDemoResult" class="vr-home-demo-result" aria-live="polite" hidden></section><div id="homeDemoOverlay" class="vr-home-demo-overlay" aria-live="assertive" aria-modal="true" role="dialog" hidden></div><p class="vr-home-demo-fallback"><a id="homeDemoFallbackLink" href="/products/veridion/demo">무료 진단 페이지에서 직접 실행</a></p>
+      <div class="vr-actions"><a class="vr-button ghost" href="/products/veridion/demo">데모 보기</a><a class="vr-button ghost" href="/service">서비스 범위 보기</a></div><div class="vr-trustline"><span>무료로 빠르게 진단</span><span>회원가입 없이 바로 확인</span><span>민감정보 입력 없음</span></div>
     </div>
-  </section>
-  <section class="v331-shell">
-    <div class="v331-feature-row" aria-label="핵심 기능">
-      <article class="v331-card"><span class="v331-icon">T</span><h3>신뢰 진단</h3><p>보안, 인증, 리뷰, 회사 정보 등 고객 신뢰 요소를 종합 분석합니다.</p></article>
-      <article class="v331-card"><span class="v331-icon">C</span><h3>준법 리스크 점검</h3><p>개인정보, 이용약관, 표시광고 등 관련 준수 여부를 자동 점검합니다.</p></article>
-      <article class="v331-card"><span class="v331-icon">G</span><h3>전환 개선 인사이트</h3><p>UX, 카피, CTA, 페이지 구조까지 전환을 높이는 개선점을 제안합니다.</p></article>
-      <article class="v331-card"><span class="v331-icon">R</span><h3>한눈에 보는 리포트</h3><p>점수, 우선순위, 실행 가이드까지 보기 쉬운 리포트로 제공합니다.</p></article>
-    </div>
-    <div class="v331-section-head"><span class="v331-kicker">진단 흐름</span><h2>VERIDION은 이렇게 작동합니다</h2><p>입력, 분석, 리포트 확인까지 고객이 바로 이해할 수 있는 흐름으로 설계했습니다.</p></div>
-    <div class="v331-steps">
-      <article class="v331-card v331-step"><span class="v331-step-num">1</span><div><h3>웹사이트 입력</h3><p>URL만 입력하면 진단이 시작됩니다.</p></div></article><span class="v331-step-arrow" aria-hidden="true">&rarr;</span>
-      <article class="v331-card v331-step"><span class="v331-step-num">2</span><div><h3>AI 분석 및 평가</h3><p>신뢰, 준법, 전환 항목을 자동 분석합니다.</p></div></article><span class="v331-step-arrow" aria-hidden="true">&rarr;</span>
-      <article class="v331-card v331-step"><span class="v331-step-num">3</span><div><h3>리포트 확인 및 개선</h3><p>우선순위와 해결 방법을 확인합니다.</p></div></article>
-    </div>
-  </section>
-  <section class="v331-stats" aria-label="서비스 지표"><div class="v331-stat-grid"><div class="v331-stat"><strong>10,000+</strong><span>진단 완료 웹사이트</span></div><div class="v331-stat"><strong>98%</strong><span>고객 만족도</span></div><div class="v331-stat"><strong>3분 이내</strong><span>평균 진단 소요 시간</span></div><div class="v331-stat"><strong>지속 업데이트</strong><span>최신 가이드 반영</span></div></div></section>
-  <section class="v331-shell"><div class="v331-section-head"><h2>더 많은 온라인 비즈니스가 VERIDION을 신뢰합니다</h2></div><div class="v331-testimonials"><article class="v331-card"><p>법적 리스크를 빠르게 발견하고 전환 흐름까지 개선할 수 있었습니다.</p><strong>김소연 대표 · 리빙데이</strong></article><article class="v331-card"><p>복잡한 점검 항목을 한눈에 볼 수 있어 운영 효율이 크게 올라갔습니다.</p><strong>이준호 팀장 · 아임마켓</strong></article><article class="v331-card"><p>리포트가 쉬워 바로 개선에 적용했고 매출 흐름도 좋아졌습니다.</p><strong>박지민 대표 · 뷰티온</strong></article></div></section>
-  <section class="v331-shell"><div class="v331-section-head"><span class="v331-kicker">요금 안내</span><h2>필요한 만큼, 합리적으로</h2><p>모든 플랜에 핵심 진단 기능을 제공합니다.</p></div><div class="v331-pricing"><article class="v331-price-card"><h3>스타터</h3><strong>월 29,000원</strong><p>월 3회 진단, 기본 리포트 제공</p></article><article class="v331-price-card featured"><h3>프로페셔널</h3><strong>월 79,000원</strong><p>월 20회 진단, 상세 리포트와 개선 가이드</p></article><article class="v331-price-card"><h3>비즈니스</h3><strong>별도 문의</strong><p>무제한 진단, 전담 지원, 맞춤 컨설팅</p></article></div></section>
+    <aside class="vr-preview vr-preview" aria-label="진단 리포트 미리보기"><div class="vr-preview-head"><div class="vr-score"><small>종합 신뢰 점수</small><strong>82</strong><small>/ 100 · 좋음</small><div class="vr-progress"><i></i></div></div><div class="vr-checks"><div><span>개인정보 처리방침</span><span class="vr-chip">적합</span></div><div><span>이용약관</span><span class="vr-chip">적합</span></div><div><span>사업자 정보 표기</span><span class="vr-chip">적합</span></div><div><span>거래 안내</span><span class="vr-chip warn">보완 필요</span></div></div></div><div class="vr-list"><article><span class="vr-icon">1</span><div><h3>신뢰 요소 보완 필요</h3><p>고객 리뷰와 인증 요소를 강화하면 전환에 도움이 됩니다.</p></div><span class="vr-chip">개선 제안</span></article><article><span class="vr-icon">2</span><div><h3>준법 보완 후보</h3><p>고객 안내 정보 일부가 부족해 보완이 필요합니다.</p></div><span class="vr-chip warn">보완 필요</span></article><article><span class="vr-icon">3</span><div><h3>전환 개선 기회</h3><p>CTA 가독성과 배치 개선을 권장합니다.</p></div><span class="vr-chip">개선 제안</span></article></div></aside>
+  </div></section>
+  <section class="vr-shell"><div class="vr-feature-row" aria-label="핵심 기능"><article class="vr-card"><span class="vr-icon">T</span><h3>신뢰 진단</h3><p>보안, 인증, 리뷰, 회사 정보 등 고객 신뢰 요소를 종합 분석합니다.</p></article><article class="vr-card"><span class="vr-icon">C</span><h3>준법 리스크 점검</h3><p>개인정보, 이용약관, 표시광고 등 관련 준수 여부를 자동 점검합니다.</p></article><article class="vr-card"><span class="vr-icon">G</span><h3>전환 개선 인사이트</h3><p>UX, 카피, CTA, 페이지 구조까지 전환을 높이는 개선점을 제안합니다.</p></article><article class="vr-card"><span class="vr-icon">R</span><h3>한눈에 보는 리포트</h3><p>점수, 우선순위, 실행 가이드까지 보기 쉬운 리포트로 제공합니다.</p></article></div>
+    <div class="vr-section-head"><span class="vr-kicker">진단 흐름</span><h2>VERIDION은 이렇게 작동합니다</h2><p>입력, 분석, 리포트 확인까지 고객이 바로 이해할 수 있는 흐름으로 설계했습니다.</p></div><div class="vr-steps"><article class="vr-card vr-step"><span class="vr-step-num">1</span><div><h3>웹사이트 입력</h3><p>URL만 입력하면 진단이 시작됩니다.</p></div></article><span class="vr-step-arrow" aria-hidden="true">&rarr;</span><article class="vr-card vr-step"><span class="vr-step-num">2</span><div><h3>AI 분석 및 평가</h3><p>신뢰, 준법, 전환 항목을 자동 분석합니다.</p></div></article><span class="vr-step-arrow" aria-hidden="true">&rarr;</span><article class="vr-card vr-step"><span class="vr-step-num">3</span><div><h3>리포트 확인 및 개선</h3><p>우선순위와 해결 방법을 확인합니다.</p></div></article></div></section>
+  <section class="vr-stats" aria-label="진단 구성"><div class="vr-stat-grid"><div class="vr-stat"><strong>신뢰</strong><span>회사 정보와 고객 안심 요소</span></div><div class="vr-stat"><strong>준법</strong><span>정책·고지·동의 흐름</span></div><div class="vr-stat"><strong>전환</strong><span>CTA·설명·구매 전 안내</span></div><div class="vr-stat"><strong>리포트</strong><span>우선순위와 실행 가이드</span></div></div></section>
+  <section class="vr-shell"><div class="vr-section-head"><h2>고객 화면에서 바로 설득되는 리포트 구조</h2><p>검증되지 않은 과장 수치 대신, 실제 화면에 필요한 판단 근거와 실행 항목을 정리합니다.</p></div><div class="vr-testimonials"><article class="vr-card"><p>점수만 보여주지 않고, 고객이 어디에서 불안해하는지와 먼저 고칠 항목을 함께 보여줍니다.</p><strong>신뢰 진단 예시</strong></article><article class="vr-card"><p>개인정보, 약관, 환불, 사업자 정보처럼 결제 전 확인되는 항목을 한 화면에서 점검합니다.</p><strong>준법 체크 예시</strong></article><article class="vr-card"><p>CTA, 가격 안내, 제공 범위, 문의 경로를 연결해 전환 흐름을 개선할 수 있게 정리합니다.</p><strong>전환 개선 예시</strong></article></div></section>
+  <section class="vr-shell"><div class="vr-section-head"><span class="vr-kicker">요금</span><h2>무료 진단 후 필요한 리포트만 선택하세요</h2><p>공개 화면 점검, 상세 리포트, 전문가 관리 단계로 단순하게 구성했습니다.</p></div><div class="vr-pricing"><article class="vr-price-card"><h3>무료 진단</h3><strong>0원</strong><p>기본 상태와 확인이 필요한 영역을 먼저 살펴봅니다.</p></article><article class="vr-price-card featured"><h3>기본 리포트</h3><strong>₩49,000/회</strong><p>사이트별 상세 항목과 보완 우선순위를 확인합니다.</p></article><article class="vr-price-card"><h3>전문가 플랜</h3><strong>₩149,000/월</strong><p>맞춤형 수정 가이드와 지속 점검을 함께 관리합니다.</p></article></div></section>
 </main>
-<footer class="v331-footer" aria-label="하단 정보">
-  <div class="v331-footer-inner">
-    <div class="v331-footer-brand"><strong>VERIDION</strong><p>온라인 비즈니스의 신뢰와 성장을 진단으로 더 쉽게.</p><span>© 2026 VERIDION. All rights reserved.</span></div>
+
+<footer class="vr-footer vr-footer" aria-label="하단 정보">
+  <div class="vr-footer-inner">
+    <div class="vr-footer-brand"><strong>VERIDION</strong><p>온라인 비즈니스의 신뢰와 성장을 진단으로 더 쉽게.</p><span>© 2026 VERIDION. All rights reserved.</span></div>
     <nav aria-label="서비스"><strong>서비스</strong><a href="/products/veridion/demo">신뢰 진단</a><a href="/service">준법 점검</a><a href="/solutions">전환 개선</a><a href="/plans">리포트 상품</a></nav>
     <nav aria-label="고객 지원"><strong>고객 지원</strong><a href="/portal">고객 포털</a><a href="/board">인사이트</a><a href="/business-info">문의하기</a><a href="/refund">환불 정책</a></nav>
-    <div class="v331-footer-legal"><strong>안전한 데이터 처리</strong><p>VERIDION은 공개 웹페이지 기반의 구조 분석 서비스이며 법률 자문이나 성과 보장을 제공하지 않습니다.</p><p>엔브이제로(NV0) · 대표자 나금상 · 사업자등록번호 584-77-00586</p><p>경기도 남양주시 와부읍 덕소로97번길 34, 105동 402호</p><p><a href="/terms">이용약관</a> · <a href="/privacy">개인정보처리방침</a></p></div>
+    <div class="vr-footer-legal"><strong>안전한 데이터 처리</strong><p>VERIDION은 공개 웹페이지 기반의 구조 분석 서비스이며 법률 자문이나 성과 보장을 제공하지 않습니다.</p><p>엔브이제로(NV0) · 대표자 나금상 · 사업자등록번호 584-77-00586</p><p>경기도 남양주시 와부읍 덕소로97번길 34, 105동 402호</p><p><a href="/terms">이용약관</a> · <a href="/privacy">개인정보처리방침</a></p></div>
   </div>
 </footer>
 <script src="/apps/public/home/app.js" type="module"></script>
-</body></html>
+<script src="/shared/veridion-runtime-optimizer.js" type="module"></script>
+</body>
+</html>

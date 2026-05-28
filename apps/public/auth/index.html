@@ -2,87 +2,43 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8"/>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <title>로그인 - VERIDION</title>
-  <link rel="stylesheet" href="/shared/veridion-clean-v311.css"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>로그인 | VERIDION</title>
+  <meta name="description" content="VERIDION 계정 로그인과 회원가입"/>
+  <link rel="preload" href="/shared/veridion-rebrand.css" as="style"/>
+  <link rel="stylesheet" href="/shared/veridion-rebrand.css"/>
 </head>
-<body data-veridion-clean="v311">
-<header class="nv0n-topbar" data-nv0n-visible-menu="true">
-  <div class="nv0n-topbar-inner">
-    <a aria-label="VERIDION 홈으로 이동" class="nv0n-brand" href="/">VERIDION</a>
-    <nav aria-label="상단 메뉴" class="nv0n-primary-nav"><a class="nv0n-nav-link" href="/products/veridion/demo">위험 진단</a><a class="nv0n-nav-link" href="/service">서비스</a><a class="nv0n-nav-link" href="/plans">요금 안내</a><a class="nv0n-nav-link" href="/board">인사이트</a><a class="nv0n-nav-link" href="/portal">내 사이트</a><a class="nv0n-nav-link" href="/business-info">문의하기</a></nav>
-    <div aria-label="계정 및 진단 바로가기" class="nv0n-topbar-actions">
-      <a class="nv0n-login-link" href="/auth">로그인</a>
-      <a class="nv0n-start-link" href="/products/veridion/demo">무료 진단</a>
+<body data-veridion-rebrand="clean" data-page="auth">
+
+<a class="skip-link" href="#main">본문 바로가기</a>
+<header class="vr-topbar vr-topbar" data-public-nav="true">
+  <div class="vr-topbar-inner">
+    <a class="vr-brand" href="/" aria-label="VERIDION 홈">VERIDION</a>
+    <nav class="vr-nav" aria-label="주요 메뉴">
+      <a href="/service">서비스</a>
+      <a href="/solutions">솔루션</a>
+      <a href="/plans">요금</a>
+      <a href="/products/veridion/demo">진단</a>
+      <a href="/board">인사이트</a>
+      <a href="/portal">고객 포털</a>
+    </nav>
+    <div class="vr-nav-actions">
+      <a class="vr-login" href="/auth" aria-current="page">로그인</a>
+      <a class="vr-cta" href="/products/veridion/demo">무료 진단 시작</a>
     </div>
   </div>
 </header>
-<main id="main" tabindex="-1" class="v311-main">
-  <section class="v311-shell">
-    <header class="v311-section-head">
-      <span class="v311-kicker">계정 관리</span>
-      <h1>계정 관리를 쉽고 안전하게 시작하세요</h1>
-      <p>이메일과 비밀번호를 직접 입력해 로그인하고, 진단 결과와 저장한 사이트를 이어서 확인할 수 있습니다.</p>
-    </header>
-    <div >
-      <aside  aria-label="로그인 안내">
-        <span class="v311-kicker">계정 안내</span>
-        <h2>처음 이용하는 고객도 필요한 작업을 바로 찾을 수 있습니다</h2>
-        <p>로그인, 회원가입, 비밀번호 재설정을 한 화면에서 확인하고 필요한 메뉴로 바로 이동할 수 있습니다.</p>
-        <div >
-          <article><b>개인정보 보호</b><p>입력칸은 비어 있으며, 고객이 직접 입력한 정보만 사용합니다.</p></article>
-          <article><b>필요한 메뉴만 선택</b><p>로그인, 회원가입, 비밀번호 재설정을 목적별로 구분했습니다.</p></article>
-          <article><b>편한 입력 화면</b><p>입력칸과 안내 문구를 넓게 배치해 모바일에서도 확인하기 쉽습니다.</p></article>
-        </div>
-        <div ><b>안전한 이용 안내</b><p>이메일이 자동으로 노출되지 않도록 빈 입력칸으로 시작합니다.</p></div>
-      </aside>
-      <div >
-      <article >
-        <h2>로그인</h2><p>내 사이트와 진단 이력을 확인합니다.</p>
-        <form id="loginForm">
-          <label>이메일 주소<input autocomplete="new-password" autocapitalize="none" spellcheck="false" data-nv0-empty-default="true" id="loginEmail" name="nv0_login_email_manual" placeholder="이메일 주소를 입력하세요" required type="email"/></label>
-          <label>비밀번호<input autocomplete="new-password" data-nv0-empty-default="true" id="loginPassword" name="nv0_login_password_manual" placeholder="비밀번호" required type="password"/></label>
-          <button type="submit">로그인하고 내 사이트 관리하기</button>
-          <div class="notice muted" id="loginState">이메일과 비밀번호를 입력하세요.</div>
-        </form>
-      </article>
-      <article >
-        <h2>회원가입</h2><p>진단 결과를 저장하고 다시 확인할 수 있습니다.</p>
-        <form id="registerForm">
-          <label>이메일 주소<input autocomplete="new-password" autocapitalize="none" spellcheck="false" data-nv0-empty-default="true" id="registerEmail" name="nv0_register_email_manual" placeholder="이메일 주소를 입력하세요" required type="email"/></label>
-          <label>비밀번호<input autocomplete="new-password" data-nv0-empty-default="true" id="registerPassword" minlength="12" name="nv0_register_password_manual" placeholder="12자 이상" required type="password"/></label>
-          <label ><input id="privacyConsent" required type="checkbox"/> 개인정보처리방침을 확인하고 동의합니다.</label>
-          <button type="submit">무료 계정 만들기</button>
-          <div class="notice muted" id="registerState">회원가입하면 진단 이력을 보관할 수 있습니다.</div>
-        </form>
-      </article>
-      <article >
-        <h2>비밀번호 재설정 요청</h2><p>가입 이메일로 재설정 안내를 요청합니다.</p>
-        <form id="resetRequestForm">
-          <label>이메일 주소<input autocomplete="new-password" autocapitalize="none" spellcheck="false" data-nv0-empty-default="true" id="resetEmail" name="nv0_reset_email_manual" placeholder="이메일 주소를 입력하세요" required type="email"/></label>
-          <button type="submit">재설정 안내 요청</button>
-          <div class="notice muted" id="resetRequestState">가입된 이메일이면 안내가 발송됩니다.</div>
-        </form>
-      </article>
-      <article >
-        <h2>새 비밀번호 설정</h2><p>이메일로 받은 인증코드를 입력해 비밀번호를 변경합니다.</p>
-        <form id="resetForm">
-          <label>이메일 주소<input autocomplete="new-password" autocapitalize="none" spellcheck="false" data-nv0-empty-default="true" id="resetConfirmEmail" name="nv0_reset_confirm_email_manual" placeholder="이메일 주소를 입력하세요" required type="email"/></label>
-          <label>토큰<input autocomplete="one-time-code" id="resetToken" name="token" placeholder="인증코드 입력" required type="text"/></label>
-          <label>새 비밀번호<input autocomplete="new-password" data-nv0-empty-default="true" id="resetPassword" minlength="12" name="nv0_reset_password_manual" placeholder="12자 이상" required type="password"/></label>
-          <button type="submit">비밀번호 변경</button>
-          <div class="notice muted" id="resetState">이메일로 받은 인증코드를 입력하세요.</div>
-        </form>
-      </article>
-    </div>
-    </div>
-  </section>
-</main>
-<footer class="v311-footer nv0n-footer">
-  <div class="v311-footer-inner">
-    <div class="v311-footer-brand"><strong>VERIDION</strong><p>국내 온라인 사업자의 고지, 환불, 개인정보 안내 공백을 공개 페이지 기준으로 점검합니다.</p></div>
-    <nav aria-label="하단 메뉴"><a href="/privacy">개인정보 처리방침</a><a href="/terms">이용약관</a><a href="/refund">환불 정책</a><a href="/business-info">문의하기</a><a href="mailto:ct@nv0.kr">ct@nv0.kr</a></nav>
-    <span>© 2026 VERIDION. All rights reserved.</span>
+<main id="main" tabindex="-1" class="vr-main vr-main" data-route-smoke="로그인 회원가입 비밀번호 재설정"><section class="vr-report-header vr-page-hero"><div class="vr-report-header-inner"><div><span class="vr-kicker">계정 관리</span><h1>계정 관리를 쉽고 안전하게 시작하세요</h1><p>이메일과 비밀번호를 직접 입력해 로그인하고, 진단 결과와 저장한 사이트를 이어서 확인할 수 있습니다.</p></div><aside class="vr-report-score"><div><strong>VERIDION</strong><p>고객이 바로 이해하는 신뢰, 준법, 전환 진단 화면으로 통일했습니다.</p></div><div><div class="vr-arc" aria-hidden="true"></div><strong>82 / 100</strong></div></aside></div></section><section class="vr-shell"><div class="vr-report-grid"><article class="vr-card"><h2>로그인</h2><p>저장 사이트와 진단 이력을 확인합니다.</p><form id="loginForm" class="vr-form" novalidate><label>이메일 주소<input id="loginEmail" type="email" autocomplete="username"/></label><label>비밀번호<input id="loginPassword" type="password" autocomplete="current-password"/></label><button class="vr-button primary" type="submit">로그인하고 고객 포털 열기</button><p id="loginState">이메일과 비밀번호를 입력하세요.</p></form></article><article class="vr-card"><h2>회원가입</h2><p>진단 결과를 저장하고 다시 확인할 수 있습니다.</p><form id="registerForm" class="vr-form" novalidate><label>이메일 주소<input id="registerEmail" type="email" autocomplete="username"/></label><label>비밀번호<input id="registerPassword" type="password" autocomplete="new-password"/></label><label class="vr-check"><input id="privacyConsent" type="checkbox"/> 개인정보처리방침을 확인하고 동의합니다.</label><button class="vr-button primary" type="submit">무료 계정 만들기</button><p id="registerState">회원가입하면 진단 이력을 보관할 수 있습니다.</p></form></article><article class="vr-card"><h2>비밀번호 재설정</h2><form id="resetRequestForm" class="vr-form" novalidate><label>이메일 주소<input id="resetEmail" type="email"/></label><button class="vr-button" type="submit">재설정 안내 요청</button><p id="resetRequestState">가입된 이메일이면 안내가 발송됩니다.</p></form><form id="resetForm" class="vr-form" novalidate><label>이메일 주소<input id="resetConfirmEmail" type="email"/></label><label>토큰<input id="resetToken"/></label><label>새 비밀번호<input id="resetPassword" type="password"/></label><button class="vr-button" type="submit">비밀번호 변경</button><p id="resetState">이메일로 받은 인증코드를 입력하세요.</p></form></article></div></section></main>
+
+<footer class="vr-footer vr-footer" aria-label="하단 정보">
+  <div class="vr-footer-inner">
+    <div class="vr-footer-brand"><strong>VERIDION</strong><p>온라인 비즈니스의 신뢰와 성장을 진단으로 더 쉽게.</p><span>© 2026 VERIDION. All rights reserved.</span></div>
+    <nav aria-label="서비스"><strong>서비스</strong><a href="/products/veridion/demo">신뢰 진단</a><a href="/service">준법 점검</a><a href="/solutions">전환 개선</a><a href="/plans">리포트 상품</a></nav>
+    <nav aria-label="고객 지원"><strong>고객 지원</strong><a href="/portal">고객 포털</a><a href="/board">인사이트</a><a href="/business-info">문의하기</a><a href="/refund">환불 정책</a></nav>
+    <div class="vr-footer-legal"><strong>안전한 데이터 처리</strong><p>VERIDION은 공개 웹페이지 기반의 구조 분석 서비스이며 법률 자문이나 성과 보장을 제공하지 않습니다.</p><p>엔브이제로(NV0) · 대표자 나금상 · 사업자등록번호 584-77-00586</p><p>경기도 남양주시 와부읍 덕소로97번길 34, 105동 402호</p><p><a href="/terms">이용약관</a> · <a href="/privacy">개인정보처리방침</a></p></div>
   </div>
-</footer><script src="/apps/public/auth/app.js" type="module"></script>
-</body></html>
+</footer>
+<script src="/apps/public/auth/app.js" type="module"></script>
+<script src="/shared/veridion-runtime-optimizer.js" type="module"></script>
+</body>
+</html>

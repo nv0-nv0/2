@@ -22,8 +22,8 @@
     var hint = id ? document.getElementById(id) : null;
     if (!hint) {
       hint = document.createElement('small');
-      hint.className = 'nv0-input-hint';
-      hint.id = 'nv0-input-hint-' + Math.random().toString(36).slice(2, 8);
+      hint.className = 'vr-input-hint';
+      hint.id = 'vr-input-hint-' + Math.random().toString(36).slice(2, 8);
       input.setAttribute('aria-describedby', hint.id);
       input.insertAdjacentElement('afterend', hint);
     }

@@ -1,0 +1,41 @@
+import fs from 'node:fs';
+import path from 'node:path';
+const root = process.cwd();
+const read = rel => fs.readFileSync(path.join(root, rel), 'utf8');
+const exists = rel => fs.existsSync(path.join(root, rel));
+const checks = [];
+const failures = [];
+function check(name, condition, detail = '') { const ok = Boolean(condition); checks.push({ name, ok, detail }); if (!ok) failures.push({ name, detail }); }
+const pkg = JSON.parse(read('package.json'));
+check('version:phase332', /phase332-live-rebrand/.test(pkg.version), pkg.version);
+const publicDirs = fs.readdirSync(path.join(root, 'apps/public'), { withFileTypes:true }).filter(d=>d.isDirectory()).map(d=>d.name);
+const publicHtml = [];
+for (const slug of publicDirs) {
+  const rel = `apps/public/${slug}/index.html`;
+  if (!exists(rel)) continue;
+  const html = read(rel);
+  publicHtml.push([slug, html]);
+  check(`${slug}:vr-css`, html.includes('/shared/veridion-rebrand.css'));
+  check(`${slug}:vr-marker`, html.includes('data-veridion-rebrand="clean"'));
+  check(`${slug}:vr-nav`, html.includes('vr-topbar') || slug === 'portal');
+  check(`${slug}:vr-footer`, html.includes('vr-footer') || slug === 'portal');
+  check(`${slug}:no-old-nav-risk`, !html.includes('>위험 진단</a>'));
+  check(`${slug}:no-old-nav-my-site`, !html.includes('>내 사이트</a>'));
+  check(`${slug}:no-cadence-copy`, !/20분에 1회|20분마다/.test(html));
+  check(`${slug}:single-footer-element`, (html.match(/<footer\b/g) || []).length <= 1);
+}
+const combined = publicHtml.map(([,h])=>h).join('\n') + '\n' + ['apps/public/board/app.js','apps/public/portal/app.js','apps/public/home/app.js','apps/public/veridion-demo/app.js','apps/public/demo/app.js'].filter(exists).map(read).join('\n');
+for (const forbidden of ['phase319','phase320','phase321','프로덕션 센티널','런칭 컨트롤','TrustOps 오토파일럿','운영 큐','자동화 백로그','canary','rollback','live verification','SLA','보안 점수88','키워드</a>','API 키 관리']) check(`public-forbidden:${forbidden}`, !combined.includes(forbidden));
+for (const required of ['웹사이트의 신뢰와 준법을 진단하고','전환율을 높이세요','고객 포털','우선 조치 항목 TOP 5','사업자 정보와 고객지원 안내','정기 업데이트','무료 진단 시작']) check(`required-copy:${required}`, combined.includes(required));
+const css = read('shared/veridion-rebrand.css');
+for (const token of ['VERIDION live rebrand hardening v332','.vr-page-hero','.vr-form','.vr-board-list','@media (max-width:760px)']) check(`css:${token}`, css.includes(token));
+const server = read('server/index.mjs');
+check('server:public-menu-rebrand', server.includes('>진단</a>') && server.includes('>고객 포털</a>') && !server.includes('>위험 진단</a>'));
+check('server:footer-skip-v311', server.includes('data-veridion-rebrand="clean"') && server.includes('vr-footer') && server.includes('/<footer\\b/i.test(body)'));
+check('route:business-info', server.includes("'/business-info'"));
+check('design-reference:home', exists('docs/design-reference/veridion-home-rebrand-reference.png'));
+const report = { ok: failures.length === 0, phase: 'phase332-live-rebrand', checkedAt: new Date().toISOString(), checks, failures };
+fs.mkdirSync(path.join(root, 'docs/current'), { recursive:true });
+fs.writeFileSync(path.join(root, 'docs/current/PHASE332_LIVE_REBRAND_VALIDATION.json'), JSON.stringify(report, null, 2));
+console.log(JSON.stringify({ ok: report.ok, phase: report.phase, checked: checks.length, failed: failures.length, report: 'docs/current/PHASE332_LIVE_REBRAND_VALIDATION.json' }, null, 2));
+if (failures.length) process.exit(1);

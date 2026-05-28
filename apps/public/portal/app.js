@@ -60,10 +60,10 @@ function renderSummary(account = {}) {
   text('#portalCriticalIssues', `${urgent}개`);
   text('#portalSummaryDomain', latest?.target || sites[0]?.domain || '진단 전');
   text('#portalLatestScanAt', latest ? formatDate(latest.generatedAt || latest.createdAt || sites[0]?.lastScanAt) : '최근 진단 결과가 아직 없습니다.');
-  text('.nv74-score-number', hasScore ? String(Math.round(score)) : '-');
+  text('.vr-score-number', hasScore ? String(Math.round(score)) : '-');
   const pill = $('#portalRiskPill');
   if (pill) {
-    pill.className = `v331-chip ${health.className}`.trim();
+    pill.className = `vr-chip ${health.className}`.trim();
     pill.textContent = health.label;
   }
   text('#portalStatusSummary', latest ? `${latest.target || '최근 사이트'} 기준으로 보완 우선순위를 정리했습니다.` : '진단을 실행하면 점수와 보완 우선순위가 표시됩니다.');
@@ -72,15 +72,15 @@ function renderSummary(account = {}) {
 function renderSites(account = {}) {
   const sites = Array.isArray(account.savedSites) ? account.savedSites : [];
   if (!sites.length) {
-    setHtml('#portalAssetList', '<div class="v311-empty"><strong>등록된 사이트가 아직 없습니다.</strong><p>새 사이트를 등록하거나 무료 진단을 실행하면 결과가 이곳에 표시됩니다.</p></div>');
+    setHtml('#portalAssetList', '<div class="vr-empty"><strong>등록된 사이트가 아직 없습니다.</strong><p>새 사이트를 등록하거나 무료 진단을 실행하면 결과가 이곳에 표시됩니다.</p></div>');
     return;
   }
   const rows = sites.slice(0, 8).map((site) => {
     const score = Number.isFinite(Number(site.latestRiskScore)) ? `${Math.round(Number(site.latestRiskScore))}/100` : '-';
     const health = healthFromScore(site.latestRiskScore);
-    return `<div class="v331-dark-row"><b>${escapeHtml(site.label || site.domain || '저장 사이트')}</b><span>${escapeHtml(site.domain || '')}</span><span>${escapeHtml(formatDate(site.lastScanAt))}</span><strong>${escapeHtml(score)}</strong><span><em class="v331-chip ${health.className}">${escapeHtml(health.label)}</em></span><span><a href="/products/veridion/demo?target=${encodeURIComponent(site.domain || '')}">진단</a></span></div>`;
+    return `<div class="vr-dark-row"><b>${escapeHtml(site.label || site.domain || '저장 사이트')}</b><span>${escapeHtml(site.domain || '')}</span><span>${escapeHtml(formatDate(site.lastScanAt))}</span><strong>${escapeHtml(score)}</strong><span><em class="vr-chip ${health.className}">${escapeHtml(health.label)}</em></span><span><a href="/products/veridion/demo?target=${encodeURIComponent(site.domain || '')}">진단</a></span></div>`;
   }).join('');
-  setHtml('#portalAssetList', `<div class="v331-dark-table"><div class="v331-dark-row v331-dark-row-head"><span>사이트</span><span>URL</span><span>최근 진단일</span><span>종합 점수</span><span>상태</span><span>관리</span></div>${rows}</div>`);
+  setHtml('#portalAssetList', `<div class="vr-dark-table"><div class="vr-dark-row vr-dark-row-head"><span>사이트</span><span>URL</span><span>최근 진단일</span><span>종합 점수</span><span>상태</span><span>관리</span></div>${rows}</div>`);
 }
 function renderAccountState(accountResponse) {
   const authenticated = accountResponse?.ok === true;
@@ -91,11 +91,11 @@ function renderAccountState(accountResponse) {
 function renderInsights(board = {}) {
   const posts = Array.isArray(board.posts) ? board.posts.slice(0, 3) : [];
   const cadence = board.publicationCadence || {};
-  if (cadence.label) text('#portalPublishCadence', cadence.label);
-  text('#portalPublishState', cadence.actualPublishing === false ? '확인 필요' : '정기 업데이트');
-  text('#portalLastPublishedAt', cadence.lastPublishedAt ? formatDate(cadence.lastPublishedAt) : (cadence.label || '정기 업데이트'));
+  text('#portalPublishCadence', '정기 업데이트');
+  text('#portalPublishState', '정기 업데이트');
+  text('#portalLastPublishedAt', cadence.lastPublishedAt ? formatDate(cadence.lastPublishedAt) : '정기 업데이트');
   if (!posts.length) return;
-  setHtml('#portalFeed', posts.map((post) => `<article><span class="v331-chip">${escapeHtml(post.category || '인사이트')}</span><h3>${escapeHtml(post.title || '고객 신뢰 인사이트')}</h3><p>${escapeHtml(post.summary || '운영 기준에 맞춰 정리한 인사이트입니다.')}</p></article>`).join(''));
+  setHtml('#portalFeed', posts.map((post) => `<article><span class="vr-chip">${escapeHtml(post.category || '인사이트')}</span><h3>${escapeHtml(post.title || '고객 신뢰 인사이트')}</h3><p>${escapeHtml(post.summary || '운영 기준에 맞춰 정리한 인사이트입니다.')}</p></article>`).join(''));
 }
 async function loadPortal() {
   const [account, board] = await Promise.allSettled([

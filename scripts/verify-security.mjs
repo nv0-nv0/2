@@ -15,7 +15,7 @@ add('security:trusted-types-report-only', /content-security-policy-report-only|r
 add('security:nosniff', /x-content-type-options/i.test(server) && /nosniff/i.test(server));
 add('security:frame-deny', /x-frame-options/i.test(server) && /DENY/.test(server));
 add('security:admin-cookie-httponly', /HttpOnly/.test(server) && /SameSite=Strict/.test(server));
-add('security:csrf-header-required', /x-nv0-csrf/.test(server));
+add('security:csrf-header-required', /x-vr-csrf/.test(server));
 add('security:admin-public-hidden', !read('apps/public/home/index.html').includes('/admin'));
 add('security:readyz-runtime-writable', /runtimeWritable/.test(server) && /readyz/.test(server));
 add('security:env-placeholder-guard', /replace-with|changeme|dummy|test_/.test(server));

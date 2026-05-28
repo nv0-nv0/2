@@ -48,7 +48,7 @@ async function runBootProbe() {
     NV0_LOCK_PROVIDER: 'memory',
     NV0_ENABLE_TURNSTILE: 'false',
     NV0_RUN_PREFLIGHT: 'false',
-    NV0_RUNTIME_DIR: '/tmp/nv0-phase325-boot-probe'
+    NV0_RUNTIME_DIR: '/tmp/vr-phase325-boot-probe'
   };
   const child = spawn(process.execPath, ['server/index.mjs'], { env, stdio: ['ignore', 'pipe', 'pipe'] });
   let output = '';

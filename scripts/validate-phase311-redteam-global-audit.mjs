@@ -8,8 +8,8 @@ const fail = (message) => { console.error(JSON.stringify({ ok: false, error: mes
 
 const pkg = JSON.parse(read('package.json'));
 if (!/phase311-clean-redteam/.test(pkg.version)) fail('package version is not phase311-clean-redteam');
-for (const file of ['shared/veridion-clean-v311.css','docs/PHASE311_REDTEAM_GLOBAL_AUDIT.md','docs/current/PHASE311_REDTEAM_GLOBAL_AUDIT.json']) if (!exists(file)) fail(`missing ${file}`);
-for (const file of ['shared/nv0-clean-slate-20260512.css','shared/nv0n-generated.css','shared/nv0n-runtime.css','shared/nv0n-runtime.js','shared/phase264-hardening.css','shared/veridion-adopted-ui.css','shared/veridion-clean-v310.css']) if (exists(file)) fail(`obsolete artifact remains: ${file}`);
+for (const file of ['shared/veridion-rebrand.css','docs/PHASE311_REDTEAM_GLOBAL_AUDIT.md','docs/current/PHASE311_REDTEAM_GLOBAL_AUDIT.json']) if (!exists(file)) fail(`missing ${file}`);
+for (const file of ['shared/vr-clean-slate-20260512.css','shared/vr-generated.css','shared/vr-runtime.css','shared/vr-runtime.js','shared/phase264-hardening.css','shared/veridion-adopted-ui.css','shared/veridion-clean-v310.css']) if (exists(file)) fail(`obsolete artifact remains: ${file}`);
 
 const report = JSON.parse(read('docs/current/PHASE311_REDTEAM_GLOBAL_AUDIT.json'));
 if (!report.ok) fail('redteam global audit did not pass');
@@ -28,10 +28,10 @@ for (const area of ['apps/public','apps/admin']) {
 }
 for (const file of appHtml) {
   const html = read(file);
-  if (!html.includes('/shared/veridion-clean-v311.css')) fail(`${file} missing v311 css`);
-  if (!html.includes('data-veridion-clean="v311"')) fail(`${file} missing v311 body marker`);
-  if (/nv0-clean-slate|nv0n-generated|nv0n-runtime|phase264-hardening|veridion-adopted-ui|veridion-clean-v310/.test(html)) fail(`${file} references obsolete shared artifact`);
+  if (!html.includes('/shared/veridion-rebrand.css')) fail(`${file} missing rebrand css`);
+  if (!html.includes('data-veridion-rebrand="clean"')) fail(`${file} missing v311 body marker`);
+  if (/vr-clean-slate|vr-generated|vr-runtime|phase264-hardening|veridion-adopted-ui|veridion-clean-v310/.test(html)) fail(`${file} references obsolete shared artifact`);
 }
 const publicRoutes = read('server/routes/public.mjs');
-if (!publicRoutes.includes('intervalMinutes') || !publicRoutes.includes('actualPublishing')) fail('20-minute insight publishing metadata missing');
+if (!publicRoutes.includes("label: '정기 업데이트'") || !publicRoutes.includes('actualPublishing')) fail('customer-safe insight publishing metadata missing');
 console.log(JSON.stringify({ ok: true, phase: 'phase311-clean-redteam', counts: report.counts }, null, 2));

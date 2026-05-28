@@ -6,7 +6,7 @@ import { createPersistenceManager } from '../server/infrastructure/persistence/p
 import { validateRuntimeConfig } from '../server/config/validation.mjs';
 
 const failures = [];
-const root = fs.mkdtempSync(path.join(os.tmpdir(), 'nv0-phase330-'));
+const root = fs.mkdtempSync(path.join(os.tmpdir(), 'vr-phase330-'));
 const dataDir = path.join(root, 'data');
 const reportsDir = path.join(root, 'reports');
 const fakeBin = path.join(root, 'bin');
@@ -155,7 +155,7 @@ async function runFullServerBootProbe() {
     NV0_LOCK_PROVIDER: 'redis',
     NV0_STORAGE_MODE: 's3',
     NV0_S3_ENDPOINT: 'https://r2.invalid.kr',
-    NV0_S3_BUCKET: 'nv0-production',
+    NV0_S3_BUCKET: 'vr-production',
     NV0_S3_ACCESS_KEY_ID: 'real-access-key-id',
     NV0_S3_SECRET_ACCESS_KEY: 'real-secret-access-key',
     NV0_SCAN_PROVIDER: 'external_http',

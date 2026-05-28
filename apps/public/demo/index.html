@@ -2,56 +2,43 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8"/>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <title>무료 진단 실행 - VERIDION</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>무료 진단 | VERIDION</title>
   <meta name="description" content="사이트 주소 하나로 웹사이트 신뢰, 준법, 전환 요소를 진단합니다."/>
-  <link rel="stylesheet" href="/shared/veridion-clean-v311.css"/>
+  <link rel="preload" href="/shared/veridion-rebrand.css" as="style"/>
+  <link rel="stylesheet" href="/shared/veridion-rebrand.css"/>
 </head>
-<body data-veridion-clean="v311" data-veridion-brand="v331" data-page="diagnosis">
+<body data-veridion-rebrand="clean" data-page="demo">
+
 <a class="skip-link" href="#main">본문 바로가기</a>
-<header class="v331-topbar" data-v331-public-nav="true">
-  <div class="v331-topbar-inner">
-    <a class="v331-brand" href="/" aria-label="VERIDION 홈">VERIDION</a>
-    <nav class="v331-nav" aria-label="주요 메뉴">
+<header class="vr-topbar vr-topbar" data-public-nav="true">
+  <div class="vr-topbar-inner">
+    <a class="vr-brand" href="/" aria-label="VERIDION 홈">VERIDION</a>
+    <nav class="vr-nav" aria-label="주요 메뉴">
       <a href="/service">서비스</a>
       <a href="/solutions">솔루션</a>
       <a href="/plans">요금</a>
-      <a href="/products/veridion/demo">진단</a>
+      <a href="/products/veridion/demo" aria-current="page">진단</a>
+      <a href="/board">인사이트</a>
       <a href="/portal">고객 포털</a>
     </nav>
-    <div class="v331-nav-actions">
-      <a class="v331-login" href="/auth">로그인</a>
-      <a class="v331-cta" href="/products/veridion/demo">무료 진단 시작</a>
+    <div class="vr-nav-actions">
+      <a class="vr-login" href="/auth">로그인</a>
+      <a class="vr-cta" href="/products/veridion/demo">무료 진단 시작</a>
     </div>
   </div>
 </header>
-<main id="main" tabindex="-1" class="v331-main" data-route-smoke="무료 진단 사이트 주소 하나 최신 무료 진단 화면 리스크 진단 결과">
-  <section class="v331-report-header" aria-labelledby="demoTitle">
-    <div class="v331-report-header-inner">
-      <div><span class="v331-kicker">무료 진단</span><h1 id="demoTitle">사이트 주소 하나로 신뢰, 준법, 전환 요소를 확인하세요</h1><p>고객이 결제 전 확인하는 고지, 환불, 개인정보 안내를 중심으로 공개 페이지를 빠르게 점검합니다.</p></div>
-      <aside class="v331-report-score" aria-label="리포트 예시"><div><strong>리포트 예시</strong><p>선택한 웹사이트, 생성일, 종합 점수, 우선 개선 항목을 한 화면에서 확인합니다.</p></div><div><div class="v331-arc" aria-hidden="true"></div><strong>82 / 100</strong></div></aside>
-    </div>
-  </section>
-  <section class="v331-shell">
-    <section aria-label="무료 진단 실행" class="nv0n-functional-bridge">
-      <div class="v331-section-head"><span class="v331-kicker">진단 시작</span><h2>사이트 주소를 입력하세요</h2><p>입력한 주소를 바탕으로 실제 진단 결과와 다음 조치를 바로 확인할 수 있습니다.</p></div>
-      <div><div class="notice" id="freeUsageLead"><strong>오늘 이용 가능한 무료 진단 확인 중</strong></div><div class="notice muted" id="freeUsageBadge">잠시 후 이용 가능 여부를 안내합니다.</div></div>
-      <div class="bridge-grid"><input autocomplete="url" id="targetUrl" inputmode="url" placeholder="https://your-store.kr" aria-label="진단할 사이트 주소"/><button id="scanBtn" type="button">무료 진단 시작</button></div>
-      <div id="turnstileBox"></div><input id="turnstileToken" type="hidden"/>
-      <div class="notice muted" id="turnstileState">안전한 이용을 위해 보안 확인을 준비하고 있습니다.</div>
-      <div class="notice muted" id="demoState">사이트 주소를 입력하면 요약 결과가 아래에 표시됩니다.</div>
-      <div class="bridge-actions"><button id="retryBtn" type="button">다시 점검</button><button id="unlockBtn" type="button">고객 포털에서 이어보기</button></div>
-      <div class="demo-result-surface" id="demoResult"><p class="notice muted">진단을 시작하면 발견 항목, 우선순위, 다음 조치가 이곳에 표시됩니다.</p></div>
-    </section>
-  </section>
-</main>
-<footer class="v331-footer" aria-label="하단 정보">
-  <div class="v331-footer-inner">
-    <div class="v331-footer-brand"><strong>VERIDION</strong><p>온라인 비즈니스의 신뢰와 성장을 진단으로 더 쉽게.</p><span>© 2026 VERIDION. All rights reserved.</span></div>
+<main id="main" tabindex="-1" class="vr-main vr-main" data-route-smoke="무료 진단 최신 무료 진단 화면"><section class="vr-report-header vr-page-hero"><div class="vr-report-header-inner"><div><span class="vr-kicker">무료 진단</span><h1>사이트 주소만 입력하면 핵심 안내 공백을 바로 확인합니다</h1><p>고객이 결제 전 확인하는 고지, 환불, 개인정보 안내를 중심으로 공개 페이지를 빠르게 점검합니다.</p></div><aside class="vr-report-score"><div><strong>VERIDION</strong><p>고객이 바로 이해하는 신뢰, 준법, 전환 진단 화면으로 통일했습니다.</p></div><div><div class="vr-arc" aria-hidden="true"></div><strong>82 / 100</strong></div></aside></div></section><section class="vr-shell"><section aria-label="무료 진단 실행" class="vr-functional-bridge"><div class="vr-section-head"><span class="vr-kicker">진단 시작</span><h2>사이트 주소를 입력하세요</h2><p>입력한 주소를 바탕으로 실제 진단 결과와 다음 조치를 바로 확인할 수 있습니다.</p></div><div><div class="notice" id="freeUsageLead"><strong>오늘 이용 가능한 무료 진단 확인 중</strong></div><div class="notice muted" id="freeUsageBadge">잠시 후 이용 가능 여부를 안내합니다.</div></div><div class="bridge-grid"><input autocomplete="url" id="targetUrl" inputmode="url" placeholder="https://your-store.kr" aria-label="진단할 사이트 주소"/><button id="scanBtn" type="button">무료 진단 시작</button></div><div id="turnstileBox"></div><input id="turnstileToken" type="hidden"/><div class="notice muted" id="turnstileState">안전한 이용을 위해 보안 확인을 준비하고 있습니다.</div><div class="notice muted" id="demoState">사이트 주소를 입력하면 요약 결과가 아래에 표시됩니다.</div><div class="bridge-actions"><button id="retryBtn" type="button">다시 점검</button><button id="unlockBtn" type="button">고객 포털에서 이어보기</button></div><div class="demo-result-surface" id="demoResult"><p class="notice muted">진단을 시작하면 발견 항목, 우선순위, 다음 조치가 이곳에 표시됩니다.</p></div></section></section></main>
+
+<footer class="vr-footer vr-footer" aria-label="하단 정보">
+  <div class="vr-footer-inner">
+    <div class="vr-footer-brand"><strong>VERIDION</strong><p>온라인 비즈니스의 신뢰와 성장을 진단으로 더 쉽게.</p><span>© 2026 VERIDION. All rights reserved.</span></div>
     <nav aria-label="서비스"><strong>서비스</strong><a href="/products/veridion/demo">신뢰 진단</a><a href="/service">준법 점검</a><a href="/solutions">전환 개선</a><a href="/plans">리포트 상품</a></nav>
     <nav aria-label="고객 지원"><strong>고객 지원</strong><a href="/portal">고객 포털</a><a href="/board">인사이트</a><a href="/business-info">문의하기</a><a href="/refund">환불 정책</a></nav>
-    <div class="v331-footer-legal"><strong>안전한 데이터 처리</strong><p>VERIDION은 공개 웹페이지 기반의 구조 분석 서비스이며 법률 자문이나 성과 보장을 제공하지 않습니다.</p><p>엔브이제로(NV0) · 대표자 나금상 · 사업자등록번호 584-77-00586</p><p>경기도 남양주시 와부읍 덕소로97번길 34, 105동 402호</p><p><a href="/terms">이용약관</a> · <a href="/privacy">개인정보처리방침</a></p></div>
+    <div class="vr-footer-legal"><strong>안전한 데이터 처리</strong><p>VERIDION은 공개 웹페이지 기반의 구조 분석 서비스이며 법률 자문이나 성과 보장을 제공하지 않습니다.</p><p>엔브이제로(NV0) · 대표자 나금상 · 사업자등록번호 584-77-00586</p><p>경기도 남양주시 와부읍 덕소로97번길 34, 105동 402호</p><p><a href="/terms">이용약관</a> · <a href="/privacy">개인정보처리방침</a></p></div>
   </div>
 </footer>
 <script src="/apps/public/demo/app.js" type="module"></script>
-</body></html>
+<script src="/shared/veridion-runtime-optimizer.js" type="module"></script>
+</body>
+</html>

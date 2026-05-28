@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "phase": "phase334-responsive-contract",
+  "checkedFiles": 51,
+  "requiredBreakpoints": [
+    "max-width:1100px",
+    "max-width:760px",
+    "max-width:520px"
+  ],
+  "failures": []
+}

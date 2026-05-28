@@ -24,7 +24,7 @@ export async function adminFetch(url, options = {}) {
   const method = String(options.method || 'GET').toUpperCase();
   const headers = new Headers(options.headers || {});
   if (!['GET', 'HEAD', 'OPTIONS'].includes(method)) {
-    headers.set('x-nv0-csrf', session.csrfToken || '');
+    headers.set('x-vr-csrf', session.csrfToken || '');
   }
   const res = await fetch(url, { ...options, method, headers });
   if (res.status === 401) {

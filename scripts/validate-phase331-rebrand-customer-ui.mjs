@@ -17,15 +17,15 @@ const portal = read('apps/public/portal/index.html');
 const portalJs = read('apps/public/portal/app.js');
 const demo = read('apps/public/veridion-demo/index.html');
 const demoJs = read('apps/public/veridion-demo/app.js');
-const css = read('shared/veridion-clean-v311.css');
+const css = read('shared/veridion-rebrand.css');
 const pkg = JSON.parse(read('package.json'));
 
 check('version:phase331', /phase331-rebrand-customer-ui/.test(pkg.version), pkg.version);
-check('home:v331-brand-marker', home.includes('data-veridion-brand="v331"'));
-check('portal:v331-brand-marker', portal.includes('data-veridion-brand="v331"'));
-check('demo:v331-brand-marker', demo.includes('data-veridion-brand="v331"'));
+check('home:vr-brand-marker', home.includes('data-veridion-rebrand="clean"'));
+check('portal:vr-brand-marker', portal.includes('data-veridion-rebrand="clean"'));
+check('demo:vr-brand-marker', demo.includes('data-veridion-rebrand="clean"'));
 check('css:rebrand-system', css.includes('VERIDION rebrand system v331'));
-for (const selector of ['.v331-topbar', '.v331-hero', '.v331-preview', '.v331-app-shell', '.v331-dashboard', '.v331-report-header', '.v331-footer']) {
+for (const selector of ['.vr-topbar', '.vr-hero', '.vr-preview', '.vr-app-shell', '.vr-dashboard', '.vr-report-header', '.vr-footer']) {
   check(`css:${selector}`, css.includes(selector));
 }
 for (const copy of ['웹사이트의 신뢰와 준법을 진단하고', '전환율을 높이세요', '종합 신뢰 점수', '무료 진단 시작']) {

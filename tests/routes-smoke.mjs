@@ -16,15 +16,15 @@ const routeSources = [
 ].join('\n');
 
 const routePairs = [
-  ['/', 'apps/public/home/index.html', ['온라인 사업자 리스크 진단', '법률·규제·과태료 리스크']],
-  ['/demo', 'apps/public/demo/index.html', ['무료 진단', '최신 무료 진단 화면']],
+  ['/', 'apps/public/home/index.html', ['웹사이트의 신뢰와 준법을 진단하고', '전환율을 높이세요']],
+  ['/demo', 'apps/public/demo/index.html', ['무료 진단', '핵심 안내 공백']],
   ['/documents', 'apps/public/documents/index.html', ['문서 생성', '고객 안내문']],
   ['/guides', 'apps/public/guides/index.html', ['가이드', '고객이 안심하는 페이지']],
-  ['/plans', 'apps/public/plans/index.html', ['상품·요금', '필요한 리포트']],
+  ['/plans', 'apps/public/plans/index.html', ['요금 안내', '기본 리포트']],
   ['/checkout', 'apps/public/checkout/index.html', ['결제 확인', '받을 결과물']],
-  ['/portal', 'apps/public/portal/index.html', ['내 사이트 관리', '확인 기록']],
+  ['/portal', 'apps/public/portal/index.html', ['고객 포털', '우선 조치']],
   ['/products/veridion/demo', 'apps/public/veridion-demo/index.html', ['무료 진단', '사이트 주소 하나']],
-  ['/solutions', 'apps/public/solutions/index.html', ['분석 프로세스', '고지·환불·개인정보']],
+  ['/solutions', 'apps/public/solutions/index.html', ['솔루션', '고지·환불·개인정보']],
   ['/terms', 'apps/public/terms/index.html', ['이용약관']],
   ['/privacy', 'apps/public/privacy/index.html', ['개인정보']],
   ['/refund', 'apps/public/refund/index.html', ['환불']],

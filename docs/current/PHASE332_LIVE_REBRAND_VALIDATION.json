@@ -1,0 +1,848 @@
+{
+  "ok": true,
+  "phase": "phase332-live-rebrand",
+  "checkedAt": "2026-05-28T04:40:14.753Z",
+  "checks": [
+    {
+      "name": "version:phase332",
+      "ok": true,
+      "detail": "1.0.1-commercial-phase332-live-rebrand"
+    },
+    {
+      "name": "auth:v311-css",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "auth:v332-marker",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "auth:v331-nav",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "auth:v331-footer",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "auth:no-old-nav-risk",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "auth:no-old-nav-my-site",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "auth:no-cadence-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "auth:single-footer-element",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "board:v311-css",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "board:v332-marker",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "board:v331-nav",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "board:v331-footer",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "board:no-old-nav-risk",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "board:no-old-nav-my-site",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "board:no-cadence-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "board:single-footer-element",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "business-info:v311-css",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "business-info:v332-marker",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "business-info:v331-nav",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "business-info:v331-footer",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "business-info:no-old-nav-risk",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "business-info:no-old-nav-my-site",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "business-info:no-cadence-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "business-info:single-footer-element",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "cases:v311-css",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "cases:v332-marker",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "cases:v331-nav",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "cases:v331-footer",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "cases:no-old-nav-risk",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "cases:no-old-nav-my-site",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "cases:no-cadence-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "cases:single-footer-element",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "checkout:v311-css",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "checkout:v332-marker",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "checkout:v331-nav",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "checkout:v331-footer",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "checkout:no-old-nav-risk",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "checkout:no-old-nav-my-site",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "checkout:no-cadence-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "checkout:single-footer-element",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "demo:v311-css",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "demo:v332-marker",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "demo:v331-nav",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "demo:v331-footer",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "demo:no-old-nav-risk",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "demo:no-old-nav-my-site",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "demo:no-cadence-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "demo:single-footer-element",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "documents:v311-css",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "documents:v332-marker",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "documents:v331-nav",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "documents:v331-footer",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "documents:no-old-nav-risk",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "documents:no-old-nav-my-site",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "documents:no-cadence-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "documents:single-footer-element",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "guides:v311-css",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "guides:v332-marker",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "guides:v331-nav",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "guides:v331-footer",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "guides:no-old-nav-risk",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "guides:no-old-nav-my-site",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "guides:no-cadence-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "guides:single-footer-element",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "home:v311-css",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "home:v332-marker",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "home:v331-nav",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "home:v331-footer",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "home:no-old-nav-risk",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "home:no-old-nav-my-site",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "home:no-cadence-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "home:single-footer-element",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "plans:v311-css",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "plans:v332-marker",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "plans:v331-nav",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "plans:v331-footer",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "plans:no-old-nav-risk",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "plans:no-old-nav-my-site",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "plans:no-cadence-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "plans:single-footer-element",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "portal:v311-css",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "portal:v332-marker",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "portal:v331-nav",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "portal:v331-footer",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "portal:no-old-nav-risk",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "portal:no-old-nav-my-site",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "portal:no-cadence-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "portal:single-footer-element",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "privacy:v311-css",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "privacy:v332-marker",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "privacy:v331-nav",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "privacy:v331-footer",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "privacy:no-old-nav-risk",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "privacy:no-old-nav-my-site",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "privacy:no-cadence-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "privacy:single-footer-element",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "refund:v311-css",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "refund:v332-marker",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "refund:v331-nav",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "refund:v331-footer",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "refund:no-old-nav-risk",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "refund:no-old-nav-my-site",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "refund:no-cadence-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "refund:single-footer-element",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "service:v311-css",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "service:v332-marker",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "service:v331-nav",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "service:v331-footer",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "service:no-old-nav-risk",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "service:no-old-nav-my-site",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "service:no-cadence-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "service:single-footer-element",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "solutions:v311-css",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "solutions:v332-marker",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "solutions:v331-nav",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "solutions:v331-footer",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "solutions:no-old-nav-risk",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "solutions:no-old-nav-my-site",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "solutions:no-cadence-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "solutions:single-footer-element",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "terms:v311-css",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "terms:v332-marker",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "terms:v331-nav",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "terms:v331-footer",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "terms:no-old-nav-risk",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "terms:no-old-nav-my-site",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "terms:no-cadence-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "terms:single-footer-element",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "veridion-demo:v311-css",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "veridion-demo:v332-marker",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "veridion-demo:v331-nav",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "veridion-demo:v331-footer",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "veridion-demo:no-old-nav-risk",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "veridion-demo:no-old-nav-my-site",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "veridion-demo:no-cadence-copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "veridion-demo:single-footer-element",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "public-forbidden:phase319",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "public-forbidden:phase320",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "public-forbidden:phase321",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "public-forbidden:프로덕션 센티널",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "public-forbidden:런칭 컨트롤",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "public-forbidden:TrustOps 오토파일럿",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "public-forbidden:운영 큐",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "public-forbidden:자동화 백로그",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "public-forbidden:canary",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "public-forbidden:rollback",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "public-forbidden:live verification",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "public-forbidden:SLA",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "public-forbidden:보안 점수88",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "public-forbidden:키워드</a>",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "public-forbidden:API 키 관리",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "required-copy:웹사이트의 신뢰와 준법을 진단하고",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "required-copy:전환율을 높이세요",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "required-copy:고객 포털",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "required-copy:우선 조치 항목 TOP 5",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "required-copy:사업자 정보와 고객지원 안내",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "required-copy:정기 업데이트",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "required-copy:무료 진단 시작",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "css:VERIDION live rebrand hardening v332",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "css:.v332-page-hero",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "css:.v332-form",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "css:.v332-board-list",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "css:@media (max-width:760px)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:public-menu-rebrand",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "server:footer-skip-v311",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "route:business-info",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "design-reference:home",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "failures": []
+}

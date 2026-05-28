@@ -25,7 +25,7 @@ function clearCredentialDefaults() {
     input.value = '';
     input.removeAttribute('value');
     input.setAttribute('autocomplete', 'new-password');
-    input.setAttribute('data-nv0-empty-default', 'true');
+    input.setAttribute('data-vr-empty-default', 'true');
   });
 }
 clearCredentialDefaults();
@@ -68,4 +68,4 @@ resetForm?.addEventListener('submit', async (event)=>{
 });
 
 (()=>{ const url=new URL(location.href); const token=url.searchParams.get('resetToken') || ''; if(token && resetToken) resetToken.value=token; })();
-(async()=>{ try{ const res = await fetch('/api/public/auth/session', { credentials:'same-origin' }); const data=await res.json(); if(data.authenticated && loginState) loginState.textContent='이미 로그인된 계정이 있습니다. 내 사이트 관리로 이동할 수 있습니다.'; }catch{} })();
+(async()=>{ try{ const res = await fetch('/api/public/auth/session', { credentials:'same-origin' }); const data=await res.json(); if(data.authenticated && loginState) loginState.textContent='이미 로그인된 계정이 있습니다. 고객 포털로 이동할 수 있습니다.'; }catch{} })();

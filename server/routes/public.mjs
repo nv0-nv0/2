@@ -12,6 +12,7 @@ import { buildTrustOpsFinalHandoff } from '../core/trustops-final-handoff.mjs';
 import { buildTrustOps100PointFinalScorecard } from '../core/trustops-100-point-finalizer.mjs';
 import { buildTrustOpsCompleteDelivery } from '../core/trustops-complete-delivery.mjs';
 import { applyEngineAgentGate, appendEngineAgentEvent } from '../core/engine-agent-orchestrator.mjs';
+import { buildUnifiedOrganismStatus, normalizeClientMetric } from '../core/unified-platform-organism.mjs';
 
 export function createPublicRouteHandler(ctx) {
   const {
@@ -171,7 +172,7 @@ function cleanLegacyPublicTokens(value) {
       .replace(/상세 리포트/g, '기본 리포트')
       .replace(/다음 행동\s*게시판/g, '게시판')
       .replace(/자동\s*발행\s*200/g, '')
-      .replace(/자동 발행/g, '20분 발행')
+      .replace(/자동 발행/g, '정기 업데이트')
       .replace(/contentFingerprint|combinationMode|publicDisplayVersion/gi, '공개 항목');
   }
   if (Array.isArray(value)) return value.map(cleanLegacyPublicTokens);
@@ -212,7 +213,7 @@ return { requestId: scan?.requestId || null, siteId: scan?.siteId || null, targe
   const paymentHandled = await paymentRouteHandler(req, res, { requestUrl: url, pathname });
   if (paymentHandled !== false) return paymentHandled;
 if (pathname === '/api/public/diagnosis-engine' && req.method === 'GET') {
-return json(req, res, 200, { ok: true, phase: RELEASE_PHASE, engine: 'VERIDION Public Evidence Summary Check Engine', rulesVersion: RULES_VERSION, targetFetchEnabled: TARGET_FETCH_ENABLED, scanProvider: SCAN_PROVIDER, aiReviewProvider: AI_REVIEW_PROVIDER, geminiConfigured: AI_REVIEW_ENABLED, resultContract: { resultType: 'preliminary_check', legalConclusion: false, includesEvidenceSummary: true, includesConfidenceScore: true, includesManualReviewFlags: true, includesAutomationDisclosure: true, includesAutomatedActionPlan: true, includesAccuracyProfile: true, includesReportQualityGate: true, includesDemoAccuracyContract: true, includesPaidOutputQualityGate: true, phase220ServiceQualityVersion: PHASE220_SERVICE_QUALITY_VERSION, phase223RiskGuardVersion: PHASE223_RISK_GUARD_VERSION }, endpoints: { scan: 'POST /api/public/scan', diagnose: 'POST /api/public/diagnose', board: 'GET /api/public/board', engine: 'GET /api/public/diagnosis-engine', productIntelligence: 'GET /api/public/product-intelligence', productQuality: 'GET /api/public/product-quality', productAgentStatus: 'GET /api/public/product-agent-status' }, smartProduct: { version: 'p153-smart-ops-v1', nextBestAction: true, planFitScoring: true, journeyOrchestration: true, smartProductEndpoint: '/api/public/smart-product', userPath: ['무료 요약','요금제 선택','내 사이트 관리','게시판 재유입'] }, publicationCadence: { boardName: '게시판', intervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000), cadenceLabel: `${Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000)}분에 1회 발행`, columnEngine: 'product-agent-insight-v1' }, automation: { mode: TARGET_FETCH_AUTOMATION_LEVEL, robotsEnabled: TARGET_FETCH_ROBOTS_ENABLED, sitemapEnabled: TARGET_FETCH_SITEMAP_ENABLED, maxPages: TARGET_FETCH_MAX_PAGES, maxDiscoveryResources: TARGET_FETCH_MAX_DISCOVERY_RESOURCES, notice: '자동 확인 가능한 공개 항목은 모두 처리하고 자동 확정 불가 영역은 직접 확인으로 고지합니다.' }, checks: buildRuleCatalog().map(({ code, category, title, severity, penaltyMax }) => ({ code, category, title, severity, penaltyMax })) });
+return json(req, res, 200, { ok: true, phase: RELEASE_PHASE, engine: 'VERIDION Public Evidence Summary Check Engine', rulesVersion: RULES_VERSION, targetFetchEnabled: TARGET_FETCH_ENABLED, scanProvider: SCAN_PROVIDER, aiReviewProvider: AI_REVIEW_PROVIDER, geminiConfigured: AI_REVIEW_ENABLED, resultContract: { resultType: 'preliminary_check', legalConclusion: false, includesEvidenceSummary: true, includesConfidenceScore: true, includesManualReviewFlags: true, includesAutomationDisclosure: true, includesAutomatedActionPlan: true, includesAccuracyProfile: true, includesReportQualityGate: true, includesDemoAccuracyContract: true, includesPaidOutputQualityGate: true, phase220ServiceQualityVersion: PHASE220_SERVICE_QUALITY_VERSION, phase223RiskGuardVersion: PHASE223_RISK_GUARD_VERSION }, endpoints: { scan: 'POST /api/public/scan', diagnose: 'POST /api/public/diagnose', board: 'GET /api/public/board', engine: 'GET /api/public/diagnosis-engine', productIntelligence: 'GET /api/public/product-intelligence', productQuality: 'GET /api/public/product-quality', productAgentStatus: 'GET /api/public/product-agent-status' }, smartProduct: { version: 'p153-smart-ops-v1', nextBestAction: true, planFitScoring: true, journeyOrchestration: true, smartProductEndpoint: '/api/public/smart-product', userPath: ['무료 요약','요금제 선택','고객 포털','인사이트 확인'] }, insightUpdate: { boardName: '인사이트', cadenceLabel: '정기 업데이트' }, automation: { mode: TARGET_FETCH_AUTOMATION_LEVEL, robotsEnabled: TARGET_FETCH_ROBOTS_ENABLED, sitemapEnabled: TARGET_FETCH_SITEMAP_ENABLED, maxPages: TARGET_FETCH_MAX_PAGES, maxDiscoveryResources: TARGET_FETCH_MAX_DISCOVERY_RESOURCES, notice: '자동 확인 가능한 공개 항목은 모두 처리하고 자동 확정 불가 영역은 직접 확인으로 고지합니다.' }, checks: buildRuleCatalog().map(({ code, category, title, severity, penaltyMax }) => ({ code, category, title, severity, penaltyMax })) });
 }
 
 if (((pathname === '/api/public/diagnose' || pathname === '/api/public/scan') && req.method === 'POST') || (isLegacyDiagnosticStart && req.method === 'POST')) {
@@ -453,6 +454,21 @@ return json(req, res, 200, { ok: true, structuredData });
 }
 
 
+const customerHiddenOperationalEndpoints = new Set([
+  '/api/public/trustops-autopilot',
+  '/api/public/automation-workqueue',
+  '/api/public/trustops-launch-control',
+  '/api/public/trustops-production-sentinel',
+  '/api/public/live-verification-checklist',
+  '/api/public/trustops-final-handoff',
+  '/api/public/trustops-100-final',
+  '/api/public/trustops-complete-delivery'
+]);
+if (customerHiddenOperationalEndpoints.has(pathname)) {
+  return json(req, res, 404, { ok: false, error: 'Not found' }, { 'cache-control': 'no-store' });
+}
+
+
 if (pathname === '/api/public/trustops-autopilot' && req.method === 'GET') {
 const db = await readDb();
 const cockpit = buildTrustOpsAutopilotCockpit(db, { nowIso: nowIso() });
@@ -580,6 +596,22 @@ const db = await readDb();
 const status = buildEngineAgentRuntimeStatus(db, { businessProfile: BUSINESS_PROFILE, nowIso: nowIso() });
 return json(req, res, 200, status);
 }
+if (pathname === '/api/public/organism-status' && req.method === 'GET') {
+const db = await readDb();
+const status = buildUnifiedOrganismStatus(db, { businessProfile: BUSINESS_PROFILE, nowIso });
+return json(req, res, 200, status, { 'cache-control': 'no-store' });
+}
+if (pathname === '/api/public/client-metric' && req.method === 'POST') {
+const payload = await bodyJson(req, Math.min(MAX_JSON_BODY_BYTES, 16_384)) || {};
+const metric = normalizeClientMetric(payload, { nowIso });
+const db = await readDb();
+db.clientMetrics = Array.isArray(db.clientMetrics) ? db.clientMetrics : [];
+db.clientMetrics.push(metric);
+if (db.clientMetrics.length > 200) db.clientMetrics = db.clientMetrics.slice(-200);
+appendAudit(db, req, 'public.client_metric.recorded', { path: metric.path, page: metric.page, loadMs: metric.loadMs, lcpMs: metric.largestContentfulPaintMs, cls: metric.cumulativeLayoutShift });
+await writeDb(db);
+return json(req, res, 200, { ok: true, accepted: true, metricId: metric.id }, { 'cache-control': 'no-store' });
+}
 if (pathname === '/api/public/commercial-readiness' && req.method === 'GET') {
 const db = await readDb();
 const status = buildCommercialReadinessStatus(db, process.env);
@@ -694,7 +726,7 @@ if (!boardAgentGate.ok) {
 await writeDb(db);
 return json(req, res, 200, {
   ok: true,
-  publicationCadence: { intervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000), label: `${Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000)}분에 1회 발행`, engine: 'product-agent-insight-v1', actualPublishing: true, searchScope: 'server-side', dataSource: publicPosts[0]?.source || 'persisted-db', lastPublishedAt: publicPosts[0]?.publishedAt || publicPosts[0]?.createdAt || null, createdOnThisRequest: !!createdNow },
+  publicationCadence: { label: '정기 업데이트', actualPublishing: true, lastPublishedAt: publicPosts[0]?.publishedAt || publicPosts[0]?.createdAt || null },
   createdNow: !!createdNow,
   pageSize,
   activity,

@@ -1,6 +1,6 @@
 {
   "name": "veridion-public-risk-diagnostic",
-  "version": "1.0.1-commercial-phase331-rebrand-customer-ui",
+  "version": "1.0.3-commercial-phase335-unified-organism",
   "private": true,
   "type": "module",
   "scripts": {
@@ -22,8 +22,8 @@
     "redteam:global": "node scripts/redteam-global-audit.mjs",
     "validate:phase311": "node scripts/validate-phase311-redteam-global-audit.mjs",
     "phase311:final": "npm run check:syntax && npm test && npm run test:e2e && npm run check:pages && npm run test:routes && npm run check:links && npm run verify:security && npm run validate:deploy && npm run check:release-secret-hygiene && npm run redteam:global && npm run validate:phase311 && npm run clean:runtime && node scripts/check-runtime-clean.mjs",
-    "delivery:final": "npm run phase331:final",
-    "release:predeploy": "npm run phase331:final",
+    "delivery:final": "npm run phase335:final",
+    "release:predeploy": "npm run phase335:final",
     "validate:phase312": "node scripts/validate-phase312-privacy-compliance.mjs",
     "phase312:final": "npm run check:syntax && npm test && npm run test:e2e && npm run check:pages && npm run test:routes && npm run check:links && npm run verify:security && npm run validate:deploy && npm run check:release-secret-hygiene && npm run validate:phase312 && npm run clean:runtime && node scripts/check-runtime-clean.mjs",
     "check:accessibility": "node scripts/check-accessibility-basics.mjs",
@@ -75,7 +75,15 @@
     "validate:phase330": "node scripts/validate-phase330-postgres-prelaunch-fallback.mjs",
     "phase330:final": "npm run check:no-available-server && npm run validate:phase325 && npm run validate:phase326 && npm run validate:phase328 && npm run validate:phase329 && npm run validate:phase330 && npm run check:syntax && npm run check:pages && npm run test:routes && npm run check:links && npm run verify:security && npm run validate:deploy && npm run check:release-secret-hygiene && npm run check:responsive-contract && npm run clean:runtime && node scripts/check-runtime-clean.mjs",
     "validate:phase331": "node scripts/validate-phase331-rebrand-customer-ui.mjs",
-    "phase331:final": "npm run validate:phase331 && npm run check:syntax && npm test && npm run test:e2e && npm run check:pages && npm run test:routes && npm run check:links && npm run smoke && npm run check:responsive-contract && npm run check:performance-budget && npm run verify:security && npm run validate:deploy && npm run check:release-secret-hygiene && npm run validate:phase325 && npm run validate:phase326 && npm run validate:phase328 && npm run validate:phase329 && npm run validate:phase330 && npm run clean:runtime && node scripts/check-runtime-clean.mjs"
+    "phase331:final": "npm run validate:phase331 && npm run check:syntax && npm test && npm run test:e2e && npm run check:pages && npm run test:routes && npm run check:links && npm run smoke && npm run check:responsive-contract && npm run check:performance-budget && npm run verify:security && npm run validate:deploy && npm run check:release-secret-hygiene && npm run validate:phase325 && npm run validate:phase326 && npm run validate:phase328 && npm run validate:phase329 && npm run validate:phase330 && npm run clean:runtime && node scripts/check-runtime-clean.mjs",
+    "validate:phase332": "node scripts/validate-phase332-live-rebrand.mjs",
+    "phase332:final": "npm run validate:phase332 && npm run check:syntax && npm test && npm run test:e2e && npm run check:pages && npm run test:routes && npm run check:links && npm run smoke && npm run check:responsive-contract && npm run check:performance-budget && npm run verify:security && npm run validate:deploy && npm run check:release-secret-hygiene && npm run validate:phase325 && npm run validate:phase326 && npm run validate:phase328 && npm run validate:phase329 && npm run validate:phase330 && npm run clean:runtime && node scripts/check-runtime-clean.mjs",
+    "validate:phase333": "node scripts/validate-phase333-100point-rebrand.mjs",
+    "phase333:final": "npm run validate:phase333 && npm run check:syntax && npm test && npm run test:e2e && npm run check:pages && npm run test:routes && npm run check:links && npm run smoke && npm run check:responsive-contract && npm run check:performance-budget && npm run verify:security && npm run validate:deploy && npm run check:release-secret-hygiene && npm run validate:phase325 && npm run validate:phase326 && npm run validate:phase328 && npm run validate:phase329 && npm run validate:phase330 && npm run clean:runtime && node scripts/check-runtime-clean.mjs",
+    "validate:phase334": "node scripts/validate-phase334-clean-rebrand.mjs",
+    "phase334:final": "npm run validate:phase334 && npm run check:syntax && npm test && npm run test:e2e && npm run check:pages && npm run test:routes && npm run check:links && npm run smoke && npm run check:responsive-contract && npm run check:performance-budget && npm run verify:security && npm run validate:deploy && npm run check:release-secret-hygiene && npm run validate:phase325 && npm run validate:phase326 && npm run validate:phase328 && npm run validate:phase329 && npm run validate:phase330 && npm run clean:runtime && node scripts/check-runtime-clean.mjs",
+    "validate:phase335": "node scripts/validate-phase335-unified-organism.mjs",
+    "phase335:final": "npm run validate:phase335 && npm run check:syntax && npm test && npm run test:e2e && npm run check:pages && npm run test:routes && npm run check:links && npm run smoke && npm run check:responsive-contract && npm run check:performance-budget && npm run verify:security && npm run validate:deploy && npm run check:release-secret-hygiene && npm run validate:phase325 && npm run validate:phase326 && npm run validate:phase328 && npm run validate:phase329 && npm run validate:phase330 && npm run clean:runtime && node scripts/check-runtime-clean.mjs"
   },
-  "description": "VERIDION phase330 recovery: prelaunch no longer crashes when PostgreSQL host postgres is unavailable; JSON fallback is enabled for prelaunch while commercial_launch remains strict."
+  "description": "VERIDION phase335 unified organism: clean rebrand UI, UX, diagnosis, commerce, portal, performance, quality, security, and release pipeline connected through engine-agent orchestration."
 }

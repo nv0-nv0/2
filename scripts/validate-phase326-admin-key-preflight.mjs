@@ -46,7 +46,7 @@ const baseCommercialEnv = {
   NV0_LOCK_PROVIDER: 'redis',
   NV0_STORAGE_MODE: 's3',
   NV0_S3_ENDPOINT: 'https://r2.example.invalid',
-  NV0_S3_BUCKET: 'nv0-production',
+  NV0_S3_BUCKET: 'vr-production',
   NV0_S3_ACCESS_KEY_ID: 'real-access-key-id',
   NV0_S3_SECRET_ACCESS_KEY: 'real-secret-access-key',
   NV0_SCAN_PROVIDER: 'external_http',

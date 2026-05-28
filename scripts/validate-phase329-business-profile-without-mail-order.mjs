@@ -39,7 +39,7 @@ const baseEnv = {
   NV0_LOCK_PROVIDER: 'redis',
   NV0_STORAGE_MODE: 's3_compatible',
   NV0_S3_ENDPOINT: 'https://s3.example.net',
-  NV0_S3_BUCKET: 'nv0-prod',
+  NV0_S3_BUCKET: 'vr-prod',
   NV0_S3_ACCESS_KEY_ID: 'real-access-key',
   NV0_S3_SECRET_ACCESS_KEY: 'real-secret-key',
   NV0_BACKUP_REMOTE_REQUIRE_ENCRYPTION: 'true',

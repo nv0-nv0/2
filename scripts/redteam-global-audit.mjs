@@ -36,10 +36,10 @@ const apiRoutes = [...read('server/routes/public.mjs').matchAll(/pathname === '(
 const adminApiRoutes = [...read('server/routes/admin.mjs').matchAll(/pathname === '([^']+)'/g)].map(m => m[1]);
 
 const oldArtifacts = [
-  'shared/nv0-clean-slate-20260512.css',
-  'shared/nv0n-generated.css',
-  'shared/nv0n-runtime.css',
-  'shared/nv0n-runtime.js',
+  'shared/vr-clean-slate-20260512.css',
+  'shared/vr-generated.css',
+  'shared/vr-runtime.css',
+  'shared/vr-runtime.js',
   'shared/phase264-hardening.css',
   'shared/veridion-adopted-ui.css',
   'shared/veridion-clean-v310.css',
@@ -48,7 +48,7 @@ const oldArtifacts = [
   'PHASE306_DELIVERY_README_KO.md'
 ];
 const legacyRefs = [];
-const forbidden = /nv0-clean-slate|nv0n-generated|nv0n-runtime|phase264-hardening|veridion-adopted-ui|veridion-clean-v310|portal-phase283-dashboard|tailwind\.phase263/g;
+const forbidden = /vr-clean-slate|vr-generated|vr-runtime|phase264-hardening|veridion-adopted-ui|veridion-clean-v310|portal-phase283-dashboard|tailwind\.phase263/g;
 const legacyGuardFiles = new Set(['scripts/redteam-global-audit.mjs','scripts/test-all.mjs','scripts/check-page-integrity.mjs','scripts/validate-phase311-redteam-global-audit.mjs','tests/e2e.mjs']);
 for (const file of allFiles.filter(file => /\.(html|js|mjs|css|md|json|txt)$/.test(file) && !legacyGuardFiles.has(file) && !file.startsWith('docs/current/') && !file.startsWith('docs/'))) {
   const src = read(file);

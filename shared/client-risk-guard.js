@@ -3,10 +3,10 @@
   window.__NV0_CLIENT_RISK_GUARD__ = true;
   function show(message) {
     try {
-      var existing = document.querySelector('.nv0-client-risk-banner');
+      var existing = document.querySelector('.vr-client-risk-banner');
       if (existing) return;
       var box = document.createElement('div');
-      box.className = 'nv0-client-risk-banner';
+      box.className = 'vr-client-risk-banner';
       box.setAttribute('role', 'status');
       box.textContent = message || '일부 화면 요소를 불러오지 못했습니다. 새로고침 후에도 반복되면 고객지원으로 문의해 주세요.';
       document.body.appendChild(box);

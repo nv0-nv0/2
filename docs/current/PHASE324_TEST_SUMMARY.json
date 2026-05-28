@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-05-28T03:20:16.910Z",
+  "generatedAt": "2026-05-28T04:44:02.403Z",
   "ok": true,
-  "phase": "phase324-complete-delivery",
+  "phase": "phase333-100point-rebrand-test",
   "total": 195,
   "passed": 195,
   "failed": 0,
@@ -82,7 +82,7 @@
       "detail": ""
     },
     {
-      "name": "package:phase331-version",
+      "name": "package:phase333-version",
       "ok": true,
       "detail": ""
     },
@@ -692,7 +692,7 @@
       "detail": ""
     },
     {
-      "name": "portal:data-veridion-brand=\"v331\"",
+      "name": "portal:data-veridion-rebrand=\"v333\"",
       "ok": true,
       "detail": ""
     },
@@ -703,11 +703,6 @@
     },
     {
       "name": "portal:고객 포털",
-      "ok": true,
-      "detail": ""
-    },
-    {
-      "name": "portal:내 사이트 관리",
       "ok": true,
       "detail": ""
     },
@@ -737,6 +732,11 @@
       "detail": ""
     },
     {
+      "name": "board:data-veridion-rebrand=\"v333\"",
+      "ok": true,
+      "detail": ""
+    },
+    {
       "name": "board:/shared/veridion-clean-v311.css",
       "ok": true,
       "detail": ""
@@ -747,7 +747,7 @@
       "detail": ""
     },
     {
-      "name": "board:20분에 1회 발행",
+      "name": "board:정기 업데이트",
       "ok": true,
       "detail": ""
     },
@@ -807,7 +807,7 @@
       "detail": ""
     },
     {
-      "name": "board-js:20분에 1회 발행",
+      "name": "board-js:정기 업데이트",
       "ok": true,
       "detail": ""
     },
@@ -897,7 +897,7 @@
       "detail": ""
     },
     {
-      "name": "api:20min-cadence",
+      "name": "api:publication-cadence",
       "ok": true,
       "detail": ""
     },

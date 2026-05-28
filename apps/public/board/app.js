@@ -11,11 +11,11 @@ let state = { page: 1, filter: 'all', query: '' };
 let controller = null;
 function fallbackPosts() {
   return [{
-    title: '20분에 1회 발행되는 고객 신뢰 인사이트 운영 방식',
+    title: '정기 업데이트로 관리되는 고객 신뢰 인사이트 운영 방식',
     category: '운영 인사이트',
     summary: '목록 연결이 지연되어도 페이지가 비어 보이지 않도록 검수된 기본 인사이트를 먼저 표시합니다.',
     body: '인사이트는 제목, 본문, 내부 링크, 중복 여부, 오탈자, 깨진 문자를 검수한 뒤 공개합니다.',
-    tags: ['점검 의도: 고객 신뢰 점검', '핵심 주제: 20분 발행', '분류 태그 5개'],
+    tags: ['점검 의도: 고객 신뢰 점검', '핵심 주제: 정기 업데이트', '분류 태그 5개'],
     publishedAt: new Date().toISOString()
   }];
 }
@@ -24,7 +24,7 @@ function renderPosts(posts) {
   $('#boardList').innerHTML = safePosts.map((post) => {
     const tags = [post.primaryKeyword, ...(post.tags || []), ...(post.hashtags || [])].filter(Boolean).slice(0, 5);
     const body = String(post.body || '').replace(/<script[\s\S]*?<\/script>/gi, '').slice(0, 1200);
-    return `<article class="v311-board-card"><div class="v311-board-card-head"><span class="v311-pill">${escapeHtml(post.category || '인사이트')}</span><span class="v311-pill success">${escapeHtml(formatDate(post.publishedAt || post.createdAt))}</span></div><h2>${escapeHtml(post.title || '고객 신뢰 인사이트')}</h2><p>${escapeHtml(post.summary || '운영 기준에 맞춰 정리한 인사이트입니다.')}</p><div class="v311-tags">${tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join('')}</div><div class="v311-post-body">${body}</div><div class="v311-post-cta"><a class="v311-btn primary" href="/products/veridion/demo">무료 진단</a><a class="v311-btn" href="/portal">내 사이트 관리</a></div></article>`;
+    return `<article class="vr-board-card"><div class="vr-board-card-head"><span class="vr-pill">${escapeHtml(post.category || '인사이트')}</span><span class="vr-pill success">${escapeHtml(formatDate(post.publishedAt || post.createdAt))}</span></div><h2>${escapeHtml(post.title || '고객 신뢰 인사이트')}</h2><p>${escapeHtml(post.summary || '운영 기준에 맞춰 정리한 인사이트입니다.')}</p><div class="vr-tags">${tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join('')}</div><div class="vr-post-body">${body}</div><div class="vr-post-cta"><a class="vr-btn primary" href="/products/veridion/demo">무료 진단</a><a class="vr-btn" href="/portal">고객 포털</a></div></article>`;
   }).join('');
 }
 function renderPagination(pagination = {}) {
@@ -58,9 +58,9 @@ async function loadBoard() {
     renderPosts(Array.isArray(data.posts) ? data.posts : []);
     renderPagination(data.pagination || {});
     renderActivity(data.activity || []);
-    if (data.publicationCadence?.label) $('#boardCadence').textContent = data.publicationCadence.label;
+    $('#boardCadence').textContent = '정기 업데이트';
     const total = data.pagination?.total ?? (data.posts || []).length;
-    $('#boardState').textContent = `총 ${total}개 인사이트를 표시합니다. ${data.publicationCadence?.label || '20분에 1회 발행'} 기준입니다.`;
+    $('#boardState').textContent = `총 ${total}개 인사이트를 표시합니다. 정기 업데이트 기준입니다.`;
   } catch (error) {
     if (error.name === 'AbortError') return;
     renderPosts(fallbackPosts());
@@ -69,8 +69,8 @@ async function loadBoard() {
     $('#boardState').textContent = '서버 연결이 지연되어 검수된 기본 인사이트를 표시합니다.';
   }
 }
-$$('.v311-tabs button').forEach((button) => button.addEventListener('click', () => {
-  $$('.v311-tabs button').forEach((item) => item.classList.remove('active'));
+$$('.vr-tabs button').forEach((button) => button.addEventListener('click', () => {
+  $$('.vr-tabs button').forEach((item) => item.classList.remove('active'));
   button.classList.add('active');
   state.filter = button.dataset.filter || 'all';
   state.page = 1;

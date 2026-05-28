@@ -87,7 +87,7 @@ function renderPriceSummary() {
     summaryPlanName.textContent = '선택한 상품 정보를 확인하는 중입니다.';
     summaryPlanPeriod.textContent = '선택 상품에 맞춰 요약을 준비합니다.';
     summaryBasePrice.textContent = '-';
-    summaryDelivery.textContent = '내 사이트 관리에서 확인';
+    summaryDelivery.textContent = '고객 포털에서 확인';
     summaryTargetCustomer.textContent = '추천 대상 확인';
     summaryTotal.textContent = '-';
     return;
@@ -95,7 +95,7 @@ function renderPriceSummary() {
   summaryPlanName.textContent = offer.title || code;
   summaryPlanPeriod.textContent = offer.summary || `${offer.period || '1회'} 제공 상품`;
   summaryBasePrice.textContent = priceLabel(offer);
-  summaryDelivery.textContent = '결제 후 내 사이트 관리에서 결과물 확인';
+  summaryDelivery.textContent = '결제 후 고객 포털에서 결과물 확인';
   summaryTargetCustomer.textContent = offer.targetCustomer || '사이트 구매 흐름을 더 탄탄하게 만들고 싶은 분';
   summaryTotal.textContent = priceLabel(offer);
   renderPaymentConfig();
@@ -133,16 +133,16 @@ function renderOrder(order, paymentSession) {
   const redirectUrl = safeUrl(paymentSession?.redirectUrl || '');
   const provider = paymentSession?.provider || 'demo';
   const paymentHint = provider === 'portone_v2'
-    ? '<div class="notice muted">결제 완료 후 내 사이트 관리에서 결과물과 확인 기록을 확인합니다.</div>'
-    : '<div class="notice muted">결제 완료 후 내 사이트 관리에서 결과물과 확인 기록을 확인합니다.</div>'; 
+    ? '<div class="notice muted">결제 완료 후 고객 포털에서 결과물과 확인 기록을 확인합니다.</div>'
+    : '<div class="notice muted">결제 완료 후 고객 포털에서 결과물과 확인 기록을 확인합니다.</div>'; 
   summary.innerHTML = `
     <div class="result-card stack checkout-order-card">
       <strong>주문번호 ${escapeHtml(order.id)}</strong>
       <div class="muted">${escapeHtml(order.plan)} · ${formatWon(order.amount)}원 · ${escapeHtml(order.status)}</div>
       <div>대상 사이트: ${escapeHtml(order.domain || order.siteId || '미연결')}</div>
       <div>결제 방식: ${escapeHtml(providerLabel(provider))}</div>
-      <div>결제 완료 후 내 사이트 관리에서 결과물과 확인 기록을 확인합니다.</div>
-      <div class="v311-gate-strip"><span>확인 기준</span><span>제공 기준</span><span>다시 확인</span></div>
+      <div>결제 완료 후 고객 포털에서 결과물과 확인 기록을 확인합니다.</div>
+      <div class="vr-gate-strip"><span>확인 기준</span><span>제공 기준</span><span>다시 확인</span></div>
       ${paymentHint}
       ${redirectUrl ? `<a href="${escapeAttr(redirectUrl)}" target="_blank" rel="noreferrer">결제 완료 후 이동 페이지</a>` : ''}
     </div>`;
@@ -173,7 +173,7 @@ async function createSession() {
     return;
   }
   if (!isValidEmail(payload.buyerEmail)) {
-    setCheckoutState('결제 연락처 이메일을 정확히 입력해 주세요. 결과물은 내 사이트 관리에 저장됩니다.', 'warn');
+    setCheckoutState('결제 연락처 이메일을 정확히 입력해 주세요. 결과물은 고객 포털에 저장됩니다.', 'warn');
     updateCheckoutButtonState();
     return;
   }
@@ -233,7 +233,7 @@ async function createSession() {
     }
     return;
   }
-  setCheckoutState(data.providerMode === 'demo' ? '주문 정보가 생성되었습니다. 결제 확인 후 내 사이트에서 리포트를 확인할 수 있습니다.' : '주문 정보를 확인했습니다. 결제창으로 이동합니다.');
+  setCheckoutState(data.providerMode === 'demo' ? '주문 정보가 생성되었습니다. 결제 확인 후 고객 포털에서 리포트를 확인할 수 있습니다.' : '주문 정보를 확인했습니다. 결제창으로 이동합니다.');
 }
 async function completePayment() {
   if (isCompletingPayment) return;
@@ -261,7 +261,7 @@ async function completePayment() {
     setCheckoutState('결제가 완료되었습니다.', 'success');
     const anchor = document.createElement('a');
     anchor.href = `/portal?orderId=${encodeURIComponent(data.order.id)}${data.order.accessToken ? `&accessToken=${encodeURIComponent(data.order.accessToken)}` : ''}`;
-    anchor.textContent = '내 사이트 관리로 이동';
+    anchor.textContent = '고객 포털로 이동';
     state.appendChild(document.createTextNode(' '));
     state.appendChild(anchor);
   } catch (error) {

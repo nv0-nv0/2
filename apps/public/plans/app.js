@@ -11,10 +11,10 @@ function normalizeDemoTarget(raw) {
 function showInputHint(input, message) {
   if (!input) return;
   input.setAttribute('aria-invalid', message ? 'true' : 'false');
-  let hint = input.nextElementSibling?.classList?.contains('nv0-input-hint') ? input.nextElementSibling : null;
+  let hint = input.nextElementSibling?.classList?.contains('vr-input-hint') ? input.nextElementSibling : null;
   if (!hint) {
     hint = document.createElement('small');
-    hint.className = 'nv0-input-hint';
+    hint.className = 'vr-input-hint';
     input.insertAdjacentElement('afterend', hint);
   }
   hint.textContent = message || '';

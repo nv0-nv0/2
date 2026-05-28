@@ -96,7 +96,7 @@ function tryPrepareRuntimeDirSync(dir) {
   }
 }
 function resolveRuntimeDir(root, env = process.env) {
-  const fallback = path.resolve(env.NV0_FALLBACK_RUNTIME_DIR || '/tmp/nv0-runtime');
+  const fallback = path.resolve(env.NV0_FALLBACK_RUNTIME_DIR || '/tmp/vr-runtime');
   const requested = path.resolve(env.NV0_RUNTIME_DIR || path.join(root, 'runtime'));
   const initial = shouldBypassLegacyRuntimeDir(env, requested) ? fallback : requested;
   if (tryPrepareRuntimeDirSync(initial)) {
@@ -575,10 +575,10 @@ const headers = {
 'x-permitted-cross-domain-policies': 'none',
 'x-download-options': 'noopen',
 'server': SERVER_HEADER,
-'x-nv0-risk-guard': PHASE223_RISK_GUARD_VERSION,
-'x-nv0-redirect-owner': DEPLOYMENT_RISK_GUARD.redirectOwner,
+'x-vr-risk-guard': PHASE223_RISK_GUARD_VERSION,
+'x-vr-redirect-owner': DEPLOYMENT_RISK_GUARD.redirectOwner,
 'content-security-policy': cspParts.join('; '),
-'content-security-policy-report-only': ["trusted-types nv0-default", "require-trusted-types-for 'script'"].join('; ')
+'content-security-policy-report-only': ["trusted-types vr-default", "require-trusted-types-for 'script'"].join('; ')
 };
 if (isSecureRequest(req)) {
 headers['strict-transport-security'] = 'max-age=31536000; includeSubDomains; preload';
@@ -693,7 +693,7 @@ if (!sameOriginAllowed(req)) {
 json(req, res, 403, { ok: false, error: '허용되지 않은 origin 입니다.' });
 return false;
 }
-const csrf = String(req.headers['x-nv0-csrf'] || '');
+const csrf = String(req.headers['x-vr-csrf'] || req.headers['x-nv0-csrf'] || '');
 if (!csrf || csrf !== session.csrfToken) {
 json(req, res, 403, { ok: false, error: 'CSRF 검증에 실패했습니다.' });
 return false;
@@ -863,7 +863,7 @@ function generateOrderAccessToken(order) { if (!order.accessToken) order.accessT
 function canAccessOrder(req, order) {
 if (!order) return false;
 const url = req._nv0Url || requestUrlFrom(req);
-const token = String(url.searchParams.get('accessToken') || req.headers['x-nv0-order-token'] || '').trim();
+const token = String(url.searchParams.get('accessToken') || req.headers['x-vr-order-token'] || '').trim();
 return hasValidOrderAccessToken(order, token);
 }
 function sanitizeOrderForPublic(order, { includeAccessToken = false } = {}) {
@@ -1393,8 +1393,8 @@ const metas = {
 '/terms': { title: '이용약관 | VERIDION', description: 'VERIDION 서비스 이용 조건과 기본 약관을 안내합니다.', keywords: ['이용약관'] },
 '/privacy': { title: '개인정보처리방침 | VERIDION', description: 'VERIDION 서비스의 개인정보 처리 기준과 입력 정보 최소화 원칙입니다.', keywords: ['개인정보처리방침'] },
 '/refund': { title: '환불 정책 | VERIDION', description: '디지털 산출물 제공 시점과 환불 기준을 안내합니다.', keywords: ['환불 정책','청약철회'] },
-'/auth': { title: '로그인 | VERIDION', description: '내 사이트 저장과 진단 이력 관리를 위한 로그인 페이지입니다.', keywords: ['로그인','회원가입'] },
-'/portal': { title: '내 사이트 관리 | VERIDION', description: '내 사이트 저장, 최근 진단 결과, 보완 항목, 다음 작업을 한 화면에서 관리합니다.', keywords: ['내 사이트 관리','진단 이력'] },
+'/auth': { title: '로그인 | VERIDION', description: '저장 사이트와 진단 이력 관리를 위한 로그인 페이지입니다.', keywords: ['로그인','회원가입'] },
+'/portal': { title: '고객 포털 | VERIDION', description: '저장 사이트, 최근 진단 결과, 보완 항목, 다음 작업을 한 화면에서 관리합니다.', keywords: ['고객 포털','진단 이력'] },
 '/checkout': { title: '결제 확인 | VERIDION', description: '선택한 상품, 금액, 받을 결과물, 동의 항목을 결제 전에 확인합니다.', keywords: ['결제 확인','리포트 결제'] }
 };
 const meta = metas[urlPath] || metas['/'];
@@ -1447,7 +1447,7 @@ const faqMap = {
 ],
 '/products/veridion/demo': [
 ['무료진단은 무엇을 보여주나요?', '사이트의 신뢰 안내 공백과 먼저 고칠 부분을 요약해서 보여줍니다.'],
-['로그인하면 무엇이 달라지나요?', '무료진단 횟수 관리, 내 사이트 저장, 원클릭 재검사, 최근 진단 이력 확인을 이용할 수 있습니다.']
+['로그인하면 무엇이 달라지나요?', '무료진단 횟수 관리, 저장 사이트, 원클릭 재검사, 최근 진단 이력 확인을 이용할 수 있습니다.']
 ],
 '/plans': [
 ['어떤 상품을 먼저 선택해야 하나요?', '먼저 무료진단을 보고, 근거가 필요하면 기본 리포트, 바로 붙여넣을 문구가 필요하면 전문가 리포트, 구조 개선안이 필요하면 전문가 리포트를 비교하면 됩니다.'],
@@ -1496,14 +1496,14 @@ function publicTopMenuHtml(urlPath = '/') {
 return `<a class="skip-link" href="#main">본문 바로가기</a><nav class="site-topbar" aria-label="주요 메뉴"><div class="site-topbar-inner">
 <a class="brand" href="/"><span class="brand-mark">VERIDION</span></a>
 <div class="site-menu">
-<a href="/products/veridion/demo"${navAttrs(urlPath, '/products/veridion/demo')}>위험 진단</a>
 <a href="/service"${navAttrs(urlPath, '/service')}>서비스</a>
-<a href="/plans"${navAttrs(urlPath, '/plans')}>요금 안내</a>
+<a href="/solutions"${navAttrs(urlPath, '/solutions')}>솔루션</a>
+<a href="/plans"${navAttrs(urlPath, '/plans')}>요금</a>
+<a href="/products/veridion/demo"${navAttrs(urlPath, '/products/veridion/demo')}>진단</a>
 <a href="/board"${navAttrs(urlPath, '/board')}>인사이트</a>
-<a href="/portal"${navAttrs(urlPath, '/portal')}>내 사이트</a>
-<a href="/business-info"${navAttrs(urlPath, '/business-info')}>문의하기</a>
+<a href="/portal"${navAttrs(urlPath, '/portal')}>고객 포털</a>
 </div>
-<div class="site-actions"><a class="login-link" href="/auth"${navAttrs(urlPath, '/auth')}>로그인</a><a class="top-cta" href="/products/veridion/demo"${navAttrs(urlPath, '/products/veridion/demo')}>무료 진단</a></div>
+<div class="site-actions"><a class="login-link" href="/auth"${navAttrs(urlPath, '/auth')}>로그인</a><a class="top-cta" href="/products/veridion/demo"${navAttrs(urlPath, '/products/veridion/demo')}>무료 진단 시작</a></div>
 </div></nav>`;
 }
 function ensureMainId(body) {
@@ -1516,9 +1516,9 @@ return body;
 function injectPublicTopMenu(body, urlPath) {
 if (urlPath.startsWith('/admin')) return body;
 let nextBody = body;
-nextBody = nextBody.replace(/<header class="nv0-topbar">[\s\S]*?<\/header>/, '');
-// Phase301: native VERIDION pages already ship their own nv0n-topbar. Do not inject a second legacy topbar.
-if (nextBody.includes('data-veridion-clean="v311"') || nextBody.includes('data-nv0n-page="true"') || nextBody.includes('nv0n-topbar') || nextBody.includes('site-topbar') || nextBody.includes('v311-topbar')) return nextBody;
+nextBody = nextBody.replace(/<header class="vr-topbar">[\s\S]*?<\/header>/, '');
+// Native VERIDION pages already ship their own topbar. Do not inject a second header.
+if (nextBody.includes('data-veridion-rebrand="clean"') || nextBody.includes('data-vr-page="true"') || nextBody.includes('vr-topbar') || nextBody.includes('site-topbar') || nextBody.includes('vr-topbar')) return nextBody;
 return nextBody.replace(/<body\b([^>]*)>/i, `<body$1>${publicTopMenuHtml(urlPath)}`);
 }
 function isSafePublicOptionalField(value = '', { requireMailOrderShape = false } = {}) {
@@ -1579,24 +1579,24 @@ return next;
 }
 
 function injectAdoptedUi(body, urlPath) {
-if (urlPath.startsWith('/admin') || body.includes('data-veridion-clean="v311"') || body.includes('/shared/veridion-clean-v311.css')) return body;
-return body.replace('</head>', '<link href="/shared/veridion-clean-v311.css" rel="stylesheet"></head>');
+if (urlPath.startsWith('/admin') || body.includes('data-veridion-rebrand="clean"') || body.includes('/shared/veridion-rebrand.css')) return body;
+return body.replace('</head>', '<link href="/shared/veridion-rebrand.css" rel="stylesheet"></head>');
 }
 
 function injectSiteEnhancementsScript(body, urlPath) {
-if (urlPath.startsWith('/admin') || body.includes('data-veridion-clean="v311"') || body.includes('/shared/site-enhancements.js')) return body;
+if (urlPath.startsWith('/admin') || body.includes('data-veridion-rebrand="clean"') || body.includes('/shared/site-enhancements.js')) return body;
 return body.replace('</body>', '<script src="/shared/site-enhancements.js" defer></script></body>');
 }
 function injectSessionNavScript(body, urlPath) {
-if (urlPath.startsWith('/admin') || body.includes('data-veridion-clean="v311"') || body.includes('/shared/session-nav.js')) return body;
+if (urlPath.startsWith('/admin') || body.includes('data-veridion-rebrand="clean"') || body.includes('/shared/session-nav.js')) return body;
 return body.replace('</body>', '<script type="module" src="/shared/session-nav.js"></script></body>');
 }
 function injectClientRiskGuard(body, urlPath) {
-if (urlPath.startsWith('/admin') || body.includes('data-veridion-clean="v311"') || body.includes('/shared/client-risk-guard.js')) return body;
+if (urlPath.startsWith('/admin') || body.includes('data-veridion-rebrand="clean"') || body.includes('/shared/client-risk-guard.js')) return body;
 return body.replace('</body>', '<script src="/shared/client-risk-guard.js" defer></script></body>');
 }
 function injectBusinessFooter(body, urlPath) {
-if (urlPath.startsWith('/admin') || body.includes('data-nv0n-page="true"')) return body;
+if (urlPath.startsWith('/admin') || body.includes('data-vr-page="true"') || body.includes('data-veridion-rebrand="clean"') || body.includes('vr-footer') || /<footer\b/i.test(body)) return body;
 const footer = businessFooterHtml();
 const replaced = body.replace(/<footer\b[^>]*class=["'][^"']*\bbusiness-footer\b[^"']*["'][\s\S]*?<\/footer>/i, footer);
 if (replaced !== body) return replaced;
@@ -1612,7 +1612,7 @@ function renderPublicErrorPage(req, res, status, title, message, requestId = '')
 const safeTitle = escapeHtml(title);
 const safeMessage = escapeHtml(message);
 const safeRequestId = requestId ? escapeHtml(requestId) : '';
-const body = `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${safeTitle} | VERIDION / NV0</title><meta name="robots" content="noindex,nofollow,noarchive"><link rel="stylesheet" href="/shared/veridion-clean-v311.css"></head><body>${publicTopMenuHtml('/')}<main id="main" tabindex="-1" class="nv0-error-page"><section class="nv0-error-card"><p class="eyebrow">서비스 안내</p><h1>${safeTitle}</h1><p>${safeMessage}</p>${safeRequestId ? `<p class="nv0-error-request">요청 ID: ${safeRequestId}</p>` : ''}<div class="hero-actions"><a class="btn primary" href="/products/veridion/demo">무료 진단으로 이동</a><a class="btn secondary" href="/">홈으로 이동</a></div></section></main>${businessFooterHtml()}<script src="/shared/client-risk-guard.js" defer></script></body></html>`;
+const body = `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${safeTitle} | VERIDION</title><meta name="robots" content="noindex,nofollow,noarchive"><link rel="stylesheet" href="/shared/veridion-rebrand.css"></head><body>${publicTopMenuHtml('/')}<main id="main" tabindex="-1" class="vr-error-page"><section class="vr-error-card"><p class="eyebrow">서비스 안내</p><h1>${safeTitle}</h1><p>${safeMessage}</p>${safeRequestId ? `<p class="vr-error-request">요청 ID: ${safeRequestId}</p>` : ''}<div class="hero-actions"><a class="btn primary" href="/products/veridion/demo">무료 진단으로 이동</a><a class="btn secondary" href="/">홈으로 이동</a></div></section></main>${businessFooterHtml()}<script src="/shared/client-risk-guard.js" defer></script></body></html>`;
 return html(req, res, status, body, { 'cache-control': 'no-store' }, 'public-page');
 }
 function adminNav() {
@@ -2018,7 +2018,7 @@ return [
 `고객 유입을 고려한 구성\n제목에는 고객이 실제로 찾을 표현을 넣고, 본문에는 문제 상황, 실무 체크리스트, 전후 문구 예시, 연결된 공개 페이지를 순서대로 배치합니다. 키워드 반복보다 독자가 체류할 이유를 만드는 구조가 중요합니다.`,
 `자주 묻는 질문\nQ1. 무료 진단만으로 충분한가요?\nA. 무료 진단은 현재 공백을 빠르게 보는 출발점입니다. 실제 반영 문구와 우선순위가 필요하면 기본 리포트나 전문가 리포트로 이어가면 됩니다.\n\nQ2. 자동 글이 반복처럼 보이지 않으려면요?\nA. 주제, 고객 질문, 사례, 체크리스트, 버튼 위치를 함께 바꿔야 합니다. 제목만 바꾸는 방식은 피해야 합니다.`,
 `자연스러운 다음 행동\n${theme.cta} 결과를 저장하면 기본 리포트에서 수정 우선순위를 보고, 전문가 리포트에서 실제 개선 방향을 확인할 수 있습니다.`,
-`관련 링크\n무료 진단: /products/veridion/demo\n요금제: /plans\n내 사이트 관리: /portal`,
+`관련 링크\n무료 진단: /products/veridion/demo\n요금제: /plans\n고객 포털: /portal`,
 `해시태그\n${tags}`
 ].join('\n\n');
 }
@@ -2037,8 +2037,8 @@ return String(value || '')
 .replace(/\bSEO\b/g, '리스크 점검')
 .replace(/\b전문가 리포트\b/g, '전문가 리포트')
 .replace(/\bAuto\b/g, '전문가 리포트')
-.replace(/자동\s*발행/g, '20분 발행')
-.replace(/20분 공개/g, '20분 발행')
+.replace(/자동\s*발행/g, '정기 업데이트')
+.replace(/20분 공개/g, '정기 업데이트')
 .replace(/자동 글/g, '정기 칼럼')
 .replace(/고객 단계/g, '고객 단계')
 .replace(/첫 화면/g, '첫 화면')
@@ -2059,8 +2059,8 @@ const sections = String(body || '')
 .replace(/\bSEO\b/g, '리스크 점검')
 .replace(/\b전문가 리포트\b/g, '전문가 리포트')
 .replace(/\bAuto\b/g, '전문가 리포트')
-.replace(/자동\s*발행/g, '20분 발행')
-.replace(/20분 공개/g, '20분 발행')
+.replace(/자동\s*발행/g, '정기 업데이트')
+.replace(/20분 공개/g, '정기 업데이트')
 .replace(/자동 글/g, '정기 칼럼')
 .replace(/고객 단계/g, '고객 단계')
 .replace(/첫 화면/g, '첫 화면')
@@ -3109,7 +3109,7 @@ latestScan: scan,
 guidance,
 autoFixJobs,
 boards: boardItems,
-publicationCadence: { intervalMinutes: Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000), label: `${Math.round(CTA_AUTOPUBLISH_INTERVAL_MS / 60000)}분에 1회 발행`, engine: 'product-agent-insight-v1', actualPublishing: true, lastPublishedAt: lastPublished?.publishedAt || lastPublished?.createdAt || null },
+publicationCadence: { label: '정기 업데이트', actualPublishing: true, lastPublishedAt: lastPublished?.publishedAt || lastPublished?.createdAt || null },
 legalUpdates: (db.legalUpdates || []).slice(0, 10),
 plans: buildPlanCatalog(scan?.recommendedPlan || subscription?.plan || 'Report')
 };
@@ -3406,7 +3406,7 @@ const gates = [
 { key: 'data_retention_cleanup_ready', ok: true, label: '만료 세션·토큰·탈퇴 계정 정리 로직 준비' },
 { key: 'backup_encryption_required', ok: !PLATFORM.commercial || (BACKUP_REMOTE_REQUIRE_ENCRYPTION && !!BACKUP_ENCRYPTION_SECRET), label: '상용 백업 암호화 필수' },
 { key: 'legal_evidence_versioned', ok: true, label: '동의·약관·환불·개인정보 버전 증적 기록' },
-{ key: 'phase313_governance', ok: PHASE313_GOVERNANCE_VERSION.includes('phase313'), label: 'phase313 거버넌스 게이트 적용' }
+{ key: 'governance_snapshot', ok: Boolean(PHASE313_GOVERNANCE_VERSION), label: '운영 거버넌스 기준 적용' }
 ];
 return { phase: RELEASE_PHASE, target: PLATFORM.target, commercial: PLATFORM.commercial, deploymentStage: DEPLOYMENT_STAGE, commercialLaunchReady: COMMERCIAL_LAUNCH_READY, prelaunchMode: PRELAUNCH_MODE, paymentProvider: PAYMENT_PROVIDER, persistenceMode: PERSISTENCE_MODE, storageMode: STORAGE_MODE, secureRecordStore: persistence.secureRecordStore || null, dataRetentionDays: DATA_RETENTION_DAYS, refundRequestWindowDays: REFUND_REQUEST_WINDOW_DAYS, missingEnv, placeholderEnv, counts, gates, ready: gates.every(g => g.ok), checkedAt: nowIso() };
 }
@@ -4194,7 +4194,7 @@ privacy,
   secureRecordStore: persistence.secureRecordStore || null,
   commercialEnv: validateCommercialEnv(process.env, { strict: false }),
   deploymentRiskGuard: DEPLOYMENT_RISK_GUARD.public,
-  phase200: { commercialSystemLayer: true, observabilityReady: true, fulfillmentHardeningReady: true },
+  systemLayer: { commercialSystemLayer: true, observabilityReady: true, fulfillmentHardeningReady: true },
   cachedForMs: READYZ_CACHE_TTL_MS
 };
 }
@@ -4232,7 +4232,7 @@ const { pathname } = routeState;
 if (pathname.startsWith('/api/public/') || pathname === '/api/diagnostics/start') return publicRouteHandler(req, res, routeState);
 if (pathname.startsWith('/api/admin/')) return adminRouteHandler(req, res, routeState);
 if (pathname === '/healthz' || pathname === '/health' || pathname === '/livez') {
-return json(req, res, 200, buildHealthDetails({ service: 'nv0-veridion', phase: RELEASE_PHASE, integrations: { process: { ok: true }, commercialEnv: { ok: validateCommercialEnv(process.env, { strict: false }).ok }, deploymentRiskGuard: { ok: DEPLOYMENT_RISK_GUARD.ok, version: PHASE223_RISK_GUARD_VERSION } } }), { 'cache-control': 'no-store' });
+return json(req, res, 200, buildHealthDetails({ service: 'veridion', release: 'clean-rebrand', integrations: { process: { ok: true }, commercialEnv: { ok: validateCommercialEnv(process.env, { strict: false }).ok }, deploymentRiskGuard: { ok: DEPLOYMENT_RISK_GUARD.ok, version: PHASE223_RISK_GUARD_VERSION } } }), { 'cache-control': 'no-store' });
 }
 if (pathname === '/readyz') return handleReadyz(req, res);
 if (pathname === '/favicon.ico' && (req.method === 'GET' || req.method === 'HEAD')) {
@@ -4246,11 +4246,11 @@ return text(req, res, 200, buildRobotsTxt(), { 'cache-control': 'public, max-age
 }
 if (pathname === '/sitemap.xml' && req.method === 'GET') {
 const cached = await cachedXml('sitemap', 30_000, buildSitemapXml);
-return text(req, res, 200, cached.body, { 'content-type': 'application/xml; charset=utf-8', 'cache-control': 'public, max-age=1800, stale-while-revalidate=3600', 'x-nv0-cache': cached.cacheHit ? 'hit' : 'miss' });
+return text(req, res, 200, cached.body, { 'content-type': 'application/xml; charset=utf-8', 'cache-control': 'public, max-age=1800, stale-while-revalidate=3600', 'x-vr-cache': cached.cacheHit ? 'hit' : 'miss' });
 }
 if (pathname === '/feed.xml' && req.method === 'GET') {
 const cached = await cachedXml('feed', 30_000, buildFeedXml);
-return text(req, res, 200, cached.body, { 'content-type': 'application/rss+xml; charset=utf-8', 'cache-control': 'public, max-age=1800, stale-while-revalidate=3600', 'x-nv0-cache': cached.cacheHit ? 'hit' : 'miss' });
+return text(req, res, 200, cached.body, { 'content-type': 'application/rss+xml; charset=utf-8', 'cache-control': 'public, max-age=1800, stale-while-revalidate=3600', 'x-vr-cache': cached.cacheHit ? 'hit' : 'miss' });
 }
 return false;
 }
