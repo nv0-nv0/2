@@ -1,6 +1,6 @@
 {
   "name": "veridion-public-risk-diagnostic",
-  "version": "1.0.0-commercial-phase324-complete-delivery",
+  "version": "1.0.0-commercial-phase325-no-available-server-guard",
   "private": true,
   "type": "module",
   "scripts": {
@@ -21,8 +21,8 @@
     "redteam:global": "node scripts/redteam-global-audit.mjs",
     "validate:phase311": "node scripts/validate-phase311-redteam-global-audit.mjs",
     "phase311:final": "npm run check:syntax && npm test && npm run test:e2e && npm run check:pages && npm run test:routes && npm run check:links && npm run verify:security && npm run validate:deploy && npm run check:release-secret-hygiene && npm run redteam:global && npm run validate:phase311 && npm run clean:runtime && node scripts/check-runtime-clean.mjs",
-    "delivery:final": "npm run phase324:final",
-    "release:predeploy": "npm run phase324:final",
+    "delivery:final": "npm run phase325:final",
+    "release:predeploy": "npm run phase325:final",
     "validate:phase312": "node scripts/validate-phase312-privacy-compliance.mjs",
     "phase312:final": "npm run check:syntax && npm test && npm run test:e2e && npm run check:pages && npm run test:routes && npm run check:links && npm run verify:security && npm run validate:deploy && npm run check:release-secret-hygiene && npm run validate:phase312 && npm run clean:runtime && node scripts/check-runtime-clean.mjs",
     "check:accessibility": "node scripts/check-accessibility-basics.mjs",
@@ -61,7 +61,10 @@
     "test:100-final": "node tests/trustops-100-final.mjs",
     "test:complete-delivery": "node tests/trustops-complete-delivery.mjs",
     "validate:phase324": "node scripts/validate-phase324-complete-delivery.mjs",
-    "phase324:final": "node scripts/run-phase324-final.mjs"
+    "phase324:final": "node scripts/run-phase324-final.mjs",
+    "check:no-available-server": "node scripts/check-no-available-server-guard.mjs",
+    "validate:phase325": "node scripts/validate-phase325-server-availability.mjs",
+    "phase325:final": "npm run check:no-available-server && npm run validate:phase325 && npm run check:syntax && npm run check:pages && npm run test:routes && npm run check:links && npm run verify:security && npm run validate:deploy && npm run check:release-secret-hygiene && npm run check:responsive-contract && npm run clean:runtime && node scripts/check-runtime-clean.mjs"
   },
-  "description": "VERIDION phase324 complete delivery: final package seal, operator proof pack, deployment handoff, and full validation closeout."
+  "description": "VERIDION phase325 no-available-server guard: boot-safe Coolify profile, explicit port mapping, healthcheck recovery, and commercial strict profile separation."
 }

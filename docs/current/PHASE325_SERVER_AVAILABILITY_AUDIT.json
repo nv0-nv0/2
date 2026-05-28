@@ -1,0 +1,25 @@
+{
+  "ok": true,
+  "phase": 325,
+  "score": 100,
+  "title": "No Available Server Guard",
+  "changes": [
+    "boot-safe root docker-compose.yml",
+    "boot-safe deploy/docker-compose.coolify.yml",
+    "explicit 3210 ports/expose mapping",
+    "preflight disabled for first boot",
+    "external dependency blockers removed from boot profile",
+    "strict commercial compose preserved separately",
+    "local boot probe and healthz verification added"
+  ],
+  "availabilityContract": {
+    "firstBootWithoutPostgres": true,
+    "firstBootWithoutRedis": true,
+    "firstBootWithoutS3": true,
+    "firstBootWithoutPortOne": true,
+    "firstBootWithoutTurnstile": true,
+    "healthPath": "/healthz",
+    "port": 3210
+  },
+  "operatorNote": "Use docker-compose.yml for first Coolify boot. Switch to deploy/docker-compose.commercial.yml only after real production dependencies are configured."
+}
