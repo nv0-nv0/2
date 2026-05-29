@@ -25,7 +25,7 @@ const requiredFiles = [
 for (const file of requiredFiles) add(`exists:${file}`, exists(file));
 
 const pkg = JSON.parse(read('package.json'));
-add('package:clean-rebrand-version', /phase33[45]-(clean-rebrand|unified-organism)|phase340-redteam-100-closeout|phase341-final-closeout|phase342-merged-best|phase343-final-perfect/.test(pkg.version));
+add('package:clean-rebrand-version', /phase33[45]-(clean-rebrand|unified-organism)|phase340-redteam-100-closeout|phase341-final-closeout|phase342-merged-best|phase343-final-perfect|phase345-final-delivery-closeout|phase346-global-hardening-final/.test(pkg.version));
 
 const appHtmlFiles = [];
 for (const area of ['apps/public', 'apps/admin']) {

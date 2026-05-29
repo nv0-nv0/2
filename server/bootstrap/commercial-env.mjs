@@ -6,7 +6,7 @@ export const COMMERCIAL_ENV_SPEC = Object.freeze({
   storage: ['NV0_STORAGE_MODE', 'NV0_S3_BUCKET', 'NV0_S3_ENDPOINT', 'NV0_S3_ACCESS_KEY_ID', 'NV0_S3_SECRET_ACCESS_KEY'],
   payment: ['NV0_PAYMENT_PROVIDER', 'NV0_PORTONE_STORE_ID', 'NV0_PORTONE_CHANNEL_KEY', 'NV0_PORTONE_API_SECRET', 'NV0_PORTONE_WEBHOOK_SECRET'],
   email: ['NV0_SMTP_URL', 'NV0_OPERATOR_ALERT_EMAIL'],
-  security: ['NV0_SESSION_SECRET', 'NV0_ADMIN_EMAIL', 'NV0_ADMIN_PASSWORD', 'NV0_TURNSTILE_SITE_KEY', 'NV0_TURNSTILE_SECRET_KEY'],
+  security: ['NV0_SESSION_SECRET', 'NV0_BOOTSTRAP_ADMIN_EMAIL', 'NV0_BOOTSTRAP_ADMIN_PASSWORD', 'NV0_TURNSTILE_SITE_KEY', 'NV0_TURNSTILE_SECRET'],
   operations: ['NV0_BACKUP_REMOTE_ENABLED', 'NV0_BACKUP_ENCRYPTION_SECRET', 'NV0_READYZ_REDIS_STRICT']
 });
 
@@ -48,6 +48,8 @@ export function validateCommercialEnv(env = process.env, options = {}) {
   if (mode === 'commercial' && persistenceMode === 'json') warnings.push('commercial-json-persistence: 운영 매출 데이터는 postgres_primary 권장');
   if (mode === 'commercial' && storageMode === 'local_fs') warnings.push('commercial-local-storage: 산출물/보관본은 s3 권장');
   if (paymentProvider !== 'portone_v2') warnings.push('payment-provider-not-live: 실결제 검증은 portone_v2 설정 필요');
+  if (String(env.NV0_SCAN_PROVIDER || '').trim().toLowerCase() === 'external_http' && String(env.NV0_SCAN_PROVIDER_FALLBACK || 'true').trim().toLowerCase() === 'false') warnings.push('scan-provider-fallback-disabled: 무료 데모 안정성을 위해 NV0_SCAN_PROVIDER_FALLBACK=true 권장');
+  if (String(env.NV0_ENABLE_TURNSTILE || '').trim().toLowerCase() === 'true' && !String(env.NV0_TURNSTILE_SECRET || env.NV0_TURNSTILE_SECRET_KEY || '').trim()) warnings.push('turnstile-secret-missing: NV0_TURNSTILE_SECRET required when Turnstile is enabled');
 
   return {
     ok: missing.length === 0,

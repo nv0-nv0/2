@@ -87,6 +87,7 @@ if (String(process.env.NV0_RATE_LIMIT_STORE) !== 'redis') errors.push('NV0_RATE_
 if (String(process.env.NV0_LOCK_PROVIDER) !== 'redis') errors.push('NV0_LOCK_PROVIDER must be redis');
 if (String(process.env.NV0_STORAGE_MODE) === 'local_fs') errors.push('NV0_STORAGE_MODE must not be local_fs');
 if (String(process.env.NV0_SCAN_PROVIDER) !== 'external_http') errors.push('NV0_SCAN_PROVIDER must be external_http');
+if (String(process.env.NV0_SCAN_PROVIDER_FALLBACK || 'true').trim().toLowerCase() === 'false') errors.push('NV0_SCAN_PROVIDER_FALLBACK must stay true for public demo outage protection');
 if (commercialLaunchReady && String(process.env.NV0_PAYMENT_PROVIDER) !== 'portone_v2') errors.push('NV0_PAYMENT_PROVIDER must be portone_v2');
 if (prelaunch && String(process.env.NV0_PAYMENT_PROVIDER) !== 'disabled') errors.push('NV0_PAYMENT_PROVIDER must be disabled during prelaunch');
 if (commercialLaunchReady && String(process.env.NV0_PORTONE_WEBHOOK_VERIFY_MODE) !== 'strict') errors.push('NV0_PORTONE_WEBHOOK_VERIFY_MODE must be strict');
@@ -96,7 +97,7 @@ if (!allowedOrigins.includes('nv0.kr')) warnings.push('NV0_ALLOWED_ADMIN_ORIGINS
 if (!allowedOrigins.includes('www.nv0.kr')) warnings.push('NV0_ALLOWED_ADMIN_ORIGINS should include www.nv0.kr');
 if (enableTurnstile) {
   if (!String(process.env.NV0_TURNSTILE_SITE_KEY || '').trim()) errors.push('NV0_TURNSTILE_SITE_KEY required when NV0_ENABLE_TURNSTILE=true');
-  if (!String(process.env.NV0_TURNSTILE_SECRET || '').trim()) errors.push('NV0_TURNSTILE_SECRET required when NV0_ENABLE_TURNSTILE=true');
+  if (!String(process.env.NV0_TURNSTILE_SECRET || process.env.NV0_TURNSTILE_SECRET_KEY || '').trim()) errors.push('NV0_TURNSTILE_SECRET required when NV0_ENABLE_TURNSTILE=true');
 }
 
 const report = {

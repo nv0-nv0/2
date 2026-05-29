@@ -161,7 +161,7 @@ const SESSION_TTL_MS = Number(process.env.NV0_ADMIN_SESSION_TTL_MS || 1000 * 60 
 const MAX_JSON_BODY_BYTES = Number(process.env.NV0_MAX_JSON_BODY_BYTES || 64 * 1024);
 const MAX_MULTIPART_BODY_BYTES = Number(process.env.NV0_MAX_MULTIPART_BODY_BYTES || 5 * 1024 * 1024);
 const ENABLE_TURNSTILE = process.env.NV0_ENABLE_TURNSTILE === 'true';
-const TURNSTILE_SECRET = process.env.NV0_TURNSTILE_SECRET || '';
+const TURNSTILE_SECRET = process.env.NV0_TURNSTILE_SECRET || process.env.NV0_TURNSTILE_SECRET_KEY || ''; // accepts legacy/alt Turnstile secret key name
 const TURNSTILE_SITE_KEY = process.env.NV0_TURNSTILE_SITE_KEY || '';
 const TURNSTILE_CONFIGURED = ENABLE_TURNSTILE && !isPlaceholderConfigValue(TURNSTILE_SECRET) && !isPlaceholderConfigValue(TURNSTILE_SITE_KEY);
 const TURNSTILE_PUBLIC_ENABLED = ENABLE_TURNSTILE && TURNSTILE_CONFIGURED;
@@ -188,6 +188,7 @@ const SCAN_PROVIDER = process.env.NV0_SCAN_PROVIDER || 'builtin';
 const SCAN_PROVIDER_URL = process.env.NV0_SCAN_PROVIDER_URL || '';
 const SCAN_PROVIDER_TOKEN = process.env.NV0_SCAN_PROVIDER_TOKEN || '';
 const SCAN_PROVIDER_FALLBACK = process.env.NV0_SCAN_PROVIDER_FALLBACK !== 'false' || PRELAUNCH_MODE || DEPLOYMENT_STAGE === 'prelaunch';
+const PUBLIC_DEMO_FORCE_SCAN_FALLBACK = process.env.NV0_PUBLIC_DEMO_FORCE_SCAN_FALLBACK !== 'false';
 const TARGET_FETCH_ENABLED = process.env.NV0_TARGET_FETCH_ENABLED !== 'false';
 const PAYMENT_PROVIDER = process.env.NV0_PAYMENT_PROVIDER || (PRELAUNCH_MODE ? 'disabled' : (PLATFORM.commercial ? 'portone_v2' : 'demo'));
 const PAYMENT_PROVIDER_URL = process.env.NV0_PAYMENT_PROVIDER_URL || '';
@@ -459,8 +460,8 @@ if (!isValidEmail(BUSINESS_PROFILE.privacyOfficerEmail)) throw new Error('Commer
 if (!isValidEmail(OPERATOR_ALERT_EMAIL)) throw new Error('Commercial launch requires valid NV0_OPERATOR_ALERT_EMAIL or NV0_SUPPORT_EMAIL.');
 }
 if (ADMIN_AUTH_MODE === 'account_rbac') {
-if (!String(process.env.NV0_BOOTSTRAP_ADMIN_EMAIL || '').trim()) throw new Error('NV0_BOOTSTRAP_ADMIN_EMAIL is required when NV0_ADMIN_AUTH_MODE=account_rbac.');
-if (!String(process.env.NV0_BOOTSTRAP_ADMIN_PASSWORD || '')) throw new Error('NV0_BOOTSTRAP_ADMIN_PASSWORD is required when NV0_ADMIN_AUTH_MODE=account_rbac.');
+if (!String(process.env.NV0_BOOTSTRAP_ADMIN_EMAIL || process.env.NV0_ADMIN_EMAIL || '').trim()) throw new Error('NV0_BOOTSTRAP_ADMIN_EMAIL is required when NV0_ADMIN_AUTH_MODE=account_rbac.');
+if (!String(process.env.NV0_BOOTSTRAP_ADMIN_PASSWORD || process.env.NV0_ADMIN_PASSWORD || '')) throw new Error('NV0_BOOTSTRAP_ADMIN_PASSWORD is required when NV0_ADMIN_AUTH_MODE=account_rbac.');
 }
 if (SCAN_PROVIDER === 'external_http' && !SCAN_PROVIDER_URL) {
 throw new Error('NV0_SCAN_PROVIDER_URL is required when NV0_SCAN_PROVIDER=external_http.');
@@ -3441,29 +3442,57 @@ scan.scoreModel = { ...(scan.scoreModel || {}), confidenceLabel: '시간 제한 
 return scan;
 }
 
+function externalScanPublicFallbackEnabled() {
+return SCAN_PROVIDER_FALLBACK || PUBLIC_DEMO_FORCE_SCAN_FALLBACK;
+}
+
+function buildBlockedTargetScanResult(input, startedAt, provider = 'blocked_target_limited') {
+const scan = buildBuiltinScanResult(input, {
+  fetched: false,
+  html: '',
+  error: 'blocked target url',
+  finalUrl: input,
+  status: 0,
+  pages: [],
+  probeCount: 0,
+  coverageStrategy: 'blocked_target_safe_limited_result'
+}, startedAt);
+scan.provider = provider;
+scan.resultStatus = 'completed_limited_blocked_target';
+scan.resultLimitNotice = '보안상 자동 수집할 수 없는 주소라 공개 페이지 수집 없이 제한 진단 결과를 표시했습니다.';
+scan.summary = `${String(input).trim()} 주소는 보안상 자동 수집을 제한했습니다. 서버 오류 대신 입력 제한 안내와 수동 확인 항목을 표시합니다.`;
+scan.fetchError = 'blocked target url';
+scan.scoreModel = { ...(scan.scoreModel || {}), confidenceLabel: '제한 결과', manualReviewCount: Math.max(1, Number(scan.scoreModel?.manualReviewCount || 0)) };
+return scan;
+}
+
 async function scanResultFor(input, db = null) {
 const startedAt = Date.now();
 const cached = findReusableScan(db, input);
 if (cached) return cached;
+const url = safeUrl(String(input).trim());
+const blockedTarget = url ? isBlockedTargetUrl(url) : false;
+if (blockedTarget) {
+return await enhanceScanWithAiReview(buildBlockedTargetScanResult(input, startedAt));
+}
 if (SCAN_PROVIDER === 'external_http') {
 try {
 const external = await runExternalScan(input);
 external.elapsedMs = external.elapsedMs || (Date.now() - startedAt);
 return await enhanceScanWithAiReview(external);
 } catch (error) {
-if (!SCAN_PROVIDER_FALLBACK) throw error;
-const url = safeUrl(String(input).trim());
-if (url && await isBlockedTargetUrlResolved(url)) throw new Error('blocked target url');
+if (!externalScanPublicFallbackEnabled()) {
+  error.status = error.status || error.statusCode || 503;
+  error.code = error.code || 'SCAN_PROVIDER_UNAVAILABLE';
+  throw error;
+}
 const fallback = await buildBuiltinScanResultWithFetchBudget(input, startedAt, 'builtin_fallback', error.message);
 fallback.resultStatus = fallback.fetched ? 'completed_live_fetch_after_provider_error' : 'completed_limited_fallback';
 fallback.resultLimitNotice = fallback.fetched ? '외부 진단 제공자는 실패했지만 공개 페이지 수집에 성공해 내장 엔진으로 분석했습니다.' : '외부 진단 제공자와 대상 사이트 수집이 모두 제한되어 제한 분석을 수행했습니다.';
 fallback.summary = `${String(input).trim()} 외부 진단 실패로 내장 엔진으로 분석했습니다. ${fallback.resultLimitNotice}`;
+fallback.upstreamProviderStatus = { ok: false, provider: 'external_http', fallbackApplied: true, message: error.message || 'scan provider failed' };
 return await enhanceScanWithAiReview(fallback);
 }
-}
-const url = safeUrl(String(input).trim());
-if (url && await isBlockedTargetUrlResolved(url)) {
-return await enhanceScanWithAiReview(buildBuiltinScanResult(input, { fetched: false, html: '', error: 'blocked target url', finalUrl: input, status: 0 }, startedAt));
 }
 const builtin = await buildBuiltinScanResultWithFetchBudget(input, startedAt, 'builtin');
 return await enhanceScanWithAiReview(builtin);
@@ -4361,7 +4390,18 @@ const { pathname } = routeState;
 if (pathname.startsWith('/api/public/') || pathname === '/api/diagnostics/start') return publicRouteHandler(req, res, routeState);
 if (pathname.startsWith('/api/admin/')) return adminRouteHandler(req, res, routeState);
 if (pathname === '/healthz' || pathname === '/health' || pathname === '/livez') {
-return json(req, res, 200, buildHealthDetails({ service: 'veridion', release: 'clean-rebrand', integrations: { process: { ok: true }, commercialEnv: { ok: validateCommercialEnv(process.env, { strict: false }).ok }, deploymentRiskGuard: { ok: DEPLOYMENT_RISK_GUARD.ok, version: PHASE223_RISK_GUARD_VERSION } } }), { 'cache-control': 'no-store' });
+const commercialEnvStatus = validateCommercialEnv(process.env, { strict: false });
+const strictHealthz = process.env.NV0_HEALTHZ_STRICT === 'true' || (COMMERCIAL_LAUNCH_READY && process.env.NV0_HEALTHZ_STRICT !== 'false');
+const integrations = strictHealthz
+  ? {
+    process: { ok: true },
+    commercialEnv: { ok: !PLATFORM.commercial || commercialEnvStatus.ok, mode: commercialEnvStatus.mode, missing: commercialEnvStatus.missing || [], warnings: commercialEnvStatus.warnings || [] },
+    deploymentRiskGuard: { ok: DEPLOYMENT_RISK_GUARD.ok, version: PHASE223_RISK_GUARD_VERSION }
+  }
+  : { process: { ok: true } };
+const payload = buildHealthDetails({ service: 'veridion', release: 'clean-rebrand', integrations });
+payload.readinessAdvisory = { commercialEnv: { ok: !PLATFORM.commercial || commercialEnvStatus.ok, mode: commercialEnvStatus.mode, missing: commercialEnvStatus.missing || [], warnings: commercialEnvStatus.warnings || [] }, deploymentRiskGuard: { ok: DEPLOYMENT_RISK_GUARD.ok, version: PHASE223_RISK_GUARD_VERSION }, strictHealthz };
+return json(req, res, payload.ok ? 200 : 503, payload, { 'cache-control': 'no-store' });
 }
 if (pathname === '/readyz') return handleReadyz(req, res);
 if (pathname === '/favicon.ico' && (req.method === 'GET' || req.method === 'HEAD')) {
@@ -4413,12 +4453,21 @@ if (rendered) return;
 if (wantsHtmlResponse(req)) return renderPublicErrorPage(req, res, 404, '페이지를 찾을 수 없습니다', '주소가 바뀌었거나 접근할 수 없는 페이지입니다. 홈 또는 무료 진단으로 이동해 주세요.', requestId);
 text(req, res, 404, 'Not found');
 } catch (error) {
-const status = error?.code === 'PAYLOAD_TOO_LARGE' ? 413 : ['INVALID_JSON', 'INVALID_PAYLOAD'].includes(error?.code) ? 400 : 500;
+const status = Number(error?.status || error?.statusCode || (error?.code === 'PAYLOAD_TOO_LARGE' ? 413 : ['INVALID_JSON', 'INVALID_PAYLOAD'].includes(error?.code) ? 400 : 500));
+const publicErrorMessage = status === 413
+  ? '요청 크기가 너무 큽니다.'
+  : status === 400
+    ? (error.message || '잘못된 요청입니다.')
+    : status === 422
+      ? (error.publicMessage || '자동 진단할 수 없는 주소입니다. 공개 사이트 주소인지 확인해 주세요.')
+      : status === 503
+        ? '자동 진단 서버가 지연되고 있습니다. 잠시 후 다시 시도해 주세요.'
+        : '서버 오류가 발생했습니다.';
 console.error(JSON.stringify({ level: 'error', event: 'request_error', requestId, statusCode: status, incident: classifyIncident(error, { requestId, route: req._nv0RouteState?.pathname }), message: error?.message || 'unknown error', code: error?.code || null, stack: NODE_ENV === 'production' ? undefined : error?.stack }));
 if (wantsHtmlResponse(req) && status >= 500) {
 return renderPublicErrorPage(req, res, status, '일시적인 오류가 발생했습니다', '요청을 안전하게 중단했습니다. 잠시 후 다시 시도해 주세요.', requestId);
 }
-json(req, res, status, { ok: false, error: status === 413 ? '요청 크기가 너무 큽니다.' : status === 400 ? (error.message || '잘못된 요청입니다.') : '서버 오류가 발생했습니다.', requestId });
+json(req, res, status, { ok: false, error: publicErrorMessage, code: error?.code || (status >= 500 ? 'INTERNAL_ERROR' : 'BAD_REQUEST'), requestId });
 } finally {
 const pathname = req._nv0RouteState?.pathname || (() => { try { return requestUrlFrom(req).pathname; } catch { return 'invalid-url'; } })();
 const elapsedMs = Date.now() - startedAt;

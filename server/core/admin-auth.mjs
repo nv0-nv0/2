@@ -18,8 +18,8 @@ export function ensureAdminCollections(db) {
 
 export async function ensureBootstrapAdmin(db, env, makeId, nowIso) {
   ensureAdminCollections(db);
-  const email = String(env.NV0_BOOTSTRAP_ADMIN_EMAIL || '').trim().toLowerCase();
-  const password = String(env.NV0_BOOTSTRAP_ADMIN_PASSWORD || '');
+  const email = String(env.NV0_BOOTSTRAP_ADMIN_EMAIL || env.NV0_ADMIN_EMAIL || '').trim().toLowerCase();
+  const password = String(env.NV0_BOOTSTRAP_ADMIN_PASSWORD || env.NV0_ADMIN_PASSWORD || '');
   if (!email || !password) return null;
   let user = db.adminUsers.find((item) => String(item.email || '').toLowerCase() === email);
   if (!user) {

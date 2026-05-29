@@ -29,9 +29,9 @@ const portal = read('apps/public/portal/index.html') + read('apps/public/portal/
 const css = read('shared/veridion-rebrand.css');
 ['Phase337 product evolution','--vr-dark-muted:#d5e3f0','vr-compare-table','vr-board-list-enhanced','outline:3px solid'].forEach(token => check(`css ${token}`, () => assert.ok(css.includes(token))));
 const pkg = JSON.parse(read('package.json'));
-check('package terminal closeout version', () => assert.match(pkg.version, /phase(337|340|341|342|343)|final-closeout|merged-best|final-perfect/));
+check('package terminal closeout version', () => assert.match(pkg.version, /phase(337|340|341|342|343|345|346)|final-closeout|merged-best|final-perfect|final-delivery-closeout|global-hardening-final/));
 check('phase337 final script', () => assert.equal(pkg.scripts['validate:phase337'], 'node scripts/validate-phase337-product-evolution.mjs'));
-check('delivery final current gate', () => assert.match(pkg.scripts['delivery:final'], /phase(337|340|341|342|343):final/));
+check('delivery final current gate', () => assert.match(pkg.scripts['delivery:final'], /phase(337|340|341|342|343|345|346):final/));
 // Expand the audit ledger to 291 concrete checklist entries, tied to the 18 red-team domains.
 const domains = [
   'live-package-consistency','ia-routing','contrast-accessibility','design-system','demo-conversion','insight-content-seo','technical-seo','structured-data','performance-cwv','copy-trust','legal-support','portal-onboarding','forms-api','security-privacy','qa-regression','deploy-runtime','admin-isolation','conversion-analytics'

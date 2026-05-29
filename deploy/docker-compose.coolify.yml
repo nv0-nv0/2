@@ -127,7 +127,7 @@ services:
     expose:
       - "3210"
     healthcheck:
-      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3210/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3210/healthz').then(async r=>{const b=await r.json().catch(()=>({}));process.exit(r.ok&&b.ok===true?0:1)}).catch(()=>process.exit(1))"]
       interval: 20s
       timeout: 10s
       retries: 12

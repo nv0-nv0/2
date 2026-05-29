@@ -1,6 +1,6 @@
 {
   "name": "veridion-public-risk-diagnostic",
-  "version": "1.0.6-commercial-phase343-final-perfect",
+  "version": "1.0.8-commercial-phase346-global-hardening-final",
   "private": true,
   "type": "module",
   "scripts": {
@@ -22,8 +22,8 @@
     "redteam:global": "node scripts/redteam-global-audit.mjs",
     "validate:phase311": "node scripts/validate-phase311-redteam-global-audit.mjs",
     "phase311:final": "npm run check:syntax && npm test && npm run test:e2e && npm run check:pages && npm run test:routes && npm run check:links && npm run verify:security && npm run validate:deploy && npm run check:release-secret-hygiene && npm run redteam:global && npm run validate:phase311 && npm run clean:runtime && node scripts/check-runtime-clean.mjs",
-    "delivery:final": "npm run phase343:final",
-    "release:predeploy": "npm run phase343:final",
+    "delivery:final": "npm run phase346:final",
+    "release:predeploy": "npm run phase346:final",
     "validate:phase312": "node scripts/validate-phase312-privacy-compliance.mjs",
     "phase312:final": "npm run check:syntax && npm test && npm run test:e2e && npm run check:pages && npm run test:routes && npm run check:links && npm run verify:security && npm run validate:deploy && npm run check:release-secret-hygiene && npm run validate:phase312 && npm run clean:runtime && node scripts/check-runtime-clean.mjs",
     "check:accessibility": "node scripts/check-accessibility-basics.mjs",
@@ -88,16 +88,25 @@
     "validate:phase336": "node scripts/validate-phase336-visibility-conversion.mjs",
     "phase336:final": "npm run validate:phase336 && npm run check:syntax && npm test && npm run test:e2e && npm run check:pages && npm run test:routes && npm run check:links && npm run smoke && npm run check:responsive-contract && npm run check:performance-budget && npm run verify:security && npm run validate:deploy && npm run check:release-secret-hygiene && npm run validate:phase325 && npm run validate:phase326 && npm run validate:phase328 && npm run validate:phase329 && npm run validate:phase330 && npm run clean:runtime && node scripts/check-runtime-clean.mjs",
     "validate:phase337": "node scripts/validate-phase337-product-evolution.mjs",
-    "phase337:final": "npm run validate:phase337 && npm run check:syntax && npm test && npm run test:e2e && npm run check:pages && npm run test:routes && npm run check:links && npm run smoke && npm run check:responsive-contract && npm run check:performance-budget && npm run verify:security && npm run validate:deploy && npm run check:release-secret-hygiene && npm run validate:phase325 && npm run validate:phase326 && npm run validate:phase328 && npm run validate:phase329 && npm run validate:phase330 && npm run clean:runtime && node scripts/check-runtime-clean.mjs",
+    "phase337:final": "npm run validate:phase337 && npm run check:syntax && npm test && npm run test:e2e && npm run check:pages && npm run test:routes && npm run check:links && npm run smoke && npm run test:diagnose-fallback && npm run check:responsive-contract && npm run check:performance-budget && npm run verify:security && npm run validate:deploy && npm run check:release-secret-hygiene && npm run validate:phase325 && npm run validate:phase326 && npm run validate:phase328 && npm run validate:phase329 && npm run validate:phase330 && npm run clean:runtime && node scripts/check-runtime-clean.mjs",
     "check:public-api-isolation": "node scripts/check-public-api-isolation.mjs",
     "validate:phase340": "node scripts/validate-phase340-redteam-closeout.mjs",
-    "phase340:final": "npm run validate:phase340 && npm run check:syntax && npm test && npm run test:e2e && npm run check:pages && npm run test:routes && npm run check:links && npm run smoke && npm run check:responsive-contract && npm run check:performance-budget && npm run verify:security && npm run check:public-api-isolation && npm run validate:deploy && npm run check:release-secret-hygiene && npm run validate:phase325 && npm run validate:phase326 && npm run validate:phase328 && npm run validate:phase329 && npm run validate:phase330 && npm run validate:phase337 && npm run clean:runtime && node scripts/check-runtime-clean.mjs",
+    "phase340:final": "npm run validate:phase340 && npm run check:syntax && npm test && npm run test:e2e && npm run check:pages && npm run test:routes && npm run check:links && npm run smoke && npm run test:diagnose-fallback && npm run check:responsive-contract && npm run check:performance-budget && npm run verify:security && npm run check:public-api-isolation && npm run validate:deploy && npm run check:release-secret-hygiene && npm run validate:phase325 && npm run validate:phase326 && npm run validate:phase328 && npm run validate:phase329 && npm run validate:phase330 && npm run validate:phase337 && npm run clean:runtime && node scripts/check-runtime-clean.mjs",
     "validate:phase341": "node scripts/validate-phase341-final-closeout.mjs",
     "phase341:final": "npm run phase340:final && npm run validate:phase341 && npm run clean:runtime && node scripts/check-runtime-clean.mjs",
     "validate:phase342": "node scripts/validate-phase342-merged-best.mjs",
     "phase342:final": "npm run phase341:final && npm run validate:phase342 && npm run clean:runtime && node scripts/check-runtime-clean.mjs",
     "validate:phase343": "node scripts/validate-phase343-final-perfect.mjs",
-    "phase343:final": "npm run phase342:final && npm run check:operational-contract && npm run validate:phase343 && npm run clean:runtime && node scripts/check-runtime-clean.mjs"
+    "phase343:final": "npm run phase342:final && npm run test:diagnose-fallback && npm run check:operational-contract && npm run validate:phase343 && npm run clean:runtime && node scripts/check-runtime-clean.mjs",
+    "test:diagnose-fallback": "node tests/diagnose-fallback.mjs",
+    "test:public-health-contract": "node tests/public-health-contract.mjs",
+    "validate:phase345": "node scripts/validate-phase345-final-delivery.mjs",
+    "phase345:final": "node scripts/run-phase345-final.mjs",
+    "test:public-demo-error-contract": "node tests/public-demo-error-contract.mjs",
+    "live:smoke": "node scripts/live-smoke.mjs",
+    "check:release-currentness": "node scripts/check-release-currentness.mjs",
+    "validate:phase346": "node scripts/validate-phase346-global-hardening.mjs",
+    "phase346:final": "node scripts/run-phase346-final.mjs"
   },
-  "description": "VERIDION phase343 final perfect closeout: phase342 merged-best product plus synchronized delivery docs, operational gate contract, and final release hygiene validator."
+  "description": "VERIDION phase346 global hardening final: public demo provider-error contract, release currentness, live smoke operator gate, and final 100-point delivery handoff."
 }

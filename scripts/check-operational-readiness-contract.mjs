@@ -25,11 +25,11 @@ const requiredEnv = [
 for (const key of requiredEnv) {
   if (!combinedEnv.includes(key)) failures.push(`missing required env contract: ${key}`);
 }
-const requiredScripts = ['phase323:final','validate:phase323','phase324:final','validate:phase324','phase342:final','validate:phase342','phase343:final','validate:phase343','release:predeploy','delivery:final','check:responsive-contract','check:operational-contract'];
+const requiredScripts = ['phase323:final','validate:phase323','phase324:final','validate:phase324','phase342:final','validate:phase342','phase343:final','validate:phase343','phase345:final','validate:phase345','phase346:final','validate:phase346','release:predeploy','delivery:final','check:responsive-contract','check:operational-contract'];
 for (const key of requiredScripts) {
   if (!packageJson.scripts?.[key]) failures.push(`missing package script: ${key}`);
 }
-const allowedTerminalGates = ['npm run phase323:final','npm run phase324:final','npm run phase340:final','npm run phase341:final','npm run phase342:final','npm run phase343:final'];
+const allowedTerminalGates = ['npm run phase323:final','npm run phase324:final','npm run phase340:final','npm run phase341:final','npm run phase342:final','npm run phase343:final','npm run phase345:final','npm run phase346:final'];
 if (!allowedTerminalGates.includes(packageJson.scripts?.['release:predeploy'])) failures.push('release:predeploy must point to a current terminal final gate');
 if (!allowedTerminalGates.includes(packageJson.scripts?.['delivery:final'])) failures.push('delivery:final must point to a current terminal final gate');
 for (const file of [

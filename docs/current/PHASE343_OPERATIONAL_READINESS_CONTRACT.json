@@ -7,6 +7,6 @@
     "deploy/env.production.nv0.kr.example",
     ".env.example"
   ],
-  "terminalGate": "npm run phase343:final",
+  "terminalGate": "npm run phase346:final",
   "failures": []
 }

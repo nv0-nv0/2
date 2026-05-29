@@ -1,0 +1,71 @@
+{
+  "ok": true,
+  "phase": "phase346-global-hardening-final",
+  "passed": 7,
+  "total": 7,
+  "inheritedPhase345Gate": true,
+  "addedPhase346Gates": [
+    "public demo provider-500 contract",
+    "release currentness",
+    "operator live smoke contract",
+    "phase346 validator"
+  ],
+  "results": [
+    {
+      "name": "phase345:final",
+      "ok": true,
+      "code": 0,
+      "elapsedMs": 16261,
+      "stdoutTail": "\n> veridion-public-risk-diagnostic@1.0.8-commercial-phase346-global-hardening-final phase345:final\n> node scripts/run-phase345-final.mjs\n\n[PASS] validate:phase340 312ms\n[PASS] check:syntax 299ms\n[PASS] test 315ms\n[PASS] test:e2e 353ms\n[PASS] check:pages 462ms\n[PASS] test:routes 338ms\n[PASS] check:links 311ms\n[PASS] smoke 1027ms\n[PASS] test:diagnose-fallback 4078ms\n[PASS] check:responsive-contract 300ms\n[PASS] check:performance-budget 282ms\n[PASS] verify:security 335ms\n[PASS] check:public-api-isolation 775ms\n[PASS] validate:deploy 314ms\n[PASS] check:release-secret-hygiene 349ms\n[PASS] validate:phase325 699ms\n[PASS] validate:phase326 383ms\n[PASS] validate:phase328 402ms\n[PASS] validate:phase329 438ms\n[PASS] validate:phase330 1101ms\n[PASS] validate:phase337 279ms\n[PASS] validate:phase341 654ms\n[PASS] validate:phase342 308ms\n[PASS] check:operational-contract 304ms\n[PASS] validate:phase343 278ms\n[PASS] test:public-health-contract 561ms\n[PASS] validate-prod-env-ci-check 80ms\n[PASS] validate:phase345 255ms\n[PASS] clean:runtime 263ms\n[PASS] check-runtime-clean 73ms\n{\n  \"ok\": true,\n  \"phase\": \"phase345-final-delivery-closeout\",\n  \"passed\": 30,\n  \"total\": 30,\n  \"report\": \"docs/current/PHASE345_FINAL_GATE_REPORT.json\"\n}\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "test:public-demo-error-contract",
+      "ok": true,
+      "code": 0,
+      "elapsedMs": 758,
+      "stdoutTail": "\n> veridion-public-risk-diagnostic@1.0.8-commercial-phase346-global-hardening-final test:public-demo-error-contract\n> node tests/public-demo-error-contract.mjs\n\npublic demo error contract ok\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "check:release-currentness",
+      "ok": true,
+      "code": 0,
+      "elapsedMs": 257,
+      "stdoutTail": "\n> veridion-public-risk-diagnostic@1.0.8-commercial-phase346-global-hardening-final check:release-currentness\n> node scripts/check-release-currentness.mjs\n\n{\n  \"ok\": true,\n  \"phase\": \"phase346-release-currentness\",\n  \"checked\": 13,\n  \"failed\": 0,\n  \"failures\": []\n}\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "live:smoke",
+      "ok": true,
+      "code": 0,
+      "elapsedMs": 282,
+      "stdoutTail": "\n> veridion-public-risk-diagnostic@1.0.8-commercial-phase346-global-hardening-final live:smoke\n> node scripts/live-smoke.mjs\n\n{\n  \"ok\": true,\n  \"skipped\": true,\n  \"reason\": \"NV0_LIVE_BASE_URL is not set; offline package gate passed and live smoke remains operator-run.\",\n  \"command\": \"NV0_LIVE_BASE_URL=https://www.nv0.kr npm run live:smoke\"\n}\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "validate:phase346",
+      "ok": true,
+      "code": 0,
+      "elapsedMs": 272,
+      "stdoutTail": "\n> veridion-public-risk-diagnostic@1.0.8-commercial-phase346-global-hardening-final validate:phase346\n> node scripts/validate-phase346-global-hardening.mjs\n\n{\n  \"ok\": true,\n  \"phase\": \"phase346-global-hardening-final\",\n  \"checked\": 15,\n  \"failed\": 0,\n  \"failures\": [],\n  \"qualityTarget\": \"local package 100/100; live production verification remains operator-run through npm run live:smoke\"\n}\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "clean:runtime",
+      "ok": true,
+      "code": 0,
+      "elapsedMs": 254,
+      "stdoutTail": "\n> veridion-public-risk-diagnostic@1.0.8-commercial-phase346-global-hardening-final clean:runtime\n> node scripts/clean-release-runtime.mjs\n\n{\n  \"ok\": true,\n  \"phase\": \"phase322-clean-release-runtime-state-excluded\",\n  \"retained\": [\n    \"runtime/data/db.seed.json\"\n  ],\n  \"removedActiveState\": [\n    \"runtime/uploads\",\n    \"runtime/backups\",\n    \"runtime/reports\"\n  ],\n  \"note\": \"Release packages must not include local runtime state or runtime-test-* directories. Server recreates local runtime files on first non-commercial JSON-mode start; commercial mode must use PostgreSQL/Redis/object storage.\"\n}\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "check-runtime-clean",
+      "ok": true,
+      "code": 0,
+      "elapsedMs": 60,
+      "stdoutTail": "{\n  \"ok\": true,\n  \"checked\": \"runtime-clean-release\",\n  \"mode\": \"active-runtime-state-and-runtime-test-excluded\",\n  \"phase\": \"phase322\"\n}\n",
+      "stderrTail": ""
+    }
+  ]
+}

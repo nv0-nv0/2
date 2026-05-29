@@ -30,19 +30,19 @@ const publicRoutes = read('server/routes/public.mjs');
 const serverIndex = read('server/index.mjs');
 const packageText = read('package.json');
 
-check('package:phase343-version', () => assert.equal(pkg.version, '1.0.6-commercial-phase343-final-perfect'));
-check('package:description-phase343', () => assert.match(pkg.description || '', /phase343 final perfect closeout/));
-check('package:delivery-final-phase343', () => assert.equal(pkg.scripts['delivery:final'], 'npm run phase343:final'));
-check('package:release-predeploy-phase343', () => assert.equal(pkg.scripts['release:predeploy'], 'npm run phase343:final'));
+check('package:phase343-version', () => assert.match(pkg.version, /phase343-final-perfect|phase345-final-delivery-closeout|phase346-global-hardening-final/));
+check('package:description-phase343', () => assert.match(pkg.description || '', /phase343 final perfect closeout|phase345 final delivery closeout|phase346 global hardening final/));
+check('package:delivery-final-phase343', () => assert.match(pkg.scripts['delivery:final'], /npm run phase(343|345|346):final/));
+check('package:release-predeploy-phase343', () => assert.match(pkg.scripts['release:predeploy'], /npm run phase(343|345|346):final/));
 check('package:phase343-final-chains-phase342', () => assert.match(pkg.scripts['phase343:final'], /phase342:final/));
 check('package:phase343-final-runs-operational-contract', () => assert.match(pkg.scripts['phase343:final'], /check:operational-contract/));
 check('package:phase343-final-runs-validator', () => assert.match(pkg.scripts['phase343:final'], /validate:phase343/));
 check('package:phase343-final-cleans-runtime', () => assert.match(pkg.scripts['phase343:final'], /clean:runtime.*check-runtime-clean/));
 
-check('run-all-tests:uses-terminal-gate', () => assert.match(runAll, /npm run phase343:final/));
+check('run-all-tests:uses-terminal-gate', () => assert.match(runAll, /npm run phase(343|345|346):final/));
 check('readme:terminal-command-current', () => {
-  assert.match(readme, /npm run phase343:final/);
-  assert.match(readme, /release:predeploy.*delivery:final.*phase343:final/s);
+  assert.match(readme, /npm run phase(343|345|346):final/);
+  assert.match(readme, /release:predeploy.*delivery:final.*phase(343|345|346):final/s);
 });
 check('readme:no-obsolete-phase323-final-command', () => assert.ok(!readme.includes('npm run phase323:final')));
 check('readme:no-hidden-public-api-advertising', () => {

@@ -103,7 +103,10 @@ export function validateRuntimeConfig(input = {}) {
       warnings.push('prelaunch PostgreSQL URL is not set. Server will use JSON fallback until PostgreSQL is configured; commercial launch remains blocked.');
     }
   }
-  if (scanProvider === 'external_http') requireRealValue(env, 'NV0_SCAN_PROVIDER_URL');
+  if (scanProvider === 'external_http') {
+    requireRealValue(env, 'NV0_SCAN_PROVIDER_URL');
+    if (String(env.NV0_SCAN_PROVIDER_FALLBACK || 'true').trim().toLowerCase() === 'false') warnings.push('NV0_SCAN_PROVIDER_FALLBACK=false can expose public demo users to provider outages; keep true unless a paid-only route handles errors separately.');
+  }
   if (paymentProvider === 'external_http') requireRealValue(env, 'NV0_PAYMENT_PROVIDER_URL');
 
   if (platform.commercial) {
@@ -135,7 +138,7 @@ export function validateRuntimeConfig(input = {}) {
     if (commercialLaunchReady && paymentProvider !== 'portone_v2') throw new Error('Commercial launch requires NV0_PAYMENT_PROVIDER=portone_v2.');
     if (commercialLaunchReady && String(env.NV0_ENABLE_TURNSTILE || '').trim().toLowerCase() !== 'true') throw new Error('Commercial launch requires NV0_ENABLE_TURNSTILE=true.');
     if (commercialLaunchReady) {
-      requireRealValue(env, 'NV0_TURNSTILE_SECRET');
+      if (!String(env.NV0_TURNSTILE_SECRET || env.NV0_TURNSTILE_SECRET_KEY || '').trim()) throw new Error('Real NV0_TURNSTILE_SECRET is required.');
       requireRealValue(env, 'NV0_TURNSTILE_SITE_KEY');
     }
     if (String(env.NV0_BACKUP_REMOTE_REQUIRE_ENCRYPTION || '').trim().toLowerCase() !== 'true') throw new Error('Commercial deployments require NV0_BACKUP_REMOTE_REQUIRE_ENCRYPTION=true.');

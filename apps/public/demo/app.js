@@ -109,7 +109,15 @@ async function jsonFetch(path, options = {}) {
   try {
     const res = await fetch(path, { ...options, signal: controller.signal, credentials: options.credentials || 'same-origin' });
     const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(data.error || `요청 실패 (${res.status})`);
+    if (!res.ok) {
+      const serverError = typeof data.error === 'string' ? data.error : (data.error?.message || data.message || `요청 실패 (${res.status})`);
+      const requestId = data.requestId || data.meta?.requestId || data.error?.requestId || '';
+      const err = new Error(requestId ? `${serverError} · 오류코드 ${requestId}` : serverError);
+      err.status = res.status;
+      err.code = data.code || data.error?.code || '';
+      err.requestId = requestId;
+      throw err;
+    }
     return data;
   } catch (error) {
     if (error.name === 'AbortError') throw new Error('응답 시간이 초과되었습니다. 네트워크 또는 서버 상태를 확인한 뒤 다시 실행하세요.');
@@ -451,7 +459,7 @@ function renderResultHero(view) {
       <h2>${escapeHtml(view.health.headline)}</h2>
       <p>${escapeHtml(view.summary)}</p>
       <div class="result-url">${escapeHtml(view.target)}</div>
-      <small>진단 시각 ${escapeHtml(formatDate(view.generatedAt))}</small>
+      <small>진단 시각 ${escapeHtml(formatDate(view.generatedAt))}${view.requestId ? ` · 문의 코드 ${escapeHtml(view.requestId)}` : ''}</small>
     </div>
     <div class="score-orbit" style="--score:${escapeAttr(view.health.percent)}">
       <div class="score-ring" aria-label="개선 우선도 ${escapeAttr(scoreText)}점"><em>개선 우선도</em><strong>${escapeHtml(scoreText)}</strong><span>/ 100</span></div>
@@ -464,6 +472,7 @@ function renderMetricStrip(view) {
     <article><span>추천 상품</span><strong>${escapeHtml(view.recommendedPlan)}</strong><small>현재 개선 우선도 기준</small></article>
     <article><span>잠금 해제 항목</span><strong>${escapeHtml(view.lockedCount)}</strong><small>회원/유료 상세에서 확인</small></article>
     <article><span>직접 확인 필요</span><strong>${escapeHtml(view.scoreModel?.manualReviewCount ?? 0)}개</strong><small>직접 확인 필요 항목</small></article>
+    <article><span>문의 코드</span><strong>${escapeHtml(view.requestId || '정상')}</strong><small>오류 문의·재현 추적용</small></article>
   </section>`;
 }
 
@@ -792,10 +801,13 @@ async function runScan() {
     const isTurnstile = /turnstile|보안|검증/i.test(message);
     const isServer = /500|502|503|서버|timeout|초과/i.test(message);
     const fallback = buildLocalFallbackScan(normalizedTarget, message);
+    fallback.requestId = err?.requestId || fallback.requestId;
+    fallback.errorCode = err?.code || '';
     if (!session.authenticated) setUsage(getUsage() + 1);
     setCachedDemoResult(normalizedTarget, fallback);
     saveScan(fallback);
-    setState('서버 응답이 지연되어 로컬 안전 결과를 표시했습니다. 다시 실행하면 서버 결과로 갱신됩니다.', 'warn');
+    const supportCode = fallback.requestId ? ` · 문의 코드 ${fallback.requestId}` : '';
+    setState(`${isServer ? '서버 응답이 지연되어' : isTurnstile ? '보안 확인이 완료되지 않아' : '요청 처리 중 문제가 있어'} 로컬 안전 결과를 표시했습니다.${supportCode} 다시 실행하면 서버 결과로 갱신됩니다.`, 'warn');
     renderResult(fallback);
     guard.reset?.();
   } finally {

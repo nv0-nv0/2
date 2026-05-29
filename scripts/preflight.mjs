@@ -79,6 +79,7 @@ if (commercial || env.NODE_ENV === 'production') {
   if (commercialLaunchReady && env.NV0_PAYMENT_PROVIDER !== 'portone_v2') errors.push('NV0_PAYMENT_PROVIDER must be portone_v2');
   if (prelaunch && env.NV0_PAYMENT_PROVIDER !== 'disabled') errors.push('NV0_PAYMENT_PROVIDER must be disabled when NV0_DEPLOYMENT_STAGE=prelaunch');
   if (env.NV0_SCAN_PROVIDER !== 'external_http') errors.push('NV0_SCAN_PROVIDER must be external_http');
+  if (String(env.NV0_SCAN_PROVIDER_FALLBACK || 'true').trim().toLowerCase() === 'false') errors.push('NV0_SCAN_PROVIDER_FALLBACK must stay true for public demo outage protection');
   const publicKeys = ['NV0_PUBLIC_BASE_URL','NV0_SUPPORT_EMAIL','NV0_HOSTING_PROVIDER','NV0_CUSTOMER_SERVICE_PHONE','NV0_PRIVACY_OFFICER_EMAIL','NV0_SMTP_URL','NV0_ADMIN_IP_ALLOWLIST'];
   const launchBusinessKeys = ['NV0_BUSINESS_TRADE_NAME','NV0_BUSINESS_REPRESENTATIVE','NV0_BUSINESS_REGISTRATION_NUMBER','NV0_BUSINESS_ADDRESS'];
   if (commercialLaunchReady) {
@@ -95,7 +96,7 @@ if (commercial || env.NODE_ENV === 'production') {
 
 if (String(env.NV0_ENABLE_TURNSTILE) === 'true') {
   required('NV0_TURNSTILE_SITE_KEY');
-  required('NV0_TURNSTILE_SECRET');
+  if (!String(env.NV0_TURNSTILE_SECRET || env.NV0_TURNSTILE_SECRET_KEY || '').trim()) errors.push('NV0_TURNSTILE_SECRET is required');
 }
 if (String(env.NV0_TRUST_PROXY_HEADERS) !== 'true') {
   warnings.push('NV0_TRUST_PROXY_HEADERS is not true; Cloudflare/Coolify forwarded proto and client IP may not be trusted');

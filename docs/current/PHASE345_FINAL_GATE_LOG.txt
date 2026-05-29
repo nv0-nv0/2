@@ -1,0 +1,59 @@
+PASS validate:phase340 312ms
+
+PASS check:syntax 299ms
+
+PASS test 315ms
+
+PASS test:e2e 353ms
+
+PASS check:pages 462ms
+
+PASS test:routes 338ms
+
+PASS check:links 311ms
+
+PASS smoke 1027ms
+
+PASS test:diagnose-fallback 4078ms
+
+PASS check:responsive-contract 300ms
+
+PASS check:performance-budget 282ms
+
+PASS verify:security 335ms
+
+PASS check:public-api-isolation 775ms
+
+PASS validate:deploy 314ms
+
+PASS check:release-secret-hygiene 349ms
+
+PASS validate:phase325 699ms
+
+PASS validate:phase326 383ms
+
+PASS validate:phase328 402ms
+
+PASS validate:phase329 438ms
+
+PASS validate:phase330 1101ms
+
+PASS validate:phase337 279ms
+
+PASS validate:phase341 654ms
+
+PASS validate:phase342 308ms
+
+PASS check:operational-contract 304ms
+
+PASS validate:phase343 278ms
+
+PASS test:public-health-contract 561ms
+
+PASS validate-prod-env-ci-check 80ms
+
+PASS validate:phase345 255ms
+
+PASS clean:runtime 263ms
+
+PASS check-runtime-clean 73ms

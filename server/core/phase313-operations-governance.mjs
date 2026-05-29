@@ -660,7 +660,7 @@ export const PHASE313_IMPROVEMENT_BACKLOG = Object.freeze([
 export function buildPhase313GovernanceSnapshot({ privacy = {}, readiness = null, env = process.env } = {}) {
   const commercialLaunchReady = String(env.NV0_COMMERCIAL_LAUNCH_READY || '').toLowerCase() === 'true';
   const commercialTarget = String(env.NV0_PLATFORM_TARGET || '').toLowerCase() === 'commercial';
-  const turnstileConfigured = String(env.NV0_ENABLE_TURNSTILE || '').toLowerCase() === 'true' && !!String(env.NV0_TURNSTILE_SECRET || '').trim() && !!String(env.NV0_TURNSTILE_SITE_KEY || '').trim();
+  const turnstileConfigured = String(env.NV0_ENABLE_TURNSTILE || '').toLowerCase() === 'true' && !!String(env.NV0_TURNSTILE_SECRET || env.NV0_TURNSTILE_SECRET_KEY || '').trim() && !!String(env.NV0_TURNSTILE_SITE_KEY || '').trim();
   const backupEncryptionConfigured = String(env.NV0_BACKUP_REMOTE_REQUIRE_ENCRYPTION || '').toLowerCase() === 'true' && !!String(env.NV0_BACKUP_ENCRYPTION_SECRET || '').trim();
   const controls = [
     { key: 'privacy_minimization', ok: privacy?.piiCollection === 'minimum_required_only', label: '개인정보 최소 수집' },
