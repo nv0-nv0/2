@@ -1,5 +1,6 @@
 import { mountTurnstile } from '/shared/turnstile.js';
 import { escapeAttr, escapeHtml, formatWon, renderList } from '/shared/html.js';
+import { getCommercialOffer } from '/shared/product-catalog.mjs';
 
 const state = document.getElementById('demoState');
 const result = document.getElementById('demoResult');
@@ -9,9 +10,13 @@ const targetInput = document.getElementById('targetUrl');
 const scanBtn = document.getElementById('scanBtn');
 const retryBtn = document.getElementById('retryBtn');
 const unlockBtn = document.getElementById('unlockBtn');
+const unifiedDiagnosisForm = document.getElementById('unifiedDiagnosisForm');
+const resultActionHint = document.getElementById('resultActionHint');
+const resultActionGroup = retryBtn?.closest('.bridge-actions') || unlockBtn?.closest('.bridge-actions') || null;
 const params = new URLSearchParams(location.search);
 if (params.get('target') && targetInput) targetInput.value = params.get('target');
 
+const DIAGNOSIS_CTA_COPY = '사이트 무료 진단 실행';
 const FREE_LIMIT = 3;
 const REQUEST_TIMEOUT_MS = 18000;
 const DEMO_CACHE_TTL_MS = 5 * 60 * 1000;
@@ -32,6 +37,10 @@ let guard = { enabled: false, ready: false, getToken: () => '', reset: () => {} 
 let progressTimer = null;
 let progressStartedAt = 0;
 let progressIndex = 0;
+const REPORT_OFFER = getCommercialOffer('Report');
+const EXPERT_OFFER = getCommercialOffer('Expert');
+const REPORT_LABEL = REPORT_OFFER ? `${REPORT_OFFER.title} ${formatWon(REPORT_OFFER.price)}원` : '기본 리포트 49,000원';
+const EXPERT_LABEL = EXPERT_OFFER ? `${EXPERT_OFFER.title} ${formatWon(EXPERT_OFFER.price)}원` : '전문가 플랜 149,000원';
 
 function setState(message, mode = 'muted') {
   if (!state) return;
@@ -93,15 +102,35 @@ function updateBadge() {
   if (badgeLead) badgeLead.innerHTML = `<strong>오늘 남은 비회원 무료 진단 ${freeUsage}회</strong>`;
   if (badge) badge.textContent = `비회원은 하루 최대 ${FREE_LIMIT}회까지 이용할 수 있습니다.`;
 }
+function setActionEnabled(button, enabled, enabledText, disabledText) {
+  if (!button) return;
+  button.disabled = !enabled;
+  button.setAttribute('aria-disabled', enabled ? 'false' : 'true');
+  if (enabledText && disabledText) button.textContent = enabled ? enabledText : disabledText;
+}
+function updateResultActions(hasResult = Boolean(lastScan || getSavedScanFromStorage())) {
+  const showActions = Boolean(hasResult) && !isScanning;
+  if (resultActionGroup) {
+    resultActionGroup.hidden = !showActions;
+    resultActionGroup.setAttribute('aria-hidden', showActions ? 'false' : 'true');
+  }
+  if (resultActionHint) {
+    resultActionHint.hidden = showActions;
+    resultActionHint.setAttribute('aria-hidden', showActions ? 'true' : 'false');
+  }
+  setActionEnabled(retryBtn, showActions, '다시 진단하기', '다시 진단하기');
+  setActionEnabled(unlockBtn, showActions, '결과 저장하고 이어보기', '결과 저장하고 이어보기');
+}
 function setBusy(flag) {
   isScanning = flag;
-  [scanBtn, retryBtn].forEach((button) => {
-    if (!button) return;
-    button.disabled = flag;
-    button.setAttribute('aria-busy', flag ? 'true' : 'false');
-  });
+  if (scanBtn) {
+    scanBtn.disabled = flag;
+    scanBtn.setAttribute('aria-busy', flag ? 'true' : 'false');
+  }
+  if (retryBtn) retryBtn.setAttribute('aria-busy', flag ? 'true' : 'false');
+  updateResultActions();
 }
-function saveScan(scan) { localStorage.setItem('nv0:lastScan', JSON.stringify(scan)); lastScan = scan; }
+function saveScan(scan) { localStorage.setItem('nv0:lastScan', JSON.stringify(scan)); lastScan = scan; updateResultActions(true); }
 function getSavedScanFromStorage() { try { return JSON.parse(localStorage.getItem('nv0:lastScan') || 'null'); } catch { return null; } }
 async function jsonFetch(path, options = {}) {
   const controller = new AbortController();
@@ -405,7 +434,7 @@ function fallbackConversionUrgency(view) {
     conversionBlockers: blockers,
     lostTrustSignals: [`발견 문제 ${issue}개`, `리스크 영역 ${area}개`, `점검 요소 ${elements}개`, `직접 확인 필요 ${manual}개`],
     primaryCta: '기본 리포트 결제하고 원인 확인',
-    secondaryCta: '전문가 리포트로 수정 문구까지 받기',
+    secondaryCta: `${EXPERT_OFFER?.title || '전문가 플랜'}으로 수정 문구까지 받기`,
     recommendedPlan: view.recommendedPlan,
     disclaimer: '리스크 점수는 법률 위반이나 법적 판단을 확정하는 값이 아니라 공개 화면 기준 보완 우선순위입니다.'
   };
@@ -435,7 +464,7 @@ function renderConversionUrgencyPanel(view) {
     <div class="crisis-blocker-grid">${blockers.slice(0, 5).map(item => `<article><b>${escapeHtml(item.label)}</b><strong>${escapeHtml(item.count)}개</strong><small>${escapeHtml(item.customerFeeling || '구매 망설임')}</small></article>`).join('')}</div>
     <div class="crisis-cta-box">
       <div><b>요약만 보면 방향만 압니다. 결제 후에는 실제 고칠 문장과 위치까지 열립니다.</b><p>전체 근거 · 수정 전후 문구 · 적용 위치 · 재검사 기준 · 사이트 맞춤 관리 문서를 한 번에 확인하세요.</p></div>
-      <div class="topnav"><a class="btn primary" href="${escapeAttr(checkoutHref)}">${escapeHtml(model.primaryCta || '기본 리포트 결제')}</a><a class="btn secondary" href="/checkout?plan=Expert&siteId=${escapeAttr(view.siteId)}">${escapeHtml(model.secondaryCta || '전문가 리포트 보기')}</a></div>
+      <div class="topnav"><a class="btn primary" href="${escapeAttr(checkoutHref)}">${escapeHtml(model.primaryCta || `${REPORT_OFFER?.title || '기본 리포트'} 결제`)}</a><a class="btn secondary" href="/checkout?plan=Expert&siteId=${escapeAttr(view.siteId)}">${escapeHtml(model.secondaryCta || `${EXPERT_OFFER?.title || '전문가 플랜'} 보기`)}</a></div>
     </div>
   </section>`;
 }
@@ -674,7 +703,14 @@ async function saveCurrentSite(scan) {
 }
 async function unlockSavedScan() {
   const scan = lastScan || getSavedScanFromStorage();
-  if (scan) renderResult(scan);
+  if (scan) {
+    renderResult(scan);
+    setState('저장된 최근 진단 결과를 같은 화면에 다시 표시했습니다.', 'success');
+    updateResultActions(true);
+    return;
+  }
+  setState('먼저 사이트 주소를 입력해 무료 진단을 실행하세요. 결과가 생성된 뒤 저장 결과를 다시 볼 수 있습니다.', 'warn');
+  updateResultActions(false);
 }
 
 function buildLocalFallbackScan(target, message = '') {
@@ -770,7 +806,7 @@ async function runScan() {
   const normalizedTarget = normalizeTarget(targetInput?.value);
   if (!isValidTarget(normalizedTarget)) { setState('유효한 사이트 주소를 입력하세요. 예: https://your-store.kr', 'warn'); setBusy(false); return; }
   if (!session.authenticated && getUsage() >= FREE_LIMIT) {
-    state.innerHTML = `오늘 비회원 요약 결과 횟수를 모두 사용했습니다. <a href="${escapeAttr(loginUrl())}">로그인·회원가입하면 계속 이용할 수 있습니다.</a>`;
+    if (state) state.innerHTML = `오늘 비회원 요약 결과 횟수를 모두 사용했습니다. <a href="${escapeAttr(loginUrl())}">로그인·회원가입하면 계속 이용할 수 있습니다.</a>`;
     setResultHtml('<div class="upgrade-box"><strong>비회원 이용 한도 초과</strong><p class="muted">로그인하면 무료진단 횟수 관리, 저장, 재검사를 계속 사용할 수 있습니다. 상세 결과는 결제 후 공개됩니다.</p></div>');
     setBusy(false);
     return;
@@ -816,10 +852,24 @@ async function runScan() {
 }
 
 // P0 safety: listeners are attached synchronously before Turnstile/session bootstrapping.
-scanBtn?.addEventListener('click', runScan);
+unifiedDiagnosisForm?.addEventListener('submit', (event) => {
+  event.preventDefault();
+  runScan();
+});
+scanBtn?.addEventListener('click', (event) => {
+  if (unifiedDiagnosisForm && event?.target?.type === 'submit') return;
+  runScan();
+});
+targetInput?.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter' && !unifiedDiagnosisForm) {
+    event.preventDefault();
+    runScan();
+  }
+});
 retryBtn?.addEventListener('click', runScan);
 unlockBtn?.addEventListener('click', unlockSavedScan);
 updateBadge();
+updateResultActions();
 setState('이메일을 먼저 요구하지 않습니다. 가능한 공개 항목은 자동 확인하고, 자동 확정 불가 영역은 명확히 표시합니다.');
 
 mountTurnstile({ containerId: 'turnstileBox', tokenInputId: 'turnstileToken', noticeId: 'turnstileState' })
@@ -976,9 +1026,9 @@ function renderValueComparison(view) {
 function renderCompletionScorecard(view) {
   const siteId = view.siteId ? `&siteId=${encodeURIComponent(view.siteId)}` : '';
   const rows = [
-    ['무료 진단', '먼저 확인', '고객이 결제 전 확인하는 기본 안내와 불안 요소를 빠르게 파악합니다.', '/products/veridion/demo'],
+    [DIAGNOSIS_CTA_COPY, '먼저 확인', '고객이 결제 전 확인하는 기본 안내와 불안 요소를 빠르게 파악합니다.', '/products/veridion/demo'],
     ['기본 리포트', '원인 확인', '문제 위치, 이유, 우선순위를 팀 공유가 쉬운 형태로 보여드립니다.', `/checkout?plan=Report${siteId}`],
-    ['전문가 리포트', '상세 개선안', '상세 근거와 전문가 해설, 맞춤 개선 방향을 확인합니다.', `/checkout?plan=Expert${siteId}`]
+    [EXPERT_OFFER?.title || '전문가 플랜', '상세 개선안', '상세 근거와 전문가 해설, 맞춤 개선 방향을 확인합니다.', `/checkout?plan=Expert${siteId}`]
   ];
   const gates = [
     '무료로 먼저 확인하고 필요한 결과물만 선택',
@@ -987,7 +1037,7 @@ function renderCompletionScorecard(view) {
     '자주 바뀌는 페이지의 안내 공백을 꾸준히 점검'
   ];
   return `<section class="vr-completion-scorecard vr-result-path" aria-label="무료 진단 이후 선택 가능한 결과물">
-    <div class="section-title"><span class="pill brand">다음 단계</span><h3>문제가 보이면, 필요한 결과물만 선택하세요</h3><p>무료 결과로 현재 상태를 먼저 보고, 고칠 필요가 보일 때만 기본 리포트·전문가 리포트 중 필요한 산출물만 선택하면 됩니다.</p></div>
+    <div class="section-title"><span class="pill brand">다음 단계</span><h3>문제가 보이면, 필요한 결과물만 선택하세요</h3><p>무료 결과로 현재 상태를 먼저 보고, 고칠 필요가 보일 때만 기본 리포트·전문가 플랜 중 필요한 산출물만 선택하면 됩니다.</p></div>
     <div class="vr-score-grid">${rows.map(([title, score, desc, href]) => `<article><b>${escapeHtml(title)}</b><strong>${escapeHtml(score)}</strong><p>${escapeHtml(desc)}</p><a href="${escapeAttr(href)}">자세히 보기</a></article>`).join('')}</div>
     <div class="vr-gate-list">${gates.map((item, index) => `<span><em>${escapeHtml(index + 1)}</em>${escapeHtml(item)}</span>`).join('')}</div>
   </section>`;
@@ -1273,7 +1323,7 @@ function renderDemoCountOnlyResult(view) {
     <div class="demo-result-explain-grid" aria-label="유료 전환 가치">
       ${topActions.map((item, index) => `<article><span class="pill gray">STEP ${escapeHtml(index + 1)}</span><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.nextStep || item.reason || '상세 리포트에서 적용 위치와 수정 기준을 확인하세요.')}</p></article>`).join('')}
     </div>
-    <div class="demo-paid-gate"><div><h3>상세 분석은 유료 리포트에서 열립니다</h3><p>무료 결과는 문제 개수와 방향을 보여주고, 유료 리포트는 페이지별 근거, 실제 문구, 수정 전후안, 우선순위 로드맵, 재점검 기준까지 제공합니다.</p></div><div class="vr-cta-row"><a class="btn primary" href="/checkout?plan=Report&siteId=${escapeAttr(view.siteId)}">기본 리포트 49,000원</a><a class="btn secondary" href="/checkout?plan=Expert&siteId=${escapeAttr(view.siteId)}">전문가 플랜 149,000원</a></div></div>
+    <div class="demo-paid-gate"><div><h3>상세 분석은 유료 리포트에서 열립니다</h3><p>무료 결과는 문제 개수와 방향을 보여주고, 유료 리포트는 페이지별 근거, 실제 문구, 수정 전후안, 우선순위 로드맵, 재점검 기준까지 제공합니다.</p></div><div class="vr-cta-row"><a class="btn primary" href="/checkout?plan=Report&siteId=${escapeAttr(view.siteId)}">${escapeHtml(REPORT_LABEL)}</a><a class="btn secondary" href="/checkout?plan=Expert&siteId=${escapeAttr(view.siteId)}">${escapeHtml(EXPERT_LABEL)}</a></div></div>
   </section>`;
 }
 
@@ -1285,7 +1335,7 @@ function renderPaidCleanResult(scan) {
   return `<section class="paid-result-clean" aria-label="유료 결과 화면">
     <div class="paid-result-hero"><div><span class="pill brand">유료 결과</span><h2>상세 근거와 개선안을 한 화면에서 확인하세요</h2><p>${escapeHtml(view.target)}</p></div><a class="btn secondary" href="/portal?siteId=${escapeAttr(view.siteId)}">고객 포털</a></div>
     <div class="paid-result-kpis"><article><span>종합 우선도</span><strong>${escapeHtml(view.riskScore ?? '-')}</strong><small>/100</small></article><article><span>리스크 영역</span><strong>${escapeHtml(buckets.areaCount)}</strong><small>상세 근거 포함</small></article><article><span>점검 요소</span><strong>${escapeHtml(buckets.totalElements)}</strong><small>수정 위치 포함</small></article><article><span>실행 과제</span><strong>${escapeHtml(actionRows.length)}</strong><small>우선순위 정렬</small></article></div>
-    <div class="paid-result-grid"><article class="paid-detail-panel"><h3>페이지별 상세 근거</h3>${details.slice(0, 8).map((item, index) => `<section class="paid-detail-row"><div><b>${index + 1}. ${escapeHtml(item.title)}</b><p>${escapeHtml(item.evidence || item.impact || '공개 페이지 기준 확인 항목입니다.')}</p></div><span class="pill ${priorityTone(item.priority)}">${escapeHtml(item.priority || 'P2')}</span></section>`).join('') || '<p class="muted">상세 항목이 준비되지 않았습니다.</p>'}</article><aside class="paid-action-panel"><h3>권장 실행 순서</h3>${actionRows.map((item, index) => `<div class="paid-action-row"><span>${index + 1}</span><div><b>${escapeHtml(item.title)}</b><small>${escapeHtml(item.nextStep || item.reason || '우선순위에 따라 적용하세요.')}</small></div></div>`).join('')}<div class="notice muted">전문가 리포트는 수정 문구, 적용 위치, 재검사 기준까지 포함합니다.</div></aside></div>
+    <div class="paid-result-grid"><article class="paid-detail-panel"><h3>페이지별 상세 근거</h3>${details.slice(0, 8).map((item, index) => `<section class="paid-detail-row"><div><b>${index + 1}. ${escapeHtml(item.title)}</b><p>${escapeHtml(item.evidence || item.impact || '공개 페이지 기준 확인 항목입니다.')}</p></div><span class="pill ${priorityTone(item.priority)}">${escapeHtml(item.priority || 'P2')}</span></section>`).join('') || '<p class="muted">상세 항목이 준비되지 않았습니다.</p>'}</article><aside class="paid-action-panel"><h3>권장 실행 순서</h3>${actionRows.map((item, index) => `<div class="paid-action-row"><span>${index + 1}</span><div><b>${escapeHtml(item.title)}</b><small>${escapeHtml(item.nextStep || item.reason || '우선순위에 따라 적용하세요.')}</small></div></div>`).join('')}<div class="notice muted">${escapeHtml(EXPERT_OFFER?.title || '전문가 플랜')}은 수정 문구, 적용 위치, 재검사 기준까지 포함합니다.</div></aside></div>
   </section>`;
 }
 

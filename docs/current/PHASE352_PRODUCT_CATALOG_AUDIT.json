@@ -1,0 +1,64 @@
+{
+  "generatedAt": "2026-05-31T04:43:41.320Z",
+  "version": "phase318-trustops-autopilot-commercial-model-v1",
+  "prices": {
+    "Free": 0,
+    "Report": 49000,
+    "FixPack": 79000,
+    "Monitoring": 59000,
+    "Expert": 149000,
+    "Agency": 499000
+  },
+  "offers": [
+    {
+      "code": "Report",
+      "title": "기본 리포트",
+      "billingType": "one_time",
+      "period": "1회",
+      "price": 49000,
+      "renewalMode": "none",
+      "refundRuleCode": "digital_report_one_time",
+      "deliveryMode": "portal_pdf_and_dashboard"
+    },
+    {
+      "code": "FixPack",
+      "title": "개선 문구팩",
+      "billingType": "one_time",
+      "period": "1회",
+      "price": 79000,
+      "renewalMode": "none",
+      "refundRuleCode": "digital_fix_pack_one_time",
+      "deliveryMode": "portal_copy_pack_and_pdf"
+    },
+    {
+      "code": "Monitoring",
+      "title": "월간 모니터링",
+      "billingType": "subscription",
+      "period": "월",
+      "price": 59000,
+      "renewalMode": "manual_renewal_until_recurring_billing_enabled",
+      "refundRuleCode": "monthly_monitoring_manual_renewal",
+      "deliveryMode": "portal_monitoring_and_digest"
+    },
+    {
+      "code": "Expert",
+      "title": "전문가 플랜",
+      "billingType": "subscription",
+      "period": "월",
+      "price": 149000,
+      "renewalMode": "manual_renewal_until_recurring_billing_enabled",
+      "refundRuleCode": "monthly_expert_manual_renewal",
+      "deliveryMode": "portal_dashboard_report_and_recurring_guidance"
+    },
+    {
+      "code": "Agency",
+      "title": "대행사 화이트라벨",
+      "billingType": "subscription",
+      "period": "월",
+      "price": 499000,
+      "renewalMode": "manual_renewal_until_recurring_billing_enabled",
+      "refundRuleCode": "monthly_agency_manual_renewal",
+      "deliveryMode": "agency_workspace_and_whitelabel_reports"
+    }
+  ]
+}

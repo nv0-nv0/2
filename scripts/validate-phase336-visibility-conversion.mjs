@@ -17,7 +17,7 @@ check('arc-no-broken-half-shape', css.includes('conic-gradient(var(--vr-success-
 const board = read('apps/public/board/index.html');
 check('board-indexable-static-articles', (board.match(/itemscope itemtype="https:\/\/schema.org\/Article"/g) || []).length >= 3);
 check('board-seo-meta', board.includes('meta name="robots" content="index,follow') && board.includes('rel="canonical"'));
-check('board-cta-structure', board.includes('무료 진단 시작') && (board.includes('요금제 보기') || board.includes('리포트 요금 보기')) && board.includes('검색 로봇'));
+check('board-cta-structure', board.includes('사이트 무료 진단 실행') && (board.includes('요금제 보기') || board.includes('리포트 요금 보기')) && board.includes('검색 로봇'));
 check('board-no-old-cadence-text', !/20분에\s*1회|20분\s*주기|자동\s*발행|운영\s*큐|백로그|TrustOps|rollback|canary|sentinel/i.test(board));
 
 const boardJs = read('apps/public/board/app.js');
@@ -30,7 +30,7 @@ for (const file of ['apps/public/veridion-demo/index.html','apps/public/demo/ind
   check(`${file}:demo-preview-grid`, html.includes('demo-preview-grid') && html.includes('기본 리포트'));
   check(`${file}:no-empty-demo`, !html.includes('정보가 전혀 없습니다'));
 }
-const demoJs = read('apps/public/veridion-demo/app.js');
+const demoJs = read('apps/public/veridion-demo/app.js') + '\n' + read('apps/public/demo/app.js');
 check('demo-free-result-more-informative', demoJs.includes('고객이 결제 전에 불안해할 지점을 먼저 보여드립니다') && demoJs.includes('demo-result-explain-grid'));
 check('demo-paid-gate-clear', demoJs.includes('상세 분석은 유료 리포트에서 열립니다') && demoJs.includes('페이지별 근거'));
 

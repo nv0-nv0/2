@@ -32,14 +32,14 @@ const freeDiscovery = read('server/core/free-auto-discovery.mjs');
 const phase340Validator = read('scripts/validate-phase340-redteam-closeout.mjs');
 const phase341Validator = read('scripts/validate-phase341-final-closeout.mjs');
 
-check('package:phase342-version', () => assert.match(pkg.version, /phase342-merged-best|phase343-final-perfect|phase345-final-delivery-closeout|phase346-global-hardening-final/));
-check('package:delivery-final-current', () => assert.ok(['npm run phase342:final','npm run phase343:final','npm run phase345:final', 'npm run phase346:final'].includes(pkg.scripts['delivery:final'])));
-check('package:release-predeploy-current', () => assert.ok(['npm run phase342:final','npm run phase343:final','npm run phase345:final', 'npm run phase346:final'].includes(pkg.scripts['release:predeploy'])));
+check('package:phase342-version', () => assert.match(pkg.version, /phase342-merged-best|phase343-final-perfect|phase345-final-delivery-closeout|phase346-global-hardening-final|phase347-unified-diagnosis-final|phase348-final-unified-engine-closeout|phase349-customer-journey-closeout|phase350-global-cta-semantics-closeout|phase351-prompt-full-sweep-closeout/));
+check('package:delivery-final-current', () => assert.ok(['npm run phase342:final','npm run phase343:final','npm run phase345:final', 'npm run phase346:final', 'npm run phase347:final', 'npm run phase348:final', 'npm run phase349:final', 'npm run phase350:final'].includes(pkg.scripts['delivery:final'])));
+check('package:release-predeploy-current', () => assert.ok(['npm run phase342:final','npm run phase343:final','npm run phase345:final', 'npm run phase346:final', 'npm run phase347:final', 'npm run phase348:final', 'npm run phase349:final', 'npm run phase350:final'].includes(pkg.scripts['release:predeploy'])));
 check('package:phase342-chains-phase341', () => assert.match(pkg.scripts['phase342:final'], /phase341:final/));
 check('package:phase342-runs-validator', () => assert.match(pkg.scripts['phase342:final'], /validate:phase342/));
 check('validators:accept-phase342', () => {
-  assert.match(phase340Validator, /phase342-merged-best|phase343-final-perfect|phase345-final-delivery-closeout|phase346-global-hardening-final/);
-  assert.match(phase341Validator, /phase342-merged-best|phase343-final-perfect|phase345-final-delivery-closeout|phase346-global-hardening-final/);
+  assert.match(phase340Validator, /phase342-merged-best|phase343-final-perfect|phase345-final-delivery-closeout|phase346-global-hardening-final|phase347-unified-diagnosis-final|phase348-final-unified-engine-closeout|phase349-customer-journey-closeout|phase350-global-cta-semantics-closeout|phase351-prompt-full-sweep-closeout/);
+  assert.match(phase341Validator, /phase342-merged-best|phase343-final-perfect|phase345-final-delivery-closeout|phase346-global-hardening-final|phase347-unified-diagnosis-final|phase348-final-unified-engine-closeout|phase349-customer-journey-closeout|phase350-global-cta-semantics-closeout|phase351-prompt-full-sweep-closeout/);
 });
 
 check('plans:four-tier-commercial-structure', () => {
@@ -65,7 +65,7 @@ const insightSlugs = [
 ];
 check('board:links-to-six-static-insight-slugs', () => {
   for (const slug of insightSlugs) assert.ok(board.includes(slug), slug);
-  ['체크리스트','상세 보기','난이도','무료 진단 시작'].forEach(token => assert.ok(board.includes(token), token));
+  ['체크리스트','상세 보기','난이도','사이트 무료 진단 실행'].forEach(token => assert.ok(board.includes(token), token));
 });
 check('insights:static-slug-files-exist', () => {
   for (const slug of insightSlugs) {

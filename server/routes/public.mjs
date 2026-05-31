@@ -41,6 +41,7 @@ export function createPublicRouteHandler(ctx) {
   RELEASE_PHASE,
   REPORTS_DIR,
   RULES_VERSION,
+  BUILD_FINGERPRINT,
   SCAN_PROVIDER,
   STORAGE_MODE,
   TARGET_FETCH_AUTOMATION_LEVEL,
@@ -311,7 +312,7 @@ if (isLegacyDiagnosticStart) {
 return json(req, res, 200, cleanLegacyPublicTokens({ ok: true, status: 'completed', portalUrl, redirectUrl: portalUrl, reportUrl, result: resultPayload, scan: { ...resultPayload, id: scan.requestId, scanId: scan.requestId, domain: site.domain || scan.domain || scan.target, targetUrl: scan.target, status: 'completed' } }), { 'cache-control': 'no-store' });
 }
 if (pathname === '/api/public/config' && req.method === 'GET') {
-return json(req, res, 200, { ok: true, turnstileEnabled: TURNSTILE_PUBLIC_ENABLED, turnstileConfigured: TURNSTILE_CONFIGURED, turnstileSiteKey: TURNSTILE_PUBLIC_ENABLED ? TURNSTILE_SITE_KEY : '' });
+return json(req, res, 200, { ok: true, turnstileEnabled: TURNSTILE_PUBLIC_ENABLED, turnstileConfigured: TURNSTILE_CONFIGURED, turnstileSiteKey: TURNSTILE_PUBLIC_ENABLED ? TURNSTILE_SITE_KEY : '', buildFingerprint: BUILD_FINGERPRINT });
 }
 if (pathname === '/api/public/health' && req.method === 'GET') {
 return json(req, res, 200, { ok: true, area: 'public', service: 'VERIDION', time: nowIso() }, { 'cache-control': 'no-store' });
@@ -979,4 +980,3 @@ if (pathname === '/api/public/account/rescan' && req.method === 'POST') return h
 export async function handlePublicRoutes(req, res, ctx, state = {}) {
   return createPublicRouteHandler(ctx)(req, res, state);
 }
-

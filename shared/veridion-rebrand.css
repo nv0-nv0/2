@@ -169,3 +169,115 @@ body[data-veridion-rebrand="clean"] :is(.vr-dark-card,.vr-app-shell,.vr-footer) 
 @media (max-width:1000px){.vr-compare-table [role="row"]{grid-template-columns:1fr;min-width:0}}
 @media (max-width:760px){.vr-decision-grid-four,.vr-pricing-enhanced{grid-template-columns:1fr}}
 @media (max-width:640px){.vr-dark-row{word-break:break-word}.vr-topbar-inner{align-items:stretch}.vr-nav a{padding:0 12px}}
+
+/* Phase347 unified diagnosis flow + button contrast hardening */
+body[data-veridion-rebrand="clean"]{
+  --vr-button-bg:#075e54;
+  --vr-button-bg-hover:#05483f;
+  --vr-button-fg:#ffffff;
+  --vr-button-secondary-bg:#ffffff;
+  --vr-button-secondary-fg:#07111f;
+  --vr-button-secondary-border:#94a3b8;
+  --vr-button-disabled-bg:#d8e2ec;
+  --vr-button-disabled-fg:#475467;
+}
+body[data-veridion-rebrand="clean"] :is(button,.btn,.vr-btn,.vr-button,.vr-cta){
+  color:var(--vr-button-secondary-fg);
+  background:var(--vr-button-secondary-bg);
+  border:1px solid var(--vr-button-secondary-border);
+  font-weight:950;
+  text-shadow:none;
+}
+body[data-veridion-rebrand="clean"] :is(button:not(.secondary):not(.ghost),.btn.primary,.vr-btn.primary,.vr-button.primary,.vr-cta,.bridge-grid button,#scanBtn){
+  background:var(--vr-button-bg)!important;
+  color:var(--vr-button-fg)!important;
+  border-color:var(--vr-button-bg)!important;
+  box-shadow:0 16px 34px rgba(7,94,84,.22);
+}
+body[data-veridion-rebrand="clean"] :is(button:not(.secondary):not(.ghost),.btn.primary,.vr-btn.primary,.vr-button.primary,.vr-cta,.bridge-grid button,#scanBtn):hover{
+  background:var(--vr-button-bg-hover)!important;
+  border-color:var(--vr-button-bg-hover)!important;
+}
+body[data-veridion-rebrand="clean"] :is(button.secondary,.btn.secondary,.vr-btn.secondary,.vr-button.secondary,.bridge-actions button,.vr-button.ghost){
+  background:var(--vr-button-secondary-bg)!important;
+  color:var(--vr-button-secondary-fg)!important;
+  border-color:var(--vr-button-secondary-border)!important;
+  box-shadow:0 10px 22px rgba(7,17,31,.08);
+}
+body[data-veridion-rebrand="clean"] :is(.vr-hero,.vr-report-header,.vr-dark-card,.vr-app-shell,.vr-footer) :is(.vr-button.ghost,.btn.secondary,.vr-btn.secondary,.bridge-actions button){
+  background:rgba(255,255,255,.14)!important;
+  color:#ffffff!important;
+  border-color:rgba(255,255,255,.42)!important;
+}
+body[data-veridion-rebrand="clean"] :is(button,.btn,.vr-btn,.vr-button,.vr-cta):disabled,
+body[data-veridion-rebrand="clean"] :is(button,.btn,.vr-btn,.vr-button,.vr-cta)[aria-busy="true"]{
+  background:var(--vr-button-disabled-bg)!important;
+  color:var(--vr-button-disabled-fg)!important;
+  border-color:#c6d3df!important;
+  box-shadow:none!important;
+  cursor:not-allowed;
+}
+.vr-home-unified-diagnosis{
+  margin-top:28px;
+  text-align:left;
+  color:#09111f;
+}
+.vr-hero .vr-home-unified-diagnosis p,
+.vr-hero .vr-home-unified-diagnosis small,
+.vr-hero .vr-home-unified-diagnosis .muted{color:#344054}
+.vr-home-unified-diagnosis .vr-section-head{text-align:left;margin:0 0 16px;max-width:780px}
+.vr-home-unified-diagnosis .vr-section-head h2{font-size:clamp(24px,2.8vw,34px);color:#09111f}
+.vr-home-unified-diagnosis .vr-section-head p{font-size:16px;line-height:1.65;color:#344054}
+.vr-unified-diagnosis-form{margin-top:16px}
+.vr-unified-diagnosis-form input{min-height:52px;font-size:16px}
+.vr-unified-diagnosis-form button{min-height:52px;white-space:nowrap}
+.vr-home-unified-diagnosis .demo-preview-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.vr-home-unified-diagnosis .demo-result-surface{margin-top:18px}
+.vr-home-unified-diagnosis .demo-sample-result{margin-top:0}
+.vr-home-unified-diagnosis .bridge-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.vr-functional-bridge[data-unified-diagnosis="home-and-demo"]{scroll-margin-top:94px}
+body[data-veridion-rebrand="clean"] :is(.notice.warn,.vr-home-demo-state.warn){background:#fff8e6;color:#7a3d00;border:1px solid #f3c56b}
+body[data-veridion-rebrand="clean"] :is(.notice.success,.vr-home-demo-state.success){background:#e8f8f3;color:#064e3b;border:1px solid #8bd9c2}
+body[data-veridion-rebrand="clean"] :is(.notice.muted,.vr-home-demo-state.muted){background:#f8fbff;color:#344054;border:1px solid #d8e5f0}
+@media (max-width:900px){
+  .vr-home-unified-diagnosis .demo-preview-grid{grid-template-columns:1fr}
+  .vr-hero-inner{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  .vr-unified-diagnosis-form{grid-template-columns:1fr!important}
+  .vr-unified-diagnosis-form button,.vr-home-unified-diagnosis .bridge-actions button{width:100%}
+}
+
+/* Phase348 final unified engine closeout: result action state + canonical CTA polish */
+body[data-veridion-rebrand="clean"] [data-diagnosis-primary-action="true"]{
+  min-width:168px;
+  letter-spacing:-.01em;
+}
+body[data-veridion-rebrand="clean"] :is(#retryBtn,#unlockBtn)[disabled],
+body[data-veridion-rebrand="clean"] :is(#retryBtn,#unlockBtn)[aria-disabled="true"]{
+  background:#eef3f8!important;
+  color:#64748b!important;
+  border-color:#cbd5e1!important;
+  box-shadow:none!important;
+}
+body[data-veridion-rebrand="clean"] .vr-functional-bridge[data-unified-diagnosis="home-and-demo"] .bridge-actions{
+  align-items:center;
+}
+body[data-veridion-rebrand="clean"] .vr-functional-bridge[data-unified-diagnosis="home-and-demo"] #unlockBtn:not([disabled]){
+  background:#ffffff!important;
+  color:#075e54!important;
+  border-color:#0b8f71!important;
+}
+@media (max-width:640px){
+  body[data-veridion-rebrand="clean"] [data-diagnosis-primary-action="true"]{width:100%;min-width:0}
+}
+
+/* Phase349 customer journey closeout: hide unavailable result actions and keep conversion UI explicit */
+body[data-veridion-rebrand="clean"] .vr-functional-bridge[data-unified-diagnosis="home-and-demo"] .bridge-actions[hidden],
+body[data-veridion-rebrand="clean"] .vr-functional-bridge[data-unified-diagnosis="home-and-demo"] .result-action-hint[hidden]{display:none!important}
+body[data-veridion-rebrand="clean"] .vr-functional-bridge[data-unified-diagnosis="home-and-demo"] .result-action-hint{margin-top:12px}
+body[data-veridion-rebrand="clean"] .vr-functional-bridge[data-unified-diagnosis="home-and-demo"] .bridge-actions:not([hidden]){display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+body[data-veridion-rebrand="clean"] .vr-functional-bridge[data-unified-diagnosis="home-and-demo"] #unlockBtn:not([disabled]){font-weight:950}
+body[data-veridion-rebrand="clean"] .vr-functional-bridge[data-unified-diagnosis="home-and-demo"] #retryBtn:not([disabled]){background:#ffffff!important;color:#07111f!important;border-color:#94a3b8!important}
+body[data-veridion-rebrand="clean"] .vr-functional-bridge[data-unified-diagnosis="home-and-demo"] #unlockBtn:not([disabled]){background:#075e54!important;color:#ffffff!important;border-color:#075e54!important}
+@media (max-width:640px){body[data-veridion-rebrand="clean"] .vr-functional-bridge[data-unified-diagnosis="home-and-demo"] .bridge-actions:not([hidden]){display:grid}body[data-veridion-rebrand="clean"] .vr-functional-bridge[data-unified-diagnosis="home-and-demo"] .bridge-actions button{width:100%}}

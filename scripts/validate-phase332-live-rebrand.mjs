@@ -26,7 +26,7 @@ for (const slug of publicDirs) {
 }
 const combined = publicHtml.map(([,h])=>h).join('\n') + '\n' + ['apps/public/board/app.js','apps/public/portal/app.js','apps/public/home/app.js','apps/public/veridion-demo/app.js','apps/public/demo/app.js'].filter(exists).map(read).join('\n');
 for (const forbidden of ['phase319','phase320','phase321','프로덕션 센티널','런칭 컨트롤','TrustOps 오토파일럿','운영 큐','자동화 백로그','canary','rollback','live verification','SLA','보안 점수88','키워드</a>','API 키 관리']) check(`public-forbidden:${forbidden}`, !combined.includes(forbidden));
-for (const required of ['웹사이트의 신뢰와 준법을 진단하고','전환율을 높이세요','고객 포털','우선 조치 항목 TOP 5','사업자 정보와 고객지원 안내','정기 업데이트','무료 진단 시작']) check(`required-copy:${required}`, combined.includes(required));
+for (const required of ['웹사이트의 신뢰와 준법을 진단하고','전환율을 높이세요','고객 포털','우선 조치 항목 TOP 5','사업자 정보와 고객지원 안내','정기 업데이트','사이트 무료 진단 실행']) check(`required-copy:${required}`, combined.includes(required));
 const css = read('shared/veridion-rebrand.css');
 for (const token of ['VERIDION live rebrand hardening v332','.vr-page-hero','.vr-form','.vr-board-list','@media (max-width:760px)']) check(`css:${token}`, css.includes(token));
 const server = read('server/index.mjs');

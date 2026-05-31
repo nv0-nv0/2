@@ -25,11 +25,11 @@ const requiredEnv = [
 for (const key of requiredEnv) {
   if (!combinedEnv.includes(key)) failures.push(`missing required env contract: ${key}`);
 }
-const requiredScripts = ['phase323:final','validate:phase323','phase324:final','validate:phase324','phase342:final','validate:phase342','phase343:final','validate:phase343','phase345:final','validate:phase345','phase346:final','validate:phase346','release:predeploy','delivery:final','check:responsive-contract','check:operational-contract'];
+const requiredScripts = ['phase323:final','validate:phase323','phase324:final','validate:phase324','phase342:final','validate:phase342','phase343:final','validate:phase343','phase345:final','validate:phase345','phase346:final','validate:phase346','phase347:final','validate:phase347','phase348:final','validate:phase348','phase349:final','phase350:final','validate:phase349','validate:phase350','phase351:final','validate:phase351','release:predeploy','delivery:final','check:responsive-contract','check:operational-contract'];
 for (const key of requiredScripts) {
   if (!packageJson.scripts?.[key]) failures.push(`missing package script: ${key}`);
 }
-const allowedTerminalGates = ['npm run phase323:final','npm run phase324:final','npm run phase340:final','npm run phase341:final','npm run phase342:final','npm run phase343:final','npm run phase345:final','npm run phase346:final'];
+const allowedTerminalGates = ['npm run phase323:final','npm run phase324:final','npm run phase340:final','npm run phase341:final','npm run phase342:final','npm run phase343:final','npm run phase345:final','npm run phase346:final','npm run phase347:final','npm run phase348:final','npm run phase349:final', 'npm run phase350:final','npm run phase351:final'];
 if (!allowedTerminalGates.includes(packageJson.scripts?.['release:predeploy'])) failures.push('release:predeploy must point to a current terminal final gate');
 if (!allowedTerminalGates.includes(packageJson.scripts?.['delivery:final'])) failures.push('delivery:final must point to a current terminal final gate');
 for (const file of [
@@ -43,7 +43,7 @@ for (const file of [
 ]) {
   if (!exists(file)) failures.push(`missing operational artifact: ${file}`);
 }
-const report = { ok: failures.length === 0, phase: 'phase343-operational-readiness-contract', requiredEnvCount: requiredEnv.length, envTemplates: envTemplates.map(([file]) => file), terminalGate: packageJson.scripts?.['delivery:final'], failures };
+const report = { ok: failures.length === 0, phase: 'phase351-operational-readiness-contract', requiredEnvCount: requiredEnv.length, envTemplates: envTemplates.map(([file]) => file), terminalGate: packageJson.scripts?.['delivery:final'], failures };
 fs.mkdirSync(path.join(root, 'docs/current'), { recursive: true });
 fs.writeFileSync(path.join(root, 'docs/current/PHASE343_OPERATIONAL_READINESS_CONTRACT.json'), JSON.stringify(report, null, 2));
 if (failures.length) {

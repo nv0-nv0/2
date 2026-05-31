@@ -1,0 +1,18 @@
+{
+  "ok": true,
+  "phase": "phase351-ui-global-sweep",
+  "checked": {
+    "html": 24,
+    "js": 24,
+    "css": 25
+  },
+  "failed": 0,
+  "failures": [],
+  "notes": [
+    {
+      "checkedHtml": 24,
+      "checkedJs": 24,
+      "checkedCss": 25
+    }
+  ]
+}

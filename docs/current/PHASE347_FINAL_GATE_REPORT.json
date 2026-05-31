@@ -1,0 +1,87 @@
+{
+  "ok": true,
+  "phase": "phase347-unified-diagnosis-final",
+  "passed": 9,
+  "total": 9,
+  "inheritedPhase346Gate": true,
+  "addedPhase347Gates": [
+    "unified diagnosis flow contract",
+    "button contrast contract",
+    "page/e2e/responsive regression",
+    "phase347 validator"
+  ],
+  "results": [
+    {
+      "name": "phase346:final",
+      "ok": true,
+      "code": 0,
+      "elapsedMs": 15644,
+      "stdoutTail": "\n> veridion-public-risk-diagnostic@1.0.12-commercial-phase350-global-cta-semantics-closeout phase346:final\n> node scripts/run-phase346-final.mjs\n\n[PASS] phase345:final 13830ms\n[PASS] test:public-demo-error-contract 554ms\n[PASS] check:release-currentness 249ms\n[PASS] live:smoke 237ms\n[PASS] validate:phase346 233ms\n[PASS] clean:runtime 239ms\n[PASS] check-runtime-clean 65ms\n{\n  \"ok\": true,\n  \"phase\": \"phase346-global-hardening-final\",\n  \"passed\": 7,\n  \"total\": 7,\n  \"report\": \"docs/current/PHASE346_FINAL_GATE_REPORT.json\"\n}\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "test:unified-diagnosis-flow",
+      "ok": true,
+      "code": 0,
+      "elapsedMs": 251,
+      "stdoutTail": "\n> veridion-public-risk-diagnostic@1.0.12-commercial-phase350-global-cta-semantics-closeout test:unified-diagnosis-flow\n> node tests/unified-diagnosis-flow-contract.mjs\n\n{\n  \"ok\": true,\n  \"phase\": \"phase347-unified-diagnosis-flow-contract\",\n  \"checked\": 22,\n  \"failed\": 0,\n  \"failures\": []\n}\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "check:button-contrast",
+      "ok": true,
+      "code": 0,
+      "elapsedMs": 276,
+      "stdoutTail": "\n> veridion-public-risk-diagnostic@1.0.12-commercial-phase350-global-cta-semantics-closeout check:button-contrast\n> node scripts/check-button-contrast-contract.mjs\n\n{\n  \"ok\": true,\n  \"phase\": \"phase347-button-contrast-contract\",\n  \"checked\": 13,\n  \"failed\": 0,\n  \"failures\": []\n}\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "check:pages",
+      "ok": true,
+      "code": 0,
+      "elapsedMs": 266,
+      "stdoutTail": ": \"public\",\n      \"slug\": \"documents\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/solutions\",\n      \"area\": \"public\",\n      \"slug\": \"solutions\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/service\",\n      \"area\": \"public\",\n      \"slug\": \"service\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/products\",\n      \"area\": \"public\",\n      \"slug\": \"plans\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/demo\",\n      \"area\": \"public\",\n      \"slug\": \"demo\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/products/veridion/demo\",\n      \"area\": \"public\",\n      \"slug\": \"veridion-demo\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/plans\",\n      \"area\": \"public\",\n      \"slug\": \"plans\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/checkout\",\n      \"area\": \"public\",\n      \"slug\": \"checkout\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/portal\",\n      \"area\": \"public\",\n      \"slug\": \"portal\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/auth\",\n      \"area\": \"public\",\n      \"slug\": \"auth\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/terms\",\n      \"area\": \"public\",\n      \"slug\": \"terms\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/privacy\",\n      \"area\": \"public\",\n      \"slug\": \"privacy\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/refund\",\n      \"area\": \"public\",\n      \"slug\": \"refund\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/business-info\",\n      \"area\": \"public\",\n      \"slug\": \"business-info\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/risk_result.html\",\n      \"area\": \"public\",\n      \"slug\": \"demo\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/demo_risk_result.html\",\n      \"area\": \"public\",\n      \"slug\": \"veridion-demo\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/service_detail.html\",\n      \"area\": \"public\",\n      \"slug\": \"service\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/pricing.html\",\n      \"area\": \"public\",\n      \"slug\": \"plans\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/insight_board.html\",\n      \"area\": \"public\",\n      \"slug\": \"board\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/mypage.html\",\n      \"area\": \"public\",\n      \"slug\": \"portal\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/auth_management.html\",\n      \"area\": \"public\",\n      \"slug\": \"auth\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/risk-result\",\n      \"area\": \"public\",\n      \"slug\": \"demo\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/insight-board\",\n      \"area\": \"public\",\n      \"slug\": \"board\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/my-page\",\n      \"area\": \"public\",\n      \"slug\": \"portal\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/admin\",\n      \"area\": \"admin\",\n      \"slug\": \"gate\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/admin/console\",\n      \"area\": \"admin\",\n      \"slug\": \"console\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/admin/orders\",\n      \"area\": \"admin\",\n      \"slug\": \"orders\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/admin/publications\",\n      \"area\": \"admin\",\n      \"slug\": \"publications\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/admin/library\",\n      \"area\": \"admin\",\n      \"slug\": \"library\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/admin/settings\",\n      \"area\": \"admin\",\n      \"slug\": \"settings\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/admin/diagnostics\",\n      \"area\": \"admin\",\n      \"slug\": \"diagnostics\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/admin/console/orders\",\n      \"area\": \"admin\",\n      \"slug\": \"orders\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/admin/console/publications\",\n      \"area\": \"admin\",\n      \"slug\": \"publications\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/admin/console/library\",\n      \"area\": \"admin\",\n      \"slug\": \"library\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/admin/console/settings\",\n      \"area\": \"admin\",\n      \"slug\": \"settings\",\n      \"ok\": true\n    },\n    {\n      \"route\": \"/admin/console/diagnostics\",\n      \"area\": \"admin\",\n      \"slug\": \"diagnostics\",\n      \"ok\": true\n    }\n  ],\n  \"errors\": []\n}\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "test:e2e",
+      "ok": true,
+      "code": 0,
+      "elapsedMs": 278,
+      "stdoutTail": "\n> veridion-public-risk-diagnostic@1.0.12-commercial-phase350-global-cta-semantics-closeout test:e2e\n> node tests/e2e.mjs\n\nE2E passed: phase335 unified organism flow\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "check:responsive-contract",
+      "ok": true,
+      "code": 0,
+      "elapsedMs": 269,
+      "stdoutTail": "\n> veridion-public-risk-diagnostic@1.0.12-commercial-phase350-global-cta-semantics-closeout check:responsive-contract\n> node scripts/check-responsive-contract.mjs\n\n{\n  \"ok\": true,\n  \"phase\": \"phase334-responsive-contract\",\n  \"checkedFiles\": 72,\n  \"requiredBreakpoints\": [\n    \"max-width:1100px\",\n    \"max-width:760px\",\n    \"max-width:520px\"\n  ],\n  \"failures\": []\n}\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "validate:phase347",
+      "ok": true,
+      "code": 0,
+      "elapsedMs": 248,
+      "stdoutTail": "\n> veridion-public-risk-diagnostic@1.0.12-commercial-phase350-global-cta-semantics-closeout validate:phase347\n> node scripts/validate-phase347-unified-diagnosis.mjs\n\n{\n  \"ok\": true,\n  \"phase\": \"phase347-unified-diagnosis-final|phase348-final-unified-engine-closeout|phase349-customer-journey-closeout|phase350-global-cta-semantics-closeout|phase350-global-cta-semantics-closeout\",\n  \"checked\": 15,\n  \"failed\": 0,\n  \"failures\": []\n}\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "clean:runtime",
+      "ok": true,
+      "code": 0,
+      "elapsedMs": 241,
+      "stdoutTail": "\n> veridion-public-risk-diagnostic@1.0.12-commercial-phase350-global-cta-semantics-closeout clean:runtime\n> node scripts/clean-release-runtime.mjs\n\n{\n  \"ok\": true,\n  \"phase\": \"phase322-clean-release-runtime-state-excluded\",\n  \"retained\": [\n    \"runtime/data/db.seed.json\"\n  ],\n  \"removedActiveState\": [\n    \"runtime/uploads\",\n    \"runtime/backups\",\n    \"runtime/reports\"\n  ],\n  \"note\": \"Release packages must not include local runtime state or runtime-test-* directories. Server recreates local runtime files on first non-commercial JSON-mode start; commercial mode must use PostgreSQL/Redis/object storage.\"\n}\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "check-runtime-clean",
+      "ok": true,
+      "code": 0,
+      "elapsedMs": 64,
+      "stdoutTail": "{\n  \"ok\": true,\n  \"checked\": \"runtime-clean-release\",\n  \"mode\": \"active-runtime-state-and-runtime-test-excluded\",\n  \"phase\": \"phase322\"\n}\n",
+      "stderrTail": ""
+    }
+  ]
+}

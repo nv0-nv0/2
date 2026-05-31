@@ -1,7 +1,7 @@
 {
   "ok": true,
-  "phase": "phase345-final-delivery-closeout|phase346-global-hardening-final",
-  "checkedAt": "2026-05-29T00:56:58.564Z",
+  "phase": "phase345-final-delivery-closeout|phase346-global-hardening-final|phase347-unified-diagnosis-final|phase348-final-unified-engine-closeout|phase349-customer-journey-closeout|phase350-global-cta-semantics-closeout|phase350-global-cta-semantics-closeout",
+  "checkedAt": "2026-05-29T07:38:54.245Z",
   "total": 29,
   "passed": 29,
   "failed": 0,
@@ -10,7 +10,7 @@
     {
       "name": "version:phase345",
       "ok": true,
-      "detail": "1.0.8-commercial-phase346-global-hardening-final"
+      "detail": "1.0.12-commercial-phase350-global-cta-semantics-closeout"
     },
     {
       "name": "script:phase345-final-exists",

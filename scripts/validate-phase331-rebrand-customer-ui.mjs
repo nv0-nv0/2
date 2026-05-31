@@ -28,7 +28,7 @@ check('css:rebrand-system', css.includes('VERIDION Rebrand Design System'));
 for (const selector of ['.vr-topbar', '.vr-hero', '.vr-preview', '.vr-app-shell', '.vr-dashboard', '.vr-report-header', '.vr-footer']) {
   check(`css:${selector}`, css.includes(selector));
 }
-for (const copy of ['웹사이트의 신뢰와 준법을 진단하고', '전환율을 높이세요', '종합 신뢰 점수', '무료 진단 시작']) {
+for (const copy of ['웹사이트의 신뢰와 준법을 진단하고', '전환율을 높이세요', '종합 신뢰 점수', '사이트 무료 진단 실행']) {
   check(`home-copy:${copy}`, home.includes(copy));
 }
 for (const copy of ['고객 포털', '종합 점수 추이', '우선 조치 항목 TOP 5', '등록된 사이트', '이번 주 추천 조치']) {

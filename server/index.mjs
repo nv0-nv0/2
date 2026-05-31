@@ -56,6 +56,14 @@ const ENV_CONFIG = readEnvConfig(process.env);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, '..');
+function packageVersion() {
+  try {
+    const pkg = JSON.parse(fsSync.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
+    return pkg.version || 'unknown';
+  } catch {
+    return 'unknown';
+  }
+}
 function externalDurableRuntimeMode(env = process.env) {
   const platformTarget = String(env.NV0_PLATFORM_TARGET || 'commercial').trim().toLowerCase();
   const persistenceMode = String(env.NV0_PERSISTENCE_MODE || (platformTarget === 'commercial' ? 'postgres_primary' : 'json')).trim().toLowerCase();
@@ -220,6 +228,14 @@ const GEMINI_API_KEY = String(process.env.NV0_GEMINI_API_KEY || '').trim();
 const GEMINI_MODEL = String(process.env.NV0_GEMINI_MODEL || 'gemini-2.5-flash').trim();
 const AI_REVIEW_ENABLED = AI_REVIEW_PROVIDER === 'gemini' && !!GEMINI_API_KEY;
 const RELEASE_PHASE = 'commercial-final-phase180-quality-performance-functionality-max-phase181-zero-blocker-closeout';
+const BUILD_FINGERPRINT = Object.freeze({
+version: process.env.NV0_BUILD_VERSION || 'phase352-local-audit',
+releasePhase: RELEASE_PHASE,
+buildTime: process.env.NV0_BUILD_TIME || new Date().toISOString(),
+deploymentEnvironment: DEPLOYMENT_STAGE,
+canonicalDomain: process.env.NV0_PUBLIC_BASE_URL || BUSINESS_PROFILE.domain || '',
+commitOrRelease: process.env.NV0_COMMIT_SHA || process.env.NV0_RELEASE_ID || packageVersion()
+});
 const LEGAL_EVIDENCE_VERSION = process.env.NV0_LEGAL_EVIDENCE_VERSION || 'phase313-legal-evidence-v1';
 const PRIVACY_POLICY_VERSION = process.env.NV0_PRIVACY_POLICY_VERSION || LEGAL_EVIDENCE_VERSION;
 const TERMS_VERSION = process.env.NV0_TERMS_VERSION || LEGAL_EVIDENCE_VERSION;
@@ -1391,18 +1407,42 @@ function canonicalPagePath(urlPath = '/') {
 const aliases = {
 '/resources': '/guides',
 '/products': '/plans',
-'/risk_result.html': '/demo',
+'/risk_result.html': '/products/veridion/demo',
 '/demo_risk_result.html': '/products/veridion/demo',
 '/service_detail.html': '/service',
 '/pricing.html': '/plans',
 '/insight_board.html': '/board',
 '/mypage.html': '/portal',
 '/auth_management.html': '/auth',
-'/risk-result': '/demo',
+'/risk-result': '/products/veridion/demo',
+'/pricing': '/plans',
+'/contact': '/business-info',
+'/faq': '/board',
+'/about': '/business-info',
+'/privacy-policy': '/privacy',
+'/terms-of-use': '/terms',
+'/cancel': '/refund',
+'/return': '/refund',
+'/exchange': '/refund',
 '/insight-board': '/board',
 '/my-page': '/portal'
 };
 return aliases[urlPath] || urlPath || '/';
+}
+function canonicalRouteRedirect(urlPath = '/') {
+const aliases = {
+'/demo': '/products/veridion/demo',
+'/pricing': '/plans',
+'/contact': '/business-info',
+'/faq': '/board',
+'/about': '/business-info',
+'/privacy-policy': '/privacy',
+'/terms-of-use': '/terms',
+'/cancel': '/refund',
+'/return': '/refund',
+'/exchange': '/refund'
+};
+return aliases[urlPath] || null;
 }
 function routeMeta(urlPath) {
 const base = seoBaseUrl();
@@ -1668,6 +1708,11 @@ return `<nav class="admin-nav">
 </nav>`;
 }
 async function renderPage(urlPath, req, res) {
+const redirectPath = canonicalRouteRedirect(urlPath);
+if (redirectPath) {
+redirect(req, res, 301, redirectPath);
+return true;
+}
 const mapped = pageMap(urlPath);
 if (!mapped) return false;
 const [baseDir, slug] = mapped;
@@ -4127,6 +4172,7 @@ PUBLIC_SCAN_LIMIT,
 PUBLIC_SCAN_WINDOW_MS,
 READYZ_REDIS_STRICT,
 RELEASE_PHASE,
+BUILD_FINGERPRINT,
 REPORTS_DIR,
 RULES_VERSION,
 RUNTIME_DIR,
@@ -4333,6 +4379,7 @@ return {
   ready: true,
   runtimeWritable: true,
 privacy,
+  buildFingerprint: BUILD_FINGERPRINT,
   platformTarget: PLATFORM.target,
   deploymentStage: DEPLOYMENT_STAGE,
   commercialLaunchReady: COMMERCIAL_LAUNCH_READY,
@@ -4370,7 +4417,7 @@ try {
   readyzCache = null;
   const message = error?.message || 'readiness check failed';
   console.error(JSON.stringify({ level: 'error', event: 'readyz_failed', message, deploymentStage: DEPLOYMENT_STAGE, commercialLaunchReady: COMMERCIAL_LAUNCH_READY, prelaunchMode: PRELAUNCH_MODE, persistenceMode: PERSISTENCE_MODE, storageMode: STORAGE_MODE, redisStrict: READYZ_REDIS_STRICT }));
-  return json(req, res, 503, { ok: false, ready: false, runtimeWritable: false, error: message, stage: DEPLOYMENT_STAGE, prelaunchMode: PRELAUNCH_MODE, commercialLaunchReady: COMMERCIAL_LAUNCH_READY, redisStrict: READYZ_REDIS_STRICT }, { 'cache-control': 'no-store' });
+  return json(req, res, 503, { ok: false, ready: false, runtimeWritable: false, error: message, stage: DEPLOYMENT_STAGE, prelaunchMode: PRELAUNCH_MODE, commercialLaunchReady: COMMERCIAL_LAUNCH_READY, redisStrict: READYZ_REDIS_STRICT, buildFingerprint: BUILD_FINGERPRINT }, { 'cache-control': 'no-store' });
 }
 }
 
@@ -4401,6 +4448,7 @@ const integrations = strictHealthz
   : { process: { ok: true } };
 const payload = buildHealthDetails({ service: 'veridion', release: 'clean-rebrand', integrations });
 payload.readinessAdvisory = { commercialEnv: { ok: !PLATFORM.commercial || commercialEnvStatus.ok, mode: commercialEnvStatus.mode, missing: commercialEnvStatus.missing || [], warnings: commercialEnvStatus.warnings || [] }, deploymentRiskGuard: { ok: DEPLOYMENT_RISK_GUARD.ok, version: PHASE223_RISK_GUARD_VERSION }, strictHealthz };
+payload.buildFingerprint = BUILD_FINGERPRINT;
 return json(req, res, payload.ok ? 200 : 503, payload, { 'cache-control': 'no-store' });
 }
 if (pathname === '/readyz') return handleReadyz(req, res);

@@ -27,13 +27,13 @@ const server = read('server/index.mjs');
 const phase337Validator = read('scripts/validate-phase337-product-evolution.mjs');
 const phase340Validator = read('scripts/validate-phase340-redteam-closeout.mjs');
 
-check('package:phase341-version', () => assert.match(pkg.version, /phase341-final-closeout|phase342-merged-best|phase343-final-perfect|phase345-final-delivery-closeout|phase346-global-hardening-final/));
-check('package:delivery-final-current', () => assert.ok(['npm run phase341:final', 'npm run phase342:final', 'npm run phase343:final', 'npm run phase345:final', 'npm run phase346:final'].includes(pkg.scripts['delivery:final'])));
-check('package:release-predeploy-current', () => assert.ok(['npm run phase341:final', 'npm run phase342:final', 'npm run phase343:final', 'npm run phase345:final', 'npm run phase346:final'].includes(pkg.scripts['release:predeploy'])));
+check('package:phase341-version', () => assert.match(pkg.version, /phase341-final-closeout|phase342-merged-best|phase343-final-perfect|phase345-final-delivery-closeout|phase346-global-hardening-final|phase347-unified-diagnosis-final|phase348-final-unified-engine-closeout|phase349-customer-journey-closeout|phase350-global-cta-semantics-closeout|phase351-prompt-full-sweep-closeout/));
+check('package:delivery-final-current', () => assert.ok(['npm run phase341:final', 'npm run phase342:final', 'npm run phase343:final', 'npm run phase345:final', 'npm run phase346:final', 'npm run phase347:final', 'npm run phase348:final', 'npm run phase349:final', 'npm run phase350:final'].includes(pkg.scripts['delivery:final'])));
+check('package:release-predeploy-current', () => assert.ok(['npm run phase341:final', 'npm run phase342:final', 'npm run phase343:final', 'npm run phase345:final', 'npm run phase346:final', 'npm run phase347:final', 'npm run phase348:final', 'npm run phase349:final', 'npm run phase350:final'].includes(pkg.scripts['release:predeploy'])));
 check('package:phase341-final-chains-phase340', () => assert.match(pkg.scripts['phase341:final'], /phase340:final/));
 check('package:phase341-final-runs-validator', () => assert.match(pkg.scripts['phase341:final'], /validate:phase341/));
 check('validator:phase337-accepts-terminal-closeout', () => assert.match(phase337Validator, /terminal closeout version/));
-check('validator:phase340-accepts-phase341', () => assert.match(phase340Validator, /phase341-final-closeout|phase342-merged-best|phase343-final-perfect|phase345-final-delivery-closeout|phase346-global-hardening-final/));
+check('validator:phase340-accepts-phase341', () => assert.match(phase340Validator, /phase341-final-closeout|phase342-merged-best|phase343-final-perfect|phase345-final-delivery-closeout|phase346-global-hardening-final|phase347-unified-diagnosis-final|phase348-final-unified-engine-closeout|phase349-customer-journey-closeout|phase350-global-cta-semantics-closeout|phase351-prompt-full-sweep-closeout/));
 check('server:canonical-alias-function', () => assert.match(server, /function canonicalPagePath/));
 check('server:route-meta-uses-canonical-path', () => assert.match(server, /const canonicalPath = canonicalPagePath\(urlPath\)/));
 check('server:structured-data-uses-canonical-url', () => assert.match(server, /const pageUrl = meta\.canonical/));

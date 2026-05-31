@@ -73,13 +73,13 @@ function renderSummary(account = {}) {
 function renderSites(account = {}) {
   const sites = Array.isArray(account.savedSites) ? account.savedSites : [];
   if (!sites.length) {
-    setHtml('#portalAssetList', '<div class="vr-dark-table"><div class="vr-dark-row vr-dark-row-head"><span>사이트</span><span>URL</span><span>최근 진단일</span><span>종합 점수</span><span>상태</span><span>관리</span></div><div class="vr-dark-row"><b>샘플 쇼핑몰</b><span>https://example-store.kr</span><span>무료 진단 후 표시</span><strong>82/100</strong><span><em class="vr-chip success">샘플</em></span><span><a href="/products/veridion/demo">진단</a></span></div></div>');
+    setHtml('#portalAssetList', '<div class="vr-dark-table"><div class="vr-dark-row vr-dark-row-head"><span>사이트</span><span>URL</span><span>최근 진단일</span><span>종합 점수</span><span>상태</span><span>관리</span></div><div class="vr-dark-row"><b>샘플 쇼핑몰</b><span>https://example-store.kr</span><span>무료 진단 후 표시</span><strong>82/100</strong><span><em class="vr-chip success">샘플</em></span><span><a href="/products/veridion/demo">진단 리포트 보기</a></span></div></div>');
     return;
   }
   const rows = sites.slice(0, 8).map((site) => {
     const score = Number.isFinite(Number(site.latestRiskScore)) ? `${Math.round(Number(site.latestRiskScore))}/100` : '-';
     const health = healthFromScore(site.latestRiskScore);
-    return `<div class="vr-dark-row"><b>${escapeHtml(site.label || site.domain || '저장 사이트')}</b><span>${escapeHtml(site.domain || '')}</span><span>${escapeHtml(formatDate(site.lastScanAt))}</span><strong>${escapeHtml(score)}</strong><span><em class="vr-chip ${health.className}">${escapeHtml(health.label)}</em></span><span><a href="/products/veridion/demo?target=${encodeURIComponent(site.domain || '')}">진단</a></span></div>`;
+    return `<div class="vr-dark-row"><b>${escapeHtml(site.label || site.domain || '저장 사이트')}</b><span>${escapeHtml(site.domain || '')}</span><span>${escapeHtml(formatDate(site.lastScanAt))}</span><strong>${escapeHtml(score)}</strong><span><em class="vr-chip ${health.className}">${escapeHtml(health.label)}</em></span><span><a href="/products/veridion/demo?target=${encodeURIComponent(site.domain || '')}">진단 리포트 보기</a></span></div>`;
   }).join('');
   setHtml('#portalAssetList', `<div class="vr-dark-table"><div class="vr-dark-row vr-dark-row-head"><span>사이트</span><span>URL</span><span>최근 진단일</span><span>종합 점수</span><span>상태</span><span>관리</span></div>${rows}</div>`);
 }

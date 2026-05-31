@@ -25,7 +25,7 @@ const requiredFiles = [
 for (const file of requiredFiles) add(`exists:${file}`, exists(file));
 
 const pkg = JSON.parse(read('package.json'));
-add('package:clean-rebrand-version', /phase33[45]-(clean-rebrand|unified-organism)|phase340-redteam-100-closeout|phase341-final-closeout|phase342-merged-best|phase343-final-perfect|phase345-final-delivery-closeout|phase346-global-hardening-final/.test(pkg.version));
+add('package:clean-rebrand-version', /phase33[45]-(clean-rebrand|unified-organism)|phase340-redteam-100-closeout|phase341-final-closeout|phase342-merged-best|phase343-final-perfect|phase345-final-delivery-closeout|phase346-global-hardening-final|phase347-unified-diagnosis-final|phase348-final-unified-engine-closeout|phase349-customer-journey-closeout|phase350-global-cta-semantics-closeout|phase351-prompt-full-sweep-closeout|phase350-global-cta-semantics-closeout|phase351-prompt-full-sweep-closeout/.test(pkg.version));
 
 const appHtmlFiles = [];
 for (const area of ['apps/public', 'apps/admin']) {
@@ -64,7 +64,7 @@ add('public:no-broken-glyph-source', !/[▤☑⋮✓↗█░⚠◆▣⚖›🤖
 add('public:no-console-log', !/console\.log\(/.test(publicClient));
 add('portal:functional-ids-preserved', ['portalRiskGauge','saveSiteForm','portalFeed'].every(t => read('apps/public/portal/index.html').includes(t)));
 add('board:functional-ids-preserved', ['boardList','boardSearchForm','boardPagination'].every(t => read('apps/public/board/index.html').includes(t)));
-add('home:functional-ids-preserved', ['homeInstantDemoForm','homeTargetUrl','homeDemoResult'].every(t => read('apps/public/home/index.html').includes(t)));
+add('home:functional-ids-preserved', ['unifiedDiagnosisForm','targetUrl','demoResult','data-unified-diagnosis="home-and-demo"'].every(t => read('apps/public/home/index.html').includes(t)));
 
 const passed = checks.filter((check) => check.ok).length;
 const failed = checks.length - passed;

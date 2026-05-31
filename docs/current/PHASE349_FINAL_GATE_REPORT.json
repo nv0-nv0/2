@@ -1,0 +1,59 @@
+{
+  "ok": true,
+  "phase": "phase349-customer-journey-closeout",
+  "passed": 10,
+  "total": 10,
+  "failed": 0,
+  "results": [
+    {
+      "name": "phase348:final",
+      "ok": true,
+      "ms": 20077
+    },
+    {
+      "name": "check:customer-journey",
+      "ok": true,
+      "ms": 237
+    },
+    {
+      "name": "check:diagnosis-copy",
+      "ok": true,
+      "ms": 230
+    },
+    {
+      "name": "check:button-contrast",
+      "ok": true,
+      "ms": 206
+    },
+    {
+      "name": "check:pages",
+      "ok": true,
+      "ms": 258
+    },
+    {
+      "name": "test:e2e",
+      "ok": true,
+      "ms": 290
+    },
+    {
+      "name": "check:responsive-contract",
+      "ok": true,
+      "ms": 307
+    },
+    {
+      "name": "validate:phase349",
+      "ok": true,
+      "ms": 226
+    },
+    {
+      "name": "clean:runtime",
+      "ok": true,
+      "ms": 232
+    },
+    {
+      "name": "check-runtime-clean",
+      "ok": true,
+      "ms": 62
+    }
+  ]
+}

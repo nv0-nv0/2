@@ -9,7 +9,7 @@ const snapshot = buildCatalogConsistencySnapshot();
 const files = {
   server: read('server/index.mjs'),
   checkout: read('apps/public/checkout/app.js'),
-  demo: read('apps/public/veridion-demo/app.js'),
+  demo: read('apps/public/veridion-demo/app.js') + '\n' + read('apps/public/demo/app.js'),
   plans: read('apps/public/plans/index.html'),
   pricing: read('server/core/pricing-conversion-model.mjs'),
   readme: read('README.md')

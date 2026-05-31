@@ -75,7 +75,7 @@ function renderPosts(posts) {
       <p itemprop="description">${escapeHtml(summary)}</p>
       <div class="vr-tags">${tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join('')}</div>
       <div class="vr-post-body" itemprop="articleBody">${body}</div>
-      <div class="vr-post-cta"><a class="vr-btn primary" href="/products/veridion/demo">무료 진단 시작</a><a class="vr-btn" href="/plans">요금제 보기</a><a class="vr-btn" href="/portal">고객 포털</a></div>
+      <div class="vr-post-cta"><a class="vr-btn primary" href="/products/veridion/demo">사이트 무료 진단 실행</a><a class="vr-btn" href="/plans">요금제 보기</a><a class="vr-btn" href="/portal">고객 포털</a></div>
     </article>`;
   }).join('');
 }

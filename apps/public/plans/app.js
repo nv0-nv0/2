@@ -1,3 +1,5 @@
+import { getCommercialOffer, formatWon as formatCatalogWon } from '/shared/product-catalog.mjs';
+
 function normalizeDemoTarget(raw) {
   let value = String(raw || '').trim();
   if (!value) return '';
@@ -20,11 +22,27 @@ function showInputHint(input, message) {
   hint.textContent = message || '';
   hint.hidden = !message;
 }
+function populateCatalogCopy() {
+  const ctaCopy = {
+    Report: '기본 리포트 구매',
+    Expert: '전문가 플랜 시작'
+  };
+  document.querySelectorAll('[data-plan-code][data-plan-field]').forEach((node) => {
+    const code = node.getAttribute('data-plan-code');
+    const field = node.getAttribute('data-plan-field');
+    const offer = getCommercialOffer(code);
+    if (!offer) return;
+    if (field === 'title') node.textContent = offer.title;
+    if (field === 'priceLabel') node.textContent = `₩${formatCatalogWon(offer.price)}/${offer.period}`;
+    if (field === 'cta') node.textContent = ctaCopy[code] || `${offer.title} 시작`;
+  });
+}
 function bindInlineDemoTargetForwarding() {
   document.querySelectorAll('.cta-input, .hero-search').forEach((box) => {
     if (box.dataset.nv0ForwardBound === 'true') return;
     const input = box.querySelector('input');
     const link = box.querySelector('a[href*="/products/veridion/demo"]');
+    if (link) link.textContent = '사이트 무료 진단 실행';
     if (!input || !link) return;
     box.dataset.nv0ForwardBound = 'true';
     const go = (event) => {
@@ -50,5 +68,6 @@ function bindInlineDemoTargetForwarding() {
 }
 try {
   document.documentElement.dataset.pageReady = 'true';
+  populateCatalogCopy();
   bindInlineDemoTargetForwarding();
 } catch {}

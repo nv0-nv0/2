@@ -1,0 +1,59 @@
+{
+  "ok": true,
+  "phase": "phase348-final-unified-engine-closeout|phase349-customer-journey-closeout",
+  "passed": 10,
+  "total": 10,
+  "failed": 0,
+  "results": [
+    {
+      "name": "phase347:final",
+      "ok": true,
+      "ms": 17786
+    },
+    {
+      "name": "test:diagnosis-engine-single-source",
+      "ok": true,
+      "ms": 244
+    },
+    {
+      "name": "check:result-action-state",
+      "ok": true,
+      "ms": 243
+    },
+    {
+      "name": "check:pages",
+      "ok": true,
+      "ms": 272
+    },
+    {
+      "name": "test:e2e",
+      "ok": true,
+      "ms": 260
+    },
+    {
+      "name": "check:button-contrast",
+      "ok": true,
+      "ms": 238
+    },
+    {
+      "name": "check:responsive-contract",
+      "ok": true,
+      "ms": 260
+    },
+    {
+      "name": "validate:phase348",
+      "ok": true,
+      "ms": 236
+    },
+    {
+      "name": "clean:runtime",
+      "ok": true,
+      "ms": 223
+    },
+    {
+      "name": "check-runtime-clean",
+      "ok": true,
+      "ms": 53
+    }
+  ]
+}
