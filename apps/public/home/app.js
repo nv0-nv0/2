@@ -1,1 +1,1 @@
-import '/shared/public-page-optimizer.js';
+import '/apps/public/demo/app.js';

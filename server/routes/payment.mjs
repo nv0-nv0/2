@@ -349,7 +349,7 @@ return json(req, res, 429, { ok: false, error: '결제 세션 생성 요청이 �
 const body = normalizeCheckoutPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
 const selectedOffer = getCommercialOffer(body.plan);
 if (!selectedOffer || Number(selectedOffer.price || selectedOffer.monthlyPrice || 0) <= 0) {
-return json(req, res, 400, { ok: false, error: '유료 결제는 기본 리포트 또는 전문가 플랜만 진행할 수 있습니다. 무료 진단은 결제 없이 이용해 주세요.' });
+return json(req, res, 400, { ok: false, error: '선택한 유료 상품 정보를 확인하지 못했습니다. 결제 가능한 상품인지 다시 확인해 주세요.' });
 }
 if (!body.siteId && !body.domain) {
 return json(req, res, 400, { ok: false, error: '유료 산출물의 대상 사이트 URL이 필요합니다. 먼저 무료 진단을 실행하거나 결제 화면에서 사이트 주소를 입력해 주세요.' });

@@ -8,7 +8,7 @@
   <link rel="preload" href="/shared/veridion-rebrand.css" as="style"/>
   <link rel="stylesheet" href="/shared/veridion-rebrand.css"/>
 </head>
-<body data-veridion-rebrand="clean" data-page="home" data-diagnosis-engine="single-source">
+<body data-veridion-rebrand="clean" data-page="home" data-diagnosis-engine="single-source" data-unified-diagnosis="home-and-demo">
 
 <a class="skip-link" href="#main">본문 바로가기</a>
 <header class="vr-topbar" data-public-nav="true">
@@ -31,12 +31,15 @@
 <main id="main" tabindex="-1" class="vr-main" data-route-smoke="온라인 사업자 리스크 진단 신뢰 준법 전환 보완 후보 신뢰 준법 전환">
   <section class="vr-hero" aria-labelledby="homeTitle"><div class="vr-hero-inner">
     <div><span class="vr-kicker">자동화 기반 웹사이트 진단</span><h1 id="homeTitle">웹사이트의 신뢰와 준법을 진단하고, <span class="vr-accent">전환율을 높이세요.</span></h1><p>판매자와 소상공인을 위한 웹사이트 진단 서비스입니다. 공개 페이지에서 확인 가능한 신뢰, 준법, 전환의 보완 후보를 정리하고 실행 우선순위를 제안합니다.</p>
-      <section class="vr-functional-bridge vr-demo-start" aria-label="무료 진단 안내">
-        <div class="vr-section-head"><span class="vr-kicker">무료 진단 실행</span><h2>실제 진단 입력과 결과 확인은 전용 진단 화면에서 진행합니다</h2><p>홈에서는 진단 방식과 결과 구조를 먼저 보여드리고, 실제 실행은 전용 진단 화면으로 이동해 시작하도록 정리했습니다.</p></div>
+      <section id="demoStart" class="vr-functional-bridge vr-demo-start" aria-label="무료 진단 실행" data-unified-diagnosis="home-and-demo">
+        <div class="vr-section-head"><span class="vr-kicker">무료 진단 실행</span><h2>주소 입력부터 결과 확인까지 한 화면에서 끝냅니다</h2><p>먼저 결과를 보여준 뒤 필요한 경우에만 저장·상세 리포트로 연결합니다. 홈에서도 전용 진단 화면과 같은 엔진으로 바로 시작할 수 있습니다.</p></div>
+        <div><div class="notice" id="freeUsageLead"><strong>무료 진단 준비 완료</strong></div><div class="notice muted" id="freeUsageBadge">비회원은 하루 이용 횟수 안에서 바로 실행할 수 있습니다.</div></div>
+        <form id="unifiedDiagnosisForm" class="bridge-grid vr-unified-diagnosis-form" data-unified-diagnosis-form="true" novalidate><input autocomplete="url" id="targetUrl" inputmode="url" placeholder="https://your-store.kr" aria-label="진단할 사이트 주소"/><button id="scanBtn" type="submit" data-diagnosis-primary-action="true">사이트 무료 진단 실행</button></form>
+        <div id="turnstileBox"></div><input id="turnstileToken" type="hidden"/><div class="notice muted" id="turnstileState">보안 확인이 필요한 경우 이 영역에 표시됩니다.</div><div class="notice muted" id="demoState">사이트 주소를 입력하면 아래 미리보기 영역이 실제 결과로 바뀝니다.</div><div class="notice muted result-action-hint" id="resultActionHint">결과가 생성되면 다시 진단하기와 저장·이어보기 버튼이 표시됩니다.</div><div class="bridge-actions" hidden aria-hidden="true"><button id="retryBtn" type="button" class="secondary" disabled aria-disabled="true">다시 진단하기</button><button id="unlockBtn" type="button" class="secondary" disabled aria-disabled="true">결과 저장하고 이어보기</button></div>
         <div class="demo-preview-grid" aria-label="무료와 유료 결과 차이"><article class="demo-preview-card"><span class="vr-pill">무료 결과</span><strong>문제 합계·영역·요소</strong><p>구체적인 문제 수와 고객이 먼저 확인하는 영역을 빠르게 보여줍니다.</p></article><article class="demo-preview-card"><span class="vr-pill success">기본 리포트</span><strong>상세 근거·수정 위치</strong><p>페이지별 근거, 적용 위치, 우선순위 로드맵을 확인합니다.</p></article><article class="demo-preview-card"><span class="vr-pill gold">전문가 플랜</span><strong>수정 문구·재점검</strong><p>실제 문구안, 수정 전후 기준, 반복 관리 문서를 함께 제공합니다.</p></article></div>
-        <div class="demo-result-surface"><section class="demo-sample-result" aria-label="진단 전 샘플 결과"><div class="demo-count-head"><div><span class="pill brand">샘플 결과</span><h2>무료 진단 화면에서는 이런 형식으로 결과를 확인합니다</h2><p>https://example-store.kr</p></div></div><div class="demo-count-kpis"><article class="demo-summary-card"><span>문제 합계</span><strong>7</strong><small>무료 미리보기 기준</small></article><article class="demo-summary-card"><span>리스크 영역</span><strong>3</strong><small>신뢰·준법·전환</small></article><article class="demo-summary-card"><span>확인 URL</span><strong>4</strong><small>공개 페이지</small></article><article class="demo-summary-card"><span>다음 조치</span><strong>5</strong><small>우선순위 제안</small></article></div></section></div>
+        <div class="demo-result-surface" id="demoResult"><section class="demo-sample-result" aria-label="진단 전 샘플 결과"><div class="demo-count-head"><div><span class="pill brand">샘플 결과</span><h2>실행하면 이런 형태로 결과가 표시됩니다</h2><p>https://example-store.kr</p></div></div><div class="demo-count-kpis"><article class="demo-summary-card"><span>문제 합계</span><strong>7</strong><small>무료 미리보기 기준</small></article><article class="demo-summary-card"><span>리스크 영역</span><strong>3</strong><small>신뢰·준법·전환</small></article><article class="demo-summary-card"><span>확인 URL</span><strong>4</strong><small>공개 페이지</small></article><article class="demo-summary-card"><span>다음 조치</span><strong>5</strong><small>우선순위 제안</small></article></div><div class="demo-result-explain-grid"><article><h3>무료에서 보이는 내용</h3><p>문제 개수, 영역, 확인 범위, 첫 번째 조치 방향을 보여줍니다.</p></article><article><h3>유료에서 열리는 내용</h3><p>페이지별 근거, 수정 위치, 적용 문구, 재점검 기준을 제공합니다.</p></article><article><h3>전환 연결</h3><p>불안을 확인한 즉시 기본 리포트 또는 전문가 플랜으로 이동합니다.</p></article></div></section></div>
       </section>
-      <div class="vr-actions"><a class="vr-button ghost" href="/products/veridion/demo">사이트 무료 진단 실행</a><a class="vr-button ghost" href="/service">서비스 범위 보기</a></div><div class="vr-trustline"><span>무료로 빠르게 진단</span><span>회원가입 없이 바로 확인</span><span>민감정보 입력 없음</span></div>
+      <div class="vr-actions"><a class="vr-button ghost" href="#demoStart">사이트 무료 진단 실행</a><a class="vr-button ghost" href="/service">서비스 범위 보기</a></div><div class="vr-trustline"><span>무료로 빠르게 진단</span><span>회원가입 없이 바로 확인</span><span>민감정보 입력 없음</span></div>
     </div>
     <aside class="vr-preview" aria-label="진단 리포트 미리보기"><div class="vr-preview-head"><div class="vr-score"><small>종합 신뢰 점수</small><strong>82</strong><small>/ 100 · 좋음</small><div class="vr-progress"><i></i></div></div><div class="vr-checks"><div><span>개인정보 처리방침</span><span class="vr-chip">적합</span></div><div><span>이용약관</span><span class="vr-chip">적합</span></div><div><span>사업자 정보 표기</span><span class="vr-chip">적합</span></div><div><span>거래 안내</span><span class="vr-chip warn">보완 필요</span></div></div></div><div class="vr-list"><article><span class="vr-icon">1</span><div><h3>신뢰 요소 보완 필요</h3><p>고객 리뷰와 인증 요소를 강화하면 전환에 도움이 됩니다.</p></div><span class="vr-chip">개선 제안</span></article><article><span class="vr-icon">2</span><div><h3>준법 보완 후보</h3><p>고객 안내 정보 일부가 부족해 보완이 필요합니다.</p></div><span class="vr-chip warn">보완 필요</span></article><article><span class="vr-icon">3</span><div><h3>전환 개선 기회</h3><p>CTA 가독성과 배치 개선을 권장합니다.</p></div><span class="vr-chip">개선 제안</span></article></div></aside>
   </div></section>
@@ -55,7 +58,7 @@
     <div class="vr-footer-legal"><strong>안전한 데이터 처리</strong><p>VERIDION은 공개 웹페이지 기반의 구조 분석 서비스이며 법률 자문이나 성과 보장을 제공하지 않습니다.</p><p>엔브이제로(NV0) · 대표자 나금상 · 사업자등록번호 584-77-00586</p><p>경기도 남양주시 와부읍 덕소로97번길 34, 105동 402호</p><p><a href="/terms">이용약관</a> · <a href="/privacy">개인정보처리방침</a></p></div>
   </div>
 </footer>
-<script src="/apps/public/home/app.js" type="module"></script>
+<script src="/apps/public/demo/app.js" type="module"></script>
 <script src="/shared/veridion-runtime-optimizer.js" type="module"></script>
 </body>
 </html>
