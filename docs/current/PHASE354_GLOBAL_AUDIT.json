@@ -1,0 +1,74 @@
+{
+  "ok": true,
+  "phase": "phase354-deployment-security-closeout",
+  "checkedAt": "2026-06-01T06:41:02.628Z",
+  "checked": 16,
+  "failed": 0,
+  "failures": [],
+  "checks": [
+    {
+      "name": "package-version-phase354",
+      "ok": true
+    },
+    {
+      "name": "delivery-final-phase354",
+      "ok": true
+    },
+    {
+      "name": "release-predeploy-phase354",
+      "ok": true
+    },
+    {
+      "name": "run-all-tests-phase354",
+      "ok": true
+    },
+    {
+      "name": "readme-phase354",
+      "ok": true
+    },
+    {
+      "name": "gitignore-added",
+      "ok": true
+    },
+    {
+      "name": "public-probe-contract-added",
+      "ok": true
+    },
+    {
+      "name": "compose-forwarding-check-added",
+      "ok": true
+    },
+    {
+      "name": "phase354-final-runner-added",
+      "ok": true
+    },
+    {
+      "name": "session-secret-local-example",
+      "ok": true
+    },
+    {
+      "name": "session-secret-coolify-template",
+      "ok": true
+    },
+    {
+      "name": "compose-explicit-internal-api-off",
+      "ok": true
+    },
+    {
+      "name": "compose-payment-allowlist-forwarded",
+      "ok": true
+    },
+    {
+      "name": "healthz-sanitized",
+      "ok": true
+    },
+    {
+      "name": "readyz-sanitized",
+      "ok": true
+    },
+    {
+      "name": "phase354-docs-exist",
+      "ok": true
+    }
+  ]
+}

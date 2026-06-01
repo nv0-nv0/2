@@ -178,7 +178,13 @@ function cleanLegacyPublicTokens(value) {
       .replace(/자동 발행|20분에\s*1회|20분\s*주기|20분 발행|20분마다/g, '정기 업데이트')
       .replace(/내 사이트 관리/g, '고객 포털')
       .replace(/상품·요금/g, '요금제')
-      .replace(/TrustOps|rollback|canary|sentinel|prelaunch|phase\d+/gi, '')
+      .replace(/TrustOps AI Platform/gi, 'VERIDION 신뢰 운영 플랫폼')
+      .replace(/TrustOps/gi, 'VERIDION')
+      .replace(/rollback/gi, '복구')
+      .replace(/canary/gi, '단계 배포')
+      .replace(/sentinel/gi, '상태 점검')
+      .replace(/prelaunch/gi, '사전 점검')
+      .replace(/phase\d+/gi, '')
       .replace(/contentFingerprint|combinationMode|publicDisplayVersion/gi, '공개 항목');
   }
   if (Array.isArray(value)) return value.map(cleanLegacyPublicTokens);
@@ -191,6 +197,17 @@ function cleanLegacyPublicTokens(value) {
     return next;
   }
   return value;
+}
+
+function buildPublicBuildFingerprint() {
+  const raw = BUILD_FINGERPRINT || {};
+  const semanticVersion = String(raw.commitOrRelease || '').match(/^\d+\.\d+\.\d+/)?.[0] || '1.0.0';
+  return {
+    version: semanticVersion,
+    buildTime: raw.buildTime || '',
+    deploymentEnvironment: raw.deploymentEnvironment || 'unknown',
+    canonicalDomain: raw.canonicalDomain || BUSINESS_PROFILE.domain
+  };
 }
 
 function hasPaidScanAccess(db, customer, scan) {
@@ -218,13 +235,43 @@ return { requestId: scan?.requestId || null, siteId: scan?.siteId || null, targe
   if (accountHandled !== false) return accountHandled;
   const paymentHandled = await paymentRouteHandler(req, res, { requestUrl: url, pathname });
   if (paymentHandled !== false) return paymentHandled;
+  // Customer-facing APIs must never expose internal engine, gate, or operations surfaces.
+  // Internal route integration tests can opt in only while NODE_ENV=test.
   const customerHiddenOperationalEndpoints = new Set([
+    '/api/public/diagnosis-engine',
+    '/api/public/privacy-status',
+    '/api/public/governance-status',
+    '/api/public/risk-guard',
     '/api/public/openapi.json',
     '/api/public/hardening-matrix',
     '/api/public/release-readiness',
-    '/api/public/commercial-final-gate'
+    '/api/public/launch-checklist',
+    '/api/public/commercial-final-gate',
+    '/api/public/commercial-readiness',
+    '/api/public/product-agent-status',
+    '/api/public/engine-agent-status',
+    '/api/public/organism-status',
+    '/api/public/product-intelligence',
+    '/api/public/product-quality',
+    '/api/public/trustops-blueprint',
+    '/api/public/fix-generator',
+    '/api/public/monitoring-plan',
+    '/api/public/revenue-optimization',
+    '/api/public/structured-data-package',
+    '/api/public/trustops-autopilot',
+    '/api/public/customer-lifecycle',
+    '/api/public/automation-workqueue',
+    '/api/public/trustops-launch-control',
+    '/api/public/lifecycle-message-sequence',
+    '/api/public/trustops-production-sentinel',
+    '/api/public/live-verification-checklist',
+    '/api/public/trustops-final-handoff',
+    '/api/public/trustops-100-final',
+    '/api/public/trustops-complete-delivery'
   ]);
-  if (customerHiddenOperationalEndpoints.has(pathname)) {
+  const allowInternalPublicApisForTest = process.env.NODE_ENV === 'test'
+    && process.env.NV0_EXPOSE_INTERNAL_PUBLIC_APIS === 'true';
+  if (!allowInternalPublicApisForTest && customerHiddenOperationalEndpoints.has(pathname)) {
     return json(req, res, 404, { ok: false, error: 'Not found' }, { 'cache-control': 'no-store' });
   }
 if (pathname === '/api/public/diagnosis-engine' && req.method === 'GET') {
@@ -287,7 +334,7 @@ if (isLegacyDiagnosticStart) {
 return json(req, res, 200, cleanLegacyPublicTokens({ ok: true, status: 'completed', portalUrl, redirectUrl: portalUrl, reportUrl, result: resultPayload, scan: { ...resultPayload, id: scan.requestId, scanId: scan.requestId, domain: site.domain || scan.domain || scan.target, targetUrl: scan.target, status: 'completed' } }), { 'cache-control': 'no-store' });
 }
 if (pathname === '/api/public/config' && req.method === 'GET') {
-return json(req, res, 200, { ok: true, turnstileEnabled: TURNSTILE_PUBLIC_ENABLED, turnstileConfigured: TURNSTILE_CONFIGURED, turnstileSiteKey: TURNSTILE_PUBLIC_ENABLED ? TURNSTILE_SITE_KEY : '', buildFingerprint: BUILD_FINGERPRINT });
+return json(req, res, 200, { ok: true, turnstileEnabled: TURNSTILE_PUBLIC_ENABLED, turnstileConfigured: TURNSTILE_CONFIGURED, turnstileSiteKey: TURNSTILE_PUBLIC_ENABLED ? TURNSTILE_SITE_KEY : '', buildFingerprint: buildPublicBuildFingerprint() });
 }
 if (pathname === '/api/public/health' && req.method === 'GET') {
 return json(req, res, 200, { ok: true, area: 'public', service: 'VERIDION', time: nowIso() }, { 'cache-control': 'no-store' });

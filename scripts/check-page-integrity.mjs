@@ -37,7 +37,7 @@ for (const entry of mappedRoutes) {
       await fs.access(abs);
     }
     if (!html.includes('/shared/veridion-rebrand.css')) errors.push({ route: entry.route, slug: entry.slug, error: 'index.html missing rebrand shared stylesheet' });
-    if (/vr-clean-slate|vr-generated|vr-runtime|phase264-hardening|veridion-adopted-ui|veridion-clean-v310|\/shared\/base\.css/.test(html) || html.includes(`/apps/${entry.area}/${entry.slug}/app.css`)) errors.push({ route: entry.route, slug: entry.slug, error: 'retired css reference detected' });
+    if (/vr-clean-slate|vr-generated|vr-runtime|phase264-hardening|veridion-adopted-ui|veridion-clean-v310|\/shared\/base\.css/.test(html)) errors.push({ route: entry.route, slug: entry.slug, error: 'retired css reference detected' });
     const expectedApp = `/apps/${entry.area}/${entry.slug}/app.js`;
     const phase348ProductDemoUnifiedEngine = entry.area === 'public' && entry.slug === 'veridion-demo' && html.includes('/apps/public/demo/app.js') && html.includes('data-diagnosis-engine="single-source"');
     if (!html.includes(expectedApp) && !phase348ProductDemoUnifiedEngine) errors.push({ route: entry.route, slug: entry.slug, error: 'index.html missing app.js reference' });

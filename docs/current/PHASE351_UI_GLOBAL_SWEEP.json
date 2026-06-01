@@ -3,7 +3,7 @@
   "phase": "phase351-ui-global-sweep",
   "checked": {
     "html": 24,
-    "js": 24,
+    "js": 25,
     "css": 25
   },
   "failed": 0,
@@ -11,7 +11,7 @@
   "notes": [
     {
       "checkedHtml": 24,
-      "checkedJs": 24,
+      "checkedJs": 25,
       "checkedCss": 25
     }
   ]

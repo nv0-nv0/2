@@ -25,6 +25,7 @@ const interactivePattern = /<(a|button)\b[^>]*>([\s\S]*?)<\/\1>/gi;
 const stripTags = s => s.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 const canonicalCta = '사이트 무료 진단 실행';
 const oldActionPhrases = ['무료 진단 시작', '사이트 구조 진단'];
+const contextualDiagnosisLabels = ['진단', '신뢰 진단', '진단 화면으로 이동', '새 사이트 진단', '다시 진단', '진단 리포트 보기', '저장 사이트 관리'];
 for (const file of htmlFiles) {
   const text = fs.readFileSync(file, 'utf8');
   if (!text.includes('/shared/veridion-rebrand.css')) fail(file, 'shared brand CSS is missing');
@@ -39,8 +40,9 @@ for (const file of htmlFiles) {
     if (tag === 'button' && !/type\s*=/.test(raw)) fail(file, 'button is missing explicit type', raw);
     if (/href\s*=\s*["']\/products\/veridion\/demo["']/.test(raw)) {
       if (oldActionPhrases.some(p => label.includes(p))) fail(file, 'diagnosis CTA uses legacy action phrase', raw);
-      if (!label.includes(canonicalCta) && !['진단', '신뢰 진단'].includes(label)) {
-        fail(file, 'diagnosis CTA label is not canonical or short navigation label', raw);
+      const contextual = contextualDiagnosisLabels.some(allowed => label === allowed || label.startsWith(`${allowed} `));
+      if (!label.includes(canonicalCta) && !contextual) {
+        fail(file, 'diagnosis CTA label is not canonical, navigation, or approved contextual label', raw);
       }
     }
     if (/href\s*=\s*["']\/portal["']/.test(raw) && /진단|실행|시작/.test(label)) {

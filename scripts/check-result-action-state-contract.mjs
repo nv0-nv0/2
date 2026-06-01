@@ -11,8 +11,13 @@ function add(name, fn) {
   catch (error) { checks.push({ name, ok: false, error: error.message }); }
 }
 
-const pages = ['apps/public/home/index.html', 'apps/public/demo/index.html', 'apps/public/veridion-demo/index.html'];
-for (const file of pages) {
+const home = read('apps/public/home/index.html');
+add('home:dedicated-diagnosis-route', () => assert.match(home, /href="\/products\/veridion\/demo"/));
+add('home:no-inline-diagnosis-form', () => assert.doesNotMatch(home, /id="unifiedDiagnosisForm"/));
+add('home:no-inline-result-actions', () => assert.doesNotMatch(home, /id="(?:retryBtn|unlockBtn|resultActionHint)"/));
+
+const resultPages = ['apps/public/demo/index.html', 'apps/public/veridion-demo/index.html'];
+for (const file of resultPages) {
   const html = read(file);
   add(`${file}:retry-disabled-before-result`, () => assert.match(html, /id="retryBtn"[^>]*disabled[^>]*aria-disabled="true"|id="retryBtn"[^>]*aria-disabled="true"[^>]*disabled/));
   add(`${file}:unlock-disabled-before-result`, () => assert.match(html, /id="unlockBtn"[^>]*disabled[^>]*aria-disabled="true"|id="unlockBtn"[^>]*aria-disabled="true"[^>]*disabled/));
@@ -25,8 +30,8 @@ add('demo-js:unlock-empty-state-warning', () => assert.match(demoJs, /먼저 사
 add('demo-js:busy-does-not-enable-result-actions', () => assert.match(demoJs, /updateResultActions\(\);/));
 
 const failures = checks.filter(item => !item.ok);
-const report = { ok: failures.length === 0, phase: 'phase348-result-action-state', checked: checks.length, failed: failures.length, failures };
+const report = { ok: failures.length === 0, phase: 'phase353-result-action-state', checked: checks.length, failed: failures.length, failures };
 fs.mkdirSync(path.join(root, 'docs/current'), { recursive: true });
-fs.writeFileSync(path.join(root, 'docs/current/PHASE348_RESULT_ACTION_STATE_CONTRACT.json'), JSON.stringify(report, null, 2));
+fs.writeFileSync(path.join(root, 'docs/current/PHASE353_RESULT_ACTION_STATE_CONTRACT.json'), JSON.stringify(report, null, 2));
 console.log(JSON.stringify(report, null, 2));
 if (failures.length) process.exit(1);

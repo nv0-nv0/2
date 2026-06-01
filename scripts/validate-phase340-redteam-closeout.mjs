@@ -19,7 +19,7 @@ const hiddenEndpoints = [
   '/api/public/diagnosis-engine','/api/public/privacy-status','/api/public/governance-status','/api/public/risk-guard','/api/public/openapi.json','/api/public/hardening-matrix','/api/public/release-readiness','/api/public/launch-checklist','/api/public/commercial-final-gate','/api/public/commercial-readiness','/api/public/product-agent-status','/api/public/engine-agent-status','/api/public/organism-status','/api/public/product-intelligence','/api/public/product-quality','/api/public/trustops-blueprint','/api/public/fix-generator','/api/public/monitoring-plan','/api/public/revenue-optimization','/api/public/structured-data-package','/api/public/trustops-autopilot','/api/public/customer-lifecycle','/api/public/automation-workqueue','/api/public/trustops-launch-control','/api/public/lifecycle-message-sequence','/api/public/trustops-production-sentinel','/api/public/live-verification-checklist','/api/public/trustops-final-handoff','/api/public/trustops-100-final','/api/public/trustops-complete-delivery'
 ];
 
-check('package:phase340-or-newer-version', () => assert.match(packageJson.version, /phase340-redteam-100-closeout|phase341-final-closeout|phase342-merged-best|phase343-final-perfect|phase345-final-delivery-closeout|phase346-global-hardening-final|phase347-unified-diagnosis-final|phase348-final-unified-engine-closeout|phase349-customer-journey-closeout|phase350-global-cta-semantics-closeout|phase351-prompt-full-sweep-closeout/));
+check('package:phase340-or-newer-version', () => assert.match(packageJson.version, /phase340-redteam-100-closeout|phase341-final-closeout|phase342-merged-best|phase343-final-perfect|phase345-final-delivery-closeout|phase346-global-hardening-final|phase347-unified-diagnosis-final|phase348-final-unified-engine-closeout|phase349-customer-journey-closeout|phase350-global-cta-semantics-closeout|phase351-prompt-full-sweep-closeout|phase353-full-package-closeout|phase354-deployment-security-closeout|phase355-organization-closeout/));
 check('package:phase340-final-script', () => assert.ok(packageJson.scripts['phase340:final']?.includes('check:public-api-isolation')));
 check('package:phase341-final-script-aligned', () => assert.ok(!packageJson.scripts['phase341:final'] || packageJson.scripts['phase341:final'].includes('phase340:final')));
 check('package:public-api-script', () => assert.equal(packageJson.scripts['check:public-api-isolation'], 'node scripts/check-public-api-isolation.mjs'));
@@ -51,7 +51,10 @@ for (const slug of ['refund-policy-checklist','privacy-policy-checklist','ecomme
   check(`insight:${slug}:app-css`, () => assert.ok(exists(`${base}/app.css`)));
   check(`insight:${slug}:article-structure`, () => {
     const html = read(`${base}/index.html`);
-    ['왜 중요한가','체크리스트','예시 문구','적용 순서','자주 하는 실수','FAQ','무료 진단 CTA','유료 리포트 CTA','전문가 검토 문의'].forEach(token => assert.ok(html.includes(token), token));
+    ['왜 중요한가','체크리스트','예시 문구','적용 순서','자주 하는 실수','FAQ'].forEach(token => assert.ok(html.includes(token), token));
+    assert.match(html, /href="\/products\/veridion\/demo"[^>]*>사이트 무료 진단 실행<\/a>/, 'free diagnosis CTA');
+    assert.match(html, /href="\/plans"[^>]*>(?:리포트 요금 보기|요금제 비교)<\/a>/, 'paid report CTA');
+    assert.match(html, /href="\/business-info"[^>]*>고객지원 문의<\/a>/, 'customer support CTA');
   });
 }
 check('insights:hub-exists', () => assert.ok(exists('apps/public/insights/index.html')));

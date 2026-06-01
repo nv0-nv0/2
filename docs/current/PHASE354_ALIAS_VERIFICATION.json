@@ -1,0 +1,25 @@
+{
+  "ok": true,
+  "phase": "phase354-alias-verification",
+  "checked": 3,
+  "results": [
+    {
+      "name": "delivery-final",
+      "ok": true,
+      "status": 0,
+      "durationSeconds": 92
+    },
+    {
+      "name": "release-predeploy",
+      "ok": true,
+      "status": 0,
+      "durationSeconds": 96
+    },
+    {
+      "name": "run-all-tests",
+      "ok": true,
+      "status": 0,
+      "durationSeconds": 95
+    }
+  ]
+}

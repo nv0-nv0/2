@@ -6,10 +6,10 @@ const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'))
 const checks = [];
 function check(name, fn) { try { fn(); checks.push({ name, ok: true }); } catch (error) { checks.push({ name, ok: false, error: error.message }); } }
 function read(p) { return fs.readFileSync(path.join(root, p), 'utf8'); }
-check('version:phase350', () => assert.match(pkg.version, /phase350-global-cta-semantics-closeout|phase351-prompt-full-sweep-closeout/));
-check('delivery-final:phase350', () => assert.ok(['npm run phase350:final','npm run phase351:final'].includes(pkg.scripts['delivery:final'])));
-check('release-predeploy:phase350', () => assert.ok(['npm run phase350:final','npm run phase351:final'].includes(pkg.scripts['release:predeploy'])));
-check('run-all-tests:phase350', () => assert.match(read('RUN_ALL_TESTS.sh'), /npm run phase350:final|npm run phase351:final/));
+check('version:phase350', () => assert.match(pkg.version, /phase350-global-cta-semantics-closeout|phase351-prompt-full-sweep-closeout|phase353-full-package-closeout|phase354-deployment-security-closeout|phase355-organization-closeout/));
+check('delivery-final:phase350', () => assert.ok(['npm run phase350:final','npm run phase351:final','npm run phase353:final','npm run phase354:final','npm run phase355:final'].includes(pkg.scripts['delivery:final'])));
+check('release-predeploy:phase350', () => assert.ok(['npm run phase350:final','npm run phase351:final','npm run phase353:final','npm run phase354:final','npm run phase355:final'].includes(pkg.scripts['release:predeploy'])));
+check('run-all-tests:phase350', () => assert.match(read('RUN_ALL_TESTS.sh'), /npm run phase350:final|npm run phase351:final|npm run phase353:final|npm run phase354:final|npm run phase355:final/));
 check('script:check-global-cta-semantics', () => assert.equal(pkg.scripts['check:global-cta-semantics'], 'node scripts/check-global-cta-semantics.mjs'));
 check('script:phase350-final', () => assert.equal(pkg.scripts['phase350:final'], 'node scripts/run-phase350-final.mjs'));
 check('docs:work-order', () => assert.match(read('docs/PHASE350_GLOBAL_CTA_SEMANTICS_WORK_ORDER.md'), /전역 CTA 의미 통일/));

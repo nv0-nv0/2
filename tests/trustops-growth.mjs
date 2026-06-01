@@ -19,6 +19,7 @@ const child = spawn(process.execPath, ['server/index.mjs'], {
     ...process.env,
     PORT: String(appPort),
     NODE_ENV: 'test',
+    NV0_EXPOSE_INTERNAL_PUBLIC_APIS: 'true',
     NV0_RUNTIME_DIR: testRuntimeDir,
     NV0_PLATFORM_TARGET: 'mvp',
     NV0_PAYMENT_PROVIDER: 'demo',
@@ -74,7 +75,7 @@ try {
     body: JSON.stringify({ target: 'https://phase317-growth.example' })
   });
   assert.equal(scan.res.status, 200);
-  assert.equal(scan.data.result.trustOpsBlueprint.positioning, 'TrustOps AI Platform');
+  assert.equal(scan.data.result.trustOpsBlueprint.positioning, 'VERIDION 신뢰 운영 플랫폼');
   assert.equal(scan.data.result.trustOpsBlueprint.improvementBacklogCount, 100);
 
   const blueprint = await j('/api/public/trustops-blueprint?riskScore=72&industry=shopping');

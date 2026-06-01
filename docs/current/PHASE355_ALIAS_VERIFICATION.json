@@ -1,0 +1,31 @@
+{
+  "ok": true,
+  "phase": "phase355-organization-closeout",
+  "checkedAt": "2026-06-01T06:38:26.897322+00:00",
+  "aliases": [
+    {
+      "name": "delivery_final",
+      "command": "npm run delivery:final",
+      "startedAt": "2026-06-01T06:32:05+00:00",
+      "status": 0,
+      "durationSeconds": 98,
+      "ok": true
+    },
+    {
+      "name": "release_predeploy",
+      "command": "npm run release:predeploy",
+      "startedAt": "2026-06-01T06:33:43+00:00",
+      "status": 0,
+      "durationSeconds": 97,
+      "ok": true
+    },
+    {
+      "name": "run_all_tests",
+      "command": "./RUN_ALL_TESTS.sh",
+      "startedAt": "2026-06-01T06:35:20+00:00",
+      "status": 0,
+      "durationSeconds": 99,
+      "ok": true
+    }
+  ]
+}

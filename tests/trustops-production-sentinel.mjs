@@ -19,6 +19,7 @@ const child = spawn(process.execPath, ['server/index.mjs'], {
     ...process.env,
     PORT: String(appPort),
     NODE_ENV: 'test',
+    NV0_EXPOSE_INTERNAL_PUBLIC_APIS: 'true',
     NV0_RUNTIME_DIR: testRuntimeDir,
     NV0_PLATFORM_TARGET: 'mvp',
     NV0_PAYMENT_PROVIDER: 'demo',

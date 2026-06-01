@@ -20,6 +20,7 @@ const aliasJs = read('apps/public/veridion-demo/app.js');
 for (const [name, html] of Object.entries({ demo, productDemo })) {
   add(`${name}:single-source-body-marker`, () => assert.match(html, /data-diagnosis-engine="single-source"/));
   add(`${name}:loads-canonical-demo-js`, () => assert.match(html, /<script src="\/apps\/public\/demo\/app\.js" type="module"><\/script>/));
+  add(`${name}:loads-bootstrap-guard`, () => assert.match(html, /<script src="\/apps\/public\/demo\/bootstrap\.js"><\/script>/));
   add(`${name}:does-not-load-alias-runtime`, () => assert.doesNotMatch(html, /\/apps\/public\/veridion-demo\/app\.js/));
   add(`${name}:canonical-form-and-result`, () => {
     for (const token of ['id="unifiedDiagnosisForm"','id="targetUrl"','id="scanBtn"','id="demoState"','id="demoResult"','id="cancelScanBtn"','id="recentTargetList"','id="targetPreview"']) assert.ok(html.includes(token), token);
@@ -42,6 +43,7 @@ add('canonical-js:owns-recent-history-and-toolbar', () => {
   assert.match(demoJs, /RECENT_TARGETS_KEY/);
   assert.match(demoJs, /renderResultToolbar/);
   assert.match(demoJs, /cancelActiveScan/);
+  assert.match(demoJs, /window\.__veridionRunScan = runScan/);
 });
 
 const failures = checks.filter(item => !item.ok);

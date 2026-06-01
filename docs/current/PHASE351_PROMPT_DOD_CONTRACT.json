@@ -1,7 +1,18 @@
 {
-  "ok": true,
+  "ok": false,
   "phase": "phase351-prompt-dod-contract",
   "checked": 9,
-  "failed": 0,
-  "failures": []
+  "failed": 2,
+  "failures": [
+    {
+      "name": "required-documents-exist",
+      "ok": false,
+      "error": ".env.example\n\nfalse !== true\n"
+    },
+    {
+      "name": "no-real-secret-in-env-example",
+      "ok": false,
+      "error": "ENOENT: no such file or directory, open '/mnt/data/veridion_phase353_work/.env.example'"
+    }
+  ]
 }

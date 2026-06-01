@@ -1,0 +1,193 @@
+{
+  "ok": true,
+  "phase": "phase353-full-package-closeout",
+  "startedAt": "2026-06-01T06:39:31.095Z",
+  "finishedAt": "2026-06-01T06:41:00.758Z",
+  "passed": 18,
+  "attempted": 18,
+  "total": 18,
+  "failed": 0,
+  "timeoutMs": 120000,
+  "results": [
+    {
+      "name": "phase351:final",
+      "ok": true,
+      "status": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 20163,
+      "stdoutTail": "\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout phase351:final\n> node scripts/run-phase351-final.mjs\n\n[PASS] validate:phase350 454ms\n[PASS] check:syntax 486ms\n[PASS] npm test 491ms\n[PASS] test:e2e 455ms\n[PASS] check:pages 491ms\n[PASS] test:routes 447ms\n[PASS] check:links 445ms\n[PASS] smoke 1060ms\n[PASS] test:diagnose-fallback 4224ms\n[PASS] test:public-health-contract 986ms\n[PASS] test:public-demo-error-contract 1023ms\n[PASS] test:unified-diagnosis-flow 443ms\n[PASS] test:diagnosis-engine-single-source 451ms\n[PASS] check:result-action-state 458ms\n[PASS] check:customer-journey 469ms\n[PASS] check:diagnosis-copy 416ms\n[PASS] check:global-cta-semantics 436ms\n[PASS] check:button-contrast 451ms\n[PASS] check:ui-global-sweep 470ms\n[PASS] check:prompt-dod 439ms\n[PASS] check:responsive-contract 471ms\n[PASS] check:performance-budget 440ms\n[PASS] verify:security 458ms\n[PASS] check:public-api-isolation 893ms\n[PASS] validate:deploy 450ms\n[PASS] check:release-secret-hygiene 529ms\n[PASS] check:release-currentness 451ms\n[PASS] check:operational-contract 428ms\n[PASS] validate:phase351 422ms\n[PASS] clean:runtime 444ms\n[PASS] check-runtime-clean 106ms\n{\n  \"ok\": true,\n  \"phase\": \"phase351-prompt-full-sweep-closeout\",\n  \"passed\": 31,\n  \"total\": 31,\n  \"failed\": 0,\n  \"report\": \"docs/current/PHASE351_FINAL_GATE_REPORT.json\"\n}\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "phase352:final",
+      "ok": true,
+      "status": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 10034,
+      "stdoutTail": "\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout phase352:final\n> node scripts/run-phase352-final.mjs\n\n\n== check:phase352-inventory ==\n\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout check:phase352-inventory\n> node scripts/run-phase352-check.mjs phase352-inventory\n\n\n== check:unique-remediation-matrix ==\n\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout check:unique-remediation-matrix\n> node scripts/run-phase352-check.mjs unique-remediation-matrix\n\n\n== check:diagnosis-single-canonical ==\n\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout check:diagnosis-single-canonical\n> node scripts/run-phase352-check.mjs diagnosis-single-canonical\n\n\n== check:product-catalog-ssot ==\n\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout check:product-catalog-ssot\n> node scripts/run-phase352-check.mjs product-catalog-ssot\n\n\n== check:global-nav-contract ==\n\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout check:global-nav-contract\n> node scripts/run-phase352-check.mjs global-nav-contract\n\n\n== check:contextual-cta-contract ==\n\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout check:contextual-cta-contract\n> node scripts/run-phase352-check.mjs contextual-cta-contract\n\n\n== check:legacy-token-global ==\n\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout check:legacy-token-global\n> node scripts/run-phase352-check.mjs legacy-token-global\n\n\n== check:calculated-contrast ==\n\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout check:calculated-contrast\n> node scripts/run-phase352-check.mjs calculated-contrast\n\n\n== check:route-alias-contract ==\n\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout check:route-alias-contract\n> node scripts/run-phase352-check.mjs route-alias-contract\n\n\n== check:insight-fallback ==\n\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout check:insight-fallback\n> node scripts/run-phase352-check.mjs insight-fallback\n\n\n== check:sample-label-contract ==\n\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout check:sample-label-contract\n> node scripts/run-phase352-check.mjs sample-label-contract\n\n\n== check:live-build-fingerprint ==\n\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout check:live-build-fingerprint\n> node scripts/run-phase352-check.mjs live-build-fingerprint\n\n\n== check:live-package-diff ==\n\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout check:live-package-diff\n> node scripts/run-phase352-check.mjs live-package-diff\n\n\n== check:public-page-bootstrap ==\n\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout check:public-page-bootstrap\n> node scripts/run-phase352-check.mjs public-page-bootstrap\n\n\n== check:runtime-optimizer-safety ==\n\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout check:runtime-optimizer-safety\n> node scripts/run-phase352-check.mjs runtime-optimizer-safety\n\n\n== check:phase352-runner-portability ==\n\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout check:phase352-runner-portability\n> node scripts/run-phase352-check.mjs phase352-runner-portability\n\n\n== check:experience-orchestrator-contract ==\n\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout check:experience-orchestrator-contract\n> node scripts/run-phase352-check.mjs experience-orchestrator-contract\n\n\n== check:business-profile-alignment ==\n\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout check:business-profile-alignment\n> node scripts/run-phase352-check.mjs business-profile-alignment\n\n\n== check:secret-hygiene ==\n\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout check:secret-hygiene\n> npm run check:release-secret-hygiene\n\n\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout check:release-secret-hygiene\n> node scripts/check-release-secret-hygiene.mjs\n\n{\n  \"ok\": true,\n  \"checkedAt\": \"2026-06-01T06:40:00.429Z\",\n  \"ruleVersion\": \"phase310-release-secret-hygiene-v1\",\n  \"findings\": []\n}\n\n== check:release-package ==\n\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout check:release-package\n> npm run validate:deploy\n\n\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout validate:deploy\n> node scripts/validate-deploy-bundle.mjs\n\nDeploy bundle validation passed\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "validate:phase340",
+      "ok": true,
+      "status": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 465,
+      "stdoutTail": "\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout validate:phase340\n> node scripts/validate-phase340-redteam-closeout.mjs\n\n{\n  \"ok\": true,\n  \"checked\": 83,\n  \"failed\": 0,\n  \"redteamLedger\": 90,\n  \"report\": \"docs/current/PHASE340_REDTEAM_CLOSEOUT_VALIDATION.json\"\n}\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "test:commerce",
+      "ok": true,
+      "status": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 2778,
+      "stdoutTail": "\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout test:commerce\n> node tests/portone-provider.mjs && node tests/provider-adapters.mjs && node tests/portone-events.mjs\n\nportone provider ok\nprovider adapters ok\nportone events ok\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "test:paid-redteam",
+      "ok": true,
+      "status": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 8214,
+      "stdoutTail": "\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout test:paid-redteam\n> node tests/paid-service-redteam.mjs\n\nphase315 paid redteam integration ok\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "test:trustops",
+      "ok": true,
+      "status": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 8098,
+      "stdoutTail": "\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout test:trustops\n> node tests/trustops-growth.mjs\n\nphase317 trustops growth integration ok\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "test:autopilot",
+      "ok": true,
+      "status": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 8122,
+      "stdoutTail": "\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout test:autopilot\n> node tests/trustops-autopilot.mjs\n\nphase318 trustops autopilot integration ok\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "test:launch-control",
+      "ok": true,
+      "status": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 8951,
+      "stdoutTail": "\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout test:launch-control\n> node tests/trustops-launch-control.mjs\n\nphase319 trustops launch control integration ok\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "test:production-sentinel",
+      "ok": true,
+      "status": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 8643,
+      "stdoutTail": "\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout test:production-sentinel\n> node tests/trustops-production-sentinel.mjs\n\nphase320 trustops production sentinel integration ok\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "test:final-handoff",
+      "ok": true,
+      "status": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 8608,
+      "stdoutTail": "\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout test:final-handoff\n> node tests/trustops-final-handoff.mjs\n\nphase321 trustops final handoff integration ok\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "test:100-final",
+      "ok": true,
+      "status": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 1454,
+      "stdoutTail": "\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout test:100-final\n> node tests/trustops-100-final.mjs\n\nphase323 trustops 100-point final integration ok\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "test:complete-delivery",
+      "ok": true,
+      "status": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 578,
+      "stdoutTail": "\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout test:complete-delivery\n> node tests/trustops-complete-delivery.mjs\n\nphase324 trustops complete delivery integration ok\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "test:experience-orchestrator",
+      "ok": true,
+      "status": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 483,
+      "stdoutTail": "\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout test:experience-orchestrator\n> node tests/experience-orchestrator.mjs\n\n{\n  \"ok\": true,\n  \"version\": \"phase353-experience-orchestrator-v1\",\n  \"stages\": 6,\n  \"score\": 75\n}\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "check:public-product-pipeline",
+      "ok": true,
+      "status": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 1115,
+      "stdoutTail": "\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout check:public-product-pipeline\n> node scripts/check-public-product-pipeline.mjs\n\n{\n  \"ok\": true,\n  \"baseUrl\": \"http://127.0.0.1:3210\",\n  \"checked\": 98,\n  \"failed\": 0,\n  \"failedChecks\": []\n}\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "check:public-api-isolation",
+      "ok": true,
+      "status": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 861,
+      "stdoutTail": "\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout check:public-api-isolation\n> node scripts/check-public-api-isolation.mjs\n\n{\n  \"ok\": true,\n  \"hiddenEndpoints\": 30,\n  \"pagesWithPrivateJsonLd\": 3\n}\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "check:phase353-audit",
+      "ok": true,
+      "status": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 534,
+      "stdoutTail": "\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout check:phase353-audit\n> node scripts/run-phase353-audit.mjs\n\n{\n  \"ok\": true,\n  \"counts\": {\n    \"packageFiles\": 565,\n    \"packageDirectories\": 63,\n    \"publicHtmlScreens\": 24,\n    \"adminHtmlScreens\": 7,\n    \"totalHtmlScreens\": 31,\n    \"publicTopLevelScreens\": 18,\n    \"adminTopLevelScreens\": 7,\n    \"cssFiles\": 34,\n    \"scriptMjsFiles\": 129,\n    \"testMjsFiles\": 24,\n    \"markdownDocs\": 100,\n    \"npmScripts\": 156,\n    \"interactiveElements\": 686,\n    \"forms\": 9,\n    \"inputs\": 39,\n    \"buttons\": 42,\n    \"links\": 596,\n    \"publicApiStringCandidates\": 92,\n    \"adminApiStringCandidates\": 63,\n    \"hiddenOperationalEndpoints\": 30,\n    \"atomicRemediations\": 26,\n    \"closedAtomicRemediations\": 26\n  },\n  \"checked\": 20,\n  \"failed\": 0,\n  \"report\": \"docs/current/PHASE353_GLOBAL_AUDIT.json\"\n}\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "clean:runtime",
+      "ok": true,
+      "status": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 449,
+      "stdoutTail": "\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout clean:runtime\n> node scripts/clean-release-runtime.mjs\n\n{\n  \"ok\": true,\n  \"phase\": \"phase322-clean-release-runtime-state-excluded\",\n  \"retained\": [\n    \"runtime/data/db.seed.json\"\n  ],\n  \"removedActiveState\": [\n    \"runtime/data/db.json\",\n    \"runtime/data/sessions.json\",\n    \"runtime/data/secure-records\",\n    \"runtime/uploads\",\n    \"runtime/backups\",\n    \"runtime/reports\",\n    \"runtime-test-paid-service-redteam\",\n    \"runtime-test-portone-events\",\n    \"runtime-test-portone-provider\",\n    \"runtime-test-provider-adapters\",\n    \"runtime-test-public-api-isolation\",\n    \"runtime-test-trustops-100-final\",\n    \"runtime-test-trustops-autopilot\",\n    \"runtime-test-trustops-final-handoff\",\n    \"runtime-test-trustops-growth\",\n    \"runtime-test-trustops-launch-control\",\n    \"runtime-test-trustops-production-sentinel\"\n  ],\n  \"note\": \"Release packages must not include local runtime state or runtime-test-* directories. Server recreates local runtime files on first non-commercial JSON-mode start; commercial mode must use PostgreSQL/Redis/object storage.\"\n}\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "check-runtime-clean",
+      "ok": true,
+      "status": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 98,
+      "stdoutTail": "{\n  \"ok\": true,\n  \"checked\": \"runtime-clean-release\",\n  \"mode\": \"active-runtime-state-and-runtime-test-excluded\",\n  \"phase\": \"phase322\"\n}\n",
+      "stderrTail": ""
+    }
+  ]
+}

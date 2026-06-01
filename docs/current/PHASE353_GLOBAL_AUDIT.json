@@ -1,0 +1,145 @@
+{
+  "ok": true,
+  "phase": "phase353-full-package-closeout",
+  "generatedAt": "2026-06-01T06:41:00.160Z",
+  "packageVersion": "1.0.16-commercial-phase355-organization-closeout",
+  "counts": {
+    "packageFiles": 565,
+    "packageDirectories": 63,
+    "publicHtmlScreens": 24,
+    "adminHtmlScreens": 7,
+    "totalHtmlScreens": 31,
+    "publicTopLevelScreens": 18,
+    "adminTopLevelScreens": 7,
+    "cssFiles": 34,
+    "scriptMjsFiles": 129,
+    "testMjsFiles": 24,
+    "markdownDocs": 100,
+    "npmScripts": 156,
+    "interactiveElements": 686,
+    "forms": 9,
+    "inputs": 39,
+    "buttons": 42,
+    "links": 596,
+    "publicApiStringCandidates": 92,
+    "adminApiStringCandidates": 63,
+    "hiddenOperationalEndpoints": 30,
+    "atomicRemediations": 26,
+    "closedAtomicRemediations": 26
+  },
+  "hiddenOperationalEndpoints": [
+    "/api/public/automation-workqueue",
+    "/api/public/commercial-final-gate",
+    "/api/public/commercial-readiness",
+    "/api/public/customer-lifecycle",
+    "/api/public/diagnosis-engine",
+    "/api/public/engine-agent-status",
+    "/api/public/fix-generator",
+    "/api/public/governance-status",
+    "/api/public/hardening-matrix",
+    "/api/public/launch-checklist",
+    "/api/public/lifecycle-message-sequence",
+    "/api/public/live-verification-checklist",
+    "/api/public/monitoring-plan",
+    "/api/public/openapi.json",
+    "/api/public/organism-status",
+    "/api/public/privacy-status",
+    "/api/public/product-agent-status",
+    "/api/public/product-intelligence",
+    "/api/public/product-quality",
+    "/api/public/release-readiness",
+    "/api/public/revenue-optimization",
+    "/api/public/risk-guard",
+    "/api/public/structured-data-package",
+    "/api/public/trustops-100-final",
+    "/api/public/trustops-autopilot",
+    "/api/public/trustops-blueprint",
+    "/api/public/trustops-complete-delivery",
+    "/api/public/trustops-final-handoff",
+    "/api/public/trustops-launch-control",
+    "/api/public/trustops-production-sentinel"
+  ],
+  "validations": [
+    {
+      "name": "package-version-phase353",
+      "ok": true
+    },
+    {
+      "name": "delivery-final-phase353",
+      "ok": true
+    },
+    {
+      "name": "release-predeploy-phase353",
+      "ok": true
+    },
+    {
+      "name": "run-all-tests-phase353",
+      "ok": true
+    },
+    {
+      "name": "readme-phase353",
+      "ok": true
+    },
+    {
+      "name": "root-env-example",
+      "ok": true
+    },
+    {
+      "name": "root-coolify-env-example",
+      "ok": true
+    },
+    {
+      "name": "env-secure-api-isolation-default",
+      "ok": true
+    },
+    {
+      "name": "env-payment-redirect-allowlist",
+      "ok": true
+    },
+    {
+      "name": "home-dedicated-diagnosis-link",
+      "ok": true
+    },
+    {
+      "name": "demo-single-diagnosis-form",
+      "ok": true
+    },
+    {
+      "name": "public-copy-sanitizer-safe-replacement",
+      "ok": true
+    },
+    {
+      "name": "public-config-safe-fingerprint",
+      "ok": true
+    },
+    {
+      "name": "hidden-operational-api-count",
+      "ok": true
+    },
+    {
+      "name": "hidden-operational-api-test-guard",
+      "ok": true
+    },
+    {
+      "name": "pipeline-self-start",
+      "ok": true
+    },
+    {
+      "name": "phase353-audit-script",
+      "ok": true
+    },
+    {
+      "name": "phase353-final-script",
+      "ok": true
+    },
+    {
+      "name": "remediation-id-unique",
+      "ok": true
+    },
+    {
+      "name": "remediation-closed",
+      "ok": true
+    }
+  ],
+  "failedValidations": []
+}

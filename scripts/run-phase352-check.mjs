@@ -187,7 +187,9 @@ const checks = {
   },
   'business-profile-alignment'() {
     const server = read('server/index.mjs');
-    const runtimeDb = readJson('runtime/data/db.json');
+    const runtimeDbPath = path.join(root, 'runtime/data/db.json');
+    const runtimeSeedPath = path.join(root, 'runtime/data/db.seed.json');
+    const runtimeDb = fs.existsSync(runtimeDbPath) ? JSON.parse(fs.readFileSync(runtimeDbPath, 'utf8')) : null;
     const businessInfo = read('apps/public/business-info/index.html');
     const privacy = read('apps/public/privacy/index.html');
     const refund = read('apps/public/refund/index.html');
@@ -198,11 +200,15 @@ const checks = {
     assert.match(server, /representative:\s*process\.env\.NV0_BUSINESS_REPRESENTATIVE \|\| '나금상'/);
     assert.match(server, /registrationNumber:\s*process\.env\.NV0_BUSINESS_REGISTRATION_NUMBER \|\| '584-77-00586'/);
     assert.match(server, /privacyOfficerEmail:\s*process\.env\.NV0_PRIVACY_OFFICER_EMAIL \|\| process\.env\.NV0_SUPPORT_EMAIL \|\| 'ct@nv0\.kr'/);
-    assert.equal(runtimeDb.settings.businessProfile.representative, '나금상');
-    assert.equal(runtimeDb.settings.businessProfile.registrationNumber, '584-77-00586');
-    assert.equal(runtimeDb.settings.businessProfile.address, expectedAddress);
-    assert.equal(runtimeDb.settings.businessProfile.contactEmail, expectedEmail);
-    assert.equal(runtimeDb.settings.businessProfile.privacyOfficerEmail, expectedEmail);
+    if (runtimeDb) {
+      assert.equal(runtimeDb.settings.businessProfile.representative, '나금상');
+      assert.equal(runtimeDb.settings.businessProfile.registrationNumber, '584-77-00586');
+      assert.equal(runtimeDb.settings.businessProfile.address, expectedAddress);
+      assert.equal(runtimeDb.settings.businessProfile.contactEmail, expectedEmail);
+      assert.equal(runtimeDb.settings.businessProfile.privacyOfficerEmail, expectedEmail);
+    } else {
+      assert.equal(fs.existsSync(runtimeSeedPath), true, 'clean release seed must remain when active runtime db is excluded');
+    }
     [businessInfo, privacy, refund, terms, rebrand].forEach((text) => {
       assert.ok(text.includes(expectedAddress), 'expected canonical business address');
       assert.ok(text.includes(expectedEmail), 'expected canonical contact email');

@@ -22,7 +22,8 @@ for (const [name, html] of Object.entries({ demo: files.demo, alias: files.alias
   add(`${name}:unified-marker`, () => assert.match(html, /data-unified-diagnosis="home-and-demo"/));
   add(`${name}:same-form-id`, () => assert.match(html, /id="unifiedDiagnosisForm"/));
   add(`${name}:same-target-input`, () => assert.match(html, /id="targetUrl"/));
-  add(`${name}:same-submit`, () => assert.match(html, /id="scanBtn"[^>]*type="submit"/));
+  add(`${name}:same-scan-button`, () => assert.match(html, /id="scanBtn"[^>]*type="button"/));
+  add(`${name}:bootstrap-guard-loaded`, () => assert.match(html, /<script src="\/apps\/public\/demo\/bootstrap\.js"><\/script>/));
   add(`${name}:same-state-and-result`, () => {
     assert.match(html, /id="demoState"/);
     assert.match(html, /id="demoResult"/);
@@ -50,6 +51,7 @@ add('demo-js:recent-and-toolbar-tools', () => {
   assert.match(files.demoJs, /RECENT_TARGETS_KEY/);
   assert.match(files.demoJs, /resultCopySummaryBtn/);
   assert.match(files.demoJs, /cancelActiveScan/);
+  assert.match(files.demoJs, /window\.__veridionRunScan = runScan/);
 });
 add('home:copy-promises-clear-separation', () => {
   assert.match(files.home, /메인에서는 핵심 가치와 결과 구조만 빠르게 확인하고/);

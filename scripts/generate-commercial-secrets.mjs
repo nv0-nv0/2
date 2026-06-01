@@ -5,6 +5,7 @@ function secret(bytes = 48) {
 }
 
 const values = {
+  NV0_SESSION_SECRET: secret(48),
   NV0_BOOTSTRAP_ADMIN_PASSWORD: secret(36),
   POSTGRES_PASSWORD: secret(36),
   NV0_SECURE_RECORDS_KEY: secret(48),

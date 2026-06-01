@@ -84,4 +84,3 @@ try {
   await stopChild();
   fs.rmSync(runtimeDir, { recursive: true, force: true });
 }
-process.exit(0);

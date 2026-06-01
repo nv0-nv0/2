@@ -1048,6 +1048,7 @@ async function runScan() {
     setBusy(false);
   }
 }
+window.__veridionRunScan = runScan;
 
 // P0 safety: listeners are attached synchronously before Turnstile/session bootstrapping.
 unifiedDiagnosisForm?.addEventListener('submit', (event) => {
@@ -1055,7 +1056,7 @@ unifiedDiagnosisForm?.addEventListener('submit', (event) => {
   runScan();
 });
 scanBtn?.addEventListener('click', (event) => {
-  if (unifiedDiagnosisForm && event?.target?.type === 'submit') return;
+  event?.preventDefault?.();
   runScan();
 });
 targetInput?.addEventListener('keydown', (event) => {

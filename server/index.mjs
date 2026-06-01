@@ -4388,6 +4388,33 @@ const READYZ_CACHE_TTL_MS = Math.max(0, Number(process.env.NV0_READYZ_CACHE_TTL_
 let readyzCache = null;
 let publicXmlCache = { sitemap: null, feed: null };
 
+function buildPublicProbeFingerprint() {
+const raw = BUILD_FINGERPRINT || {};
+const semanticVersion = String(raw.commitOrRelease || '').match(/^\d+\.\d+\.\d+/)?.[0] || '1.0.0';
+return { version: semanticVersion };
+}
+
+function buildPublicHealthzPayload(payload = {}) {
+return {
+  ok: payload.ok === true,
+  service: 'veridion',
+  status: payload.ok === true ? 'ok' : 'degraded',
+  generatedAt: payload.generatedAt || nowIso(),
+  buildFingerprint: buildPublicProbeFingerprint()
+};
+}
+
+function buildPublicReadyzPayload(payload = {}, options = {}) {
+return {
+  ok: payload.ok === true,
+  ready: payload.ready === true,
+  status: payload.ready === true ? 'ready' : 'not_ready',
+  generatedAt: nowIso(),
+  buildFingerprint: buildPublicProbeFingerprint(),
+  cacheHit: options.cacheHit === true
+};
+}
+
 
 async function buildReadyzPayload() {
 validateConfig();
@@ -4437,16 +4464,16 @@ async function handleReadyz(req, res) {
 try {
   const now = Date.now();
   if (readyzCache && READYZ_CACHE_TTL_MS > 0 && readyzCache.expiresAt > now) {
-    return json(req, res, 200, { ...readyzCache.payload, cacheHit: true }, { 'cache-control': 'no-store' });
+    return json(req, res, 200, buildPublicReadyzPayload(readyzCache.payload, { cacheHit: true }), { 'cache-control': 'no-store' });
   }
   const payload = await buildReadyzPayload();
   readyzCache = { payload, expiresAt: now + READYZ_CACHE_TTL_MS };
-  return json(req, res, 200, { ...payload, cacheHit: false }, { 'cache-control': 'no-store' });
+  return json(req, res, 200, buildPublicReadyzPayload(payload, { cacheHit: false }), { 'cache-control': 'no-store' });
 } catch (error) {
   readyzCache = null;
   const message = error?.message || 'readiness check failed';
   console.error(JSON.stringify({ level: 'error', event: 'readyz_failed', message, deploymentStage: DEPLOYMENT_STAGE, commercialLaunchReady: COMMERCIAL_LAUNCH_READY, prelaunchMode: PRELAUNCH_MODE, persistenceMode: PERSISTENCE_MODE, storageMode: STORAGE_MODE, redisStrict: READYZ_REDIS_STRICT }));
-  return json(req, res, 503, { ok: false, ready: false, runtimeWritable: false, error: message, stage: DEPLOYMENT_STAGE, prelaunchMode: PRELAUNCH_MODE, commercialLaunchReady: COMMERCIAL_LAUNCH_READY, redisStrict: READYZ_REDIS_STRICT, buildFingerprint: BUILD_FINGERPRINT }, { 'cache-control': 'no-store' });
+  return json(req, res, 503, buildPublicReadyzPayload({ ok: false, ready: false }, { cacheHit: false }), { 'cache-control': 'no-store' });
 }
 }
 
@@ -4477,8 +4504,8 @@ const integrations = strictHealthz
   : { process: { ok: true } };
 const payload = buildHealthDetails({ service: 'veridion', release: 'clean-rebrand', integrations });
 payload.readinessAdvisory = { commercialEnv: { ok: !PLATFORM.commercial || commercialEnvStatus.ok, mode: commercialEnvStatus.mode, missing: commercialEnvStatus.missing || [], warnings: commercialEnvStatus.warnings || [] }, deploymentRiskGuard: { ok: DEPLOYMENT_RISK_GUARD.ok, version: PHASE223_RISK_GUARD_VERSION }, strictHealthz };
-payload.buildFingerprint = BUILD_FINGERPRINT;
-return json(req, res, payload.ok ? 200 : 503, payload, { 'cache-control': 'no-store' });
+payload.buildFingerprint = buildPublicProbeFingerprint();
+return json(req, res, payload.ok ? 200 : 503, buildPublicHealthzPayload(payload), { 'cache-control': 'no-store' });
 }
 if (pathname === '/readyz') return handleReadyz(req, res);
 if (pathname === '/favicon.ico' && (req.method === 'GET' || req.method === 'HEAD')) {

@@ -1,0 +1,53 @@
+{
+  "ok": true,
+  "phase": "phase355-organization-closeout",
+  "startedAt": "2026-06-01T06:39:30.310Z",
+  "finishedAt": "2026-06-01T06:41:04.373Z",
+  "passed": 4,
+  "attempted": 4,
+  "total": 4,
+  "failed": 0,
+  "timeoutMs": 300000,
+  "results": [
+    {
+      "name": "phase354:final",
+      "ok": true,
+      "status": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 93059,
+      "stdoutTail": "\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout phase354:final\n> node scripts/run-phase354-final.mjs\n\n[PASS] phase353:final 90089ms\n[PASS] test:public-probe-minimal 975ms\n[PASS] check:compose-env-forwarding 434ms\n[PASS] check:phase354-audit 466ms\n[PASS] clean:runtime 566ms\n[PASS] check-runtime-clean 105ms\n{\n  \"ok\": true,\n  \"phase\": \"phase354-deployment-security-closeout\",\n  \"passed\": 6,\n  \"attempted\": 6,\n  \"total\": 6,\n  \"failed\": 0,\n  \"report\": \"docs/current/PHASE354_FINAL_GATE_REPORT.json\"\n}\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "check:phase355-audit",
+      "ok": true,
+      "status": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 464,
+      "stdoutTail": "\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout check:phase355-audit\n> node scripts/run-phase355-audit.mjs\n\n{\n  \"ok\": true,\n  \"checked\": 18,\n  \"failed\": 0,\n  \"report\": \"docs/current/PHASE355_GLOBAL_AUDIT.json\"\n}\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "clean:runtime",
+      "ok": true,
+      "status": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 428,
+      "stdoutTail": "\n> veridion-public-risk-diagnostic@1.0.16-commercial-phase355-organization-closeout clean:runtime\n> node scripts/clean-release-runtime.mjs\n\n{\n  \"ok\": true,\n  \"phase\": \"phase322-clean-release-runtime-state-excluded\",\n  \"retained\": [\n    \"runtime/data/db.seed.json\"\n  ],\n  \"removedActiveState\": [\n    \"runtime/uploads\",\n    \"runtime/backups\",\n    \"runtime/reports\"\n  ],\n  \"note\": \"Release packages must not include local runtime state or runtime-test-* directories. Server recreates local runtime files on first non-commercial JSON-mode start; commercial mode must use PostgreSQL/Redis/object storage.\"\n}\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "check-runtime-clean",
+      "ok": true,
+      "status": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 104,
+      "stdoutTail": "{\n  \"ok\": true,\n  \"checked\": \"runtime-clean-release\",\n  \"mode\": \"active-runtime-state-and-runtime-test-excluded\",\n  \"phase\": \"phase322\"\n}\n",
+      "stderrTail": ""
+    }
+  ]
+}

@@ -7,11 +7,11 @@ function add(name, fn) { try { fn(); checks.push({ name, ok: true }); } catch (e
 function read(rel) { return fs.readFileSync(path.join(root, rel), 'utf8'); }
 function exists(rel) { return fs.existsSync(path.join(root, rel)); }
 const pkg = JSON.parse(read('package.json'));
-add('version:phase351', () => assert.match(pkg.version, /1\.0\.13-commercial-phase351-prompt-full-sweep-closeout/));
+add('version:phase351-or-newer', () => assert.match(pkg.version, /1\.0\.13-commercial-phase351-prompt-full-sweep-closeout|1\.0\.14-commercial-phase353-full-package-closeout|1\.0\.15-commercial-phase354-deployment-security-closeout|1\.0\.16-commercial-phase355-organization-closeout/));
 add('scripts:phase351-final', () => assert.equal(pkg.scripts['phase351:final'], 'node scripts/run-phase351-final.mjs'));
 add('scripts:delivery-release-current', () => {
-  assert.equal(pkg.scripts['delivery:final'], 'npm run phase351:final');
-  assert.equal(pkg.scripts['release:predeploy'], 'npm run phase351:final');
+  assert.ok(['npm run phase351:final','npm run phase353:final','npm run phase354:final','npm run phase355:final'].includes(pkg.scripts['delivery:final']));
+  assert.ok(['npm run phase351:final','npm run phase353:final','npm run phase354:final','npm run phase355:final'].includes(pkg.scripts['release:predeploy']));
 });
 add('scripts:new-contracts', () => {
   assert.equal(pkg.scripts['check:ui-global-sweep'], 'node scripts/check-ui-global-sweep.mjs');
@@ -30,11 +30,11 @@ add('ui-sweep:checks-global-files', () => {
   assert.match(s, /button is missing explicit type/);
   assert.match(s, /shared brand CSS is missing/);
 });
-add('readme:phase351', () => assert.match(read('README.md'), /phase351:final/));
-add('run-all-tests:phase351', () => assert.match(read('RUN_ALL_TESTS.sh'), /phase351:final/));
+add('readme:terminal-gate', () => assert.match(read('README.md'), /phase353:final|phase354:final|phase355:final/));
+add('run-all-tests:terminal-gate', () => assert.match(read('RUN_ALL_TESTS.sh'), /phase353:final|phase354:final|phase355:final/));
 const failures = checks.filter(c => !c.ok);
-const report = { ok: failures.length === 0, phase: 'phase351-prompt-full-sweep-closeout', checked: checks.length, failed: failures.length, failures };
+const report = { ok: failures.length === 0, phase: 'phase353-compatible-phase351-validation', checked: checks.length, failed: failures.length, failures };
 fs.mkdirSync(path.join(root, 'docs/current'), { recursive: true });
-fs.writeFileSync(path.join(root, 'docs/current/PHASE351_VALIDATION.json'), JSON.stringify(report, null, 2));
+fs.writeFileSync(path.join(root, 'docs/current/PHASE353_COMPAT_PHASE351_VALIDATION.json'), JSON.stringify(report, null, 2));
 console.log(JSON.stringify(report, null, 2));
 if (!report.ok) process.exit(1);
