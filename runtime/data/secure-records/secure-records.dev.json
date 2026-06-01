@@ -1,0 +1,1928 @@
+{
+  "collections": {
+    "customers": [],
+    "orders": [
+      {
+        "id": "ord-1001",
+        "customer": "Acme Co",
+        "status": "paid",
+        "stage": "scan_requested",
+        "amount": 79000,
+        "createdAt": "2026-05-31T23:37:54.918Z"
+      },
+      {
+        "id": "ord-1002",
+        "customer": "Beta Labs",
+        "status": "pending",
+        "stage": "draft",
+        "amount": 49000,
+        "createdAt": "2026-05-31T23:37:54.918Z"
+      }
+    ],
+    "subscriptions": [
+      {
+        "id": "sub-1001",
+        "siteId": "site-seed-001",
+        "plan": "Expert",
+        "status": "active",
+        "monthlyPrice": 149000,
+        "createdAt": "2026-05-31T23:37:54.918Z"
+      }
+    ],
+    "sites": [
+      {
+        "id": "site-e28d87b4",
+        "domain": "https://example.com",
+        "industry": "일반 이커머스",
+        "jurisdiction": "KR",
+        "latestRiskScore": 24,
+        "latestRiskLevel": "관찰",
+        "latestEstimatedMaxPenalty": 12000000,
+        "lastScanAt": "2026-05-31T23:39:15.807Z",
+        "createdAt": "2026-05-31T23:38:32.889Z",
+        "status": "active"
+      }
+    ],
+    "scans": [
+      {
+        "requestId": "scan-3998a01f",
+        "provider": "builtin",
+        "target": "https://example.com",
+        "normalizedTarget": "https://example.com/",
+        "summary": "https://example.com/ 최근 분석 결과를 재사용했습니다.",
+        "fetched": false,
+        "fetchStatus": 0,
+        "fetchError": "fetch failed",
+        "industry": "일반 이커머스",
+        "siteProfile": {
+          "industry": "일반 이커머스",
+          "siteType": "일반 웹사이트",
+          "likelyHighRegulation": false,
+          "signals": {
+            "hasSignup": false,
+            "hasCheckout": false,
+            "hasProductDetail": false,
+            "hasPrivacyPolicy": false,
+            "hasTerms": false,
+            "hasRefundPolicy": false,
+            "hasContactInfo": false
+          },
+          "keyPages": [
+            "홈",
+            "푸터"
+          ]
+        },
+        "categoryScores": {
+          "개인정보": 55,
+          "지원": 21
+        },
+        "ruleVersion": "2026.05.02-phase164-zero-cost-hardening-50",
+        "scanMode": "zero_cost_full_auto_disclosure",
+        "scanScopeLabel": "무료 공개 페이지 최대 커버리지 무료진단",
+        "cached": true,
+        "resultStatus": "completed_builtin_provider",
+        "resultLimitNotice": "내장 공개 페이지 진단 결과이며 법률 자문이나 성과 보장을 의미하지 않습니다.",
+        "riskScore": 24,
+        "detectionScore": 24,
+        "riskLevel": "관찰",
+        "totalFindings": 2,
+        "categoryCounts": {
+          "개인정보": 1,
+          "지원": 1
+        },
+        "estimatedMaxPenalty": 12000000,
+        "penaltyEstimateType": "reference_upper_bound_candidate",
+        "legalConclusion": false,
+        "penaltyDisclaimer": "과태료 상한 후보는 자동진단 기반 참고 정보이며, 실제 부과 여부·금액·적용 법령은 관할기관 판단과 전문가 검토에 따라 달라집니다.",
+        "topFindings": [
+          "개인정보처리방침 링크 또는 본문 (P2 · 신뢰도 낮음)",
+          "고객센터 연락수단 (P2 · 신뢰도 낮음)"
+        ],
+        "detailFindings": [
+          {
+            "id": "finding-3421ae18",
+            "code": "PRIVACY-POLICY",
+            "category": "개인정보",
+            "title": "개인정보처리방침 링크 또는 본문",
+            "severity": 26,
+            "weightedSeverity": 12,
+            "riskContribution": 12,
+            "priority": "P2",
+            "estimatedPenaltyMax": 10000000,
+            "impact": "고객 안내와 운영 신뢰에 영향을 줄 수 있는 항목입니다.",
+            "evidence": "개인정보처리방침 링크 또는 본문 관련 신호(개인정보, privacy, 수집, 보관)를 확인한 공개 페이지에서 충분히 찾지 못했습니다. 확인 위치: https://example.com/policy/privacy · https://example.com/privacy · https://example.com/privacy-policy",
+            "evidenceType": "negative_public_html_evidence",
+            "evidenceStatus": "not_found_in_scanned_pages",
+            "sourcePages": [
+              "https://example.com/policy/privacy",
+              "https://example.com/privacy",
+              "https://example.com/privacy-policy"
+            ],
+            "certainty": "낮음",
+            "manualReviewRequired": true,
+            "coverage": {
+              "relevantPages": 3,
+              "successfulPages": 0,
+              "failedPages": 3
+            },
+            "limitation": "일부 후보 페이지는 직접 확인 필요.",
+            "recommendation": "필요 안내를 보강합니다.",
+            "autoFixEligible": true
+          },
+          {
+            "id": "finding-9b7e8ceb",
+            "code": "CONTACT-CHANNEL",
+            "category": "지원",
+            "title": "고객센터 연락수단",
+            "severity": 10,
+            "weightedSeverity": 4,
+            "riskContribution": 4,
+            "priority": "P2",
+            "estimatedPenaltyMax": 2000000,
+            "impact": "고객 안내와 운영 신뢰에 영향을 줄 수 있는 항목입니다.",
+            "evidence": "고객센터 연락수단 관련 신호(문의, 고객센터, contact, @)를 확인한 공개 페이지에서 충분히 찾지 못했습니다. 확인 위치: https://example.com/ · https://example.com/contact",
+            "evidenceType": "negative_public_html_evidence",
+            "evidenceStatus": "not_found_in_scanned_pages",
+            "sourcePages": [
+              "https://example.com/",
+              "https://example.com/contact"
+            ],
+            "certainty": "낮음",
+            "manualReviewRequired": true,
+            "coverage": {
+              "relevantPages": 12,
+              "successfulPages": 0,
+              "failedPages": 12
+            },
+            "limitation": "일부 후보 페이지는 직접 확인 필요.",
+            "recommendation": "필요 안내를 보강합니다.",
+            "autoFixEligible": true
+          }
+        ],
+        "evidenceSummary": {
+          "collectionMethod": "zero_cost_full_auto_public_probe",
+          "collectionStrategy": "홈→내부 후보링크→robots.txt→sitemap.xml→무료 HTTP 병렬수집→규칙판정→자동초안/직접 확인 분리",
+          "verifiedBy": "builtin_rules_full_auto_public_probe",
+          "aiReviewProvider": "disabled",
+          "externalMeasurementProviders": {
+            "lighthouse": false,
+            "searchConsole": false,
+            "browserRendering": false
+          },
+          "automationDiscovery": {
+            "level": "maximum_free_safe",
+            "capabilities": [
+              "URL 자동 보정",
+              "홈 연결된 공개 페이지 자동 수집",
+              "robots.txt sitemap 자동 탐색",
+              "sitemap.xml 주요 URL 자동 선별",
+              "정책·결제·문의 후보 페이지 자동 우선순위화",
+              "실패 URL 직접 확인 항목 자동 고지"
+            ],
+            "htmlLinkCount": 0,
+            "sitemapLinkCount": 0,
+            "robotsEnabled": true,
+            "sitemapEnabled": true,
+            "resourceFetches": [
+              {
+                "url": "https://example.com/robots.txt",
+                "finalUrl": "https://example.com/robots.txt",
+                "status": 0,
+                "contentType": "",
+                "contentLength": 0,
+                "fetched": false,
+                "error": "fetch failed",
+                "source": "robots_txt"
+              },
+              {
+                "url": "https://example.com/sitemap.xml",
+                "finalUrl": "https://example.com/sitemap.xml",
+                "status": 0,
+                "contentType": "",
+                "contentLength": 0,
+                "fetched": false,
+                "error": "fetch failed",
+                "source": "sitemap_xml"
+              }
+            ]
+          },
+          "automationCapabilities": [
+            "URL 자동 보정",
+            "홈 연결된 공개 페이지 자동 수집",
+            "robots.txt sitemap 자동 탐색",
+            "sitemap.xml 주요 URL 자동 선별",
+            "정책·결제·문의 후보 페이지 자동 우선순위화",
+            "실패 URL 직접 확인 항목 자동 고지"
+          ],
+          "coverageScore": 0,
+          "confidenceScore": 5,
+          "confidenceLabel": "매우 낮음",
+          "successfulPageCount": 0,
+          "failedPageCount": 12,
+          "attemptedPageCount": 12,
+          "expectedProbeCount": 12,
+          "maxProbePages": 12,
+          "manualReviewCount": 12,
+          "scannedPages": [
+            {
+              "url": "https://example.com/",
+              "finalUrl": "https://example.com/",
+              "status": 0,
+              "contentType": "",
+              "contentLength": 0,
+              "fetched": false,
+              "error": "fetch failed",
+              "verifiedBy": "http_fetch",
+              "renderedByBrowser": false,
+              "source": "primary"
+            },
+            {
+              "url": "https://example.com/policy/privacy",
+              "finalUrl": "https://example.com/policy/privacy",
+              "status": 0,
+              "contentType": "",
+              "contentLength": 0,
+              "fetched": false,
+              "error": "fetch failed",
+              "verifiedBy": "http_fetch",
+              "renderedByBrowser": false,
+              "source": "adaptive_probe"
+            },
+            {
+              "url": "https://example.com/privacy",
+              "finalUrl": "https://example.com/privacy",
+              "status": 0,
+              "contentType": "",
+              "contentLength": 0,
+              "fetched": false,
+              "error": "fetch failed",
+              "verifiedBy": "http_fetch",
+              "renderedByBrowser": false,
+              "source": "adaptive_probe"
+            },
+            {
+              "url": "https://example.com/privacy-policy",
+              "finalUrl": "https://example.com/privacy-policy",
+              "status": 0,
+              "contentType": "",
+              "contentLength": 0,
+              "fetched": false,
+              "error": "fetch failed",
+              "verifiedBy": "http_fetch",
+              "renderedByBrowser": false,
+              "source": "adaptive_probe"
+            },
+            {
+              "url": "https://example.com/policy/terms",
+              "finalUrl": "https://example.com/policy/terms",
+              "status": 0,
+              "contentType": "",
+              "contentLength": 0,
+              "fetched": false,
+              "error": "fetch failed",
+              "verifiedBy": "http_fetch",
+              "renderedByBrowser": false,
+              "source": "adaptive_probe"
+            },
+            {
+              "url": "https://example.com/terms",
+              "finalUrl": "https://example.com/terms",
+              "status": 0,
+              "contentType": "",
+              "contentLength": 0,
+              "fetched": false,
+              "error": "fetch failed",
+              "verifiedBy": "http_fetch",
+              "renderedByBrowser": false,
+              "source": "adaptive_probe"
+            },
+            {
+              "url": "https://example.com/terms-of-use",
+              "finalUrl": "https://example.com/terms-of-use",
+              "status": 0,
+              "contentType": "",
+              "contentLength": 0,
+              "fetched": false,
+              "error": "fetch failed",
+              "verifiedBy": "http_fetch",
+              "renderedByBrowser": false,
+              "source": "adaptive_probe"
+            },
+            {
+              "url": "https://example.com/cancel",
+              "finalUrl": "https://example.com/cancel",
+              "status": 0,
+              "contentType": "",
+              "contentLength": 0,
+              "fetched": false,
+              "error": "fetch failed",
+              "verifiedBy": "http_fetch",
+              "renderedByBrowser": false,
+              "source": "adaptive_probe"
+            },
+            {
+              "url": "https://example.com/exchange",
+              "finalUrl": "https://example.com/exchange",
+              "status": 0,
+              "contentType": "",
+              "contentLength": 0,
+              "fetched": false,
+              "error": "fetch failed",
+              "verifiedBy": "http_fetch",
+              "renderedByBrowser": false,
+              "source": "adaptive_probe"
+            },
+            {
+              "url": "https://example.com/refund",
+              "finalUrl": "https://example.com/refund",
+              "status": 0,
+              "contentType": "",
+              "contentLength": 0,
+              "fetched": false,
+              "error": "fetch failed",
+              "verifiedBy": "http_fetch",
+              "renderedByBrowser": false,
+              "source": "adaptive_probe"
+            },
+            {
+              "url": "https://example.com/return",
+              "finalUrl": "https://example.com/return",
+              "status": 0,
+              "contentType": "",
+              "contentLength": 0,
+              "fetched": false,
+              "error": "fetch failed",
+              "verifiedBy": "http_fetch",
+              "renderedByBrowser": false,
+              "source": "adaptive_probe"
+            },
+            {
+              "url": "https://example.com/contact",
+              "finalUrl": "https://example.com/contact",
+              "status": 0,
+              "contentType": "",
+              "contentLength": 0,
+              "fetched": false,
+              "error": "fetch failed",
+              "verifiedBy": "http_fetch",
+              "renderedByBrowser": false,
+              "source": "adaptive_probe"
+            }
+          ],
+          "coverageGaps": [
+            {
+              "url": "https://example.com/policy/privacy",
+              "status": 0,
+              "error": "fetch failed"
+            },
+            {
+              "url": "https://example.com/privacy",
+              "status": 0,
+              "error": "fetch failed"
+            },
+            {
+              "url": "https://example.com/privacy-policy",
+              "status": 0,
+              "error": "fetch failed"
+            },
+            {
+              "url": "https://example.com/policy/terms",
+              "status": 0,
+              "error": "fetch failed"
+            },
+            {
+              "url": "https://example.com/terms",
+              "status": 0,
+              "error": "fetch failed"
+            },
+            {
+              "url": "https://example.com/terms-of-use",
+              "status": 0,
+              "error": "fetch failed"
+            },
+            {
+              "url": "https://example.com/exchange",
+              "status": 0,
+              "error": "fetch failed"
+            },
+            {
+              "url": "https://example.com/refund",
+              "status": 0,
+              "error": "fetch failed"
+            }
+          ],
+          "limitations": [
+            "무료 공개 URL·연결된 공개 페이지·robots.txt·sitemap.xml 기준입니다.",
+            "자동 접근 가능한 공개 화면은 최대한 수집하지만 로그인·외부 결제·차단·JS 전용 화면은 직접 확인입니다.",
+            "미연결 외부 측정값은 확정하지 않습니다.",
+            "법률 위반·처분 가능성은 확정하지 않습니다."
+          ],
+          "disclaimer": "무료 전자동 공개 페이지 예비 점검입니다. 자동 확정 불가 항목은 직접 확인 필요로 분리합니다."
+        },
+        "scoreModel": {
+          "primaryLabel": "개선 우선도",
+          "riskScoreLabel": "탐지 점수",
+          "riskScoreMeaning": "수집된 공개 페이지에서 보완 후보가 얼마나 많이 발견됐는지 나타내는 내부 지표입니다.",
+          "confidenceScore": 5,
+          "confidenceLabel": "매우 낮음",
+          "detectedFindings": 2,
+          "manualReviewCount": 12,
+          "notLegalConclusion": true,
+          "scoreDisclaimer": "점수는 법적 위험 확정값이 아니라 발견 항목의 우선순위 지표입니다.",
+          "weightedSignals": [
+            "필수 고지 노출",
+            "정책 링크 확인",
+            "고객지원 경로",
+            "결제 전 안내",
+            "과장 표현 후보",
+            "수집 범위 신뢰도"
+          ]
+        },
+        "accuracyProfile": {
+          "version": "phase201-product-quality-v1",
+          "score": 0,
+          "grade": "E",
+          "label": "출시 전 차단",
+          "falsePositiveRisk": "high",
+          "manualReviewRequired": true,
+          "evidenceCoverage": {
+            "coverageScore": 0,
+            "confidenceScore": 5,
+            "attemptedPages": 12,
+            "successfulPages": 0,
+            "failedPages": 12,
+            "scannedPageCount": 12,
+            "coverageGaps": [
+              {
+                "url": "https://example.com/policy/privacy",
+                "status": 0,
+                "error": "fetch failed"
+              },
+              {
+                "url": "https://example.com/privacy",
+                "status": 0,
+                "error": "fetch failed"
+              },
+              {
+                "url": "https://example.com/privacy-policy",
+                "status": 0,
+                "error": "fetch failed"
+              },
+              {
+                "url": "https://example.com/policy/terms",
+                "status": 0,
+                "error": "fetch failed"
+              },
+              {
+                "url": "https://example.com/terms",
+                "status": 0,
+                "error": "fetch failed"
+              },
+              {
+                "url": "https://example.com/terms-of-use",
+                "status": 0,
+                "error": "fetch failed"
+              },
+              {
+                "url": "https://example.com/exchange",
+                "status": 0,
+                "error": "fetch failed"
+              },
+              {
+                "url": "https://example.com/refund",
+                "status": 0,
+                "error": "fetch failed"
+              }
+            ]
+          },
+          "findingReliability": {
+            "totalFindings": 2,
+            "highCertaintyCount": 0,
+            "mediumCertaintyCount": 0,
+            "lowCertaintyCount": 2,
+            "manualReviewCount": 12,
+            "manualReviewRatio": 1
+          },
+          "gates": [
+            {
+              "key": "target_fetched",
+              "ok": false,
+              "label": "대상 공개 페이지 1개 이상 수집",
+              "details": null
+            },
+            {
+              "key": "coverage_usable",
+              "ok": false,
+              "label": "진단 커버리지 45점 이상",
+              "details": {
+                "coverageScore": 0
+              }
+            },
+            {
+              "key": "confidence_usable",
+              "ok": false,
+              "label": "근거 신뢰도 45점 이상",
+              "details": {
+                "confidenceScore": 5
+              }
+            },
+            {
+              "key": "manual_review_bounded",
+              "ok": false,
+              "label": "수동검토 항목 과다 방지",
+              "details": {
+                "manualReviewCount": 12,
+                "totalFindings": 2
+              }
+            },
+            {
+              "key": "source_pages_recorded",
+              "ok": true,
+              "label": "확인 URL 기록 보존",
+              "details": {
+                "scannedPages": 12
+              }
+            }
+          ],
+          "blockers": [
+            {
+              "key": "target_fetched",
+              "ok": false,
+              "label": "대상 공개 페이지 1개 이상 수집",
+              "details": null
+            },
+            {
+              "key": "coverage_usable",
+              "ok": false,
+              "label": "진단 커버리지 45점 이상",
+              "details": {
+                "coverageScore": 0
+              }
+            },
+            {
+              "key": "confidence_usable",
+              "ok": false,
+              "label": "근거 신뢰도 45점 이상",
+              "details": {
+                "confidenceScore": 5
+              }
+            },
+            {
+              "key": "manual_review_bounded",
+              "ok": false,
+              "label": "수동검토 항목 과다 방지",
+              "details": {
+                "manualReviewCount": 12,
+                "totalFindings": 2
+              }
+            }
+          ],
+          "operatingRule": "점수는 법적 결론이 아니라 공개 수집 근거 기반의 개선 우선순위입니다. 낮은 신뢰도 항목은 결제 산출물에서도 확인 필요로 유지합니다."
+        },
+        "demoIssueOverview": {
+          "version": "phase229-value-priced-quality-lock-v1",
+          "scope": "free_demo_problem_area_element_count_only",
+          "target": "https://example.com",
+          "totalIssueCount": 2,
+          "visibleIssueCount": 2,
+          "hiddenDetailedIssueCount": 0,
+          "areaCount": 2,
+          "elementCount": 10,
+          "manualReviewCount": 12,
+          "priorityCounts": {
+            "P2": 2
+          },
+          "areaBreakdown": [
+            {
+              "area": "개인정보·동의",
+              "issueCount": 1,
+              "elementCount": 5,
+              "elements": [
+                "수집 항목",
+                "수집 목적",
+                "보관 기간",
+                "파기 기준",
+                "동의 문구"
+              ],
+              "priorities": {
+                "P2": 1
+              },
+              "previewFindings": [
+                {
+                  "title": "개인정보처리방침 링크 또는 본문",
+                  "priority": "P2",
+                  "status": "검토 필요",
+                  "elementCount": 5,
+                  "elements": [
+                    "수집 항목",
+                    "수집 목적",
+                    "보관 기간"
+                  ]
+                }
+              ]
+            },
+            {
+              "area": "사업자 정보·문의 경로",
+              "issueCount": 1,
+              "elementCount": 5,
+              "elements": [
+                "상호·대표자",
+                "사업자번호",
+                "통신판매업 신고번호",
+                "고객지원 경로",
+                "답변 기준"
+              ],
+              "priorities": {
+                "P2": 1
+              },
+              "previewFindings": [
+                {
+                  "title": "고객센터 연락수단",
+                  "priority": "P2",
+                  "status": "검토 필요",
+                  "elementCount": 5,
+                  "elements": [
+                    "상호·대표자",
+                    "사업자번호",
+                    "통신판매업 신고번호"
+                  ]
+                }
+              ]
+            }
+          ],
+          "demoVisibleFields": [
+            "problem area",
+            "affected elements",
+            "counts",
+            "priority",
+            "status"
+          ],
+          "paidUnlockFields": [
+            "full evidence",
+            "source page mapping",
+            "limitation",
+            "recommendation",
+            "before/after copy",
+            "acceptance criteria",
+            "site operations document"
+          ],
+          "disclaimer": "무료 데모는 문제 영역·요소·개수와 우선순위 요약만 제공합니다. 전체 근거와 수정 문서는 결제 후 산출물에서 제공합니다."
+        },
+        "conversionUrgency": {
+          "version": "phase229-value-priced-quality-lock-v1",
+          "scope": "free_demo_conversion_crisis_score",
+          "target": "https://example.com",
+          "crisisScore": 40,
+          "crisisLabel": "관리 가능",
+          "tone": "success",
+          "headline": "작은 안내 공백도 누적되면 문의와 이탈을 만들 수 있습니다.",
+          "reason": "발견 문제 2개 · 문제 영역 2개 · 영향 요소 10개 · 직접 확인 필요 12개 기준으로 보완 우선도를 계산했습니다.",
+          "projectedAfterFixScore": 16,
+          "expectedScoreReduction": 24,
+          "immediateFixableCount": 0,
+          "conversionBlockers": [
+            {
+              "key": "privacy",
+              "label": "개인정보·동의",
+              "count": 1,
+              "customerFeeling": "입력폼 이탈"
+            },
+            {
+              "key": "business",
+              "label": "사업자·문의 경로",
+              "count": 1,
+              "customerFeeling": "신뢰 확인 지연"
+            }
+          ],
+          "lostTrustSignals": [
+            "발견 문제 2개",
+            "문제 영역 2개",
+            "영향 요소 10개",
+            "직접 확인 필요 12개"
+          ],
+          "primaryCta": "기본 리포트 결제하고 원인 확인",
+          "secondaryCta": "전문가 리포트로 개선안 받기",
+          "recommendedPlan": "Report",
+          "purchasePath": [
+            {
+              "step": 1,
+              "title": "위기도 확인",
+              "body": "무료 데모에서 문제 영역·요소·갯수와 위기도 점수를 확인합니다."
+            },
+            {
+              "step": 2,
+              "title": "상세 근거 잠금 해제",
+              "body": "결제 후 전체 문제, 페이지별 근거, 한계, 우선순위를 확인합니다."
+            },
+            {
+              "step": 3,
+              "title": "맞춤 개선 문서 실행",
+              "body": "사이트 상황에 맞춘 문구·운영 SOP·재검증 기준을 적용합니다."
+            }
+          ],
+          "disclaimer": "위기도 점수는 법률 위반 또는 매출 손실을 확정하는 값이 아니라 공개 화면 기준 보완 우선순위입니다."
+        },
+        "automationDisclosure": {
+          "mode": "free_auto_with_explicit_limits",
+          "principle": "추가 비용 없이 자동 확인 가능한 공개 신호는 모두 수집하고, 자동 확정이 위험한 항목은 직접 확인으로 분리합니다.",
+          "fullyAutomated": true,
+          "automationLevel": "maximum_free_safe",
+          "automatedChecks": [
+            "URL 형식 자동 보정",
+            "홈 HTML 수집",
+            "연결된 공개 페이지 후보 추출",
+            "robots.txt에서 sitemap 위치 확인",
+            "sitemap.xml에서 주요 공개 URL 추출",
+            "개인정보·약관·환불·문의·결제·가격·배송 후보 페이지 우선순위화",
+            "HTTP 상태·본문 길이·확인 URL 기록",
+            "규칙 기반 보완 후보 판정",
+            "수정 문구 후보와 다음 행동 자동 생성"
+          ],
+          "autoGeneratedDeliverables": [
+            "탐지 점수",
+            "수집 신뢰도",
+            "페이지별 확인 근거",
+            "직접 확인 필요 목록",
+            "우선순위별 개선 순서",
+            "자동 수정 후보 문구"
+          ],
+          "manualBoundaries": [
+            "로그인 후 화면",
+            "외부 결제창",
+            "자바스크립트 전용 렌더링 화면",
+            "접근 차단 또는 timeout 페이지",
+            "업종별 법률 판단",
+            "사업자·통신판매업 신고번호의 행정기관 진위 확인",
+            "광고 표현의 최종 법률 검토"
+          ],
+          "clearNotice": "자동으로 확인 가능한 공개 페이지는 모두 검사하지만, 자동 확정이 불가능한 항목은 누락으로 숨기지 않고 직접 확인 필요로 표시합니다.",
+          "failedPageCount": 12,
+          "manualFindingCount": 2,
+          "canClaim": "공개 페이지 기준 자동 예비 점검",
+          "mustNotClaim": [
+            "법률 결론 확정",
+            "과태료 확정",
+            "성과 약속",
+            "전체 페이지 완전 탐지"
+          ],
+          "discoveryStats": {
+            "htmlLinkCount": 0,
+            "sitemapLinkCount": 0,
+            "resourceFetches": [
+              {
+                "url": "https://example.com/robots.txt",
+                "finalUrl": "https://example.com/robots.txt",
+                "status": 0,
+                "contentType": "",
+                "contentLength": 0,
+                "fetched": false,
+                "error": "fetch failed",
+                "source": "robots_txt"
+              },
+              {
+                "url": "https://example.com/sitemap.xml",
+                "finalUrl": "https://example.com/sitemap.xml",
+                "status": 0,
+                "contentType": "",
+                "contentLength": 0,
+                "fetched": false,
+                "error": "fetch failed",
+                "source": "sitemap_xml"
+              }
+            ]
+          }
+        },
+        "automatedActionPlan": {
+          "mode": "auto_first_manual_boundary",
+          "summary": "자동 처리 가능한 항목은 수정 후보까지 생성하고, 자동 확정 불가 항목은 직접 확인 목록으로 분리했습니다.",
+          "automaticFixes": [],
+          "manualReviews": [
+            {
+              "order": 1,
+              "mode": "manual_review_required",
+              "findingCode": "PRIVACY-POLICY",
+              "title": "개인정보처리방침 링크 또는 본문",
+              "reason": "일부 후보 페이지는 직접 확인 필요.",
+              "sourcePages": [
+                "https://example.com/policy/privacy",
+                "https://example.com/privacy",
+                "https://example.com/privacy-policy"
+              ]
+            },
+            {
+              "order": 2,
+              "mode": "manual_review_required",
+              "findingCode": "CONTACT-CHANNEL",
+              "title": "고객센터 연락수단",
+              "reason": "일부 후보 페이지는 직접 확인 필요.",
+              "sourcePages": [
+                "https://example.com/",
+                "https://example.com/contact"
+              ]
+            }
+          ],
+          "autoNextSteps": [
+            "확인된 P0/P1 항목을 우선순위대로 정리합니다.",
+            "자동 수정 후보 문구를 생성합니다.",
+            "실패한 후보 URL은 직접 확인 목록으로 넘깁니다.",
+            "재진단 시 같은 기준으로 결과를 비교합니다."
+          ],
+          "coverageNotice": "무료 전자동 공개 페이지 예비 점검입니다. 자동 확정 불가 항목은 직접 확인 필요로 분리합니다.",
+          "requiresOperatorApproval": true
+        },
+        "qualityAssurance": {
+          "resultType": "limited_fallback_check",
+          "canGuaranteeLegalAccuracy": false,
+          "canGuaranteeBusinessOutcome": false,
+          "requiresManualReview": true,
+          "automationPolicy": "자동 확인 가능한 공개 항목은 기본 처리하고, 자동 확정 불가 영역은 명확히 고지합니다.",
+          "recommendedExternalTools": [
+            "Playwright(선택)",
+            "Lighthouse(선택)",
+            "Search Console(선택)",
+            "Gemini(선택)"
+          ]
+        },
+        "aiReview": {
+          "enabled": false,
+          "provider": "disabled",
+          "model": null,
+          "role": "해석 보조 레이어이며 측정 원천이 아닙니다."
+        },
+        "autoFixCandidates": [
+          {
+            "findingCode": "PRIVACY-POLICY",
+            "title": "개인정보처리방침 링크 또는 본문",
+            "patchSummary": "필요 안내를 보강합니다.",
+            "sourcePages": [
+              "https://example.com/policy/privacy",
+              "https://example.com/privacy",
+              "https://example.com/privacy-policy"
+            ],
+            "certainty": "낮음"
+          },
+          {
+            "findingCode": "CONTACT-CHANNEL",
+            "title": "고객센터 연락수단",
+            "patchSummary": "필요 안내를 보강합니다.",
+            "sourcePages": [
+              "https://example.com/",
+              "https://example.com/contact"
+            ],
+            "certainty": "낮음"
+          }
+        ],
+        "recommendedPlan": "Report",
+        "lockedPreviewCount": 0,
+        "generatedAt": "2026-05-31T23:39:15.807Z",
+        "elapsedMs": 1,
+        "findings": [
+          {
+            "key": "PRIVACY-POLICY",
+            "label": "개인정보처리방침 링크 또는 본문",
+            "status": "P2",
+            "certainty": "낮음",
+            "sourcePages": [
+              "https://example.com/policy/privacy",
+              "https://example.com/privacy",
+              "https://example.com/privacy-policy"
+            ]
+          },
+          {
+            "key": "CONTACT-CHANNEL",
+            "label": "고객센터 연락수단",
+            "status": "P2",
+            "certainty": "낮음",
+            "sourcePages": [
+              "https://example.com/",
+              "https://example.com/contact"
+            ]
+          }
+        ],
+        "nextActions": [
+          "/plans",
+          "/checkout",
+          "/portal"
+        ],
+        "siteId": "site-e28d87b4",
+        "customerId": null,
+        "savedToAccount": false,
+        "paidAccess": false,
+        "locked": true,
+        "cachedFromRequestId": "scan-2d563e79"
+      },
+      {
+        "requestId": "scan-2d563e79",
+        "provider": "builtin",
+        "target": "https://example.com",
+        "normalizedTarget": "https://example.com/",
+        "summary": "https://example.com 무료진단이 완료되었습니다. 자동 확인 근거와 직접 확인 한계를 함께 표시합니다.",
+        "fetched": false,
+        "fetchStatus": 0,
+        "fetchError": "fetch failed",
+        "industry": "일반 이커머스",
+        "siteProfile": {
+          "industry": "일반 이커머스",
+          "siteType": "일반 웹사이트",
+          "likelyHighRegulation": false,
+          "signals": {
+            "hasSignup": false,
+            "hasCheckout": false,
+            "hasProductDetail": false,
+            "hasPrivacyPolicy": false,
+            "hasTerms": false,
+            "hasRefundPolicy": false,
+            "hasContactInfo": false
+          },
+          "keyPages": [
+            "홈",
+            "푸터"
+          ]
+        },
+        "categoryScores": {
+          "개인정보": 55,
+          "지원": 21
+        },
+        "ruleVersion": "2026.05.02-phase164-zero-cost-hardening-50",
+        "scanMode": "zero_cost_full_auto_disclosure",
+        "scanScopeLabel": "무료 공개 페이지 최대 커버리지 무료진단",
+        "cached": false,
+        "resultStatus": "completed_builtin_provider",
+        "resultLimitNotice": "내장 공개 페이지 진단 결과이며 법률 자문이나 성과 보장을 의미하지 않습니다.",
+        "riskScore": 24,
+        "detectionScore": 24,
+        "riskLevel": "관찰",
+        "totalFindings": 2,
+        "categoryCounts": {
+          "개인정보": 1,
+          "지원": 1
+        },
+        "estimatedMaxPenalty": 12000000,
+        "penaltyEstimateType": "reference_upper_bound_candidate",
+        "legalConclusion": false,
+        "penaltyDisclaimer": "과태료 상한 후보는 자동진단 기반 참고 정보이며, 실제 부과 여부·금액·적용 법령은 관할기관 판단과 전문가 검토에 따라 달라집니다.",
+        "topFindings": [
+          "개인정보처리방침 링크 또는 본문 (P2 · 신뢰도 낮음)",
+          "고객센터 연락수단 (P2 · 신뢰도 낮음)"
+        ],
+        "detailFindings": [
+          {
+            "id": "finding-3421ae18",
+            "code": "PRIVACY-POLICY",
+            "category": "개인정보",
+            "title": "개인정보처리방침 링크 또는 본문",
+            "severity": 26,
+            "weightedSeverity": 12,
+            "riskContribution": 12,
+            "priority": "P2",
+            "estimatedPenaltyMax": 10000000,
+            "impact": "고객 안내와 운영 신뢰에 영향을 줄 수 있는 항목입니다.",
+            "evidence": "개인정보처리방침 링크 또는 본문 관련 신호(개인정보, privacy, 수집, 보관)를 확인한 공개 페이지에서 충분히 찾지 못했습니다. 확인 위치: https://example.com/policy/privacy · https://example.com/privacy · https://example.com/privacy-policy",
+            "evidenceType": "negative_public_html_evidence",
+            "evidenceStatus": "not_found_in_scanned_pages",
+            "sourcePages": [
+              "https://example.com/policy/privacy",
+              "https://example.com/privacy",
+              "https://example.com/privacy-policy"
+            ],
+            "certainty": "낮음",
+            "manualReviewRequired": true,
+            "coverage": {
+              "relevantPages": 3,
+              "successfulPages": 0,
+              "failedPages": 3
+            },
+            "limitation": "일부 후보 페이지는 직접 확인 필요.",
+            "recommendation": "필요 안내를 보강합니다.",
+            "autoFixEligible": true
+          },
+          {
+            "id": "finding-9b7e8ceb",
+            "code": "CONTACT-CHANNEL",
+            "category": "지원",
+            "title": "고객센터 연락수단",
+            "severity": 10,
+            "weightedSeverity": 4,
+            "riskContribution": 4,
+            "priority": "P2",
+            "estimatedPenaltyMax": 2000000,
+            "impact": "고객 안내와 운영 신뢰에 영향을 줄 수 있는 항목입니다.",
+            "evidence": "고객센터 연락수단 관련 신호(문의, 고객센터, contact, @)를 확인한 공개 페이지에서 충분히 찾지 못했습니다. 확인 위치: https://example.com/ · https://example.com/contact",
+            "evidenceType": "negative_public_html_evidence",
+            "evidenceStatus": "not_found_in_scanned_pages",
+            "sourcePages": [
+              "https://example.com/",
+              "https://example.com/contact"
+            ],
+            "certainty": "낮음",
+            "manualReviewRequired": true,
+            "coverage": {
+              "relevantPages": 12,
+              "successfulPages": 0,
+              "failedPages": 12
+            },
+            "limitation": "일부 후보 페이지는 직접 확인 필요.",
+            "recommendation": "필요 안내를 보강합니다.",
+            "autoFixEligible": true
+          }
+        ],
+        "evidenceSummary": {
+          "collectionMethod": "zero_cost_full_auto_public_probe",
+          "collectionStrategy": "홈→내부 후보링크→robots.txt→sitemap.xml→무료 HTTP 병렬수집→규칙판정→자동초안/직접 확인 분리",
+          "verifiedBy": "builtin_rules_full_auto_public_probe",
+          "aiReviewProvider": "disabled",
+          "externalMeasurementProviders": {
+            "lighthouse": false,
+            "searchConsole": false,
+            "browserRendering": false
+          },
+          "automationDiscovery": {
+            "level": "maximum_free_safe",
+            "capabilities": [
+              "URL 자동 보정",
+              "홈 연결된 공개 페이지 자동 수집",
+              "robots.txt sitemap 자동 탐색",
+              "sitemap.xml 주요 URL 자동 선별",
+              "정책·결제·문의 후보 페이지 자동 우선순위화",
+              "실패 URL 직접 확인 항목 자동 고지"
+            ],
+            "htmlLinkCount": 0,
+            "sitemapLinkCount": 0,
+            "robotsEnabled": true,
+            "sitemapEnabled": true,
+            "resourceFetches": [
+              {
+                "url": "https://example.com/robots.txt",
+                "finalUrl": "https://example.com/robots.txt",
+                "status": 0,
+                "contentType": "",
+                "contentLength": 0,
+                "fetched": false,
+                "error": "fetch failed",
+                "source": "robots_txt"
+              },
+              {
+                "url": "https://example.com/sitemap.xml",
+                "finalUrl": "https://example.com/sitemap.xml",
+                "status": 0,
+                "contentType": "",
+                "contentLength": 0,
+                "fetched": false,
+                "error": "fetch failed",
+                "source": "sitemap_xml"
+              }
+            ]
+          },
+          "automationCapabilities": [
+            "URL 자동 보정",
+            "홈 연결된 공개 페이지 자동 수집",
+            "robots.txt sitemap 자동 탐색",
+            "sitemap.xml 주요 URL 자동 선별",
+            "정책·결제·문의 후보 페이지 자동 우선순위화",
+            "실패 URL 직접 확인 항목 자동 고지"
+          ],
+          "coverageScore": 0,
+          "confidenceScore": 5,
+          "confidenceLabel": "매우 낮음",
+          "successfulPageCount": 0,
+          "failedPageCount": 12,
+          "attemptedPageCount": 12,
+          "expectedProbeCount": 12,
+          "maxProbePages": 12,
+          "manualReviewCount": 12,
+          "scannedPages": [
+            {
+              "url": "https://example.com/",
+              "finalUrl": "https://example.com/",
+              "status": 0,
+              "contentType": "",
+              "contentLength": 0,
+              "fetched": false,
+              "error": "fetch failed",
+              "verifiedBy": "http_fetch",
+              "renderedByBrowser": false,
+              "source": "primary"
+            },
+            {
+              "url": "https://example.com/policy/privacy",
+              "finalUrl": "https://example.com/policy/privacy",
+              "status": 0,
+              "contentType": "",
+              "contentLength": 0,
+              "fetched": false,
+              "error": "fetch failed",
+              "verifiedBy": "http_fetch",
+              "renderedByBrowser": false,
+              "source": "adaptive_probe"
+            },
+            {
+              "url": "https://example.com/privacy",
+              "finalUrl": "https://example.com/privacy",
+              "status": 0,
+              "contentType": "",
+              "contentLength": 0,
+              "fetched": false,
+              "error": "fetch failed",
+              "verifiedBy": "http_fetch",
+              "renderedByBrowser": false,
+              "source": "adaptive_probe"
+            },
+            {
+              "url": "https://example.com/privacy-policy",
+              "finalUrl": "https://example.com/privacy-policy",
+              "status": 0,
+              "contentType": "",
+              "contentLength": 0,
+              "fetched": false,
+              "error": "fetch failed",
+              "verifiedBy": "http_fetch",
+              "renderedByBrowser": false,
+              "source": "adaptive_probe"
+            },
+            {
+              "url": "https://example.com/policy/terms",
+              "finalUrl": "https://example.com/policy/terms",
+              "status": 0,
+              "contentType": "",
+              "contentLength": 0,
+              "fetched": false,
+              "error": "fetch failed",
+              "verifiedBy": "http_fetch",
+              "renderedByBrowser": false,
+              "source": "adaptive_probe"
+            },
+            {
+              "url": "https://example.com/terms",
+              "finalUrl": "https://example.com/terms",
+              "status": 0,
+              "contentType": "",
+              "contentLength": 0,
+              "fetched": false,
+              "error": "fetch failed",
+              "verifiedBy": "http_fetch",
+              "renderedByBrowser": false,
+              "source": "adaptive_probe"
+            },
+            {
+              "url": "https://example.com/terms-of-use",
+              "finalUrl": "https://example.com/terms-of-use",
+              "status": 0,
+              "contentType": "",
+              "contentLength": 0,
+              "fetched": false,
+              "error": "fetch failed",
+              "verifiedBy": "http_fetch",
+              "renderedByBrowser": false,
+              "source": "adaptive_probe"
+            },
+            {
+              "url": "https://example.com/cancel",
+              "finalUrl": "https://example.com/cancel",
+              "status": 0,
+              "contentType": "",
+              "contentLength": 0,
+              "fetched": false,
+              "error": "fetch failed",
+              "verifiedBy": "http_fetch",
+              "renderedByBrowser": false,
+              "source": "adaptive_probe"
+            },
+            {
+              "url": "https://example.com/exchange",
+              "finalUrl": "https://example.com/exchange",
+              "status": 0,
+              "contentType": "",
+              "contentLength": 0,
+              "fetched": false,
+              "error": "fetch failed",
+              "verifiedBy": "http_fetch",
+              "renderedByBrowser": false,
+              "source": "adaptive_probe"
+            },
+            {
+              "url": "https://example.com/refund",
+              "finalUrl": "https://example.com/refund",
+              "status": 0,
+              "contentType": "",
+              "contentLength": 0,
+              "fetched": false,
+              "error": "fetch failed",
+              "verifiedBy": "http_fetch",
+              "renderedByBrowser": false,
+              "source": "adaptive_probe"
+            },
+            {
+              "url": "https://example.com/return",
+              "finalUrl": "https://example.com/return",
+              "status": 0,
+              "contentType": "",
+              "contentLength": 0,
+              "fetched": false,
+              "error": "fetch failed",
+              "verifiedBy": "http_fetch",
+              "renderedByBrowser": false,
+              "source": "adaptive_probe"
+            },
+            {
+              "url": "https://example.com/contact",
+              "finalUrl": "https://example.com/contact",
+              "status": 0,
+              "contentType": "",
+              "contentLength": 0,
+              "fetched": false,
+              "error": "fetch failed",
+              "verifiedBy": "http_fetch",
+              "renderedByBrowser": false,
+              "source": "adaptive_probe"
+            }
+          ],
+          "coverageGaps": [
+            {
+              "url": "https://example.com/policy/privacy",
+              "status": 0,
+              "error": "fetch failed"
+            },
+            {
+              "url": "https://example.com/privacy",
+              "status": 0,
+              "error": "fetch failed"
+            },
+            {
+              "url": "https://example.com/privacy-policy",
+              "status": 0,
+              "error": "fetch failed"
+            },
+            {
+              "url": "https://example.com/policy/terms",
+              "status": 0,
+              "error": "fetch failed"
+            },
+            {
+              "url": "https://example.com/terms",
+              "status": 0,
+              "error": "fetch failed"
+            },
+            {
+              "url": "https://example.com/terms-of-use",
+              "status": 0,
+              "error": "fetch failed"
+            },
+            {
+              "url": "https://example.com/exchange",
+              "status": 0,
+              "error": "fetch failed"
+            },
+            {
+              "url": "https://example.com/refund",
+              "status": 0,
+              "error": "fetch failed"
+            }
+          ],
+          "limitations": [
+            "무료 공개 URL·연결된 공개 페이지·robots.txt·sitemap.xml 기준입니다.",
+            "자동 접근 가능한 공개 화면은 최대한 수집하지만 로그인·외부 결제·차단·JS 전용 화면은 직접 확인입니다.",
+            "미연결 외부 측정값은 확정하지 않습니다.",
+            "법률 위반·처분 가능성은 확정하지 않습니다."
+          ],
+          "disclaimer": "무료 전자동 공개 페이지 예비 점검입니다. 자동 확정 불가 항목은 직접 확인 필요로 분리합니다."
+        },
+        "scoreModel": {
+          "primaryLabel": "개선 우선도",
+          "riskScoreLabel": "탐지 점수",
+          "riskScoreMeaning": "수집된 공개 페이지에서 보완 후보가 얼마나 많이 발견됐는지 나타내는 내부 지표입니다.",
+          "confidenceScore": 5,
+          "confidenceLabel": "매우 낮음",
+          "detectedFindings": 2,
+          "manualReviewCount": 12,
+          "notLegalConclusion": true,
+          "scoreDisclaimer": "점수는 법적 위험 확정값이 아니라 발견 항목의 우선순위 지표입니다.",
+          "weightedSignals": [
+            "필수 고지 노출",
+            "정책 링크 확인",
+            "고객지원 경로",
+            "결제 전 안내",
+            "과장 표현 후보",
+            "수집 범위 신뢰도"
+          ]
+        },
+        "accuracyProfile": {
+          "version": "phase201-product-quality-v1",
+          "score": 0,
+          "grade": "E",
+          "label": "출시 전 차단",
+          "falsePositiveRisk": "high",
+          "manualReviewRequired": true,
+          "evidenceCoverage": {
+            "coverageScore": 0,
+            "confidenceScore": 5,
+            "attemptedPages": 12,
+            "successfulPages": 0,
+            "failedPages": 12,
+            "scannedPageCount": 12,
+            "coverageGaps": [
+              {
+                "url": "https://example.com/policy/privacy",
+                "status": 0,
+                "error": "fetch failed"
+              },
+              {
+                "url": "https://example.com/privacy",
+                "status": 0,
+                "error": "fetch failed"
+              },
+              {
+                "url": "https://example.com/privacy-policy",
+                "status": 0,
+                "error": "fetch failed"
+              },
+              {
+                "url": "https://example.com/policy/terms",
+                "status": 0,
+                "error": "fetch failed"
+              },
+              {
+                "url": "https://example.com/terms",
+                "status": 0,
+                "error": "fetch failed"
+              },
+              {
+                "url": "https://example.com/terms-of-use",
+                "status": 0,
+                "error": "fetch failed"
+              },
+              {
+                "url": "https://example.com/exchange",
+                "status": 0,
+                "error": "fetch failed"
+              },
+              {
+                "url": "https://example.com/refund",
+                "status": 0,
+                "error": "fetch failed"
+              }
+            ]
+          },
+          "findingReliability": {
+            "totalFindings": 2,
+            "highCertaintyCount": 0,
+            "mediumCertaintyCount": 0,
+            "lowCertaintyCount": 2,
+            "manualReviewCount": 12,
+            "manualReviewRatio": 1
+          },
+          "gates": [
+            {
+              "key": "target_fetched",
+              "ok": false,
+              "label": "대상 공개 페이지 1개 이상 수집",
+              "details": null
+            },
+            {
+              "key": "coverage_usable",
+              "ok": false,
+              "label": "진단 커버리지 45점 이상",
+              "details": {
+                "coverageScore": 0
+              }
+            },
+            {
+              "key": "confidence_usable",
+              "ok": false,
+              "label": "근거 신뢰도 45점 이상",
+              "details": {
+                "confidenceScore": 5
+              }
+            },
+            {
+              "key": "manual_review_bounded",
+              "ok": false,
+              "label": "수동검토 항목 과다 방지",
+              "details": {
+                "manualReviewCount": 12,
+                "totalFindings": 2
+              }
+            },
+            {
+              "key": "source_pages_recorded",
+              "ok": true,
+              "label": "확인 URL 기록 보존",
+              "details": {
+                "scannedPages": 12
+              }
+            }
+          ],
+          "blockers": [
+            {
+              "key": "target_fetched",
+              "ok": false,
+              "label": "대상 공개 페이지 1개 이상 수집",
+              "details": null
+            },
+            {
+              "key": "coverage_usable",
+              "ok": false,
+              "label": "진단 커버리지 45점 이상",
+              "details": {
+                "coverageScore": 0
+              }
+            },
+            {
+              "key": "confidence_usable",
+              "ok": false,
+              "label": "근거 신뢰도 45점 이상",
+              "details": {
+                "confidenceScore": 5
+              }
+            },
+            {
+              "key": "manual_review_bounded",
+              "ok": false,
+              "label": "수동검토 항목 과다 방지",
+              "details": {
+                "manualReviewCount": 12,
+                "totalFindings": 2
+              }
+            }
+          ],
+          "operatingRule": "점수는 법적 결론이 아니라 공개 수집 근거 기반의 개선 우선순위입니다. 낮은 신뢰도 항목은 결제 산출물에서도 확인 필요로 유지합니다."
+        },
+        "demoIssueOverview": {
+          "version": "phase229-value-priced-quality-lock-v1",
+          "scope": "free_demo_problem_area_element_count_only",
+          "target": "https://example.com",
+          "totalIssueCount": 2,
+          "visibleIssueCount": 2,
+          "hiddenDetailedIssueCount": 0,
+          "areaCount": 2,
+          "elementCount": 10,
+          "manualReviewCount": 12,
+          "priorityCounts": {
+            "P2": 2
+          },
+          "areaBreakdown": [
+            {
+              "area": "개인정보·동의",
+              "issueCount": 1,
+              "elementCount": 5,
+              "elements": [
+                "수집 항목",
+                "수집 목적",
+                "보관 기간",
+                "파기 기준",
+                "동의 문구"
+              ],
+              "priorities": {
+                "P2": 1
+              },
+              "previewFindings": [
+                {
+                  "title": "개인정보처리방침 링크 또는 본문",
+                  "priority": "P2",
+                  "status": "검토 필요",
+                  "elementCount": 5,
+                  "elements": [
+                    "수집 항목",
+                    "수집 목적",
+                    "보관 기간"
+                  ]
+                }
+              ]
+            },
+            {
+              "area": "사업자 정보·문의 경로",
+              "issueCount": 1,
+              "elementCount": 5,
+              "elements": [
+                "상호·대표자",
+                "사업자번호",
+                "통신판매업 신고번호",
+                "고객지원 경로",
+                "답변 기준"
+              ],
+              "priorities": {
+                "P2": 1
+              },
+              "previewFindings": [
+                {
+                  "title": "고객센터 연락수단",
+                  "priority": "P2",
+                  "status": "검토 필요",
+                  "elementCount": 5,
+                  "elements": [
+                    "상호·대표자",
+                    "사업자번호",
+                    "통신판매업 신고번호"
+                  ]
+                }
+              ]
+            }
+          ],
+          "demoVisibleFields": [
+            "problem area",
+            "affected elements",
+            "counts",
+            "priority",
+            "status"
+          ],
+          "paidUnlockFields": [
+            "full evidence",
+            "source page mapping",
+            "limitation",
+            "recommendation",
+            "before/after copy",
+            "acceptance criteria",
+            "site operations document"
+          ],
+          "disclaimer": "무료 데모는 문제 영역·요소·개수와 우선순위 요약만 제공합니다. 전체 근거와 수정 문서는 결제 후 산출물에서 제공합니다."
+        },
+        "conversionUrgency": {
+          "version": "phase229-value-priced-quality-lock-v1",
+          "scope": "free_demo_conversion_crisis_score",
+          "target": "https://example.com",
+          "crisisScore": 40,
+          "crisisLabel": "관리 가능",
+          "tone": "success",
+          "headline": "작은 안내 공백도 누적되면 문의와 이탈을 만들 수 있습니다.",
+          "reason": "발견 문제 2개 · 문제 영역 2개 · 영향 요소 10개 · 직접 확인 필요 12개 기준으로 보완 우선도를 계산했습니다.",
+          "projectedAfterFixScore": 16,
+          "expectedScoreReduction": 24,
+          "immediateFixableCount": 0,
+          "conversionBlockers": [
+            {
+              "key": "privacy",
+              "label": "개인정보·동의",
+              "count": 1,
+              "customerFeeling": "입력폼 이탈"
+            },
+            {
+              "key": "business",
+              "label": "사업자·문의 경로",
+              "count": 1,
+              "customerFeeling": "신뢰 확인 지연"
+            }
+          ],
+          "lostTrustSignals": [
+            "발견 문제 2개",
+            "문제 영역 2개",
+            "영향 요소 10개",
+            "직접 확인 필요 12개"
+          ],
+          "primaryCta": "기본 리포트 결제하고 원인 확인",
+          "secondaryCta": "전문가 리포트로 개선안 받기",
+          "recommendedPlan": "Report",
+          "purchasePath": [
+            {
+              "step": 1,
+              "title": "위기도 확인",
+              "body": "무료 데모에서 문제 영역·요소·갯수와 위기도 점수를 확인합니다."
+            },
+            {
+              "step": 2,
+              "title": "상세 근거 잠금 해제",
+              "body": "결제 후 전체 문제, 페이지별 근거, 한계, 우선순위를 확인합니다."
+            },
+            {
+              "step": 3,
+              "title": "맞춤 개선 문서 실행",
+              "body": "사이트 상황에 맞춘 문구·운영 SOP·재검증 기준을 적용합니다."
+            }
+          ],
+          "disclaimer": "위기도 점수는 법률 위반 또는 매출 손실을 확정하는 값이 아니라 공개 화면 기준 보완 우선순위입니다."
+        },
+        "automationDisclosure": {
+          "mode": "free_auto_with_explicit_limits",
+          "principle": "추가 비용 없이 자동 확인 가능한 공개 신호는 모두 수집하고, 자동 확정이 위험한 항목은 직접 확인으로 분리합니다.",
+          "fullyAutomated": true,
+          "automationLevel": "maximum_free_safe",
+          "automatedChecks": [
+            "URL 형식 자동 보정",
+            "홈 HTML 수집",
+            "연결된 공개 페이지 후보 추출",
+            "robots.txt에서 sitemap 위치 확인",
+            "sitemap.xml에서 주요 공개 URL 추출",
+            "개인정보·약관·환불·문의·결제·가격·배송 후보 페이지 우선순위화",
+            "HTTP 상태·본문 길이·확인 URL 기록",
+            "규칙 기반 보완 후보 판정",
+            "수정 문구 후보와 다음 행동 자동 생성"
+          ],
+          "autoGeneratedDeliverables": [
+            "탐지 점수",
+            "수집 신뢰도",
+            "페이지별 확인 근거",
+            "직접 확인 필요 목록",
+            "우선순위별 개선 순서",
+            "자동 수정 후보 문구"
+          ],
+          "manualBoundaries": [
+            "로그인 후 화면",
+            "외부 결제창",
+            "자바스크립트 전용 렌더링 화면",
+            "접근 차단 또는 timeout 페이지",
+            "업종별 법률 판단",
+            "사업자·통신판매업 신고번호의 행정기관 진위 확인",
+            "광고 표현의 최종 법률 검토"
+          ],
+          "clearNotice": "자동으로 확인 가능한 공개 페이지는 모두 검사하지만, 자동 확정이 불가능한 항목은 누락으로 숨기지 않고 직접 확인 필요로 표시합니다.",
+          "failedPageCount": 12,
+          "manualFindingCount": 2,
+          "canClaim": "공개 페이지 기준 자동 예비 점검",
+          "mustNotClaim": [
+            "법률 결론 확정",
+            "과태료 확정",
+            "성과 약속",
+            "전체 페이지 완전 탐지"
+          ],
+          "discoveryStats": {
+            "htmlLinkCount": 0,
+            "sitemapLinkCount": 0,
+            "resourceFetches": [
+              {
+                "url": "https://example.com/robots.txt",
+                "finalUrl": "https://example.com/robots.txt",
+                "status": 0,
+                "contentType": "",
+                "contentLength": 0,
+                "fetched": false,
+                "error": "fetch failed",
+                "source": "robots_txt"
+              },
+              {
+                "url": "https://example.com/sitemap.xml",
+                "finalUrl": "https://example.com/sitemap.xml",
+                "status": 0,
+                "contentType": "",
+                "contentLength": 0,
+                "fetched": false,
+                "error": "fetch failed",
+                "source": "sitemap_xml"
+              }
+            ]
+          }
+        },
+        "automatedActionPlan": {
+          "mode": "auto_first_manual_boundary",
+          "summary": "자동 처리 가능한 항목은 수정 후보까지 생성하고, 자동 확정 불가 항목은 직접 확인 목록으로 분리했습니다.",
+          "automaticFixes": [],
+          "manualReviews": [
+            {
+              "order": 1,
+              "mode": "manual_review_required",
+              "findingCode": "PRIVACY-POLICY",
+              "title": "개인정보처리방침 링크 또는 본문",
+              "reason": "일부 후보 페이지는 직접 확인 필요.",
+              "sourcePages": [
+                "https://example.com/policy/privacy",
+                "https://example.com/privacy",
+                "https://example.com/privacy-policy"
+              ]
+            },
+            {
+              "order": 2,
+              "mode": "manual_review_required",
+              "findingCode": "CONTACT-CHANNEL",
+              "title": "고객센터 연락수단",
+              "reason": "일부 후보 페이지는 직접 확인 필요.",
+              "sourcePages": [
+                "https://example.com/",
+                "https://example.com/contact"
+              ]
+            }
+          ],
+          "autoNextSteps": [
+            "확인된 P0/P1 항목을 우선순위대로 정리합니다.",
+            "자동 수정 후보 문구를 생성합니다.",
+            "실패한 후보 URL은 직접 확인 목록으로 넘깁니다.",
+            "재진단 시 같은 기준으로 결과를 비교합니다."
+          ],
+          "coverageNotice": "무료 전자동 공개 페이지 예비 점검입니다. 자동 확정 불가 항목은 직접 확인 필요로 분리합니다.",
+          "requiresOperatorApproval": true
+        },
+        "qualityAssurance": {
+          "resultType": "limited_fallback_check",
+          "canGuaranteeLegalAccuracy": false,
+          "canGuaranteeBusinessOutcome": false,
+          "requiresManualReview": true,
+          "automationPolicy": "자동 확인 가능한 공개 항목은 기본 처리하고, 자동 확정 불가 영역은 명확히 고지합니다.",
+          "recommendedExternalTools": [
+            "Playwright(선택)",
+            "Lighthouse(선택)",
+            "Search Console(선택)",
+            "Gemini(선택)"
+          ]
+        },
+        "aiReview": {
+          "enabled": false,
+          "provider": "disabled",
+          "model": null,
+          "role": "해석 보조 레이어이며 측정 원천이 아닙니다."
+        },
+        "autoFixCandidates": [
+          {
+            "findingCode": "PRIVACY-POLICY",
+            "title": "개인정보처리방침 링크 또는 본문",
+            "patchSummary": "필요 안내를 보강합니다.",
+            "sourcePages": [
+              "https://example.com/policy/privacy",
+              "https://example.com/privacy",
+              "https://example.com/privacy-policy"
+            ],
+            "certainty": "낮음"
+          },
+          {
+            "findingCode": "CONTACT-CHANNEL",
+            "title": "고객센터 연락수단",
+            "patchSummary": "필요 안내를 보강합니다.",
+            "sourcePages": [
+              "https://example.com/",
+              "https://example.com/contact"
+            ],
+            "certainty": "낮음"
+          }
+        ],
+        "recommendedPlan": "Report",
+        "lockedPreviewCount": 0,
+        "generatedAt": "2026-05-31T23:38:32.889Z",
+        "elapsedMs": 128,
+        "findings": [
+          {
+            "key": "PRIVACY-POLICY",
+            "label": "개인정보처리방침 링크 또는 본문",
+            "status": "P2",
+            "certainty": "낮음",
+            "sourcePages": [
+              "https://example.com/policy/privacy",
+              "https://example.com/privacy",
+              "https://example.com/privacy-policy"
+            ]
+          },
+          {
+            "key": "CONTACT-CHANNEL",
+            "label": "고객센터 연락수단",
+            "status": "P2",
+            "certainty": "낮음",
+            "sourcePages": [
+              "https://example.com/",
+              "https://example.com/contact"
+            ]
+          }
+        ],
+        "nextActions": [
+          "/plans",
+          "/checkout",
+          "/portal"
+        ],
+        "siteId": "site-e28d87b4",
+        "customerId": null,
+        "savedToAccount": false,
+        "paidAccess": false,
+        "locked": true
+      }
+    ],
+    "purchasedAssets": [],
+    "paymentSessions": [],
+    "paymentEvents": [],
+    "webhookInbox": [],
+    "auditLogs": [
+      {
+        "id": "audit-9563d3fc",
+        "at": "2026-06-01T01:53:28.666Z",
+        "event": "system.product_insight.published",
+        "ipHash": "unknown",
+        "path": "/undefined",
+        "meta": {
+          "id": "insight-f390d32d",
+          "reason": "startup",
+          "intervalMs": 1200000,
+          "suiteVersion": "phase311-product-agent-insight-redteam-v4.0.0",
+          "qualityScore": 100
+        }
+      },
+      {
+        "id": "audit-1eea3dd9",
+        "at": "2026-06-01T01:15:39.506Z",
+        "event": "system.product_insight.published",
+        "ipHash": "unknown",
+        "path": "/undefined",
+        "meta": {
+          "id": "insight-4c31471b",
+          "reason": "startup",
+          "intervalMs": 1200000,
+          "suiteVersion": "phase311-product-agent-insight-redteam-v4.0.0",
+          "qualityScore": 100
+        }
+      },
+      {
+        "id": "audit-2e30aa7d",
+        "at": "2026-06-01T01:14:22.456Z",
+        "event": "system.product_insight.blocked_quality_gate",
+        "ipHash": "unknown",
+        "path": "/undefined",
+        "meta": {
+          "reason": "startup",
+          "intervalMs": 1200000,
+          "suiteVersion": "phase311-product-agent-insight-redteam-v4.0.0",
+          "qualityScore": 88,
+          "failed": [
+            "noInternalTokens"
+          ],
+          "errorCode": "PRODUCT_INSIGHT_QUALITY_FAILED"
+        }
+      },
+      {
+        "id": "audit-93ac82f1",
+        "at": "2026-06-01T01:10:24.936Z",
+        "event": "system.product_insight.blocked_quality_gate",
+        "ipHash": "unknown",
+        "path": "/undefined",
+        "meta": {
+          "reason": "interval",
+          "intervalMs": 1200000,
+          "suiteVersion": "phase311-product-agent-insight-redteam-v4.0.0",
+          "qualityScore": 88,
+          "failed": [
+            "noInternalTokens"
+          ],
+          "errorCode": "PRODUCT_INSIGHT_QUALITY_FAILED"
+        }
+      },
+      {
+        "id": "audit-bad220f8",
+        "at": "2026-06-01T00:29:12.772Z",
+        "event": "system.product_insight.blocked_quality_gate",
+        "ipHash": "unknown",
+        "path": "/undefined",
+        "meta": {
+          "reason": "interval",
+          "intervalMs": 1200000,
+          "suiteVersion": "phase311-product-agent-insight-redteam-v4.0.0",
+          "qualityScore": 88,
+          "failed": [
+            "noInternalTokens"
+          ],
+          "errorCode": "PRODUCT_INSIGHT_QUALITY_FAILED"
+        }
+      },
+      {
+        "id": "audit-28aee384",
+        "at": "2026-05-31T23:39:15.808Z",
+        "event": "public.diagnose.completed",
+        "ipHash": "ip_b9ceff584caa748f758c",
+        "method": "POST",
+        "path": "/api/public/diagnose",
+        "meta": {
+          "siteId": "site-e28d87b4",
+          "requestId": "scan-3998a01f",
+          "target": "https://example.com",
+          "customerId": "",
+          "engineAgentGate": true
+        }
+      },
+      {
+        "id": "audit-ebfa1700",
+        "at": "2026-05-31T23:38:32.891Z",
+        "event": "public.diagnose.completed",
+        "ipHash": "ip_b9ceff584caa748f758c",
+        "method": "POST",
+        "path": "/api/public/diagnose",
+        "meta": {
+          "siteId": "site-e28d87b4",
+          "requestId": "scan-2d563e79",
+          "target": "https://example.com",
+          "customerId": "",
+          "engineAgentGate": true
+        }
+      },
+      {
+        "id": "audit-2916070d",
+        "at": "2026-05-31T23:37:54.945Z",
+        "event": "system.product_insight.published",
+        "ipHash": "unknown",
+        "path": "/undefined",
+        "meta": {
+          "id": "insight-fab1ffa3",
+          "reason": "startup",
+          "intervalMs": 1200000,
+          "suiteVersion": "phase311-product-agent-insight-redteam-v4.0.0",
+          "qualityScore": 100
+        }
+      }
+    ]
+  },
+  "metadata": {
+    "secureCollections": [
+      "customers",
+      "orders",
+      "subscriptions",
+      "sites",
+      "scans",
+      "purchasedAssets",
+      "paymentSessions",
+      "paymentEvents",
+      "webhookInbox",
+      "auditLogs"
+    ],
+    "encrypted": false,
+    "writtenAt": "2026-06-01T01:53:28.670Z"
+  },
+  "warning": "development mode only: set NV0_SECURE_RECORDS_KEY in production"
+}

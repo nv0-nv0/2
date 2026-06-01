@@ -20,7 +20,7 @@ for (const script of ['test:e2e','phase335:final','validate:phase335','check:res
   assert.ok(pkg.scripts[script], `missing script ${script}`);
 }
 
-for (const route of ['/api/public/scan','/api/public/diagnose','/api/public/checkout-session','/api/public/payment/complete','/api/public/portal-summary','/api/public/fulfillment-download','/api/public/board','/api/public/payment/config','/api/public/paid-service-model','/api/public/engine-agent-status','/api/public/customer-lifecycle','/api/public/lifecycle-message-sequence','/api/public/organism-status','/api/public/client-metric']) {
+for (const route of ['/api/public/scan','/api/public/diagnose','/api/public/checkout-session','/api/public/payment/complete','/api/public/portal-summary','/api/public/fulfillment-download','/api/public/board','/api/public/payment/config','/api/public/paid-service-model','/api/public/engine-agent-status','/api/public/customer-lifecycle','/api/public/lifecycle-message-sequence','/api/public/organism-status','/api/public/client-metric','/api/public/experience-orchestrator','/api/admin/experience-orchestrator','/api/admin/experience-orchestrator/audit']) {
   assert.ok(allRoutes.includes(route), `missing route ${route}`);
 }
 assert.match(publicRoutes, /pathname === '\/api\/public\/diagnose' \|\| pathname === '\/api\/public\/scan'/);

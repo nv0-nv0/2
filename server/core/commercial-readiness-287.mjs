@@ -94,7 +94,7 @@ function weightedScore(checks) {
 
 export function buildLegalPolicyPack(settings = {}, env = process.env) {
   const supportEmail = settings.supportEmail || env.NV0_SUPPORT_EMAIL || 'ct@nv0.kr';
-  const privacyEmail = settings.privacyOfficerEmail || env.NV0_PRIVACY_OFFICER_EMAIL || 'privacy@nv0.kr';
+  const privacyEmail = settings.privacyOfficerEmail || env.NV0_PRIVACY_OFFICER_EMAIL || 'ct@nv0.kr';
   const businessRegistrationNumber = settings.businessRegistrationNumber || env.NV0_MAIL_ORDER_REGISTRATION_NUMBER || '';
   const legalApproved = envFlag(env, 'NV0_LEGAL_REVIEW_APPROVED', false);
   const policyVersion = safeString(env.NV0_POLICY_VERSION || settings.policyVersion || COMMERCIAL_READINESS_VERSION);

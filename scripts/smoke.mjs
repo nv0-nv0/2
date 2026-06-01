@@ -54,17 +54,28 @@ async function check(urlPath, expectedStatus = 200, mustInclude = '') {
   }
 }
 
+async function checkRedirect(urlPath, expectedStatus, expectedLocation) {
+  const res = await fetch(`${base}${urlPath}`, { redirect: 'manual' });
+  if (res.status !== expectedStatus) {
+    throw new Error(`${urlPath} expected redirect ${expectedStatus}, got ${res.status}`);
+  }
+  if (res.headers.get('location') !== expectedLocation) {
+    throw new Error(`${urlPath} expected redirect to ${expectedLocation}, got ${res.headers.get('location')}`);
+  }
+}
+
 let failed = null;
 try {
   await ensureServer();
   await check('/healthz', 200, '"ok": true');
   await check('/readyz', 200, '"ready": true');
   await check('/', 200, '웹사이트의 신뢰와 준법을 진단하고');
-  await check('/demo', 200, '사이트 주소 하나로 신뢰');
+  await checkRedirect('/demo', 301, '/products/veridion/demo');
   await check('/products/veridion/demo', 200, '사이트 주소 하나로 신뢰');
   await check('/admin', 200, '관리자');
   await check('/api/public/auth/session', 200, '"authenticated": false');
   await check('/api/public/system-items', 200, '"ok": true');
+  await check('/api/public/experience-orchestrator', 200, '"userSatisfactionScore"');
   const adminRedirect = await fetch(`${base}/admin/console`, { redirect: 'manual' });
   if (adminRedirect.status !== 302 || adminRedirect.headers.get('location') !== '/admin') {
     throw new Error('/admin/console should redirect to /admin when unauthenticated');
@@ -75,13 +86,11 @@ try {
 } finally {
   if (child) {
     child.removeAllListeners();
-    try { child.kill('SIGKILL'); } catch {}
-    try { child.unref(); } catch {}
+    try { child.kill(); } catch {}
   }
 }
 
 if (failed) {
   console.error(failed);
-  process.exit(1);
+  process.exitCode = 1;
 }
-process.exit(0);

@@ -1,1 +1,1 @@
-document.documentElement.dataset.insightsHubReady = 'true';
+import '/shared/public-page-optimizer.js';

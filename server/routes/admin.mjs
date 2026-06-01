@@ -64,6 +64,8 @@ export function createAdminRouteHandler(ctx) {
   runProductAgentPackageAudit,
   buildEngineAgentRuntimeStatus,
   runEngineAgentPackageAudit,
+  buildExperienceControlPlane,
+  runExperienceOrchestratorAudit,
   buildCommercialReadinessStatus,
   runPhase287CommercialAudit,
   buildSystemItemsFeed,
@@ -453,6 +455,34 @@ appendAudit(db, req, 'admin.engine_agents.audit', { score: audit.score, ok: audi
 await writeDb(db);
 return json(req, res, 200, { ok: audit.ok, audit, status });
 }
+if (pathname === '/api/admin/experience-orchestrator' && req.method === 'GET') {
+if (!requireAdminPermission(req, res, session, 'ops.read')) return;
+const controlPlane = buildExperienceControlPlane(db, { nowIso: nowIso() });
+appendAudit(db, req, 'admin.experience_orchestrator.checked', { score: controlPlane.score, status: controlPlane.status, criticalStages: controlPlane.priorityMatrix.length });
+await writeDb(db);
+return json(req, res, controlPlane.ok ? 200 : 207, { ok: controlPlane.ok, controlPlane });
+}
+if (pathname === '/api/admin/experience-orchestrator/audit' && req.method === 'GET') {
+if (!requireAdminPermission(req, res, session, 'ops.read')) return;
+const packageFiles = [
+  'server/core/experience-orchestrator.mjs',
+  'server/routes/public.mjs',
+  'server/routes/admin.mjs',
+  'server/core/engine-agent-orchestrator.mjs',
+  'server/core/product-agent-suite.mjs',
+  'tests/experience-orchestrator.mjs'
+];
+const audit = runExperienceOrchestratorAudit({
+  files: packageFiles,
+  packageJson: { scripts: { 'test:experience-orchestrator': true } },
+  routes: ['/api/public/experience-orchestrator', '/api/admin/experience-orchestrator', '/api/admin/experience-orchestrator/audit'],
+  sourceText: await fs.readFile(path.join(process.cwd(), 'server/core/experience-orchestrator.mjs'), 'utf8')
+});
+const controlPlane = buildExperienceControlPlane(db, { nowIso: nowIso() });
+appendAudit(db, req, 'admin.experience_orchestrator.audit', { score: audit.score, ok: audit.ok });
+await writeDb(db);
+return json(req, res, 200, { ok: audit.ok, audit, controlPlane });
+}
 if (pathname === '/api/admin/commercial-readiness/audit' && req.method === 'GET') {
 if (!requireAdminPermission(req, res, session, 'ops.read')) return;
 const packageFiles = [
@@ -758,7 +788,14 @@ await writeDb(db);
 return json(req, res, 200, { ok: true, order: sanitizeOrderForPublic(order), asset });
 }
 if (pathname === '/api/admin/email-outbox' && req.method === 'GET') {
-return json(req, res, 200, { ok: true, emails: (db.emailOutbox || []).slice(0, 200).map(item => ({ ...item, body: String(item.body || '').slice(0, 500) })) });
+return json(req, res, 200, {
+  ok: true,
+  emails: (db.emailOutbox || []).slice(0, 200).map(item => ({
+    ...item,
+    to: maskEmail(item.to),
+    body: String(item.body || '').slice(0, 500)
+  }))
+});
 }
 if (pathname === '/api/admin/email-outbox/status' && req.method === 'POST') {
 const body = normalizeEmailDeliveryPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
@@ -799,9 +836,6 @@ const gate = buildCommercialFinalGate(db);
 appendAudit(db, req, 'admin.commercial_final_gate.viewed', { ok: gate.ok, blockers: gate.blockers.map(item => item.key) });
 await writeDb(db);
 return json(req, res, gate.ok ? 200 : 503, { ok: gate.ok, gate });
-}
-if (pathname === '/api/admin/email-outbox' && req.method === 'GET') {
-return json(req, res, 200, { ok: true, outbox: (db.emailOutbox || []).map(item => ({ ...item, to: maskEmail(item.to) })).slice(0, 200) });
 }
 if (pathname === '/api/admin/email-outbox/process' && req.method === 'POST') {
 const body = await bodyJson(req, MAX_JSON_BODY_BYTES) || {};
@@ -857,4 +891,3 @@ return json(req, res, 404, { ok: false, error: 'Not found' });
 export async function handleAdminRoutes(req, res, ctx, state = {}) {
   return createAdminRouteHandler(ctx)(req, res, state);
 }
-

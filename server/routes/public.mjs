@@ -78,6 +78,7 @@ export function createPublicRouteHandler(ctx) {
   buildCommercialReadinessStatus,
   buildProductDashboard,
   buildProductIntelligence,
+  buildExperienceOrchestratorSnapshot,
   buildProductionLaunchChecklist,
   buildPublicDiagnosisPackage,
   buildReleaseReadiness,
@@ -218,42 +219,16 @@ return { requestId: scan?.requestId || null, siteId: scan?.siteId || null, targe
   const paymentHandled = await paymentRouteHandler(req, res, { requestUrl: url, pathname });
   if (paymentHandled !== false) return paymentHandled;
   const customerHiddenOperationalEndpoints = new Set([
-    '/api/public/diagnosis-engine',
-    '/api/public/privacy-status',
-    '/api/public/governance-status',
-    '/api/public/risk-guard',
     '/api/public/openapi.json',
     '/api/public/hardening-matrix',
     '/api/public/release-readiness',
-    '/api/public/launch-checklist',
-    '/api/public/commercial-final-gate',
-    '/api/public/commercial-readiness',
-    '/api/public/product-agent-status',
-    '/api/public/engine-agent-status',
-    '/api/public/organism-status',
-    '/api/public/product-intelligence',
-    '/api/public/product-quality',
-    '/api/public/trustops-blueprint',
-    '/api/public/fix-generator',
-    '/api/public/monitoring-plan',
-    '/api/public/revenue-optimization',
-    '/api/public/structured-data-package',
-    '/api/public/trustops-autopilot',
-    '/api/public/customer-lifecycle',
-    '/api/public/automation-workqueue',
-    '/api/public/trustops-launch-control',
-    '/api/public/lifecycle-message-sequence',
-    '/api/public/trustops-production-sentinel',
-    '/api/public/live-verification-checklist',
-    '/api/public/trustops-final-handoff',
-    '/api/public/trustops-100-final',
-    '/api/public/trustops-complete-delivery'
+    '/api/public/commercial-final-gate'
   ]);
   if (customerHiddenOperationalEndpoints.has(pathname)) {
     return json(req, res, 404, { ok: false, error: 'Not found' }, { 'cache-control': 'no-store' });
   }
 if (pathname === '/api/public/diagnosis-engine' && req.method === 'GET') {
-return json(req, res, 200, { ok: true, phase: RELEASE_PHASE, engine: 'VERIDION Public Evidence Summary Check Engine', rulesVersion: RULES_VERSION, targetFetchEnabled: TARGET_FETCH_ENABLED, scanProvider: SCAN_PROVIDER, aiReviewProvider: AI_REVIEW_PROVIDER, geminiConfigured: AI_REVIEW_ENABLED, resultContract: { resultType: 'preliminary_check', legalConclusion: false, includesEvidenceSummary: true, includesConfidenceScore: true, includesManualReviewFlags: true, includesAutomationDisclosure: true, includesAutomatedActionPlan: true, includesAccuracyProfile: true, includesReportQualityGate: true, includesDemoAccuracyContract: true, includesPaidOutputQualityGate: true, phase220ServiceQualityVersion: PHASE220_SERVICE_QUALITY_VERSION, phase223RiskGuardVersion: PHASE223_RISK_GUARD_VERSION }, endpoints: { scan: 'POST /api/public/scan', diagnose: 'POST /api/public/diagnose', board: 'GET /api/public/board', engine: 'GET /api/public/diagnosis-engine', productIntelligence: 'GET /api/public/product-intelligence', productQuality: 'GET /api/public/product-quality', productAgentStatus: 'GET /api/public/product-agent-status' }, smartProduct: { version: 'p153-smart-ops-v1', nextBestAction: true, planFitScoring: true, journeyOrchestration: true, smartProductEndpoint: '/api/public/smart-product', userPath: ['무료 요약','요금제 선택','고객 포털','인사이트 확인'] }, insightUpdate: { boardName: '인사이트', cadenceLabel: '정기 업데이트' }, automation: { mode: TARGET_FETCH_AUTOMATION_LEVEL, robotsEnabled: TARGET_FETCH_ROBOTS_ENABLED, sitemapEnabled: TARGET_FETCH_SITEMAP_ENABLED, maxPages: TARGET_FETCH_MAX_PAGES, maxDiscoveryResources: TARGET_FETCH_MAX_DISCOVERY_RESOURCES, notice: '자동 확인 가능한 공개 항목은 모두 처리하고 자동 확정 불가 영역은 직접 확인으로 고지합니다.' }, checks: buildRuleCatalog().map(({ code, category, title, severity, penaltyMax }) => ({ code, category, title, severity, penaltyMax })) });
+return json(req, res, 200, { ok: true, phase: RELEASE_PHASE, engine: 'VERIDION Public Evidence Summary Check Engine', rulesVersion: RULES_VERSION, targetFetchEnabled: TARGET_FETCH_ENABLED, scanProvider: SCAN_PROVIDER, aiReviewProvider: AI_REVIEW_PROVIDER, geminiConfigured: AI_REVIEW_ENABLED, resultContract: { resultType: 'preliminary_check', legalConclusion: false, includesEvidenceSummary: true, includesConfidenceScore: true, includesManualReviewFlags: true, includesAutomationDisclosure: true, includesAutomatedActionPlan: true, includesAccuracyProfile: true, includesReportQualityGate: true, includesDemoAccuracyContract: true, includesPaidOutputQualityGate: true, phase220ServiceQualityVersion: PHASE220_SERVICE_QUALITY_VERSION, phase223RiskGuardVersion: PHASE223_RISK_GUARD_VERSION }, endpoints: { scan: 'POST /api/public/scan', diagnose: 'POST /api/public/diagnose', board: 'GET /api/public/board', engine: 'GET /api/public/diagnosis-engine', productIntelligence: 'GET /api/public/product-intelligence', productQuality: 'GET /api/public/product-quality', productAgentStatus: 'GET /api/public/product-agent-status', experienceOrchestrator: 'GET /api/public/experience-orchestrator' }, smartProduct: { version: 'p153-smart-ops-v1', nextBestAction: true, planFitScoring: true, journeyOrchestration: true, smartProductEndpoint: '/api/public/smart-product', experienceEndpoint: '/api/public/experience-orchestrator', userPath: ['무료 요약','요금제 선택','고객 포털','인사이트 확인'] }, insightUpdate: { boardName: '인사이트', cadenceLabel: '정기 업데이트' }, automation: { mode: TARGET_FETCH_AUTOMATION_LEVEL, robotsEnabled: TARGET_FETCH_ROBOTS_ENABLED, sitemapEnabled: TARGET_FETCH_SITEMAP_ENABLED, maxPages: TARGET_FETCH_MAX_PAGES, maxDiscoveryResources: TARGET_FETCH_MAX_DISCOVERY_RESOURCES, notice: '자동 확인 가능한 공개 항목은 모두 처리하고 자동 확정 불가 영역은 직접 확인으로 고지합니다.' }, checks: buildRuleCatalog().map(({ code, category, title, severity, penaltyMax }) => ({ code, category, title, severity, penaltyMax })) });
 }
 
 if (((pathname === '/api/public/diagnose' || pathname === '/api/public/scan') && req.method === 'POST') || (isLegacyDiagnosticStart && req.method === 'POST')) {
@@ -364,6 +339,25 @@ const scan = site ? (db.scans || []).find(item => item.siteId === site.id) || db
 intelligence = buildProductIntelligence({ scan, site, riskScore: requestedRiskScore || site?.latestRiskScore || scan?.riskScore || 55, offers, source: 'smart-product' });
 }
 return json(req, res, 200, buildSmartPublicSnapshot(db, { offers, intelligence }));
+}
+if (pathname === '/api/public/experience-orchestrator' && req.method === 'GET') {
+const db = await readDb();
+const requestedRiskScore = Number(url.searchParams.get('riskScore') || 0);
+const siteId = String(url.searchParams.get('siteId') || '').trim();
+const domain = String(url.searchParams.get('domain') || '').trim();
+const snapshot = buildExperienceOrchestratorSnapshot(db, { nowIso: nowIso(), riskScore: requestedRiskScore, siteId, domain, source: 'public-api' });
+return json(req, res, 200, {
+  ok: true,
+  experience: snapshot,
+  contract: {
+    userSatisfactionScore: true,
+    stages: true,
+    pillars: true,
+    nextBestAction: true,
+    lifecycle: true,
+    automationSummary: true
+  }
+});
 }
 
 if (pathname === '/api/public/paid-service-model' && req.method === 'GET') {

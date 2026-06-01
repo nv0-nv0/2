@@ -41,7 +41,7 @@ for (const [route, file, needles] of routePairs) {
 for (const route of ['/admin', '/admin/console', '/admin/orders', '/admin/publications', '/admin/library', '/admin/settings', '/admin/diagnostics']) {
   assert.ok(server.includes(route), `admin route missing ${route}`);
 }
-for (const route of ['/healthz', '/readyz', '/api/public/health', '/api/admin/session']) {
+for (const route of ['/healthz', '/readyz', '/api/public/health', '/api/admin/session', '/api/public/experience-orchestrator', '/api/admin/experience-orchestrator']) {
   assert.ok(routeSources.includes(route), `system route missing ${route}`);
 }
 assert.match(server, /redirect\(req, res, 302, '\/admin'\)|location.*\/admin|\/admin\/console/);

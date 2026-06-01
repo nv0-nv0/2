@@ -196,13 +196,20 @@ function publicCopyHasKnownTypo(text = '') {
   return KNOWN_COPY_TYPOS.some(([from]) => String(text).includes(from));
 }
 
+function isPlaceholderHost(value = '') {
+  return /(^|\.)example\.(com|net|org)$|(^|\.)localhost$|(^|\.)invalid$|(^|\.)test$/i.test(String(value || '').trim());
+}
+
 function stripUrl(value = '') {
   const raw = normalizeText(value, '등록 사이트');
   try {
     const url = /^https?:\/\//i.test(raw) ? new URL(raw) : null;
-    return url?.hostname ? url.hostname.replace(/^www\./i, '') : raw;
+    const host = url?.hostname ? url.hostname.replace(/^www\./i, '') : '';
+    if (host && !isPlaceholderHost(host)) return host;
+    return '등록 사이트';
   } catch {
-    return raw.replace(/^https?:\/\//i, '').replace(/^www\./i, '').split('/')[0] || '등록 사이트';
+    const host = raw.replace(/^https?:\/\//i, '').replace(/^www\./i, '').split('/')[0] || '';
+    return host && !isPlaceholderHost(host) ? host : '등록 사이트';
   }
 }
 

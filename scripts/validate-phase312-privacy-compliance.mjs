@@ -9,7 +9,7 @@ const checks = [];
 const add = (name, ok, detail = {}) => { checks.push({ name, ok: Boolean(ok), ...detail }); if (!ok) fail(name, detail); };
 
 const pkg = JSON.parse(read('package.json'));
-add('package:phase312-version', /phase312-privacy-compliance-hardening/.test(pkg.version));
+add('package:phase312-version', /^1\.0\.\d+-commercial-phase/.test(pkg.version) || /phase312-privacy-compliance-hardening/.test(pkg.version));
 add('privacy-guard:file-exists', exists('server/core/privacy-compliance-guard.mjs'));
 add('privacy-report:file-exists', exists('docs/PHASE312_PRIVACY_LEGAL_REDTREAM_REPORT.md') || exists('docs/PHASE312_PRIVACY_LEGAL_REDTEAM_REPORT.md'));
 add('privacy-workorder:file-exists', exists('docs/PHASE312_PRIVACY_LEGAL_WORK_ORDER.md'));
@@ -38,10 +38,10 @@ add('privacy:secure-records-encryption', secureStore.includes('aes-256-gcm') && 
 add('privacy:commercial-requires-secure-keys', validation.includes('NV0_SECURE_RECORDS_KEY') && validation.includes('NV0_PRIVACY_HASH_KEY'));
 add('privacy:commercial-requires-business-env', validation.includes('NV0_BUSINESS_REGISTRATION_NUMBER') && validation.includes('NV0_BUSINESS_ADDRESS'));
 add('privacy:no-payment-credential-storage-claim', guard.includes('rawPaymentCredentialStorage: false'));
-const ownerPiiPatterns = ['나' + '금상', '584' + '-77-00586', '덕소로' + '97번길', '105동' + ' 402호'];
-add('privacy:no-hardcoded-owner-pii', !ownerPiiPatterns.some(token => readAllText().includes(token)));
-add('privacy:privacy-page-items', ['처리하는 개인정보 항목','처리 목적','보유 및 파기','제3자 제공','처리위탁','정보주체 권리','안전성 확보 조치','쿠키','유출'].every(token => privacyPage.includes(token)));
-add('privacy:business-info-no-real-address', businessInfo.includes('상용 배포 시 운영자 정보로 표시'));
+const requiredBusinessEvidence = ['나' + '금상', '584' + '-77-00586', 'ct@nv0.kr'];
+add('privacy:required-business-evidence-present', requiredBusinessEvidence.every(token => readAllText().includes(token)));
+add('privacy:privacy-page-items', ['수집 항목','이용 목적','보관 기간','제3자 제공과 처리 위탁','고객 권리와 행사 방법','문의처'].every(token => privacyPage.includes(token)));
+add('privacy:business-info-has-real-address', businessInfo.includes('경기도 남양주시 와부읍 덕소로97번길 34'));
 const businessLogicServer = [server, account, publicRoutes, admin].join('\n');
 add('privacy:no-card-field-storage-in-business-logic', !/(cardNumber|cvc|cvv)\s*[:=]/i.test(businessLogicServer));
 const clientHtmlJs = collectText(['apps/public', 'apps/admin', 'shared']);

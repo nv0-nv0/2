@@ -130,6 +130,83 @@ const checks = {
     const diff = readJson('docs/current/PHASE352_LIVE_PACKAGE_DIFF.json');
     assert.equal(diff.liveProbe.status, 'not_run');
     assert.ok(diff.packageFingerprint.version);
+  },
+  'public-page-bootstrap'() {
+    const optimizer = read('shared/public-page-optimizer.js');
+    assert.match(optimizer, /__NV0_PUBLIC_PAGE_OPTIMIZER__/);
+    assert.match(optimizer, /markCurrentLinks/);
+    assert.match(optimizer, /annotateExternalLinks/);
+    assert.match(optimizer, /carryTargetToDiagnosisLinks/);
+    assert.match(optimizer, /promoteVisiblePrimaryAction/);
+    assert.match(optimizer, /nv0PublicPageReady/);
+    const sharedImportPages = [
+      'apps/public/business-info/app.js',
+      'apps/public/privacy/app.js',
+      'apps/public/refund/app.js',
+      'apps/public/terms/app.js',
+      'apps/public/insights/app.js',
+      'apps/public/insights/business-info-display/app.js',
+      'apps/public/insights/conversion-before-payment/app.js',
+      'apps/public/insights/ecommerce-trust-checklist/app.js',
+      'apps/public/insights/mobile-checkout-trust/app.js',
+      'apps/public/insights/privacy-policy-checklist/app.js',
+      'apps/public/insights/refund-policy-checklist/app.js'
+    ];
+    sharedImportPages.forEach((file) => assert.match(read(file), /shared\/public-page-optimizer\.js/));
+  },
+  'runtime-optimizer-safety'() {
+    const optimizer = read('shared/veridion-runtime-optimizer.js');
+    assert.match(optimizer, /__NV0_RUNTIME_OPTIMIZER__/);
+    assert.match(optimizer, /supportsPrefetch/);
+    assert.match(optimizer, /reduce\)/);
+    assert.match(optimizer, /vrPrefetchMode/);
+    assert.match(optimizer, /pagehide/);
+    assert.doesNotMatch(optimizer, /shell:\s*true/);
+  },
+  'phase352-runner-portability'() {
+    const runner = read('scripts/run-phase352-final.mjs');
+    assert.match(runner, /process\.env\.ComSpec/);
+    assert.match(runner, /npm\.cmd/);
+    assert.doesNotMatch(runner, /shell:\s*true/);
+    assert.match(runner, /check:public-page-bootstrap/);
+    assert.match(runner, /check:runtime-optimizer-safety/);
+  },
+  'experience-orchestrator-contract'() {
+    const source = read('server/core/experience-orchestrator.mjs');
+    const publicRoutes = read('server/routes/public.mjs');
+    const adminRoutes = read('server/routes/admin.mjs');
+    const pkg = readJson('package.json');
+    assert.match(source, /phase353-experience-orchestrator-v1/);
+    assert.match(source, /buildExperienceOrchestratorSnapshot/);
+    assert.match(source, /buildExperienceControlPlane/);
+    assert.match(source, /runExperienceOrchestratorAudit/);
+    assert.match(publicRoutes, /\/api\/public\/experience-orchestrator/);
+    assert.match(adminRoutes, /\/api\/admin\/experience-orchestrator/);
+    assert.match(adminRoutes, /\/api\/admin\/experience-orchestrator\/audit/);
+    assert.equal(pkg.scripts['test:experience-orchestrator'], 'node tests/experience-orchestrator.mjs');
+  },
+  'business-profile-alignment'() {
+    const server = read('server/index.mjs');
+    const runtimeDb = readJson('runtime/data/db.json');
+    const businessInfo = read('apps/public/business-info/index.html');
+    const privacy = read('apps/public/privacy/index.html');
+    const refund = read('apps/public/refund/index.html');
+    const terms = read('apps/public/terms/index.html');
+    const rebrand = read('scripts/apply-phase332-rebrand.mjs');
+    const expectedAddress = '경기도 남양주시 와부읍 덕소로97번길 34, 105동 402호(덕소주공아파트 1단지)';
+    const expectedEmail = 'ct@nv0.kr';
+    assert.match(server, /representative:\s*process\.env\.NV0_BUSINESS_REPRESENTATIVE \|\| '나금상'/);
+    assert.match(server, /registrationNumber:\s*process\.env\.NV0_BUSINESS_REGISTRATION_NUMBER \|\| '584-77-00586'/);
+    assert.match(server, /privacyOfficerEmail:\s*process\.env\.NV0_PRIVACY_OFFICER_EMAIL \|\| process\.env\.NV0_SUPPORT_EMAIL \|\| 'ct@nv0\.kr'/);
+    assert.equal(runtimeDb.settings.businessProfile.representative, '나금상');
+    assert.equal(runtimeDb.settings.businessProfile.registrationNumber, '584-77-00586');
+    assert.equal(runtimeDb.settings.businessProfile.address, expectedAddress);
+    assert.equal(runtimeDb.settings.businessProfile.contactEmail, expectedEmail);
+    assert.equal(runtimeDb.settings.businessProfile.privacyOfficerEmail, expectedEmail);
+    [businessInfo, privacy, refund, terms, rebrand].forEach((text) => {
+      assert.ok(text.includes(expectedAddress), 'expected canonical business address');
+      assert.ok(text.includes(expectedEmail), 'expected canonical contact email');
+    });
   }
 };
 

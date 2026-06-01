@@ -16,6 +16,7 @@ import { buildPremiumPurchasedAsset, buildPremiumAssetPdfLines } from './core/pr
 import { buildCtaBoardArticle, chooseCtaVariant, ctaTopicPacks, ctaCombinationStats, rewriteExistingCtaPublication, auditHumanFriendlyCtaArticle, ctaFingerprint } from './core/cta-publication.mjs';
 import { buildProductIntelligence, annotateOffersWithIntelligence, buildProductDashboard } from './core/product-intelligence.mjs';
 import { buildSmartProductOrchestration, buildSmartPublicSnapshot } from './core/smart-product-orchestrator.mjs';
+import { buildExperienceOrchestratorSnapshot, buildExperienceControlPlane, runExperienceOrchestratorAudit } from './core/experience-orchestrator.mjs';
 import { discoverTargetAutomationLinks } from './core/free-auto-discovery.mjs';
 import { buildEvidenceSummary, buildScoreModel } from './core/scan-evidence-model.mjs';
 import { buildAutomationDisclosure, buildAutomatedActionPlan } from './core/free-auto-disclosure.mjs';
@@ -137,10 +138,21 @@ const PUBLIC_DIR = path.join(ROOT, 'apps', 'public');
 const ADMIN_DIR = path.join(ROOT, 'apps', 'admin');
 const BUSINESS_PROFILE = Object.freeze({
 tradeName: process.env.NV0_BUSINESS_TRADE_NAME || '엔브이제로(NV0)',
-representative: process.env.NV0_BUSINESS_REPRESENTATIVE || '운영자',
-registrationNumber: process.env.NV0_BUSINESS_REGISTRATION_NUMBER || '상용 배포 시 환경변수 입력',
-address: process.env.NV0_BUSINESS_ADDRESS || '상용 배포 시 환경변수 입력',
-businessTypes: ['정보통신업', '소프트웨어 개발 및 공급업', '전자상거래업', '데이터베이스 및 온라인 정보 제공업', '광고 대행업'],
+representative: process.env.NV0_BUSINESS_REPRESENTATIVE || '나금상',
+registrationNumber: process.env.NV0_BUSINESS_REGISTRATION_NUMBER || '584-77-00586',
+address: process.env.NV0_BUSINESS_ADDRESS || '경기도 남양주시 와부읍 덕소로97번길 34, 105동 402호(덕소주공아파트 1단지)',
+businessTypes: [
+  '정보통신업',
+  '응용 소프트웨어 개발 및 공급업',
+  '구매 및 소매업',
+  '전자상거래 소매업',
+  '영상물 제공 서비스업',
+  '오디오물 제작 서비스업',
+  '데이터베이스 및 온라인 정보 제공업',
+  '전문, 과학 및 기술서비스업',
+  '광고 대행업',
+  '작가'
+],
 contactEmail: process.env.NV0_SUPPORT_EMAIL || 'ct@nv0.kr',
 domain: process.env.NV0_PUBLIC_BASE_URL || 'https://nv0.kr',
 mailOrderRegistrationNumber: process.env.NV0_MAIL_ORDER_REGISTRATION_NUMBER || '',
@@ -4225,6 +4237,8 @@ buildProductAgentRuntimeStatus,
 buildEngineAgentRuntimeStatus,
 buildCommercialReadinessStatus,
 buildProductDashboard,
+buildExperienceOrchestratorSnapshot,
+buildExperienceControlPlane,
 buildProductIntelligence,
 buildProductionLaunchChecklist,
 buildPublicDiagnosisPackage,
@@ -4234,6 +4248,7 @@ buildRobotsTxt,
 buildRuleCatalog,
 runProductAgentPackageAudit,
 runEngineAgentPackageAudit,
+runExperienceOrchestratorAudit,
 runPhase287CommercialAudit,
 buildSitemapXml,
 buildSmartProductOrchestration,

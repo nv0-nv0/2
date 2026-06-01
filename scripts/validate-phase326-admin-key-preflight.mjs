@@ -57,7 +57,7 @@ const baseCommercialEnv = {
   NV0_SUPPORT_EMAIL: 'ct@nv0.kr',
   NV0_HOSTING_PROVIDER: 'Coolify/Contabo',
   NV0_CUSTOMER_SERVICE_PHONE: '02-0000-0000',
-  NV0_PRIVACY_OFFICER_EMAIL: 'privacy@nv0.kr',
+  NV0_PRIVACY_OFFICER_EMAIL: 'ct@nv0.kr',
   NV0_SMTP_URL: 'smtps://mailer:mailsecret123@smtp.nv0.kr:465?from=ct%40nv0.kr',
   NV0_ADMIN_IP_ALLOWLIST: '203.0.113.10/32',
   NV0_SECURE_RECORDS_KEY: 'real-secure-records-key-real-secure-records-key',

@@ -1,1 +1,1 @@
-document.documentElement.dataset.insightArticleReady = 'true';
+import '/shared/public-page-optimizer.js';
