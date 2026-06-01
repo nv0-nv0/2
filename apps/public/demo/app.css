@@ -1,1 +1,35 @@
-/* Page-specific CSS intentionally empty; canonical styling is /shared/veridion-rebrand.css. */
+/* Diagnosis page hardening styles layered on top of shared/veridion-rebrand.css. */
+.vr-demo-input-meta{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap;margin-top:12px}
+.vr-demo-inline-actions{display:flex;gap:10px;flex-wrap:wrap}
+.vr-demo-chip-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.vr-demo-chip-row button{border:1px solid #d8e3ef;border-radius:999px;background:#fff;padding:8px 12px;font-weight:850;color:#12344d}
+.vr-demo-chip-row button:hover{border-color:#0b8f71;color:#075e54}
+.vr-demo-recent-row[hidden]{display:none!important}
+.vr-demo-recent-row::before{content:"최근 진단";display:inline-flex;align-items:center;font-size:12px;font-weight:900;color:#64748b;padding-right:4px}
+.vr-demo-target-warning{margin-top:8px}
+.vr-result-toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:0 0 16px}
+.vr-result-toolbar button,.vr-result-toolbar a{border:1px solid #d8e3ef;border-radius:12px;background:#fff;padding:10px 14px;font-weight:850;color:#12344d}
+.vr-result-toolbar button:hover,.vr-result-toolbar a:hover{border-color:#0b8f71;color:#075e54}
+.vr-result-toolbar .primary{background:#075e54;color:#fff;border-color:#075e54}
+.vr-result-stack{display:grid;gap:18px}
+.vr-result-meta-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.vr-result-meta-grid article{border:1px solid #dfe9f3;background:#fff;border-radius:18px;padding:16px}
+.vr-result-meta-grid span{display:block;color:#64748b;font-size:12px;font-weight:900;margin-bottom:8px}
+.vr-result-meta-grid strong{display:block;color:#07111f;font-size:20px}
+.vr-result-meta-grid small{display:block;color:#667085;margin-top:6px}
+.vr-result-surface-empty{border:1px dashed #cbd5e1;border-radius:18px;background:#f8fbff;padding:16px;color:#475467}
+.vr-result-source-badge{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:900}
+.vr-result-source-badge.live{background:#e9f8f3;color:#075e54}
+.vr-result-source-badge.cached{background:#eef2ff;color:#3730a3}
+.vr-result-source-badge.fallback{background:#fff4e5;color:#9a3412}
+.vr-target-preview-blocked{border-color:#f5cfa7!important;background:#fff7ed!important;color:#9a3412!important}
+.vr-copy-feedback{min-height:18px;color:#64748b;font-size:12px}
+@media (max-width:900px){
+  .vr-result-meta-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:640px){
+  .vr-demo-input-meta{align-items:stretch}
+  .vr-demo-inline-actions,.vr-demo-chip-row,.vr-result-toolbar{display:grid}
+  .vr-demo-inline-actions button,.vr-demo-chip-row button,.vr-result-toolbar button,.vr-result-toolbar a{width:100%}
+  .vr-result-meta-grid{grid-template-columns:1fr}
+}

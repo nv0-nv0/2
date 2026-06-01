@@ -18,7 +18,7 @@ function add(name, fn) {
   catch (error) { checks.push({ name, ok: false, error: error.message }); }
 }
 
-for (const [name, html] of Object.entries({ home: files.home, demo: files.demo, alias: files.alias })) {
+for (const [name, html] of Object.entries({ demo: files.demo, alias: files.alias })) {
   add(`${name}:unified-marker`, () => assert.match(html, /data-unified-diagnosis="home-and-demo"/));
   add(`${name}:same-form-id`, () => assert.match(html, /id="unifiedDiagnosisForm"/));
   add(`${name}:same-target-input`, () => assert.match(html, /id="targetUrl"/));
@@ -28,18 +28,32 @@ for (const [name, html] of Object.entries({ home: files.home, demo: files.demo, 
     assert.match(html, /id="demoResult"/);
     assert.match(html, /id="freeUsageLead"/);
     assert.match(html, /id="freeUsageBadge"/);
+    assert.match(html, /id="cancelScanBtn"/);
+    assert.match(html, /id="recentTargetList"/);
+    assert.match(html, /id="targetPreview"/);
   });
 }
-add('home:uses-demo-engine-script', () => assert.match(files.home, /\/apps\/public\/demo\/app\.js/));
-add('home:does-not-load-divergent-home-engine', () => assert.doesNotMatch(files.home, /\/apps\/public\/home\/app\.js/));
-add('home:legacy-entry-imports-demo-engine', () => assert.match(files.homeJs, /import '\/apps\/public\/demo\/app\.js'/));
+add('home:delegates-to-dedicated-diagnosis-page', () => {
+  assert.doesNotMatch(files.home, /id="unifiedDiagnosisForm"/);
+  assert.match(files.home, /href="\/products\/veridion\/demo"/);
+  assert.match(files.home, /실제 무료 진단은 전용 화면에서 안정적으로 실행합니다/);
+});
+add('home:loads-home-engine-only', () => {
+  assert.match(files.home, /\/apps\/public\/home\/app\.js/);
+  assert.doesNotMatch(files.home, /\/apps\/public\/demo\/app\.js/);
+});
+add('home:compact-engine-marker', () => assert.match(files.homeJs, /homeCompactReady/));
 add('demo-js:form-submit-listener', () => assert.match(files.demoJs, /unifiedDiagnosisForm\?\.addEventListener\('submit'/));
 add('demo-js:single-public-diagnose-endpoint', () => assert.match(files.demoJs, /\/api\/public\/diagnose/));
 add('demo-js:no-home-auto-portal-timer', () => assert.doesNotMatch(files.demoJs, /AUTO_PORTAL_DELAY_MS|homeDemoRedirectCountdown|자동 이동 준비/));
-add('home:copy-promises-result-first-journey', () => {
-  assert.match(files.home, /주소 입력부터 결과 확인까지 한 화면에서 끝냅니다/);
-  assert.match(files.home, /먼저 결과를 보여준 뒤 필요한 경우에만 저장·상세 리포트로 연결합니다/);
-  assert.doesNotMatch(files.home, /무의미하게|같은 진단 엔진|메인과 진단 페이지/);
+add('demo-js:recent-and-toolbar-tools', () => {
+  assert.match(files.demoJs, /RECENT_TARGETS_KEY/);
+  assert.match(files.demoJs, /resultCopySummaryBtn/);
+  assert.match(files.demoJs, /cancelActiveScan/);
+});
+add('home:copy-promises-clear-separation', () => {
+  assert.match(files.home, /메인에서는 핵심 가치와 결과 구조만 빠르게 확인하고/);
+  assert.match(files.home, /실제 무료 진단은 전용 화면에서 안정적으로 실행합니다/);
 });
 
 const failures = checks.filter(x => !x.ok);

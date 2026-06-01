@@ -64,6 +64,13 @@ await add('public-config-ok', async () => {
   return { status: res.status };
 });
 
+await add('public-module-mime-ok', async () => {
+  const res = await fetch(`${baseUrl}/shared/product-catalog.mjs`);
+  assert.equal(res.status, 200);
+  assert.match(String(res.headers.get('content-type') || ''), /text\/javascript/i);
+  return { status: res.status, contentType: res.headers.get('content-type') };
+});
+
 await add('public-diagnose-valid-url', async () => {
   const { res, data } = await fetchJson(`${baseUrl}/api/public/diagnose`, {
     method: 'POST',
@@ -76,6 +83,18 @@ await add('public-diagnose-valid-url', async () => {
   return { status: res.status, provider: data.result?.provider, resultStatus: data.result?.resultStatus };
 });
 
+await add('public-diagnose-hash-normalized', async () => {
+  const { res, data } = await fetchJson(`${baseUrl}/api/public/diagnose`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ target: 'https://example.com/path?from=smoke#fragment' })
+  });
+  assert.equal(res.status, 200);
+  assert.equal(data.ok, true);
+  assert.doesNotMatch(String(data.result?.normalizedTarget || ''), /#fragment/);
+  return { status: res.status, target: data.result?.target, normalizedTarget: data.result?.normalizedTarget };
+});
+
 await add('public-diagnose-malformed-url', async () => {
   const { res, data } = await fetchJson(`${baseUrl}/api/public/diagnose`, {
     method: 'POST',
@@ -85,6 +104,17 @@ await add('public-diagnose-malformed-url', async () => {
   assert.equal(res.status, 400);
   assert.equal(data.ok, false);
   return { status: res.status, code: data.code };
+});
+
+await add('public-diagnose-unsafe-protocol-rejected', async () => {
+  const { res, data } = await fetchJson(`${baseUrl}/api/public/diagnose`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ target: 'javascript:alert(1)' })
+  });
+  assert.equal(res.status, 400);
+  assert.equal(data.ok, false);
+  return { status: res.status, error: data.error };
 });
 
 const failed = checks.filter(item => !item.ok);

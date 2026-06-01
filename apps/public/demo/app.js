@@ -10,17 +10,26 @@ const targetInput = document.getElementById('targetUrl');
 const scanBtn = document.getElementById('scanBtn');
 const retryBtn = document.getElementById('retryBtn');
 const unlockBtn = document.getElementById('unlockBtn');
+const cancelScanBtn = document.getElementById('cancelScanBtn');
+const clearRecentBtn = document.getElementById('clearRecentBtn');
+const presetTargets = document.getElementById('demoPresetTargets');
+const recentTargetList = document.getElementById('recentTargetList');
+const targetPreview = document.getElementById('targetPreview');
 const unifiedDiagnosisForm = document.getElementById('unifiedDiagnosisForm');
 const resultActionHint = document.getElementById('resultActionHint');
 const resultActionGroup = retryBtn?.closest('.bridge-actions') || unlockBtn?.closest('.bridge-actions') || null;
+const initialResultHtml = result?.innerHTML || '';
 const params = new URLSearchParams(location.search);
 if (params.get('target') && targetInput) targetInput.value = params.get('target');
 
 const DIAGNOSIS_CTA_COPY = '사이트 무료 진단 실행';
+const DIAGNOSIS_BUSY_COPY = '무료 진단 분석 중...';
 const FREE_LIMIT = 3;
 const REQUEST_TIMEOUT_MS = 18000;
 const DEMO_CACHE_TTL_MS = 5 * 60 * 1000;
+const RECENT_TARGET_LIMIT = 6;
 const PROGRESS_TICK_MS = 900;
+const RECENT_TARGETS_KEY = 'veridion:recent-targets:v1';
 const PROGRESS_STEPS = [
   { title: 'URL 입력', detail: '주소 형식과 공개 접근 가능 여부 확인' },
   { title: '자동 수집', detail: '홈·정책·문의·robots·sitemap 후보 확인' },
@@ -37,6 +46,8 @@ let guard = { enabled: false, ready: false, getToken: () => '', reset: () => {} 
 let progressTimer = null;
 let progressStartedAt = 0;
 let progressIndex = 0;
+let activeScanAbort = null;
+let targetAssessment = { valid: false, normalized: '', issues: ['사이트 주소를 입력하세요.'], warnings: [] };
 const REPORT_OFFER = getCommercialOffer('Report');
 const EXPERT_OFFER = getCommercialOffer('Expert');
 const REPORT_LABEL = REPORT_OFFER ? `${REPORT_OFFER.title} ${formatWon(REPORT_OFFER.price)}원` : '기본 리포트 49,000원';
@@ -48,10 +59,157 @@ function setState(message, mode = 'muted') {
   state.textContent = message;
 }
 function setResultHtml(html) { if (result) result.innerHTML = html; }
+function sanitizeTargetInput(raw = '') {
+  return String(raw || '').trim().replace(/\s+/g, '').replace(/[)>.,;!?]+$/g, '');
+}
+function isPrivateHost(host = '') {
+  const normalized = String(host || '').trim().toLowerCase().replace(/^\[|\]$/g, '');
+  if (!normalized) return true;
+  if (['localhost', '0.0.0.0'].includes(normalized) || normalized.endsWith('.local') || normalized.endsWith('.internal') || normalized.endsWith('.localhost')) return true;
+  if (/^(10|127)\./.test(normalized)) return true;
+  if (/^169\.254\./.test(normalized)) return true;
+  if (/^192\.168\./.test(normalized)) return true;
+  if (/^172\.(1[6-9]|2\d|3[0-1])\./.test(normalized)) return true;
+  if (/^100\.(6[4-9]|[7-9]\d|1[01]\d|12[0-7])\./.test(normalized)) return true;
+  if (/^\[?::1\]?$/.test(normalized) || /^fc|^fd|^fe80/i.test(normalized)) return true;
+  return false;
+}
+function assessTarget(raw = '') {
+  const source = sanitizeTargetInput(raw);
+  const issues = [];
+  const warnings = [];
+  if (!source) return { valid: false, normalized: '', issues: ['사이트 주소를 입력하세요.'], warnings };
+  const prefixed = /^[a-z][a-z0-9+.-]*:\/\//i.test(source) ? source : `https://${source}`;
+  let url = null;
+  try { url = new URL(prefixed); } catch { return { valid: false, normalized: '', issues: ['도메인 또는 URL 형식이 올바르지 않습니다.'], warnings }; }
+  if (!['http:', 'https:'].includes(url.protocol)) issues.push('http 또는 https 주소만 진단할 수 있습니다.');
+  if (url.username || url.password) issues.push('계정 정보가 포함된 주소는 진단할 수 없습니다.');
+  if (!url.hostname || (!url.hostname.includes('.') && !isPrivateHost(url.hostname))) issues.push('공개 도메인 형식의 주소를 입력하세요.');
+  if (url.hash) warnings.push('주소의 해시 값은 제외하고 진단합니다.');
+  if (url.search) warnings.push('쿼리 파라미터는 유지하지만 핵심 공개 페이지 위주로 진단합니다.');
+  if (isPrivateHost(url.hostname)) warnings.push('로컬 또는 사설 주소는 제한 결과만 제공될 수 있습니다.');
+  url.hash = '';
+  url.hostname = url.hostname.toLowerCase();
+  if ((url.protocol === 'https:' && url.port === '443') || (url.protocol === 'http:' && url.port === '80')) url.port = '';
+  return { valid: issues.length === 0, normalized: url.toString(), issues, warnings };
+}
+function getRecentTargets() {
+  try {
+    const value = JSON.parse(localStorage.getItem(RECENT_TARGETS_KEY) || '[]');
+    return Array.isArray(value) ? value.filter(Boolean).slice(0, RECENT_TARGET_LIMIT) : [];
+  } catch {
+    return [];
+  }
+}
+function saveRecentTarget(target = '') {
+  const normalized = assessTarget(target).normalized || normalizeTarget(target);
+  if (!normalized) return;
+  const next = [normalized, ...getRecentTargets().filter((item) => item !== normalized)].slice(0, RECENT_TARGET_LIMIT);
+  try { localStorage.setItem(RECENT_TARGETS_KEY, JSON.stringify(next)); } catch {}
+}
+function clearRecentTargets() {
+  try { localStorage.removeItem(RECENT_TARGETS_KEY); } catch {}
+  renderRecentTargets();
+}
+function renderRecentTargets() {
+  if (!recentTargetList) return;
+  const items = getRecentTargets();
+  recentTargetList.hidden = items.length === 0;
+  recentTargetList.setAttribute('aria-hidden', items.length ? 'false' : 'true');
+  recentTargetList.innerHTML = items.map((item) => `<button type="button" data-target-recent="${escapeAttr(item)}">${escapeHtml(item)}</button>`).join('');
+}
+function updateTargetPreview(mode = 'muted') {
+  targetAssessment = assessTarget(targetInput?.value || '');
+  if (!targetPreview) return targetAssessment;
+  targetPreview.className = `notice ${mode}`.trim();
+  targetPreview.classList.remove('vr-target-preview-blocked');
+  if (!targetAssessment.valid) {
+    targetPreview.textContent = targetAssessment.issues[0] || '사이트 주소 형식을 확인하세요.';
+    targetPreview.classList.add('warn');
+  } else {
+    targetPreview.textContent = targetAssessment.warnings.length
+      ? `${targetAssessment.normalized} · ${targetAssessment.warnings[0]}`
+      : `${targetAssessment.normalized} 기준으로 공개 페이지를 진단합니다.`;
+    if (targetAssessment.warnings.some((item) => /사설|로컬/.test(item))) targetPreview.classList.add('vr-target-preview-blocked');
+  }
+  if (scanBtn && !isScanning) scanBtn.disabled = !targetAssessment.valid;
+  return targetAssessment;
+}
+async function copyTextToClipboard(text, successMessage = '복사했습니다.') {
+  try {
+    await navigator.clipboard.writeText(String(text || ''));
+    setState(successMessage, 'success');
+  } catch {
+    setState('복사에 실패했습니다. 브라우저 권한을 확인하세요.', 'warn');
+  }
+}
+function downloadScanJson(scan) {
+  const blob = new Blob([JSON.stringify(scan || {}, null, 2)], { type: 'application/json;charset=utf-8' });
+  const href = URL.createObjectURL(blob);
+  const anchor = document.createElement('a');
+  anchor.href = href;
+  anchor.download = `veridion-diagnosis-${Date.now()}.json`;
+  document.body.append(anchor);
+  anchor.click();
+  anchor.remove();
+  URL.revokeObjectURL(href);
+}
+function resetRenderedResult() {
+  setResultHtml(initialResultHtml);
+  updateResultActions(Boolean(lastScan || getSavedScanFromStorage()));
+  setState('진단 대기 상태로 화면을 초기화했습니다.', 'muted');
+}
+function renderResultToolbar(view, scan) {
+  return `<section class="vr-result-toolbar" aria-label="결과 도구">
+    <button id="resultCopySummaryBtn" type="button">요약 복사</button>
+    <button id="resultCopyJsonBtn" type="button">JSON 복사</button>
+    <button id="resultDownloadJsonBtn" type="button">JSON 다운로드</button>
+    <button id="resultShareBtn" type="button">공유 링크 복사</button>
+    <button id="resultResetBtn" type="button">결과 영역 초기화</button>
+    ${view.siteId ? `<a class="primary" href="/portal?siteId=${escapeAttr(view.siteId)}">고객 포털 열기</a>` : ''}
+  </section>`;
+}
+function renderResultMetaSummary(view, scan) {
+  const sourceTone = scan?.fallback ? 'fallback' : scan?.cached ? 'cached' : 'live';
+  const sourceLabel = scan?.fallback ? '안전 결과' : scan?.cached ? '캐시 재사용' : '실시간 진단';
+  return `<section class="vr-result-meta-grid" aria-label="진단 메타 정보">
+    <article><span>결과 출처</span><strong><span class="vr-result-source-badge ${escapeAttr(sourceTone)}">${escapeHtml(sourceLabel)}</span></strong><small>${escapeHtml(scan?.provider || 'builtin')}</small></article>
+    <article><span>진단 시각</span><strong>${escapeHtml(formatDate(view.generatedAt))}</strong><small>${escapeHtml(view.scanScopeLabel || '공개 페이지 기준')}</small></article>
+    <article><span>신뢰도</span><strong>${escapeHtml(view.scoreModel?.confidenceLabel || '확인 필요')}</strong><small>수동 확인 ${escapeHtml(view.scoreModel?.manualReviewCount ?? 0)}개</small></article>
+    <article><span>문의 코드</span><strong>${escapeHtml(view.requestId || '정상')}</strong><small>${escapeHtml(view.riskLevel || '상태 확인')}</small></article>
+  </section>`;
+}
+function resultShareUrl(scan) {
+  const url = new URL(location.href);
+  const shareTarget = scan?.target || targetAssessment.normalized || normalizeTarget(targetInput?.value || '');
+  if (shareTarget) url.searchParams.set('target', shareTarget);
+  return url.toString();
+}
+function buildSummaryText(view) {
+  return [
+    `VERIDION 무료 진단 요약`,
+    `대상: ${view.target}`,
+    `점수: ${view.riskScore ?? '확인 필요'} / 100`,
+    `리스크 영역: ${view.demoIssueOverview?.areaCount ?? view.risks.length}`,
+    `문제 개수: ${view.demoIssueOverview?.totalIssueCount ?? view.risks.length}`,
+    `우선 조치: ${view.recommendedActions?.[0]?.title || '정책·문의·환불 고지 확인'}`,
+    `문의 코드: ${view.requestId || '정상'}`
+  ].join('\n');
+}
+function prefersReducedMotion() {
+  try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; }
+}
+function revealResultSurface() {
+  if (!result) return;
+  const behavior = prefersReducedMotion() ? 'auto' : 'smooth';
+  requestAnimationFrame(() => result.scrollIntoView({ behavior, block: 'start' }));
+}
 
 function stopProgress() {
   if (progressTimer) clearInterval(progressTimer);
   progressTimer = null;
+  if (result) result.dataset.demoProgress = 'idle';
+  document.body.dataset.diagnosisScanning = 'false';
 }
 function demoCacheKey(target) { return `veridion:instantDemoCache:${String(target || '').toLowerCase()}`; }
 function getCachedDemoResult(target) {
@@ -67,19 +225,25 @@ function setCachedDemoResult(target, scan) {
 function renderProgress(index = 0) {
   const elapsed = progressStartedAt ? Math.max(0, Math.round((Date.now() - progressStartedAt) / 1000)) : 0;
   const active = Math.max(0, Math.min(PROGRESS_STEPS.length - 1, index));
+  const percent = Math.max(12, Math.round(((active + 1) / PROGRESS_STEPS.length) * 100));
   return `<section class="demo-progress-panel" aria-live="polite">
     <div class="demo-progress-head"><span class="pill brand">실시간 무료 진단</span><b>${elapsed}초 경과</b></div>
+    <div class="demo-progress-rail" aria-hidden="true"><i style="width:${percent}%"></i></div>
+    <div class="notice muted">진단 대상: ${escapeHtml(targetAssessment.normalized || normalizeTarget(targetInput?.value || '') || '입력 대기')}</div>
     <h3>결과 화면을 먼저 준비하면서 공개 페이지를 확인하고 있습니다</h3>
     <p class="muted">응답이 느린 사이트도 빈 화면으로 기다리게 하지 않고, 현재 처리 단계를 계속 보여줍니다.</p>
     <ol class="demo-progress-steps vr-readable-steps">${PROGRESS_STEPS.map((step, stepIndex) => `<li class="${stepIndex < active ? 'done' : stepIndex === active ? 'active' : ''}"><span aria-hidden="true">${stepIndex + 1}</span><div><b>${escapeHtml(step.title)}</b><p>${escapeHtml(step.detail)}</p></div></li>`).join('')}</ol>
-    <div class="demo-progress-note">반복 실행 시 최근 5분 이내 동일 URL 결과는 즉시 재사용해 체감 대기시간을 줄입니다.</div>
+    <div class="demo-progress-note">반복 실행 시 최근 5분 이내 동일 URL 결과는 즉시 재사용해 체감 대기시간을 줄입니다. 진행 중에는 진단 중단 버튼으로 요청을 멈출 수 있습니다.</div>
   </section>`;
 }
 function startProgress() {
   stopProgress();
   progressStartedAt = Date.now();
   progressIndex = 0;
+  if (result) result.dataset.demoProgress = 'active';
+  document.body.dataset.diagnosisScanning = 'true';
   setResultHtml(renderProgress(progressIndex));
+  revealResultSurface();
   progressTimer = setInterval(() => {
     progressIndex = Math.min(PROGRESS_STEPS.length - 1, progressIndex + 1);
     setResultHtml(renderProgress(progressIndex));
@@ -123,9 +287,20 @@ function updateResultActions(hasResult = Boolean(lastScan || getSavedScanFromSto
 }
 function setBusy(flag) {
   isScanning = flag;
+  document.body.dataset.diagnosisScanning = flag ? 'true' : 'false';
   if (scanBtn) {
-    scanBtn.disabled = flag;
+    scanBtn.disabled = flag || !targetAssessment.valid;
     scanBtn.setAttribute('aria-busy', flag ? 'true' : 'false');
+    scanBtn.textContent = flag ? DIAGNOSIS_BUSY_COPY : DIAGNOSIS_CTA_COPY;
+  }
+  if (targetInput) {
+    targetInput.readOnly = flag;
+    targetInput.setAttribute('aria-busy', flag ? 'true' : 'false');
+  }
+  if (cancelScanBtn) {
+    cancelScanBtn.hidden = !flag;
+    cancelScanBtn.setAttribute('aria-hidden', flag ? 'false' : 'true');
+    cancelScanBtn.disabled = !flag;
   }
   if (retryBtn) retryBtn.setAttribute('aria-busy', flag ? 'true' : 'false');
   updateResultActions();
@@ -134,9 +309,17 @@ function saveScan(scan) { localStorage.setItem('nv0:lastScan', JSON.stringify(sc
 function getSavedScanFromStorage() { try { return JSON.parse(localStorage.getItem('nv0:lastScan') || 'null'); } catch { return null; } }
 async function jsonFetch(path, options = {}) {
   const controller = new AbortController();
+  const signal = options.signal
+    ? (typeof AbortSignal !== 'undefined' && typeof AbortSignal.any === 'function'
+        ? AbortSignal.any([controller.signal, options.signal])
+        : controller.signal)
+    : controller.signal;
+  if (options.signal && typeof AbortSignal !== 'undefined' && typeof AbortSignal.any !== 'function') {
+    options.signal.addEventListener('abort', () => controller.abort(options.signal.reason), { once: true });
+  }
   const timeout = setTimeout(() => controller.abort(), options.timeoutMs || REQUEST_TIMEOUT_MS);
   try {
-    const res = await fetch(path, { ...options, signal: controller.signal, credentials: options.credentials || 'same-origin' });
+    const res = await fetch(path, { ...options, signal, credentials: options.credentials || 'same-origin' });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
       const serverError = typeof data.error === 'string' ? data.error : (data.error?.message || data.message || `요청 실패 (${res.status})`);
@@ -166,11 +349,9 @@ async function loadSession() {
 }
 
 function normalizeTarget(raw) {
-  const target = String(raw || '').trim();
-  if (!target) return '';
-  return /^https?:\/\//i.test(target) ? target : `https://${target}`;
+  return assessTarget(raw).normalized || '';
 }
-function isValidTarget(value) { return /^https?:\/\/[^\s.]+\.[^\s]+/i.test(value); }
+function isValidTarget(value) { return assessTarget(value).valid; }
 function clampScore(value) {
   const n = Number(value);
   if (!Number.isFinite(n)) return null;
@@ -799,31 +980,40 @@ function buildLocalFallbackScan(target, message = '') {
     error: reason
   };
 }
+function cancelActiveScan() {
+  if (!activeScanAbort) return;
+  activeScanAbort.abort(new Error('scan_cancelled'));
+}
 async function runScan() {
   if (isScanning) return;
   setBusy(true);
   await loadSession();
-  const normalizedTarget = normalizeTarget(targetInput?.value);
-  if (!isValidTarget(normalizedTarget)) { setState('유효한 사이트 주소를 입력하세요. 예: https://your-store.kr', 'warn'); setBusy(false); return; }
+  const assessment = updateTargetPreview('muted');
+  const normalizedTarget = assessment.normalized;
+  if (!assessment.valid) { setState(assessment.issues[0] || '유효한 사이트 주소를 입력하세요. 예: https://your-store.kr', 'warn'); setBusy(false); return; }
   if (!session.authenticated && getUsage() >= FREE_LIMIT) {
     if (state) state.innerHTML = `오늘 비회원 요약 결과 횟수를 모두 사용했습니다. <a href="${escapeAttr(loginUrl())}">로그인·회원가입하면 계속 이용할 수 있습니다.</a>`;
     setResultHtml('<div class="upgrade-box"><strong>비회원 이용 한도 초과</strong><p class="muted">로그인하면 무료진단 횟수 관리, 저장, 재검사를 계속 사용할 수 있습니다. 상세 결과는 결제 후 공개됩니다.</p></div>');
     setBusy(false);
     return;
   }
+  saveRecentTarget(normalizedTarget);
+  renderRecentTargets();
   const cachedResult = getCachedDemoResult(normalizedTarget);
   if (cachedResult) {
     saveScan(cachedResult);
     setState('최근 5분 이내 동일 URL 진단 결과를 즉시 불러왔습니다. 다시 점검을 누르면 새로 검사합니다.', 'success');
     renderResult(cachedResult);
+    revealResultSurface();
     setBusy(false);
     return;
   }
-  setState('공개 페이지·연결된 공개 페이지·robots.txt·sitemap.xml을 자동 수집하고 확인 근거를 확인하고 있습니다.', 'muted');
+  setState(assessment.warnings[0] ? `${assessment.warnings[0]} 공개 페이지·연결된 공개 페이지·robots.txt·sitemap.xml을 순서대로 확인합니다.` : '공개 페이지·연결된 공개 페이지·robots.txt·sitemap.xml을 자동 수집하고 확인 근거를 확인하고 있습니다.', 'muted');
+  activeScanAbort = new AbortController();
   startProgress();
   try {
     const token = guard.enabled ? guard.getToken() : '';
-    const data = await jsonFetch('/api/public/diagnose', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ target: normalizedTarget, turnstileToken: token }), timeoutMs: REQUEST_TIMEOUT_MS });
+    const data = await jsonFetch('/api/public/diagnose', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ target: normalizedTarget, turnstileToken: token }), timeoutMs: REQUEST_TIMEOUT_MS, signal: activeScanAbort.signal });
     stopProgress();
     if (!session.authenticated) setUsage(getUsage() + 1);
     setCachedDemoResult(normalizedTarget, data.result || {});
@@ -831,8 +1021,14 @@ async function runScan() {
     if (session.authenticated && data.result) { try { await saveCurrentSite(data.result); } catch {} }
     setState(session.authenticated ? '무료진단 완료 · 저장 사이트와 최근 이력 관리가 활성화되었습니다. 상세 결과는 결제 후 공개됩니다.' : '무료진단 완료 · 확인 근거와 한계를 먼저 보여드립니다. 상세 결과는 결제 후 공개됩니다.', 'success');
     renderResult(data.result || {});
+    revealResultSurface();
   } catch (err) {
     stopProgress();
+    if (activeScanAbort?.signal?.aborted) {
+      setState('진단 요청을 중단했습니다. 주소를 유지한 채 다시 실행할 수 있습니다.', 'warn');
+      setResultHtml('<div class="vr-result-surface-empty"><strong>진단을 중단했습니다.</strong><p>입력한 주소는 그대로 유지했습니다. 준비가 되면 다시 실행하세요.</p></div>');
+      return;
+    }
     const message = err?.message || '알 수 없는 오류';
     const isTurnstile = /turnstile|보안|검증/i.test(message);
     const isServer = /500|502|503|서버|timeout|초과/i.test(message);
@@ -845,8 +1041,10 @@ async function runScan() {
     const supportCode = fallback.requestId ? ` · 문의 코드 ${fallback.requestId}` : '';
     setState(`${isServer ? '서버 응답이 지연되어' : isTurnstile ? '보안 확인이 완료되지 않아' : '요청 처리 중 문제가 있어'} 로컬 안전 결과를 표시했습니다.${supportCode} 다시 실행하면 서버 결과로 갱신됩니다.`, 'warn');
     renderResult(fallback);
+    revealResultSurface();
     guard.reset?.();
   } finally {
+    activeScanAbort = null;
     setBusy(false);
   }
 }
@@ -866,10 +1064,33 @@ targetInput?.addEventListener('keydown', (event) => {
     runScan();
   }
 });
+targetInput?.addEventListener('input', () => updateTargetPreview('muted'));
+targetInput?.addEventListener('paste', () => setTimeout(() => {
+  if (targetInput) targetInput.value = sanitizeTargetInput(targetInput.value);
+  updateTargetPreview('muted');
+}, 0));
 retryBtn?.addEventListener('click', runScan);
 unlockBtn?.addEventListener('click', unlockSavedScan);
+cancelScanBtn?.addEventListener('click', cancelActiveScan);
+clearRecentBtn?.addEventListener('click', clearRecentTargets);
+presetTargets?.addEventListener('click', (event) => {
+  const value = event.target?.closest?.('[data-target-preset]')?.getAttribute?.('data-target-preset');
+  if (!value || !targetInput) return;
+  targetInput.value = value;
+  updateTargetPreview('muted');
+  targetInput.focus();
+});
+recentTargetList?.addEventListener('click', (event) => {
+  const value = event.target?.closest?.('[data-target-recent]')?.getAttribute?.('data-target-recent');
+  if (!value || !targetInput) return;
+  targetInput.value = value;
+  updateTargetPreview('muted');
+  targetInput.focus();
+});
 updateBadge();
 updateResultActions();
+renderRecentTargets();
+updateTargetPreview('muted');
 setState('이메일을 먼저 요구하지 않습니다. 가능한 공개 항목은 자동 확인하고, 자동 확정 불가 영역은 명확히 표시합니다.');
 
 mountTurnstile({ containerId: 'turnstileBox', tokenInputId: 'turnstileToken', noticeId: 'turnstileState' })
@@ -1341,7 +1562,39 @@ function renderPaidCleanResult(scan) {
 
 function renderResult(scan) {
   const view = normalizeScan(scan);
-  const html = hasPaidAccess(scan) ? renderPaidCleanResult(scan) : renderDemoCountOnlyResult(view);
+  const html = `<div class="vr-result-stack">
+    ${renderResultToolbar(view, scan)}
+    ${renderResultHero(view)}
+    ${renderResultMetaSummary(view, scan)}
+    ${renderMetricStrip(view)}
+    ${renderSummaryMetricCards(view)}
+    ${renderDiscoverySummary(view)}
+    ${renderDemoIssueOverview(view)}
+    ${renderEvidenceMatrix(view)}
+    ${renderEvidenceFindings(view)}
+    ${renderRiskCards(view.risks)}
+    ${renderCategoryBoard(view.categories)}
+    ${renderRecommendedActions(view.recommendedActions)}
+    ${renderConversionImpact(view)}
+    ${renderFixPreview(view.recommendedActions)}
+    ${renderPurchasePathPanel(view)}
+    ${renderReportSample(view)}
+    ${renderVerifiedPages(view)}
+    ${renderAutomationDisclosure(view)}
+    ${renderAutomatedActionPlan(view)}
+    ${renderEvidenceChecklist(view)}
+    ${renderExternalToolPlan(view)}
+    ${renderSmartNextAction(view)}
+    ${hasPaidAccess(scan) ? renderPaidCleanResult(scan) : renderDemoCountOnlyResult(view)}
+  </div>`;
   setResultHtml(html);
   document.getElementById('dashboardRetryBtn')?.addEventListener('click', runScan);
+  document.getElementById('resultCopySummaryBtn')?.addEventListener('click', () => copyTextToClipboard(buildSummaryText(view), '진단 요약을 복사했습니다.'));
+  document.getElementById('resultCopyJsonBtn')?.addEventListener('click', () => copyTextToClipboard(JSON.stringify(scan || {}, null, 2), '진단 JSON을 복사했습니다.'));
+  document.getElementById('resultDownloadJsonBtn')?.addEventListener('click', () => {
+    downloadScanJson(scan);
+    setState('진단 JSON 파일을 다운로드했습니다.', 'success');
+  });
+  document.getElementById('resultShareBtn')?.addEventListener('click', () => copyTextToClipboard(resultShareUrl(scan), '공유 링크를 복사했습니다.'));
+  document.getElementById('resultResetBtn')?.addEventListener('click', resetRenderedResult);
 }

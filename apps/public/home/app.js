@@ -1,1 +1,1 @@
-import '/apps/public/demo/app.js';
+document.documentElement.dataset.homeCompactReady = 'true';

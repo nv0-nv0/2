@@ -39,9 +39,8 @@ for (const entry of mappedRoutes) {
     if (!html.includes('/shared/veridion-rebrand.css')) errors.push({ route: entry.route, slug: entry.slug, error: 'index.html missing rebrand shared stylesheet' });
     if (/vr-clean-slate|vr-generated|vr-runtime|phase264-hardening|veridion-adopted-ui|veridion-clean-v310|\/shared\/base\.css/.test(html) || html.includes(`/apps/${entry.area}/${entry.slug}/app.css`)) errors.push({ route: entry.route, slug: entry.slug, error: 'retired css reference detected' });
     const expectedApp = `/apps/${entry.area}/${entry.slug}/app.js`;
-    const phase347HomeUnifiedEngine = entry.area === 'public' && entry.slug === 'home' && html.includes('/apps/public/demo/app.js') && html.includes('data-unified-diagnosis="home-and-demo"');
     const phase348ProductDemoUnifiedEngine = entry.area === 'public' && entry.slug === 'veridion-demo' && html.includes('/apps/public/demo/app.js') && html.includes('data-diagnosis-engine="single-source"');
-    if (!html.includes(expectedApp) && !phase347HomeUnifiedEngine && !phase348ProductDemoUnifiedEngine) errors.push({ route: entry.route, slug: entry.slug, error: 'index.html missing app.js reference' });
+    if (!html.includes(expectedApp) && !phase348ProductDemoUnifiedEngine) errors.push({ route: entry.route, slug: entry.slug, error: 'index.html missing app.js reference' });
     if (/\son[a-z]+\s*=/.test(html)) errors.push({ route: entry.route, slug: entry.slug, error: 'inline event handler detected' });
     if (/style="/.test(html)) errors.push({ route: entry.route, slug: entry.slug, error: 'inline style attribute detected' });
     if (/<script(?![^>]*src=)(?![^>]*type=\"application\/ld\+json\")/.test(html)) errors.push({ route: entry.route, slug: entry.slug, error: 'inline script tag detected' });

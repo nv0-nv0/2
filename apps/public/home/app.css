@@ -1,1 +1,41 @@
-/* Page-specific CSS intentionally empty; canonical styling is /shared/veridion-rebrand.css. */
+.vr-home-compact .vr-shell{padding-top:24px;padding-bottom:24px}
+.vr-home-hero{padding-bottom:28px}
+.vr-home-hero-inner{align-items:start;gap:28px}
+.vr-home-copy{display:grid;gap:18px}
+.vr-home-preview{padding:24px}
+.vr-home-signal-grid,
+.vr-home-offer-grid,
+.vr-home-audience-grid,
+.vr-home-kpi-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.vr-home-signal-card,
+.vr-home-offer-card,
+.vr-home-audience-grid article,
+.vr-home-kpi-grid article{border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:16px;background:rgba(255,255,255,.06)}
+.vr-home-preview .vr-home-kpi-grid article{background:#f8fbff;border-color:#dce7f2}
+.vr-home-signal-card strong,
+.vr-home-offer-card h3,
+.vr-home-audience-grid h3{display:block;margin-bottom:8px}
+.vr-home-two-column{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.vr-home-panel{padding:24px}
+.vr-home-section-head{margin:0 0 18px;text-align:left;max-width:none}
+.vr-home-flow-grid{display:grid;gap:14px}
+.vr-home-flow-step{display:grid;grid-template-columns:60px 1fr;gap:14px;align-items:start;border:1px solid var(--vr-line);border-radius:18px;padding:16px;background:#fbfdff}
+.vr-home-flow-step .vr-step-num{width:60px;height:60px}
+.vr-home-offer-card{background:#fbfdff;border-color:var(--vr-line)}
+.vr-home-offer-accent{background:linear-gradient(180deg,#ecfbf7,#ffffff);border-color:#bde8db}
+.vr-home-pricing-compact{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.vr-home-audience-cta{background:linear-gradient(180deg,#0b1b2c,#10253b)!important;border-color:#173250!important;color:#fff}
+.vr-home-audience-cta p{color:rgba(255,255,255,.76)}
+.vr-home-audience-cta .vr-button{margin-top:8px}
+@media (max-width:1100px){
+  .vr-home-two-column,
+  .vr-home-pricing-compact{grid-template-columns:1fr}
+}
+@media (max-width:760px){
+  .vr-home-signal-grid,
+  .vr-home-offer-grid,
+  .vr-home-audience-grid,
+  .vr-home-kpi-grid{grid-template-columns:1fr}
+  .vr-home-preview{padding:20px}
+  .vr-home-flow-step{grid-template-columns:1fr}
+}

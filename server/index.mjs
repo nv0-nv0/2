@@ -1334,6 +1334,7 @@ text(req, res, 404, 'Not found');
 function mime(p) {
 if (p.endsWith('.css')) return 'text/css; charset=utf-8';
 if (p.endsWith('.js')) return 'text/javascript; charset=utf-8';
+if (p.endsWith('.mjs')) return 'text/javascript; charset=utf-8';
 if (p.endsWith('.json')) return 'application/json; charset=utf-8';
 if (p.endsWith('.html')) return 'text/html; charset=utf-8';
 if (p.endsWith('.svg')) return 'image/svg+xml';
@@ -2282,10 +2283,23 @@ if (!Array.isArray(value)) throw invalidPayload(`${field} 값이 배열이어야
 if (value.length > maxItems) throw invalidPayload(`${field} 항목 수가 너무 많습니다.`);
 return value.map((item) => asTrimmedString(item, { field, max: maxItemLength })).filter(Boolean);
 }
+function canonicalizePublicTarget(value, { field = 'target' } = {}) {
+const raw = asTrimmedString(value, { field, required: true, max: 2048 });
+const candidate = /^[a-z][a-z0-9+.-]*:\/\//i.test(raw) ? raw : `https://${raw}`;
+const url = safeUrl(candidate);
+if (!url) throw invalidPayload('진단할 사이트 주소 형식이 올바르지 않습니다.');
+if (!['http:', 'https:'].includes(url.protocol)) throw invalidPayload('http 또는 https 주소만 진단할 수 있습니다.');
+if (url.username || url.password) throw invalidPayload('계정 정보가 포함된 주소는 진단할 수 없습니다.');
+url.hash = '';
+url.hostname = url.hostname.toLowerCase();
+if ((url.protocol === 'https:' && url.port === '443') || (url.protocol === 'http:' && url.port === '80')) url.port = '';
+if (!url.hostname || (!url.hostname.includes('.') && !isBlockedTargetUrl(url))) throw invalidPayload('공개 도메인 형식의 사이트 주소를 입력하세요.');
+return url.toString();
+}
 function normalizeScanPayload(body = {}) {
 const targetCandidate = body.target || body.url || body.targetUrl || body.domain;
 return {
-target: asTrimmedString(targetCandidate, { field: 'target', required: true, max: 2048, pattern: /^https?:\/\//i }),
+target: canonicalizePublicTarget(targetCandidate, { field: 'target' }),
 turnstileToken: asTrimmedString(body.turnstileToken, { field: 'turnstileToken', max: 2048 }),
 source: asTrimmedString(body.source, { field: 'source', max: 80 })
 };

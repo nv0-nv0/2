@@ -50,10 +50,10 @@ const checks = {
     const home = read('apps/public/home/index.html');
     const homeJs = read('apps/public/home/app.js');
     const demo = read('apps/public/demo/index.html');
-    assert.match(home, /data-unified-diagnosis="home-and-demo"/);
-    assert.match(home, /id="unifiedDiagnosisForm"/);
-    assert.match(home, /<script src="\/apps\/public\/demo\/app\.js" type="module"><\/script>/);
-    assert.match(homeJs, /demo\/app\.js/);
+    assert.doesNotMatch(home, /id="unifiedDiagnosisForm"/);
+    assert.match(home, /href="\/products\/veridion\/demo"/);
+    assert.match(home, /<script src="\/apps\/public\/home\/app\.js" type="module"><\/script>/);
+    assert.match(homeJs, /homeCompactReady/);
     assert.match(demo, /id="unifiedDiagnosisForm"/);
   },
   'product-catalog-ssot'() {

@@ -64,7 +64,8 @@ add('public:no-broken-glyph-source', !/[▤☑⋮✓↗█░⚠◆▣⚖›🤖
 add('public:no-console-log', !/console\.log\(/.test(publicClient));
 add('portal:functional-ids-preserved', ['portalRiskGauge','saveSiteForm','portalFeed'].every(t => read('apps/public/portal/index.html').includes(t)));
 add('board:functional-ids-preserved', ['boardList','boardSearchForm','boardPagination'].every(t => read('apps/public/board/index.html').includes(t)));
-add('home:functional-ids-preserved', ['unifiedDiagnosisForm','targetUrl','demoResult','data-unified-diagnosis="home-and-demo"'].every(t => read('apps/public/home/index.html').includes(t)));
+add('home:functional-ids-preserved', ['vr-home-two-column','homeSignalGrid','homeAudienceGrid','/apps/public/home/app.js'].every(t => read('apps/public/home/index.html').includes(t)));
+add('demo:functional-ids-preserved', ['cancelScanBtn','recentTargetList','targetPreview','/apps/public/demo/app.css'].every(t => read('apps/public/demo/index.html').includes(t)));
 
 const passed = checks.filter((check) => check.ok).length;
 const failed = checks.length - passed;

@@ -7,8 +7,9 @@
   <meta name="description" content="웹사이트의 신뢰, 준법, 전환 요소를 진단하고 개선 우선순위를 제안하는 VERIDION"/>
   <link rel="preload" href="/shared/veridion-rebrand.css" as="style"/>
   <link rel="stylesheet" href="/shared/veridion-rebrand.css"/>
+  <link rel="stylesheet" href="/apps/public/home/app.css"/>
 </head>
-<body data-veridion-rebrand="clean" data-page="home" data-diagnosis-engine="single-source" data-unified-diagnosis="home-and-demo">
+<body data-veridion-rebrand="clean" data-page="home">
 
 <a class="skip-link" href="#main">본문 바로가기</a>
 <header class="vr-topbar" data-public-nav="true">
@@ -28,26 +29,188 @@
     </div>
   </div>
 </header>
-<main id="main" tabindex="-1" class="vr-main" data-route-smoke="온라인 사업자 리스크 진단 신뢰 준법 전환 보완 후보 신뢰 준법 전환">
-  <section class="vr-hero" aria-labelledby="homeTitle"><div class="vr-hero-inner">
-    <div><span class="vr-kicker">자동화 기반 웹사이트 진단</span><h1 id="homeTitle">웹사이트의 신뢰와 준법을 진단하고, <span class="vr-accent">전환율을 높이세요.</span></h1><p>판매자와 소상공인을 위한 웹사이트 진단 서비스입니다. 공개 페이지에서 확인 가능한 신뢰, 준법, 전환의 보완 후보를 정리하고 실행 우선순위를 제안합니다.</p>
-      <section id="demoStart" class="vr-functional-bridge vr-demo-start" aria-label="무료 진단 실행" data-unified-diagnosis="home-and-demo">
-        <div class="vr-section-head"><span class="vr-kicker">무료 진단 실행</span><h2>주소 입력부터 결과 확인까지 한 화면에서 끝냅니다</h2><p>먼저 결과를 보여준 뒤 필요한 경우에만 저장·상세 리포트로 연결합니다. 홈에서도 전용 진단 화면과 같은 엔진으로 바로 시작할 수 있습니다.</p></div>
-        <div><div class="notice" id="freeUsageLead"><strong>무료 진단 준비 완료</strong></div><div class="notice muted" id="freeUsageBadge">비회원은 하루 이용 횟수 안에서 바로 실행할 수 있습니다.</div></div>
-        <form id="unifiedDiagnosisForm" class="bridge-grid vr-unified-diagnosis-form" data-unified-diagnosis-form="true" novalidate><input autocomplete="url" id="targetUrl" inputmode="url" placeholder="https://your-store.kr" aria-label="진단할 사이트 주소"/><button id="scanBtn" type="submit" data-diagnosis-primary-action="true">사이트 무료 진단 실행</button></form>
-        <div id="turnstileBox"></div><input id="turnstileToken" type="hidden"/><div class="notice muted" id="turnstileState">보안 확인이 필요한 경우 이 영역에 표시됩니다.</div><div class="notice muted" id="demoState">사이트 주소를 입력하면 아래 미리보기 영역이 실제 결과로 바뀝니다.</div><div class="notice muted result-action-hint" id="resultActionHint">결과가 생성되면 다시 진단하기와 저장·이어보기 버튼이 표시됩니다.</div><div class="bridge-actions" hidden aria-hidden="true"><button id="retryBtn" type="button" class="secondary" disabled aria-disabled="true">다시 진단하기</button><button id="unlockBtn" type="button" class="secondary" disabled aria-disabled="true">결과 저장하고 이어보기</button></div>
-        <div class="demo-preview-grid" aria-label="무료와 유료 결과 차이"><article class="demo-preview-card"><span class="vr-pill">무료 결과</span><strong>문제 합계·영역·요소</strong><p>구체적인 문제 수와 고객이 먼저 확인하는 영역을 빠르게 보여줍니다.</p></article><article class="demo-preview-card"><span class="vr-pill success">기본 리포트</span><strong>상세 근거·수정 위치</strong><p>페이지별 근거, 적용 위치, 우선순위 로드맵을 확인합니다.</p></article><article class="demo-preview-card"><span class="vr-pill gold">전문가 플랜</span><strong>수정 문구·재점검</strong><p>실제 문구안, 수정 전후 기준, 반복 관리 문서를 함께 제공합니다.</p></article></div>
-        <div class="demo-result-surface" id="demoResult"><section class="demo-sample-result" aria-label="진단 전 샘플 결과"><div class="demo-count-head"><div><span class="pill brand">샘플 결과</span><h2>실행하면 이런 형태로 결과가 표시됩니다</h2><p>https://example-store.kr</p></div></div><div class="demo-count-kpis"><article class="demo-summary-card"><span>문제 합계</span><strong>7</strong><small>무료 미리보기 기준</small></article><article class="demo-summary-card"><span>리스크 영역</span><strong>3</strong><small>신뢰·준법·전환</small></article><article class="demo-summary-card"><span>확인 URL</span><strong>4</strong><small>공개 페이지</small></article><article class="demo-summary-card"><span>다음 조치</span><strong>5</strong><small>우선순위 제안</small></article></div><div class="demo-result-explain-grid"><article><h3>무료에서 보이는 내용</h3><p>문제 개수, 영역, 확인 범위, 첫 번째 조치 방향을 보여줍니다.</p></article><article><h3>유료에서 열리는 내용</h3><p>페이지별 근거, 수정 위치, 적용 문구, 재점검 기준을 제공합니다.</p></article><article><h3>전환 연결</h3><p>불안을 확인한 즉시 기본 리포트 또는 전문가 플랜으로 이동합니다.</p></article></div></section></div>
-      </section>
-      <div class="vr-actions"><a class="vr-button ghost" href="#demoStart">사이트 무료 진단 실행</a><a class="vr-button ghost" href="/service">서비스 범위 보기</a></div><div class="vr-trustline"><span>무료로 빠르게 진단</span><span>회원가입 없이 바로 확인</span><span>민감정보 입력 없음</span></div>
+<main id="main" tabindex="-1" class="vr-main vr-home-compact" data-route-smoke="온라인 사업자 리스크 진단 신뢰 준법 전환 보완 후보">
+  <section class="vr-hero vr-home-hero" aria-labelledby="homeTitle">
+    <div class="vr-hero-inner vr-home-hero-inner">
+      <div class="vr-home-copy">
+        <span class="vr-kicker">온라인 사업자 진단 운영체계</span>
+        <h1 id="homeTitle">웹사이트의 신뢰와 준법을 진단하고, <span class="vr-accent">전환율을 높이세요.</span></h1>
+        <p>메인에서는 핵심 가치와 결과 구조만 빠르게 확인하고, 실제 무료 진단은 전용 화면에서 안정적으로 실행합니다. 그래서 더 선명하고, 더 짧고, 더 헷갈리지 않습니다.</p>
+        <div class="vr-actions">
+          <a class="vr-button primary" href="/products/veridion/demo">사이트 무료 진단 실행</a>
+          <a class="vr-button ghost" href="/plans">리포트 상품 바로 보기</a>
+        </div>
+        <div class="vr-trustline">
+          <span>전용 진단 화면에서 실행</span>
+          <span>공개 페이지 기준 근거 제시</span>
+          <span>결과 저장 후 고객 포털 연계</span>
+        </div>
+        <div class="vr-home-signal-grid" id="homeSignalGrid" aria-label="핵심 강점">
+          <article class="vr-home-signal-card">
+            <strong>신뢰</strong>
+            <p>사업자 정보, 고객지원, 구매 전 안내를 한 번에 점검합니다.</p>
+          </article>
+          <article class="vr-home-signal-card">
+            <strong>준법</strong>
+            <p>개인정보, 약관, 환불 기준처럼 분쟁으로 이어지기 쉬운 지점을 먼저 봅니다.</p>
+          </article>
+          <article class="vr-home-signal-card">
+            <strong>전환</strong>
+            <p>CTA, 설명 순서, 결제 전 설득 구간을 함께 정리합니다.</p>
+          </article>
+          <article class="vr-home-signal-card">
+            <strong>운영</strong>
+            <p>무료 진단에서 끝나지 않고 포털, 리포트, 반복 점검으로 연결합니다.</p>
+          </article>
+        </div>
+      </div>
+      <aside class="vr-preview vr-home-preview" aria-label="핵심 요약">
+        <div class="vr-preview-head">
+          <div class="vr-score">
+            <small>종합 신뢰 점수</small>
+            <strong>82</strong>
+            <small>/ 100 · 구조 양호</small>
+            <div class="vr-progress"><i></i></div>
+          </div>
+          <div class="vr-checks">
+            <div><span>사업자 정보</span><span class="vr-chip">적합</span></div>
+            <div><span>개인정보 처리방침</span><span class="vr-chip">적합</span></div>
+            <div><span>환불 안내</span><span class="vr-chip warn">보완 필요</span></div>
+            <div><span>결제 전 설명</span><span class="vr-chip warn">보완 필요</span></div>
+          </div>
+        </div>
+        <div class="vr-home-kpi-grid" aria-label="핵심 지표">
+          <article><span>확인 URL</span><strong>4</strong></article>
+          <article><span>리스크 영역</span><strong>3</strong></article>
+          <article><span>즉시 조치</span><strong>5</strong></article>
+          <article><span>결과 연계</span><strong>포털</strong></article>
+        </div>
+        <div class="vr-list">
+          <article><span class="vr-icon">1</span><div><h3>왜 메인에서 바로 실행하지 않나요?</h3><p>무료 진단은 전용 화면으로 분리해 오류와 혼선을 줄였습니다.</p></div><span class="vr-chip">안정화</span></article>
+          <article><span class="vr-icon">2</span><div><h3>무엇을 먼저 보나요?</h3><p>고객이 결제 전에 확인하는 안내, 정책, 신뢰 신호를 우선 정렬합니다.</p></div><span class="vr-chip">우선순위</span></article>
+          <article><span class="vr-icon">3</span><div><h3>다음 단계는?</h3><p>무료 진단 후 기본 리포트, 전문가 플랜, 고객 포털로 이어집니다.</p></div><span class="vr-chip">연결</span></article>
+        </div>
+      </aside>
     </div>
-    <aside class="vr-preview" aria-label="진단 리포트 미리보기"><div class="vr-preview-head"><div class="vr-score"><small>종합 신뢰 점수</small><strong>82</strong><small>/ 100 · 좋음</small><div class="vr-progress"><i></i></div></div><div class="vr-checks"><div><span>개인정보 처리방침</span><span class="vr-chip">적합</span></div><div><span>이용약관</span><span class="vr-chip">적합</span></div><div><span>사업자 정보 표기</span><span class="vr-chip">적합</span></div><div><span>거래 안내</span><span class="vr-chip warn">보완 필요</span></div></div></div><div class="vr-list"><article><span class="vr-icon">1</span><div><h3>신뢰 요소 보완 필요</h3><p>고객 리뷰와 인증 요소를 강화하면 전환에 도움이 됩니다.</p></div><span class="vr-chip">개선 제안</span></article><article><span class="vr-icon">2</span><div><h3>준법 보완 후보</h3><p>고객 안내 정보 일부가 부족해 보완이 필요합니다.</p></div><span class="vr-chip warn">보완 필요</span></article><article><span class="vr-icon">3</span><div><h3>전환 개선 기회</h3><p>CTA 가독성과 배치 개선을 권장합니다.</p></div><span class="vr-chip">개선 제안</span></article></div></aside>
-  </div></section>
-  <section class="vr-shell"><div class="vr-feature-row" aria-label="핵심 기능"><article class="vr-card"><span class="vr-icon">T</span><h3>신뢰 진단</h3><p>보안, 인증, 리뷰, 회사 정보 등 고객 신뢰 요소를 종합 분석합니다.</p></article><article class="vr-card"><span class="vr-icon">C</span><h3>준법 리스크 점검</h3><p>개인정보, 이용약관, 표시광고 등 관련 준수 여부를 자동 점검합니다.</p></article><article class="vr-card"><span class="vr-icon">G</span><h3>전환 개선 인사이트</h3><p>UX, 카피, CTA, 페이지 구조까지 전환을 높이는 개선점을 제안합니다.</p></article><article class="vr-card"><span class="vr-icon">R</span><h3>한눈에 보는 리포트</h3><p>점수, 우선순위, 실행 가이드까지 보기 쉬운 리포트로 제공합니다.</p></article></div>
-    <div class="vr-section-head"><span class="vr-kicker">진단 흐름</span><h2>VERIDION은 이렇게 작동합니다</h2><p>입력, 분석, 리포트 확인까지 고객이 바로 이해할 수 있는 흐름으로 설계했습니다.</p></div><div class="vr-steps"><article class="vr-card vr-step"><span class="vr-step-num">1</span><div><h3>웹사이트 입력</h3><p>URL만 입력하면 진단이 시작됩니다.</p></div></article><span class="vr-step-arrow" aria-hidden="true">&rarr;</span><article class="vr-card vr-step"><span class="vr-step-num">2</span><div><h3>AI 분석 및 평가</h3><p>신뢰, 준법, 전환 항목을 자동 분석합니다.</p></div></article><span class="vr-step-arrow" aria-hidden="true">&rarr;</span><article class="vr-card vr-step"><span class="vr-step-num">3</span><div><h3>리포트 확인 및 개선</h3><p>우선순위와 해결 방법을 확인합니다.</p></div></article></div></section>
-  <section class="vr-stats" aria-label="진단 구성"><div class="vr-stat-grid"><div class="vr-stat"><strong>신뢰</strong><span>회사 정보와 고객 안심 요소</span></div><div class="vr-stat"><strong>준법</strong><span>정책·고지·동의 흐름</span></div><div class="vr-stat"><strong>전환</strong><span>CTA·설명·구매 전 안내</span></div><div class="vr-stat"><strong>리포트</strong><span>우선순위와 실행 가이드</span></div></div></section>
-  <section class="vr-shell"><div class="vr-section-head"><h2>고객 화면에서 바로 설득되는 리포트 구조</h2><p>검증되지 않은 과장 수치 대신, 실제 화면에 필요한 판단 근거와 실행 항목을 정리합니다.</p></div><div class="vr-testimonials"><article class="vr-card"><p>점수만 보여주지 않고, 고객이 어디에서 불안해하는지와 먼저 고칠 항목을 함께 보여줍니다.</p><strong>신뢰 진단 예시</strong></article><article class="vr-card"><p>개인정보, 약관, 환불, 사업자 정보처럼 결제 전 확인되는 항목을 한 화면에서 점검합니다.</p><strong>준법 체크 예시</strong></article><article class="vr-card"><p>CTA, 가격 안내, 제공 범위, 문의 경로를 연결해 전환 흐름을 개선할 수 있게 정리합니다.</p><strong>전환 개선 예시</strong></article></div></section>
-  <section class="vr-shell"><div class="vr-section-head"><span class="vr-kicker">요금</span><h2>무료 진단 후 필요한 리포트만 선택하세요</h2><p>공개 화면 점검, 상세 리포트, 전문가 관리 단계로 단순하게 구성했습니다.</p></div><div class="vr-pricing"><article class="vr-price-card"><h3>사이트 무료 진단 실행</h3><strong>0원</strong><p>기본 상태와 확인이 필요한 영역을 먼저 살펴봅니다.</p></article><article class="vr-price-card featured"><h3>기본 리포트</h3><strong>₩49,000/회</strong><p>사이트별 상세 항목과 보완 우선순위를 확인합니다.</p></article><article class="vr-price-card"><h3>전문가 플랜</h3><strong>₩149,000/월</strong><p>맞춤형 수정 가이드와 지속 점검을 함께 관리합니다.</p></article></div></section>
+  </section>
+
+  <section class="vr-shell">
+    <div class="vr-home-two-column" aria-label="핵심 안내">
+      <article class="vr-card vr-home-panel">
+        <div class="vr-section-head vr-home-section-head">
+          <span class="vr-kicker">진단 흐름</span>
+          <h2>한 번에 이해되는 3단계 구조</h2>
+          <p>메인은 설명, 진단 페이지는 실행, 포털은 반복 관리에 집중합니다.</p>
+        </div>
+        <div class="vr-home-flow-grid">
+          <article class="vr-home-flow-step">
+            <span class="vr-step-num">1</span>
+            <div>
+              <h3>전용 진단 화면으로 이동</h3>
+              <p>홈에서는 판단만 빠르게 하고 실제 실행은 `/products/veridion/demo`에서 진행합니다.</p>
+            </div>
+          </article>
+          <article class="vr-home-flow-step">
+            <span class="vr-step-num">2</span>
+            <div>
+              <h3>문제 개수와 근거 확인</h3>
+              <p>무료 결과에서 영역, 확인 URL, 다음 조치를 먼저 확인합니다.</p>
+            </div>
+          </article>
+          <article class="vr-home-flow-step">
+            <span class="vr-step-num">3</span>
+            <div>
+              <h3>리포트 또는 포털로 연결</h3>
+              <p>상세 근거가 필요하면 리포트로, 반복 관리가 필요하면 포털로 이어집니다.</p>
+            </div>
+          </article>
+        </div>
+      </article>
+
+      <article class="vr-card vr-home-panel">
+        <div class="vr-section-head vr-home-section-head">
+          <span class="vr-kicker">결과물</span>
+          <h2>무엇을 받는지 바로 비교</h2>
+          <p>길게 읽지 않아도 무료 결과와 유료 결과의 차이를 바로 이해할 수 있도록 정리했습니다.</p>
+        </div>
+        <div class="vr-home-offer-grid">
+          <article class="vr-home-offer-card">
+            <span class="vr-chip">무료 결과</span>
+            <h3>문제 합계·영역·첫 조치</h3>
+            <p>현재 어디가 약한지 빠르게 파악합니다.</p>
+          </article>
+          <article class="vr-home-offer-card">
+            <span class="vr-chip success">기본 리포트</span>
+            <h3>상세 근거·수정 위치</h3>
+            <p>페이지별 보완 포인트와 우선순위를 확인합니다.</p>
+          </article>
+          <article class="vr-home-offer-card">
+            <span class="vr-chip gold">전문가 플랜</span>
+            <h3>문구안·운영 가이드</h3>
+            <p>실제 적용을 위한 수정안과 재점검 기준까지 받습니다.</p>
+          </article>
+          <article class="vr-home-offer-card vr-home-offer-accent">
+            <span class="vr-chip">고객 포털</span>
+            <h3>저장·비교·반복 점검</h3>
+            <p>진단 이력을 묶어서 지속적으로 관리합니다.</p>
+          </article>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="vr-shell">
+    <div class="vr-home-two-column vr-home-bottom-grid" aria-label="요금과 적용 대상">
+      <article class="vr-card vr-home-panel">
+        <div class="vr-section-head vr-home-section-head">
+          <span class="vr-kicker">요금</span>
+          <h2>핵심 상품만 압축했습니다</h2>
+          <p>스크롤을 길게 끌지 않고도 어떤 단계에서 어떤 상품을 선택하면 되는지 바로 보이게 구성했습니다.</p>
+        </div>
+        <div class="vr-pricing vr-home-pricing-compact">
+          <article class="vr-price-card">
+            <h3>기본 리포트</h3>
+            <strong>₩49,000/회</strong>
+            <p>사이트별 상세 근거와 우선순위가 필요한 경우 적합합니다.</p>
+            <a class="vr-button" href="/checkout?plan=Report">기본 리포트 구매</a>
+          </article>
+          <article class="vr-price-card featured">
+            <h3>전문가 플랜</h3>
+            <strong>₩149,000/월</strong>
+            <p>수정 문구, 운영 가이드, 반복 점검까지 함께 관리합니다.</p>
+            <a class="vr-button primary" href="/checkout?plan=Expert">전문가 플랜 시작</a>
+          </article>
+        </div>
+      </article>
+
+      <article class="vr-card vr-home-panel">
+        <div class="vr-section-head vr-home-section-head">
+          <span class="vr-kicker">추천 대상</span>
+          <h2>이런 상황에서 가장 효과적입니다</h2>
+          <p>광고비를 쓰고 있는데 전환이 약하거나, 고객 문의와 환불 이슈가 잦다면 특히 빠르게 체감됩니다.</p>
+        </div>
+        <div class="vr-home-audience-grid" id="homeAudienceGrid">
+          <article>
+            <h3>소상공인·브랜드 운영자</h3>
+            <p>결제 전 신뢰와 정책 안내가 약한지 빠르게 확인하고 싶은 경우</p>
+          </article>
+          <article>
+            <h3>마케터·실무 담당자</h3>
+            <p>랜딩, CTA, 설명 순서가 전환을 막고 있는지 점검해야 하는 경우</p>
+          </article>
+          <article>
+            <h3>반복 운영팀</h3>
+            <p>사이트별 점검 이력과 개선 우선순위를 포털에서 계속 관리하려는 경우</p>
+          </article>
+          <article class="vr-home-audience-cta">
+            <h3>바로 시작하기</h3>
+            <p>실제 무료 진단은 전용 화면에서 안정적으로 실행됩니다.</p>
+            <a class="vr-button primary" href="/products/veridion/demo">사이트 무료 진단 실행</a>
+          </article>
+        </div>
+      </article>
+    </div>
+  </section>
 </main>
 
 <footer class="vr-footer" aria-label="하단 정보">
@@ -58,7 +221,7 @@
     <div class="vr-footer-legal"><strong>안전한 데이터 처리</strong><p>VERIDION은 공개 웹페이지 기반의 구조 분석 서비스이며 법률 자문이나 성과 보장을 제공하지 않습니다.</p><p>엔브이제로(NV0) · 대표자 나금상 · 사업자등록번호 584-77-00586</p><p>경기도 남양주시 와부읍 덕소로97번길 34, 105동 402호(덕소주공아파트 1단지)</p><p>고객지원 메일: <a href="mailto:ct@nv0.kr">ct@nv0.kr</a></p><p><a href="/terms">이용약관</a> · <a href="/privacy">개인정보처리방침</a></p></div>
   </div>
 </footer>
-<script src="/apps/public/demo/app.js" type="module"></script>
+<script src="/apps/public/home/app.js" type="module"></script>
 <script src="/shared/veridion-runtime-optimizer.js" type="module"></script>
 </body>
 </html>
