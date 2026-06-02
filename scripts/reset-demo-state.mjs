@@ -2,8 +2,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const root = process.cwd();
-const runtimeDataDir = path.join(root, 'runtime', 'data');
-const seedPath = path.join(runtimeDataDir, 'db.seed.json');
+const runtimeDir = path.resolve(process.env.NV0_RUNTIME_DIR || path.join(root, 'runtime'));
+const runtimeDataDir = path.join(runtimeDir, 'data');
+const seedPath = path.join(root, 'runtime', 'data', 'db.seed.json');
 const dbPath = path.join(runtimeDataDir, 'db.json');
 const sessionsPath = path.join(runtimeDataDir, 'sessions.json');
 

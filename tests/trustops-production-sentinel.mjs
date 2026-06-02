@@ -100,4 +100,5 @@ try {
   console.log('phase320 trustops production sentinel integration ok');
 } finally {
   await stopChild(child);
+  fs.rmSync(testRuntimeDir, { recursive: true, force: true });
 }

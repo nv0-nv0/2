@@ -122,4 +122,5 @@ try {
   console.log('phase317 trustops growth integration ok');
 } finally {
   await stopChild(child);
+  fs.rmSync(testRuntimeDir, { recursive: true, force: true });
 }

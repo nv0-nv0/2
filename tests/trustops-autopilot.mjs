@@ -103,4 +103,5 @@ try {
   console.log('phase318 trustops autopilot integration ok');
 } finally {
   await stopChild(child);
+  fs.rmSync(testRuntimeDir, { recursive: true, force: true });
 }

@@ -1,0 +1,65 @@
+{
+  "ok": true,
+  "phase": "phase357-global-qa-accessibility-closeout",
+  "generatedAt": "2026-06-01T14:32:00.895763+00:00",
+  "packageFilesActual": 607,
+  "auditMetrics": {
+    "files": 607,
+    "directories": 62,
+    "htmlPages": 31,
+    "publicPages": 24,
+    "adminPages": 7,
+    "cssFiles": 34,
+    "mjsFiles": 228,
+    "markdownFiles": 113,
+    "npmScripts": 164,
+    "uiElements": 688,
+    "links": 603,
+    "buttons": 42,
+    "inputs": 39,
+    "selects": 2,
+    "textareas": 2,
+    "forms": 9,
+    "composeForwardedKeys": 137,
+    "hiddenOperationalEndpoints": 30,
+    "localAssetsReferenced": 122
+  },
+  "atomicRemediations": 101,
+  "acceptance": {
+    "passed": 28,
+    "total": 28
+  },
+  "aliases": {
+    "delivery:final": 123,
+    "release:predeploy": 130,
+    "RUN_ALL_TESTS.sh": 130
+  },
+  "manualServerVerification": {
+    "checked": 50,
+    "pages": 23,
+    "ssrfBlocked": 9,
+    "securityHeaders": 4
+  },
+  "composeForwardedKeyCounts": {
+    "docker-compose.yml": 137,
+    "deploy/docker-compose.coolify.yml": 137
+  },
+  "environmentTemplateKeyCounts": {
+    ".env.example": 34,
+    "deploy/coolify.env.example": 142,
+    "deploy/coolify.env.bulk.txt": 138,
+    "deploy/env.production.template": 142,
+    "deploy/env.production.nv0.kr.example": 142,
+    "deploy/env.commercial.template": 142
+  },
+  "changeCounts": {
+    "new": 24,
+    "modified": 84,
+    "deleted": 0
+  },
+  "forbiddenDeliveryArtifacts": [],
+  "retainedRuntimeFiles": [
+    "runtime/data/db.seed.json"
+  ],
+  "dockerEngineAvailable": false
+}

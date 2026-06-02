@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import { spawn } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -8,6 +9,8 @@ const __dirname = path.dirname(__filename);
 const root = path.resolve(__dirname, '..');
 const port = 3216;
 const base = `http://127.0.0.1:${port}`;
+const runtimeDir = path.join(root, 'runtime-test-contracts-fuzz');
+fs.rmSync(runtimeDir, { recursive: true, force: true });
 
 const child = spawn(process.execPath, ['server/index.mjs'], {
   cwd: root,
@@ -19,7 +22,9 @@ const child = spawn(process.execPath, ['server/index.mjs'], {
     NV0_TRUST_PROXY_HEADERS: 'true',
     NV0_TARGET_FETCH_ENABLED: 'false',
     NV0_ENABLE_TURNSTILE: 'false',
-    NODE_ENV: 'production'
+    NODE_ENV: 'production',
+    NV0_RUNTIME_DIR: runtimeDir,
+    NV0_FALLBACK_RUNTIME_DIR: runtimeDir
   },
   stdio: 'ignore',
   detached: false
@@ -66,10 +71,13 @@ try {
   const malformedPublic = await request('/api/public/scan', { method:'POST', headers:{ 'content-type':'application/json' }, body:'{"' });
   assert.equal(malformedPublic.res.status, 400);
 
-  for (const invalid of [{}, { target: 'ftp://example.com' }, { target: 'javascript:alert(1)' }, { target: 'example.com' }]) {
+  for (const invalid of [{}, { target: 'ftp://example.com' }, { target: 'javascript:alert(1)' }, { target: '127.0.0.1' }]) {
     const x = await request('/api/public/scan', { method:'POST', headers:{ 'content-type':'application/json' }, body: JSON.stringify(invalid) });
     assert.equal(x.res.status, 400);
   }
+  const bareHostname = await request('/api/public/scan', { method:'POST', headers:{ 'content-type':'application/json' }, body: JSON.stringify({ target: 'example.com' }) });
+  assert.equal(bareHostname.res.status, 200);
+  assert.match(bareHostname.data.result.target, /^https:\/\/example\.com\/?/);
 
   const previewBadEmail = await request('/api/public/document-preview', { method:'POST', headers:{ 'content-type':'application/json' }, body: JSON.stringify({ businessName:'테스트', contactEmail:'not-an-email' }) });
   assert.equal(previewBadEmail.res.status, 400);
@@ -95,12 +103,14 @@ try {
   const invalidOps = await request('/api/admin/ops', { method:'POST', headers:{ 'content-type':'application/json', cookie, 'x-nv0-csrf': csrf }, body: JSON.stringify({ action:'destroy' }) });
   assert.equal(invalidOps.res.status, 400);
 
-  try { child.kill('SIGKILL'); } catch {}
-  console.log(JSON.stringify({ ok: true, checked: 14 }, null, 2));
-  process.reallyExit ? process.reallyExit(0) : process.exit(0);
+  console.log(JSON.stringify({ ok: true, checked: 15 }, null, 2));
 } finally {
-  child.kill('SIGKILL');
-  if (typeof child.unref === 'function') child.unref();
+  if (child.exitCode === null) {
+    await new Promise(resolve => {
+      const timer = setTimeout(() => { try { child.kill('SIGKILL'); } catch {} resolve(); }, 1000);
+      child.once('exit', () => { clearTimeout(timer); resolve(); });
+      try { child.kill('SIGTERM'); } catch { resolve(); }
+    });
+  }
+  fs.rmSync(runtimeDir, { recursive: true, force: true });
 }
-
-process.reallyExit ? process.reallyExit(0) : process.exit(0);

@@ -1,28 +1,28 @@
 # PHASE353 전역 감사 보고서
 
-생성 시각: 2026-06-01T06:41:00.160Z
+생성 시각: 2026-06-02T02:35:42.059Z
 
 ## 패키지 인벤토리
 
 | 항목 | 개수 |
 | --- | ---: |
-| packageFiles | 565 |
-| packageDirectories | 63 |
+| packageFiles | 618 |
+| packageDirectories | 62 |
 | publicHtmlScreens | 24 |
 | adminHtmlScreens | 7 |
 | totalHtmlScreens | 31 |
 | publicTopLevelScreens | 18 |
 | adminTopLevelScreens | 7 |
 | cssFiles | 34 |
-| scriptMjsFiles | 129 |
-| testMjsFiles | 24 |
-| markdownDocs | 100 |
-| npmScripts | 156 |
-| interactiveElements | 686 |
+| scriptMjsFiles | 137 |
+| testMjsFiles | 28 |
+| markdownDocs | 117 |
+| npmScripts | 168 |
+| interactiveElements | 693 |
 | forms | 9 |
 | inputs | 39 |
 | buttons | 42 |
-| links | 596 |
+| links | 603 |
 | publicApiStringCandidates | 92 |
 | adminApiStringCandidates | 63 |
 | hiddenOperationalEndpoints | 30 |

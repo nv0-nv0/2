@@ -66,13 +66,13 @@ assert(!coolifyCompose.includes('postgres:16-alpine'), 'coolify boot-safe compos
 assert(!coolifyCompose.includes('redis:7-alpine'), 'coolify boot-safe compose must not start Redis by default');
 
 const commercialCompose = await read('deploy/docker-compose.commercial.yml');
-for (const token of ['NV0_PLATFORM_TARGET: commercial', 'NV0_STORAGE_MODE: s3', '${NV0_S3_ENDPOINT:?', '${NV0_S3_REGION:-auto}', '${NV0_S3_FORCE_PATH_STYLE:-true}', '/healthz']) {
+for (const token of ['NV0_PLATFORM_TARGET: commercial', 'NV0_STORAGE_MODE: s3', '${NV0_S3_ENDPOINT:?', '${NV0_S3_REGION:-auto}', '${NV0_S3_FORCE_PATH_STYLE:-true}', '${NV0_READYZ_REDIS_STRICT:-true}', '/readyz', 'b.ready===true']) {
   assert(commercialCompose.includes(token), `commercial R2 compose missing: ${token}`);
 }
 assert(!commercialCompose.includes('minio/minio'), 'commercial R2 compose must not include MinIO; use deploy/docker-compose.local-minio.yml for fallback');
 
 const localMinio = await read('deploy/docker-compose.local-minio.yml');
-for (const token of ['minio/minio', 'minio/mc', 'mc mb --ignore-existing', 'NV0_S3_ENDPOINT: http://minio:9000', 'service_completed_successfully']) {
+for (const token of ['minio/minio', 'minio/mc', 'mc mb --ignore-existing', 'NV0_S3_ENDPOINT: http://minio:9000', 'service_completed_successfully', '${NV0_READYZ_REDIS_STRICT:-true}', '/readyz', 'b.ready===true']) {
   assert(localMinio.includes(token), `local MinIO fallback compose missing: ${token}`);
 }
 

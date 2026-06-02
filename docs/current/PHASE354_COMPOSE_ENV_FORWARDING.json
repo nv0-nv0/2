@@ -1,10 +1,10 @@
 {
   "ok": true,
   "phase": "phase354-compose-env-forwarding",
-  "checkedAt": "2026-06-01T06:41:02.172Z",
-  "checked": 10,
+  "checkedAt": "2026-06-02T02:33:48.535Z",
+  "checked": 11,
   "failed": 0,
-  "forwardedKeys": 22,
+  "forwardedKeys": 39,
   "failures": [],
   "checks": [
     {
@@ -41,6 +41,10 @@
     },
     {
       "name": "deploy/docker-compose.coolify.yml:forwards-critical-keys",
+      "ok": true
+    },
+    {
+      "name": "operator-templates-cover-critical-runtime-keys",
       "ok": true
     },
     {

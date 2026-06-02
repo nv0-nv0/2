@@ -1,0 +1,63 @@
+{
+  "ok": true,
+  "phase": "phase356-conversion-dashboard-closeout",
+  "startedAt": "2026-06-02T02:31:58.278Z",
+  "finishedAt": "2026-06-02T02:33:35.675Z",
+  "passed": 5,
+  "attempted": 5,
+  "total": 5,
+  "failed": 0,
+  "timeoutMs": 720000,
+  "results": [
+    {
+      "name": "phase355:final",
+      "ok": true,
+      "status": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 95932,
+      "stdoutTail": "\n> veridion-public-risk-diagnostic@1.0.20-commercial-phase357-global-qa-accessibility-closeout-csp-visual-integrity-patch-phase358-commercial-deploy-integrity-closeout phase355:final\n> node scripts/run-phase355-final.mjs\n\n[PASS] phase354:final 94370ms\n[PASS] check:phase355-audit 447ms\n[PASS] clean:runtime 447ms\n[PASS] check-runtime-clean 110ms\n{\n  \"ok\": true,\n  \"phase\": \"phase355-organization-closeout\",\n  \"passed\": 4,\n  \"attempted\": 4,\n  \"total\": 4,\n  \"failed\": 0,\n  \"report\": \"docs/current/PHASE355_FINAL_GATE_REPORT.json\"\n}\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "test:phase356-dashboard-contract",
+      "ok": true,
+      "status": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 490,
+      "stdoutTail": "\n> veridion-public-risk-diagnostic@1.0.20-commercial-phase357-global-qa-accessibility-closeout-csp-visual-integrity-patch-phase358-commercial-deploy-integrity-closeout test:phase356-dashboard-contract\n> node tests/phase356-conversion-dashboard-contract.mjs\n\n{\n  \"ok\": true,\n  \"contract\": \"phase356-conversion-dashboard-contract\",\n  \"checked\": 15,\n  \"failed\": 0,\n  \"failures\": []\n}\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "check:phase356-audit",
+      "ok": true,
+      "status": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 437,
+      "stdoutTail": "\n> veridion-public-risk-diagnostic@1.0.20-commercial-phase357-global-qa-accessibility-closeout-csp-visual-integrity-patch-phase358-commercial-deploy-integrity-closeout check:phase356-audit\n> node scripts/run-phase356-audit.mjs\n\n{\n  \"ok\": true,\n  \"checked\": 16,\n  \"failed\": 0,\n  \"report\": \"docs/current/PHASE356_GLOBAL_AUDIT.json\"\n}\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "clean:runtime",
+      "ok": true,
+      "status": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 429,
+      "stdoutTail": "\n> veridion-public-risk-diagnostic@1.0.20-commercial-phase357-global-qa-accessibility-closeout-csp-visual-integrity-patch-phase358-commercial-deploy-integrity-closeout clean:runtime\n> node scripts/clean-release-runtime.mjs\n\n{\n  \"ok\": true,\n  \"phase\": \"phase322-clean-release-runtime-state-excluded\",\n  \"retained\": [\n    \"runtime/data/db.seed.json\"\n  ],\n  \"removedActiveState\": [\n    \"runtime/uploads\",\n    \"runtime/backups\",\n    \"runtime/reports\"\n  ],\n  \"note\": \"Release packages must not include local runtime state or runtime-test-* directories. Server recreates local runtime files on first non-commercial JSON-mode start; commercial mode must use PostgreSQL/Redis/object storage.\"\n}\n",
+      "stderrTail": ""
+    },
+    {
+      "name": "check-runtime-clean",
+      "ok": true,
+      "status": 0,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 102,
+      "stdoutTail": "{\n  \"ok\": true,\n  \"checked\": \"runtime-clean-release\",\n  \"mode\": \"active-runtime-state-and-runtime-test-excluded\",\n  \"phase\": \"phase322\"\n}\n",
+      "stderrTail": ""
+    }
+  ]
+}

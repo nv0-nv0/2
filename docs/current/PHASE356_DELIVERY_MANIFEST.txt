@@ -1,0 +1,9 @@
+VERIDION PHASE356 DELIVERY MANIFEST
+phase=phase356-conversion-dashboard-closeout
+terminalGate=npm run phase356:final
+quickGate=npm run test:phase356-dashboard-contract && npm run check:phase356-audit
+rollback=npm run phase355:final
+runtimeSeed=runtime/data/db.seed.json
+volatileRuntimeExcluded=runtime/data/db.json,runtime/data/sessions.json,runtime/data/secure-records/
+desktopPreview=docs/design-reference/PHASE356_CONVERSION_DASHBOARD_DESKTOP.png
+mobilePreview=docs/design-reference/PHASE356_CONVERSION_DASHBOARD_MOBILE.png

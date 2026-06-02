@@ -1,8 +1,14 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { spawn } from 'node:child_process';
 
 const port = 3218;
 const base = `http://127.0.0.1:${port}`;
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const runtimeDir = path.join(root, 'runtime-test-security-stateful');
+fs.rmSync(runtimeDir, { recursive: true, force: true });
 let child = null;
 
 function wait(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
@@ -17,7 +23,7 @@ async function request(path, options = {}) {
 async function ensureServer() {
   child = spawn(process.execPath, ['server/index.mjs'], {
     cwd: process.cwd(),
-    env: { ...process.env, PORT: String(port), NODE_ENV: 'production', NV0_ADMIN_KEY: 'stateful-test-key', NV0_TRUST_PROXY_HEADERS: 'true' },
+    env: { ...process.env, PORT: String(port), NODE_ENV: 'production', NV0_ADMIN_KEY: 'stateful-test-key', NV0_TRUST_PROXY_HEADERS: 'true', NV0_RUNTIME_DIR: runtimeDir, NV0_FALLBACK_RUNTIME_DIR: runtimeDir },
     stdio: 'ignore'
   });
   for (let i = 0; i < 30; i += 1) {
@@ -74,8 +80,6 @@ async function main() {
   assert.equal(r.data?.ok, true);
 
   console.log(JSON.stringify({ ok: true, checked: protectedPosts.length + 2 }, null, 2));
-  if (child) { try { child.kill('SIGKILL'); } catch {} }
-  process.reallyExit ? process.reallyExit(0) : process.exit(0);
 }
 
 main().catch(error => {
@@ -89,5 +93,5 @@ main().catch(error => {
       wait(250)
     ]);
   }
-  process.exit(process.exitCode || 0);
+  fs.rmSync(runtimeDir, { recursive: true, force: true });
 });

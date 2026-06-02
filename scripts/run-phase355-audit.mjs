@@ -13,16 +13,16 @@ function add(name, fn) {
   catch (error) { checks.push({ name, ok: false, error: error.message }); }
 }
 
-add('package-version-phase355', () => assert.match(pkg.version, /phase355-organization-closeout/));
-add('description-phase355', () => assert.match(pkg.description || '', /phase355 organization closeout/i));
-add('delivery-final-phase355', () => assert.equal(pkg.scripts['delivery:final'], 'npm run phase355:final'));
-add('release-predeploy-phase355', () => assert.equal(pkg.scripts['release:predeploy'], 'npm run phase355:final'));
-add('verify-release-phase355', () => assert.equal(pkg.scripts['verify:release'], 'npm run phase355:final'));
-add('run-all-tests-phase355', () => assert.match(read('RUN_ALL_TESTS.sh'), /npm run phase355:final/));
-add('readme-phase355', () => assert.match(read('README.md'), /npm run phase355:final/));
+add('package-version-phase355', () => assert.match(pkg.version, /phase355-organization-closeout|phase356-conversion-dashboard-closeout|phase357-global-qa-accessibility-closeout|phase358-commercial-deploy-integrity-closeout/));
+add('description-phase355', () => assert.match(pkg.description || '', /phase355 organization closeout|phase356 conversion dashboard closeout|phase357 global QA and accessibility closeout/i));
+add('delivery-final-phase355', () => assert.ok(['npm run phase355:final','npm run phase356:final','npm run phase357:final','npm run phase358:final'].includes(pkg.scripts['delivery:final'])));
+add('release-predeploy-phase355', () => assert.ok(['npm run phase355:final','npm run phase356:final','npm run phase357:final','npm run phase358:final'].includes(pkg.scripts['release:predeploy'])));
+add('verify-release-phase355', () => assert.ok(['npm run phase355:final','npm run phase356:final','npm run phase357:final','npm run phase358:final'].includes(pkg.scripts['verify:release'])));
+add('run-all-tests-phase355', () => assert.match(read('RUN_ALL_TESTS.sh'), /npm run phase355:final|npm run phase356:final|npm run phase357:final|npm run phase358:final/));
+add('readme-phase355', () => assert.match(read('README.md'), /npm run phase355:final|npm run phase356:final|npm run phase357:final|npm run phase358:final/));
 add('readme-correct-rollback', () => {
   const text = read('README.md');
-  assert.match(text, /PHASE354.*PHASE353/s);
+  assert.match(text, /PHASE354.*PHASE353|PHASE356.*PHASE355|PHASE357.*PHASE356|PHASE358.*PHASE357/s);
   assert.doesNotMatch(text, /PHASE353 변경은 데이터 마이그레이션을 포함하지 않습니다\. 문제가 발생하면 PHASE352/);
 });
 add('simple-command-aliases', () => {

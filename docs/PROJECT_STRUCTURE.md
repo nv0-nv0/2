@@ -1,6 +1,6 @@
 # VERIDION 프로젝트 구조 지도
 
-이 문서는 PHASE355 기준 유지보수용 구조 지도입니다. 과거 PHASE 문서와 회귀 스크립트는 삭제하지 않고 원래 경로를 유지합니다.
+이 문서는 PHASE357 기준 유지보수용 구조 지도입니다. 과거 PHASE 문서와 회귀 스크립트는 삭제하지 않고 원래 경로를 유지합니다.
 
 ```text
 veridion/
@@ -51,7 +51,15 @@ npm run runtime:clean
 | 영역 | 위험도 | 원칙 |
 | --- | --- | --- |
 | `runtime/data/` | 높음 | seed 외 활성 상태 파일을 배송 ZIP에 넣지 않음 |
+| `runtime/uploads/` | 높음 | `NV0_RUNTIME_DIR` 외부 경로에서도 실제 `UPLOADS_DIR`과 제공 경로를 일치시킴 |
 | `server/routes/public.mjs` | 높음 | 내부 운영 API를 고객 공개 경로에 노출하지 않음 |
 | 결제 환경변수 | 높음 | redirect allowlist와 웹훅을 운영 도메인 기준으로 확인 |
 | `docs/PHASE*.md` | 중간 | 회귀 검증 참조 가능성이 있으므로 임의 이동·삭제 금지 |
-| `package.json` | 중간 | 최신 납품 별칭은 반드시 `phase355:final`을 가리킴 |
+| `package.json` | 중간 | 최신 납품 별칭은 반드시 `phase358:final`을 가리킴 |
+
+## PHASE358 상용 배포 무결성
+
+- `scripts/check-phase358-commercial-deploy-integrity.mjs`
+- `scripts/run-phase358-audit.mjs`
+- `scripts/run-phase358-final.mjs`
+

@@ -25,7 +25,7 @@ const requiredFiles = [
 for (const file of requiredFiles) add(`exists:${file}`, exists(file));
 
 const pkg = JSON.parse(read('package.json'));
-add('package:clean-rebrand-version', /phase33[45]-(clean-rebrand|unified-organism)|phase340-redteam-100-closeout|phase341-final-closeout|phase342-merged-best|phase343-final-perfect|phase345-final-delivery-closeout|phase346-global-hardening-final|phase347-unified-diagnosis-final|phase348-final-unified-engine-closeout|phase349-customer-journey-closeout|phase350-global-cta-semantics-closeout|phase351-prompt-full-sweep-closeout|phase353-full-package-closeout|phase354-deployment-security-closeout|phase355-organization-closeout|phase350-global-cta-semantics-closeout|phase351-prompt-full-sweep-closeout/.test(pkg.version));
+add('package:clean-rebrand-version', /phase33[45]-(clean-rebrand|unified-organism)|phase340-redteam-100-closeout|phase341-final-closeout|phase342-merged-best|phase343-final-perfect|phase345-final-delivery-closeout|phase346-global-hardening-final|phase347-unified-diagnosis-final|phase348-final-unified-engine-closeout|phase349-customer-journey-closeout|phase350-global-cta-semantics-closeout|phase351-prompt-full-sweep-closeout|phase353-full-package-closeout|phase354-deployment-security-closeout|phase355-organization-closeout|phase356-conversion-dashboard-closeout|phase357-global-qa-accessibility-closeout|phase350-global-cta-semantics-closeout|phase351-prompt-full-sweep-closeout/.test(pkg.version));
 
 const appHtmlFiles = [];
 for (const area of ['apps/public', 'apps/admin']) {

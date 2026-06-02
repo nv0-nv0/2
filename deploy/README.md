@@ -26,6 +26,13 @@ npm run release:predeploy
 NV0_LIVE_BASE_URL=https://www.nv0.kr npm run live:smoke
 ```
 
+
+## 상용 프로파일 전환 규칙
+
+- `prelaunch`에서는 `NV0_PAYMENT_PROVIDER=disabled`를 유지합니다.
+- 실결제는 통신판매업 신고번호, PortOne 키, redirect allowlist, 웹훅 검증을 확인한 뒤 `NV0_DEPLOYMENT_STAGE=commercial_launch`, `NV0_COMMERCIAL_LAUNCH_READY=true`, `NV0_PAYMENT_PROVIDER=portone_v2`로 전환합니다.
+- `docker-compose.commercial.yml`과 `docker-compose.local-minio.yml`은 Redis 기반 세션·rate limit·lock provider를 필수로 사용하므로 앱 healthcheck가 `/readyz`를 확인합니다.
+
 ## 주의
 
 - `NV0_SESSION_SECRET`은 신규 값으로 발급합니다.

@@ -12,7 +12,6 @@ yarn-error.log*
 .env.*
 !.env.example
 !.env.coolify.example
-!.env.test
 
 # Volatile runtime state: keep seed data only
 runtime/data/db.json

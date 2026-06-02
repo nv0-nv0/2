@@ -17,15 +17,15 @@ function add(name, fn) {
 add('version:phase349', () => assert.match(pkg.version, /phase349-customer-journey-closeout|phase350-global-cta-semantics-closeout|phase351-prompt-full-sweep-closeout|phase350-global-cta-semantics-closeout|phase351-prompt-full-sweep-closeout/));
 add('terminal-gates:phase349', () => {
   assert.equal(scripts['phase349:final'], 'node scripts/run-phase349-final.mjs');
-  assert.ok(['npm run phase349:final','npm run phase350:final'].includes(scripts['delivery:final']));
-  assert.ok(['npm run phase349:final','npm run phase350:final'].includes(scripts['release:predeploy']));
+  assert.ok(['npm run phase349:final','npm run phase350:final','npm run phase358:final'].includes(scripts['delivery:final']));
+  assert.ok(['npm run phase349:final','npm run phase350:final','npm run phase358:final'].includes(scripts['release:predeploy']));
 });
 add('new-contract-scripts', () => {
   assert.equal(scripts['check:customer-journey'], 'node scripts/check-customer-journey-contract.mjs');
   assert.equal(scripts['check:diagnosis-copy'], 'node scripts/check-diagnosis-copy-contract.mjs');
 });
-add('run-all-tests:phase349', () => assert.match(read('RUN_ALL_TESTS.sh'), /npm run phase349:final|npm run phase350:final/));
-add('readme:phase349', () => assert.match(read('README.md'), /npm run phase349:final|npm run phase350:final/));
+add('run-all-tests:phase349', () => assert.match(read('RUN_ALL_TESTS.sh'), /npm run phase349:final|npm run phase350:final|npm run phase358:final/));
+add('readme:phase349', () => assert.match(read('README.md'), /npm run phase349:final|npm run phase350:final|npm run phase358:final/));
 add('docs:phase349', () => {
   assert.equal(exists('docs/PHASE349_CUSTOMER_JOURNEY_WORK_ORDER.md'), true);
   assert.equal(exists('docs/PHASE349_118_REMAINING_UIUX_MATRIX.md'), true);

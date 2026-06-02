@@ -8,12 +8,16 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const root = path.resolve(__dirname, '..');
 const port = 3213;
+const runtimeDir = path.join(root, 'runtime-test-runtime-persistence');
+await fs.rm(runtimeDir, { recursive: true, force: true });
 const env = {
   ...process.env,
   PORT: String(port),
   NV0_ADMIN_KEY: 'persist-key',
   NV0_TRUST_PROXY_HEADERS: 'true',
-  NV0_AUDIT_LOG_RETENTION_COUNT: '5'
+  NV0_AUDIT_LOG_RETENTION_COUNT: '5',
+  NV0_RUNTIME_DIR: runtimeDir,
+  NV0_FALLBACK_RUNTIME_DIR: runtimeDir
 };
 
 const wait = ms => new Promise(r => setTimeout(r, ms));
@@ -31,10 +35,12 @@ async function waitUntilReady() {
   throw new Error('server not ready');
 }
 async function stopServer(child) {
-  if (!child) return;
-  try { child.removeAllListeners(); } catch {}
-  try { child.kill('SIGKILL'); } catch {}
-  try { child.unref(); } catch {}
+  if (!child || child.exitCode !== null) return;
+  await new Promise(resolve => {
+    const timer = setTimeout(() => { try { child.kill('SIGKILL'); } catch {} resolve(); }, 1000);
+    child.once('exit', () => { clearTimeout(timer); resolve(); });
+    try { child.kill('SIGTERM'); } catch { resolve(); }
+  });
 }
 async function j(url, options={}) {
   const res = await fetch(`http://127.0.0.1:${port}${url}`, options);
@@ -91,7 +97,7 @@ try {
   const restored = await j('/api/admin/backups/restore', { method: 'POST', headers: { 'content-type': 'application/json', cookie: cookie2, 'x-nv0-csrf': csrf2 }, body: JSON.stringify({ name: backupName }) });
   assert.equal(restored.data.ok, true);
 
-  const afterRestore = JSON.parse(await fs.readFile(path.join(root, 'runtime', 'data', 'db.json'), 'utf8'));
+  const afterRestore = JSON.parse(await fs.readFile(path.join(runtimeDir, 'data', 'db.json'), 'utf8'));
   assert.equal(afterRestore.library.length, beforeCount);
 
   for (let i = 0; i < 12; i += 1) {
@@ -103,5 +109,5 @@ try {
   console.log('runtime persistence / recovery / retention ok');
 } finally {
   await stopServer(child);
+  await fs.rm(runtimeDir, { recursive: true, force: true });
 }
-process.exit(0);

@@ -127,4 +127,9 @@ try {
   assert.equal(webhook.status, 200);
 
   console.log('portone provider ok');
-} finally { child.kill('SIGKILL'); if (typeof portoneServer.closeAllConnections === 'function') portoneServer.closeAllConnections(); portoneServer.close(() => {}); process.exit(0); }
+} finally {
+  await stopChild(child);
+  if (typeof portoneServer.closeAllConnections === 'function') portoneServer.closeAllConnections();
+  await new Promise(resolve => portoneServer.close(resolve));
+  fs.rmSync(testRuntimeDir, { recursive: true, force: true });
+}

@@ -99,4 +99,5 @@ try {
   console.log('phase321 trustops final handoff integration ok');
 } finally {
   await stopChild(child);
+  fs.rmSync(testRuntimeDir, { recursive: true, force: true });
 }

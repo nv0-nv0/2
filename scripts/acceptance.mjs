@@ -4,6 +4,8 @@ import path from 'node:path';
 
 const root = process.cwd();
 const docsDir = path.join(root, 'docs');
+const acceptanceRuntimeDir = path.join(root, 'runtime-test-acceptance');
+fs.rmSync(acceptanceRuntimeDir, { recursive: true, force: true });
 fs.mkdirSync(docsDir, { recursive: true });
 
 const baseEnv = {
@@ -18,7 +20,9 @@ const baseEnv = {
   NV0_ADMIN_AUTH_LIMIT: process.env.NV0_ADMIN_AUTH_LIMIT || '8',
   NV0_BACKUP_RETENTION_COUNT: process.env.NV0_BACKUP_RETENTION_COUNT || '20',
   NV0_AUDIT_LOG_RETENTION_COUNT: process.env.NV0_AUDIT_LOG_RETENTION_COUNT || '200',
-  NV0_ADMIN_SESSION_TTL_MS: process.env.NV0_ADMIN_SESSION_TTL_MS || '3600000'
+  NV0_ADMIN_SESSION_TTL_MS: process.env.NV0_ADMIN_SESSION_TTL_MS || '3600000',
+  NV0_RUNTIME_DIR: acceptanceRuntimeDir,
+  NV0_FALLBACK_RUNTIME_DIR: acceptanceRuntimeDir
 };
 
 const node = process.execPath;
@@ -33,7 +37,7 @@ const tasks = [
   ['check:render-safety', ['scripts/check-client-render-safety.mjs']],
   ['server syntax', ['--check', 'server/index.mjs']],
   ['reset:demo', ['scripts/reset-demo-state.mjs']],
-  ['validate:env', ['scripts/validate-prod-env.mjs', './deploy/env.production.nv0.kr.example']],
+  ['validate:env:production-shape', ['scripts/validate-prod-env.mjs', './deploy/env.production.nv0.kr.ci-check.env'], { NV0_ADMIN_KEY: '' }],
   ['validate:deploy', ['scripts/validate-deploy-bundle.mjs']],
   ['test:e2e', ['tests/e2e.mjs']],
   ['test:routes', ['tests/routes-smoke.mjs']],
@@ -44,7 +48,7 @@ const tasks = [
   ['test:security-stateful', ['tests/security-stateful.mjs']],
   ['smoke', ['scripts/smoke.mjs']],
   ['verify:security', ['scripts/verify-security.mjs']],
-  ['preflight', ['scripts/preflight.mjs']],
+  ['preflight:production-shape', ['scripts/preflight.mjs', './deploy/env.production.nv0.kr.ci-check.env'], { NV0_ADMIN_KEY: '' }],
   ['ops:report', ['scripts/ops-report.mjs'], { NV0_OPS_REPORT_PORT: '3223' }],
   ['audit:inventory', ['scripts/audit-inventory.mjs']],
   ['release:manifest', ['scripts/release-manifest.mjs']],
@@ -80,7 +84,11 @@ for (const [name, args, env = {}] of tasks) {
   if (!result.ok) break;
 }
 
-const ok = results.length === tasks.length && results.every(item => item.ok);
+const cleanup = spawnSync(node, ['scripts/clean-release-runtime.mjs'], { cwd: root, env: baseEnv, encoding: 'utf8', timeout: 30000 });
+fs.rmSync(acceptanceRuntimeDir, { recursive: true, force: true });
+results.push({ name: 'cleanup:release-runtime', code: cleanup.status, signal: cleanup.signal, ok: cleanup.status === 0 && !cleanup.error, timedOut: Boolean(cleanup.error && cleanup.error.code === 'ETIMEDOUT'), startedAt: new Date().toISOString(), finishedAt: new Date().toISOString(), stdout: (cleanup.stdout || '').slice(-12000), stderr: (cleanup.stderr || String(cleanup.error?.message || '')).slice(-12000) });
+console.log(`${results.at(-1).ok ? 'PASS' : 'FAIL'} cleanup:release-runtime`);
+const ok = results.length === tasks.length + 1 && results.every(item => item.ok);
 const summary = {
   generatedAt: new Date().toISOString(),
   ok,
@@ -88,7 +96,11 @@ const summary = {
   results
 };
 
-const outPath = path.join(docsDir, 'PHASE102_ACCEPTANCE_SUMMARY_20260426.json');
-fs.writeFileSync(outPath, JSON.stringify(summary, null, 2));
-console.log(JSON.stringify({ ok, report: 'docs/PHASE102_ACCEPTANCE_SUMMARY_20260426.json', passed: results.filter(r => r.ok).length, total: tasks.length }, null, 2));
+const legacyOutPath = path.join(docsDir, 'PHASE102_ACCEPTANCE_SUMMARY_20260426.json');
+const currentDir = path.join(docsDir, 'current');
+const currentOutPath = path.join(currentDir, 'PHASE357_ACCEPTANCE_REPORT.json');
+fs.mkdirSync(currentDir, { recursive: true });
+fs.writeFileSync(legacyOutPath, JSON.stringify(summary, null, 2));
+fs.writeFileSync(currentOutPath, JSON.stringify(summary, null, 2));
+console.log(JSON.stringify({ ok, report: 'docs/current/PHASE357_ACCEPTANCE_REPORT.json', legacyReport: 'docs/PHASE102_ACCEPTANCE_SUMMARY_20260426.json', passed: results.filter(r => r.ok).length, total: results.length, taskCount: tasks.length, cleanupIncluded: true }, null, 2));
 process.exit(ok ? 0 : 1);

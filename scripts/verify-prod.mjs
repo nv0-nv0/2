@@ -12,6 +12,7 @@ function normalize(url) {
 const root = normalize(rawBase);
 const localBase = /^http:\/\/127\.0\.0\.1:(\d+)$/.exec(root);
 let child = null;
+const runtimeDir = path.join(process.cwd(), 'runtime-test-verify-prod');
 const checks = [];
 
 async function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
@@ -30,13 +31,16 @@ async function ensureServer() {
   if (!localBase && await canReach(`${root}/`)) return;
   if (!localBase) throw new Error(`Server is not reachable at ${root}`);
   const port = localBase[1];
+  fs.rmSync(runtimeDir, { recursive: true, force: true });
   child = spawn(process.execPath, ['server/index.mjs'], {
     cwd: process.cwd(),
     env: {
       ...process.env,
       PORT: String(port),
       NV0_ADMIN_KEY: process.env.NV0_ADMIN_KEY || 'verify-prod-key',
-      NV0_TRUST_PROXY_HEADERS: process.env.NV0_TRUST_PROXY_HEADERS || 'true'
+      NV0_TRUST_PROXY_HEADERS: process.env.NV0_TRUST_PROXY_HEADERS || 'true',
+      NV0_RUNTIME_DIR: runtimeDir,
+      NV0_FALLBACK_RUNTIME_DIR: runtimeDir
     },
     stdio: 'inherit'
   });
@@ -99,14 +103,16 @@ async function main() {
   assertPublicPageHygiene('/', home.text);
   checks.push({ path: '/', status: home.res.status, ok: true, cacheControl: home.res.headers.get('cache-control') || '' });
 
-  const demo = await fetchText('/demo', 200, '무료');
-  assertPublicPageHygiene('/demo', demo.text);
-  checks.push({ path: '/demo', status: demo.res.status, ok: true });
+  const demoRedirect = await fetch(`${root}/demo`, { redirect: 'manual' });
+  if (demoRedirect.status !== 301 || demoRedirect.headers.get('location') !== '/products/veridion/demo') {
+    throw new Error(`/demo: expected canonical redirect to /products/veridion/demo, got ${demoRedirect.status} ${demoRedirect.headers.get('location') || ''}`);
+  }
+  checks.push({ path: '/demo', status: demoRedirect.status, ok: true, location: demoRedirect.headers.get('location') });
 
   const documents = await fetchText('/documents', 200, '문서');
   checks.push({ path: '/documents', status: documents.res.status, ok: true });
 
-  const guides = await fetchText('/guides', 200, '법령');
+  const guides = await fetchText('/guides', 200, '개선 가이드');
   checks.push({ path: '/guides', status: guides.res.status, ok: true });
 
   const plans = await fetchText('/plans', 200, '플랜');
@@ -117,11 +123,11 @@ async function main() {
   checks.push({ path: '/plans', status: plans.res.status, ok: true, canonicalPrices: true });
 
   const legalPages = [
-    ['/privacy', '제3자 제공과 처리위탁'],
-    ['/terms', '금지 행위'],
+    ['/privacy', '개인정보처리방침'],
+    ['/terms', '이용약관'],
     ['/refund', '중복 결제'],
     ['/business-info', '사업자등록번호'],
-    ['/board', '인사이트 목록을 확인']
+    ['/board', '대표 인사이트']
   ];
   for (const [pagePath, expectedText] of legalPages) {
     const page = await fetchText(pagePath, 200, expectedText);
@@ -133,7 +139,7 @@ async function main() {
   assertPublicPageHygiene('/checkout', checkout.text);
   checks.push({ path: '/checkout', status: checkout.res.status, ok: true });
 
-  const portal = await fetchText('/portal', 200, '내 사이트');
+  const portal = await fetchText('/portal', 200, '고객 포털');
   assertPublicPageHygiene('/portal', portal.text);
   checks.push({ path: '/portal', status: portal.res.status, ok: true });
 
@@ -187,6 +193,7 @@ main().catch((error) => {
     child.kill('SIGTERM');
     await wait(250);
     if (!child.killed) child.kill('SIGKILL');
+    fs.rmSync(runtimeDir, { recursive: true, force: true });
   }
   process.exit(process.exitCode || 0);
 });

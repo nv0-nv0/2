@@ -74,10 +74,9 @@ try {
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ target: 'http://127.0.0.1/private' })
   });
-  assert.equal(blockedTarget.res.status, 200);
-  assert.equal(blockedTarget.data.ok, true);
-  assert.equal(blockedTarget.data.result.resultStatus, 'completed_limited_blocked_target');
-  assert.match(blockedTarget.data.result.resultLimitNotice, /보안상/);
+  assert.equal(blockedTarget.res.status, 400);
+  assert.equal(blockedTarget.data.ok, false);
+  assert.match(String(blockedTarget.data.error || ''), /공개 인터넷|사설|로컬|내부 네트워크|허용되지/);
 
   console.log('diagnose fallback ok');
 } finally {

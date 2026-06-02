@@ -125,4 +125,5 @@ try {
   await stopChild(child);
   await new Promise(resolve => scanServer.close(resolve));
   await new Promise(resolve => paymentServer.close(resolve));
+  fs.rmSync(testRuntimeDir, { recursive: true, force: true });
 }

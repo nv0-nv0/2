@@ -127,4 +127,5 @@ try {
   console.log('phase315 paid redteam integration ok');
 } finally {
   await stopChild(child);
+  fs.rmSync(testRuntimeDir, { recursive: true, force: true });
 }

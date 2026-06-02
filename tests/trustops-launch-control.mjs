@@ -104,4 +104,5 @@ try {
   console.log('phase319 trustops launch control integration ok');
 } finally {
   await stopChild(child);
+  fs.rmSync(testRuntimeDir, { recursive: true, force: true });
 }

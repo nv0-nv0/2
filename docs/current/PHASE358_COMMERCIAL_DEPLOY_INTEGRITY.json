@@ -1,0 +1,66 @@
+{
+  "ok": true,
+  "phase": "phase358-commercial-deploy-integrity",
+  "checkedAt": "2026-06-02T02:35:13.599Z",
+  "checked": 14,
+  "failed": 0,
+  "failures": [],
+  "checks": [
+    {
+      "name": "deploy/coolify.env.example:prelaunch-payment-disabled",
+      "ok": true
+    },
+    {
+      "name": "deploy/coolify.env.bulk.txt:prelaunch-payment-disabled",
+      "ok": true
+    },
+    {
+      "name": "deploy/env.production.template:prelaunch-payment-disabled",
+      "ok": true
+    },
+    {
+      "name": "deploy/env.production.nv0.kr.example:prelaunch-payment-disabled",
+      "ok": true
+    },
+    {
+      "name": "deploy/env.commercial.template:prelaunch-payment-disabled",
+      "ok": true
+    },
+    {
+      "name": "deploy/docker-compose.commercial.yml:strict-redis-readiness-default",
+      "ok": true
+    },
+    {
+      "name": "deploy/docker-compose.commercial.yml:app-healthcheck-uses-readyz",
+      "ok": true
+    },
+    {
+      "name": "deploy/docker-compose.local-minio.yml:strict-redis-readiness-default",
+      "ok": true
+    },
+    {
+      "name": "deploy/docker-compose.local-minio.yml:app-healthcheck-uses-readyz",
+      "ok": true
+    },
+    {
+      "name": "deploy/env.commercial.template:strict-redis-readiness",
+      "ok": true
+    },
+    {
+      "name": "Dockerfile:liveness-remains-healthz",
+      "ok": true
+    },
+    {
+      "name": ".gitignore:no-env-test-allowlist",
+      "ok": true
+    },
+    {
+      "name": ".dockerignore:no-env-test-allowlist",
+      "ok": true
+    },
+    {
+      "name": "secure-release:dynamic-dot-env-deny-rule",
+      "ok": true
+    }
+  ]
+}

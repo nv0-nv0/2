@@ -33,8 +33,8 @@ const phase340Validator = read('scripts/validate-phase340-redteam-closeout.mjs')
 const phase341Validator = read('scripts/validate-phase341-final-closeout.mjs');
 
 check('package:phase342-version', () => assert.match(pkg.version, /phase342-merged-best|phase343-final-perfect|phase345-final-delivery-closeout|phase346-global-hardening-final|phase347-unified-diagnosis-final|phase348-final-unified-engine-closeout|phase349-customer-journey-closeout|phase350-global-cta-semantics-closeout|phase351-prompt-full-sweep-closeout/));
-check('package:delivery-final-current', () => assert.ok(['npm run phase342:final','npm run phase343:final','npm run phase345:final', 'npm run phase346:final', 'npm run phase347:final', 'npm run phase348:final', 'npm run phase349:final', 'npm run phase350:final'].includes(pkg.scripts['delivery:final'])));
-check('package:release-predeploy-current', () => assert.ok(['npm run phase342:final','npm run phase343:final','npm run phase345:final', 'npm run phase346:final', 'npm run phase347:final', 'npm run phase348:final', 'npm run phase349:final', 'npm run phase350:final'].includes(pkg.scripts['release:predeploy'])));
+check('package:delivery-final-current', () => assert.ok(['npm run phase342:final','npm run phase343:final','npm run phase345:final', 'npm run phase346:final', 'npm run phase347:final', 'npm run phase348:final', 'npm run phase349:final', 'npm run phase350:final','npm run phase358:final'].includes(pkg.scripts['delivery:final'])));
+check('package:release-predeploy-current', () => assert.ok(['npm run phase342:final','npm run phase343:final','npm run phase345:final', 'npm run phase346:final', 'npm run phase347:final', 'npm run phase348:final', 'npm run phase349:final', 'npm run phase350:final','npm run phase358:final'].includes(pkg.scripts['release:predeploy'])));
 check('package:phase342-chains-phase341', () => assert.match(pkg.scripts['phase342:final'], /phase341:final/));
 check('package:phase342-runs-validator', () => assert.match(pkg.scripts['phase342:final'], /validate:phase342/));
 check('validators:accept-phase342', () => {

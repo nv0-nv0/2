@@ -22,7 +22,7 @@ for (const [name, html] of Object.entries({ demo: files.demo, alias: files.alias
   add(`${name}:unified-marker`, () => assert.match(html, /data-unified-diagnosis="home-and-demo"/));
   add(`${name}:same-form-id`, () => assert.match(html, /id="unifiedDiagnosisForm"/));
   add(`${name}:same-target-input`, () => assert.match(html, /id="targetUrl"/));
-  add(`${name}:same-scan-button`, () => assert.match(html, /id="scanBtn"[^>]*type="button"/));
+  add(`${name}:same-scan-submit-button`, () => assert.match(html, /id="scanBtn"[^>]*type="submit"/));
   add(`${name}:bootstrap-guard-loaded`, () => assert.match(html, /<script src="\/apps\/public\/demo\/bootstrap\.js"><\/script>/));
   add(`${name}:same-state-and-result`, () => {
     assert.match(html, /id="demoState"/);

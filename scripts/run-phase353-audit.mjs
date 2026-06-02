@@ -53,11 +53,11 @@ function check(name, fn) {
   try { fn(); validations.push({ name, ok: true }); }
   catch (error) { validations.push({ name, ok: false, error: error.message }); }
 }
-check('package-version-phase353', () => assert.match(packageJson.version, /phase353-full-package-closeout|phase354-deployment-security-closeout|phase355-organization-closeout/));
-check('delivery-final-phase353', () => assert.ok(['npm run phase353:final','npm run phase354:final','npm run phase355:final'].includes(packageJson.scripts['delivery:final'])));
-check('release-predeploy-phase353', () => assert.ok(['npm run phase353:final','npm run phase354:final','npm run phase355:final'].includes(packageJson.scripts['release:predeploy'])));
-check('run-all-tests-phase353', () => assert.match(read('RUN_ALL_TESTS.sh'), /npm run phase(?:353|354|355):final/));
-check('readme-phase353', () => assert.match(read('README.md'), /npm run phase(?:353|354|355):final/));
+check('package-version-phase353', () => assert.match(packageJson.version, /phase353-full-package-closeout|phase354-deployment-security-closeout|phase355-organization-closeout|phase356-conversion-dashboard-closeout|phase357-global-qa-accessibility-closeout|phase358-commercial-deploy-integrity-closeout/));
+check('delivery-final-phase353', () => assert.ok(['npm run phase353:final','npm run phase354:final','npm run phase355:final','npm run phase356:final','npm run phase357:final','npm run phase358:final'].includes(packageJson.scripts['delivery:final'])));
+check('release-predeploy-phase353', () => assert.ok(['npm run phase353:final','npm run phase354:final','npm run phase355:final','npm run phase356:final','npm run phase357:final','npm run phase358:final'].includes(packageJson.scripts['release:predeploy'])));
+check('run-all-tests-phase353', () => assert.match(read('RUN_ALL_TESTS.sh'), /npm run phase(?:353|354|355|356|357|358):final/));
+check('readme-phase353', () => assert.match(read('README.md'), /npm run phase(?:353|354|355|356|357|358):final/));
 check('root-env-example', () => assert.equal(exists('.env.example'), true));
 check('root-coolify-env-example', () => assert.equal(exists('.env.coolify.example'), true));
 check('env-secure-api-isolation-default', () => assert.match(read('.env.example'), /NV0_EXPOSE_INTERNAL_PUBLIC_APIS=false/));

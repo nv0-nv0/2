@@ -1272,9 +1272,10 @@ const raw = String(value || '').trim();
 if (!raw) return '';
 try {
 const url = new URL(/^https?:\/\//i.test(raw) ? raw : `https://${raw}`);
+if (isBlockedTargetUrl(url)) return '';
 return url.origin.replace(/\/$/, '');
 } catch {
-return raw.replace(/\/$/, '');
+return '';
 }
 }
 function normalizeSavedSitePayload(body = {}) {
@@ -1312,11 +1313,11 @@ const latestScan = (db.scans || []).find(item => item.siteId === link.siteId || 
 return { ...link, siteId: link.siteId, domain: site.domain || link.domain || '', status: site.status || 'active', latestRiskScore: site.latestRiskScore ?? latestScan?.riskScore ?? null, latestRiskLevel: site.latestRiskLevel || latestScan?.riskLevel || null, lastScanAt: site.lastScanAt || latestScan?.generatedAt || null, latestFindings: latestScan?.totalFindings ?? null, recommendedPlan: latestScan?.recommendedPlan || null };
 });
 }
-async function serveFile(req, res, absPath, contentType) {
+async function serveFile(req, res, absPath, contentType, categoryOverride = '') {
 try {
 const stat = await fs.stat(absPath);
 if (!stat.isFile()) return text(req, res, 404, 'Not found');
-const category = absPath.includes('/runtime/uploads/') ? 'upload' : 'static';
+const category = categoryOverride || (absPath.includes('/runtime/uploads/') ? 'upload' : 'static');
 const etag = `W/\"${stat.size.toString(16)}-${Math.floor(stat.mtimeMs).toString(16)}\"`;
 const lastModified = stat.mtime.toUTCString();
 if (req.headers['if-none-match'] === etag || req.headers['if-modified-since'] === lastModified) {
@@ -1345,7 +1346,7 @@ if (p.endsWith('.webp')) return 'image/webp';
 if (p.endsWith('.pdf')) return 'application/pdf';
 return 'application/octet-stream';
 }
-async function serveStaticRoot(req, res, rootDir, prefix = '') {
+async function serveStaticRoot(req, res, rootDir, prefix = '', categoryOverride = '') {
 if (!['GET', 'HEAD'].includes(req.method)) return text(req, res, 405, 'Method Not Allowed', { allow: 'GET, HEAD' });
 let clean;
 try { clean = decodeURIComponent(req.url.split('?')[0]); } catch { return text(req, res, 400, 'Bad request path'); }
@@ -1354,7 +1355,7 @@ if (rel.includes('\0')) return text(req, res, 400, 'Bad request path');
 const abs = path.resolve(rootDir, rel.replace(/^\/+/, ''));
 const safeRoot = path.resolve(rootDir) + path.sep;
 if (!(abs + path.sep).startsWith(safeRoot) && abs !== path.resolve(rootDir)) return text(req, res, 403, 'Forbidden');
-return serveFile(req, res, abs, mime(abs));
+return serveFile(req, res, abs, mime(abs), categoryOverride);
 }
 function pageMap(urlPath) {
 const m = {
@@ -2290,6 +2291,7 @@ const url = safeUrl(candidate);
 if (!url) throw invalidPayload('진단할 사이트 주소 형식이 올바르지 않습니다.');
 if (!['http:', 'https:'].includes(url.protocol)) throw invalidPayload('http 또는 https 주소만 진단할 수 있습니다.');
 if (url.username || url.password) throw invalidPayload('계정 정보가 포함된 주소는 진단할 수 없습니다.');
+if (isBlockedTargetUrl(url)) throw invalidPayload('공개 인터넷 사이트 주소만 진단할 수 있습니다. 사설·로컬·내부 네트워크 주소는 허용되지 않습니다.');
 url.hash = '';
 url.hostname = url.hostname.toLowerCase();
 if ((url.protocol === 'https:' && url.port === '443') || (url.protocol === 'http:' && url.port === '80')) url.port = '';
@@ -4548,7 +4550,7 @@ return serveStaticRoot(req, res, ROOT, '/');
 if (pathname.startsWith('/runtime/uploads/')) {
 const uploadSession = await getSession(req);
 if (!uploadSession) return text(req, res, 403, 'Forbidden');
-return serveStaticRoot(req, res, ROOT, '/');
+return serveStaticRoot(req, res, UPLOADS_DIR, '/runtime/uploads/', 'upload');
 }
 const apiHandled = await handleApi(req, res, requestState);
 if (apiHandled !== false) return;

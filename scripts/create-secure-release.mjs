@@ -13,13 +13,26 @@ const zipName = process.argv.includes('--name') ? process.argv[process.argv.inde
 const zipPath = path.join(outDir, zipName);
 
 const excluded = [
-  '.git', 'node_modules', '.env', '.env.local', '.env.production',
+  '.git', 'node_modules',
   'runtime/data', 'runtime/uploads', 'runtime/backups', 'runtime/reports',
   'coverage', '.DS_Store'
 ];
+const allowedRootEnvExamples = new Set(['.env.example', '.env.coolify.example']);
+
+function normalizedRel(rel) {
+  return rel.replaceAll('\\', '/').replace(/^\.\//, '');
+}
+
+function isForbiddenEnvFile(rel) {
+  const normalized = normalizedRel(rel);
+  const base = path.posix.basename(normalized);
+  if (!base.startsWith('.env')) return false;
+  return !(normalized === base && allowedRootEnvExamples.has(base));
+}
 
 function shouldExclude(rel) {
-  const normalized = rel.replaceAll('\\', '/').replace(/^\.\//, '');
+  const normalized = normalizedRel(rel);
+  if (isForbiddenEnvFile(normalized)) return true;
   return excluded.some((prefix) => normalized === prefix || normalized.startsWith(`${prefix}/`));
 }
 
@@ -37,8 +50,7 @@ async function walk(dir, result = []) {
 
 const files = await walk(root);
 const suspicious = files.filter((rel) => {
-  const base = path.basename(rel);
-  const realEnv = base === '.env' || base === '.env.local' || base === '.env.production';
+  const realEnv = isForbiddenEnvFile(rel);
   const runtimeState = /^runtime\/(data|uploads|backups|reports)\//.test(rel);
   return realEnv || runtimeState;
 });
@@ -47,7 +59,7 @@ if (suspicious.length) {
   process.exit(1);
 }
 if (fsSync.existsSync(zipPath)) await fs.unlink(zipPath);
-const args = ['-q', '-r', zipPath, '.', ...excluded.flatMap((item) => ['-x', `${item}/*`, '-x', item])];
+const args = ['-q', zipPath, ...files];
 const zipped = spawnSync('zip', args, { cwd: root, encoding: 'utf8' });
 if (zipped.status !== 0) {
   console.error(zipped.stderr || zipped.stdout);

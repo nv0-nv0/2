@@ -1,4 +1,5 @@
 import { spawn } from 'node:child_process';
+import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -8,6 +9,7 @@ const root = path.resolve(__dirname, '..');
 const base = process.env.NV0_BASE_URL || 'http://127.0.0.1:3210';
 const localBase = /^http:\/\/127\.0\.0\.1:(\d+)$/.exec(base);
 let child = null;
+const runtimeDir = path.join(root, 'runtime-test-smoke');
 
 async function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
 
@@ -26,13 +28,16 @@ async function ensureServer() {
     throw new Error(`Server is not reachable at ${base}`);
   }
   const port = localBase[1];
+  fs.rmSync(runtimeDir, { recursive: true, force: true });
   child = spawn(process.execPath, ['server/index.mjs'], {
     cwd: root,
     env: {
       ...process.env,
       PORT: String(port),
       NV0_ADMIN_KEY: process.env.NV0_ADMIN_KEY || 'smoke-key',
-      NV0_TRUST_PROXY_HEADERS: process.env.NV0_TRUST_PROXY_HEADERS || 'true'
+      NV0_TRUST_PROXY_HEADERS: process.env.NV0_TRUST_PROXY_HEADERS || 'true',
+      NV0_RUNTIME_DIR: runtimeDir,
+      NV0_FALLBACK_RUNTIME_DIR: runtimeDir
     },
     stdio: 'ignore'
   });
@@ -85,8 +90,12 @@ try {
   failed = error;
 } finally {
   if (child) {
-    child.removeAllListeners();
-    try { child.kill(); } catch {}
+    await new Promise(resolve => {
+      const timer = setTimeout(() => { try { child.kill('SIGKILL'); } catch {} resolve(); }, 1000);
+      child.once('exit', () => { clearTimeout(timer); resolve(); });
+      try { child.kill('SIGTERM'); } catch { resolve(); }
+    });
+    fs.rmSync(runtimeDir, { recursive: true, force: true });
   }
 }
 

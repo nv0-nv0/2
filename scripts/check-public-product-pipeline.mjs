@@ -1,6 +1,11 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { spawn } from 'node:child_process';
 
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const runtimeDir = path.join(root, 'runtime-test-public-product-pipeline');
 const baseUrl = (process.env.NV0_PUBLIC_BASE_URL || process.env.BASE_URL || 'http://127.0.0.1:3210').replace(/\/$/, '');
 const localBase = /^http:\/\/127\.0\.0\.1:(\d+)$/.exec(baseUrl);
 const routes = ['/', '/service', '/solutions', '/plans', '/products/veridion/demo', '/portal', '/board', '/business-info', '/terms', '/privacy', '/refund'];
@@ -13,9 +18,10 @@ async function canReach(url) { try { const res = await fetch(url, { redirect: 'm
 async function ensureServer() {
   if (await canReach(`${baseUrl}/healthz`)) return;
   if (!localBase) throw new Error(`Server is not reachable at ${baseUrl}`);
+  fs.rmSync(runtimeDir, { recursive: true, force: true });
   child = spawn(process.execPath, ['server/index.mjs'], {
-    cwd: process.cwd(),
-    env: { ...process.env, PORT: localBase[1], NODE_ENV: 'test', NV0_PLATFORM_TARGET: 'mvp', NV0_PAYMENT_PROVIDER: 'demo', NV0_ADMIN_KEY: process.env.NV0_ADMIN_KEY || 'pipeline-check-key' },
+    cwd: root,
+    env: { ...process.env, PORT: localBase[1], NODE_ENV: 'test', NV0_PLATFORM_TARGET: 'mvp', NV0_PAYMENT_PROVIDER: 'demo', NV0_ADMIN_KEY: process.env.NV0_ADMIN_KEY || 'pipeline-check-key', NV0_RUNTIME_DIR: runtimeDir, NV0_FALLBACK_RUNTIME_DIR: runtimeDir },
     stdio: 'ignore'
   });
   for (let i = 0; i < 40; i += 1) { await wait(200); if (await canReach(`${baseUrl}/healthz`)) return; }
@@ -42,6 +48,7 @@ try {
   }
 } finally {
   await stopServer();
+  if (child) fs.rmSync(runtimeDir, { recursive: true, force: true });
 }
 const failed = checks.filter(item => !item.ok);
 const report = { ok: failed.length === 0, baseUrl, checked: checks.length, failed: failed.length, failedChecks: failed };

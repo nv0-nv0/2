@@ -1,0 +1,30 @@
+{
+  "ok": true,
+  "contract": "phase357-csp-inline-style-contract",
+  "checkedAt": "2026-06-02T02:33:36.098Z",
+  "checked": 5,
+  "failed": 0,
+  "failures": [],
+  "checks": [
+    {
+      "name": "server-csp-keeps-inline-style-blocked",
+      "ok": true
+    },
+    {
+      "name": "demo-templates-have-no-inline-style-attributes",
+      "ok": true
+    },
+    {
+      "name": "demo-uses-csp-safe-meter-classes",
+      "ok": true
+    },
+    {
+      "name": "visual-percent-class-coverage-0-to-100",
+      "ok": true
+    },
+    {
+      "name": "legacy-variable-class-coverage-0-to-100",
+      "ok": true
+    }
+  ]
+}

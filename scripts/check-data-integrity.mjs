@@ -9,11 +9,7 @@ const ROOT = path.resolve(__dirname, '..');
 const requiredDbKeys = ['settings', 'orders', 'subscriptions', 'publications', 'boards', 'library', 'scans', 'sites', 'legalUpdates', 'systemItems', 'rules', 'autoFixJobs', 'guidanceDocuments', 'paymentSessions', 'auditLogs'];
 const jsonFiles = [
   'package.json',
-  'runtime/data/db.json',
-  'runtime/data/sessions.json',
-  'docs/LOCAL_ACCEPTANCE_SUMMARY_20260423.json',
-  'docs/RELEASE_MANIFEST_20260423.json',
-  'docs/REMAINING_WORK_INVENTORY_20260423.json'
+  'runtime/data/db.seed.json'
 ];
 
 const results = [];
@@ -31,12 +27,15 @@ for (const rel of jsonFiles) {
   try {
     await fs.access(path.join(ROOT, rel));
     const data = await readJson(rel);
-    if (rel.endsWith('db.json') || rel.endsWith('db.seed.json')) {
+    if (rel.endsWith('db.json')) {
       for (const key of requiredDbKeys) {
         if (!(key in data)) {
           errors.push({ file: rel, error: `missing db key: ${key}` });
         }
       }
+    }
+    if (rel.endsWith('db.seed.json') && (!data || typeof data !== 'object' || Array.isArray(data))) {
+      errors.push({ file: rel, error: 'db.seed.json must be a JSON object; an empty object is a valid clean delivery seed' });
     }
     if (rel.endsWith('sessions.json') && !Array.isArray(data)) {
       errors.push({ file: rel, error: 'sessions.json must be an array' });

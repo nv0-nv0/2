@@ -72,4 +72,9 @@ try {
   assert.ok((ops.data.report.counts?.paymentEvents || 0) >= 2);
   assert.ok((ops.data.report.counts?.webhookInbox || 0) >= 2);
   console.log('portone events ok');
-} finally { child.kill('SIGKILL'); if (typeof server.closeAllConnections === 'function') server.closeAllConnections(); server.close(() => {}); process.exit(0); }
+} finally {
+  await stopChild(child);
+  if (typeof server.closeAllConnections === 'function') server.closeAllConnections();
+  await new Promise(resolve => server.close(resolve));
+  fs.rmSync(testRuntimeDir, { recursive: true, force: true });
+}

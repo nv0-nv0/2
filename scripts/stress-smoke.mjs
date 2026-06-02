@@ -7,7 +7,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, '..');
 const port = Number(process.env.NV0_STRESS_SMOKE_PORT || 3291);
-const runtimeDir = path.join(ROOT, 'runtime', 'stress-smoke');
+const runtimeDir = path.join(ROOT, 'runtime-test-stress-smoke');
 await fs.rm(runtimeDir, { recursive: true, force: true });
 await fs.mkdir(path.join(runtimeDir, 'data'), { recursive: true });
 
@@ -44,7 +44,8 @@ async function waitReady() {
   throw new Error(`stress smoke server not ready: ${stderr.slice(-1000)}`);
 }
 
-const targets = ['/healthz', '/health', '/livez', '/api/public/health', '/api/public/openapi.json', '/api/public/hardening-matrix', '/api/public/plans'];
+const targets = ['/healthz', '/health', '/livez', '/api/public/health', '/api/public/plans'];
+const hiddenTargets = ['/api/public/openapi.json', '/api/public/hardening-matrix'];
 try {
   await waitReady();
   const startedAt = Date.now();
@@ -53,12 +54,24 @@ try {
     const text = await res.text();
     return { round, pathname, status: res.status, ok: res.ok, bytes: text.length };
   }))));
+  const hiddenResponses = await Promise.all(hiddenTargets.map(async pathname => {
+    const res = await fetch(`http://127.0.0.1:${port}${pathname}`);
+    const text = await res.text();
+    return { pathname, status: res.status, isolated: res.status === 404, bytes: text.length };
+  }));
   const flat = responses.flat();
   const failures = flat.filter(item => !item.ok);
-  const report = { ok: failures.length === 0, phase: 'phase164-zero-cost-hardening-50', requests: flat.length, failures, elapsedMs: Date.now() - startedAt };
+  const hiddenFailures = hiddenResponses.filter(item => !item.isolated);
+  const report = { ok: failures.length === 0 && hiddenFailures.length === 0, phase: 'phase357-public-stress-and-private-api-isolation', requests: flat.length, hiddenIsolationChecks: hiddenResponses.length, failures, hiddenFailures, elapsedMs: Date.now() - startedAt };
   console.log(JSON.stringify(report, null, 2));
-  if (failures.length) process.exitCode = 1;
+  if (failures.length || hiddenFailures.length) process.exitCode = 1;
 } finally {
-  child.kill('SIGTERM');
-  await wait(300);
+  if (child.exitCode === null) {
+    await new Promise(resolve => {
+      const timer = setTimeout(() => { try { child.kill('SIGKILL'); } catch {} resolve(); }, 1000);
+      child.once('exit', () => { clearTimeout(timer); resolve(); });
+      try { child.kill('SIGTERM'); } catch { resolve(); }
+    });
+  }
+  await fs.rm(runtimeDir, { recursive: true, force: true });
 }

@@ -8,11 +8,15 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const root = path.resolve(__dirname, '..');
 const port = 3212;
+const runtimeDir = path.join(root, 'runtime-test-session-persistence');
+await fs.rm(runtimeDir, { recursive: true, force: true });
 const env = {
   ...process.env,
   PORT: String(port),
   NV0_ADMIN_KEY: 'persist-key',
-  NV0_TRUST_PROXY_HEADERS: 'true'
+  NV0_TRUST_PROXY_HEADERS: 'true',
+  NV0_RUNTIME_DIR: runtimeDir,
+  NV0_FALLBACK_RUNTIME_DIR: runtimeDir
 };
 
 const wait = ms => new Promise(r => setTimeout(r, ms));
@@ -33,10 +37,12 @@ async function waitUntilReady() {
 }
 
 async function stopServer(child) {
-  if (!child) return;
-  child.kill('SIGKILL');
-  if (typeof child.unref === 'function') child.unref();
-  await new Promise(resolve => setTimeout(resolve, 50));
+  if (!child || child.exitCode !== null) return;
+  await new Promise(resolve => {
+    const timer = setTimeout(() => { try { child.kill('SIGKILL'); } catch {} resolve(); }, 1000);
+    child.once('exit', () => { clearTimeout(timer); resolve(); });
+    try { child.kill('SIGTERM'); } catch { resolve(); }
+  });
 }
 
 async function json(url, options={}) {
@@ -45,7 +51,7 @@ async function json(url, options={}) {
   return { res, data };
 }
 
-const sessionsFile = path.join(root, 'runtime', 'data', 'sessions.json');
+const sessionsFile = path.join(runtimeDir, 'data', 'sessions.json');
 let child = startServer();
 await waitUntilReady();
 try {
@@ -64,7 +70,7 @@ try {
   const page = await fetch(`http://127.0.0.1:${port}/admin/console`, { headers: { cookie } });
   assert.equal(page.status, 200);
   const html = await page.text();
-  assert.ok(html.includes('관리자 허브'));
+  assert.ok(html.includes('관리자 대시보드'));
 
   const rowsAfter = JSON.parse(await fs.readFile(sessionsFile, 'utf8'));
   assert.ok(Array.isArray(rowsAfter));
@@ -72,4 +78,5 @@ try {
   console.log('session persistence ok');
 } finally {
   await stopServer(child);
+  await fs.rm(runtimeDir, { recursive: true, force: true });
 }

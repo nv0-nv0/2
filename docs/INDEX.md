@@ -11,18 +11,21 @@
 | 폴더·파일 구조 지도 | `PROJECT_STRUCTURE.md` |
 | 운영 배포 파일 선택 | `../deploy/README.md` |
 | 운영자 수동 확인 | `PHASE354_OPERATOR_CONFIRMATION_CHECKLIST.md` |
-| 최신 전체 납품 보고서 | `PHASE355_FULL_PACKAGE_CLOSEOUT.md` |
-| 최신 정리 작업 내역 | `PHASE355_ORGANIZATION_CLOSEOUT.md` |
-| 최신 수정 매트릭스 | `PHASE355_REMEDIATION_MATRIX.md` |
+| 최신 전체 납품 보고서 | `PHASE358_COMMERCIAL_DEPLOY_INTEGRITY_CLOSEOUT.md` |
+| 직전 구조 정리 작업 | `PHASE355_ORGANIZATION_CLOSEOUT.md` |
+| 최신 수정 매트릭스 | `PHASE358_REMEDIATION_MATRIX.md` |
 
 ## 2. 자동 생성 검증 결과
 
-`current/`에는 테스트와 릴리즈 게이트가 생성한 JSON·로그가 들어갑니다. 최신 PHASE355 결과를 우선 확인하고, 이전 PHASE 결과는 회귀 추적에 사용합니다.
+`current/`에는 테스트와 릴리즈 게이트가 생성한 JSON·로그가 들어갑니다. 최신 PHASE358 결과를 우선 확인하고, 이전 PHASE 결과는 회귀 추적에 사용합니다.
 
 | 파일 | 용도 |
 | --- | --- |
-| `current/PHASE355_FINAL_GATE_REPORT.json` | 최신 최종 게이트 결과 |
-| `current/PHASE355_GLOBAL_AUDIT.json` | 구조·문서·진입점 정렬 감사 |
+| `current/PHASE358_FINAL_GATE_REPORT.json` | 최신 최종 게이트 결과 |
+| `current/PHASE358_COMMERCIAL_DEPLOY_INTEGRITY.json` | 상용 배포 무결성 계약 결과 |
+| `current/PHASE358_COMMERCIAL_DEPLOY_INTEGRITY_AUDIT.json` | PHASE358 감사 결과 |
+| `current/PHASE357_FINAL_GATE_REPORT.json` | 직전 전역 QA·CSP 게이트 결과 |
+| `current/PHASE357_GLOBAL_AUDIT.json` | 전역 QA·접근성·보안 감사 |
 | `current/PHASE354_FINAL_GATE_REPORT.json` | 직전 보안·배포 회귀 게이트 결과 |
 | `current/PHASE354_COMPOSE_ENV_FORWARDING.json` | Compose 환경변수 전달 검사 |
 
@@ -35,3 +38,27 @@
 - 보안·UI·결제·운영 개선의 이력을 추적할 수 있음
 
 새로운 작업자는 과거 문서를 순서대로 모두 읽기보다 `CURRENT_RELEASE.md`와 최신 closeout 문서부터 확인합니다.
+
+## PHASE356 전환 위기도 대시보드
+
+- `PHASE356_CONVERSION_DASHBOARD_WORK_ORDER.md`
+- `PHASE356_REMEDIATION_MATRIX.md`
+- `PHASE356_CONVERSION_DASHBOARD_CLOSEOUT.md`
+
+## PHASE357 전역 QA·접근성 마감
+
+- `PHASE357_GLOBAL_QA_WORK_ORDER.md`
+- `PHASE357_REMEDIATION_MATRIX.md`
+- `PHASE357_GLOBAL_QA_CLOSEOUT.md`
+- `current/PHASE357_GLOBAL_AUDIT.json`
+- `current/PHASE357_FINAL_GATE_REPORT.json`
+
+
+## PHASE358 상용 배포 무결성 마감
+
+- `PHASE358_COMMERCIAL_DEPLOY_INTEGRITY_WORK_ORDER.md`
+- `PHASE358_REMEDIATION_MATRIX.md`
+- `PHASE358_COMMERCIAL_DEPLOY_INTEGRITY_CLOSEOUT.md`
+- `current/PHASE358_COMMERCIAL_DEPLOY_INTEGRITY.json`
+- `current/PHASE358_COMMERCIAL_DEPLOY_INTEGRITY_AUDIT.json`
+- `current/PHASE358_FINAL_GATE_REPORT.json`

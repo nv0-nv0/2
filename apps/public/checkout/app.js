@@ -6,6 +6,7 @@ const targetBox = document.getElementById('checkoutTarget');
 const summary = document.getElementById('orderSummary');
 const planInput = document.getElementById('plan');
 const checkoutBtn = document.getElementById('checkoutBtn');
+const checkoutForm = document.getElementById('checkoutForm');
 const completeBtn = document.getElementById('completeBtn');
 const paymentConfigState = document.getElementById('paymentConfigState');
 const targetInput = document.getElementById('targetDomain');
@@ -322,7 +323,10 @@ document.getElementById('buyerEmail')?.addEventListener('input', updateCheckoutB
 targetInput?.addEventListener('input', updateCheckoutButtonState);
 ['privacyConsent', 'termsConsent', 'refundConsent', 'deliveryConsent'].forEach(id => document.getElementById(id)?.addEventListener('change', updateCheckoutButtonState));
 planInput?.addEventListener('change', () => { renderPriceSummary(); updateCheckoutButtonState(); });
-checkoutBtn?.addEventListener('click', createSession);
+checkoutForm?.addEventListener('submit', (event) => {
+  event.preventDefault();
+  createSession();
+});
 completeBtn?.addEventListener('click', completePayment);
 window.addEventListener('load', updateCheckoutButtonState);
 setTimeout(updateCheckoutButtonState, 1200);

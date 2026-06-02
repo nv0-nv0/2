@@ -40,6 +40,20 @@ const requiredCommercialKeys = [
   'NV0_PORTONE_WEBHOOK_VERIFY_MODE'
 ];
 
+const requiredLocalKeys = [
+  'NODE_ENV',
+  'HOST',
+  'PORT',
+  'NV0_RUNTIME_DIR',
+  'NV0_PLATFORM_TARGET',
+  'NV0_PAYMENT_PROVIDER',
+  'NV0_ADMIN_KEY',
+  'NV0_SESSION_SECRET',
+  'NV0_SECURE_RECORDS_KEY',
+  'NV0_PRIVACY_HASH_KEY',
+  'NV0_SCAN_PROVIDER'
+];
+
 const forbiddenCommercialPairs = [
   'NV0_ADMIN_KEY=',
   'NV0_PAYMENT_PROVIDER=demo',
@@ -69,13 +83,20 @@ for (const rel of envFiles) {
       seen.add(key);
       keys.push(key);
     }
-    for (const key of requiredCommercialKeys) {
-      if (!seen.has(key)) errors.push({ file: rel, error: `missing commercial key: ${key}` });
+    const isLocalDevelopmentExample = rel === '.env.example';
+    const requiredKeys = isLocalDevelopmentExample ? requiredLocalKeys : requiredCommercialKeys;
+    for (const key of requiredKeys) {
+      if (!seen.has(key)) errors.push({ file: rel, error: `missing ${isLocalDevelopmentExample ? 'local development' : 'commercial'} key: ${key}` });
     }
-    for (const pair of forbiddenCommercialPairs) {
-      if (raw.includes(pair)) errors.push({ file: rel, error: `forbidden commercial pair: ${pair}` });
+    if (isLocalDevelopmentExample) {
+      if (!raw.includes('NV0_PLATFORM_TARGET=mvp')) errors.push({ file: rel, error: 'local development example must use NV0_PLATFORM_TARGET=mvp' });
+      if (!raw.includes('NV0_PAYMENT_PROVIDER=demo')) errors.push({ file: rel, error: 'local development example must default to demo payments' });
+    } else {
+      for (const pair of forbiddenCommercialPairs) {
+        if (raw.includes(pair)) errors.push({ file: rel, error: `forbidden commercial pair: ${pair}` });
+      }
+      if (!raw.includes('NV0_PLATFORM_TARGET=commercial')) errors.push({ file: rel, error: 'not a commercial env file' });
     }
-    if (!raw.includes('NV0_PLATFORM_TARGET=commercial')) errors.push({ file: rel, error: 'not a commercial env file' });
     if (duplicates.length) errors.push({ file: rel, error: `duplicate keys: ${duplicates.join(', ')}` });
     checked.push({ file: rel, keyCount: keys.length, ok: true });
   } catch (error) {

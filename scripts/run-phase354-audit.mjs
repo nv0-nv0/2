@@ -13,11 +13,11 @@ function add(name, fn) {
   catch (error) { checks.push({ name, ok: false, error: error.message }); }
 }
 
-add('package-version-phase354', () => assert.match(pkg.version, /phase354-deployment-security-closeout|phase355-organization-closeout/));
-add('delivery-final-phase354', () => assert.ok(['npm run phase354:final','npm run phase355:final'].includes(pkg.scripts['delivery:final'])));
-add('release-predeploy-phase354', () => assert.ok(['npm run phase354:final','npm run phase355:final'].includes(pkg.scripts['release:predeploy'])));
-add('run-all-tests-phase354', () => assert.match(read('RUN_ALL_TESTS.sh'), /npm run phase354:final|npm run phase355:final/));
-add('readme-phase354', () => assert.match(read('README.md'), /npm run phase354:final|npm run phase355:final/));
+add('package-version-phase354', () => assert.match(pkg.version, /phase354-deployment-security-closeout|phase355-organization-closeout|phase356-conversion-dashboard-closeout|phase357-global-qa-accessibility-closeout|phase358-commercial-deploy-integrity-closeout/));
+add('delivery-final-phase354', () => assert.ok(['npm run phase354:final','npm run phase355:final','npm run phase356:final','npm run phase357:final','npm run phase358:final'].includes(pkg.scripts['delivery:final'])));
+add('release-predeploy-phase354', () => assert.ok(['npm run phase354:final','npm run phase355:final','npm run phase356:final','npm run phase357:final','npm run phase358:final'].includes(pkg.scripts['release:predeploy'])));
+add('run-all-tests-phase354', () => assert.match(read('RUN_ALL_TESTS.sh'), /npm run phase354:final|npm run phase355:final|npm run phase356:final|npm run phase357:final|npm run phase358:final/));
+add('readme-phase354', () => assert.match(read('README.md'), /npm run phase354:final|npm run phase355:final|npm run phase356:final|npm run phase357:final|npm run phase358:final/));
 add('gitignore-added', () => assert.equal(exists('.gitignore'), true));
 add('public-probe-contract-added', () => assert.equal(pkg.scripts['test:public-probe-minimal'], 'node tests/public-probe-minimal-contract.mjs'));
 add('compose-forwarding-check-added', () => assert.equal(pkg.scripts['check:compose-env-forwarding'], 'node scripts/check-compose-env-forwarding.mjs'));

@@ -34,7 +34,7 @@ services:
       NV0_DATA_DESTRUCTION_GRACE_DAYS: ${NV0_DATA_DESTRUCTION_GRACE_DAYS:-30}
       NV0_DATABASE_URL: postgres://nv0:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}@postgres:5432/nv0
       NV0_REDIS_URL: redis://redis:6379/0
-      NV0_READYZ_REDIS_STRICT: ${NV0_READYZ_REDIS_STRICT:-false}
+      NV0_READYZ_REDIS_STRICT: ${NV0_READYZ_REDIS_STRICT:-true}
       NV0_S3_ENDPOINT: ${NV0_S3_ENDPOINT:?set NV0_S3_ENDPOINT}
       NV0_S3_BUCKET: ${NV0_S3_BUCKET:?set NV0_S3_BUCKET}
       NV0_S3_REGION: ${NV0_S3_REGION:-auto}
@@ -50,7 +50,7 @@ services:
       redis:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3210/healthz').then(async r=>{const b=await r.json().catch(()=>({}));process.exit(r.ok&&b.ok===true?0:1)}).catch(()=>process.exit(1))"]
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3210/readyz').then(async r=>{const b=await r.json().catch(()=>({}));process.exit(r.ok&&b.ok===true&&b.ready===true?0:1)}).catch(()=>process.exit(1))"]
       interval: 30s
       timeout: 10s
       retries: 10

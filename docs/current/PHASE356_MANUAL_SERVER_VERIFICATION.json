@@ -1,0 +1,143 @@
+{
+  "ok": true,
+  "phase": "phase356-conversion-dashboard-closeout",
+  "checkedAt": "2026-06-01T11:35:52.544913+00:00",
+  "checks": [
+    {
+      "name": "healthz",
+      "status": 200,
+      "ok": true,
+      "body": {
+        "ok": true,
+        "service": "veridion",
+        "status": "ok",
+        "generatedAt": "2026-06-01T11:35:24.585Z",
+        "buildFingerprint": {
+          "version": "1.0.17"
+        }
+      }
+    },
+    {
+      "name": "readyz",
+      "status": 200,
+      "ok": true,
+      "body": {
+        "ok": true,
+        "ready": true,
+        "status": "ready",
+        "generatedAt": "2026-06-01T11:35:24.642Z",
+        "buildFingerprint": {
+          "version": "1.0.17"
+        },
+        "cacheHit": false
+      }
+    },
+    {
+      "name": "home",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "name": "demo",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "name": "public-config",
+      "status": 200,
+      "ok": true,
+      "body": {
+        "ok": true,
+        "turnstileEnabled": false,
+        "turnstileConfigured": false,
+        "turnstileSiteKey": "",
+        "buildFingerprint": {
+          "version": "1.0.17",
+          "buildTime": "2026-06-01T11:35:24.427Z",
+          "deploymentEnvironment": "mvp",
+          "canonicalDomain": "http://127.0.0.1:3210"
+        }
+      }
+    },
+    {
+      "name": "public-diagnose",
+      "status": 200,
+      "ok": true,
+      "topLevelKeys": [
+        "ok",
+        "portalUrl",
+        "redirectUrl",
+        "reportUrl",
+        "result",
+        "scan",
+        "status"
+      ],
+      "resultKeys": [
+        "accuracyProfile",
+        "aiReview",
+        "autoFixCandidates",
+        "automatedActionPlan",
+        "automationDisclosure",
+        "cached",
+        "categoryCounts",
+        "categoryScores",
+        "conversionUrgency",
+        "customerId",
+        "demoIssueOverview",
+        "detailFindings",
+        "detectionScore",
+        "diagnosis",
+        "elapsedMs",
+        "estimatedMaxPenalty",
+        "evidenceSummary",
+        "fetchError",
+        "fetchStatus",
+        "fetched",
+        "findings",
+        "generatedAt",
+        "handoff",
+        "industry",
+        "legalConclusion",
+        "locked",
+        "lockedPreviewCount",
+        "nextActions",
+        "normalizedTarget",
+        "paidAccess",
+        "penaltyDisclaimer",
+        "penaltyEstimateType",
+        "portalUrl",
+        "provider",
+        "qualityAssurance",
+        "recommendedPlan",
+        "redirectUrl",
+        "reportUrl",
+        "requestId",
+        "resultLimitNotice",
+        "resultStatus",
+        "riskLevel",
+        "riskScore",
+        "ruleVersion",
+        "savedToAccount",
+        "scanMode",
+        "scanScopeLabel",
+        "scoreModel",
+        "siteId",
+        "siteProfile",
+        "summary",
+        "target",
+        "topFindings",
+        "totalFindings",
+        "trustOpsBlueprint"
+      ]
+    },
+    {
+      "name": "hidden-operational-api",
+      "status": 404,
+      "ok": true,
+      "body": {
+        "ok": false,
+        "error": "Public route not found"
+      }
+    }
+  ]
+}

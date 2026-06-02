@@ -17,15 +17,15 @@ function add(name, fn) {
 add('version:phase348', () => assert.match(pkg.version, /phase348-final-unified-engine-closeout|phase349-customer-journey-closeout|phase350-global-cta-semantics-closeout|phase351-prompt-full-sweep-closeout|phase350-global-cta-semantics-closeout|phase351-prompt-full-sweep-closeout/));
 add('terminal-gates:phase348', () => {
   assert.equal(scripts['phase348:final'], 'node scripts/run-phase348-final.mjs');
-  assert.ok(['npm run phase348:final','npm run phase349:final', 'npm run phase350:final', 'npm run phase350:final'].includes(scripts['delivery:final']));
-  assert.ok(['npm run phase348:final','npm run phase349:final', 'npm run phase350:final', 'npm run phase350:final'].includes(scripts['release:predeploy']));
+  assert.ok(['npm run phase348:final','npm run phase349:final', 'npm run phase350:final','npm run phase358:final', 'npm run phase350:final','npm run phase358:final'].includes(scripts['delivery:final']));
+  assert.ok(['npm run phase348:final','npm run phase349:final', 'npm run phase350:final','npm run phase358:final', 'npm run phase350:final','npm run phase358:final'].includes(scripts['release:predeploy']));
 });
 add('new-contract-scripts', () => {
   assert.equal(scripts['test:diagnosis-engine-single-source'], 'node tests/diagnosis-engine-single-source-contract.mjs');
   assert.equal(scripts['check:result-action-state'], 'node scripts/check-result-action-state-contract.mjs');
 });
-add('run-all-tests:phase348', () => assert.match(read('RUN_ALL_TESTS.sh'), /npm run phase348:final|npm run phase349:final|npm run phase350:final/));
-add('readme:phase348', () => assert.match(read('README.md'), /npm run phase348:final|npm run phase349:final|npm run phase350:final/));
+add('run-all-tests:phase348', () => assert.match(read('RUN_ALL_TESTS.sh'), /npm run phase348:final|npm run phase349:final|npm run phase350:final|npm run phase358:final/));
+add('readme:phase348', () => assert.match(read('README.md'), /npm run phase348:final|npm run phase349:final|npm run phase350:final|npm run phase358:final/));
 add('docs:phase348', () => {
   assert.equal(exists('docs/PHASE348_FINAL_ENGINE_CLOSEOUT_WORK_ORDER.md'), true);
   assert.equal(exists('docs/PHASE348_112_FINAL_POLISH_MATRIX.md'), true);

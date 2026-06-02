@@ -1,0 +1,30 @@
+{
+  "ok": true,
+  "phase": "phase356-conversion-dashboard-closeout",
+  "method": "static-render-reference-using-production-css-and-result-markup",
+  "note": "로컬 HTTP 페이지의 브라우저 직접 접속은 실행 환경 정책에 의해 제한되어, 동일 CSS와 동일 결과 마크업을 정적 렌더링하여 시각 검수했습니다. 서버 API와 실제 라우트는 별도 수동 검증에서 확인했습니다.",
+  "desktop": {
+    "file": "docs/design-reference/PHASE356_CONVERSION_DASHBOARD_DESKTOP.png",
+    "width": 1440,
+    "height": 1939,
+    "checks": [
+      "위기도 원형 그래프가 첫 화면 우측에 노출됨",
+      "핵심 KPI 4개가 상단 CTA와 함께 노출됨",
+      "리스크 히트맵과 고객 여정 퍼널이 2열로 정렬됨",
+      "우선 해결 3개와 잠금 리포트 미리보기가 CTA로 연결됨",
+      "하단 고정 CTA가 상세 영역을 가리지 않음"
+    ]
+  },
+  "mobile": {
+    "file": "docs/design-reference/PHASE356_CONVERSION_DASHBOARD_MOBILE.png",
+    "width": 430,
+    "height": 3677,
+    "checks": [
+      "상단 KPI가 2열로 재배치됨",
+      "위기도 그래프가 본문 너비에 맞게 노출됨",
+      "히트맵·퍼널·우선 해결 카드가 1열로 전환됨",
+      "구매 CTA가 모바일 너비에 맞게 정렬됨",
+      "하단 고정 CTA가 터치 가능한 크기로 유지됨"
+    ]
+  }
+}

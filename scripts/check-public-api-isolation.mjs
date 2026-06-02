@@ -123,4 +123,5 @@ try {
   console.log(JSON.stringify({ ok: true, hiddenEndpoints: hidden.length, pagesWithPrivateJsonLd: pages.length }, null, 2));
 } finally {
   await stop();
+  fs.rmSync(runtimeDir, { recursive: true, force: true });
 }

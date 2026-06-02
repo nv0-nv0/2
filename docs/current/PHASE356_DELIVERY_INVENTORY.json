@@ -1,0 +1,27 @@
+{
+  "phase": "phase356-conversion-dashboard-closeout",
+  "generatedAt": "2026-06-01T11:41:08.234365+00:00",
+  "packageVersion": "1.0.17-commercial-phase356-conversion-dashboard-closeout",
+  "counts": {
+    "packageFiles": 583,
+    "packageDirectories": 65,
+    "htmlScreens": 31,
+    "publicHtmlScreens": 24,
+    "adminHtmlScreens": 7,
+    "cssFiles": 34,
+    "scriptMjsFiles": 131,
+    "testMjsFiles": 25,
+    "markdownDocs": 106,
+    "pngDesignReferences": 5,
+    "npmScripts": 159,
+    "interactiveElements": 690,
+    "links": 596,
+    "buttons": 42,
+    "inputs": 39,
+    "selects": 2,
+    "textareas": 2,
+    "forms": 9
+  },
+  "volatileRuntimePresent": [],
+  "runtimeSeedPresent": true
+}

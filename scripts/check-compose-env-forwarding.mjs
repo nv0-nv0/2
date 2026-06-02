@@ -30,6 +30,12 @@ const forwardedKeys = [
   'NV0_SLOW_REQUEST_THRESHOLD_MS',
   'NV0_LOG_HEALTHCHECK_REQUESTS',
   'NV0_LOG_FAVICON_REQUESTS',
+  'NV0_HEALTHZ_STRICT',
+  'NV0_READYZ_CACHE_TTL_MS',
+  'NV0_BUILD_VERSION',
+  'NV0_BUILD_TIME',
+  'NV0_COMMIT_SHA',
+  'NV0_RELEASE_ID',
   'NV0_MAX_JSON_BODY_BYTES',
   'NV0_MAX_MULTIPART_BODY_BYTES',
   'NV0_SESSION_SECRET',
@@ -41,7 +47,18 @@ const forwardedKeys = [
   'NV0_RULES_VERSION',
   'NV0_PUBLIC_SCAN_LIMIT',
   'NV0_PUBLIC_SCAN_WINDOW_MS',
+  'NV0_SCAN_SOFT_TIMEOUT_MS',
+  'NV0_PUBLIC_DEMO_FORCE_SCAN_FALLBACK',
+  'NV0_TARGET_FETCH_MAX_BYTES',
+  'NV0_TARGET_FETCH_MAX_REDIRECTS',
+  'NV0_PAYMENT_PROVIDER_URL',
+  'NV0_PAYMENT_PROVIDER_TOKEN',
   'NV0_PAYMENT_REDIRECT_ALLOWED_HOSTS',
+  'NV0_ALLOW_PRELAUNCH_ONLINE_PAYMENT',
+  'NV0_LEGAL_EVIDENCE_VERSION',
+  'NV0_PRIVACY_POLICY_VERSION',
+  'NV0_TERMS_VERSION',
+  'NV0_REFUND_POLICY_VERSION',
   'NV0_AI_REVIEW_PROVIDER',
   'NV0_GEMINI_API_KEY',
   'NV0_GEMINI_MODEL'
@@ -65,6 +82,40 @@ for (const file of bootSafeComposeFiles) {
     for (const key of forwardedKeys) assert.match(text, new RegExp(`^\\s+${key}:`, 'm'), `${file} missing ${key}`);
   });
 }
+const operatorTemplateFiles = [
+  'deploy/coolify.env.example',
+  'deploy/coolify.env.bulk.txt',
+  'deploy/env.production.template',
+  'deploy/env.commercial.template',
+  'deploy/env.production.nv0.kr.example'
+];
+const operatorTemplateKeys = [
+  'NV0_EXPOSE_INTERNAL_PUBLIC_APIS',
+  'NV0_SESSION_SECRET',
+  'NV0_PRIVACY_HASH_KEY',
+  'NV0_SECURE_RECORDS_KEY',
+  'NV0_SECURE_RECORDS_SALT',
+  'NV0_SECURE_RECORDS_DIR',
+  'NV0_PAYMENT_REDIRECT_ALLOWED_HOSTS',
+  'NV0_ALLOW_PRELAUNCH_ONLINE_PAYMENT',
+  'NV0_HEALTHZ_STRICT',
+  'NV0_READYZ_REDIS_STRICT',
+  'NV0_READYZ_CACHE_TTL_MS',
+  'NV0_SCAN_SOFT_TIMEOUT_MS',
+  'NV0_TARGET_FETCH_MAX_BYTES',
+  'NV0_TARGET_FETCH_MAX_REDIRECTS',
+  'NV0_BUSINESS_TRADE_NAME',
+  'NV0_BUSINESS_REPRESENTATIVE',
+  'NV0_BUSINESS_REGISTRATION_NUMBER',
+  'NV0_BUSINESS_ADDRESS'
+];
+add('operator-templates-cover-critical-runtime-keys', () => {
+  for (const file of operatorTemplateFiles) {
+    const text = read(file);
+    for (const key of operatorTemplateKeys) assert.match(text, new RegExp(`^${key}=`, 'm'), `${file} missing ${key}`);
+  }
+});
+
 add('public-probe-sanitizers-exist', () => {
   const server = read('server/index.mjs');
   assert.match(server, /buildPublicHealthzPayload/);

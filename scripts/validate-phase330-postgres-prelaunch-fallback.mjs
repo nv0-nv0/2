@@ -235,6 +235,8 @@ if (!persistenceText.includes('commercial_launch remains strict')) failures.push
 if (!fs.readFileSync('docker-compose.yml', 'utf8').includes('NV0_PRELAUNCH_DB_FALLBACK')) failures.push('root compose must expose NV0_PRELAUNCH_DB_FALLBACK');
 if (!fs.readFileSync('deploy/docker-compose.coolify.yml', 'utf8').includes('NV0_PRELAUNCH_DB_FALLBACK')) failures.push('Coolify compose must expose NV0_PRELAUNCH_DB_FALLBACK');
 
+fs.rmSync(root, { recursive: true, force: true });
+
 if (failures.length) {
   console.error(JSON.stringify({ ok: false, phase: 330, failures }, null, 2));
   process.exit(1);
