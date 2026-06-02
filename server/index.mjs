@@ -241,7 +241,7 @@ const GEMINI_MODEL = String(process.env.NV0_GEMINI_MODEL || 'gemini-2.5-flash').
 const AI_REVIEW_ENABLED = AI_REVIEW_PROVIDER === 'gemini' && !!GEMINI_API_KEY;
 const RELEASE_PHASE = 'clean-commercial-baseline';
 const BUILD_FINGERPRINT = Object.freeze({
-version: process.env.NV0_BUILD_VERSION || '2.1.0-clean-commercial-baseline',
+version: process.env.NV0_BUILD_VERSION || '2.3.0-executive-trust-report-system',
 releasePhase: RELEASE_PHASE,
 buildTime: process.env.NV0_BUILD_TIME || new Date().toISOString(),
 deploymentEnvironment: DEPLOYMENT_STAGE,

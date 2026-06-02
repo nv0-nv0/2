@@ -967,18 +967,6 @@ function clampDashboardWidth(value, max = 100) {
   return Math.max(8, Math.min(100, Math.round((number / Math.max(1, Number(max || 1))) * 100)));
 }
 
-function renderPaidCleanResult(scan) {
-  const view = normalizeScan(scan);
-  const buckets = countDemoBuckets(view);
-  const details = detailRows(scan).map(normalizeRiskItem);
-  const actionRows = (view.recommendedActions || []).slice(0, 6);
-  return `<section class="paid-result-clean" aria-label="유료 결과 화면">
-    <div class="paid-result-hero"><div><span class="pill brand">유료 결과</span><h2>상세 근거와 개선안을 한 화면에서 확인하세요</h2><p>${escapeHtml(view.target)}</p></div><a class="btn secondary" href="/portal?siteId=${escapeAttr(view.siteId)}">고객 포털</a></div>
-    <div class="paid-result-kpis"><article><span>종합 우선도</span><strong>${escapeHtml(view.riskScore ?? '-')}</strong><small>/100</small></article><article><span>리스크 영역</span><strong>${escapeHtml(buckets.areaCount)}</strong><small>상세 근거 포함</small></article><article><span>점검 요소</span><strong>${escapeHtml(buckets.totalElements)}</strong><small>수정 위치 포함</small></article><article><span>실행 과제</span><strong>${escapeHtml(actionRows.length)}</strong><small>우선순위 정렬</small></article></div>
-    <div class="paid-result-grid"><article class="paid-detail-panel"><h3>페이지별 상세 근거</h3>${details.slice(0, 8).map((item, index) => `<section class="paid-detail-row"><div><b>${index + 1}. ${escapeHtml(item.title)}</b><p>${escapeHtml(item.evidence || item.impact || '공개 페이지 기준 확인 항목입니다.')}</p></div><span class="pill ${priorityTone(item.priority)}">${escapeHtml(item.priority || 'P2')}</span></section>`).join('') || '<p class="muted">상세 항목이 준비되지 않았습니다.</p>'}</article><aside class="paid-action-panel"><h3>권장 실행 순서</h3>${actionRows.map((item, index) => `<div class="paid-action-row"><span>${index + 1}</span><div><b>${escapeHtml(item.title)}</b><small>${escapeHtml(item.nextStep || item.reason || '우선순위에 따라 적용하세요.')}</small></div></div>`).join('')}<div class="notice muted">${escapeHtml(EXPERT_OFFER?.title || '전문가 플랜')}은 수정 문구, 적용 위치, 재검사 기준까지 포함합니다.</div></aside></div>
-  </section>`;
-}
-
 function vr360Tone(score) {
   const value = normalizePercent(score, 0);
   if (value >= 72) return 'critical';
@@ -989,139 +977,266 @@ function vr360Tone(score) {
 
 function vr360RiskLabel(score) {
   const value = normalizePercent(score, 0);
-  if (value >= 72) return '즉시 개선 필요';
-  if (value >= 52) return '우선 개선 권장';
+  if (value >= 72) return '즉시 개선 검토';
+  if (value >= 52) return '우선 개선 권고';
   if (value >= 34) return '주의 관찰';
   return '기본 관리';
 }
 
-function renderVr360ExecutiveHero(view) {
+function vr360RiskGrade(score) {
+  const value = normalizePercent(score, 0);
+  if (value >= 82) return 'GRADE E';
+  if (value >= 68) return 'GRADE D';
+  if (value >= 48) return 'GRADE C';
+  if (value >= 28) return 'GRADE B';
+  return 'GRADE A';
+}
+
+function executiveReportModel(view) {
   const buckets = countDemoBuckets(view);
-  const model = conversionUrgencyFor(view);
-  const score = normalizePercent(model.crisisScore, normalizePercent(view.riskScore, 0));
-  const projected = normalizePercent(model.projectedAfterFixScore, Math.max(8, score - 18));
-  const tone = vr360Tone(score);
-  const checkout = `/checkout?plan=Report&siteId=${encodeURIComponent(view.siteId || '')}&riskScore=${encodeURIComponent(score)}`;
-  const title = score >= 72
-    ? '결제 직전 고객이 멈출 수 있는 신뢰 공백이 발견됐습니다.'
+  const urgency = conversionUrgencyFor(view);
+  const score = normalizePercent(urgency.crisisScore, normalizePercent(view.riskScore, 0));
+  const visibleIssueCount = Math.min(2, Math.max(0, buckets.totalIssues));
+  const manualReviewCount = Number(view.scoreModel?.manualReviewCount ?? buckets.classCounts?.['검토 필요'] ?? 0);
+  const confirmedPageCount = Number(view.evidenceSummary?.successfulPageCount ?? view.pages.length ?? 0);
+  const attemptedPageCount = Number(view.evidenceSummary?.attemptedPageCount ?? Math.max(confirmedPageCount, view.pages.length, 1));
+  const lockedItemCount = Math.max(0, Number(view.lockedCount || 0), buckets.totalElements - visibleIssueCount, buckets.totalIssues - visibleIssueCount);
+  const reportSeed = String(view.siteId || view.target || 'FREE-PREVIEW').replace(/[^a-z0-9]/gi, '').toUpperCase().slice(0, 12) || 'FREEPREVIEW';
+  const confidenceLabel = view.scoreModel?.confidenceLabel || (confirmedPageCount >= 4 ? '중간 이상' : '예비 진단');
+  const headline = score >= 72
+    ? '구매 직전 확인해야 할 신뢰 공백이 우선 조치 대상으로 분류되었습니다.'
     : score >= 52
-      ? '구매 결정을 늦추는 안내 공백을 먼저 정리해야 합니다.'
+      ? '구매 결정을 지연시킬 수 있는 안내 공백이 확인되었습니다.'
       : '기본 구조는 확인됐지만 구매 전 신뢰 신호를 더 선명하게 만들 수 있습니다.';
-  return `<section class="vr360-hero ${escapeAttr(tone)}" aria-label="VERIDION 진단 결과 핵심 요약">
-    <div class="vr360-hero-topline"><div><span class="vr360-eyebrow"><i aria-hidden="true"></i> VERIDION TRUST RISK REPORT</span><span class="vr360-scope">공개 화면 기준 무료 진단</span></div><button class="vr360-retry" type="button" id="vr360RetryBtn">다시 점검</button></div>
-    <div class="vr360-hero-grid">
-      <div class="vr360-hero-copy">
-        <span class="vr360-alert-chip">구매 전환 위험 신호 감지</span>
-        <h2>${escapeHtml(title)}</h2>
-        <p>가격, 환불, 문의, 개인정보 안내가 흐리면 고객은 결제 직전에 멈춥니다. 아래 수치는 법적 판단이나 실제 매출 손실 확정값이 아니라, <b>먼저 해결해야 할 신뢰 공백의 우선순위</b>입니다.</p>
-        <div class="vr360-domain">${escapeHtml(view.target)}</div>
-        <div class="vr360-hero-actions">
-          <a class="btn primary" href="${escapeAttr(checkout)}">${escapeHtml(REPORT_LABEL)} 열기</a>
-          <a class="btn secondary" href="/checkout?plan=Expert&siteId=${escapeAttr(view.siteId)}">${escapeHtml(EXPERT_LABEL)} 보기</a>
-        </div>
-        <small>상세 리포트에서 페이지별 근거, 실제 수정 문구, 적용 위치, 재점검 기준을 확인할 수 있습니다.</small>
+  const decision = score >= 72
+    ? '상세 근거를 열어 결제 전 안내와 복구 경로부터 우선 정비하는 편이 좋습니다.'
+    : score >= 52
+      ? '상세 근거를 열어 우선순위가 높은 영역부터 수정 위치를 확인하는 편이 좋습니다.'
+      : '상세 근거를 열어 개선 효율이 높은 항목부터 선별 적용하는 편이 좋습니다.';
+  return {
+    buckets,
+    urgency,
+    score,
+    tone: vr360Tone(score),
+    riskLabel: vr360RiskLabel(score),
+    riskGrade: vr360RiskGrade(score),
+    visibleIssueCount,
+    manualReviewCount,
+    confirmedPageCount,
+    attemptedPageCount,
+    lockedItemCount,
+    reportId: `VRD-${reportSeed}`,
+    confidenceLabel,
+    generatedAt: formatDate(view.generatedAt),
+    headline,
+    decision
+  };
+}
+
+function renderVr360DocumentControl(view, model, paid = false) {
+  return `<section class="vrd-document-control" aria-label="리포트 통제 정보">
+    <div><span>REPORT ID</span><strong>${escapeHtml(model.reportId)}</strong></div>
+    <div><span>REPORT CLASS</span><strong>${paid ? 'CLIENT CONFIDENTIAL' : 'FREE PREVIEW · CONTROLLED DISCLOSURE'}</strong></div>
+    <div><span>SCOPE</span><strong>PUBLIC WEB SIGNALS</strong></div>
+    <div><span>ISSUED</span><strong>${escapeHtml(model.generatedAt)}</strong></div>
+  </section>`;
+}
+
+function renderVr360ExecutiveHero(view, model = executiveReportModel(view), paid = false) {
+  const checkout = `/checkout?plan=Report&siteId=${encodeURIComponent(view.siteId || '')}&riskScore=${encodeURIComponent(model.score)}`;
+  return `<section class="vrd-cover ${escapeAttr(model.tone)}" aria-label="VERIDION 신뢰 리스크 경영진 요약 보고서">
+    <div class="vrd-cover-bar"><span>VERIDION · DIGITAL TRUST ADVISORY</span><strong>${paid ? 'FULL REPORT · 100% OPEN' : 'FREE EXECUTIVE BRIEF · 25% OPEN'}</strong></div>
+    ${renderVr360DocumentControl(view, model, paid)}
+    <div class="vrd-cover-grid">
+      <div class="vrd-cover-copy">
+        <div class="vrd-report-meta"><span>공개 웹페이지 자동 진단</span><span>의사결정용 예비 보고서</span><span>${paid ? '상세 근거 공개' : '상세 분석 75% 잠금'}</span></div>
+        <p class="vrd-report-code">EXECUTIVE TRUST RISK BRIEF</p>
+        <h2>${escapeHtml(model.headline)}</h2>
+        <p>고객은 가격, 환불, 문의, 개인정보, 사업자 안내를 찾기 어려우면 결제 직전에 추가 확인을 시작합니다. 이 보고서는 법률 판단이나 실제 매출 손실 확정값이 아니라, <b>공개 화면에서 우선 점검해야 할 신뢰 공백의 상대 강도</b>를 정리한 의사결정 자료입니다.</p>
+        <div class="vrd-executive-callout"><span>MANAGEMENT DECISION</span><strong>${escapeHtml(model.decision)}</strong></div>
+        <div class="vrd-target"><span>분석 대상</span><strong>${escapeHtml(view.target)}</strong></div>
+        <div class="vrd-cover-actions"><a class="btn primary" href="${escapeAttr(checkout)}">${escapeHtml(REPORT_LABEL)} 열기</a><a class="btn secondary" href="/checkout?plan=Expert&siteId=${escapeAttr(view.siteId)}">${escapeHtml(EXPERT_LABEL)} 보기</a><button class="vrd-retry" type="button" id="vr360RetryBtn">다시 점검</button></div>
       </div>
-      <aside class="vr360-gauge-card" aria-label="구매 전환 위기도 ${escapeAttr(score)}점">
-        <div class="vr360-gauge ${percentClass(score)}"><div><span>구매 전환<br/>위기도</span><strong>${escapeHtml(score)}</strong><em>/100</em></div></div>
-        <div class="vr360-gauge-caption"><b>${escapeHtml(vr360RiskLabel(score))}</b><span>개선 목표 ${escapeHtml(projected)}점 이하</span></div>
-        <div class="vr360-gauge-delta"><span>현재</span><strong>${escapeHtml(score)}</strong><i aria-hidden="true">→</i><span>개선 목표</span><strong>${escapeHtml(projected)}</strong></div>
+      <aside class="vrd-score-card" aria-label="신뢰 리스크 지수 ${escapeAttr(model.score)}점">
+        <div class="vrd-score-head"><span>TRUST EXPOSURE INDEX</span><b>${escapeHtml(model.riskLabel)}</b></div>
+        <div class="vrd-score-grade">${escapeHtml(model.riskGrade)}</div>
+        <div class="vrd-score-number"><strong>${escapeHtml(model.score)}</strong><em>/100</em></div>
+        <div class="vrd-score-track"><i class="${meterWidthClass(model.score)}"></i></div>
+        <div class="vrd-score-scale"><span>낮은 위험</span><span>즉시 점검</span></div>
+        <dl class="vrd-score-facts"><div><dt>진단 신뢰도</dt><dd>${escapeHtml(model.confidenceLabel)}</dd></div><div><dt>확인 페이지</dt><dd>${escapeHtml(model.confirmedPageCount)}/${escapeHtml(model.attemptedPageCount)}</dd></div><div><dt>산정 방식</dt><dd>공개 신호 상대 비교</dd></div></dl>
       </aside>
     </div>
-    <div class="vr360-kpi-strip" aria-label="핵심 진단 지표">
-      <article><span>발견 문제</span><strong>${escapeHtml(buckets.totalIssues)}</strong><small>개</small></article>
-      <article><span>리스크 영역</span><strong>${escapeHtml(buckets.areaCount)}</strong><small>개</small></article>
-      <article><span>점검 요소</span><strong>${escapeHtml(buckets.totalElements)}</strong><small>개</small></article>
-      <article><span>직접 확인 필요</span><strong>${escapeHtml(view.scoreModel?.manualReviewCount ?? buckets.classCounts?.['검토 필요'] ?? 0)}</strong><small>개</small></article>
+    <div class="vrd-kpi-strip" aria-label="경영진 요약 핵심 지표">
+      <article><span>발견 문제</span><strong>${escapeHtml(model.buckets.totalIssues)}</strong><small>개</small></article>
+      <article><span>리스크 영역</span><strong>${escapeHtml(model.buckets.areaCount)}</strong><small>개</small></article>
+      <article><span>무료 공개</span><strong>${escapeHtml(model.visibleIssueCount)}</strong><small>개 항목</small></article>
+      <article class="locked"><span>상세 잠금</span><strong>${escapeHtml(model.lockedItemCount)}</strong><small>개 분석</small></article>
+      <article><span>직접 확인</span><strong>${escapeHtml(model.manualReviewCount)}</strong><small>개</small></article>
     </div>
   </section>`;
 }
 
-function renderVr360RiskMap(view) {
-  const buckets = countDemoBuckets(view);
-  const rows = buckets.areas.slice(0, 6);
+function renderVr360ReportIndex(view, paid = false, model = executiveReportModel(view)) {
+  const chapters = [
+    ['01', 'Executive Decision', '공개'],
+    ['02', 'Trust Exposure Map', '일부'],
+    ['03', 'Buyer Friction Path', '공개'],
+    ['04', 'Priority Register', '일부'],
+    ['05', 'Evidence Ledger', paid ? '공개' : '잠금'],
+    ['06', 'Fix Specification', paid ? '공개' : '잠금'],
+    ['07', '14-Day Roadmap', paid ? '공개' : '잠금'],
+    ['08', 'Recheck Protocol', paid ? '공개' : '잠금']
+  ];
+  return `<aside class="vrd-index" aria-label="리포트 목차">
+    <div class="vrd-index-title"><span>REPORT NAVIGATION</span><strong>${paid ? '상세 실행 리포트' : '경영진 무료 요약'}</strong><small>${paid ? '실행 가능한 전체 보고서' : '유료 리포트 전체 구성의 약 25%'}</small></div>
+    <div class="vrd-open-meter"><div><b>공개 범위</b><strong>${paid ? '100%' : '25%'}</strong></div><span><i class="${paid ? 'vr-meter-width vr-pct-100' : 'vr-meter-width vr-pct-25'}"></i></span></div>
+    <nav aria-label="리포트 섹션">${chapters.map(([no, title, status], index) => `<a href="#${['vrdDecision','vrdRiskMap','vrdJourney','vrdPriority','vrdEvidence','vrdFixPlan','vrdRoadmap','vrdProtocol'][index]}"><b>${escapeHtml(no)}</b><span>${escapeHtml(title)}</span><em class="${status === '잠금' ? 'lock' : ''}">${escapeHtml(status)}</em></a>`).join('')}</nav>
+    <div class="vrd-index-lock"><span>CONTROLLED DISCLOSURE</span><strong>${escapeHtml(model.lockedItemCount)}개 상세 분석 잠금</strong><p>근거 URL, 정확한 위치, 수정 전후 문구, 실행 순서, 재점검 기준이 잠겨 있습니다.</p></div>
+    <a class="btn primary" href="/checkout?plan=Report&siteId=${escapeAttr(view.siteId)}">상세 실행 리포트 열기</a>
+  </aside>`;
+}
+
+function renderVr360ExecutiveBrief(view, model = executiveReportModel(view)) {
+  const issueLead = model.buckets.totalIssues > 0 ? `${model.buckets.totalIssues}개 문제 후보가 ${model.buckets.areaCount}개 영역에 걸쳐 있습니다.` : '공개 화면에서 즉시 확인되는 중대 문제 후보는 제한적입니다.';
+  return `<section class="vrd-card vrd-decision" id="vrdDecision" aria-label="경영진 판단 요약">
+    <header class="vrd-section-head"><div><span>01 · EXECUTIVE DECISION</span><h3>지금 경영진이 알아야 할 세 가지</h3><p>무료 화면은 의사결정에 필요한 방향만 공개하고 실행 명세는 잠급니다.</p></div><em>BOARD BRIEF</em></header>
+    <div class="vrd-decision-grid">
+      <article><b>01</b><span>WHY IT MATTERS</span><strong>${escapeHtml(issueLead)}</strong><p>신뢰 정보 탐색이 길어지면 고객은 구매보다 추가 확인을 선택할 수 있습니다.</p></article>
+      <article><b>02</b><span>WHAT IS VERIFIED</span><strong>공개 페이지 ${escapeHtml(model.confirmedPageCount)}개를 우선 확인했습니다.</strong><p>로그인 이후 화면과 외부 결제창은 자동 확정하지 않고 직접 확인 대상으로 분리합니다.</p></article>
+      <article class="locked"><b>03</b><span>WHAT TO DO NEXT</span><strong>정확한 수정 위치와 문구는 잠겨 있습니다.</strong><p>상세 리포트에서 적용 순서, 수정 전후 문구, 재점검 기준을 확인합니다.</p></article>
+    </div>
+  </section>`;
+}
+
+function renderVr360RiskMap(view, model = executiveReportModel(view)) {
+  const rows = model.buckets.areas.slice(0, 6);
   const maxIssue = Math.max(1, ...rows.map(row => Number(row.issueCount || 0)));
   const maxElement = Math.max(1, ...rows.map(row => Number(row.elementCount || 0)));
-  return `<article class="vr360-card vr360-risk-map">
-    <div class="vr360-card-head"><div><span class="vr360-mini-label danger">RISK HEATMAP</span><h3>구매를 막는 영역별 신뢰 공백</h3><p>빨간 막대는 문제 우선도, 금색 막대는 관련 요소 범위입니다.</p></div><small>상대 비교 기준</small></div>
-    <div class="vr360-bar-list">${rows.map((row, index) => `<div class="vr360-bar-row">
-      <div class="vr360-bar-label"><span>${escapeHtml(String(index + 1).padStart(2, '0'))}</span><b>${escapeHtml(row.area)}</b></div>
-      <div class="vr360-bar-track"><i class="${meterWidthClass(clampDashboardWidth(row.issueCount, maxIssue))}"></i><em class="${meterWidthClass(clampDashboardWidth(row.elementCount, maxElement))}"></em></div>
-      <div class="vr360-bar-count"><strong>${escapeHtml(row.issueCount)}</strong><small>문제</small></div>
-    </div>`).join('') || '<p class="muted">영역별 문제를 정리하고 있습니다.</p>'}</div>
-    <div class="vr360-legend"><span><i class="risk"></i>문제 우선도</span><span><i class="scope"></i>관련 요소 범위</span></div>
+  const visibleRows = rows.slice(0, 2);
+  const hiddenCount = Math.max(0, rows.length - visibleRows.length, model.buckets.areaCount - visibleRows.length);
+  return `<article class="vrd-card vrd-risk-card" id="vrdRiskMap">
+    <header class="vrd-section-head"><div><span>02 · TRUST EXPOSURE MAP</span><h3>구매 검토를 늦출 수 있는 신뢰 공백</h3><p>영역별 문제 신호와 관련 요소 범위를 상대 비교합니다.</p></div><em>PARTIAL OPEN</em></header>
+    <div class="vrd-heatmap">${visibleRows.map((row, index) => `<div class="vrd-heat-row">
+      <div class="vrd-heat-label"><b>${escapeHtml(String(index + 1).padStart(2, '0'))}</b><span>${escapeHtml(row.area)}</span></div>
+      <div class="vrd-heat-track"><i class="${meterWidthClass(clampDashboardWidth(row.issueCount, maxIssue))}"></i><em class="${meterWidthClass(clampDashboardWidth(row.elementCount, maxElement))}"></em></div>
+      <div class="vrd-heat-count"><strong>${escapeHtml(row.issueCount)}</strong><small>신호</small></div>
+    </div>`).join('') || '<p class="muted">영역별 위험 신호를 정리하고 있습니다.</p>'}
+    ${hiddenCount > 0 ? `<div class="vrd-heat-locked"><span>LOCKED EXPOSURE AREAS</span><strong>추가 위험 영역 ${escapeHtml(hiddenCount)}개</strong><p>영역별 근거 URL, 페이지 위치, 관련 요소는 상세 리포트에서 공개됩니다.</p></div>` : ''}</div>
+    <footer class="vrd-card-foot"><span><i class="risk"></i>문제 신호</span><span><i class="scope"></i>관련 요소 범위</span><small>공개 페이지 기준 상대 비교</small></footer>
   </article>`;
 }
 
-function renderVr360Journey(view) {
-  const buckets = countDemoBuckets(view);
-  const model = conversionUrgencyFor(view);
-  const score = normalizePercent(model.crisisScore, normalizePercent(view.riskScore, 0));
+function renderVr360Journey(view, model = executiveReportModel(view)) {
   const stages = [
-    ['01', '사이트 방문', '첫인상과 신뢰 확인', '관심 형성'],
+    ['01', '첫 방문', '사업자와 브랜드 신뢰 신호 확인', '초기 판단'],
     ['02', '상품 검토', '가격·혜택·제공 범위 비교', '구매 이유 검토'],
-    ['03', '결제 직전', '환불·문의·개인정보 확인', `${buckets.totalIssues}개 공백 영향 가능`],
-    ['04', '구매 결정', '불안이 남으면 이탈 또는 문의', score >= 52 ? '주의 필요' : '추가 개선 권장']
+    ['03', '결제 직전', '환불·문의·개인정보 안내 재확인', `${model.buckets.totalIssues}개 공백 영향 가능`],
+    ['04', '결정 또는 이탈', '불안이 남으면 문의·보류·이탈', model.score >= 52 ? '우선 점검' : '개선 권장']
   ];
-  return `<article class="vr360-card vr360-journey-card">
-    <div class="vr360-card-head"><div><span class="vr360-mini-label">CUSTOMER JOURNEY</span><h3>고객은 결제 직전에 가장 많이 망설입니다</h3><p>실제 이탈률 측정값이 아니라, 공개 화면에서 확인된 신뢰 공백의 영향 지점을 시각화했습니다.</p></div></div>
-    <div class="vr360-journey">${stages.map(([step,title,desc,state], index) => `<div class="vr360-journey-step step-${index + 1}"><span>${escapeHtml(step)}</span><div><b>${escapeHtml(title)}</b><small>${escapeHtml(desc)}</small></div><em>${escapeHtml(state)}</em></div>`).join('')}</div>
+  return `<article class="vrd-card vrd-journey-card" id="vrdJourney">
+    <header class="vrd-section-head"><div><span>03 · BUYER FRICTION PATH</span><h3>고객의 망설임은 결제 직전에 커집니다</h3><p>실제 이탈률 측정값이 아니라, 확인된 신뢰 공백이 영향을 줄 수 있는 지점을 표시합니다.</p></div></header>
+    <div class="vrd-journey">${stages.map(([step,title,desc,state], index) => `<div class="vrd-journey-step step-${index + 1}"><b>${escapeHtml(step)}</b><div><strong>${escapeHtml(title)}</strong><small>${escapeHtml(desc)}</small></div><em>${escapeHtml(state)}</em></div>`).join('')}</div>
   </article>`;
 }
 
-function renderVr360PriorityIssues(view) {
-  const rows = (view.risks || []).slice(0, 3);
-  return `<section class="vr360-card vr360-priority-section" aria-label="우선 해결 위험 항목">
-    <div class="vr360-card-head"><div><span class="vr360-mini-label danger">TOP PRIORITY</span><h3>지금 먼저 해결해야 할 3가지</h3><p>무료 화면에서는 문제의 방향을 보여주고, 결제 후 리포트에서 실제 수정 문구와 적용 위치를 제공합니다.</p></div></div>
-    <div class="vr360-priority-grid">${rows.map((item, index) => `<article>
-      <div class="vr360-issue-top"><span class="vr360-rank">0${escapeHtml(index + 1)}</span><b class="vr360-priority-pill ${escapeAttr(priorityTone(item.priority))}">${escapeHtml(item.priority || (index === 0 ? 'P0' : 'P1'))}</b></div>
-      <h4>${escapeHtml(item.title)}</h4>
-      <p>${escapeHtml(item.impact || item.limitation || '고객이 필요한 안내를 바로 확인하기 어려울 수 있습니다.')}</p>
-      <div class="vr360-issue-meta"><span>${escapeHtml(item.area || item.category || '점검 영역')}</span><small>${escapeHtml(item.action || '상세 리포트에서 개선 위치 확인')}</small></div>
-      <a href="/checkout?plan=Report&siteId=${escapeAttr(view.siteId)}">수정 위치 확인 <i aria-hidden="true">→</i></a>
-    </article>`).join('') || '<p class="muted">우선 해결 항목을 정리하고 있습니다.</p>'}</div>
+function renderVr360ControlSnapshot(view, model = executiveReportModel(view)) {
+  const controls = [
+    ['신뢰 정보 발견성', '고객이 필요한 안내를 빠르게 찾을 수 있는가', model.buckets.totalIssues > 0 ? 'GAP SIGNAL' : 'BASELINE'],
+    ['구매 전 고지 일관성', '가격·환불·제공 범위가 연결돼 있는가', model.score >= 52 ? 'REVIEW' : 'WATCH'],
+    ['문의·복구 경로', '문제가 생겼을 때 다음 행동이 선명한가', model.manualReviewCount > 0 ? 'VERIFY' : 'WATCH'],
+    ['개인정보 안내 연결성', '수집·이용 안내가 구매 흐름에서 확인되는가', 'DETAIL LOCKED']
+  ];
+  return `<section class="vrd-card vrd-control-snapshot" aria-label="신뢰 통제 스냅샷">
+    <header class="vrd-section-head"><div><span>CONTROL SNAPSHOT</span><h3>무료 요약에서 확인되는 통제 상태</h3><p>판단 방향은 공개하지만 페이지별 판정 근거는 잠급니다.</p></div><em>4 CONTROLS</em></header>
+    <div class="vrd-control-grid">${controls.map(([title, desc, state], index) => `<article class="${index === 3 ? 'locked' : ''}"><b>${escapeHtml(String(index + 1).padStart(2, '0'))}</b><div><strong>${escapeHtml(title)}</strong><p>${escapeHtml(desc)}</p></div><em>${escapeHtml(state)}</em></article>`).join('')}</div>
   </section>`;
 }
 
-function renderVr360Unlock(view) {
-  const locked = Math.max(7, Number(view.lockedCount || 0));
-  return `<section class="vr360-unlock" aria-label="유료 리포트 잠금 해제 안내">
-    <div class="vr360-unlock-copy"><span class="vr360-mini-label gold">PAID REPORT PREVIEW</span><h3>문제는 확인했습니다. 이제 실제로 고칠 문장과 위치를 여세요.</h3><p>기본 리포트는 무료 요약에서 보이지 않는 상세 근거와 실행 단위를 제공합니다. 팀이 바로 적용할 수 있도록 수정 전후 문구와 페이지별 위치까지 정리합니다.</p><div class="vr360-benefits"><span>페이지별 근거</span><span>수정 전후 문구</span><span>적용 위치</span><span>우선순위 로드맵</span><span>재점검 기준</span></div></div>
-    <div class="vr360-lock-sheet" aria-hidden="true"><div><b>01. 결제 전 안내 보완</b><span></span><span></span></div><div><b>02. 환불 기준 문구 수정</b><span></span><span></span></div><div><b>03. 정책 링크 위치 조정</b><span></span><span></span></div><em>상세 해결안 ${escapeHtml(locked)}개 잠금</em></div>
-    <div class="vr360-unlock-actions"><a class="btn primary" href="/checkout?plan=Report&siteId=${escapeAttr(view.siteId)}">${escapeHtml(REPORT_LABEL)} 열기</a><a class="btn secondary" href="/checkout?plan=Expert&siteId=${escapeAttr(view.siteId)}">${escapeHtml(EXPERT_LABEL)} 보기</a><small>필요한 결과물만 선택할 수 있습니다.</small></div>
-  </section>`;
-}
-
-function renderVr360TechnicalDetails(view, scan) {
-  return `<details class="vr360-details">
-    <summary><div><span class="vr360-mini-label">EVIDENCE DETAILS</span><b>기술 근거·확인 URL·세부 항목 펼쳐보기</b><small>핵심 판단과 구매 선택에 필요한 정보는 위에서 먼저 확인할 수 있습니다.</small></div><i aria-hidden="true">+</i></summary>
-    <div class="vr360-detail-stack">
-      ${renderResultMetaSummary(view, scan)}
-      ${renderDiscoverySummary(view)}
-      ${renderEvidenceMatrix(view)}
-      ${renderEvidenceFindings(view)}
-      ${renderVerifiedPages(view)}
-      ${renderAutomationDisclosure(view)}
-      ${renderExternalToolPlan(view)}
+function renderVr360PriorityIssues(view, model = executiveReportModel(view)) {
+  const rows = (view.risks || []).slice(0, 4);
+  const visible = rows.slice(0, 2);
+  const hidden = Math.max(1, rows.length - visible.length, model.buckets.totalIssues - visible.length);
+  return `<section class="vrd-card vrd-priority" id="vrdPriority" aria-label="무료 공개 우선 조치 원장">
+    <header class="vrd-section-head"><div><span>04 · PRIORITY REGISTER</span><h3>먼저 해결해야 할 조치 후보</h3><p>무료 화면은 문제 방향과 영향 가능성만 공개합니다. 정확한 위치, 근거 URL, 수정 전후 문구는 잠급니다.</p></div><em>TOP ACTIONS</em></header>
+    <div class="vrd-priority-table-head"><span>RANK</span><span>ISSUE DIRECTION</span><span>DISCLOSURE</span></div>
+    <div class="vrd-priority-list">${visible.map((item, index) => `<article>
+      <div class="vrd-priority-rank"><b>${escapeHtml(String(index + 1).padStart(2, '0'))}</b><span>${escapeHtml(item.priority || (index === 0 ? 'P1' : 'P2'))}</span></div>
+      <div><h4>${escapeHtml(item.title)}</h4><p>${escapeHtml(item.impact || item.limitation || '고객이 필요한 안내를 바로 확인하기 어려울 수 있습니다.')}</p><small>${escapeHtml(item.area || item.category || '신뢰 안내 영역')} · 근거 확인됨 · 수정 위치 잠금</small></div>
+      <a href="/checkout?plan=Report&siteId=${escapeAttr(view.siteId)}">상세 열기 <i aria-hidden="true">→</i></a>
+    </article>`).join('') || '<p class="muted">우선 조치 후보를 정리하고 있습니다.</p>'}
+      <article class="vrd-priority-locked"><div class="vrd-priority-rank"><b>+</b><span>LOCKED</span></div><div><h4>추가 조치 후보 ${escapeHtml(hidden)}개</h4><p>근거 URL, 페이지 내 정확한 위치, 수정 문구 초안과 적용 순서는 상세 리포트에서 공개됩니다.</p><small>실행 명세 잠금</small></div><a href="/checkout?plan=Report&siteId=${escapeAttr(view.siteId)}">잠금 해제 <i aria-hidden="true">→</i></a></article>
     </div>
-  </details>`;
+  </section>`;
 }
 
-function renderVr360StickyCta(view) {
-  return `<aside class="vr360-sticky" aria-label="기본 리포트 구매 안내"><div><span aria-hidden="true"></span><b>신뢰 공백이 발견됐습니다.</b><small>실제 수정 위치와 문구를 열어 바로 보완하세요.</small></div><a class="btn primary" href="/checkout?plan=Report&siteId=${escapeAttr(view.siteId)}">${escapeHtml(REPORT_LABEL)} 열기</a></aside>`;
+function renderVr360DecisionMemo(view, model = executiveReportModel(view)) {
+  return `<section class="vrd-decision-memo" aria-label="결정 메모">
+    <div><span>DECISION MEMO</span><h3>무료 요약으로 방향을 확인하고, 상세 리포트로 실행 단위를 여세요.</h3><p>지금 필요한 것은 막연한 문제 목록이 아니라 무엇을, 어느 페이지에서, 어떤 문장으로, 어떤 순서로 고칠지 결정할 수 있는 실행 명세입니다.</p></div>
+    <dl><div><dt>무료 공개</dt><dd>위험 방향 · 상대 강도 · 우선 조치 일부</dd></div><div><dt>상세 공개</dt><dd>근거 URL · 정확한 위치 · 수정 전후 문구 · 14일 로드맵</dd></div><div><dt>전문가 플랜</dt><dd>검토 노트 · 적용 지원 · 재점검 기준</dd></div></dl>
+  </section>`;
+}
+
+function renderVr360Unlock(view, model = executiveReportModel(view)) {
+  const outline = [
+    ['05', 'Evidence Ledger', '페이지별 근거 URL과 확인 상태'],
+    ['06', 'Fix Specification', '정확한 위치와 수정 전후 문구'],
+    ['07', '14-Day Roadmap', '영향도·난이도 기반 적용 순서'],
+    ['08', 'Recheck Protocol', '적용 후 재점검 체크리스트'],
+    ['09', 'Executive Appendix', '판단 한계와 직접 확인 항목'],
+    ['10', 'Expert Review Notes', '전문가 플랜 전용 검토 노트']
+  ];
+  return `<section class="vrd-premium" id="vrdEvidence" aria-label="유료 리포트 잠금 미리보기">
+    <div class="vrd-premium-copy"><span>CONTROLLED DISCLOSURE · 75% LOCKED</span><h3>문제의 방향은 확인했습니다.<br/>이제 실행 가능한 근거 원장을 여세요.</h3><p>상세 리포트는 단순 문제 목록이 아닙니다. 페이지별 근거, 정확한 수정 위치, 수정 전후 문구, 적용 순서, 재점검 기준을 하나의 실행 문서로 묶습니다.</p><div class="vrd-premium-benefits"><b>Evidence Ledger</b><b>Fix Specification</b><b>14-Day Roadmap</b><b>Recheck Protocol</b><b>Executive Appendix</b></div><small>잠금된 상세 분석 ${escapeHtml(model.lockedItemCount)}개 · 필요한 산출물만 선택할 수 있습니다.</small></div>
+    <div class="vrd-premium-sheet" aria-label="상세 리포트 목차 미리보기">${outline.map(([no,title,desc]) => `<div class="locked"><b>${escapeHtml(no)}</b><span>${escapeHtml(title)}</span><em>${escapeHtml(desc)}</em></div>`).join('')}</div>
+    <div class="vrd-premium-actions"><a class="btn primary" href="/checkout?plan=Report&siteId=${escapeAttr(view.siteId)}">${escapeHtml(REPORT_LABEL)} 열기</a><a class="btn secondary" href="/checkout?plan=Expert&siteId=${escapeAttr(view.siteId)}">${escapeHtml(EXPERT_LABEL)} 보기</a><small>결과를 검토한 뒤 필요한 플랜만 선택하세요.</small></div>
+  </section>`;
+}
+
+function renderPaidExecutiveReport(scan, model) {
+  const view = normalizeScan(scan);
+  const details = detailRows(scan).map(normalizeRiskItem).slice(0, 10);
+  const actions = (view.recommendedActions || []).slice(0, 8);
+  return `<section class="vrd-paid-report" id="vrdEvidence" aria-label="상세 실행 리포트">
+    <header class="vrd-section-head"><div><span>05 · EVIDENCE LEDGER & FIX SPECIFICATION</span><h3>페이지별 근거와 실행 명세</h3><p>유료 리포트에서 확인 가능한 상세 근거와 우선 조치입니다.</p></div><em>100% OPEN</em></header>
+    <div class="vrd-paid-grid"><article><h4>Evidence Ledger</h4>${details.map((item, index) => `<section class="vrd-paid-row"><b>${escapeHtml(String(index + 1).padStart(2, '0'))}</b><div><strong>${escapeHtml(item.title)}</strong><p>${escapeHtml(item.evidence || item.impact || '공개 페이지 기준 확인 항목입니다.')}</p><small>${escapeHtml(item.action || '적용 위치를 확인하고 우선순위에 따라 수정하세요.')}</small></div><em>${escapeHtml(item.priority || 'P2')}</em></section>`).join('') || '<p class="muted">상세 근거를 정리하고 있습니다.</p>'}</article><aside id="vrdRoadmap"><h4>14-Day Roadmap</h4>${actions.map((item, index) => `<div class="vrd-roadmap-row"><b>DAY ${escapeHtml(String(index + 1).padStart(2, '0'))}</b><div><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.nextStep || item.reason || '우선순위에 따라 적용하세요.')}</small></div></div>`).join('') || '<p class="muted">실행 순서를 정리하고 있습니다.</p>'}<div class="vrd-paid-note" id="vrdProtocol">적용 후 재점검 체크리스트와 전문가 검토 노트는 고객 포털에서 확인할 수 있습니다.</div></aside></div>
+  </section>`;
+}
+
+function renderPaidCleanResult(scan, model) {
+  return renderPaidExecutiveReport(scan, model || executiveReportModel(normalizeScan(scan)));
+}
+
+function renderVr360TechnicalDetails(view, scan, paid = false, model = executiveReportModel(view)) {
+  if (paid) return `<details class="vrd-details" id="vrdProtocol"><summary><div><span>APPENDIX · METHODOLOGY</span><b>기술 근거·확인 URL·진단 한계 펼쳐보기</b><small>결제된 상세 리포트의 근거 자료를 확인합니다.</small></div><i aria-hidden="true">+</i></summary><div class="vrd-detail-stack">${renderResultMetaSummary(view, scan)}${renderDiscoverySummary(view)}${renderEvidenceMatrix(view)}${renderEvidenceFindings(view)}${renderVerifiedPages(view)}${renderAutomationDisclosure(view)}${renderExternalToolPlan(view)}</div></details>`;
+  return `<details class="vrd-details" id="vrdProtocol"><summary><div><span>APPENDIX · METHODOLOGY & LIMITS</span><b>무료 진단의 확인 범위와 판단 한계</b><small>무료 화면은 전체 리포트의 약 25%만 공개합니다.</small></div><i aria-hidden="true">+</i></summary><div class="vrd-free-method"><article><span>확인 범위</span><strong>${escapeHtml(model.confirmedPageCount)}/${escapeHtml(model.attemptedPageCount)}개 공개 페이지</strong><p>공개 접근 가능한 URL과 기본 안내 신호를 우선 확인했습니다.</p></article><article><span>자동 확정 제외</span><strong>로그인·외부 결제·업종별 판단</strong><p>공개 화면만으로 단정하기 어려운 영역은 직접 확인 대상으로 분리합니다.</p></article><article class="locked"><span>상세 근거 원장</span><strong>75% CONTROLLED DISCLOSURE</strong><p>근거 URL, 페이지별 위치, 수정 문구, 실행 순서, 재점검 기준은 상세 리포트에서 공개됩니다.</p></article></div></details>`;
+}
+
+function renderVr360StickyCta(view, model = executiveReportModel(view)) {
+  return `<aside class="vrd-sticky" aria-label="상세 실행 리포트 구매 안내"><div><span aria-hidden="true"></span><b>무료 공개 25% · 상세 분석 ${escapeHtml(model.lockedItemCount)}개 잠금</b><small>근거 URL, 정확한 수정 위치, 적용 문구, 14일 로드맵을 여세요.</small></div><a class="btn primary" href="/checkout?plan=Report&siteId=${escapeAttr(view.siteId)}">상세 실행 리포트 열기</a></aside>`;
 }
 
 function renderVr360Result(view, scan) {
   const paid = hasPaidAccess(scan);
-  return `<div class="vr360-report-shell">
+  const model = executiveReportModel(view);
+  return `<div class="vrd-report-shell">
     ${renderResultToolbar(view, scan)}
-    ${renderVr360ExecutiveHero(view)}
-    <section class="vr360-dashboard-grid" aria-label="진단 인포그래픽">${renderVr360RiskMap(view)}${renderVr360Journey(view)}</section>
-    ${renderVr360PriorityIssues(view)}
-    ${paid ? renderPaidCleanResult(scan) : renderVr360Unlock(view)}
-    ${renderVr360TechnicalDetails(view, scan)}
-    ${paid ? '' : renderVr360StickyCta(view)}
+    ${renderVr360ExecutiveHero(view, model, paid)}
+    <div class="vrd-report-layout" id="vrdOverview">
+      ${renderVr360ReportIndex(view, paid, model)}
+      <main class="vrd-report-main">
+        ${renderVr360ExecutiveBrief(view, model)}
+        <section class="vrd-dashboard-grid" aria-label="진단 인포그래픽">${renderVr360RiskMap(view, model)}${renderVr360Journey(view, model)}</section>
+        ${renderVr360ControlSnapshot(view, model)}
+        ${renderVr360PriorityIssues(view, model)}
+        ${renderVr360DecisionMemo(view, model)}
+        ${paid ? renderPaidCleanResult(scan, model) : renderVr360Unlock(view, model)}
+        ${renderVr360TechnicalDetails(view, scan, paid, model)}
+      </main>
+    </div>
+    ${paid ? '' : renderVr360StickyCta(view, model)}
   </div>`;
 }
+
 
 function renderResult(scan) {
   const view = normalizeScan(scan);

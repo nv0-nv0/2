@@ -269,7 +269,7 @@ export function runGrowthAudit({ files = [], packageJson = {}, sourceText = '' }
   const failures = [];
   for (const file of requiredFiles) if (!files.includes(file)) failures.push(`missing-file:${file}`);
   for (const route of requiredRoutes) if (!sourceText.includes(route)) failures.push(`missing-route:${route}`);
-  if (String(packageJson.version || '') !== '2.1.0-clean-commercial-baseline') failures.push('package-version-not-clean-baseline');
+  if (String(packageJson.version || '') !== '2.3.0-executive-trust-report-system') failures.push('package-version-not-clean-baseline');
   if (backlog.length !== 100) failures.push('backlog-count-not-100');
   const score = Math.max(0, 100 - failures.length * 10);
   return { ok: failures.length === 0, score, version: TRUSTOPS_GROWTH_VERSION, backlogCount: backlog.length, routeCount: requiredRoutes.length, requiredRoutes, failures };

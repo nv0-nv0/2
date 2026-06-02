@@ -1,4 +1,4 @@
-# VERIDION 2.1 Clean Commercial Baseline
+# VERIDION 2.3 Executive Trust Report System
 
 온라인 사업자의 공개 웹페이지를 진단하고, 신뢰·고지·전환 위험을 우선순위화하는 상용 서비스 패키지입니다.
 
@@ -41,6 +41,13 @@ npm run deploy:precheck
 - `tests/`: 기능·보안·회귀 테스트
 - `docs/`: 현재 기준선 문서
 - `runtime/data/db.seed.json`: 배송용 초기 seed
+
+
+## Executive Trust Report System
+
+무료 진단 결과는 경영진 판단용 신뢰 리스크 요약 보고서로 렌더링합니다. 무료 공개 범위는 약 25%이며, 상세 리포트에서는 근거 URL, 정확한 수정 위치, 수정 전후 문구, 14일 실행 로드맵, 재점검 기준을 제공합니다.
+
+보고서 전역 품질은 `npm run test:report-excellence`로 검증하며 100점 미만이면 릴리즈를 차단합니다. 상세 구조는 `docs/REPORT_SYSTEM.md`를 확인하세요.
 
 ## 배포 원칙
 

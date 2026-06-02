@@ -13,7 +13,7 @@ const rel = abs => path.relative(root, abs).replaceAll('\\', '/');
 const files = walk(root).map(rel).filter(file => !file.startsWith('.git/'));
 const pkg = JSON.parse(read('package.json'));
 
-add('package-version-clean-baseline', () => assert.equal(pkg.version, '2.1.0-clean-commercial-baseline'));
+add('package-version-clean-baseline', () => assert.equal(pkg.version, '2.3.0-executive-trust-report-system'));
 add('single-terminal-release-gate', () => {
   assert.equal(pkg.scripts['verify:release'], 'node scripts/run-release-gate.mjs');
   assert.equal(pkg.scripts['release:predeploy'], 'npm run verify:release');

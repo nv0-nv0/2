@@ -25,7 +25,7 @@ const requiredFiles = [
 for (const file of requiredFiles) add(`exists:${file}`, exists(file));
 
 const pkg = JSON.parse(read('package.json'));
-add('package:clean-baseline-version', pkg.version === '2.1.0-clean-commercial-baseline');
+add('package:clean-baseline-version', pkg.version === '2.3.0-executive-trust-report-system');
 
 const appHtmlFiles = [];
 for (const area of ['apps/public', 'apps/admin']) {

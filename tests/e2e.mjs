@@ -15,7 +15,7 @@ const checkoutJs = read('apps/public/checkout/app.js');
 const boardJs = read('apps/public/board/app.js');
 const allRoutes = [server, publicRoutes, paymentRoutes, accountRoutes, adminRoutes].join('\n');
 
-assert.equal(pkg.version, '2.1.0-clean-commercial-baseline');
+assert.equal(pkg.version, '2.3.0-executive-trust-report-system');
 for (const script of ['test:e2e','verify:release','check:clean-baseline','check:responsive-contract','test:routes','check:links','verify:security']) {
   assert.ok(pkg.scripts[script], `missing script ${script}`);
 }

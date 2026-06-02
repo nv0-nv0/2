@@ -249,7 +249,7 @@ export function runFinalCompletionAudit({ files = [], packageJson = {}, sourceTe
   ];
   const checks = [
     { key: 'requiredFiles', weight: 12, pass: requiredFiles.every(file => normalizedFiles.includes(file)), message: '현재 인수인계 핵심 파일 존재' },
-    { key: 'packagePhase', weight: 10, pass: String(packageJson.version || '') === '2.1.0-clean-commercial-baseline', message: 'clean baseline package version' },
+    { key: 'packagePhase', weight: 10, pass: String(packageJson.version || '') === '2.3.0-executive-trust-report-system', message: 'clean baseline package version' },
     { key: 'scripts', weight: 12, pass: scripts['verify:release'] === 'node scripts/run-release-gate.mjs' && scripts['release:predeploy'] === 'npm run verify:release' && Boolean(scripts['test:trustops']), message: '인수인계 단일 릴리즈 게이트 연결' },
     { key: 'routes', weight: 12, pass: sourceText.includes('/api/public/trustops-final-handoff') && sourceText.includes('/api/admin/trustops-final-handoff'), message: '공개·관리자 final handoff API 존재' },
     { key: 'portal', weight: 8, pass: sourceText.includes('/api/public/trustops-final-handoff') && sourceText.includes('/api/admin/trustops-final-handoff'), message: '공개·관리자 final handoff 경로' },

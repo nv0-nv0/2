@@ -1,6 +1,6 @@
 {
   "name": "veridion-public-risk-diagnostic",
-  "version": "2.1.0-clean-commercial-baseline",
+  "version": "2.3.0-executive-trust-report-system",
   "private": true,
   "type": "module",
   "description": "VERIDION clean commercial baseline for public trust, disclosure and conversion-risk diagnosis",
@@ -54,7 +54,6 @@
     "start:local": "node scripts/start-local-server.mjs",
     "stress:smoke": "node scripts/stress-smoke.mjs",
     "test": "node scripts/test-all.mjs",
-    "test:all": "npm test",
     "test:commerce": "node tests/portone-provider.mjs && node tests/provider-adapters.mjs && node tests/portone-events.mjs",
     "test:diagnosis-result-ui": "node tests/diagnosis-result-ui-contract.mjs",
     "test:e2e": "node tests/e2e.mjs",
@@ -74,6 +73,7 @@
     "verify:quick": "npm run check:syntax && npm test && npm run test:e2e && npm run smoke",
     "verify:release": "node scripts/run-release-gate.mjs",
     "verify:security": "node scripts/verify-security.mjs",
-    "check:reference-integrity": "node scripts/check-reference-integrity.mjs"
+    "check:reference-integrity": "node scripts/check-reference-integrity.mjs",
+    "test:report-excellence": "node tests/report-excellence-scorecard.mjs"
   }
 }

@@ -175,7 +175,7 @@ export function buildUnifiedOrganismAudit(input = {}) {
   add('optimizer:exists', optimizer.includes('__NV0_RUNTIME_OPTIMIZER__') && optimizer.includes('sendBeacon'));
   add('server:organism-status-route', serverRoutes.includes('/api/public/organism-status') && serverRoutes.includes('buildUnifiedOrganismStatus'));
   add('server:client-metric-route', serverRoutes.includes('/api/public/client-metric') && serverRoutes.includes('normalizeClientMetric'));
-  add('package:clean-baseline-version', String(packageJson.version || '') === '2.1.0-clean-commercial-baseline');
+  add('package:clean-baseline-version', String(packageJson.version || '') === '2.3.0-executive-trust-report-system');
   add('package:release-gate', packageJson.scripts?.['verify:release'] === 'node scripts/run-release-gate.mjs');
   add('package:delivery-final-updated', packageJson.scripts?.['delivery:final'] === 'npm run verify:release');
 

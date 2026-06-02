@@ -21,7 +21,7 @@
 
 ## Semantic migration
 
-현재 릴리즈 판정은 `2.1.0-clean-commercial-baseline`과 단일 릴리즈 게이트를 기준으로 수행합니다. API 또는 내부 키 변경 사항은 `docs/COMPATIBILITY.md`에 정리했습니다.
+현재 릴리즈 판정은 `2.3.0-executive-trust-report-system`과 단일 릴리즈 게이트를 기준으로 수행합니다. API 또는 내부 키 변경 사항은 `docs/COMPATIBILITY.md`에 정리했습니다.
 
 ## Rollback
 

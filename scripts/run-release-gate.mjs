@@ -15,6 +15,7 @@ const steps = [
   ['test:routes', 'npm', ['run','test:routes']],
   ['smoke', 'npm', ['run','smoke']],
   ['test:diagnosis-result-ui', 'npm', ['run','test:diagnosis-result-ui']],
+  ['test:report-excellence', 'npm', ['run','test:report-excellence']],
   ['test:global-qa-accessibility', 'npm', ['run','test:global-qa-accessibility']],
   ['test:public-target-ssrf', 'npm', ['run','test:public-target-ssrf']],
   ['clean:runtime-before-isolation', 'npm', ['run','clean:runtime']],
@@ -54,7 +55,7 @@ for (const [name, cmd, args] of steps) {
   if (!ok) break;
 }
 const failures = results.filter(item => !item.ok);
-const report = { ok: failures.length === 0 && results.length === steps.length, gate: 'veridion-2.1-clean-commercial-baseline', startedAt, finishedAt: new Date().toISOString(), passed: results.filter(item => item.ok).length, attempted: results.length, total: steps.length, failed: failures.length, results };
+const report = { ok: failures.length === 0 && results.length === steps.length, gate: 'veridion-2.3-executive-trust-report-system', startedAt, finishedAt: new Date().toISOString(), passed: results.filter(item => item.ok).length, attempted: results.length, total: steps.length, failed: failures.length, results };
 fs.mkdirSync(path.join(root, 'docs/current'), { recursive: true });
 fs.writeFileSync(path.join(root, 'docs/current/RELEASE_GATE_REPORT.json'), JSON.stringify(report, null, 2) + '\n');
 console.log(JSON.stringify({ ok: report.ok, gate: report.gate, passed: report.passed, attempted: report.attempted, total: report.total, failed: report.failed, report: 'docs/current/RELEASE_GATE_REPORT.json' }, null, 2));
