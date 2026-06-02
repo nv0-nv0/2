@@ -47,8 +47,8 @@ add('canonical-js:owns-recent-history-and-toolbar', () => {
 });
 
 const failures = checks.filter(item => !item.ok);
-const report = { ok: failures.length === 0, phase: 'phase348-diagnosis-engine-single-source', checked: checks.length, failed: failures.length, failures };
+const report = { ok: failures.length === 0, phase: 'diagnosis-engine-single-source', checked: checks.length, failed: failures.length, failures };
 fs.mkdirSync(path.join(root, 'docs/current'), { recursive: true });
-fs.writeFileSync(path.join(root, 'docs/current/PHASE348_DIAGNOSIS_ENGINE_SINGLE_SOURCE_CONTRACT.json'), JSON.stringify(report, null, 2));
+fs.writeFileSync(path.join(root, 'docs/current/DIAGNOSIS_ENGINE_SINGLE_SOURCE_CONTRACT.json'), JSON.stringify(report, null, 2));
 console.log(JSON.stringify(report, null, 2));
 if (failures.length) process.exit(1);

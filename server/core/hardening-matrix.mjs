@@ -1,6 +1,6 @@
 export function buildOpenApiSpec(ctx = {}) {
   const baseUrl = ctx.baseUrl || 'https://nv0.kr';
-  const releasePhase = ctx.releasePhase || 'phase164-zero-cost-hardening-50';
+  const releasePhase = ctx.releasePhase || 'runtime-hardening-v1';
   return {
     openapi: '3.1.0',
     info: {
@@ -50,18 +50,18 @@ export function buildHardeningMatrix(ctx = {}) {
     ['Infra', 'multi_region_dr', 'operator_required', 'Remote encrypted backups are supported; second region bucket/server must be provisioned externally.'],
     ['Infra', 'state_persistence', 'implemented', 'Customer sessions, saved sites, scans, and orders are server-backed.'],
     ['Infra', 'redis_layer', ctx.redisConfigured ? 'configured' : 'implemented_optional', 'Redis adapters exist for session/rate-limit/lock.'],
-    ['FE', 'loading_stall', 'implemented', 'Phase15/156 fixes and routes smoke tests retained.'],
+    ['FE', 'loading_stall', 'implemented', 'Legacy hardening fixes and routes smoke tests retained.'],
     ['FE', 'image_optimization', 'documented', 'Static assets are small; WebP conversion remains build-pipeline optional.'],
     ['FE', 'bundle_size', 'implemented', 'Vanilla static pages avoid bundler dependency and large JS bundles.'],
     ['FE', 'seo_meta', 'implemented', 'Server injects route-level meta, sitemap, robots, feed, and structured data.'],
     ['FE', 'lighthouse_monitoring', 'operator_optional', 'Run Lighthouse/PageSpeed manually or in CI if Chrome is available.'],
-    ['FE', 'error_pages', 'implemented', '404/500 fallback contract is validated in Phase164.'],
+    ['FE', 'error_pages', 'implemented', '404/500 fallback contract is validated in the runtime hardening baseline.'],
     ['FE', 'font_display', 'implemented', 'No external webfont dependency; layout shift risk minimized.'],
     ['FE', 'pwa', 'optional', 'Not required for current conversion path; can be added without backend change.'],
     ['FE', 'dark_mode', 'implemented', 'CSS variables and dark-mode compatibility are covered by guard scripts.'],
     ['FE', 'server_validation', 'implemented', 'All mutating public/admin payloads pass server-side normalizers.'],
     ['Ops', 'payment_failure_recovery', 'implemented', 'paymentSessions/paymentEvents/webhookInbox and sync/cancel admin routes exist.'],
-    ['Ops', 'terms_versioning', 'implemented', 'Document preview and consent timestamps include release phase.'],
+    ['Ops', 'terms_versioning', 'implemented', 'Document preview and consent timestamps include the release stage.'],
     ['Ops', 'notification_tracking', 'implemented', 'emailOutbox retries and admin processing route are implemented.'],
     ['Ops', 'admin_audit_logs', 'implemented', `audit retention=${ctx.auditLogRetentionCount}`],
     ['Ops', 'dashboard_counts', 'implemented', 'Admin status reads counts from persisted DB state.'],
@@ -75,9 +75,9 @@ export function buildHardeningMatrix(ctx = {}) {
     ['QA', 'stress_test', 'implemented', 'scripts/stress-smoke.mjs provides zero-cost local concurrent request test.'],
     ['QA', 'shadow_deployment', 'documented', 'Coolify preview/shadow checklist included; real traffic mirroring requires infra setting.'],
     ['QA', 'style_consistency', 'implemented', 'Syntax and render-safety checks are CI-enforced.'],
-    ['QA', 'dead_code_archive', 'implemented', 'scripts/audit-inventory.mjs and Phase document archive policy included.'],
-    ['QA', 'hotfix_fast_track', 'documented', 'Phase164 runbook defines precheck -> backup -> deploy -> smoke -> rollback path.'],
-    ['QA', 'docs_archive', 'implemented', 'Phase docs are indexed and current handoff supersedes older phases.'],
+    ['QA', 'dead_code_archive', 'implemented', 'scripts/audit-inventory.mjs and historical document archive policy included.'],
+    ['QA', 'hotfix_fast_track', 'documented', 'Runtime hardening runbook defines precheck -> backup -> deploy -> smoke -> rollback path.'],
+    ['QA', 'docs_archive', 'implemented', 'Historical stage documents are separated and the current handoff supersedes older iterations.'],
     ['QA', 'visual_regression', 'implemented', 'Static route smoke plus CSS/HTML guard; true screenshot diff remains optional without browser service.'],
     ['QA', 'health_endpoint', 'implemented', '/healthz, /health, /livez, /readyz are supported.']
   ].map(([area, key, status, evidence], index) => ({ id: index + 1, area, key, status, evidence }));
@@ -85,8 +85,8 @@ export function buildHardeningMatrix(ctx = {}) {
   const operatorRequired = checks.filter(item => item.status === 'operator_required').length;
   return {
     ok: checks.length === 50,
-    version: ctx.version || 'phase164-hardening-matrix-v1',
-    phase: ctx.releasePhase || 'phase164-zero-cost-hardening-50',
+    version: ctx.version || 'runtime-hardening-matrix-v1',
+    phase: ctx.releasePhase || 'runtime-hardening-v1',
     checkedAt: ctx.checkedAt || new Date().toISOString(),
     score: { total: checks.length, implemented, operatorRequired, optional: checks.length - implemented - operatorRequired },
     checks

@@ -26,4 +26,4 @@ if (failures.length) {
   console.error(JSON.stringify({ ok: false, checked: files.length, failures }, null, 2));
   process.exit(1);
 }
-console.log(JSON.stringify({ ok: true, checked: files.length, phase: 'phase313-accessibility-basics' }, null, 2));
+console.log(JSON.stringify({ ok: true, checked: files.length, contract: 'accessibility-basics' }, null, 2));

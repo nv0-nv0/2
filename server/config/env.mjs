@@ -1,4 +1,4 @@
-// Phase166 environment reader for native Node http service.
+// Native server environment reader for native Node http service.
 // This intentionally returns plain values and avoids framework-specific assumptions.
 export function readEnvConfig(env = process.env) {
   const csv = (name, fallback = '') => String(env[name] ?? fallback).split(',').map(v => v.trim()).filter(Boolean);

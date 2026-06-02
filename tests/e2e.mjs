@@ -15,8 +15,8 @@ const checkoutJs = read('apps/public/checkout/app.js');
 const boardJs = read('apps/public/board/app.js');
 const allRoutes = [server, publicRoutes, paymentRoutes, accountRoutes, adminRoutes].join('\n');
 
-assert.match(pkg.version, /phase33[45]-(clean-rebrand|unified-organism)|phase340-redteam-100-closeout|phase341-final-closeout|phase342-merged-best|phase343-final-perfect|phase345-final-delivery-closeout|phase346-global-hardening-final|phase347-unified-diagnosis-final|phase348-final-unified-engine-closeout|phase349-customer-journey-closeout|phase350-global-cta-semantics-closeout|phase351-prompt-full-sweep-closeout|phase353-full-package-closeout|phase354-deployment-security-closeout|phase355-organization-closeout|phase356-conversion-dashboard-closeout|phase357-global-qa-accessibility-closeout/);
-for (const script of ['test:e2e','phase335:final','validate:phase335','check:responsive-contract','test:routes','check:links','verify:security']) {
+assert.equal(pkg.version, '2.1.0-clean-commercial-baseline');
+for (const script of ['test:e2e','verify:release','check:clean-baseline','check:responsive-contract','test:routes','check:links','verify:security']) {
   assert.ok(pkg.scripts[script], `missing script ${script}`);
 }
 
@@ -46,4 +46,4 @@ assert.ok(server.includes('/robots.txt'));
 assert.ok(server.includes('/sitemap.xml'));
 assert.ok(server.includes('frame-src https://cdn.portone.io https://*.portone.io'));
 assert.ok(!server.includes('/shared/veridion-adopted-ui.css'));
-console.log('E2E passed: phase335 unified organism flow');
+console.log('E2E passed: clean commercial baseline flow');

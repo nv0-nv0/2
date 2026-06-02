@@ -1,4 +1,4 @@
-const ORGANISM_VERSION = 'phase335-unified-organism-v1.0.0';
+const ORGANISM_VERSION = 'unified-platform-v1.0.0';
 
 export const UNIFIED_ORGANISM_VERSION = ORGANISM_VERSION;
 
@@ -165,19 +165,19 @@ export function buildUnifiedOrganismAudit(input = {}) {
   const forbidden = [
     '위험 진단', '요금 안내', '내 사이트 관리', '보안 점수88', '성능 점수76', 'SEO 점수90', '접근성 점수75',
     'API 키 관리', '20분에 1회', '자동 발행', 'TrustOps', '프로덕션 센티널', '런칭 컨트롤', '운영 큐',
-    '자동화 백로그', 'rollback', 'canary', 'live verification', 'SLA', 'MRR', 'phase319', 'phase320', 'phase321', 'prelaunch'
+    '자동화 백로그', 'rollback', 'canary', 'live verification', 'SLA', 'MRR', 'launchItems', 'sentinelItems', 'handoffItems', 'prelaunch'
   ];
 
   add('engine:registry', engine.includes('ORGANISM_ENGINE_REGISTRY') && ORGANISM_ENGINE_REGISTRY.length >= 10, { count: ORGANISM_ENGINE_REGISTRY.length });
   add('agent:registry', engine.includes('ORGANISM_AGENT_REGISTRY') && ORGANISM_AGENT_REGISTRY.length >= 20, { count: ORGANISM_AGENT_REGISTRY.length });
   add('pipeline:steps', PIPELINE_STEPS.length >= 10 && PIPELINE_STEPS.every(step => step.engine), { count: PIPELINE_STEPS.length });
   add('css:organism-layer', css.includes('VERIDION Unified Organism Optimization Layer') && css.includes('--vr-motion-fast'));
-  add('optimizer:exists', optimizer.includes('VERIDION runtime optimizer') && optimizer.includes('sendBeacon'));
+  add('optimizer:exists', optimizer.includes('__NV0_RUNTIME_OPTIMIZER__') && optimizer.includes('sendBeacon'));
   add('server:organism-status-route', serverRoutes.includes('/api/public/organism-status') && serverRoutes.includes('buildUnifiedOrganismStatus'));
   add('server:client-metric-route', serverRoutes.includes('/api/public/client-metric') && serverRoutes.includes('normalizeClientMetric'));
-  add('package:phase335-version', /phase335-unified-organism/.test(String(packageJson.version || '')));
-  add('package:phase335-final', Boolean(packageJson.scripts?.['phase335:final']));
-  add('package:delivery-final-updated', String(packageJson.scripts?.['delivery:final'] || '').includes('phase335:final'));
+  add('package:clean-baseline-version', String(packageJson.version || '') === '2.1.0-clean-commercial-baseline');
+  add('package:release-gate', packageJson.scripts?.['verify:release'] === 'node scripts/run-release-gate.mjs');
+  add('package:delivery-final-updated', packageJson.scripts?.['delivery:final'] === 'npm run verify:release');
 
   for (const page of publicPages) {
     const html = String(page.html || '');
@@ -192,7 +192,7 @@ export function buildUnifiedOrganismAudit(input = {}) {
   const failed = checks.filter(item => !item.ok);
   return {
     ok: failed.length === 0,
-    phase: 'phase335-unified-organism',
+    phase: 'unified-platform',
     version: ORGANISM_VERSION,
     score: failed.length === 0 ? 100 : Math.max(0, 100 - failed.length),
     checked: checks.length,

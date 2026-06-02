@@ -1,4 +1,4 @@
-export const PRODUCT_CATALOG_VERSION = 'phase318-trustops-autopilot-commercial-model-v1';
+export const PRODUCT_CATALOG_VERSION = 'trustops-autopilot-commercial-model-v1';
 
 export const COMMERCIAL_PRICE_TABLE = Object.freeze({
   Free: 0,

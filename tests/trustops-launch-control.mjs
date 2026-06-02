@@ -27,10 +27,11 @@ const child = spawn(process.execPath, ['server/index.mjs'], {
     NV0_ALLOW_PRELAUNCH_ONLINE_PAYMENT: 'true',
     NV0_PUBLIC_SCAN_LIMIT: '200',
     NV0_PUBLIC_BASE_URL: `http://127.0.0.1:${appPort}`,
+    NV0_TARGET_FETCH_ENABLED: 'false',
     NV0_PRIVACY_OFFICER_EMAIL: 'privacy@example.com',
-    NV0_SECURE_RECORDS_KEY: 'phase319-secure-records-key',
-    NV0_PRIVACY_HASH_KEY: 'phase319-privacy-hash-key',
-    NV0_ADMIN_KEY: 'phase319-key'
+    NV0_SECURE_RECORDS_KEY: 'trustops-launch-secure-records-key',
+    NV0_PRIVACY_HASH_KEY: 'trustops-launch-privacy-hash-key',
+    NV0_ADMIN_KEY: 'trustops-launch-key'
   },
   stdio: 'ignore'
 });
@@ -72,15 +73,15 @@ try {
   const scan = await j('/api/public/diagnose', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ target: 'https://phase319-launch.example' })
+    body: JSON.stringify({ target: 'https://trustops-launch.example' })
   });
   assert.equal(scan.res.status, 200);
 
   const launch = await j('/api/public/trustops-launch-control');
   assert.equal(launch.res.status, 200, launch.text);
-  assert.equal(launch.data.launch.version, 'phase319-trustops-launch-control-v1');
+  assert.equal(launch.data.launch.version, 'trustops-launch-control-v1');
   assert.ok(launch.data.launch.backlogCount >= 170);
-  assert.equal(launch.data.launch.phase319BacklogCount, 40);
+  assert.equal(launch.data.launch.launchBacklogCount, 40);
   assert.ok(launch.data.launch.launchSequence.length >= 5);
   assert.ok(launch.data.launch.incidentPlaybooks.length >= 5);
   assert.ok(launch.data.launch.experiments.length >= 8);
@@ -101,7 +102,7 @@ try {
   assert.ok(status.data.agentCount >= 84);
   assert.ok(status.data.eventPolicyCount >= 16);
 
-  console.log('phase319 trustops launch control integration ok');
+  console.log('trustops launch control integration ok');
 } finally {
   await stopChild(child);
   fs.rmSync(testRuntimeDir, { recursive: true, force: true });

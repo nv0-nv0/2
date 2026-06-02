@@ -1,6 +1,6 @@
 import { buildPlanCatalog, buildCommercialOfferCatalog, PRODUCT_CATALOG_VERSION } from '../../shared/product-catalog.mjs';
 
-export const PHASE317_TRUSTOPS_GROWTH_VERSION = 'phase317-trustops-growth-automation-v1';
+export const TRUSTOPS_GROWTH_VERSION = 'trustops-growth-automation-v1';
 
 const INDUSTRY_TEMPLATES = Object.freeze([
   { code: 'shopping', label: '쇼핑몰', risks: ['환불 조건', '배송 지연 안내', '사업자 정보', '결제 전 고지'], quickWins: ['상품 상세 하단 FAQ', '푸터 사업자 정보', '결제 전 확인 문구'] },
@@ -56,13 +56,13 @@ function clampScore(value, fallback = 65) {
   return Math.max(0, Math.min(100, Math.round(number)));
 }
 
-export function buildPhase317ImprovementBacklog() {
+export function buildGrowthImprovementBacklog() {
   const actions = [];
   for (const [domainIndex, domain] of IMPROVEMENT_DOMAINS.entries()) {
     for (let i = 1; i <= 5; i += 1) {
       const index = domainIndex * 5 + i;
       actions.push({
-        id: `P317-${String(index).padStart(3, '0')}`,
+        id: `GROW-${String(index).padStart(3, '0')}`,
         domain,
         priority: index <= 25 ? 'P0' : index <= 60 ? 'P1' : 'P2',
         title: `${domain} 개선 항목 ${i}`,
@@ -134,7 +134,7 @@ export function buildFixGeneratorPayload(input = {}) {
   ];
   return {
     ok: true,
-    version: PHASE317_TRUSTOPS_GROWTH_VERSION,
+    version: TRUSTOPS_GROWTH_VERSION,
     siteUrl,
     brandName,
     industry,
@@ -151,7 +151,7 @@ export function buildMonitoringPlan(input = {}) {
   const cadenceLabel = cadence === 'daily' ? '매일' : cadence === 'biweekly' ? '격주' : '매주';
   return {
     ok: true,
-    version: PHASE317_TRUSTOPS_GROWTH_VERSION,
+    version: TRUSTOPS_GROWTH_VERSION,
     target,
     industry: industry.label,
     cadence,
@@ -175,10 +175,10 @@ export function buildMonitoringPlan(input = {}) {
 
 export function buildRevenueOptimizationPlan(options = {}) {
   const offers = options.offers || buildCommercialOfferCatalog();
-  const backlog = buildPhase317ImprovementBacklog();
+  const backlog = buildGrowthImprovementBacklog();
   return {
     ok: true,
-    version: PHASE317_TRUSTOPS_GROWTH_VERSION,
+    version: TRUSTOPS_GROWTH_VERSION,
     productCatalogVersion: PRODUCT_CATALOG_VERSION,
     ladder: [
       { stage: 'lead', product: '무료 진단', goal: 'URL 입력과 이메일 수집', metric: 'scanCompletionRate' },
@@ -199,7 +199,7 @@ export function buildStructuredDataPackage(input = {}) {
   const url = safeString(input.url || input.siteUrl, 'https://nv0.kr');
   return {
     ok: true,
-    version: PHASE317_TRUSTOPS_GROWTH_VERSION,
+    version: TRUSTOPS_GROWTH_VERSION,
     jsonLd: {
       '@context': 'https://schema.org',
       '@type': 'SoftwareApplication',
@@ -229,8 +229,8 @@ export function buildTrustOpsGrowthBlueprint(options = {}) {
   const monitoring = buildMonitoringPlan({ industry: industry.code, siteUrl: site.domain || scan.target || options.siteUrl, cadence: options.cadence || 'weekly' });
   return {
     ok: true,
-    phase: 'phase317',
-    version: PHASE317_TRUSTOPS_GROWTH_VERSION,
+    phase: 'trustops-growth',
+    version: TRUSTOPS_GROWTH_VERSION,
     generatedAt: options.generatedAt || new Date().toISOString(),
     positioning: 'TrustOps AI Platform',
     promise: '진단, 증거, 개선 문구, 정기 모니터링, 매출 전환을 한 흐름으로 묶습니다.',
@@ -245,18 +245,18 @@ export function buildTrustOpsGrowthBlueprint(options = {}) {
     monitoring,
     structuredData: buildStructuredDataPackage({ name: options.brandName || 'VERIDION', url: options.siteUrl || site.domain || scan.target }).jsonLd,
     revenuePlan: buildRevenueOptimizationPlan({ offers: options.offers }).ladder,
-    improvementBacklogCount: buildPhase317ImprovementBacklog().length,
+    improvementBacklogCount: buildGrowthImprovementBacklog().length,
     automationPrinciples: ['룰 엔진 우선', '필요한 항목만 AI 사용', '결과 캐싱', '전문가 검수 업셀', '월간 반복 과금']
   };
 }
 
-export function runPhase317GrowthAudit({ files = [], packageJson = {}, sourceText = '' } = {}) {
-  const backlog = buildPhase317ImprovementBacklog();
+export function runGrowthAudit({ files = [], packageJson = {}, sourceText = '' } = {}) {
+  const backlog = buildGrowthImprovementBacklog();
   const requiredFiles = [
     'server/core/trustops-growth-engine.mjs',
-    'scripts/validate-phase317-trustops-growth.mjs',
+    'scripts/run-release-gate.mjs',
     'tests/trustops-growth.mjs',
-    'docs/PHASE317_TRUSTOPS_GROWTH_AUTOMATION_REPORT.md'
+    'docs/OPERATIONS.md'
   ];
   const requiredRoutes = [
     '/api/public/trustops-blueprint',
@@ -269,8 +269,8 @@ export function runPhase317GrowthAudit({ files = [], packageJson = {}, sourceTex
   const failures = [];
   for (const file of requiredFiles) if (!files.includes(file)) failures.push(`missing-file:${file}`);
   for (const route of requiredRoutes) if (!sourceText.includes(route)) failures.push(`missing-route:${route}`);
-  if (!/phase317-trustops-growth-automation|phase318-trustops-autopilot-cockpit|phase319-trustops-launch-control|phase320-trustops-production-sentinel|phase323-one-hundred-point-closeout|phase321-trustops-final-completion|phase322-final-test-closeout|phase324-complete-delivery/.test(String(packageJson.version || ''))) failures.push('package-version-not-phase317-or-newer');
+  if (String(packageJson.version || '') !== '2.1.0-clean-commercial-baseline') failures.push('package-version-not-clean-baseline');
   if (backlog.length !== 100) failures.push('backlog-count-not-100');
   const score = Math.max(0, 100 - failures.length * 10);
-  return { ok: failures.length === 0, score, version: PHASE317_TRUSTOPS_GROWTH_VERSION, backlogCount: backlog.length, routeCount: requiredRoutes.length, requiredRoutes, failures };
+  return { ok: failures.length === 0, score, version: TRUSTOPS_GROWTH_VERSION, backlogCount: backlog.length, routeCount: requiredRoutes.length, requiredRoutes, failures };
 }

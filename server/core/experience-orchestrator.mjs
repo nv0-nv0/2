@@ -6,7 +6,7 @@ import { buildProductAgentRuntimeStatus } from './product-agent-suite.mjs';
 import { buildEngineAgentRuntimeStatus } from './engine-agent-orchestrator.mjs';
 import { buildTrustOpsAutopilotCockpit, buildCustomerLifecyclePlan, buildAutomationWorkQueue } from './trustops-autopilot-engine.mjs';
 
-export const EXPERIENCE_ORCHESTRATOR_VERSION = 'phase353-experience-orchestrator-v1';
+export const EXPERIENCE_ORCHESTRATOR_VERSION = 'experience-orchestrator-v1';
 
 function list(value) {
   return Array.isArray(value) ? value.filter(Boolean) : [];
@@ -348,7 +348,7 @@ export function runExperienceOrchestratorAudit({ files = [], packageJson = {}, r
     { key: 'source_exports', weight: 12, pass: /buildExperienceOrchestratorSnapshot/.test(sourceText) && /buildExperienceControlPlane/.test(sourceText), message: '핵심 빌더 함수 export' },
     { key: 'package_script', weight: 10, pass: Boolean(scripts['test:experience-orchestrator']), message: '경험 오케스트레이터 테스트 스크립트' },
     { key: 'test_file', weight: 10, pass: normalizedFiles.includes('tests/experience-orchestrator.mjs'), message: '경험 오케스트레이터 단위 테스트' },
-    { key: 'version_string', weight: 8, pass: /phase353-experience-orchestrator-v1/.test(sourceText), message: '버전 선언' }
+    { key: 'version_string', weight: 8, pass: /experience-orchestrator-v1/.test(sourceText), message: '버전 선언' }
   ];
   const score = checks.reduce((sum, item) => sum + (item.pass ? item.weight : 0), 0);
   return {

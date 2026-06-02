@@ -1,4 +1,4 @@
-// Phase166 payment/commerce route split for the native http.createServer dispatcher.
+// Native server payment/commerce route split for the native http.createServer dispatcher.
 import { paidAccessWindow, sanitizePaymentSessionForPublic, sanitizeProviderPaymentForPublic } from '../core/paid-service-redteam-control.mjs';
 import { applyEngineAgentGate, appendEngineAgentEvent } from '../core/engine-agent-orchestrator.mjs';
 // Framework-free: the parent public dispatcher calls this handler directly.

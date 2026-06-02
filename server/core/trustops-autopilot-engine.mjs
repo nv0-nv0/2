@@ -1,7 +1,7 @@
 import { buildCommercialOfferCatalog, planPrice, normalizePlanCode } from '../../shared/product-catalog.mjs';
-import { buildPhase317ImprovementBacklog, buildFixGeneratorPayload, buildMonitoringPlan } from './trustops-growth-engine.mjs';
+import { buildGrowthImprovementBacklog, buildFixGeneratorPayload, buildMonitoringPlan } from './trustops-growth-engine.mjs';
 
-export const PHASE318_TRUSTOPS_AUTOPILOT_VERSION = 'phase318-trustops-autopilot-cockpit-v1';
+export const TRUSTOPS_AUTOPILOT_VERSION = 'trustops-autopilot-cockpit-v1';
 
 const WORKSTREAMS = Object.freeze([
   ['conversion', '전환 최적화', '무료 진단을 유료 리포트와 문구팩 구매로 연결'],
@@ -51,14 +51,14 @@ function hasPaidPlan(db = {}, code) {
   return paidOrders(db).some(order => orderPlan(order) === normalized) || activeSubscriptions(db).some(sub => normalizePlanCode(sub.plan || sub.productCode) === normalized);
 }
 
-export function buildPhase318AutomationBacklog() {
-  const phase317 = buildPhase317ImprovementBacklog();
-  const phase318 = [];
+export function buildAutomationBacklog() {
+  const growthItems = buildGrowthImprovementBacklog();
+  const autopilotItems = [];
   for (const [streamIndex, [stream, label, outcome]] of WORKSTREAMS.entries()) {
     for (let i = 1; i <= 5; i += 1) {
       const index = streamIndex * 5 + i;
-      phase318.push({
-        id: `P318-${String(index).padStart(3, '0')}`,
+      autopilotItems.push({
+        id: `AUTO-${String(index).padStart(3, '0')}`,
         stream,
         label,
         priority: index <= 12 ? 'P0' : index <= 24 ? 'P1' : 'P2',
@@ -70,7 +70,7 @@ export function buildPhase318AutomationBacklog() {
       });
     }
   }
-  return [...phase317, ...phase318];
+  return [...growthItems, ...autopilotItems];
 }
 
 export function buildNextBestOffer(input = {}, db = {}) {
@@ -232,7 +232,7 @@ export function buildCustomerLifecyclePlan(input = {}, db = {}) {
   const monitoring = buildMonitoringPlan({ siteUrl, industry: input.industry || 'shopping', cadence: input.cadence || 'weekly' });
   return {
     ok: true,
-    version: PHASE318_TRUSTOPS_AUTOPILOT_VERSION,
+    version: TRUSTOPS_AUTOPILOT_VERSION,
     siteUrl,
     currentPlan,
     riskScore,
@@ -260,14 +260,14 @@ export function buildTrustOpsAutopilotCockpit(db = {}, options = {}) {
   const subscriptions = list(db.subscriptions);
   const queue = buildAutomationWorkQueue(db, options);
   const revenue = buildRevenueForecast(db, options);
-  const backlog = buildPhase318AutomationBacklog();
+  const backlog = buildAutomationBacklog();
   const latestScan = latest(scans, 'createdAt');
   const averageRisk = scans.length ? Math.round(scans.reduce((sum, scan) => sum + clamp(toNumber(scan.riskScore, 55), 0, 100), 0) / scans.length) : 55;
   const nextBestOffer = buildNextBestOffer({ riskScore: latestScan?.riskScore || averageRisk, siteCount: sites.length }, db);
   const kpis = Object.fromEntries(KPI_DEFINITIONS.map(([key, label, from, to]) => [key, { key, label, from, to, status: 'tracked', value: 0 }]));
   return {
     ok: true,
-    version: PHASE318_TRUSTOPS_AUTOPILOT_VERSION,
+    version: TRUSTOPS_AUTOPILOT_VERSION,
     generatedAt: nowIso(options),
     counts: {
       sites: sites.length,
@@ -292,7 +292,7 @@ export function buildTrustOpsAutopilotCockpit(db = {}, options = {}) {
     kpis,
     workstreams: WORKSTREAMS.map(([key, label, outcome]) => ({ key, label, outcome, active: true })),
     backlogCount: backlog.length,
-    phase318BacklogCount: backlog.filter(item => String(item.id).startsWith('P318-')).length,
+    autopilotBacklogCount: backlog.filter(item => String(item.id).startsWith('AUTO-')).length,
     safeguards: [
       '유료 산출물은 paid 상태와 접근 기간 확인 뒤 제공',
       '무료 진단은 법률 확정 결론이 아니라 사전 점검으로 표시',
@@ -302,25 +302,25 @@ export function buildTrustOpsAutopilotCockpit(db = {}, options = {}) {
   };
 }
 
-export function runPhase318AutopilotAudit({ files = [], packageJson = {}, sourceText = '' } = {}) {
+export function runAutopilotAudit({ files = [], packageJson = {}, sourceText = '' } = {}) {
   const requiredFiles = [
     'server/core/trustops-autopilot-engine.mjs',
     'tests/trustops-autopilot.mjs',
-    'scripts/validate-phase318-trustops-autopilot.mjs',
-    'docs/PHASE318_TRUSTOPS_AUTOPILOT_WORK_ORDER.md',
-    'docs/PHASE318_TRUSTOPS_AUTOPILOT_REPORT.md'
+    'scripts/run-release-gate.mjs',
+    'docs/OPERATIONS.md',
+    'docs/QA.md'
   ];
   const checks = [];
   const check = (key, ok, detail = '') => checks.push({ key, ok: Boolean(ok), detail });
   check('required files present', requiredFiles.every(file => files.includes(file)), requiredFiles.filter(file => !files.includes(file)).join(', '));
-  check('package script phase318', Boolean(packageJson.scripts?.['phase318:final']));
+  check('package release gate', packageJson.scripts?.['verify:release'] === 'node scripts/run-release-gate.mjs');
   check('autopilot routes present', ['/api/public/trustops-autopilot','/api/public/customer-lifecycle','/api/public/automation-workqueue'].every(route => sourceText.includes(route)));
   check('admin cockpit route present', sourceText.includes('/api/admin/trustops-autopilot'));
   check('engine agent policy present', sourceText.includes('trustops.autopilot'));
-  check('backlog exceeds 120', buildPhase318AutomationBacklog().length >= 130);
+  check('backlog exceeds 120', buildAutomationBacklog().length >= 130);
   const cockpit = buildTrustOpsAutopilotCockpit({ scans: [{ riskScore: 72, target: 'https://audit.example' }], sites: [], orders: [], subscriptions: [], refundRequests: [] });
   check('cockpit ok', cockpit.ok && cockpit.counts.queue >= 1);
   check('next offer present', Boolean(cockpit.nextBestOffer?.code));
   const ok = checks.every(item => item.ok);
-  return { ok, version: PHASE318_TRUSTOPS_AUTOPILOT_VERSION, score: Math.round((checks.filter(item => item.ok).length / checks.length) * 100), checks };
+  return { ok, version: TRUSTOPS_AUTOPILOT_VERSION, score: Math.round((checks.filter(item => item.ok).length / checks.length) * 100), checks };
 }

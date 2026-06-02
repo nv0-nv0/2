@@ -26,16 +26,17 @@ const child = spawn(process.execPath, ['server/index.mjs'], {
     NV0_ALLOW_PRELAUNCH_ONLINE_PAYMENT: 'true',
     NV0_PUBLIC_SCAN_LIMIT: '200',
     NV0_PUBLIC_BASE_URL: `http://127.0.0.1:${appPort}`,
+    NV0_TARGET_FETCH_ENABLED: 'false',
     NV0_PRIVACY_OFFICER_EMAIL: 'privacy@example.com',
-    NV0_SECURE_RECORDS_KEY: 'phase321-secure-records-key',
-    NV0_PRIVACY_HASH_KEY: 'phase321-privacy-hash-key',
+    NV0_SECURE_RECORDS_KEY: 'trustops-handoff-secure-records-key',
+    NV0_PRIVACY_HASH_KEY: 'trustops-handoff-privacy-hash-key',
     NV0_BUSINESS_TRADE_NAME: 'VERIDION TEST',
     NV0_BUSINESS_REPRESENTATIVE: '대표자',
     NV0_BUSINESS_REGISTRATION_NUMBER: '123-45-67890',
     NV0_BUSINESS_ADDRESS: '서울특별시 테스트로 1',
     NV0_HOSTING_PROVIDER: 'Test Hosting',
     NV0_CUSTOMER_SERVICE_PHONE: '02-0000-0000',
-    NV0_ADMIN_KEY: 'phase321-key'
+    NV0_ADMIN_KEY: 'trustops-handoff-key'
   },
   stdio: 'ignore'
 });
@@ -75,19 +76,19 @@ try {
   const scan = await j('/api/public/diagnose', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ target: 'https://phase321-final.example' })
+    body: JSON.stringify({ target: 'https://trustops-handoff.example' })
   });
   assert.equal(scan.res.status, 200, scan.text);
 
   const handoff = await j('/api/public/trustops-final-handoff');
   assert.equal(handoff.res.status, 200, handoff.text);
-  assert.equal(handoff.data.handoff.version, 'phase321-trustops-final-handoff-v1');
+  assert.equal(handoff.data.handoff.version, 'trustops-final-handoff-v1');
   assert.ok(handoff.data.handoff.acceptanceChecklist.length >= 15);
   assert.ok(handoff.data.handoff.operatorRunbook.length >= 12);
   assert.ok(handoff.data.handoff.safeModeMatrix.length >= 5);
   assert.ok(handoff.data.handoff.goLiveKpi.length >= 6);
   assert.ok(handoff.data.handoff.summary.backlogCount >= 280);
-  assert.equal(handoff.data.handoff.summary.phase321BacklogCount, 60);
+  assert.equal(handoff.data.handoff.summary.handoffBacklogCount, 60);
 
   const status = await j('/api/public/engine-agent-status');
   assert.equal(status.res.status, 200, status.text);
@@ -96,7 +97,7 @@ try {
   assert.ok(status.data.eventPolicyCount >= 18);
   assert.ok(status.data.publicSummary.appliedRoutes.includes('/api/public/trustops-final-handoff'));
 
-  console.log('phase321 trustops final handoff integration ok');
+  console.log('trustops final handoff integration ok');
 } finally {
   await stopChild(child);
   fs.rmSync(testRuntimeDir, { recursive: true, force: true });

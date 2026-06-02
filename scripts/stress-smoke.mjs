@@ -62,7 +62,7 @@ try {
   const flat = responses.flat();
   const failures = flat.filter(item => !item.ok);
   const hiddenFailures = hiddenResponses.filter(item => !item.isolated);
-  const report = { ok: failures.length === 0 && hiddenFailures.length === 0, phase: 'phase357-public-stress-and-private-api-isolation', requests: flat.length, hiddenIsolationChecks: hiddenResponses.length, failures, hiddenFailures, elapsedMs: Date.now() - startedAt };
+  const report = { ok: failures.length === 0 && hiddenFailures.length === 0, phase: 'public-stress-and-private-api-isolation', requests: flat.length, hiddenIsolationChecks: hiddenResponses.length, failures, hiddenFailures, elapsedMs: Date.now() - startedAt };
   console.log(JSON.stringify(report, null, 2));
   if (failures.length || hiddenFailures.length) process.exitCode = 1;
 } finally {

@@ -41,4 +41,4 @@ if (failures.length) {
   console.error(JSON.stringify({ ok: false, failures }, null, 2));
   process.exit(1);
 }
-console.log(JSON.stringify({ ok: true, checked: files.length + 1, guard: 'phase325-no-available-server' }, null, 2));
+console.log(JSON.stringify({ ok: true, checked: files.length + 1, guard: 'no-available-server-guard' }, null, 2));

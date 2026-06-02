@@ -21,7 +21,7 @@ function add(name, fn) {
   catch (error) { checks.push({ name, ok: false, error: error.message }); }
 }
 
-add('css:phase347-layer-present', () => assert.match(css, /Phase347 unified diagnosis flow \+ button contrast hardening/));
+add('css:diagnosis-layer-present', () => assert.match(css, /Clean commercial baseline: unified diagnosis flow \+ button contrast hardening/));
 add('css:primary-button-dark-bg-white-text', () => {
   assert.match(css, /--vr-button-bg:#075e54/);
   assert.match(css, /--vr-button-fg:#ffffff/);
@@ -53,8 +53,8 @@ for (const file of htmlFiles) {
 }
 
 const failures = checks.filter(x => !x.ok);
-const report = { ok: failures.length === 0, phase: 'phase347-button-contrast-contract', checked: checks.length, failed: failures.length, failures };
+const report = { ok: failures.length === 0, phase: 'button-contrast-contract', checked: checks.length, failed: failures.length, failures };
 fs.mkdirSync(path.join(root, 'docs/current'), { recursive: true });
-fs.writeFileSync(path.join(root, 'docs/current/PHASE347_BUTTON_CONTRAST_CONTRACT.json'), JSON.stringify(report, null, 2));
+fs.writeFileSync(path.join(root, 'docs/current/BUTTON_CONTRAST_CONTRACT.json'), JSON.stringify(report, null, 2));
 console.log(JSON.stringify(report, null, 2));
 if (failures.length) process.exit(1);

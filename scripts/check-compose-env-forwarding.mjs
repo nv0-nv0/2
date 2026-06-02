@@ -20,7 +20,7 @@ const sessionSecretFiles = [
   'deploy/env.production.template',
   'deploy/env.commercial.template',
   'deploy/env.production.nv0.kr.example',
-  'deploy/env.production.nv0.kr.ci-check.env'
+  'deploy/env.production.nv0.kr.ci-check.example'
 ];
 const forwardedKeys = [
   'NV0_EXPOSE_INTERNAL_PUBLIC_APIS',
@@ -127,7 +127,7 @@ add('public-probe-sanitizers-exist', () => {
 const failures = checks.filter(item => !item.ok);
 const report = {
   ok: failures.length === 0,
-  phase: 'phase354-compose-env-forwarding',
+  phase: 'compose-env-forwarding',
   checkedAt: new Date().toISOString(),
   checked: checks.length,
   failed: failures.length,
@@ -136,6 +136,6 @@ const report = {
   checks
 };
 fs.mkdirSync(path.join(root, 'docs/current'), { recursive: true });
-fs.writeFileSync(path.join(root, 'docs/current/PHASE354_COMPOSE_ENV_FORWARDING.json'), JSON.stringify(report, null, 2));
-console.log(JSON.stringify({ ok: report.ok, checked: report.checked, failed: report.failed, forwardedKeys: report.forwardedKeys, report: 'docs/current/PHASE354_COMPOSE_ENV_FORWARDING.json' }, null, 2));
+fs.writeFileSync(path.join(root, 'docs/current/COMPOSE_ENV_FORWARDING.json'), JSON.stringify(report, null, 2));
+console.log(JSON.stringify({ ok: report.ok, checked: report.checked, failed: report.failed, forwardedKeys: report.forwardedKeys, report: 'docs/current/COMPOSE_ENV_FORWARDING.json' }, null, 2));
 if (!report.ok) process.exit(1);

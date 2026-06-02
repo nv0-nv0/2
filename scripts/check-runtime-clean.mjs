@@ -18,7 +18,7 @@ if (!exists('runtime')) {
     console.error(JSON.stringify({ ok: false, failures }, null, 2));
     process.exit(1);
   }
-  console.log(JSON.stringify({ ok: true, checked: 'runtime-clean-release', mode: 'runtime-directory-absent-clean', phase: 'phase322' }, null, 2));
+  console.log(JSON.stringify({ ok: true, checked: 'runtime-clean-release', mode: 'runtime-directory-absent-clean', contract: 'runtime-clean-release' }, null, 2));
   process.exit(0);
 }
 if (!exists('runtime/data/db.seed.json')) failures.push('runtime/data/db.seed.json must remain as the only shippable seed state');
@@ -33,4 +33,4 @@ if (failures.length) {
   console.error(JSON.stringify({ ok: false, failures }, null, 2));
   process.exit(1);
 }
-console.log(JSON.stringify({ ok: true, checked: 'runtime-clean-release', mode: 'active-runtime-state-and-runtime-test-excluded', phase: 'phase322' }, null, 2));
+console.log(JSON.stringify({ ok: true, checked: 'runtime-clean-release', mode: 'active-runtime-state-and-runtime-test-excluded', contract: 'runtime-clean-release' }, null, 2));

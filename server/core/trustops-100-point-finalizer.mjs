@@ -2,11 +2,11 @@ import { buildTrustOpsFinalHandoff } from './trustops-final-handoff.mjs';
 import { buildProductionSentinel } from './trustops-production-sentinel.mjs';
 import { buildTrustOpsLaunchControl } from './trustops-launch-control.mjs';
 import { buildTrustOpsAutopilotCockpit } from './trustops-autopilot-engine.mjs';
-import { buildTrustOpsGrowthBlueprint, buildPhase317ImprovementBacklog } from './trustops-growth-engine.mjs';
+import { buildTrustOpsGrowthBlueprint, buildGrowthImprovementBacklog } from './trustops-growth-engine.mjs';
 import { buildEngineAgentAssignment } from './engine-agent-orchestrator.mjs';
 import { buildCommercialOfferCatalog } from '../../shared/product-catalog.mjs';
 
-export const PHASE323_100_POINT_FINALIZER_VERSION = 'phase323-one-hundred-point-closeout-v1';
+export const TRUSTOPS_SCORECARD_VERSION = 'trustops-scorecard-closeout-v1';
 
 const SCORE_AREAS = Object.freeze([
   ['architecture', '전체 구조', '진단, 결제, 산출물, 포털, 관리자, 운영 관제가 단일 서비스 흐름으로 연결됨'],
@@ -22,7 +22,7 @@ const SCORE_AREAS = Object.freeze([
   ['admin', '관리자 운영', '주문, 환불, 발행, 자료, 설정, 진단, 오토파일럿/센티널 API 관제 구조 적용'],
   ['data', '데이터·저장소', 'runtime seed만 납품, 운영 DB/Redis/S3 연결 전제, secure record 충돌 방지'],
   ['backup', '백업·복구', '백업, 복구 drill, prune, 배포 전 백업/복구 런북 유지'],
-  ['testing', '테스트', '회귀, E2E, 결제, 레드팀, 링크, 라우트, 보안, 접근성, 성능, phase 검증 게이트 구성'],
+  ['testing', '테스트', '회귀, E2E, 결제, 레드팀, 링크, 라우트, 보안, 접근성, 성능, release 검증 게이트 구성'],
   ['deployment', '배포', 'release:predeploy와 delivery:final을 동일 최종 게이트로 고정'],
   ['live-verification', '실서버 검증', 'live checklist, canary, rollback, cache purge, 실결제/다운로드 확인 절차 고정'],
   ['incident', '장애 대응', '결제, 산출물, 개인정보, 진단, 인사이트 장애별 safe mode와 SLA 적용'],
@@ -32,7 +32,7 @@ const SCORE_AREAS = Object.freeze([
 ]);
 
 const FINAL_OPERATOR_ITEMS = Object.freeze([
-  ['server-deploy', '운영 서버에 phase323 ZIP 반영'],
+  ['server-deploy', '운영 서버에 clean baseline ZIP 반영'],
   ['env-real-values', '사업자 정보, 개인정보 보호책임자, 결제 provider, storage, Redis 값을 운영 환경에만 주입'],
   ['predeploy', '운영 서버에서 npm run release:predeploy 실행'],
   ['cache-purge', 'CDN/브라우저 캐시 삭제 후 /portal, /board, /checkout, /privacy, /business-info 확인'],
@@ -83,20 +83,20 @@ function scoreArea(area, context = {}) {
     privacy: () => fileSet.has('server/core/privacy-compliance-guard.mjs') && routeSet.has('/api/public/privacy-status'),
     'legal-notice': () => ['apps/public/terms/index.html','apps/public/privacy/index.html','apps/public/refund/index.html','apps/public/business-info/index.html'].every(f => fileSet.has(f)),
     security: () => fileSet.has('scripts/verify-security.mjs') && fileSet.has('scripts/check-release-secret-hygiene.mjs'),
-    'ui-ux': () => fileSet.has('shared/veridion-clean-v311.css') && fileSet.has('scripts/check-accessibility-basics.mjs') && fileSet.has('scripts/check-performance-budget.mjs'),
+    'ui-ux': () => fileSet.has('shared/veridion-rebrand.css') && fileSet.has('scripts/check-accessibility-basics.mjs') && fileSet.has('scripts/check-performance-budget.mjs'),
     insight: () => /20분|intervalMinutes/.test(text) && fileSet.has('server/core/product-agent-suite.mjs') && fileSet.has('apps/public/board/app.js'),
     'engine-agent': () => assignment.engineCount >= 50 && assignment.agentCount >= 108 && assignment.eventPolicyCount >= 19,
-    growth: () => buildCommercialOfferCatalog().length >= 5 && buildPhase317ImprovementBacklog().length >= 100,
+    growth: () => buildCommercialOfferCatalog().length >= 5 && buildGrowthImprovementBacklog().length >= 100,
     trustops: () => ['server/core/trustops-growth-engine.mjs','server/core/trustops-autopilot-engine.mjs','server/core/trustops-launch-control.mjs','server/core/trustops-production-sentinel.mjs','server/core/trustops-final-handoff.mjs'].every(f => fileSet.has(f)),
     admin: () => routeSet.has('/api/admin/trustops-final-handoff') && routeSet.has('/api/admin/trustops-production-sentinel'),
     data: () => fileSet.has('runtime/data/db.seed.json') && fileSet.has('scripts/check-runtime-clean.mjs'),
     backup: () => fileSet.has('scripts/backup-runtime.mjs') && fileSet.has('scripts/restore-drill.mjs'),
-    testing: () => Boolean(scripts['test:e2e'] && scripts['test:commerce'] && scripts['test:paid-redteam'] && scripts['test:final-handoff']),
-    deployment: () => ['npm run phase323:final','npm run phase324:final'].includes(scripts['delivery:final']) && ['npm run phase323:final','npm run phase324:final'].includes(scripts['release:predeploy']),
+    testing: () => Boolean(scripts['test:e2e'] && scripts['test:commerce'] && scripts['test:paid-redteam'] && scripts['test:trustops']),
+    deployment: () => scripts['delivery:final'] === 'npm run verify:release' && scripts['release:predeploy'] === 'npm run verify:release' && scripts['verify:release'] === 'node scripts/run-release-gate.mjs',
     'live-verification': () => fileSet.has('scripts/check-live-public.mjs') && routeSet.has('/api/public/live-verification-checklist'),
     incident: () => sentinel.rollbackMatrix?.length >= 5 && sentinel.slaMatrix?.length >= 3,
     'cost-quality': () => sentinel.costQualityBudget?.length >= 4 || /cost-quality/.test(text),
-    documentation: () => fileSet.has('docs/PHASE323_100_POINT_FINAL_DELIVERY_REPORT.md') && fileSet.has('docs/PHASE323_100_POINT_FINAL_WORK_ORDER.md'),
+    documentation: () => ['docs/QA.md','docs/DEPLOYMENT.md','docs/ROLLBACK.md','docs/CLEANUP_REPORT.md'].every(file => fileSet.has(file)),
     packaging: () => runtimeClean && secretHygienePassed && fileSet.has('scripts/clean-release-runtime.mjs')
   };
   const pass = runtimeMode ? true : Boolean((criteria[area[0]] || (() => false))());
@@ -120,8 +120,8 @@ export function buildTrustOps100PointFinalScorecard(db = {}, options = {}) {
   const decision = packageScore === 100 && failed.length === 0 ? 'package-accepted' : 'package-hold';
   return {
     ok: decision === 'package-accepted',
-    version: PHASE323_100_POINT_FINALIZER_VERSION,
-    phase: 'phase323-one-hundred-point-closeout',
+    version: TRUSTOPS_SCORECARD_VERSION,
+    phase: 'trustops-scorecard-closeout',
     decision,
     packageScore,
     totalScore: 100,
@@ -147,7 +147,7 @@ export function buildTrustOps100PointFinalScorecard(db = {}, options = {}) {
   };
 }
 
-export function runPhase323PackageAudit(input = {}) {
+export function runPackageAudit(input = {}) {
   const scorecard = buildTrustOps100PointFinalScorecard(input.db || {}, input);
   const checks = [
     { key: 'packageScore100', pass: scorecard.packageScore === 100, message: '패키지 내부 20개 영역 100점 달성' },

@@ -80,7 +80,7 @@ if (encryptionSecret) {
 const remoteDb = await remotePut(remoteKey, remotePayload, remoteContentType);
 const remoteUploadsManifest = await remotePut(`${remotePrefix}/runtime-snapshot-${stamp}/uploads-manifest.json`, Buffer.from(JSON.stringify(uploadsManifest, null, 2)), 'application/json; charset=utf-8');
 const manifest = {
-  version: 'phase163-runtime-backup-v1',
+  version: 'runtime-backup-v1',
   createdAt,
   local: { snapshotDir, dbSha256: sha256Hex(dbBuffer), dbSize: dbBuffer.length },
   security: { compressed: compress, encrypted: Boolean(encryptionSecret), encryptionAlgorithm: encryptionSecret ? 'aes-256-gcm+scrypt' : null },

@@ -36,7 +36,7 @@ for (const rel of ['runtime/uploads', 'runtime/backups', 'runtime/reports']) {
 
 console.log(JSON.stringify({
   ok: true,
-  phase: 'phase322-clean-release-runtime-state-excluded',
+  phase: 'clean-release-runtime-state-excluded',
   retained: ['runtime/data/db.seed.json'],
   removedActiveState: removed,
   note: 'Release packages must not include local runtime state or runtime-test-* directories. Server recreates local runtime files on first non-commercial JSON-mode start; commercial mode must use PostgreSQL/Redis/object storage.'

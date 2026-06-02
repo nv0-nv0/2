@@ -1,5 +1,5 @@
 const DEFAULT_INTERVAL_MS = 20 * 60 * 1000;
-const SUITE_VERSION = 'phase311-product-agent-insight-redteam-v4.0.0';
+const SUITE_VERSION = 'product-agent-insight-redteam-v4.0.0';
 
 export const PRODUCT_AGENT_SUITE_VERSION = SUITE_VERSION;
 
@@ -129,7 +129,7 @@ function unique(items = []) {
 }
 
 
-const CONTENT_QUALITY_RULESET_VERSION = 'phase311-korean-copy-special-char-redteam-v3';
+const CONTENT_QUALITY_RULESET_VERSION = 'korean-copy-special-char-redteam-v3';
 const DISALLOWED_PUBLIC_SYMBOLS = /[�□■◆◇●▲▼※★☆♣♥♠♬✓✔✕✖↔⇒⇐⇔⌕▱↻▤▥♢⚖⚙☑⋮🛡█░›↗]/gu;
 const DISALLOWED_DECORATIVE_ARROWS = /[→←]/g;
 const INVISIBLE_CONTROL_CHARS = /[\u200B-\u200D\uFEFF]/g;
@@ -548,8 +548,8 @@ export function runProductAgentPackageAudit({ files = [], packageJson = {}, rout
   const checks = [
     { key: 'registry', pass: PRODUCT_ENGINE_REGISTRY.length >= 12, weight: 12, message: '제품 엔진/에이전트 레지스트리' },
     { key: 'apps', pass: requiredScopes.every(hasFile), weight: 16, message: '패키지 주요 영역 파일 존재' },
-    { key: 'script', pass: !!packageJson?.scripts?.['validate:phase280'], weight: 12, message: 'phase280 검증 스크립트 연결' },
-    { key: 'finalScript', pass: !!packageJson?.scripts?.['phase280:final'], weight: 12, message: 'phase280 최종 게이트 연결' },
+    { key: 'script', pass: !!packageJson?.scripts?.['check:public-product-pipeline'], weight: 12, message: '공개 제품 파이프라인 검사 연결' },
+    { key: 'finalScript', pass: packageJson?.scripts?.['verify:release'] === 'node scripts/run-release-gate.mjs', weight: 12, message: '단일 릴리즈 게이트 연결' },
     { key: 'publicStatusRoute', pass: routes.includes('/api/public/product-agent-status'), weight: 12, message: '공개 상태 API' },
     { key: 'adminAuditRoute', pass: routes.includes('/api/admin/product-agents/audit'), weight: 12, message: '관리자 패키지 감사 API' },
     { key: 'cadence', pass: DEFAULT_INTERVAL_MS === 1_200_000, weight: 12, message: '20분 자동 발행 기본값' },

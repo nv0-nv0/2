@@ -1,5 +1,5 @@
 import { isSafeHttpMethod } from '../core/native-route-state.mjs';
-// Phase166 admin API dispatcher for native http.createServer routing.
+// Native server admin API dispatcher for native http.createServer routing.
 import { createOpsRouteHandler } from './ops.mjs';
 import { buildTrustOpsAutopilotCockpit } from '../core/trustops-autopilot-engine.mjs';
 import { buildTrustOpsLaunchControl } from '../core/trustops-launch-control.mjs';
@@ -67,7 +67,7 @@ export function createAdminRouteHandler(ctx) {
   buildExperienceControlPlane,
   runExperienceOrchestratorAudit,
   buildCommercialReadinessStatus,
-  runPhase287CommercialAudit,
+  runCommercialReadinessAudit,
   buildSystemItemsFeed,
   canTransition,
   cleanupDataRetention,
@@ -419,13 +419,14 @@ const packageFiles = [
   'server/index.mjs',
   'server/routes/public.mjs',
   'server/routes/admin.mjs',
-  'shared/base.css',
-  'scripts/validate-phase280-product-agent-insight.mjs',
+  'shared/veridion-rebrand.css',
+  'scripts/check-public-product-pipeline.mjs',
+  'scripts/run-release-gate.mjs',
   'tests/routes-smoke.mjs',
   'deploy/docker-compose.commercial.yml',
-  'docs/PHASE280_PRODUCT_AGENT_INSIGHT_REPORT.md'
+  'docs/QA.md'
 ];
-const audit = runProductAgentPackageAudit({ files: packageFiles, packageJson: { scripts: { 'validate:phase280': true, 'phase280:final': true } }, routes: ['/api/public/product-agent-status', '/api/admin/product-agents/audit'] });
+const audit = runProductAgentPackageAudit({ files: packageFiles, packageJson: { scripts: { 'check:public-product-pipeline': 'node scripts/check-public-product-pipeline.mjs', 'verify:release': 'node scripts/run-release-gate.mjs' } }, routes: ['/api/public/product-agent-status', '/api/admin/product-agents/audit'] });
 const status = buildProductAgentRuntimeStatus(db, { businessProfile: db.settings?.businessProfile });
 appendAudit(db, req, 'admin.product_agents.audit', { score: audit.score, ok: audit.ok });
 await writeDb(db);
@@ -439,15 +440,17 @@ const packageFiles = [
   'server/routes/public.mjs',
   'server/routes/payment.mjs',
   'server/routes/admin.mjs',
-  'shared/veridion-clean-v311.css',
-  'scripts/validate-phase316-engine-agent-application.mjs',
-  'docs/PHASE316_ENGINE_AGENT_APPLICATION_WORK_ORDER.md',
-  'docs/PHASE316_ENGINE_AGENT_APPLICATION_REPORT.md',
-  'docs/current/PHASE316_ENGINE_AGENT_APPLICATION_AUDIT.json'
+  'shared/veridion-rebrand.css',
+  'scripts/run-release-gate.mjs',
+  'scripts/check-clean-baseline.mjs',
+  'scripts/check-release-secret-hygiene.mjs',
+  'docs/QA.md',
+  'docs/DEPLOYMENT.md',
+  'docs/ROLLBACK.md'
 ];
 const audit = runEngineAgentPackageAudit({
   files: packageFiles,
-  packageJson: { scripts: { 'validate:phase316': true, 'phase316:final': true, 'release:predeploy': 'npm run phase316:final' } },
+  packageJson: { scripts: { 'verify:release': 'node scripts/run-release-gate.mjs', 'release:predeploy': 'npm run verify:release', 'test:trustops': 'node tests/trustops-growth.mjs', 'check:clean-baseline': 'node scripts/check-clean-baseline.mjs' } },
   routes: ['/api/public/engine-agent-status', '/api/admin/engine-agents/audit']
 });
 const status = buildEngineAgentRuntimeStatus(db, { businessProfile: db.settings?.businessProfile, nowIso: nowIso() });
@@ -486,22 +489,22 @@ return json(req, res, 200, { ok: audit.ok, audit, controlPlane });
 if (pathname === '/api/admin/commercial-readiness/audit' && req.method === 'GET') {
 if (!requireAdminPermission(req, res, session, 'ops.read')) return;
 const packageFiles = [
-  'server/core/commercial-readiness-287.mjs',
-  'scripts/validate-phase287-commercial-readiness.mjs',
-  'docs/PHASE287_COMMERCIAL_READINESS_REPORT.md',
-  'docs/LEGAL_PAYMENT_OPS_CHECKLIST.md',
-  'docs/COMMERCIAL_LAUNCH_RUNBOOK.md',
-  'docs/current/PHASE287_COMMERCIAL_READINESS_AUDIT.json',
+  'server/core/commercial-readiness.mjs',
+  'scripts/validate-commercial-release.mjs',
+  'scripts/check-operational-readiness-contract.mjs',
+  'docs/DEPLOYMENT.md',
+  'docs/OPERATIONS.md',
+  'docs/ROLLBACK.md',
   'apps/public/privacy/index.html',
   'apps/public/terms/index.html',
   'apps/public/refund/index.html',
   'apps/public/business-info/index.html'
 ];
-const audit = runPhase287CommercialAudit({
+const audit = runCommercialReadinessAudit({
   files: packageFiles,
-  packageJson: { scripts: { 'validate:phase287': true, 'phase287:final': true, 'phase286:final': true, 'phase285:final': true, 'phase284:final': true } },
+  packageJson: { scripts: { 'validate:commercial': 'node scripts/validate-commercial-release.mjs', 'deploy:precheck': 'npm run validate:coolify-env && npm run validate:deploy', 'verify:release': 'node scripts/run-release-gate.mjs', 'release:predeploy': 'npm run verify:release' } },
   routes: ['/api/public/commercial-readiness', '/api/admin/commercial-readiness/audit'],
-  envExample: await fs.readFile(path.join(process.cwd(), '.env.example'), 'utf8').catch(() => '')
+  envExample: await fs.readFile(path.join(process.cwd(), 'deploy/env.commercial.template'), 'utf8').catch(() => '')
 });
 const status = buildCommercialReadinessStatus(db, process.env);
 appendAudit(db, req, 'admin.commercial_readiness.audit', { score: audit.score, ok: audit.ok, version: audit.version, environmentScore: status.environmentScore });

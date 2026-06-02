@@ -25,16 +25,17 @@ const child = spawn(process.execPath, ['server/index.mjs'], {
     NV0_ALLOW_PRELAUNCH_ONLINE_PAYMENT: 'true',
     NV0_PUBLIC_SCAN_LIMIT: '200',
     NV0_PUBLIC_BASE_URL: `http://127.0.0.1:${appPort}`,
+    NV0_TARGET_FETCH_ENABLED: 'false',
     NV0_PRIVACY_OFFICER_EMAIL: 'privacy@example.com',
-    NV0_SECURE_RECORDS_KEY: 'phase323-secure-records-key',
-    NV0_PRIVACY_HASH_KEY: 'phase323-privacy-hash-key',
+    NV0_SECURE_RECORDS_KEY: 'trustops-scorecard-secure-records-key',
+    NV0_PRIVACY_HASH_KEY: 'trustops-scorecard-privacy-hash-key',
     NV0_BUSINESS_TRADE_NAME: 'VERIDION TEST',
     NV0_BUSINESS_REPRESENTATIVE: '대표자',
     NV0_BUSINESS_REGISTRATION_NUMBER: '123-45-67890',
     NV0_BUSINESS_ADDRESS: '서울특별시 테스트로 1',
     NV0_HOSTING_PROVIDER: 'Test Hosting',
     NV0_CUSTOMER_SERVICE_PHONE: '02-0000-0000',
-    NV0_ADMIN_KEY: 'phase323-key'
+    NV0_ADMIN_KEY: 'trustops-scorecard-key'
   },
   stdio: 'ignore'
 });
@@ -68,7 +69,7 @@ try {
   await waitUntilReady();
   const score = await j('/api/public/trustops-100-final');
   assert.equal(score.res.status, 200, score.text);
-  assert.equal(score.data.scorecard.version, 'phase323-one-hundred-point-closeout-v1');
+  assert.equal(score.data.scorecard.version, 'trustops-scorecard-closeout-v1');
   assert.equal(score.data.scorecard.packageScore, 100);
   assert.equal(score.data.scorecard.failed.length, 0);
   assert.ok(score.data.scorecard.externalOperatorItems.length >= 10);
@@ -79,7 +80,7 @@ try {
   assert.ok(status.data.agentCount >= 108);
   assert.ok(status.data.eventPolicyCount >= 19);
   assert.ok(status.data.publicSummary.appliedRoutes.includes('/api/public/trustops-100-final'));
-  console.log('phase323 trustops 100-point final integration ok');
+  console.log('trustops scorecard final integration ok');
 } finally {
   await stopChild(child);
   fs.rmSync(testRuntimeDir, { recursive: true, force: true });

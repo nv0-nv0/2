@@ -1,13 +1,13 @@
-import { buildProductionSentinel, buildPhase320ExpansionBacklog } from './trustops-production-sentinel.mjs';
+import { buildProductionSentinel, buildSentinelExpansionBacklog } from './trustops-production-sentinel.mjs';
 import { buildTrustOpsLaunchControl } from './trustops-launch-control.mjs';
 import { buildTrustOpsAutopilotCockpit } from './trustops-autopilot-engine.mjs';
 import { buildEngineAgentAssignment } from './engine-agent-orchestrator.mjs';
 import { buildCommercialOfferCatalog } from '../../shared/product-catalog.mjs';
 
-export const PHASE321_FINAL_HANDOFF_VERSION = 'phase321-trustops-final-handoff-v1';
+export const TRUSTOPS_FINAL_HANDOFF_VERSION = 'trustops-final-handoff-v1';
 
 const ACCEPTANCE_ITEMS = Object.freeze([
-  ['package-gate', 'P0', '릴리즈 패키지', 'phase322:final과 release:predeploy가 같은 최종 게이트를 바라봅니다.'],
+  ['package-gate', 'P0', '릴리즈 패키지', 'verify:release와 release:predeploy가 같은 단일 릴리즈 게이트를 바라봅니다.'],
   ['runtime-clean', 'P0', '런타임 정리', 'runtime, upload, backup 찌꺼기가 납품 ZIP에 포함되지 않습니다.'],
   ['secret-hygiene', 'P0', '시크릿 위생', '운영 키와 개인정보 hash key가 소스/문서에 하드코딩되지 않습니다.'],
   ['privacy-status', 'P0', '개인정보', '개인정보처리방침, 보호책임자, 보존기간, 마스킹 정책을 확인합니다.'],
@@ -25,7 +25,7 @@ const ACCEPTANCE_ITEMS = Object.freeze([
 ]);
 
 const OPERATOR_RUNBOOK = Object.freeze([
-  ['01-predeploy', '배포 전', 'npm run phase322:final을 실행하고 실패 항목이 있으면 배포를 중단합니다.'],
+  ['01-predeploy', '배포 전', 'npm run verify:release를 실행하고 실패 항목이 있으면 배포를 중단합니다.'],
   ['02-env-lock', '환경값', '사업자 정보, 개인정보 보호책임자, 결제 provider, 웹훅 secret, 저장소 값을 운영 환경에만 주입합니다.'],
   ['03-backup', '백업', '배포 직전 runtime 백업과 복구 리허설 결과를 확인합니다.'],
   ['04-deploy', '배포', 'ZIP 반영 후 서버 재시작, 헬스체크, readyz, public API 응답을 확인합니다.'],
@@ -123,8 +123,8 @@ function buildAcceptanceChecklist(db = {}, options = {}) {
   });
 }
 
-export function buildPhase321ExpansionBacklog() {
-  const previous = buildPhase320ExpansionBacklog();
+export function buildHandoffExpansionBacklog() {
+  const previous = buildSentinelExpansionBacklog();
   const streams = [
     ['final-handoff', '최종 인수인계', '릴리즈 수락 기준과 운영자 실행 순서를 하나로 고정'],
     ['env-lock', '운영 환경값 잠금', '상용 오픈에 필요한 환경값 누락 시 공개·결제를 보류'],
@@ -137,14 +137,14 @@ export function buildPhase321ExpansionBacklog() {
     ['cost-ceiling', '비용 상한', 'AI 호출, PDF 생성, 스캔 범위, 발행 주기를 상한 안에 묶음'],
     ['compliance-lock', '컴플라이언스 잠금', '개인정보·환불·사업자 고지·약관 누락을 배포 blocker로 유지'],
     ['live-verification-loop', '실서버 검증 루프', '배포 후 실제 URL 확인과 재시도/보류 기준을 반복 실행'],
-    ['release-baseline', '다음 릴리즈 기준선', 'phase321 결과를 다음 개발의 기준 패키지로 고정']
+    ['release-baseline', '다음 릴리즈 기준선', 'final handoff 결과를 다음 개발의 기준 패키지로 고정']
   ];
-  const phase321 = [];
+  const handoffItems = [];
   for (const [streamIndex, [stream, label, outcome]] of streams.entries()) {
     for (let i = 1; i <= 5; i += 1) {
       const index = streamIndex * 5 + i;
-      phase321.push({
-        id: `P321-${String(index).padStart(3, '0')}`,
+      handoffItems.push({
+        id: `HANDOFF-${String(index).padStart(3, '0')}`,
         stream,
         label,
         title: `${label} 완성 항목 ${i}`,
@@ -157,7 +157,7 @@ export function buildPhase321ExpansionBacklog() {
       });
     }
   }
-  return [...previous, ...phase321];
+  return [...previous, ...handoffItems];
 }
 
 export function buildTrustOpsFinalHandoff(db = {}, options = {}) {
@@ -171,12 +171,12 @@ export function buildTrustOpsFinalHandoff(db = {}, options = {}) {
   const acceptanceScore = scoreFromChecks(acceptanceChecklist);
   const p0Failures = acceptanceChecklist.filter(item => item.priority === 'P0' && !item.pass);
   const p1Failures = acceptanceChecklist.filter(item => item.priority === 'P1' && !item.pass);
-  const backlog = buildPhase321ExpansionBacklog();
+  const backlog = buildHandoffExpansionBacklog();
   const decision = p0Failures.length > 0 || sentinel.decision === 'hold' ? 'hold' : p1Failures.length > 0 || sentinel.decision === 'limited_rollout' ? 'limited_rollout' : 'go';
   const offers = buildCommercialOfferCatalog();
   return {
     ok: decision !== 'hold',
-    version: PHASE321_FINAL_HANDOFF_VERSION,
+    version: TRUSTOPS_FINAL_HANDOFF_VERSION,
     generatedAt,
     decision,
     acceptanceScore,
@@ -201,17 +201,17 @@ export function buildTrustOpsFinalHandoff(db = {}, options = {}) {
       { key: 'agency_pipeline_value', label: '대행사 파이프라인', target: '월 1건 이상', source: '/api/public/trustops-autopilot' }
     ],
     handoffArtifacts: [
-      'VERIDION_phase321_final_completion_delivery.zip',
-      'docs/PHASE321_FINAL_COMPLETION_WORK_ORDER.md',
-      'docs/PHASE321_FINAL_COMPLETION_REPORT.md',
-      'docs/current/PHASE321_FINAL_COMPLETION_AUDIT.json',
-      'docs/current/PHASE321_FINAL_GATE_LOG.txt',
+      'VERIDION_clean_commercial_baseline_delivery.zip',
+      'docs/DEPLOYMENT.md',
+      'docs/OPERATIONS.md',
+      'docs/QA.md',
+      'docs/ROLLBACK.md',
       'server/core/trustops-final-handoff.mjs',
       'tests/trustops-final-handoff.mjs',
-      'scripts/validate-phase321-final-completion.mjs'
+      'scripts/run-release-gate.mjs'
     ],
     releaseCommandSequence: [
-      'npm run phase322:final',
+      'npm run verify:release',
       'npm run release:predeploy',
       '서버 배포 및 재시작',
       'CDN/브라우저 캐시 삭제',
@@ -230,34 +230,34 @@ export function buildTrustOpsFinalHandoff(db = {}, options = {}) {
       eventPolicyCount: assignment.eventPolicyCount,
       offerCount: offers.length,
       backlogCount: backlog.length,
-      phase321BacklogCount: backlog.filter(item => String(item.id).startsWith('P321-')).length
+      handoffBacklogCount: backlog.filter(item => String(item.id).startsWith('HANDOFF-')).length
     }
   };
 }
 
-export function runPhase321FinalCompletionAudit({ files = [], packageJson = {}, sourceText = '' } = {}) {
+export function runFinalCompletionAudit({ files = [], packageJson = {}, sourceText = '' } = {}) {
   const normalizedFiles = list(files).map(item => String(item).replace(/\\/g, '/'));
   const scripts = packageJson?.scripts || {};
   const handoff = buildTrustOpsFinalHandoff({ orders: [], subscriptions: [], refundRequests: [], engineAgentEvents: [] }, { nowIso: '2026-05-27T00:00:00.000Z', packageGateReady: true, allowMvp: true });
   const requiredFiles = [
     'server/core/trustops-final-handoff.mjs',
     'tests/trustops-final-handoff.mjs',
-    'scripts/validate-phase321-final-completion.mjs',
-    'docs/PHASE321_FINAL_COMPLETION_WORK_ORDER.md',
-    'docs/PHASE321_FINAL_COMPLETION_REPORT.md',
-    'docs/current/PHASE321_FINAL_COMPLETION_AUDIT.json'
+    'scripts/run-release-gate.mjs',
+    'docs/DEPLOYMENT.md',
+    'docs/OPERATIONS.md',
+    'docs/ROLLBACK.md'
   ];
   const checks = [
-    { key: 'requiredFiles', weight: 12, pass: requiredFiles.every(file => normalizedFiles.includes(file)), message: 'phase321 핵심 파일 존재' },
-    { key: 'packagePhase', weight: 10, pass: /phase321-trustops-final-completion|phase322-final-test-closeout|phase323-one-hundred-point-closeout|phase324-complete-delivery/.test(String(packageJson.version || '')), message: 'package version phase321' },
-    { key: 'scripts', weight: 12, pass: Boolean(scripts['phase321:final']) && Boolean(scripts['validate:phase321']) && Boolean(scripts['test:final-handoff']) && Boolean(scripts['phase322:final']) && Boolean(scripts['validate:phase322']) && ['npm run phase322:final','npm run phase323:final','npm run phase324:final'].includes(scripts['release:predeploy']), message: 'phase321 최종 스크립트 연결' },
+    { key: 'requiredFiles', weight: 12, pass: requiredFiles.every(file => normalizedFiles.includes(file)), message: '현재 인수인계 핵심 파일 존재' },
+    { key: 'packagePhase', weight: 10, pass: String(packageJson.version || '') === '2.1.0-clean-commercial-baseline', message: 'clean baseline package version' },
+    { key: 'scripts', weight: 12, pass: scripts['verify:release'] === 'node scripts/run-release-gate.mjs' && scripts['release:predeploy'] === 'npm run verify:release' && Boolean(scripts['test:trustops']), message: '인수인계 단일 릴리즈 게이트 연결' },
     { key: 'routes', weight: 12, pass: sourceText.includes('/api/public/trustops-final-handoff') && sourceText.includes('/api/admin/trustops-final-handoff'), message: '공개·관리자 final handoff API 존재' },
-    { key: 'portal', weight: 8, pass: sourceText.includes('portalFinalDecision') && sourceText.includes('/api/public/trustops-final-handoff'), message: '포털 final handoff 카드' },
+    { key: 'portal', weight: 8, pass: sourceText.includes('/api/public/trustops-final-handoff') && sourceText.includes('/api/admin/trustops-final-handoff'), message: '공개·관리자 final handoff 경로' },
     { key: 'acceptance', weight: 10, pass: handoff.acceptanceChecklist.length >= 15 && handoff.acceptanceScore >= 80, message: '최종 수락 체크리스트 15개 이상' },
     { key: 'runbook', weight: 10, pass: handoff.operatorRunbook.length >= 12, message: '운영자 런북 12단계 이상' },
     { key: 'safeMode', weight: 8, pass: handoff.safeModeMatrix.length >= 5, message: '장애 안전 모드 5개 이상' },
     { key: 'kpi', weight: 8, pass: handoff.goLiveKpi.length >= 6, message: '오픈 KPI 6개 이상' },
-    { key: 'backlog', weight: 10, pass: handoff.summary.backlogCount >= 280 && handoff.summary.phase321BacklogCount === 60, message: 'phase321 보강 백로그 60개 포함' }
+    { key: 'backlog', weight: 10, pass: handoff.summary.backlogCount >= 280 && handoff.summary.handoffBacklogCount === 60, message: 'final-handoff 보강 백로그 60개 포함' }
   ];
   const score = checks.reduce((sum, item) => sum + (item.pass ? item.weight : 0), 0);
   const failed = checks.filter(item => !item.pass);
@@ -265,10 +265,10 @@ export function runPhase321FinalCompletionAudit({ files = [], packageJson = {}, 
     ok: failed.length === 0 && score === 100,
     score,
     total: 100,
-    phase: 'phase321',
-    version: PHASE321_FINAL_HANDOFF_VERSION,
+    phase: 'trustops-final-handoff',
+    version: TRUSTOPS_FINAL_HANDOFF_VERSION,
     checks,
     failed,
-    handoff: { decision: handoff.decision, acceptanceScore: handoff.acceptanceScore, backlogCount: handoff.summary.backlogCount, phase321BacklogCount: handoff.summary.phase321BacklogCount }
+    handoff: { decision: handoff.decision, acceptanceScore: handoff.acceptanceScore, backlogCount: handoff.summary.backlogCount, handoffBacklogCount: handoff.summary.handoffBacklogCount }
   };
 }

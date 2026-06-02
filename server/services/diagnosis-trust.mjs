@@ -1,6 +1,6 @@
 import crypto from 'node:crypto';
 
-export const DIAGNOSIS_RULES_VERSION = 'nv0-rules-2026.05.phase200';
+export const DIAGNOSIS_RULES_VERSION = 'nv0-rules-2026.05.baseline';
 
 function sha256(value) {
   return crypto.createHash('sha256').update(String(value ?? '')).digest('hex');

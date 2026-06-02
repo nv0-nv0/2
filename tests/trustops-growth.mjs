@@ -27,7 +27,8 @@ const child = spawn(process.execPath, ['server/index.mjs'], {
     NV0_ALLOW_PRELAUNCH_ONLINE_PAYMENT: 'true',
     NV0_PUBLIC_SCAN_LIMIT: '200',
     NV0_PUBLIC_BASE_URL: `http://127.0.0.1:${appPort}`,
-    NV0_ADMIN_KEY: 'phase317-key'
+    NV0_TARGET_FETCH_ENABLED: 'false',
+    NV0_ADMIN_KEY: 'trustops-growth-key'
   },
   stdio: 'ignore'
 });
@@ -72,7 +73,7 @@ try {
   const scan = await j('/api/public/diagnose', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ target: 'https://phase317-growth.example' })
+    body: JSON.stringify({ target: 'https://trustops-growth.example' })
   });
   assert.equal(scan.res.status, 200);
   assert.equal(scan.data.result.trustOpsBlueprint.positioning, 'VERIDION 신뢰 운영 플랫폼');
@@ -85,7 +86,7 @@ try {
   const fix = await j('/api/public/fix-generator', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ brandName: '성장몰', siteUrl: 'https://phase317-growth.example', industry: 'shopping', supportEmail: 'help@example.kr' })
+    body: JSON.stringify({ brandName: '성장몰', siteUrl: 'https://trustops-growth.example', industry: 'shopping', supportEmail: 'help@example.kr' })
   });
   assert.equal(fix.res.status, 200);
   assert.equal(fix.data.fixPack.copyReadyCount, 5);
@@ -94,7 +95,7 @@ try {
   const monitoring = await j('/api/public/monitoring-plan', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ siteUrl: 'https://phase317-growth.example', industry: 'shopping', cadence: 'weekly' })
+    body: JSON.stringify({ siteUrl: 'https://trustops-growth.example', industry: 'shopping', cadence: 'weekly' })
   });
   assert.equal(monitoring.res.status, 200);
   assert.equal(monitoring.data.monitoring.schedule.length, 5);
@@ -119,7 +120,7 @@ try {
   assert.ok(status.data.engineCount >= 30);
   assert.ok(status.data.eventPolicyCount >= 12);
 
-  console.log('phase317 trustops growth integration ok');
+  console.log('trustops growth integration ok');
 } finally {
   await stopChild(child);
   fs.rmSync(testRuntimeDir, { recursive: true, force: true });

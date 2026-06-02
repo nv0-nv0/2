@@ -30,17 +30,14 @@ add('visual-percent-class-coverage-0-to-100', () => {
     assert.ok(demoCss.includes(`.vr-pct-${value}{--vr-pct:${value}}`), `missing vr-pct-${value}`);
   }
 });
-add('legacy-variable-class-coverage-0-to-100', () => {
-  for (let value = 0; value <= 100; value += 1) {
-    assert.ok(demoCss.includes(`.vr-crisis-${value}{--crisis:${value}}`), `missing vr-crisis-${value}`);
-    assert.ok(demoCss.includes(`.vr-target-${value}{--target:${value}}`), `missing vr-target-${value}`);
-    assert.ok(demoCss.includes(`.vr-score-${value}{--score:${value}}`), `missing vr-score-${value}`);
-  }
+add('legacy-variable-classes-removed', () => {
+  assert.doesNotMatch(demoCss, /\.vr-(?:crisis|target|score)-\d+\{/);
+  assert.doesNotMatch(demoJs, /vr-(?:crisis|target|score)-\$\{/);
 });
 
 const failures = checks.filter(item => !item.ok);
-const report = { ok: failures.length === 0, contract: 'phase357-csp-inline-style-contract', checkedAt: new Date().toISOString(), checked: checks.length, failed: failures.length, failures, checks };
+const report = { ok: failures.length === 0, contract: 'csp-inline-style-contract', checkedAt: new Date().toISOString(), checked: checks.length, failed: failures.length, failures, checks };
 fs.mkdirSync(path.join(root, 'docs/current'), { recursive: true });
-fs.writeFileSync(path.join(root, 'docs/current/PHASE357_CSP_VISUAL_INTEGRITY.json'), JSON.stringify(report, null, 2));
+fs.writeFileSync(path.join(root, 'docs/current/CSP_VISUAL_INTEGRITY.json'), JSON.stringify(report, null, 2));
 console.log(JSON.stringify(report, null, 2));
 if (!report.ok) process.exit(1);

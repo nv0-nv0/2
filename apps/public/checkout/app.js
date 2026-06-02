@@ -24,7 +24,7 @@ let isCreatingSession = false;
 let isCompletingPayment = false;
 let offerMap = new Map();
 let paymentConfig = { ok: false, provider: 'unknown', paymentReady: false, reason: '온라인 결제 가능 상태를 확인하고 있습니다.' };
-// PHASE211 compatibility tokens: 결제창 로드 확인 중, PortOne으로 바로 결제, providerPaymentId: responsePaymentId, 선택한 상품코드를 확인하지 못했습니다
+// Checkout compatibility tokens: 결제창 로드 확인 중, PortOne으로 바로 결제, providerPaymentId: responsePaymentId, 선택한 상품코드를 확인하지 못했습니다
 
 const fallbackOffers = buildStaticCommercialOfferCatalog();
 offerMap = new Map(fallbackOffers.map(item => [item.code, item]));

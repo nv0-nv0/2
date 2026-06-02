@@ -1,4 +1,4 @@
-// Phase166 ops route split for the native http.createServer dispatcher.
+// Native server ops route split for the native http.createServer dispatcher.
 // The admin dispatcher performs IP, session, CSRF, and RBAC gate setup before calling this handler.
 export function createOpsRouteHandler(ctx) {
   const {

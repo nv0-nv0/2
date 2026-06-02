@@ -90,7 +90,7 @@ body[data-veridion-rebrand="clean"] .vr-topbar{will-change:transform}
 }
 
 
-/* Phase336 visibility, premium UI and conversion hardening layer */
+/* Baseline visibility, premium UI and conversion hardening layer */
 :root{
   --vr-bg:#f6f8fb;
   --vr-ink-strong:#09111f;
@@ -135,7 +135,7 @@ body[data-veridion-rebrand="clean"] :is(.vr-dark-card,.vr-app-shell,.vr-side,.vr
 @media (max-width:640px){.demo-count-kpis,.paid-result-kpis,.demo-value-grid,.demo-preview-grid,.demo-result-explain-grid,.vr-seo-summary{grid-template-columns:1fr}.demo-count-head h2{font-size:26px}.demo-summary-card strong,.paid-result-kpis strong{font-size:30px}.vr-post-cta,.vr-cta-row,.topnav{display:grid}.vr-post-cta a,.vr-cta-row a,.topnav a,.bridge-actions button{width:100%}}
 
 
-/* Phase337 product evolution: readability, visual hierarchy, pricing, insight, demo conversion hardening */
+/* Baseline product evolution: readability, visual hierarchy, pricing, insight, demo conversion hardening */
 body[data-veridion-rebrand="clean"]{--vr-text-strong:#0b1220;--vr-text:#1f2937;--vr-text-muted:#475467;--vr-dark-text:#ffffff;--vr-dark-muted:#d5e3f0;--vr-surface:#ffffff;--vr-surface-2:#f8fbff;--vr-border:#d5e1ec;}
 body[data-veridion-rebrand="clean"] p, body[data-veridion-rebrand="clean"] li, body[data-veridion-rebrand="clean"] dd{color:var(--vr-text-muted)}
 body[data-veridion-rebrand="clean"] :is(.vr-card,.vr-price-card,.demo-value-card,.demo-preview-card,.demo-summary-card,.vr-compare-card,.vr-board-card){color:var(--vr-text)}
@@ -170,7 +170,7 @@ body[data-veridion-rebrand="clean"] :is(.vr-dark-card,.vr-app-shell,.vr-footer) 
 @media (max-width:760px){.vr-decision-grid-four,.vr-pricing-enhanced{grid-template-columns:1fr}}
 @media (max-width:640px){.vr-dark-row{word-break:break-word}.vr-topbar-inner{align-items:stretch}.vr-nav a{padding:0 12px}}
 
-/* Phase347 unified diagnosis flow + button contrast hardening */
+/* Clean commercial baseline: unified diagnosis flow + button contrast hardening */
 body[data-veridion-rebrand="clean"]{
   --vr-button-bg:#075e54;
   --vr-button-bg-hover:#05483f;
@@ -248,7 +248,7 @@ body[data-veridion-rebrand="clean"] :is(.notice.muted,.vr-home-demo-state.muted)
   .vr-unified-diagnosis-form button,.vr-home-unified-diagnosis .bridge-actions button{width:100%}
 }
 
-/* Phase348 final unified engine closeout: result action state + canonical CTA polish */
+/* Baseline final unified engine closeout: result action state + canonical CTA polish */
 body[data-veridion-rebrand="clean"] [data-diagnosis-primary-action="true"]{
   min-width:168px;
   letter-spacing:-.01em;
@@ -272,7 +272,7 @@ body[data-veridion-rebrand="clean"] .vr-functional-bridge[data-unified-diagnosis
   body[data-veridion-rebrand="clean"] [data-diagnosis-primary-action="true"]{width:100%;min-width:0}
 }
 
-/* Phase349 customer journey closeout: hide unavailable result actions and keep conversion UI explicit */
+/* Baseline customer journey closeout: hide unavailable result actions and keep conversion UI explicit */
 body[data-veridion-rebrand="clean"] .vr-functional-bridge[data-unified-diagnosis="home-and-demo"] .bridge-actions[hidden],
 body[data-veridion-rebrand="clean"] .vr-functional-bridge[data-unified-diagnosis="home-and-demo"] .result-action-hint[hidden]{display:none!important}
 body[data-veridion-rebrand="clean"] .vr-functional-bridge[data-unified-diagnosis="home-and-demo"] .result-action-hint{margin-top:12px}
@@ -282,7 +282,7 @@ body[data-veridion-rebrand="clean"] .vr-functional-bridge[data-unified-diagnosis
 body[data-veridion-rebrand="clean"] .vr-functional-bridge[data-unified-diagnosis="home-and-demo"] #unlockBtn:not([disabled]){background:#075e54!important;color:#ffffff!important;border-color:#075e54!important}
 @media (max-width:640px){body[data-veridion-rebrand="clean"] .vr-functional-bridge[data-unified-diagnosis="home-and-demo"] .bridge-actions:not([hidden]){display:grid}body[data-veridion-rebrand="clean"] .vr-functional-bridge[data-unified-diagnosis="home-and-demo"] .bridge-actions button{width:100%}}
 
-/* Phase354 diagnosis experience hardening: stronger scan feedback and motion-safe progress emphasis */
+/* Baseline diagnosis experience hardening: stronger scan feedback and motion-safe progress emphasis */
 body[data-veridion-rebrand="clean"] .demo-progress-rail{height:10px;border-radius:999px;background:#e7edf4;overflow:hidden;margin:14px 0 6px}
 body[data-veridion-rebrand="clean"] .demo-progress-rail i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#0b8f71,#24d2aa);box-shadow:0 0 22px rgba(36,210,170,.35);transition:width .45s ease}
 body[data-veridion-rebrand="clean"] .demo-result-surface[data-demo-progress="active"]{position:relative}

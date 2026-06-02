@@ -1,5 +1,5 @@
 import { buildDiagnosisAccuracyProfile, buildReportQualityProfile, buildFulfillmentQualityProfile } from './product-quality-engine.mjs';
-import { buildDemoAccuracyContract, buildDemoIssueOverview, buildPaidDeliverableBlueprint, buildPaidOutputQualityGate, buildPaidFullDetailContract, buildSiteOperationsDocument, buildConversionUrgencyModel, buildPhase229OutputQualityLock } from './service-quality-220.mjs';
+import { buildDemoAccuracyContract, buildDemoIssueOverview, buildPaidDeliverableBlueprint, buildPaidOutputQualityGate, buildPaidFullDetailContract, buildSiteOperationsDocument, buildConversionUrgencyModel, buildOutputQualityLock } from './service-quality.mjs';
 const SAFE_DISCLAIMER = '본 산출물은 운영 사이트 점검과 문구 개선을 돕는 참고 자료이며, 개별 사건에 대한 법률 자문이나 법적 안전성 보장을 의미하지 않습니다. 법률·정책 판단은 공식 원문 또는 전문가 검토가 필요합니다.';
 
 function text(value, fallback = '') {
@@ -92,7 +92,7 @@ function buildEvidenceMatrix(scan) {
 }
 function buildQualityContract(order) {
   return {
-    version: 'phase134-all-service-output-maximized',
+    version: 'premium-service-output-maximized',
     outputLevel: 'commercial-ready',
     language: 'ko',
     intent: '문의 또는 체험 신청 전환과 결제 후 실행 지원',
@@ -411,7 +411,7 @@ function buildStakeholderHandoff(order, scan) {
 function buildOutputPerformanceProfile(order, offer, scan) {
   const demoAccuracy = buildDemoAccuracyContract(scan || {}, { plan: order?.plan });
   return {
-    level: 'phase134-all-service-output-max',
+    level: 'premium-service-output-max',
     detailDepth: '결제 후 실행 가능한 문서·문구·FAQ·CTA·태그·재점검 기준까지 포함',
     valueMultiple: '가격 대비 4배 전후 구성 가치 기준. 실제 성과 보장이 아니라 산출물 구성 기준입니다.',
     renderPerformance: ['카드형 섹션', '긴 문장 자동 줄바꿈', '모바일 1열 재배치', 'PDF 다운로드 라인 확장'],
@@ -464,35 +464,35 @@ export function buildPremiumPurchasedAsset({ order, offer, scan, site, businessP
     reportQualityProfile: buildReportQualityProfile(base, scan || {}),
     fulfillmentQualityProfile: buildFulfillmentQualityProfile(order || {}, base, scan || {}),
     paidOutputQualityGate: buildPaidOutputQualityGate({ order: order || {}, asset: base, scan: scan || {} }),
-    phase229OutputQualityLock: buildPhase229OutputQualityLock({ order: order || {}, asset: base, scan: scan || {} })
+    outputQualityLock: buildOutputQualityLock({ order: order || {}, asset: base, scan: scan || {} })
   };
   const plan = text(order?.plan || 'Report');
-  const withPhase220Gate = (asset) => {
+  const withServiceQualityGate = (asset) => {
     const reportQualityProfile = buildReportQualityProfile(asset, scan || {});
     const fulfillmentQualityProfile = buildFulfillmentQualityProfile(order || {}, asset, scan || {});
     const paidOutputQualityGate = buildPaidOutputQualityGate({ order: order || {}, asset: { ...asset, reportQualityProfile, fulfillmentQualityProfile }, scan: scan || {} });
-    const phase229OutputQualityLock = buildPhase229OutputQualityLock({ order: order || {}, asset: { ...asset, reportQualityProfile, fulfillmentQualityProfile, paidOutputQualityGate }, scan: scan || {} });
-    return { ...asset, reportQualityProfile, fulfillmentQualityProfile, paidOutputQualityGate, phase229OutputQualityLock }; 
+    const outputQualityLock = buildOutputQualityLock({ order: order || {}, asset: { ...asset, reportQualityProfile, fulfillmentQualityProfile, paidOutputQualityGate }, scan: scan || {} });
+    return { ...asset, reportQualityProfile, fulfillmentQualityProfile, paidOutputQualityGate, outputQualityLock }; 
   };
   if (plan === 'Report') {
     const asset = { ...enrichedBase, type: 'report', title: '정밀 리스크 리포트', downloadable: true, fixes: [], templates: [], guide: null, autoPublishingPlan: null };
-    return withPhase220Gate(asset);
+    return withServiceQualityGate(asset);
   }
   if (plan === '전문가 리포트') {
     const asset = { ...enrichedBase, type: 'fix_pack', title: '수정 문구안 패키지', downloadable: true, templates: [], guide: null, autoPublishingPlan: null };
-    return withPhase220Gate(asset);
+    return withServiceQualityGate(asset);
   }
   if (plan === '문서 초안') {
     const asset = { ...enrichedBase, type: 'template_pack', title: '법률 문서 템플릿 팩', downloadable: true, fixes: [], guide: null, autoPublishingPlan: null };
-    return withPhase220Gate(asset);
+    return withServiceQualityGate(asset);
   }
   if (plan === 'IndustryGuide') {
     const asset = { ...enrichedBase, type: 'industry_guide', title: `${text(industryGuide?.industry || '업종별')} 운영 리스크 가이드`, downloadable: true, fixes: [], templates: [], autoPublishingPlan: null };
-    return withPhase220Gate(asset);
+    return withServiceQualityGate(asset);
   }
   if (plan === 'Certified') {
     const asset = { ...enrichedBase, type: 'certification', title: 'NV0 Certified 인증 후보', downloadable: false, certificationStatus: 'pending_operator_review', fixes: buildFixes(scan).slice(0, 3), templates: [], autoPublishingPlan: null };
-    return withPhase220Gate(asset);
+    return withServiceQualityGate(asset);
   }
   if (['Basic', 'Pro', 'Auto', 'Agency'].includes(plan)) {
     const isAuto = plan === 'Auto' || plan === 'Agency';
@@ -507,10 +507,10 @@ export function buildPremiumPurchasedAsset({ order, offer, scan, site, businessP
       autoPublishing: isAuto,
       autoPublishingPlan: isAuto ? buildAutoPublishingPlan(order, scan) : null
     };
-    return withPhase220Gate(asset);
+    return withServiceQualityGate(asset);
   }
   const asset = { ...enrichedBase, type: 'generic', title: text(offer?.title || plan), downloadable: true };
-  return withPhase220Gate(asset);
+  return withServiceQualityGate(asset);
 }
 
 export function buildPremiumAssetPdfLines(asset, order) {
@@ -532,7 +532,7 @@ export function buildPremiumAssetPdfLines(asset, order) {
   if (asset.conversionUrgency) lines.push(`전환 위기도: ${asset.conversionUrgency.crisisScore}/100 · ${asset.conversionUrgency.crisisLabel} · 예상 개선 후 ${asset.conversionUrgency.projectedAfterFixScore}/100`);
   if (asset.paidFullDetailContract) lines.push(`유료 전체 공개 게이트: ${asset.paidFullDetailContract.completenessScore}/100 · 전체 상세 ${asset.paidFullDetailContract.allDetailsVisible ? '공개' : '보완 필요'} · ${asset.paidFullDetailContract.issueDetails?.length || 0}개 항목`);
   if (asset.siteOperationsDocument) lines.push(`맞춤 운영 문서: ${asset.siteOperationsDocument.qualityScore}/100 · ${asset.siteOperationsDocument.sections?.length || 0}개 섹션 · ${asset.siteOperationsDocument.title}`);
-  if (asset.phase229OutputQualityLock) lines.push(`가격 인하 품질 잠금: ${asset.phase229OutputQualityLock.score}/100 · ${asset.phase229OutputQualityLock.ok ? '통과' : '보완 필요'} · 전체 상세/수정 문구/운영 문서 유지`);
+  if (asset.outputQualityLock) lines.push(`가격 인하 품질 잠금: ${asset.outputQualityLock.score}/100 · ${asset.outputQualityLock.ok ? '통과' : '보완 필요'} · 전체 상세/수정 문구/운영 문서 유지`);
   for (const sec of asset.sections || []) lines.push(`${sec.title}: ${sec.body}`);
   for (const fix of asset.fixes || []) lines.push(`${fix.title}: ${fix.after || fix.rationale || ''}`);
   for (const tpl of asset.templates || []) lines.push(`${tpl.title}: ${String(tpl.content || '').slice(0, 700)}`);

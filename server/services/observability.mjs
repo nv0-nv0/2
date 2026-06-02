@@ -21,7 +21,7 @@ export function buildHealthDetails(options = {}) {
   return {
     ok: Object.values(integrations).every((item) => item?.ok !== false),
     service: options.service || 'nv0-veridion',
-    phase: options.phase || 'phase200-commercial-system',
+    phase: options.phase || 'commercial-system-v1',
     generatedAt: new Date().toISOString(),
     uptimeSec: Math.round(process.uptime()),
     memory: process.memoryUsage(),

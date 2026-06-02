@@ -27,7 +27,8 @@ const child = spawn(process.execPath, ['server/index.mjs'], {
     NV0_ALLOW_PRELAUNCH_ONLINE_PAYMENT: 'true',
     NV0_PUBLIC_SCAN_LIMIT: '200',
     NV0_PUBLIC_BASE_URL: `http://127.0.0.1:${appPort}`,
-    NV0_ADMIN_KEY: 'phase318-key'
+    NV0_TARGET_FETCH_ENABLED: 'false',
+    NV0_ADMIN_KEY: 'trustops-autopilot-key'
   },
   stdio: 'ignore'
 });
@@ -69,13 +70,13 @@ try {
   const scan = await j('/api/public/diagnose', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ target: 'https://phase318-autopilot.example' })
+    body: JSON.stringify({ target: 'https://trustops-autopilot.example' })
   });
   assert.equal(scan.res.status, 200);
 
   const autopilot = await j('/api/public/trustops-autopilot');
   assert.equal(autopilot.res.status, 200);
-  assert.equal(autopilot.data.cockpit.version, 'phase318-trustops-autopilot-cockpit-v1');
+  assert.equal(autopilot.data.cockpit.version, 'trustops-autopilot-cockpit-v1');
   assert.ok(autopilot.data.cockpit.backlogCount >= 130);
   assert.ok(autopilot.data.cockpit.nextBestOffer.code);
   assert.ok(Array.isArray(autopilot.data.cockpit.workQueue));
@@ -83,7 +84,7 @@ try {
   const lifecycle = await j('/api/public/customer-lifecycle', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ siteUrl: 'https://phase318-autopilot.example', riskScore: 78, currentPlan: 'Free', industry: 'shopping' })
+    body: JSON.stringify({ siteUrl: 'https://trustops-autopilot.example', riskScore: 78, currentPlan: 'Free', industry: 'shopping' })
   });
   assert.equal(lifecycle.res.status, 200);
   assert.equal(lifecycle.data.lifecycle.stages.length, 6);
@@ -100,7 +101,7 @@ try {
   assert.ok(status.data.agentCount >= 76);
   assert.ok(status.data.eventPolicyCount >= 14);
 
-  console.log('phase318 trustops autopilot integration ok');
+  console.log('trustops autopilot integration ok');
 } finally {
   await stopChild(child);
   fs.rmSync(testRuntimeDir, { recursive: true, force: true });

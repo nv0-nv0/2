@@ -11,7 +11,7 @@ import { assertCommercialRouteAllowed, createPlatformProfile } from './core/plat
 import { PAYMENT_SESSION_TRANSITIONS, ORDER_STATUS_TRANSITIONS, canTransition } from './core/payment-state-machine.mjs';
 import { handleAccountRescan, customerRecentScans } from './core/account-rescan.mjs';
 import { buildPublicDiagnosisPackage } from './core/diagnosis-report-package.mjs';
-import { buildDemoIssueOverview, buildConversionUrgencyModel, buildSiteOperationsDocument } from './core/service-quality-220.mjs';
+import { buildDemoIssueOverview, buildConversionUrgencyModel, buildSiteOperationsDocument } from './core/service-quality.mjs';
 import { buildPremiumPurchasedAsset, buildPremiumAssetPdfLines } from './core/premium-asset-builder.mjs';
 import { buildCtaBoardArticle, chooseCtaVariant, ctaTopicPacks, ctaCombinationStats, rewriteExistingCtaPublication, auditHumanFriendlyCtaArticle, ctaFingerprint } from './core/cta-publication.mjs';
 import { buildProductIntelligence, annotateOffersWithIntelligence, buildProductDashboard } from './core/product-intelligence.mjs';
@@ -42,16 +42,16 @@ import { resolveNativeRouteState } from './core/native-route-state.mjs';
 import { buildWorkOrderPreview } from './core/work-order-generator.mjs';
 import { validateCommercialEnv } from './bootstrap/commercial-env.mjs';
 import { buildHealthDetails, classifyIncident } from './services/observability.mjs';
-import { buildDeploymentRiskGuard, PHASE223_RISK_GUARD_VERSION } from './core/deployment-risk-guard.mjs';
+import { buildDeploymentRiskGuard, DEPLOYMENT_RISK_GUARD_VERSION } from './core/deployment-risk-guard.mjs';
 import { timingSafeStringEqual, hasValidOrderAccessToken } from './core/access-token.mjs';
 import { putObjectToS3Compatible } from './infrastructure/storage/s3-compatible.mjs';
-import { PHASE229_PRICING_VERSION, buildPricingRecalculation } from './core/pricing-conversion-model.mjs';
+import { PRICING_MODEL_VERSION, buildPricingRecalculation } from './core/pricing-conversion-model.mjs';
 import { buildCommercialOfferCatalog as buildSharedCommercialOfferCatalog, buildPlanCatalog as buildSharedPlanCatalog, planPrice as sharedPlanPrice } from '../shared/product-catalog.mjs';
-import { PHASE313_GOVERNANCE_VERSION, buildPhase313GovernanceSnapshot } from './core/phase313-operations-governance.mjs';
+import { OPERATIONS_GOVERNANCE_VERSION, buildOperationsGovernanceSnapshot } from './core/operations-governance.mjs';
 import { buildPublicColumnEnginePosts, publicColumnTypeLabel } from './core/public-column-engine.mjs';
 import { PRODUCT_AGENT_SUITE_VERSION, publishProductInsightNow, publishProductInsightIfDue, ensureProductAgentSettings, latestProductInsightPublication, productInsightDueStatus, buildProductAgentRuntimeStatus, runProductAgentPackageAudit } from './core/product-agent-suite.mjs';
 import { ENGINE_AGENT_ORCHESTRATOR_VERSION, buildEngineAgentRuntimeStatus, runEngineAgentPackageAudit } from './core/engine-agent-orchestrator.mjs';
-import { PHASE287_COMMERCIAL_READINESS_VERSION, buildCommercialReadinessStatus, runPhase287CommercialAudit } from './core/commercial-readiness-287.mjs';
+import { COMMERCIAL_READINESS_VERSION, buildCommercialReadinessStatus, runCommercialReadinessAudit } from './core/commercial-readiness.mjs';
 const COMMERCIAL_OFFER_COMPATIBILITY_MARKERS = ['전문가 리포트', 'IndustryGuide', 'Certified'];
 const ENV_CONFIG = readEnvConfig(process.env);
 const __filename = fileURLToPath(import.meta.url);
@@ -217,7 +217,7 @@ const PAYMENT_REDIRECT_ALLOWED_HOSTS = String(process.env.NV0_PAYMENT_REDIRECT_A
 const PORTONE_CLIENT = createPortOneV2Client(process.env);
 const PORTONE_WEBHOOK_SECRET = process.env.NV0_PORTONE_WEBHOOK_SECRET || '';
 const PORTONE_WEBHOOK_VERIFY_MODE = process.env.NV0_PORTONE_WEBHOOK_VERIFY_MODE || (PLATFORM.target === 'commercial' || NODE_ENV === 'production' ? 'strict' : 'optional');
-const RULES_VERSION = process.env.NV0_RULES_VERSION || '2026.05.02-phase164-zero-cost-hardening-50';
+const RULES_VERSION = process.env.NV0_RULES_VERSION || '2026.05.02-runtime-hardening-v1';
 const SCAN_CACHE_TTL_MS = Number(process.env.NV0_SCAN_CACHE_TTL_MS || 10 * 60_000);
 const TARGET_FETCH_TIMEOUT_MS = Number(process.env.NV0_TARGET_FETCH_TIMEOUT_MS || 3000);
 const TARGET_FETCH_MAX_BYTES = Math.max(32 * 1024, Math.min(1_048_576, Number(process.env.NV0_TARGET_FETCH_MAX_BYTES || 512 * 1024)));
@@ -239,16 +239,16 @@ const AI_REVIEW_PROVIDER = String(process.env.NV0_AI_REVIEW_PROVIDER || 'disable
 const GEMINI_API_KEY = String(process.env.NV0_GEMINI_API_KEY || '').trim();
 const GEMINI_MODEL = String(process.env.NV0_GEMINI_MODEL || 'gemini-2.5-flash').trim();
 const AI_REVIEW_ENABLED = AI_REVIEW_PROVIDER === 'gemini' && !!GEMINI_API_KEY;
-const RELEASE_PHASE = 'commercial-final-phase180-quality-performance-functionality-max-phase181-zero-blocker-closeout';
+const RELEASE_PHASE = 'clean-commercial-baseline';
 const BUILD_FINGERPRINT = Object.freeze({
-version: process.env.NV0_BUILD_VERSION || 'phase352-local-audit',
+version: process.env.NV0_BUILD_VERSION || '2.1.0-clean-commercial-baseline',
 releasePhase: RELEASE_PHASE,
 buildTime: process.env.NV0_BUILD_TIME || new Date().toISOString(),
 deploymentEnvironment: DEPLOYMENT_STAGE,
 canonicalDomain: process.env.NV0_PUBLIC_BASE_URL || BUSINESS_PROFILE.domain || '',
 commitOrRelease: process.env.NV0_COMMIT_SHA || process.env.NV0_RELEASE_ID || packageVersion()
 });
-const LEGAL_EVIDENCE_VERSION = process.env.NV0_LEGAL_EVIDENCE_VERSION || 'phase313-legal-evidence-v1';
+const LEGAL_EVIDENCE_VERSION = process.env.NV0_LEGAL_EVIDENCE_VERSION || 'legal-evidence-v1';
 const PRIVACY_POLICY_VERSION = process.env.NV0_PRIVACY_POLICY_VERSION || LEGAL_EVIDENCE_VERSION;
 const TERMS_VERSION = process.env.NV0_TERMS_VERSION || LEGAL_EVIDENCE_VERSION;
 const REFUND_POLICY_VERSION = process.env.NV0_REFUND_POLICY_VERSION || LEGAL_EVIDENCE_VERSION;
@@ -270,7 +270,7 @@ const ACCESS_LOG_MODE = ENV_CONFIG.accessLogMode || 'normal';
 const LOG_HEALTHCHECK_REQUESTS = Boolean(ENV_CONFIG.logHealthcheckRequests) || ACCESS_LOG_MODE === 'verbose';
 const LOG_FAVICON_REQUESTS = Boolean(ENV_CONFIG.logFaviconRequests) || ACCESS_LOG_MODE === 'verbose';
 const DATA_DESTRUCTION_GRACE_DAYS = Number(process.env.NV0_DATA_DESTRUCTION_GRACE_DAYS || 30);
-const SECURITY_POSTURE_VERSION = 'phase164-hardening-matrix-v1';
+const SECURITY_POSTURE_VERSION = 'runtime-hardening-matrix-v1';
 const DEPLOYMENT_RISK_GUARD = buildDeploymentRiskGuard(process.env, { businessProfile: BUSINESS_PROFILE, publicBaseUrl: BUSINESS_PROFILE.domain });
 if (String(process.env.NV0_DEPLOYMENT_RISK_STRICT || 'false').trim().toLowerCase() === 'true' && !DEPLOYMENT_RISK_GUARD.ok) {
 throw new Error(`Deployment risk guard blocked startup: ${DEPLOYMENT_RISK_GUARD.blockers.map(item => item.key).join(', ')}`);
@@ -2547,7 +2547,7 @@ function pickRecommendedPlan(riskScore) {
 if (riskScore >= 45) return 'Expert';
 return 'Report';
 }
-const PHASE255_LEGACY_PRODUCT_ALIASES = ['전문가 리포트'];
+const LEGACY_PRODUCT_ALIASES = ['전문가 리포트'];
 function normalizePlanCode(value, fallback = 'Report') {
 const raw = String(value || '').trim();
 const key = raw.toLowerCase().replace(/[\s_-]+/g, '');
@@ -3634,7 +3634,7 @@ const gates = [
 { key: 'data_retention_cleanup_ready', ok: true, label: '만료 세션·토큰·탈퇴 계정 정리 로직 준비' },
 { key: 'backup_encryption_required', ok: !PLATFORM.commercial || (BACKUP_REMOTE_REQUIRE_ENCRYPTION && !!BACKUP_ENCRYPTION_SECRET), label: '상용 백업 암호화 필수' },
 { key: 'legal_evidence_versioned', ok: true, label: '동의·약관·환불·개인정보 버전 증적 기록' },
-{ key: 'governance_snapshot', ok: Boolean(PHASE313_GOVERNANCE_VERSION), label: '운영 거버넌스 기준 적용' }
+{ key: 'governance_snapshot', ok: Boolean(OPERATIONS_GOVERNANCE_VERSION), label: '운영 거버넌스 기준 적용' }
 ];
 return { phase: RELEASE_PHASE, target: PLATFORM.target, commercial: PLATFORM.commercial, deploymentStage: DEPLOYMENT_STAGE, commercialLaunchReady: COMMERCIAL_LAUNCH_READY, prelaunchMode: PRELAUNCH_MODE, paymentProvider: PAYMENT_PROVIDER, persistenceMode: PERSISTENCE_MODE, storageMode: STORAGE_MODE, secureRecordStore: persistence.secureRecordStore || null, dataRetentionDays: DATA_RETENTION_DAYS, refundRequestWindowDays: REFUND_REQUEST_WINDOW_DAYS, missingEnv, placeholderEnv, counts, gates, ready: gates.every(g => g.ok), checkedAt: nowIso() };
 }
@@ -4188,7 +4188,7 @@ OPERATOR_ALERT_EMAIL,
 ORDER_STATUS_TRANSITIONS,
 PAYMENT_PROVIDER,
 PAYMENT_PROVIDER_URL,
-PHASE223_RISK_GUARD_VERSION,
+DEPLOYMENT_RISK_GUARD_VERSION,
 PERSISTENCE_MODE,
 PLATFORM,
 PORTONE_CLIENT,
@@ -4240,7 +4240,7 @@ buildDiagnosisAccuracyProfile,
 buildCommercialFinalGate,
 buildCommercialOfferCatalog,
 buildPricingRecalculation,
-phase229PricingVersion: PHASE229_PRICING_VERSION,
+pricingModelVersion: PRICING_MODEL_VERSION,
 buildFeedXml,
 buildHardeningMatrix,
 buildOpenApiSpec,
@@ -4259,13 +4259,13 @@ buildProductIntelligence,
 buildProductionLaunchChecklist,
 buildPublicDiagnosisPackage,
 buildReleaseReadiness,
-buildPhase313GovernanceSnapshot,
+buildOperationsGovernanceSnapshot,
 buildRobotsTxt,
 buildRuleCatalog,
 runProductAgentPackageAudit,
 runEngineAgentPackageAudit,
 runExperienceOrchestratorAudit,
-runPhase287CommercialAudit,
+runCommercialReadinessAudit,
 buildSitemapXml,
 buildSmartProductOrchestration,
 buildSmartPublicSnapshot,
@@ -4501,11 +4501,11 @@ const integrations = strictHealthz
   ? {
     process: { ok: true },
     commercialEnv: { ok: !PLATFORM.commercial || commercialEnvStatus.ok, mode: commercialEnvStatus.mode, missing: commercialEnvStatus.missing || [], warnings: commercialEnvStatus.warnings || [] },
-    deploymentRiskGuard: { ok: DEPLOYMENT_RISK_GUARD.ok, version: PHASE223_RISK_GUARD_VERSION }
+    deploymentRiskGuard: { ok: DEPLOYMENT_RISK_GUARD.ok, version: DEPLOYMENT_RISK_GUARD_VERSION }
   }
   : { process: { ok: true } };
 const payload = buildHealthDetails({ service: 'veridion', release: 'clean-rebrand', integrations });
-payload.readinessAdvisory = { commercialEnv: { ok: !PLATFORM.commercial || commercialEnvStatus.ok, mode: commercialEnvStatus.mode, missing: commercialEnvStatus.missing || [], warnings: commercialEnvStatus.warnings || [] }, deploymentRiskGuard: { ok: DEPLOYMENT_RISK_GUARD.ok, version: PHASE223_RISK_GUARD_VERSION }, strictHealthz };
+payload.readinessAdvisory = { commercialEnv: { ok: !PLATFORM.commercial || commercialEnvStatus.ok, mode: commercialEnvStatus.mode, missing: commercialEnvStatus.missing || [], warnings: commercialEnvStatus.warnings || [] }, deploymentRiskGuard: { ok: DEPLOYMENT_RISK_GUARD.ok, version: DEPLOYMENT_RISK_GUARD_VERSION }, strictHealthz };
 payload.buildFingerprint = buildPublicProbeFingerprint();
 return json(req, res, payload.ok ? 200 : 503, buildPublicHealthzPayload(payload), { 'cache-control': 'no-store' });
 }

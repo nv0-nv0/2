@@ -1,14 +1,14 @@
 import { COMMERCIAL_PRICE_TABLE } from '../../shared/product-catalog.mjs';
-export const PHASE250_PRICING_VERSION = 'phase250-three-plan-public-catalog-lock-v1';
-export const PHASE229_PRICING_VERSION = PHASE250_PRICING_VERSION;
+export const PRICING_CATALOG_VERSION = 'pricing-catalog-lock-v1';
+export const PRICING_MODEL_VERSION = PRICING_CATALOG_VERSION;
 
-export const PHASE250_PRICE_TABLE = Object.freeze({
+export const CURRENT_PRICE_TABLE = Object.freeze({
   Free: 0,
   Report: COMMERCIAL_PRICE_TABLE.Report,
   Expert: COMMERCIAL_PRICE_TABLE.Expert
 });
-export const PHASE229_PRICE_TABLE = PHASE250_PRICE_TABLE;
-export const PHASE229_PREVIOUS_PRICE_TABLE = Object.freeze({
+export const LEGACY_PRICE_TABLE_ALIAS = CURRENT_PRICE_TABLE;
+export const PREVIOUS_PRICE_TABLE = Object.freeze({
   Free: 0,
   Report: 69000,
   Expert: 199000
@@ -76,7 +76,7 @@ export function buildValuePricedOfferCatalog({ commonAssurance = [] } = {}) {
       code: 'Report',
       group: 'one_time',
       title: '기본 리포트',
-      price: PHASE250_PRICE_TABLE.Report,
+      price: CURRENT_PRICE_TABLE.Report,
       period: '1회',
       priority: 1,
       summary: '핵심 문제와 개선 우선순위를 한눈에 파악합니다.',
@@ -94,7 +94,7 @@ export function buildValuePricedOfferCatalog({ commonAssurance = [] } = {}) {
       code: 'Expert',
       group: 'one_time',
       title: '전문가 플랜',
-      price: PHASE250_PRICE_TABLE.Expert,
+      price: CURRENT_PRICE_TABLE.Expert,
       period: '월',
       priority: 2,
       summary: '상세 근거와 전문가 해설, 맞춤 개선 방향까지 제공합니다.',
@@ -110,7 +110,7 @@ export function buildValuePricedOfferCatalog({ commonAssurance = [] } = {}) {
     }
   ].map((offer) => {
     const economics = netAfterPg(offer.price);
-    const previous = PHASE229_PREVIOUS_PRICE_TABLE[offer.code] ?? offer.price;
+    const previous = PREVIOUS_PRICE_TABLE[offer.code] ?? offer.price;
     return {
       ...offer,
       previousPrice: previous,
@@ -132,7 +132,7 @@ export function buildPricingRecalculation({ pgFeeRate = 0.032 } = {}) {
     return {
       code: offer.code,
       title: offer.title,
-      previousPrice: PHASE229_PREVIOUS_PRICE_TABLE[offer.code],
+      previousPrice: PREVIOUS_PRICE_TABLE[offer.code],
       recommendedPrice: offer.price,
       priceLabel: offer.price === 0 ? '0원' : won(offer.price),
       priceDropAmount: offer.priceDropAmount,
@@ -148,7 +148,7 @@ export function buildPricingRecalculation({ pgFeeRate = 0.032 } = {}) {
   });
   return {
     ok: true,
-    version: PHASE250_PRICING_VERSION,
+    version: PRICING_CATALOG_VERSION,
     recommendedFocusPlan: 'Report',
     strategy: '공개 요금제는 무료 진단, 기본 리포트, 전문가 리포트 3개로 고정합니다.',
     pgAssumption: { source: 'estimated PG fee baseline', cardFeeRate: pgFeeRate },

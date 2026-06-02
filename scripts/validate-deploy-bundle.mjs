@@ -21,7 +21,8 @@ const requiredFiles = [
   'scripts/preflight.mjs',
   'scripts/verify-prod.mjs',
   'scripts/validate-prod-env.mjs',
-  'scripts/ci-strict.mjs',
+  'scripts/run-release-gate.mjs',
+  'scripts/check-operational-readiness-contract.mjs',
   'scripts/validate-coolify-env-detection.mjs',
   'scripts/generate-r2-coolify-env.mjs',
   'scripts/check-storage-config.mjs'

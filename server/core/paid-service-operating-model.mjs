@@ -1,7 +1,7 @@
 import { buildPlanCatalog, buildCommercialOfferCatalog, PRODUCT_CATALOG_VERSION } from '../../shared/product-catalog.mjs';
-import { buildPhase315PaidRedteamCouncil, PHASE315_PAID_REDTEAM_VERSION } from './paid-service-redteam-control.mjs';
+import { buildPaidRedteamCouncil, PAID_REDTEAM_VERSION } from './paid-service-redteam-control.mjs';
 
-export const PAID_SERVICE_OPERATING_VERSION = 'phase317-paid-service-trustops-growth-model-v1';
+export const PAID_SERVICE_OPERATING_VERSION = 'paid-service-trustops-growth-model-v1';
 
 export const PAID_ORDER_STATES = Object.freeze([
   'catalog_viewed',
@@ -102,8 +102,8 @@ export function buildPaidServiceOperatingModel(options = {}) {
       supportFallback: ['결제사 확인 지연 안내', '가상계좌/READY 상태 안내', '운영자 환불 검토 큐']
     },
     redteamFocus: buildPaidServiceRedteamChecklist(),
-    phase315Council: buildPhase315PaidRedteamCouncil(),
-    phase315Version: PHASE315_PAID_REDTEAM_VERSION
+    paidRedteamCouncil: buildPaidRedteamCouncil(),
+    paidRedteamVersion: PAID_REDTEAM_VERSION
   };
 }
 

@@ -26,3 +26,6 @@ docs/logs
 docs/phase*
 docs/release
 docs/archive
+
+# Generated local audit evidence
+docs/current

@@ -24,5 +24,5 @@ assert.ok(files.demo.includes('기본 리포트 49,000원') && files.demo.includ
 assert.ok(!/29000|89000|29,000원|89,000원/.test(joinedRuntime), 'legacy 29,000/89,000 prices must not remain in runtime surfaces');
 const report = { ok: true, generatedAt: new Date().toISOString(), snapshot };
 fs.mkdirSync(path.join(root, 'docs/current'), { recursive: true });
-fs.writeFileSync(path.join(root, 'docs/current/PHASE300_PRICE_CATALOG_AUDIT.json'), JSON.stringify(report, null, 2));
+fs.writeFileSync(path.join(root, 'docs/current/PRICE_CATALOG_AUDIT.json'), JSON.stringify(report, null, 2));
 console.log(JSON.stringify(report, null, 2));

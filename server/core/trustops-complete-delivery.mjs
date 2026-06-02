@@ -1,12 +1,12 @@
-import { buildTrustOps100PointFinalScorecard, runPhase323PackageAudit } from './trustops-100-point-finalizer.mjs';
+import { buildTrustOps100PointFinalScorecard, runPackageAudit } from './trustops-100-point-finalizer.mjs';
 import { buildTrustOpsFinalHandoff } from './trustops-final-handoff.mjs';
 import { buildProductionSentinel } from './trustops-production-sentinel.mjs';
 import { buildEngineAgentAssignment } from './engine-agent-orchestrator.mjs';
 
-export const PHASE324_COMPLETE_DELIVERY_VERSION = 'phase324-complete-delivery-v1';
+export const TRUSTOPS_COMPLETE_DELIVERY_VERSION = 'trustops-complete-delivery-v1';
 
 const FINAL_SEAL_CHECKS = Object.freeze([
-  ['packageGate', '패키지 내부 100점 게이트 통과', 'phase323 점수판과 phase324 최종 납품 게이트를 모두 통과해야 합니다.'],
+  ['packageGate', '패키지 내부 품질 게이트 통과', '현재 clean baseline 점수판과 최종 릴리즈 게이트를 모두 통과해야 합니다.'],
   ['runtimeClean', '런타임 찌꺼기 제거', 'runtime-test, uploads, reports, backups 같은 실행 산출물이 납품 ZIP에 남지 않아야 합니다.'],
   ['secretClean', '시크릿 위생', '운영 키, 결제 secret, 개인정보 hash key 원문이 패키지에 포함되지 않아야 합니다.'],
   ['paidFlow', '유료 흐름 폐쇄성', '상품, 결제, 검증, 산출물, 권한, 환불 요청 흐름이 우회 불가능해야 합니다.'],
@@ -57,7 +57,7 @@ function makeSealCheck([id, title, detail], context) {
     operatorRunbook: () => Array.isArray(handoff.operatorRunbook) && handoff.operatorRunbook.length >= 10,
     liveVerification: () => Array.isArray(sentinel.liveVerification?.checks) && sentinel.liveVerification.checks.length >= 10,
     rollbackSafeMode: () => Array.isArray(sentinel.rollbackMatrix) && sentinel.rollbackMatrix.length >= 5,
-    deliveryEvidence: () => runtimeMode || files.has('docs/PHASE324_COMPLETE_DELIVERY_REPORT.md')
+    deliveryEvidence: () => runtimeMode || ['docs/QA.md','docs/DEPLOYMENT.md','docs/ROLLBACK.md','docs/CLEANUP_REPORT.md'].every(file => files.has(file))
   };
   const pass = Boolean((checks[id] || (() => false))());
   return {
@@ -81,7 +81,7 @@ export function buildTrustOpsCompleteDelivery(db = {}, options = {}) {
     runtimeClean: value(options.runtimeClean, true),
     secretHygienePassed: value(options.secretHygienePassed, true)
   });
-  const packageAudit = runPhase323PackageAudit({ ...options, db, env, packageGateReady: true, runtimeClean: value(options.runtimeClean, true), secretHygienePassed: value(options.secretHygienePassed, true) });
+  const packageAudit = runPackageAudit({ ...options, db, env, packageGateReady: true, runtimeClean: value(options.runtimeClean, true), secretHygienePassed: value(options.secretHygienePassed, true) });
   const handoff = buildTrustOpsFinalHandoff(db, { ...options, env, packageGateReady: true, runtimeClean: value(options.runtimeClean, true), secretHygienePassed: value(options.secretHygienePassed, true), allowMvp: true });
   const sentinel = buildProductionSentinel(db, { ...options, env, baseUrl: options.baseUrl || env.NV0_PUBLIC_BASE_URL || 'https://nv0.kr' });
   const checks = FINAL_SEAL_CHECKS.map(row => makeSealCheck(row, { ...options, scorecard, handoff, sentinel }));
@@ -92,16 +92,16 @@ export function buildTrustOpsCompleteDelivery(db = {}, options = {}) {
   const decision = packageScore === 100 && packageAudit.ok && failed.length === 0 ? 'delivery-complete-package-ready' : 'delivery-hold';
   return {
     ok: decision === 'delivery-complete-package-ready',
-    version: PHASE324_COMPLETE_DELIVERY_VERSION,
-    phase: 'phase324-complete-delivery',
+    version: TRUSTOPS_COMPLETE_DELIVERY_VERSION,
+    phase: 'trustops-complete-delivery',
     decision,
     packageScore,
     totalScore: 100,
     failed,
     checks,
     linkedScores: {
-      phase323PackageScore: scorecard.packageScore,
-      phase323AuditOk: packageAudit.ok,
+      scorecardPackageScore: scorecard.packageScore,
+      scorecardAuditOk: packageAudit.ok,
       handoffDecision: handoff.decision,
       sentinelDecision: sentinel.decision,
       engineCount: assignment.engineCount,
@@ -119,18 +119,18 @@ export function buildTrustOpsCompleteDelivery(db = {}, options = {}) {
       'npm run release:predeploy',
       'npm run check:responsive-contract',
       'npm run check:operational-contract',
-      'npm run validate:phase324',
+      'npm run verify:release',
       'node scripts/check-runtime-clean.mjs'
     ]
   };
 }
 
-export function runPhase324CompleteDeliveryAudit(input = {}) {
+export function runCompleteDeliveryAudit(input = {}) {
   const delivery = buildTrustOpsCompleteDelivery(input.db || {}, input);
   const checks = [
-    { key: 'packageScore100', pass: delivery.packageScore === 100, message: 'phase324 최종 납품 점수 100점' },
+    { key: 'packageScore100', pass: delivery.packageScore === 100, message: '최종 납품 점수 100점' },
     { key: 'noFailedSealChecks', pass: delivery.failed.length === 0, message: '최종 seal 실패 0개' },
-    { key: 'phase323Linked', pass: delivery.linkedScores.phase323PackageScore === 100 && delivery.linkedScores.phase323AuditOk === true, message: 'phase323 100점 기준 연동' },
+    { key: 'scorecardLinked', pass: delivery.linkedScores.scorecardPackageScore === 100 && delivery.linkedScores.scorecardAuditOk === true, message: 'scorecard 100점 기준 연동' },
     { key: 'engineAgentExpanded', pass: delivery.linkedScores.engineCount >= 50 && delivery.linkedScores.agentCount >= 108 && delivery.linkedScores.eventPolicyCount >= 19, message: '엔진·에이전트 전체 적용 유지' },
     { key: 'operatorPack', pass: delivery.finalOperatorPack.length >= 10, message: '운영 최종 증적 팩 포함' }
   ];

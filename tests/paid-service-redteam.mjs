@@ -26,7 +26,7 @@ const child = spawn(process.execPath, ['server/index.mjs'], {
     NV0_ALLOW_PRELAUNCH_ONLINE_PAYMENT: 'true',
     NV0_PUBLIC_SCAN_LIMIT: '200',
     NV0_PUBLIC_BASE_URL: `http://127.0.0.1:${appPort}`,
-    NV0_ADMIN_KEY: 'phase315-key'
+    NV0_ADMIN_KEY: 'paid-redteam-key'
   },
   stdio: 'ignore'
 });
@@ -66,14 +66,14 @@ try {
   await waitUntilReady();
   const model = await j('/api/public/paid-service-model');
   assert.equal(model.res.status, 200);
-  assert.equal(model.data.phase315Council.roleCount, 50);
-  assert.equal(model.data.phase315Council.improvementCount, 100);
-  assert.match(model.data.version, /phase31[57]/);
+  assert.equal(model.data.paidRedteamCouncil.roleCount, 50);
+  assert.equal(model.data.paidRedteamCouncil.improvementCount, 100);
+  assert.match(model.data.version, /paid-service|trustops-growth/);
 
   const scan = await j('/api/public/diagnose', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ target: 'https://phase315-paid.example' })
+    body: JSON.stringify({ target: 'https://paid-redteam.example' })
   });
   assert.equal(scan.res.status, 200);
   const siteId = scan.data.result.siteId;
@@ -84,7 +84,7 @@ try {
 
   const checkout = await j('/api/public/checkout-session', {
     method: 'POST',
-    headers: { 'content-type': 'application/json', 'idempotency-key': `phase315-checkout-${Date.now()}` },
+    headers: { 'content-type': 'application/json', 'idempotency-key': `paid-redteam-checkout-${Date.now()}` },
     body: JSON.stringify({ plan: 'Report', siteId, buyerEmail: 'buyer315@example.com', privacyConsent: true, termsConsent: true, refundConsent: true, deliveryConsent: true })
   });
   assert.equal(checkout.res.status, 200);
@@ -124,7 +124,7 @@ try {
   const pdf = await download.arrayBuffer();
   assert.ok(pdf.byteLength > 100, 'downloaded PDF should have content');
 
-  console.log('phase315 paid redteam integration ok');
+  console.log('paid service redteam integration ok');
 } finally {
   await stopChild(child);
   fs.rmSync(testRuntimeDir, { recursive: true, force: true });

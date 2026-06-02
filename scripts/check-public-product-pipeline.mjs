@@ -9,7 +9,7 @@ const runtimeDir = path.join(root, 'runtime-test-public-product-pipeline');
 const baseUrl = (process.env.NV0_PUBLIC_BASE_URL || process.env.BASE_URL || 'http://127.0.0.1:3210').replace(/\/$/, '');
 const localBase = /^http:\/\/127\.0\.0\.1:(\d+)$/.exec(baseUrl);
 const routes = ['/', '/service', '/solutions', '/plans', '/products/veridion/demo', '/portal', '/board', '/business-info', '/terms', '/privacy', '/refund'];
-const bannedPublicCopy = /위험 진단|요금 안내|내 사이트 관리|20분에 1회|자동 발행|TrustOps|프로덕션 센티널|런칭 컨트롤|운영 큐|자동화 백로그|rollback|canary|prelaunch|phase319|phase320|phase321|API 키 관리|보안 점수88|성능 점수76|SEO 점수90|접근성 점수75|법률 리스크|규제 리스크|과태료 리스크|NV0는/i;
+const bannedPublicCopy = /위험 진단|요금 안내|내 사이트 관리|20분에 1회|자동 발행|TrustOps|프로덕션 센티널|런칭 컨트롤|운영 큐|자동화 백로그|rollback|canary|prelaunch|launchItems|sentinelItems|handoffItems|API 키 관리|보안 점수88|성능 점수76|SEO 점수90|접근성 점수75|법률 리스크|규제 리스크|과태료 리스크|NV0는/i;
 let child = null;
 const checks = [];
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms));

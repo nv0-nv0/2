@@ -223,7 +223,7 @@ function legacyChooseCtaVariant(db = {}, options = {}) {
 }
 
 
-const COMBINATORIAL_ENGINE_VERSION = 'cta-board-v11.0-phase242-expert-human-column-20min';
+const COMBINATORIAL_ENGINE_VERSION = 'cta-board-v11.0-expert-human-column';
 const COMBO_ANGLES = [
   ['첫 방문자 신뢰 확보', '정보 탐색형', '인지', '첫 방문 신뢰도'],
   ['구매 직전 불안 제거', '전환 개선형', '결정', '구매 직전 이탈 방지'],
@@ -305,7 +305,7 @@ function comboContext(scan = {}, variant = {}, options = {}) {
 }
 
 
-const HUMAN_TONE_VERSION = 'phase242-expert-human-column-20min-v1';
+const HUMAN_TONE_VERSION = 'expert-human-column-v1';
 const HUMAN_TONE_LEGACY_VERSION = 'p208-20min-reader-interest-final-cta-v1';
 const HARD_WORDS = [
   ['contentFingerprint', '중복 확인값'],
@@ -702,8 +702,8 @@ export function buildCtaBoardArticle(scan = {}, variant = {}, options = {}) {
     toneProfile: 'expert_editorial_commercial',
     readabilityTarget: 'expert_but_accessible_korean',
     targetLengthKo: '4200-5200',
-    trustFriendlyVersion: 'phase256-expert-editorial-risk-trust-v1',
-    publicDisplayVersion: 'phase217-expert-editorial-board',
+    trustFriendlyVersion: 'expert-editorial-risk-trust-v1',
+    publicDisplayVersion: 'expert-editorial-board-v1',
     diversityKey: `${ctx.baseVariant.ctaType}:${ctx.angle[1]}:${ctx.angle[2]}:${ctx.angle[0]}:${ctx.archetype[0]}:${fingerprint(body)}`,
     contentFingerprint: fingerprint(`${title}\n${body}`),
     seo: {
@@ -725,7 +725,7 @@ export function buildCtaBoardArticle(scan = {}, variant = {}, options = {}) {
       humanToneVersion: HUMAN_TONE_VERSION,
       legacyHumanToneVersion: HUMAN_TONE_LEGACY_VERSION,
       legacyHumanToneVersion: HUMAN_TONE_LEGACY_VERSION,
-      trustFriendlyVersion: 'phase256-expert-editorial-risk-trust-v1'
+      trustFriendlyVersion: 'expert-editorial-risk-trust-v1'
     }
   };
 }
@@ -812,10 +812,10 @@ export function rewriteExistingCtaPublication(item = {}, options = {}) {
     toneProfile: 'expert_editorial_commercial',
     readabilityTarget: 'expert_but_accessible_korean',
     humanToneVersion: HUMAN_TONE_VERSION,
-    trustFriendlyVersion: 'phase256-expert-editorial-risk-trust-v1',
-    publicDisplayVersion: 'phase217-expert-editorial-board',
+    trustFriendlyVersion: 'expert-editorial-risk-trust-v1',
+    publicDisplayVersion: 'expert-editorial-board-v1',
     rewrittenAt: options.rewrittenAt || new Date().toISOString(),
-    rewrittenBy: 'phase217_expert_editorial_rewriter',
+    rewrittenBy: 'expert_editorial_rewriter',
     originalContentFingerprint: item.originalContentFingerprint || fingerprint(oldBody),
     contentFingerprint: fingerprint(`${rewritten.title}\n${rewritten.body}`),
     migrationNote: '기존 자동 발행 칼럼을 전문가형 포스팅 구조와 수익화 다음 행동 흐름으로 다시 정리했습니다.'

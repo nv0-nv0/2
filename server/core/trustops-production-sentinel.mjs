@@ -1,8 +1,8 @@
-import { buildTrustOpsLaunchControl, buildPhase319ExpansionBacklog } from './trustops-launch-control.mjs';
+import { buildTrustOpsLaunchControl, buildLaunchExpansionBacklog } from './trustops-launch-control.mjs';
 import { buildTrustOpsAutopilotCockpit, buildAutomationWorkQueue } from './trustops-autopilot-engine.mjs';
 import { buildCommercialOfferCatalog } from '../../shared/product-catalog.mjs';
 
-export const PHASE320_PRODUCTION_SENTINEL_VERSION = 'phase320-trustops-production-sentinel-v1';
+export const TRUSTOPS_PRODUCTION_SENTINEL_VERSION = 'trustops-production-sentinel-v1';
 
 const LIVE_CHECKS = Object.freeze([
   ['public-home', '/', '공개 홈 200 응답과 CTA 확인', 'P0'],
@@ -48,8 +48,8 @@ function countDueSubscriptions(db = {}, options = {}) {
 }
 function toBool(value) { return value === true || value === 'true' || value === '1'; }
 
-export function buildPhase320ExpansionBacklog() {
-  const previous = buildPhase319ExpansionBacklog();
+export function buildSentinelExpansionBacklog() {
+  const previous = buildLaunchExpansionBacklog();
   const streams = [
     ['live-verification', '실서버 검증 자동화', '배포 직후 13개 공개/관리자/상태 체크를 표준화'],
     ['rollback', '롤백·홀드 조건', '결제·개인정보·산출물·진단 장애별 차단 단계를 분리'],
@@ -60,14 +60,14 @@ export function buildPhase320ExpansionBacklog() {
     ['customer-safe-mode', '고객 안전 모드', '장애 시 신규 결제와 다운로드를 단계적으로 제한'],
     ['agency-readiness', '대행사 확장 준비', '화이트라벨·다중 사이트·재판매 리포트 오픈 전 조건을 분리'],
     ['data-governance', '데이터 거버넌스', '보존기간, 원문 로그 제한, 개인정보 최소화를 운영 지표화'],
-    ['release-discipline', '릴리즈 규율', 'phase final, predeploy, live verification, rollback drill을 하나로 고정']
+    ['release-discipline', '릴리즈 규율', 'release gate, predeploy, live verification, rollback drill을 하나로 고정']
   ];
-  const phase320 = [];
+  const sentinelItems = [];
   for (const [streamIndex, [stream, label, outcome]] of streams.entries()) {
     for (let i = 1; i <= 5; i += 1) {
       const index = streamIndex * 5 + i;
-      phase320.push({
-        id: `P320-${String(index).padStart(3, '0')}`,
+      sentinelItems.push({
+        id: `SENTINEL-${String(index).padStart(3, '0')}`,
         stream,
         label,
         title: `${label} 고도화 ${i}`,
@@ -80,14 +80,14 @@ export function buildPhase320ExpansionBacklog() {
       });
     }
   }
-  return [...previous, ...phase320];
+  return [...previous, ...sentinelItems];
 }
 
 export function buildLiveVerificationChecklist(input = {}, options = {}) {
   const baseUrl = String(input.baseUrl || options.baseUrl || '').replace(/\/$/, '');
   return {
     ok: true,
-    version: PHASE320_PRODUCTION_SENTINEL_VERSION,
+    version: TRUSTOPS_PRODUCTION_SENTINEL_VERSION,
     generatedAt: nowIso(options),
     baseUrl: baseUrl || '운영 URL 설정 후 실행',
     checks: LIVE_CHECKS.map(([id, path, purpose, priority], index) => ({
@@ -115,7 +115,7 @@ export function buildLiveVerificationChecklist(input = {}, options = {}) {
 export function buildCanaryStages(readiness = {}) {
   const hardHold = readiness.decision === 'hold';
   return [
-    { stage: 0, name: 'staff_only', label: '운영자 내부 검증', traffic: '0%', allowed: true, exit: 'phase320 final, secret hygiene, runtime clean 통과' },
+    { stage: 0, name: 'staff_only', label: '운영자 내부 검증', traffic: '0%', allowed: true, exit: 'production-sentinel release gate, secret hygiene, runtime clean 통과' },
     { stage: 1, name: 'free_scan_canary', label: '무료 진단 소량 공개', traffic: '5%', allowed: !hardHold, exit: '진단 20건 중 5xx 0건, P0 0개' },
     { stage: 2, name: 'report_checkout_canary', label: '기본 리포트 결제 제한 공개', traffic: '10%', allowed: readiness.decision === 'go', exit: '결제 3건 산출물 자동 생성 100%' },
     { stage: 3, name: 'monitoring_expert_canary', label: '모니터링·전문가 플랜 공개', traffic: '25%', allowed: readiness.decision === 'go', exit: '수동 갱신 고지, 접근 만료, 환불 큐 정상' },
@@ -127,7 +127,7 @@ export function buildProductionSentinel(db = {}, options = {}) {
   const launch = buildTrustOpsLaunchControl(db, options);
   const cockpit = buildTrustOpsAutopilotCockpit(db, options);
   const queue = buildAutomationWorkQueue(db, options);
-  const backlog = buildPhase320ExpansionBacklog();
+  const backlog = buildSentinelExpansionBacklog();
   const liveVerification = buildLiveVerificationChecklist({ baseUrl: options.baseUrl || options.env?.NV0_PUBLIC_BASE_URL }, options);
   const paidWithoutFulfillment = countPaidWithoutFulfillment(db);
   const openRefunds = countOpenRefunds(db);
@@ -152,7 +152,7 @@ export function buildProductionSentinel(db = {}, options = {}) {
   };
   return {
     ok: true,
-    version: PHASE320_PRODUCTION_SENTINEL_VERSION,
+    version: TRUSTOPS_PRODUCTION_SENTINEL_VERSION,
     generatedAt: nowIso(options),
     decision,
     score,
@@ -174,9 +174,9 @@ export function buildProductionSentinel(db = {}, options = {}) {
     },
     costQualityBudget,
     backlogCount: backlog.length,
-    phase320BacklogCount: backlog.filter(item => String(item.id).startsWith('P320-')).length,
+    sentinelBacklogCount: backlog.filter(item => String(item.id).startsWith('SENTINEL-')).length,
     releaseCommands: [
-      'npm run phase320:final',
+      'npm run verify:release',
       'npm run release:predeploy',
       'npm run clean:runtime',
       'node scripts/check-live-public.mjs',
@@ -192,7 +192,7 @@ export function buildProductionSentinel(db = {}, options = {}) {
   };
 }
 
-export function runPhase320ProductionSentinelAudit({ files = [], packageJson = {}, sourceText = '' } = {}) {
+export function runProductionSentinelAudit({ files = [], packageJson = {}, sourceText = '' } = {}) {
   const normalizedFiles = list(files).map(item => String(item).replace(/\\/g, '/'));
   const scripts = packageJson?.scripts || {};
   const source = sourceText || normalizedFiles.join('\n');
@@ -200,21 +200,21 @@ export function runPhase320ProductionSentinelAudit({ files = [], packageJson = {
   const requiredFiles = [
     'server/core/trustops-production-sentinel.mjs',
     'tests/trustops-production-sentinel.mjs',
-    'scripts/validate-phase320-production-sentinel.mjs',
-    'docs/PHASE320_TRUSTOPS_PRODUCTION_SENTINEL_WORK_ORDER.md',
-    'docs/PHASE320_TRUSTOPS_PRODUCTION_SENTINEL_REPORT.md',
-    'docs/current/PHASE320_TRUSTOPS_PRODUCTION_SENTINEL_AUDIT.json'
+    'scripts/run-release-gate.mjs',
+    'docs/OPERATIONS.md',
+    'docs/ROLLBACK.md',
+    'scripts/monitoring-rollback-gate.mjs'
   ];
   const checks = [
-    { key: 'requiredFiles', weight: 12, pass: requiredFiles.every(file => normalizedFiles.includes(file)), message: 'phase320 핵심 파일 존재' },
-    { key: 'packagePhase', weight: 10, pass: /phase320-trustops-production-sentinel|phase321-trustops-final-completion|phase322-final-test-closeout|phase323-one-hundred-point-closeout|phase324-complete-delivery/.test(String(packageJson.version || '')), message: 'package version phase320' },
-    { key: 'scripts', weight: 12, pass: Boolean(scripts['phase320:final']) && Boolean(scripts['validate:phase320']) && Boolean(scripts['test:production-sentinel']) && ['npm run phase320:final','npm run phase321:final','npm run phase322:final','npm run phase323:final','npm run phase324:final'].includes(scripts['release:predeploy']), message: 'phase320 최종 스크립트 연결' },
+    { key: 'requiredFiles', weight: 12, pass: requiredFiles.every(file => normalizedFiles.includes(file)), message: '현재 센티널 핵심 파일 존재' },
+    { key: 'packagePhase', weight: 10, pass: String(packageJson.version || '') === '2.1.0-clean-commercial-baseline', message: 'clean baseline package version' },
+    { key: 'scripts', weight: 12, pass: scripts['verify:release'] === 'node scripts/run-release-gate.mjs' && scripts['release:predeploy'] === 'npm run verify:release' && Boolean(scripts['monitoring:rollback']), message: '센티널·롤백 단일 게이트 연결' },
     { key: 'routes', weight: 12, pass: source.includes('/api/public/trustops-production-sentinel') && source.includes('/api/admin/trustops-production-sentinel') && source.includes('/api/public/live-verification-checklist'), message: '공개·관리자 sentinel API 존재' },
-    { key: 'backlog', weight: 10, pass: sentinel.backlogCount >= 220 && sentinel.phase320BacklogCount === 50, message: 'phase320 보강 백로그 50개 이상' },
+    { key: 'backlog', weight: 10, pass: sentinel.backlogCount >= 220 && sentinel.sentinelBacklogCount === 50, message: 'production-sentinel 보강 백로그 50개 이상' },
     { key: 'liveChecks', weight: 10, pass: sentinel.liveVerification.checks.length >= 13, message: '실서버 검증 체크 13개 이상' },
     { key: 'rollback', weight: 10, pass: sentinel.rollbackMatrix.length >= 7, message: '롤백 트리거 7개 이상' },
     { key: 'sla', weight: 8, pass: sentinel.slaMatrix.length >= 3, message: '운영 SLA P0/P1/P2' },
-    { key: 'portal', weight: 8, pass: source.includes('portalProductionSentinel') && source.includes('/api/public/trustops-production-sentinel'), message: '포털 sentinel 관제 카드' },
+    { key: 'portal', weight: 8, pass: source.includes('/api/public/trustops-production-sentinel') && source.includes('/api/admin/trustops-production-sentinel'), message: '공개·관리자 sentinel 관제 경로' },
     { key: 'enginePolicy', weight: 8, pass: source.includes('trustops.production_sentinel') && source.includes('production-sentinel-engine'), message: '엔진·에이전트 정책 연결' }
   ];
   const score = checks.reduce((sum, item) => sum + (item.pass ? item.weight : 0), 0);
@@ -223,10 +223,10 @@ export function runPhase320ProductionSentinelAudit({ files = [], packageJson = {
     ok: failed.length === 0 && score === 100,
     score,
     total: 100,
-    phase: 'phase320',
-    version: PHASE320_PRODUCTION_SENTINEL_VERSION,
+    phase: 'trustops-production-sentinel',
+    version: TRUSTOPS_PRODUCTION_SENTINEL_VERSION,
     checks,
     failed,
-    sentinel: { decision: sentinel.decision, score: sentinel.score, backlogCount: sentinel.backlogCount, phase320BacklogCount: sentinel.phase320BacklogCount, liveCheckCount: sentinel.liveVerification.checks.length }
+    sentinel: { decision: sentinel.decision, score: sentinel.score, backlogCount: sentinel.backlogCount, sentinelBacklogCount: sentinel.sentinelBacklogCount, liveCheckCount: sentinel.liveVerification.checks.length }
   };
 }

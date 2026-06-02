@@ -1,6 +1,6 @@
 import crypto from 'node:crypto';
 
-export const PRIVACY_COMPLIANCE_GUARD_VERSION = 'phase312-privacy-zero-leak-guard-v1';
+export const PRIVACY_COMPLIANCE_GUARD_VERSION = 'privacy-zero-leak-guard-v1';
 
 const DEFAULT_RETENTION_DAYS = Object.freeze({
   auditLogs: 90,

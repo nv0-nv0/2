@@ -1,4 +1,4 @@
-# VERIDION Coolify boot-safe compose - phase325 no-available-server guard
+# VERIDION Coolify boot-safe compose - fail-closed availability guard
 # Purpose: keep nv0.kr reachable even before external PostgreSQL/Redis/S3/PortOne/SMTP keys are finalized.
 # Use this root compose in Coolify first. After the site is healthy, switch to deploy/docker-compose.commercial.yml for strict commercial mode.
 
@@ -68,6 +68,7 @@ services:
       NV0_LOCK_PROVIDER: ${NV0_LOCK_PROVIDER:-memory}
       NV0_DATABASE_URL: ${NV0_DATABASE_URL:-}
       NV0_PRELAUNCH_DB_FALLBACK: ${NV0_PRELAUNCH_DB_FALLBACK:-true}
+      NV0_DB_COMPARE_MODE: ${NV0_DB_COMPARE_MODE:-0}
       NV0_REDIS_URL: ${NV0_REDIS_URL:-}
       NV0_REDIS_TIMEOUT_MS: ${NV0_REDIS_TIMEOUT_MS:-1500}
       NV0_STORAGE_MODE: ${NV0_STORAGE_MODE:-local_fs}
@@ -119,7 +120,7 @@ services:
       NV0_DATA_DESTRUCTION_GRACE_DAYS: ${NV0_DATA_DESTRUCTION_GRACE_DAYS:-30}
       NV0_REFUND_REQUEST_WINDOW_DAYS: ${NV0_REFUND_REQUEST_WINDOW_DAYS:-7}
       NV0_RULES_VERSION: ${NV0_RULES_VERSION:-production-20260427}
-      NV0_LEGAL_EVIDENCE_VERSION: ${NV0_LEGAL_EVIDENCE_VERSION:-phase313-legal-evidence-v1}
+      NV0_LEGAL_EVIDENCE_VERSION: ${NV0_LEGAL_EVIDENCE_VERSION:-legal-evidence-v1}
       NV0_PRIVACY_POLICY_VERSION: ${NV0_PRIVACY_POLICY_VERSION:-}
       NV0_TERMS_VERSION: ${NV0_TERMS_VERSION:-}
       NV0_REFUND_POLICY_VERSION: ${NV0_REFUND_POLICY_VERSION:-}

@@ -25,7 +25,7 @@ const requiredFiles = [
 for (const file of requiredFiles) add(`exists:${file}`, exists(file));
 
 const pkg = JSON.parse(read('package.json'));
-add('package:clean-rebrand-version', /phase33[45]-(clean-rebrand|unified-organism)|phase340-redteam-100-closeout|phase341-final-closeout|phase342-merged-best|phase343-final-perfect|phase345-final-delivery-closeout|phase346-global-hardening-final|phase347-unified-diagnosis-final|phase348-final-unified-engine-closeout|phase349-customer-journey-closeout|phase350-global-cta-semantics-closeout|phase351-prompt-full-sweep-closeout|phase353-full-package-closeout|phase354-deployment-security-closeout|phase355-organization-closeout|phase356-conversion-dashboard-closeout|phase357-global-qa-accessibility-closeout|phase350-global-cta-semantics-closeout|phase351-prompt-full-sweep-closeout/.test(pkg.version));
+add('package:clean-baseline-version', pkg.version === '2.1.0-clean-commercial-baseline');
 
 const appHtmlFiles = [];
 for (const area of ['apps/public', 'apps/admin']) {
@@ -39,7 +39,7 @@ for (const area of ['apps/public', 'apps/admin']) {
 const forbiddenPublic = [
   '위험 진단', '요금 안내', '내 사이트', '보안 점수88', '성능 점수76', 'SEO 점수90', '접근성 점수75',
   'API 키 관리', '20분에 1회', '20분마다', '자동 발행', 'TrustOps', '프로덕션 센티널', '런칭 컨트롤',
-  '운영 큐', '자동화 백로그', 'rollback', 'canary', 'live verification', 'SLA', 'MRR', 'phase319', 'phase320', 'phase321', 'prelaunch'
+  '운영 큐', '자동화 백로그', 'rollback', 'canary', 'live verification', 'SLA', 'MRR', 'launchItems', 'sentinelItems', 'handoffItems', 'prelaunch'
 ];
 const forbiddenSource = ['veridion-clean-v311.css','data-veridion-clean="v311"','data-veridion-brand="v331"','data-veridion-rebrand="v333"','v311-','v331-','v332-','v333-','nv0n-','nv74-'];
 
@@ -69,8 +69,8 @@ add('demo:functional-ids-preserved', ['cancelScanBtn','recentTargetList','target
 
 const passed = checks.filter((check) => check.ok).length;
 const failed = checks.length - passed;
-const report = { generatedAt: new Date().toISOString(), ok: failed === 0, phase: 'phase335-unified-organism-test', total: checks.length, passed, failed, checks };
+const report = { generatedAt: new Date().toISOString(), ok: failed === 0, contract: 'clean-baseline-ui-regression-test', total: checks.length, passed, failed, checks };
 fs.mkdirSync(path.join(root, 'docs/current'), { recursive: true });
-fs.writeFileSync(path.join(root, 'docs/current/PHASE335_TEST_SUMMARY.json'), JSON.stringify(report, null, 2));
-console.log(JSON.stringify({ ok: report.ok, passed, failed, report: 'docs/current/PHASE335_TEST_SUMMARY.json' }, null, 2));
+fs.writeFileSync(path.join(root, 'docs/current/UI_REGRESSION_TEST_SUMMARY.json'), JSON.stringify(report, null, 2));
+console.log(JSON.stringify({ ok: report.ok, passed, failed, report: 'docs/current/UI_REGRESSION_TEST_SUMMARY.json' }, null, 2));
 if (!report.ok) process.exit(1);

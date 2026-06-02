@@ -1,4 +1,4 @@
-// Phase167 native HTTP request state utilities. No Express Router assumptions.
+// Native HTTP request state utilities. No Express Router assumptions.
 export function resolveNativeRouteState(req, fallbackBase = 'http://localhost') {
   if (req && req._nv0RouteState && req._nv0RouteState.requestUrl) return req._nv0RouteState;
   const base = req?.headers?.host ? `http://${req.headers.host}` : fallbackBase;

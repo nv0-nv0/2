@@ -1,7 +1,7 @@
-// Phase166 public API dispatcher for native http.createServer routing.
+// Native server public API dispatcher for native http.createServer routing.
 import { createAccountRouteHandler } from './account.mjs';
 import { createPaymentRouteHandler } from './payment.mjs';
-import { buildDemoAccuracyContract, buildDemoIssueOverview, buildPaidDeliverableBlueprint, buildPaidOutputQualityGate, buildPaidFullDetailContract, buildSiteOperationsDocument, buildConversionUrgencyModel, PHASE220_SERVICE_QUALITY_VERSION } from '../core/service-quality-220.mjs';
+import { buildDemoAccuracyContract, buildDemoIssueOverview, buildPaidDeliverableBlueprint, buildPaidOutputQualityGate, buildPaidFullDetailContract, buildSiteOperationsDocument, buildConversionUrgencyModel, SERVICE_QUALITY_VERSION } from '../core/service-quality.mjs';
 import { buildPublicColumnEnginePosts, publicColumnTypeLabel } from '../core/public-column-engine.mjs';
 import { buildPaidServiceOperatingModel } from '../core/paid-service-operating-model.mjs';
 import { buildTrustOpsGrowthBlueprint, buildFixGeneratorPayload, buildMonitoringPlan, buildRevenueOptimizationPlan, buildIndustryTemplates, buildStructuredDataPackage } from '../core/trustops-growth-engine.mjs';
@@ -27,7 +27,7 @@ export function createPublicRouteHandler(ctx) {
   DEPLOYMENT_STAGE,
   MAX_JSON_BODY_BYTES,
   PAYMENT_PROVIDER,
-  PHASE223_RISK_GUARD_VERSION,
+  DEPLOYMENT_RISK_GUARD_VERSION,
   PERSISTENCE_MODE,
   PLATFORM,
   PORTONE_CLIENT,
@@ -82,7 +82,7 @@ export function createPublicRouteHandler(ctx) {
   buildProductionLaunchChecklist,
   buildPublicDiagnosisPackage,
   buildReleaseReadiness,
-  buildPhase313GovernanceSnapshot,
+  buildOperationsGovernanceSnapshot,
   buildRobotsTxt,
   buildRuleCatalog,
   buildSitemapXml,
@@ -275,7 +275,7 @@ return { requestId: scan?.requestId || null, siteId: scan?.siteId || null, targe
     return json(req, res, 404, { ok: false, error: 'Not found' }, { 'cache-control': 'no-store' });
   }
 if (pathname === '/api/public/diagnosis-engine' && req.method === 'GET') {
-return json(req, res, 200, { ok: true, phase: RELEASE_PHASE, engine: 'VERIDION Public Evidence Summary Check Engine', rulesVersion: RULES_VERSION, targetFetchEnabled: TARGET_FETCH_ENABLED, scanProvider: SCAN_PROVIDER, aiReviewProvider: AI_REVIEW_PROVIDER, geminiConfigured: AI_REVIEW_ENABLED, resultContract: { resultType: 'preliminary_check', legalConclusion: false, includesEvidenceSummary: true, includesConfidenceScore: true, includesManualReviewFlags: true, includesAutomationDisclosure: true, includesAutomatedActionPlan: true, includesAccuracyProfile: true, includesReportQualityGate: true, includesDemoAccuracyContract: true, includesPaidOutputQualityGate: true, phase220ServiceQualityVersion: PHASE220_SERVICE_QUALITY_VERSION, phase223RiskGuardVersion: PHASE223_RISK_GUARD_VERSION }, endpoints: { scan: 'POST /api/public/scan', diagnose: 'POST /api/public/diagnose', board: 'GET /api/public/board', engine: 'GET /api/public/diagnosis-engine', productIntelligence: 'GET /api/public/product-intelligence', productQuality: 'GET /api/public/product-quality', productAgentStatus: 'GET /api/public/product-agent-status', experienceOrchestrator: 'GET /api/public/experience-orchestrator' }, smartProduct: { version: 'p153-smart-ops-v1', nextBestAction: true, planFitScoring: true, journeyOrchestration: true, smartProductEndpoint: '/api/public/smart-product', experienceEndpoint: '/api/public/experience-orchestrator', userPath: ['무료 요약','요금제 선택','고객 포털','인사이트 확인'] }, insightUpdate: { boardName: '인사이트', cadenceLabel: '정기 업데이트' }, automation: { mode: TARGET_FETCH_AUTOMATION_LEVEL, robotsEnabled: TARGET_FETCH_ROBOTS_ENABLED, sitemapEnabled: TARGET_FETCH_SITEMAP_ENABLED, maxPages: TARGET_FETCH_MAX_PAGES, maxDiscoveryResources: TARGET_FETCH_MAX_DISCOVERY_RESOURCES, notice: '자동 확인 가능한 공개 항목은 모두 처리하고 자동 확정 불가 영역은 직접 확인으로 고지합니다.' }, checks: buildRuleCatalog().map(({ code, category, title, severity, penaltyMax }) => ({ code, category, title, severity, penaltyMax })) });
+return json(req, res, 200, { ok: true, phase: RELEASE_PHASE, engine: 'VERIDION Public Evidence Summary Check Engine', rulesVersion: RULES_VERSION, targetFetchEnabled: TARGET_FETCH_ENABLED, scanProvider: SCAN_PROVIDER, aiReviewProvider: AI_REVIEW_PROVIDER, geminiConfigured: AI_REVIEW_ENABLED, resultContract: { resultType: 'preliminary_check', legalConclusion: false, includesEvidenceSummary: true, includesConfidenceScore: true, includesManualReviewFlags: true, includesAutomationDisclosure: true, includesAutomatedActionPlan: true, includesAccuracyProfile: true, includesReportQualityGate: true, includesDemoAccuracyContract: true, includesPaidOutputQualityGate: true, serviceQualityVersion: SERVICE_QUALITY_VERSION, deploymentRiskGuardVersion: DEPLOYMENT_RISK_GUARD_VERSION }, endpoints: { scan: 'POST /api/public/scan', diagnose: 'POST /api/public/diagnose', board: 'GET /api/public/board', engine: 'GET /api/public/diagnosis-engine', productIntelligence: 'GET /api/public/product-intelligence', productQuality: 'GET /api/public/product-quality', productAgentStatus: 'GET /api/public/product-agent-status', experienceOrchestrator: 'GET /api/public/experience-orchestrator' }, smartProduct: { version: 'p153-smart-ops-v1', nextBestAction: true, planFitScoring: true, journeyOrchestration: true, smartProductEndpoint: '/api/public/smart-product', experienceEndpoint: '/api/public/experience-orchestrator', userPath: ['무료 요약','요금제 선택','고객 포털','인사이트 확인'] }, insightUpdate: { boardName: '인사이트', cadenceLabel: '정기 업데이트' }, automation: { mode: TARGET_FETCH_AUTOMATION_LEVEL, robotsEnabled: TARGET_FETCH_ROBOTS_ENABLED, sitemapEnabled: TARGET_FETCH_SITEMAP_ENABLED, maxPages: TARGET_FETCH_MAX_PAGES, maxDiscoveryResources: TARGET_FETCH_MAX_DISCOVERY_RESOURCES, notice: '자동 확인 가능한 공개 항목은 모두 처리하고 자동 확정 불가 영역은 직접 확인으로 고지합니다.' }, checks: buildRuleCatalog().map(({ code, category, title, severity, penaltyMax }) => ({ code, category, title, severity, penaltyMax })) });
 }
 
 if (((pathname === '/api/public/diagnose' || pathname === '/api/public/scan') && req.method === 'POST') || (isLegacyDiagnosticStart && req.method === 'POST')) {
@@ -346,11 +346,11 @@ if (pathname === '/api/public/governance-status' && req.method === 'GET') {
 const db = await readDb();
 const readiness = buildReleaseReadiness(db);
 const privacy = privacyComplianceSummary(process.env);
-const governance = buildPhase313GovernanceSnapshot({ privacy, readiness, env: process.env });
+const governance = buildOperationsGovernanceSnapshot({ privacy, readiness, env: process.env });
 return json(req, res, governance.ok ? 200 : 503, { ok: governance.ok, privacy, readiness: { ready: readiness.ready, gates: readiness.gates }, governance }, { 'cache-control': 'no-store' });
 }
 if (pathname === '/api/public/risk-guard' && req.method === 'GET') {
-const guard = DEPLOYMENT_RISK_GUARD?.public || { ok: true, version: PHASE223_RISK_GUARD_VERSION };
+const guard = DEPLOYMENT_RISK_GUARD?.public || { ok: true, version: DEPLOYMENT_RISK_GUARD_VERSION };
 return json(req, res, guard.ok ? 200 : 503, { ok: guard.ok, riskGuard: guard }, { 'cache-control': 'no-store' });
 }
 if (pathname === '/api/public/openapi.json' && req.method === 'GET') {
@@ -444,7 +444,7 @@ const diagnosisAccuracy = scan ? buildDiagnosisAccuracyProfile(scan) : null;
 const demoAccuracy = scan ? buildDemoAccuracyContract(scan) : null;
 const paidDeliverableBlueprint = scan ? buildPaidDeliverableBlueprint(scan, scan.recommendedPlan || 'Report') : null;
 const paidOutputQualityGate = scan ? buildPaidOutputQualityGate({ scan, asset: { paidDeliverableBlueprint }, order: { plan: scan.recommendedPlan || 'Report', status: 'generating', siteId: scan.siteId, domain: scan.target } }) : null;
-return json(req, res, 200, { ok: true, productQuality: { version: PHASE220_SERVICE_QUALITY_VERSION, siteId: site?.id || scan?.siteId || null, requestId: scan?.requestId || null, diagnosisAccuracy, demoAccuracy, paidDeliverableBlueprint, paidOutputQualityGate, publicContract: { diagnosisIsPreliminary: true, scoreMeansPriorityNotLegalConclusion: true, paidDeliverablesRequireReportQualityGate: true, manualReviewItemsRemainVisible: true, paidOutputMustPassAcceptanceGate: true }, notice: '진단 정확도는 공개 수집 커버리지·근거 신뢰도·수동검토 비율·결제 후 산출물 수용 기준을 함께 반영한 운영 품질 지표입니다.' } });
+return json(req, res, 200, { ok: true, productQuality: { version: SERVICE_QUALITY_VERSION, siteId: site?.id || scan?.siteId || null, requestId: scan?.requestId || null, diagnosisAccuracy, demoAccuracy, paidDeliverableBlueprint, paidOutputQualityGate, publicContract: { diagnosisIsPreliminary: true, scoreMeansPriorityNotLegalConclusion: true, paidDeliverablesRequireReportQualityGate: true, manualReviewItemsRemainVisible: true, paidOutputMustPassAcceptanceGate: true }, notice: '진단 정확도는 공개 수집 커버리지·근거 신뢰도·수동검토 비율·결제 후 산출물 수용 기준을 함께 반영한 운영 품질 지표입니다.' } });
 }
 if (pathname === '/api/public/pricing-fit' && req.method === 'GET') {
 return json(req, res, 200, buildPricingRecalculation());
@@ -568,7 +568,7 @@ return json(req, res, 200, { ok: true, queue });
 if (pathname === '/api/public/trustops-launch-control' && req.method === 'GET') {
 const db = await readDb();
 const launch = buildTrustOpsLaunchControl(db, { nowIso: nowIso() });
-const gate = applyEngineAgentGate('trustops.launch_control', { readinessScore: launch.readiness.score, backlogCount: launch.backlogCount, phase319BacklogCount: launch.phase319BacklogCount, experimentCount: launch.experiments.length, playbookCount: launch.incidentPlaybooks.length }, { stage: 'trustops-launch-control', nowIso: nowIso() });
+const gate = applyEngineAgentGate('trustops.launch_control', { readinessScore: launch.readiness.score, backlogCount: launch.backlogCount, launchBacklogCount: launch.launchBacklogCount, experimentCount: launch.experiments.length, playbookCount: launch.incidentPlaybooks.length }, { stage: 'trustops-launch-control', nowIso: nowIso() });
 appendEngineAgentEvent(db, gate);
 await writeDb(db);
 if (!gate.ok) return json(req, res, 500, { ok: false, error: 'TrustOps 런칭 컨트롤 게이트를 통과하지 못했습니다.', gate });
@@ -589,7 +589,7 @@ return json(req, res, 200, { ok: true, sequence });
 if (pathname === '/api/public/trustops-production-sentinel' && req.method === 'GET') {
 const db = await readDb();
 const sentinel = buildProductionSentinel(db, { nowIso: nowIso(), env: process.env, baseUrl: BUSINESS_PROFILE.domain, maxPages: TARGET_FETCH_MAX_PAGES });
-const gate = applyEngineAgentGate('trustops.production_sentinel', { sentinelScore: sentinel.score, backlogCount: sentinel.backlogCount, phase320BacklogCount: sentinel.phase320BacklogCount, liveCheckCount: sentinel.liveVerification.checks.length, rollbackCount: sentinel.rollbackMatrix.length, slaCount: sentinel.slaMatrix.length }, { stage: 'trustops-production-sentinel', nowIso: nowIso() });
+const gate = applyEngineAgentGate('trustops.production_sentinel', { sentinelScore: sentinel.score, backlogCount: sentinel.backlogCount, sentinelBacklogCount: sentinel.sentinelBacklogCount, liveCheckCount: sentinel.liveVerification.checks.length, rollbackCount: sentinel.rollbackMatrix.length, slaCount: sentinel.slaMatrix.length }, { stage: 'trustops-production-sentinel', nowIso: nowIso() });
 appendEngineAgentEvent(db, gate);
 await writeDb(db);
 if (!gate.ok) return json(req, res, 500, { ok: false, error: 'TrustOps 프로덕션 센티널 게이트를 통과하지 못했습니다.', gate });
@@ -603,7 +603,7 @@ return json(req, res, 200, { ok: true, checklist });
 if (pathname === '/api/public/trustops-final-handoff' && req.method === 'GET') {
 const db = await readDb();
 const handoff = buildTrustOpsFinalHandoff(db, { nowIso: nowIso(), env: process.env, baseUrl: BUSINESS_PROFILE.domain, maxPages: TARGET_FETCH_MAX_PAGES, allowMvp: PLATFORM?.target !== 'commercial' });
-const gate = applyEngineAgentGate('trustops.final_handoff', { acceptanceScore: handoff.acceptanceScore, backlogCount: handoff.summary.backlogCount, phase321BacklogCount: handoff.summary.phase321BacklogCount, checklistCount: handoff.acceptanceChecklist.length, runbookCount: handoff.operatorRunbook.length, safeModeCount: handoff.safeModeMatrix.length, kpiCount: handoff.goLiveKpi.length }, { stage: 'trustops-final-handoff', nowIso: nowIso() });
+const gate = applyEngineAgentGate('trustops.final_handoff', { acceptanceScore: handoff.acceptanceScore, backlogCount: handoff.summary.backlogCount, handoffBacklogCount: handoff.summary.handoffBacklogCount, checklistCount: handoff.acceptanceChecklist.length, runbookCount: handoff.operatorRunbook.length, safeModeCount: handoff.safeModeMatrix.length, kpiCount: handoff.goLiveKpi.length }, { stage: 'trustops-final-handoff', nowIso: nowIso() });
 appendEngineAgentEvent(db, gate);
 await writeDb(db);
 if (!gate.ok) return json(req, res, 500, { ok: false, error: 'TrustOps 최종 인수인계 게이트를 통과하지 못했습니다.', gate });
@@ -645,7 +645,7 @@ return json(req, res, 200, {
   ok: true,
   available: true,
   service: 'VERIDION',
-  phase: 'phase288',
+  phase: 'public-route-baseline',
   serverTime: nowIso(),
   host: req.headers.host || '',
   checks: {

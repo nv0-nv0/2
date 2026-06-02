@@ -1,4 +1,4 @@
-export const FINAL_DELIVERY_ENGINE_VERSION = 'phase305-integrity-closeout-ops-engine-v5.0.0';
+export const FINAL_DELIVERY_ENGINE_VERSION = 'integrity-closeout-ops-engine-v5.0.0';
 
 export const FINAL_DELIVERY_AGENT_REGISTRY = Object.freeze([
   { id: 'final-package-gate-engine', layer: 'engine', scope: 'package', purpose: '전체 패키지 검증 명령과 산출물 누락을 최종 차단' },
@@ -20,7 +20,7 @@ const EXTERNAL_OPERATION_ITEMS = Object.freeze([
   { key: 'deploy-cache-purge', category: 'deployment', blockingLevel: 'go-live', label: '배포 캐시 무효화', packageControl: 'deployment runbook and cache checklist', liveSignal: '배포 후 새 CSS/JS 해시 확인' },
   { key: 'desktop-visual-qa', category: 'visual-qa', blockingLevel: 'go-live', label: 'Chrome·Edge·Safari 데스크톱 시각 QA', packageControl: 'button/layout static guard', liveSignal: '브라우저 캡처 검수' },
   { key: 'mobile-visual-qa', category: 'visual-qa', blockingLevel: 'go-live', label: '모바일 실기기 시각 QA', packageControl: 'responsive CSS hardening', liveSignal: '실기기 360/390/430px 확인' },
-  { key: 'autopublish-observation', category: 'ops-observation', blockingLevel: 'go-live', label: '20분 자동발행 2회 이상 관측', packageControl: 'cadence watchdog and phase298 validator', liveSignal: '운영 로그 2회 이상' },
+  { key: 'autopublish-observation', category: 'ops-observation', blockingLevel: 'go-live', label: '20분 자동발행 2회 이상 관측', packageControl: 'cadence watchdog and release validator', liveSignal: '운영 로그 2회 이상' },
   { key: 'portone-payment', category: 'payment', blockingLevel: 'go-live', label: 'PortOne 결제 샌드박스·실결제 확인', packageControl: 'payment provider gate', liveSignal: '결제 성공·웹훅 수신 로그' },
   { key: 'smtp-delivery', category: 'mail', blockingLevel: 'go-live', label: 'SMTP 발송 확인', packageControl: 'email outbox and ops self-test', liveSignal: '운영 수신함 확인' },
   { key: 'object-storage', category: 'storage', blockingLevel: 'go-live', label: 'R2/S3 업로드·다운로드 확인', packageControl: 'check-storage-config and storage adapter', liveSignal: '업로드·다운로드 probe' },
@@ -89,7 +89,7 @@ export function buildFinalDeliveryOperationalMatrix(env = process.env, options =
   const goLiveScore = liveVerifiedCount === items.length ? 100 : Math.round(packageScore * 0.7 + liveScore * 0.3);
   return {
     ok: true,
-    phase: 'phase305',
+    phase: 'final-delivery-ops',
     version: FINAL_DELIVERY_ENGINE_VERSION,
     packageStatus,
     agents: FINAL_DELIVERY_AGENT_REGISTRY,

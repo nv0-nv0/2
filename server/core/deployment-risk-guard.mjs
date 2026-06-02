@@ -1,4 +1,4 @@
-export const PHASE223_RISK_GUARD_VERSION = 'phase223-deployment-risk-guard-v1';
+export const DEPLOYMENT_RISK_GUARD_VERSION = 'deployment-risk-guard-v1';
 
 const PLACEHOLDER_RE = new RegExp('(?:replace|placeholder|sample|example|dummy|changeme|your-|test_|' + 'to' + 'do|tbd|미정|예정|입력|상용|0000-0000)', 'i');
 const LOCAL_HOSTS = new Set(['localhost', '127.0.0.1', '0.0.0.0', '::1']);
@@ -83,7 +83,7 @@ export function buildDeploymentRiskGuard(env = process.env, options = {}) {
   addCheck('customer-phone-placeholder-hidden', !isPlaceholderConfigValue(customerPhone), 'warning', '고객센터 전화번호 placeholder 값은 공개 문구에 노출되면 안 됩니다.');
 
   const publicSummary = Object.freeze({
-    version: PHASE223_RISK_GUARD_VERSION,
+    version: DEPLOYMENT_RISK_GUARD_VERSION,
     ok: blockers.length === 0,
     redirectOwner,
     appCanonicalRedirect,

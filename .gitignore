@@ -28,3 +28,7 @@ runtime-test-*/
 *.sha256
 PHASE*.zip
 SHA256SUMS*
+
+# Generated local audit evidence
+docs/current/*
+!docs/current/.gitkeep

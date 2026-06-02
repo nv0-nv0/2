@@ -95,7 +95,7 @@ try {
   assert.equal(readyzCached.data.cacheHit, true);
   assertNoPrivateKeys('readyz-cache', readyzCached.data, ['runtimeDir', 'commercialEnv', 'secureRecordStore', 'error']);
 
-  console.log(JSON.stringify({ ok: true, checked: 3, contract: 'phase354-public-probe-minimal' }, null, 2));
+  console.log(JSON.stringify({ ok: true, checked: 3, contract: 'public-probe-minimal' }, null, 2));
 } finally {
   await stopChild();
   fs.rmSync(runtimeDir, { recursive: true, force: true });

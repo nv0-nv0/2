@@ -28,4 +28,4 @@ if (failures.length) {
   console.error(JSON.stringify({ ok: false, budgets, failures }, null, 2));
   process.exit(1);
 }
-console.log(JSON.stringify({ ok: true, budgets, phase: 'phase313-performance-budget' }, null, 2));
+console.log(JSON.stringify({ ok: true, budgets, phase: 'performance-budget' }, null, 2));

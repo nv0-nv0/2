@@ -27,10 +27,11 @@ const child = spawn(process.execPath, ['server/index.mjs'], {
     NV0_ALLOW_PRELAUNCH_ONLINE_PAYMENT: 'true',
     NV0_PUBLIC_SCAN_LIMIT: '200',
     NV0_PUBLIC_BASE_URL: `http://127.0.0.1:${appPort}`,
+    NV0_TARGET_FETCH_ENABLED: 'false',
     NV0_PRIVACY_OFFICER_EMAIL: 'privacy@example.com',
-    NV0_SECURE_RECORDS_KEY: 'phase320-secure-records-key',
-    NV0_PRIVACY_HASH_KEY: 'phase320-privacy-hash-key',
-    NV0_ADMIN_KEY: 'phase320-key'
+    NV0_SECURE_RECORDS_KEY: 'trustops-sentinel-secure-records-key',
+    NV0_PRIVACY_HASH_KEY: 'trustops-sentinel-privacy-hash-key',
+    NV0_ADMIN_KEY: 'trustops-sentinel-key'
   },
   stdio: 'ignore'
 });
@@ -72,15 +73,15 @@ try {
   const scan = await j('/api/public/diagnose', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ target: 'https://phase320-sentinel.example' })
+    body: JSON.stringify({ target: 'https://trustops-sentinel.example' })
   });
   assert.equal(scan.res.status, 200, scan.text);
 
   const sentinel = await j('/api/public/trustops-production-sentinel');
   assert.equal(sentinel.res.status, 200, sentinel.text);
-  assert.equal(sentinel.data.sentinel.version, 'phase320-trustops-production-sentinel-v1');
+  assert.equal(sentinel.data.sentinel.version, 'trustops-production-sentinel-v1');
   assert.ok(sentinel.data.sentinel.backlogCount >= 220);
-  assert.equal(sentinel.data.sentinel.phase320BacklogCount, 50);
+  assert.equal(sentinel.data.sentinel.sentinelBacklogCount, 50);
   assert.ok(sentinel.data.sentinel.liveVerification.checks.length >= 13);
   assert.ok(sentinel.data.sentinel.canaryStages.length >= 5);
   assert.ok(sentinel.data.sentinel.rollbackMatrix.length >= 7);
@@ -97,7 +98,7 @@ try {
   assert.ok(status.data.eventPolicyCount >= 17);
   assert.ok(status.data.publicSummary.appliedRoutes.includes('/api/public/trustops-production-sentinel'));
 
-  console.log('phase320 trustops production sentinel integration ok');
+  console.log('trustops production sentinel integration ok');
 } finally {
   await stopChild(child);
   fs.rmSync(testRuntimeDir, { recursive: true, force: true });

@@ -1,7 +1,7 @@
 import { buildDiagnosisAccuracyProfile, buildReportQualityProfile } from './product-quality-engine.mjs';
-import { buildDemoAccuracyContract, buildDemoIssueOverview, buildPaidDeliverableBlueprint, buildConversionUrgencyModel, attachPhase220ServiceQuality } from './service-quality-220.mjs';
+import { buildDemoAccuracyContract, buildDemoIssueOverview, buildPaidDeliverableBlueprint, buildConversionUrgencyModel, attachServiceQuality } from './service-quality.mjs';
 export function buildPublicDiagnosisPackage(result = {}, options = {}) {
-  const phase220Scan = attachPhase220ServiceQuality(result, options);
+  const qualityScan = attachServiceQuality(result, options);
   const detail = Array.isArray(result.detailFindings) ? result.detailFindings : [];
   const scoreValue = Number(result.riskScore || 0) || 0;
   const rulesVersion = options.rulesVersion || 'internal';
@@ -62,7 +62,7 @@ export function buildPublicDiagnosisPackage(result = {}, options = {}) {
       demoAccuracyScore: demoAccuracyContract.score,
       blockers: [...accuracyProfile.blockers, ...reportQualityPreview.blockers, ...demoAccuracyContract.blockers]
     },
-    serviceQuality: phase220Scan.serviceQuality,
+    serviceQuality: qualityScan.serviceQuality,
     conversionUrgency,
     demoIssueOverview,
     freeDemoContract: { scope: 'free_demo_problem_area_element_count_only', shows: ['problemAreas','affectedElements','issueCounts','priorityCounts'], locks: ['fullEvidence','fullRecommendation','fullFixTemplate','acceptanceCriteria'] },

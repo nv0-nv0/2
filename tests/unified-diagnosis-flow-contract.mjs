@@ -59,8 +59,8 @@ add('home:copy-promises-clear-separation', () => {
 });
 
 const failures = checks.filter(x => !x.ok);
-const report = { ok: failures.length === 0, phase: 'phase347-unified-diagnosis-flow-contract', checked: checks.length, failed: failures.length, failures };
+const report = { ok: failures.length === 0, phase: 'unified-diagnosis-flow-contract', checked: checks.length, failed: failures.length, failures };
 fs.mkdirSync(path.join(root, 'docs/current'), { recursive: true });
-fs.writeFileSync(path.join(root, 'docs/current/PHASE347_UNIFIED_DIAGNOSIS_FLOW_CONTRACT.json'), JSON.stringify(report, null, 2));
+fs.writeFileSync(path.join(root, 'docs/current/UNIFIED_DIAGNOSIS_FLOW_CONTRACT.json'), JSON.stringify(report, null, 2));
 console.log(JSON.stringify(report, null, 2));
 if (failures.length) process.exit(1);

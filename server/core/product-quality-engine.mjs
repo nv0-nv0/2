@@ -1,4 +1,4 @@
-const VERSION = 'phase201-product-quality-v1';
+const VERSION = 'product-quality-v1';
 
 function list(value) {
   return Array.isArray(value) ? value.filter(Boolean) : [];
