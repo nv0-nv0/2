@@ -84,3 +84,9 @@ npm run deploy:precheck
 ## Stitch 경험 파이프라인
 
 Stitch `Executive Trust Framework` 시안 10종은 홈, 진단 결과, 요금제, 고객 포털, 로그인, 인사이트, 관리자 대시보드에 연결했습니다. `shared/stitch-route-manifest.mjs`가 시안·라우트·상태·기능 연결의 단일 소스이며, 정적 계약 검사와 테스트 전용 내부 API 통합 테스트를 최종 릴리즈 게이트에 포함합니다. 상세 내용은 `docs/STITCH_EXPERIENCE_PIPELINE.md`를 확인하세요. 전체 31개 HTML의 중복 ID·입력 라벨·빈 링크·빈 버튼·정적 자산과 일반 페이지 Host 차단·헬스체크 예외도 별도 릴리즈 계약으로 검증합니다.
+
+## 상용화 극대화 하드닝
+
+직전 MFA fail-closed 핫픽스는 비회귀 계약으로 고정했습니다. 추가로 HTTP 메서드 제한, 과대 URI 조기 차단, HEAD 전송 최적화, 정적 파일 실제 경로 검증, 서버 timeout·shutdown 보강, 상용 환경변수 범위·placeholder·URL 프로토콜 검증, 배송 ZIP 재검증과 파일별 SHA-256 증거 생성을 적용했습니다.
+
+상세 적용 내역은 `docs/COMMERCIAL_MAXIMIZATION_REPORT_KO.md`, 운영 환경변수 기준은 `docs/CONFIGURATION_REFERENCE_KO.md`, 실서버 전환 검수는 `docs/POST_DEPLOYMENT_ACCEPTANCE_KO.md`를 확인하세요.

@@ -1,5 +1,8 @@
 // Request security gate for Node's native http.createServer flow.
 // It returns a pre-parsed native request state so downstream route handlers do not re-parse URL.
+const DEFAULT_ALLOWED_METHODS = Object.freeze(['GET', 'HEAD', 'POST', 'OPTIONS']);
+const DEFAULT_MAX_REQUEST_TARGET_LENGTH = 4096;
+
 function normalizeHostHeader(value = '') {
   const raw = String(value || '').trim().toLowerCase();
   if (!raw) return '';
@@ -22,21 +25,55 @@ function shouldCanonicalHostRedirect(requestHost, canonicalHost) {
   if (canonicalHost === `www.${requestHost}`) return true;
   return false;
 }
+function validRequestTarget(rawTarget = '', maxLength = DEFAULT_MAX_REQUEST_TARGET_LENGTH) {
+  const target = String(rawTarget || '/');
+  if (target.length > maxLength) return { ok: false, status: 414, message: 'URI Too Long', reason: 'request_target_too_long' };
+  if (/[\u0000-\u001f\u007f]/.test(target)) return { ok: false, status: 400, message: 'Bad Request', reason: 'request_target_control_character' };
+  return { ok: true };
+}
 
-export function createSecurityMiddleware({ isAllowedHost, text, baseHeaders, requestUrlFrom, redirect, canonicalBaseUrl = '', canonicalHostRedirect = false }) {
+export function createSecurityMiddleware({
+  isAllowedHost,
+  text,
+  baseHeaders,
+  requestUrlFrom,
+  redirect,
+  canonicalBaseUrl = '',
+  canonicalHostRedirect = false,
+  allowedMethods = DEFAULT_ALLOWED_METHODS,
+  maxRequestTargetLength = DEFAULT_MAX_REQUEST_TARGET_LENGTH
+}) {
+  const normalizedAllowedMethods = Array.from(new Set(allowedMethods.map(value => String(value || '').trim().toUpperCase()).filter(Boolean)));
+  const allowHeader = normalizedAllowedMethods.join(', ');
   return function applyHttpSecurityGate(req, res) {
     if (!isAllowedHost(req)) {
       text(req, res, 421, 'Misdirected Request');
       return { handled: true, reason: 'host_rejected' };
     }
-    const requestUrl = requestUrlFrom(req);
+    const targetCheck = validRequestTarget(req.url || '/', maxRequestTargetLength);
+    if (!targetCheck.ok) {
+      text(req, res, targetCheck.status, targetCheck.message, { 'cache-control': 'no-store' });
+      return { handled: true, reason: targetCheck.reason };
+    }
+    let requestUrl;
+    try {
+      requestUrl = requestUrlFrom(req);
+    } catch {
+      text(req, res, 400, 'Bad Request', { 'cache-control': 'no-store' });
+      return { handled: true, reason: 'invalid_request_url' };
+    }
     const pathname = requestUrl.pathname;
     const method = String(req.method || 'GET').toUpperCase();
     const routeState = Object.freeze({ requestUrl, pathname, method, routeKey: `${method} ${pathname}` });
     req._nv0Url = requestUrl;
     req._nv0RouteState = routeState;
-    if (req.method === 'OPTIONS') {
-      res.writeHead(204, { allow: 'GET, HEAD, POST, OPTIONS', ...baseHeaders(req) });
+    if (!normalizedAllowedMethods.includes(method)) {
+      res.writeHead(405, { allow: allowHeader, ...baseHeaders(req) });
+      res.end();
+      return { handled: true, reason: 'method_rejected', ...routeState };
+    }
+    if (method === 'OPTIONS') {
+      res.writeHead(204, { allow: allowHeader, 'cache-control': 'no-store', ...baseHeaders(req) });
       res.end();
       return { handled: true, reason: 'preflight', ...routeState };
     }

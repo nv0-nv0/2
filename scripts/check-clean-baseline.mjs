@@ -32,7 +32,7 @@ add('no-stale-engine-script-paths', () => {
   assert.doesNotMatch(text, /scripts\/(?:run-phase|validate-phase|redteam-global-audit)/i);
 });
 add('no-git-metadata', () => assert.equal(exists('.git'), false));
-add('required-docs', () => { for (const file of ['docs/INDEX.md','docs/ARCHITECTURE.md','docs/DEPLOYMENT.md','docs/OPERATIONS.md','docs/QA.md','docs/ROLLBACK.md','docs/CLEANUP_REPORT.md','docs/COMPATIBILITY.md']) assert.equal(exists(file), true, file); });
+add('required-docs', () => { for (const file of ['docs/INDEX.md','docs/ARCHITECTURE.md','docs/DEPLOYMENT.md','docs/OPERATIONS.md','docs/QA.md','docs/ROLLBACK.md','docs/CLEANUP_REPORT.md','docs/COMPATIBILITY.md','docs/COMMERCIAL_MAXIMIZATION_REPORT_KO.md','docs/CONFIGURATION_REFERENCE_KO.md','docs/POST_DEPLOYMENT_ACCEPTANCE_KO.md']) assert.equal(exists(file), true, file); });
 add('canonical-stylesheet-only', () => {
   assert.equal(exists('shared/veridion-rebrand.css'), true);
   assert.equal(exists('shared/base.css'), false);

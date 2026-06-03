@@ -69,7 +69,7 @@ check('server/index.mjs:runtime-uploads-follow-configured-upload-dir', () => {
   const text = read('server/index.mjs');
   assert.match(text, /serveStaticRoot\(req, res, UPLOADS_DIR, '\/runtime\/uploads\/', 'upload'\)/);
   assert.match(text, /async function serveStaticRoot\(req, res, rootDir, prefix = '', categoryOverride = ''\)/);
-  assert.match(text, /return serveFile\(req, res, abs, mime\(abs\), categoryOverride\)/);
+  assert.match(text, /return serveFile\(req, res, realAbs, mime\(realAbs\), categoryOverride\)/);
 });
 check('scripts/reset-demo-state.mjs:respects-configured-runtime-dir', () => {
   const text = read('scripts/reset-demo-state.mjs');

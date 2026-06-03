@@ -75,6 +75,10 @@ for (const file of bootSafeComposeFiles) {
       assert.equal(vars.has(key), true, `${file}: bulk key is not forwarded: ${key}`);
     }
   });
+  add(`${file}:admin-mfa-default-fail-closed`, () => {
+    const raw = read(file);
+    assert.match(raw, /NV0_ADMIN_MFA_REQUIRED:\s*\$\{NV0_ADMIN_MFA_REQUIRED:-true\}/, `${file}: admin MFA must default to true so an omitted Coolify variable cannot disable the commercial preflight control`);
+  });
 }
 add('commercial-compose:strict-services-and-readyz', () => {
   assert.match(strictCompose, /^\s{2}postgres:\s*$/m);

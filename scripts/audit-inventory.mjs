@@ -54,11 +54,13 @@ const report = {
   statusSummary,
 };
 
-const outDir = path.join(ROOT, 'docs');
-await fs.writeFile(path.join(outDir, 'REMAINING_WORK_INVENTORY_20260423.json'), JSON.stringify(report, null, 2));
+const outDir = path.join(ROOT, 'docs', 'current');
+await fs.mkdir(outDir, { recursive: true });
+await fs.writeFile(path.join(outDir, 'REMAINING_WORK_INVENTORY.json'), JSON.stringify(report, null, 2) + '\n');
 
 const lines = [];
-lines.push('# 남은 단계·영역·요소 인벤토리 (2026-04-23)');
+const reportDate = report.generatedAt.slice(0, 10);
+lines.push(`# 남은 단계·영역·요소 인벤토리 (${reportDate})`);
 lines.push('');
 lines.push('## 1. 현재 실제 구현 요소 수');
 lines.push('');
@@ -99,5 +101,5 @@ lines.push('');
 lines.push('## 5. 현재 고유 라우트 목록');
 lines.push('');
 uniqueRoutes.forEach(route => lines.push(`- \`${route}\``));
-await fs.writeFile(path.join(outDir, 'REMAINING_WORK_INVENTORY_20260423_KO.md'), lines.join('\n'));
+await fs.writeFile(path.join(outDir, 'REMAINING_WORK_INVENTORY_KO.md'), lines.join('\n') + '\n');
 console.log(JSON.stringify(report, null, 2));

@@ -66,7 +66,7 @@ function packageVersion() {
   }
 }
 function externalDurableRuntimeMode(env = process.env) {
-  const platformTarget = String(env.NV0_PLATFORM_TARGET || 'commercial').trim().toLowerCase();
+  const platformTarget = String(env.NV0_PLATFORM_TARGET || 'mvp').trim().toLowerCase();
   const persistenceMode = String(env.NV0_PERSISTENCE_MODE || (platformTarget === 'commercial' ? 'postgres_primary' : 'json')).trim().toLowerCase();
   const storageMode = String(env.NV0_STORAGE_MODE || (platformTarget === 'commercial' ? 's3' : 'local_fs')).trim().toLowerCase();
   return platformTarget === 'commercial' && persistenceMode === 'postgres_primary' && storageMode !== 'local_fs';
@@ -421,6 +421,22 @@ requestTimeoutMs: REQUEST_TIMEOUT_MS,
 slowRequestThresholdMs: SLOW_REQUEST_THRESHOLD_MS,
 accessLogMode: ACCESS_LOG_MODE,
 dataDestructionGraceDays: DATA_DESTRUCTION_GRACE_DAYS,
+targetFetchTimeoutMs: TARGET_FETCH_TIMEOUT_MS,
+targetFetchMaxBytes: TARGET_FETCH_MAX_BYTES,
+targetFetchMaxRedirects: TARGET_FETCH_MAX_REDIRECTS,
+scanSoftTimeoutMs: SCAN_SOFT_TIMEOUT_MS,
+targetFetchMaxPages: TARGET_FETCH_MAX_PAGES,
+targetFetchConcurrency: TARGET_FETCH_CONCURRENCY,
+targetFetchMaxSitemapUrls: TARGET_FETCH_MAX_SITEMAP_URLS,
+targetFetchMaxDiscoveryResources: TARGET_FETCH_MAX_DISCOVERY_RESOURCES,
+dataRetentionDays: DATA_RETENTION_DAYS,
+refundRequestWindowDays: REFUND_REQUEST_WINDOW_DAYS,
+paymentIdempotencyTtlMs: PAYMENT_IDEMPOTENCY_TTL_MS,
+emailMaxRetryCount: EMAIL_MAX_RETRY_COUNT,
+emailRetryBackoffMs: EMAIL_RETRY_BACKOFF_MS,
+publicAssetCacheSeconds: PUBLIC_ASSET_CACHE_SECONDS,
+readyzCacheTtlMs: Number(process.env.NV0_READYZ_CACHE_TTL_MS || 3000),
+redisTimeoutMs: Number(process.env.NV0_REDIS_TIMEOUT_MS || 1500),
 businessProfile: BUSINESS_PROFILE,
 operatorAlertEmail: OPERATOR_ALERT_EMAIL
 });
@@ -439,6 +455,19 @@ assertFiniteConfigNumber('NV0_SCAN_CACHE_TTL_MS', SCAN_CACHE_TTL_MS, { min: 0, m
 assertFiniteConfigNumber('NV0_TARGET_FETCH_TIMEOUT_MS', TARGET_FETCH_TIMEOUT_MS, { min: 500, max: 30_000 });
 assertFiniteConfigNumber('NV0_TARGET_FETCH_MAX_BYTES', TARGET_FETCH_MAX_BYTES, { min: 32 * 1024, max: 1_048_576 });
 assertFiniteConfigNumber('NV0_TARGET_FETCH_MAX_REDIRECTS', TARGET_FETCH_MAX_REDIRECTS, { min: 0, max: 10 });
+assertFiniteConfigNumber('NV0_SCAN_SOFT_TIMEOUT_MS', SCAN_SOFT_TIMEOUT_MS, { min: 2500, max: 15_000 });
+assertFiniteConfigNumber('NV0_TARGET_FETCH_MAX_PAGES', TARGET_FETCH_MAX_PAGES, { min: 4, max: 24 });
+assertFiniteConfigNumber('NV0_TARGET_FETCH_CONCURRENCY', TARGET_FETCH_CONCURRENCY, { min: 1, max: 6 });
+assertFiniteConfigNumber('NV0_TARGET_FETCH_MAX_SITEMAP_URLS', TARGET_FETCH_MAX_SITEMAP_URLS, { min: 0, max: 80 });
+assertFiniteConfigNumber('NV0_TARGET_FETCH_MAX_DISCOVERY_RESOURCES', TARGET_FETCH_MAX_DISCOVERY_RESOURCES, { min: 1, max: 6 });
+assertFiniteConfigNumber('NV0_DATA_RETENTION_DAYS', DATA_RETENTION_DAYS, { min: 1, max: 3650 });
+assertFiniteConfigNumber('NV0_REFUND_REQUEST_WINDOW_DAYS', REFUND_REQUEST_WINDOW_DAYS, { min: 0, max: 365 });
+assertFiniteConfigNumber('NV0_PAYMENT_IDEMPOTENCY_TTL_MS', PAYMENT_IDEMPOTENCY_TTL_MS, { min: 60_000, max: 7 * 24 * 60 * 60_000 });
+assertFiniteConfigNumber('NV0_EMAIL_MAX_RETRY_COUNT', EMAIL_MAX_RETRY_COUNT, { min: 0, max: 20 });
+assertFiniteConfigNumber('NV0_EMAIL_RETRY_BACKOFF_MS', EMAIL_RETRY_BACKOFF_MS, { min: 1000, max: 24 * 60 * 60_000 });
+assertFiniteConfigNumber('NV0_PUBLIC_ASSET_CACHE_SECONDS', PUBLIC_ASSET_CACHE_SECONDS, { min: 0, max: 31_536_000 });
+assertFiniteConfigNumber('NV0_READYZ_CACHE_TTL_MS', Number(process.env.NV0_READYZ_CACHE_TTL_MS || 3000), { min: 0, max: 60_000 });
+assertFiniteConfigNumber('NV0_REDIS_TIMEOUT_MS', Number(process.env.NV0_REDIS_TIMEOUT_MS || 1500), { min: 100, max: 30_000 });
 assertFiniteConfigNumber('NV0_CTA_AUTOPUBLISH_INTERVAL_MS', CTA_AUTOPUBLISH_INTERVAL_MS, { min: 60_000, max: 86_400_000 });
 assertFiniteConfigNumber('NV0_PUBLIC_CACHE_SECONDS', PUBLIC_CACHE_SECONDS, { min: 0, max: 86_400 });
 assertFiniteConfigNumber('NV0_REQUEST_TIMEOUT_MS', REQUEST_TIMEOUT_MS, { min: 1000, max: 120_000 });
@@ -614,6 +643,8 @@ const headers = {
 'origin-agent-cluster': '?1',
 'x-permitted-cross-domain-policies': 'none',
 'x-download-options': 'noopen',
+'x-dns-prefetch-control': 'off',
+'x-robots-tag': category === 'dynamic' || category === 'upload' ? 'noindex, nofollow, noarchive' : 'all',
 'content-security-policy': cspParts.join('; '),
 'content-security-policy-report-only': ["trusted-types vr-default", "require-trusted-types-for 'script'"].join('; ')
 };
@@ -628,13 +659,23 @@ if (category === 'static') headers['cache-control'] = 'no-cache, max-age=0, must
 if (category === 'upload') headers['cache-control'] = 'private, max-age=300';
 return headers;
 }
+function responseBuffer(payload = '') {
+return Buffer.isBuffer(payload) ? payload : Buffer.from(String(payload ?? ''), 'utf8');
+}
+function endResponse(req, res, payload = '') {
+const body = responseBuffer(payload);
+if (String(req.method || 'GET').toUpperCase() === 'HEAD') return res.end();
+return res.end(body);
+}
 function json(req, res, status, payload, extraHeaders = {}) {
-res.writeHead(status, { 'content-type': 'application/json; charset=utf-8', ...baseHeaders(req), ...extraHeaders });
-res.end(JSON.stringify(payload, null, 2));
+const body = responseBuffer(JSON.stringify(payload, null, 2));
+res.writeHead(status, { 'content-type': 'application/json; charset=utf-8', 'content-length': String(body.byteLength), ...baseHeaders(req), ...extraHeaders });
+return endResponse(req, res, body);
 }
 function text(req, res, status, payload, extraHeaders = {}) {
-res.writeHead(status, { 'content-type': 'text/plain; charset=utf-8', ...baseHeaders(req), ...extraHeaders });
-res.end(payload);
+const body = responseBuffer(payload);
+res.writeHead(status, { 'content-type': 'text/plain; charset=utf-8', 'content-length': String(body.byteLength), ...baseHeaders(req), ...extraHeaders });
+return endResponse(req, res, body);
 }
 function noContent(req, res, status = 204, extraHeaders = {}, category = 'static') {
 res.writeHead(status, { ...baseHeaders(req, category), ...extraHeaders });
@@ -662,8 +703,9 @@ if (ACCESS_LOG_MODE === 'quiet' && statusCode < 400) return false;
 return true;
 }
 function html(req, res, status, payload, extraHeaders = {}, category = 'public-page') {
-res.writeHead(status, { 'content-type': 'text/html; charset=utf-8', ...baseHeaders(req, category), ...extraHeaders });
-res.end(payload);
+const body = responseBuffer(payload);
+res.writeHead(status, { 'content-type': 'text/html; charset=utf-8', 'content-length': String(body.byteLength), ...baseHeaders(req, category), ...extraHeaders });
+return endResponse(req, res, body);
 }
 function redirect(req, res, statusOrLocation, maybeLocation) {
 const status = Number.isInteger(statusOrLocation) ? statusOrLocation : 302;
@@ -754,6 +796,12 @@ return null;
 return session;
 }
 async function bodyBuffer(req, limitBytes = MAX_JSON_BODY_BYTES) {
+const declaredLength = Number(req.headers['content-length'] || 0);
+if (Number.isFinite(declaredLength) && declaredLength > limitBytes) {
+const err = new Error('PAYLOAD_TOO_LARGE');
+err.code = 'PAYLOAD_TOO_LARGE';
+throw err;
+}
 const chunks = [];
 let total = 0;
 for await (const chunk of req) {
@@ -765,7 +813,12 @@ throw err;
 }
 chunks.push(chunk);
 }
-return Buffer.concat(chunks);
+if (req.aborted || !req.complete) {
+const err = new Error('REQUEST_BODY_INCOMPLETE');
+err.code = 'INVALID_PAYLOAD';
+throw err;
+}
+return Buffer.concat(chunks, total);
 }
 async function bodyText(req, limitBytes = MAX_JSON_BODY_BYTES) {
 const buffer = await bodyBuffer(req, limitBytes);
@@ -1333,7 +1386,7 @@ res.writeHead(304, { etag, 'last-modified': lastModified, ...baseHeaders(req, ca
 return res.end();
 }
 const data = await fs.readFile(absPath);
-res.writeHead(200, { 'content-type': contentType, etag, 'last-modified': lastModified, ...baseHeaders(req, category) });
+res.writeHead(200, { 'content-type': contentType, 'content-length': String(data.byteLength), etag, 'last-modified': lastModified, ...baseHeaders(req, category) });
 if (req.method === 'HEAD') return res.end();
 res.end(data);
 } catch {
@@ -1361,9 +1414,18 @@ try { clean = decodeURIComponent(req.url.split('?')[0]); } catch { return text(r
 const rel = prefix ? clean.slice(prefix.length) : clean;
 if (rel.includes('\0')) return text(req, res, 400, 'Bad request path');
 const abs = path.resolve(rootDir, rel.replace(/^\/+/, ''));
-const safeRoot = path.resolve(rootDir) + path.sep;
-if (!(abs + path.sep).startsWith(safeRoot) && abs !== path.resolve(rootDir)) return text(req, res, 403, 'Forbidden');
-return serveFile(req, res, abs, mime(abs), categoryOverride);
+const resolvedRoot = path.resolve(rootDir);
+const safeRoot = resolvedRoot + path.sep;
+if (!(abs + path.sep).startsWith(safeRoot) && abs !== resolvedRoot) return text(req, res, 403, 'Forbidden');
+try {
+const realRoot = await fs.realpath(resolvedRoot);
+const realAbs = await fs.realpath(abs);
+const safeRealRoot = realRoot + path.sep;
+if (!(realAbs + path.sep).startsWith(safeRealRoot) && realAbs !== realRoot) return text(req, res, 403, 'Forbidden');
+return serveFile(req, res, realAbs, mime(realAbs), categoryOverride);
+} catch {
+return text(req, res, 404, 'Not found');
+}
 }
 function pageMap(urlPath) {
 const m = {
@@ -4676,12 +4738,12 @@ const gate = securityMiddleware(req, res);
 if (gate.handled) return;
 const requestState = gate;
 const pathname = requestState.pathname;
-if (pathname.startsWith('/shared/')) return serveStaticRoot(req, res, ROOT, '/');
-if (pathname.startsWith('/apps/public/')) return serveStaticRoot(req, res, ROOT, '/');
-if (pathname.startsWith('/apps/admin/gate/')) return serveStaticRoot(req, res, ROOT, '/');
+if (pathname.startsWith('/shared/')) return serveStaticRoot(req, res, path.join(ROOT, 'shared'), '/shared/');
+if (pathname.startsWith('/apps/public/')) return serveStaticRoot(req, res, path.join(ROOT, 'apps/public'), '/apps/public/');
+if (pathname.startsWith('/apps/admin/gate/')) return serveStaticRoot(req, res, path.join(ROOT, 'apps/admin/gate'), '/apps/admin/gate/');
 if (pathname.startsWith('/apps/admin/')) {
 if (!await getSession(req)) return text(req, res, 403, 'Forbidden');
-return serveStaticRoot(req, res, ROOT, '/');
+return serveStaticRoot(req, res, path.join(ROOT, 'apps/admin'), '/apps/admin/');
 }
 if (pathname.startsWith('/runtime/uploads/')) {
 const uploadSession = await getSession(req);
@@ -4727,6 +4789,11 @@ ipHash: pseudonymizeIp(clientIp(req))
 }
 }
 });
+server.requestTimeout = REQUEST_TIMEOUT_MS;
+server.headersTimeout = Math.min(REQUEST_TIMEOUT_MS, 10_000);
+server.keepAliveTimeout = 5_000;
+server.maxHeadersCount = 100;
+server.maxRequestsPerSocket = 1_000;
 const cleanupInterval = setInterval(() => {
 cleanupExpiredSessions().catch(error => console.error('session cleanup failed', error));
 }, 60_000);
@@ -4743,17 +4810,22 @@ const autoBackupInterval = setInterval(() => {
 runAutomaticBackup('scheduled').catch(error => console.error('automatic backup failed', error));
 }, AUTO_BACKUP_INTERVAL_MS);
 autoBackupInterval.unref();
+let shutdownPromise = null;
 async function shutdown() {
+if (shutdownPromise) return shutdownPromise;
+shutdownPromise = (async () => {
 clearInterval(cleanupInterval);
 clearInterval(ctaAutopublishInterval);
 clearTimeout(ctaAutopublishStartupTimer);
 clearInterval(autoBackupInterval);
-if (sessionsDirty) await writeSessionsToDisk();
-const forceExit = setTimeout(() => process.exit(0), 1500);
+const forceExit = setTimeout(() => process.exit(0), 2000);
 forceExit.unref();
-if (typeof server.closeIdleConnections === 'function') server.closeIdleConnections();
-if (typeof server.closeAllConnections === 'function') server.closeAllConnections();
 server.close(() => process.exit(0));
+if (typeof server.closeIdleConnections === 'function') server.closeIdleConnections();
+if (sessionsDirty) await writeSessionsToDisk();
+if (typeof server.closeAllConnections === 'function') server.closeAllConnections();
+})();
+return shutdownPromise;
 }
 process.on('SIGTERM', () => { shutdown().catch(() => process.exit(1)); });
 process.on('SIGINT', () => { shutdown().catch(() => process.exit(1)); });

@@ -20,6 +20,7 @@ for (const file of files) {
   must(text, 'NV0_SCAN_PROVIDER: ${NV0_SCAN_PROVIDER:-builtin}', file, 'first boot must not require external scan provider');
   must(text, 'NV0_PAYMENT_PROVIDER: ${NV0_PAYMENT_PROVIDER:-disabled}', file, 'first boot must keep payment disabled');
   must(text, 'NV0_ENABLE_TURNSTILE: ${NV0_ENABLE_TURNSTILE:-false}', file, 'first boot must not require Turnstile keys');
+  must(text, 'NV0_ADMIN_MFA_REQUIRED: ${NV0_ADMIN_MFA_REQUIRED:-true}', file, 'boot-safe compose must preserve the commercial MFA fail-closed hotfix');
   must(text, 'ports:', file, 'Coolify/Traefik needs explicit reachable service port in the boot-safe profile');
   must(text, '"${APP_PORT:-3210}:3210"', file, 'app port 3210 must be explicitly mapped');
   must(text, 'expose:', file, 'service port must be exposed for proxy discovery');

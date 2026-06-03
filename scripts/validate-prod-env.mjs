@@ -32,7 +32,7 @@ function isPlaceholderConfigValue(value) {
 
 const required = [
   'NODE_ENV', 'PORT', 'NV0_PLATFORM_TARGET', 'NV0_PUBLIC_BASE_URL',
-  'NV0_ADMIN_AUTH_MODE', 'NV0_BOOTSTRAP_ADMIN_EMAIL', 'NV0_BOOTSTRAP_ADMIN_PASSWORD',
+  'NV0_ADMIN_AUTH_MODE', 'NV0_ADMIN_MFA_REQUIRED', 'NV0_ADMIN_TOTP_SECRET', 'NV0_BOOTSTRAP_ADMIN_EMAIL', 'NV0_BOOTSTRAP_ADMIN_PASSWORD',
   'NV0_PERSISTENCE_MODE', 'NV0_DATABASE_URL',
   'NV0_REDIS_URL', 'NV0_SESSION_STORE', 'NV0_RATE_LIMIT_STORE', 'NV0_LOCK_PROVIDER',
   'NV0_STORAGE_MODE', 'NV0_S3_ENDPOINT', 'NV0_S3_BUCKET', 'NV0_S3_ACCESS_KEY_ID', 'NV0_S3_SECRET_ACCESS_KEY',
@@ -80,6 +80,18 @@ if (String(process.env.NV0_PLATFORM_TARGET) !== 'commercial') errors.push('NV0_P
 if (!port || Number.isNaN(port) || port < 1 || port > 65535) errors.push('PORT must be a valid TCP port');
 if (process.env.NV0_ADMIN_KEY) errors.push('NV0_ADMIN_KEY must not be set for commercial launch');
 if (String(process.env.NV0_ADMIN_AUTH_MODE) !== 'account_rbac') errors.push('NV0_ADMIN_AUTH_MODE must be account_rbac');
+if (String(process.env.NV0_ADMIN_MFA_REQUIRED) !== 'true') errors.push('NV0_ADMIN_MFA_REQUIRED must be true');
+if (!/^[A-Z2-7]+=*$/i.test(String(process.env.NV0_ADMIN_TOTP_SECRET || '').trim()) || String(process.env.NV0_ADMIN_TOTP_SECRET || '').trim().length < 16) errors.push('NV0_ADMIN_TOTP_SECRET must be a finalized Base32 secret with at least 16 characters');
+if (String(process.env.NV0_BOOTSTRAP_ADMIN_PASSWORD || '').length < 15) errors.push('NV0_BOOTSTRAP_ADMIN_PASSWORD must contain at least 15 characters');
+for (const key of ['NV0_SESSION_SECRET','NV0_SECURE_RECORDS_KEY','NV0_PRIVACY_HASH_KEY','NV0_BACKUP_ENCRYPTION_SECRET']) if (String(process.env[key] || '').trim().length < 32) errors.push(`${key} must contain at least 32 characters`);
+try { const value = new URL(String(process.env.NV0_REDIS_URL || '')); if (!['redis:','rediss:'].includes(value.protocol)) errors.push('NV0_REDIS_URL must use redis:// or rediss://'); } catch { errors.push('NV0_REDIS_URL must be a valid Redis URL'); }
+try { const value = new URL(String(process.env.NV0_SCAN_PROVIDER_URL || '')); if (value.protocol !== 'https:') errors.push('NV0_SCAN_PROVIDER_URL must use https://'); } catch { errors.push('NV0_SCAN_PROVIDER_URL must be a valid HTTPS URL'); }
+try { const value = new URL(String(process.env.NV0_SMTP_URL || '')); if (!['smtp:','smtps:'].includes(value.protocol)) errors.push('NV0_SMTP_URL must use smtp:// or smtps://'); } catch { errors.push('NV0_SMTP_URL must be a valid SMTP URL'); }
+try {
+  const value = new URL(String(process.env.NV0_S3_ENDPOINT || ''));
+  const localHosts = new Set(['minio','localhost','127.0.0.1','::1']);
+  if (value.protocol !== 'https:' && !(prelaunch && value.protocol === 'http:' && localHosts.has(value.hostname))) errors.push('NV0_S3_ENDPOINT must use HTTPS except private local MinIO during prelaunch');
+} catch { errors.push('NV0_S3_ENDPOINT must be a valid object-storage URL'); }
 if (String(process.env.NV0_PERSISTENCE_MODE) !== 'postgres_primary') errors.push('NV0_PERSISTENCE_MODE must be postgres_primary');
 if (String(process.env.NV0_BACKUP_REMOTE_REQUIRE_ENCRYPTION) !== 'true') errors.push('NV0_BACKUP_REMOTE_REQUIRE_ENCRYPTION must be true');
 if (String(process.env.NV0_SESSION_STORE) !== 'redis') errors.push('NV0_SESSION_STORE must be redis');

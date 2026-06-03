@@ -87,7 +87,7 @@ if (commercial || env.NODE_ENV === 'production') {
     else warnings.push('NV0_ADMIN_KEY is ignored in commercial prelaunch. Remove it before NV0_COMMERCIAL_LAUNCH_READY=true.');
   }
   if (env.NV0_ADMIN_AUTH_MODE !== 'account_rbac') errors.push('NV0_ADMIN_AUTH_MODE must be account_rbac');
-  if (env.NV0_ADMIN_MFA_REQUIRED !== 'true') errors.push('NV0_ADMIN_MFA_REQUIRED must be true for commercial deployments');
+  if (env.NV0_ADMIN_MFA_REQUIRED !== 'true') errors.push('NV0_ADMIN_MFA_REQUIRED must be true for commercial deployments. Set NV0_ADMIN_MFA_REQUIRED=true in Coolify environment variables and redeploy.');
   if (env.NV0_ADMIN_MFA_REQUIRED === 'true') finalized('NV0_ADMIN_TOTP_SECRET');
   if (env.NV0_PERSISTENCE_MODE !== 'postgres_primary') errors.push('NV0_PERSISTENCE_MODE must be postgres_primary');
   if (env.NV0_BACKUP_REMOTE_REQUIRE_ENCRYPTION !== 'true') errors.push('NV0_BACKUP_REMOTE_REQUIRE_ENCRYPTION must be true');
@@ -103,7 +103,7 @@ if (commercial || env.NODE_ENV === 'production') {
   } else {
     const missingBusinessKeys = launchBusinessKeys.filter((key) => placeholder(env[key]));
     if (missingBusinessKeys.length) warnings.push(`Prelaunch legal business profile is incomplete: ${missingBusinessKeys.join(', ')}. The server may boot for private prelaunch, but commercial launch remains blocked.`);
-    if (placeholder(env.NV0_MAIL_ORDER_REGISTRATION_NUMBER)) warnings.push('Prelaunch mail-order registration number is not set. Keep NV0_PAYMENT_PROVIDER=disabled and add NV0_MAIL_ORDER_REGISTRATION_NUMBER before commercial_launch.');
+    if (placeholder(env.NV0_MAIL_ORDER_REGISTRATION_NUMBER)) warnings.push('Expected prelaunch warning: mail-order registration number is not set. Keep NV0_PAYMENT_PROVIDER=disabled and add NV0_MAIL_ORDER_REGISTRATION_NUMBER before commercial_launch. This warning does not block prelaunch boot.');
   }
   for (const key of publicKeys) finalized(key);
 } else {

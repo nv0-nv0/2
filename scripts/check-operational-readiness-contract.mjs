@@ -21,7 +21,8 @@ const requiredScripts = [
 ];
 const requiredArtifacts = [
   'scripts/run-release-gate.mjs','scripts/check-clean-baseline.mjs','scripts/check-runtime-clean.mjs',
-  'scripts/check-release-secret-hygiene.mjs','docs/DEPLOYMENT.md','docs/OPERATIONS.md','docs/QA.md','docs/ROLLBACK.md',
+  'scripts/check-release-secret-hygiene.mjs','scripts/check-commercial-max-hardening.mjs','tests/commercial-max-hardening-contract.mjs',
+  'docs/DEPLOYMENT.md','docs/OPERATIONS.md','docs/QA.md','docs/ROLLBACK.md','docs/COMMERCIAL_MAXIMIZATION_REPORT_KO.md','docs/CONFIGURATION_REFERENCE_KO.md','docs/POST_DEPLOYMENT_ACCEPTANCE_KO.md',
   'deploy/docker-compose.commercial.yml','deploy/COOLIFY_R2_DEPLOYMENT_RUNBOOK_KO.md'
 ];
 for (const key of requiredEnv) if (!combinedEnv.includes(key)) failures.push(`missing required env contract: ${key}`);

@@ -8,6 +8,8 @@ const steps = [
   ['clean:audit-evidence', 'node', ['scripts/clean-current-audit-evidence.mjs']],
   ['clean:runtime', 'npm', ['run','clean:runtime']],
   ['check:clean-baseline', 'npm', ['run','check:clean-baseline']],
+  ['check:commercial-max-hardening', 'node', ['scripts/check-commercial-max-hardening.mjs']],
+  ['test:commercial-max-hardening', 'node', ['tests/commercial-max-hardening-contract.mjs']],
   ['check:delivery-hygiene', 'node', ['scripts/check-delivery-hygiene.mjs']],
   ['check:static-html-quality', 'node', ['scripts/check-static-html-quality.mjs']],
   ['check:enhanced-html-accessibility', 'node', ['scripts/check-enhanced-html-accessibility.mjs']],

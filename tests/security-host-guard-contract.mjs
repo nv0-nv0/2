@@ -26,9 +26,9 @@ const child = spawn(process.execPath, ['scripts/start-local-server.mjs'], { cwd:
 let output = '';
 child.stdout.on('data', chunk => { output += chunk.toString(); });
 child.stderr.on('data', chunk => { output += chunk.toString(); });
-function request(pathname, host = `127.0.0.1:${port}`) {
+function request(pathname, host = `127.0.0.1:${port}`, method = 'GET') {
   return new Promise((resolve, reject) => {
-    const req = http.request({ hostname: '127.0.0.1', port, method: 'GET', path: pathname, headers: { host, 'user-agent': 'veridion-host-guard-contract/1.0' } }, res => {
+    const req = http.request({ hostname: '127.0.0.1', port, method, path: pathname, headers: { host, 'user-agent': 'veridion-host-guard-contract/1.0' } }, res => {
       const chunks = [];
       res.on('data', chunk => chunks.push(chunk));
       res.on('end', () => resolve({ status: res.statusCode, headers: res.headers, body: Buffer.concat(chunks).toString('utf8') }));
@@ -61,6 +61,18 @@ try {
   const adminConsole = await request('/admin/console');
   const adminAsset = await request('/apps/admin/console/app.js?v=2.7.0');
   const traversal = await request('/apps/public/%2e%2e/%2e%2e/server/index.mjs');
+  const trace = await request('/', `127.0.0.1:${port}`, 'TRACE');
+  const options = await request('/', `127.0.0.1:${port}`, 'OPTIONS');
+  const head = await request('/', `127.0.0.1:${port}`, 'HEAD');
+  const tooLong = await request('/' + 'a'.repeat(4200));
+  const symlink = path.join(root, 'shared', '.max-hardening-symlink-test');
+  let symlinkResponse = { status: 0 };
+  try {
+    fs.symlinkSync(path.join(root, 'server', 'index.mjs'), symlink);
+    symlinkResponse = await request('/shared/.max-hardening-symlink-test');
+  } finally {
+    fs.rmSync(symlink, { force: true });
+  }
 
   add('home-allowed-host-returns-html', home.status === 200 && /text\/html/i.test(String(home.headers['content-type'] || '')) && /data-design-system="executive-trust-framework"/.test(home.body), { status: home.status, contentType: home.headers['content-type'] });
   add('normal-page-rejects-untrusted-host', evilHome.status === 421, { status: evilHome.status });
@@ -71,6 +83,11 @@ try {
   add('admin-console-redirects-to-gate-without-session', adminConsole.status === 302 && adminConsole.headers.location === '/admin', { status: adminConsole.status, location: adminConsole.headers.location });
   add('admin-static-asset-blocked-without-session', adminAsset.status === 403, { status: adminAsset.status });
   add('encoded-static-traversal-not-served', traversal.status === 404 || traversal.status === 403, { status: traversal.status });
+  add('trace-method-rejected-globally', trace.status === 405 && /GET, HEAD, POST, OPTIONS/.test(String(trace.headers.allow || '')), { status: trace.status, allow: trace.headers.allow });
+  add('options-preflight-is-no-store', options.status === 204 && options.headers['cache-control'] === 'no-store', { status: options.status, cacheControl: options.headers['cache-control'] });
+  add('head-request-sends-no-body-with-length', head.status === 200 && head.body === '' && Number(head.headers['content-length'] || 0) > 0, { status: head.status, contentLength: head.headers['content-length'], bodyLength: head.body.length });
+  add('oversized-request-target-rejected', tooLong.status === 414, { status: tooLong.status });
+  add('static-symlink-escape-rejected', symlinkResponse.status === 403, { status: symlinkResponse.status });
 } finally {
   child.kill('SIGTERM');
   await new Promise(resolve => setTimeout(resolve, 150));

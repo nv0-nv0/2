@@ -35,6 +35,22 @@ NV0_PAYMENT_PROVIDER=disabled
 
 공개 페이지와 기본 진단 흐름이 정상인지 확인합니다.
 
+### boot-safe 환경에서 commercial prelaunch 값을 사용하는 경우
+
+Coolify 환경변수에서 아래 값을 반드시 명시합니다. 패키지 Compose도 `NV0_ADMIN_MFA_REQUIRED` 누락 시 `true`로 fail-closed 처리하지만, 운영 화면에는 실제 값을 저장하는 것이 원칙입니다.
+
+```env
+NV0_PLATFORM_TARGET=commercial
+NV0_DEPLOYMENT_STAGE=prelaunch
+NV0_COMMERCIAL_LAUNCH_READY=false
+NV0_ADMIN_AUTH_MODE=account_rbac
+NV0_ADMIN_MFA_REQUIRED=true
+NV0_ADMIN_TOTP_SECRET=실제_BASE32_TOTP_시크릿
+NV0_PAYMENT_PROVIDER=disabled
+```
+
+`NV0_MAIL_ORDER_REGISTRATION_NUMBER`가 아직 없으면 경고는 정상입니다. 이 단계에서는 비워 두고 `NV0_PAYMENT_PROVIDER=disabled`를 유지합니다. 신고번호가 발급된 뒤 `commercial_launch` 승인 절차에서 입력합니다.
+
 ## 3. strict commercial 환경변수 생성
 
 로컬 또는 서버에서 아래 명령을 실행합니다.

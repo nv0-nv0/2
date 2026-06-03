@@ -36,6 +36,32 @@ export function assertEmailConfig(name, value) {
   }
 }
 
+export function assertUrlConfig(name, value, { protocols = ['https:'] } = {}) {
+  const raw = String(value || '').trim();
+  try {
+    const url = new URL(raw);
+    if (!protocols.includes(url.protocol)) throw new Error('invalid protocol');
+    return url;
+  } catch {
+    throw new Error(`${name} must be a valid URL using one of: ${protocols.join(', ')}.`);
+  }
+}
+
+export function assertSecretConfig(name, value, { minLength = 24 } = {}) {
+  const raw = String(value || '').trim();
+  if (isPlaceholderConfigValue(raw) || raw.length < minLength) {
+    throw new Error(`${name} must be a finalized secret with at least ${minLength} characters.`);
+  }
+  return raw;
+}
+
+export function assertTotpSecretConfig(name, value) {
+  const raw = String(value || '').trim().replace(/\s+/g, '').toUpperCase();
+  if (isPlaceholderConfigValue(raw) || raw.length < 16 || !/^[A-Z2-7]+=*$/.test(raw)) {
+    throw new Error(`${name} must be a finalized Base32 TOTP secret with at least 16 characters.`);
+  }
+  return raw;
+}
 
 function allowsPrelaunchPostgresFallback(env, commercialLaunchReady) {
   const explicit = String(env.NV0_POSTGRES_FALLBACK_MODE || env.NV0_PRELAUNCH_DB_FALLBACK || env.NV0_ALLOW_DB_FALLBACK || '').trim().toLowerCase();
@@ -87,6 +113,22 @@ export function validateRuntimeConfig(input = {}) {
   assertFiniteConfigNumber('NV0_REQUEST_TIMEOUT_MS', Number(input.requestTimeoutMs), { min: 1000, max: 120_000 });
   assertFiniteConfigNumber('NV0_SLOW_REQUEST_THRESHOLD_MS', Number(input.slowRequestThresholdMs), { min: 100, max: 60_000 });
   assertFiniteConfigNumber('NV0_DATA_DESTRUCTION_GRACE_DAYS', Number(input.dataDestructionGraceDays), { min: 0, max: 3650 });
+  assertFiniteConfigNumber('NV0_TARGET_FETCH_TIMEOUT_MS', Number(input.targetFetchTimeoutMs), { min: 500, max: 30_000 });
+  assertFiniteConfigNumber('NV0_TARGET_FETCH_MAX_BYTES', Number(input.targetFetchMaxBytes), { min: 32 * 1024, max: 1_048_576 });
+  assertFiniteConfigNumber('NV0_TARGET_FETCH_MAX_REDIRECTS', Number(input.targetFetchMaxRedirects), { min: 0, max: 10 });
+  assertFiniteConfigNumber('NV0_SCAN_SOFT_TIMEOUT_MS', Number(input.scanSoftTimeoutMs), { min: 2500, max: 15_000 });
+  assertFiniteConfigNumber('NV0_TARGET_FETCH_MAX_PAGES', Number(input.targetFetchMaxPages), { min: 4, max: 24 });
+  assertFiniteConfigNumber('NV0_TARGET_FETCH_CONCURRENCY', Number(input.targetFetchConcurrency), { min: 1, max: 6 });
+  assertFiniteConfigNumber('NV0_TARGET_FETCH_MAX_SITEMAP_URLS', Number(input.targetFetchMaxSitemapUrls), { min: 0, max: 80 });
+  assertFiniteConfigNumber('NV0_TARGET_FETCH_MAX_DISCOVERY_RESOURCES', Number(input.targetFetchMaxDiscoveryResources), { min: 1, max: 6 });
+  assertFiniteConfigNumber('NV0_DATA_RETENTION_DAYS', Number(input.dataRetentionDays), { min: 1, max: 3650 });
+  assertFiniteConfigNumber('NV0_REFUND_REQUEST_WINDOW_DAYS', Number(input.refundRequestWindowDays), { min: 0, max: 365 });
+  assertFiniteConfigNumber('NV0_PAYMENT_IDEMPOTENCY_TTL_MS', Number(input.paymentIdempotencyTtlMs), { min: 60_000, max: 7 * 24 * 60 * 60_000 });
+  assertFiniteConfigNumber('NV0_EMAIL_MAX_RETRY_COUNT', Number(input.emailMaxRetryCount), { min: 0, max: 20 });
+  assertFiniteConfigNumber('NV0_EMAIL_RETRY_BACKOFF_MS', Number(input.emailRetryBackoffMs), { min: 1000, max: 24 * 60 * 60_000 });
+  assertFiniteConfigNumber('NV0_PUBLIC_ASSET_CACHE_SECONDS', Number(input.publicAssetCacheSeconds), { min: 0, max: 31_536_000 });
+  assertFiniteConfigNumber('NV0_READYZ_CACHE_TTL_MS', Number(input.readyzCacheTtlMs), { min: 0, max: 60_000 });
+  assertFiniteConfigNumber('NV0_REDIS_TIMEOUT_MS', Number(input.redisTimeoutMs), { min: 100, max: 30_000 });
 
   if (platform.commercial && adminAuthMode === 'shared_key') {
     throw new Error('NV0_ADMIN_AUTH_MODE=shared_key is not allowed for commercial deployments.');
@@ -110,6 +152,22 @@ export function validateRuntimeConfig(input = {}) {
   if (paymentProvider === 'external_http') requireRealValue(env, 'NV0_PAYMENT_PROVIDER_URL');
 
   if (platform.commercial) {
+    if (String(env.NV0_ADMIN_MFA_REQUIRED || '').trim().toLowerCase() !== 'true') throw new Error('Commercial deployments require NV0_ADMIN_MFA_REQUIRED=true.');
+    assertTotpSecretConfig('NV0_ADMIN_TOTP_SECRET', env.NV0_ADMIN_TOTP_SECRET);
+    assertSecretConfig('NV0_SESSION_SECRET', env.NV0_SESSION_SECRET, { minLength: 32 });
+    assertSecretConfig('NV0_SECURE_RECORDS_KEY', env.NV0_SECURE_RECORDS_KEY, { minLength: 32 });
+    assertSecretConfig('NV0_PRIVACY_HASH_KEY', env.NV0_PRIVACY_HASH_KEY, { minLength: 32 });
+    assertSecretConfig('NV0_BACKUP_ENCRYPTION_SECRET', env.NV0_BACKUP_ENCRYPTION_SECRET, { minLength: 32 });
+    const bootstrapPassword = requireRealValue(env, 'NV0_BOOTSTRAP_ADMIN_PASSWORD');
+    if (bootstrapPassword.length < 15) throw new Error('NV0_BOOTSTRAP_ADMIN_PASSWORD must be at least 15 characters.');
+    assertUrlConfig('NV0_REDIS_URL', env.NV0_REDIS_URL, { protocols: ['redis:', 'rediss:'] });
+    assertUrlConfig('NV0_SMTP_URL', env.NV0_SMTP_URL, { protocols: ['smtp:', 'smtps:'] });
+    assertUrlConfig('NV0_SCAN_PROVIDER_URL', env.NV0_SCAN_PROVIDER_URL, { protocols: ['https:'] });
+    const s3Endpoint = assertUrlConfig('NV0_S3_ENDPOINT', env.NV0_S3_ENDPOINT, { protocols: ['https:', 'http:'] });
+    const localS3Hosts = new Set(['minio', 'localhost', '127.0.0.1', '::1']);
+    if (s3Endpoint.protocol !== 'https:' && (!localS3Hosts.has(s3Endpoint.hostname) || commercialLaunchReady)) {
+      throw new Error('NV0_S3_ENDPOINT must use HTTPS except for private local MinIO during non-launch validation.');
+    }
     if (persistenceMode !== 'postgres_primary') throw new Error('Commercial deployments require NV0_PERSISTENCE_MODE=postgres_primary.');
     if (env.NV0_SESSION_STORE !== 'redis') throw new Error('Commercial deployments require NV0_SESSION_STORE=redis.');
     if (env.NV0_RATE_LIMIT_STORE !== 'redis') throw new Error('Commercial deployments require NV0_RATE_LIMIT_STORE=redis.');
@@ -145,6 +203,10 @@ export function validateRuntimeConfig(input = {}) {
     requireRealValue(env, 'NV0_BACKUP_ENCRYPTION_SECRET');
     if (/\b0\.0\.0\.0\b|\*|0\.0\.0\.0\/0/.test(String(env.NV0_ADMIN_IP_ALLOWLIST || ''))) {
       throw new Error('NV0_ADMIN_IP_ALLOWLIST must not contain wildcard IP ranges in commercial mode.');
+    }
+    const redirectHosts = String(env.NV0_PAYMENT_REDIRECT_ALLOWED_HOSTS || '').split(',').map(value => value.trim()).filter(Boolean);
+    if (commercialLaunchReady && paymentProvider === 'portone_v2' && redirectHosts.length === 0) {
+      warnings.push('NV0_PAYMENT_REDIRECT_ALLOWED_HOSTS is empty. Configure explicit payment redirect hosts before enabling external redirect flows.');
     }
   }
 
