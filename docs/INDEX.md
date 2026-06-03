@@ -17,3 +17,4 @@
 - [상용 환경변수 운영 기준](CONFIGURATION_REFERENCE_KO.md)
 - [실서버 상용 전환 인수 검사](POST_DEPLOYMENT_ACCEPTANCE_KO.md)
 - [Coolify MFA stale-value 자동 복구](HOTFIX_MFA_RUNTIME_NORMALIZATION_KO.md)
+- [Coolify TOTP 시크릿 preflight 정렬](HOTFIX_TOTP_SECRET_PREFLIGHT_ALIGNMENT_KO.md)

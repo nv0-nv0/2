@@ -25,6 +25,9 @@ has('deploy/COOLIFY_R2_DEPLOYMENT_RUNBOOK_KO.md', 'NV0_ADMIN_MFA_REQUIRED=true')
 has('docs/HOTFIX_MFA_PREFLIGHT_RECOVERY_KO.md', 'NV0_ADMIN_MFA_REQUIRED=true');
 has('deploy/entrypoint.sh', 'commercial profile forces NV0_ADMIN_MFA_REQUIRED=true; stale or missing Coolify value was normalized in-container.');
 has('deploy/entrypoint.sh', 'export NV0_ADMIN_MFA_RECOVERY_NORMALIZED="true"');
+has('deploy/entrypoint.sh', 'node scripts/check-commercial-totp-preflight.mjs');
+has('scripts/check-commercial-totp-preflight.mjs', 'npm run secrets:generate locally');
+has('scripts/check-commercial-totp-preflight.mjs', 'Do not paste the secret into logs or chat.');
 
 // HTTP request hardening.
 has('server/middleware/security.mjs', "const DEFAULT_ALLOWED_METHODS = Object.freeze(['GET', 'HEAD', 'POST', 'OPTIONS']);");
@@ -123,11 +126,14 @@ for (const file of [
   'docs/POST_DEPLOYMENT_ACCEPTANCE_KO.md',
   'tests/commercial-max-hardening-contract.mjs',
   'tests/commercial-mfa-entrypoint-normalization-contract.mjs',
-  'docs/HOTFIX_MFA_RUNTIME_NORMALIZATION_KO.md'
+  'docs/HOTFIX_MFA_RUNTIME_NORMALIZATION_KO.md',
+  'docs/HOTFIX_TOTP_SECRET_PREFLIGHT_ALIGNMENT_KO.md',
+  'tests/commercial-totp-preflight-contract.mjs'
 ]) add(`artifact:${file}`, () => assert.equal(exists(file), true, `${file} missing`));
 has('scripts/run-release-gate.mjs', "['check:commercial-max-hardening', 'node', ['scripts/check-commercial-max-hardening.mjs']]");
 has('scripts/run-release-gate.mjs', "['test:commercial-max-hardening', 'node', ['tests/commercial-max-hardening-contract.mjs']]");
 has('scripts/run-release-gate.mjs', "['test:commercial-mfa-entrypoint-normalization', 'node', ['tests/commercial-mfa-entrypoint-normalization-contract.mjs']]");
+has('scripts/run-release-gate.mjs', "['test:commercial-totp-preflight-alignment', 'node', ['tests/commercial-totp-preflight-contract.mjs']]");
 has('scripts/check-operational-readiness-contract.mjs', 'docs/COMMERCIAL_MAXIMIZATION_REPORT_KO.md');
 has('scripts/validate-deploy-bundle.mjs', 'scripts/check-commercial-max-hardening.mjs');
 has('README.md', '상용화 극대화 하드닝');

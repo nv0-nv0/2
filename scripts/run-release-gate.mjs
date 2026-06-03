@@ -11,6 +11,7 @@ const steps = [
   ['check:commercial-max-hardening', 'node', ['scripts/check-commercial-max-hardening.mjs']],
   ['test:commercial-max-hardening', 'node', ['tests/commercial-max-hardening-contract.mjs']],
   ['test:commercial-mfa-entrypoint-normalization', 'node', ['tests/commercial-mfa-entrypoint-normalization-contract.mjs']],
+  ['test:commercial-totp-preflight-alignment', 'node', ['tests/commercial-totp-preflight-contract.mjs']],
   ['check:delivery-hygiene', 'node', ['scripts/check-delivery-hygiene.mjs']],
   ['check:static-html-quality', 'node', ['scripts/check-static-html-quality.mjs']],
   ['check:enhanced-html-accessibility', 'node', ['scripts/check-enhanced-html-accessibility.mjs']],

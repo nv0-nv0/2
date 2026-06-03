@@ -117,6 +117,13 @@ if [ "$PLATFORM_TARGET" = "commercial" ] && [ "$ADMIN_AUTH_MODE_NORMALIZED" = "a
   export NV0_LEGACY_ADMIN_KEY_SANITIZED="true"
 fi
 
+# Always validate the finalized commercial TOTP secret before importing the server.
+# This aligns the lightweight boot path with the deeper runtime validator and prevents
+# a misleading preflight ok=true followed by a repeated uncaught startup exception.
+if [ "$PLATFORM_TARGET" = "commercial" ]; then
+  node scripts/check-commercial-totp-preflight.mjs
+fi
+
 if [ "${NV0_RUN_PREFLIGHT:-false}" = "true" ]; then
   node scripts/preflight.mjs
 fi

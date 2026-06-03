@@ -94,3 +94,7 @@ Stitch `Executive Trust Framework` 시안 10종은 홈, 진단 결과, 요금제
 ## Coolify MFA stale-value 자동 복구
 
 Coolify에 과거 `NV0_ADMIN_MFA_REQUIRED=false`가 명시적으로 남아 있으면 Compose 기본값보다 외부 값이 우선합니다. 상용 컨테이너 엔트리포인트는 이 값을 `true`로 fail-closed 정규화하고 경고를 출력합니다. 운영 화면에서도 `NV0_ADMIN_MFA_REQUIRED=true`를 저장하고 재배포해야 경고가 사라집니다. 실제 Base32 `NV0_ADMIN_TOTP_SECRET`은 별도로 등록해야 합니다.
+
+## Coolify TOTP 시크릿 preflight 정렬
+
+상용 컨테이너는 서버 import 전에 `scripts/check-commercial-totp-preflight.mjs`를 실행합니다. 실제 Base32 `NV0_ADMIN_TOTP_SECRET`이 누락되거나 placeholder이거나 형식이 잘못되면, 서버가 뜬 뒤 반복 종료되지 않고 시작 전에 복구 지침과 함께 차단됩니다. 시크릿 생성은 로컬 안전 환경에서 `npm run secrets:generate`를 사용하고, 실제 값은 Coolify Runtime Variable에만 저장합니다.
