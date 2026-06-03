@@ -35,3 +35,11 @@ Stitch `Executive Trust Framework` 시안 10종은 `shared/stitch-route-manifest
 ## 시스템 제어면
 
 `server/core/system-control-plane.mjs`는 기존 엔진·에이전트를 레이어와 파이프라인으로 연결합니다. 공개 API는 안전 요약만 제공하고 관리자 API는 전체 상태, 감사, 운영 이벤트 기록을 제공합니다.
+
+## 시스템 제어면 v1.1
+
+플랫폼 기반 레이어는 `system-control-plane-engine`을 단일 책임 엔진으로 사용합니다. 파이프라인은 책임 레이어와 의존성 DAG를 갖고, 선행 파이프라인 차단 상태가 후속 파이프라인에 전파됩니다.
+
+## UI Foundation final cascade layer
+
+공개·관리자 화면은 기존 상용 화면 구조를 유지하면서 마지막 CSS 계층으로 `shared/nv0-ui-foundation.css`를 로드한다. 이 계층은 본문 16px, 보조 정보 12px 하한, 대비 토큰, 48px 터치 영역, 정책 문서 읽기 폭, 모바일 메뉴와 포털 drawer를 강제한다. `shared/nv0-ui-runtime.js`는 모바일 메뉴의 `aria-expanded`, `aria-controls`, ESC 닫기와 포털 drawer를 초기화한다.

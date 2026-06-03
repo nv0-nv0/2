@@ -40,7 +40,8 @@ assert.throws(() => normalizeSystemControlEventPayload({ pipelineId: 'unknown-pi
 appendSystemControlEvent(db, normalized, { id: 'scp_test', nowIso: () => '2026-06-03T00:01:00.000Z' });
 const blocked = buildSystemControlPlaneSnapshot(db, { nowIso: () => '2026-06-03T00:02:00.000Z' });
 assert.equal(blocked.ok, false);
-assert.equal(blocked.runtime.blockedPipelineCount, 1);
+assert.equal(blocked.runtime.blockedPipelineCount, 2);
+assert.deepEqual(blocked.pipelines.find(pipeline => pipeline.id === 'refund-support-pipeline').blockedBy, ['commerce-fulfillment-pipeline']);
 assert.equal(blocked.recentEvents[0].id, 'scp_test');
 const publicSummary = buildPublicSystemControlPlaneSummary(db, { nowIso: () => '2026-06-03T00:03:00.000Z' });
 assert.equal(publicSummary.publicSafe, true);
@@ -57,14 +58,16 @@ const files = [
   'server/routes/public.mjs',
   'server/routes/admin.mjs',
   'tests/system-control-plane-contract.mjs',
+  'tests/system-control-plane-operations-hardening-contract.mjs',
   'scripts/run-release-gate.mjs',
-  'docs/SYSTEM_CONTROL_PLANE_KO.md'
+  'docs/SYSTEM_CONTROL_PLANE_KO.md',
+  'docs/SYSTEM_CONTROL_PLANE_OPERATIONS_HARDENING_KO.md'
 ];
 const audit = runSystemControlPlanePackageAudit({
   files,
   routes: ['/api/public/system-control-plane','/api/admin/system-control-plane','/api/admin/system-control-plane/audit','/api/admin/system-control-plane/events'],
   sourceText: fs.readFileSync(new URL('../server/core/system-control-plane.mjs', import.meta.url), 'utf8'),
-  releaseGateText: "['test:system-control-plane', 'node', ['tests/system-control-plane-contract.mjs']]"
+  releaseGateText: "system-control-plane-contract.mjs system-control-plane-operations-hardening-contract.mjs"
 });
 assert.equal(audit.ok, true);
 assert.equal(audit.score, 100);

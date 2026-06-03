@@ -22,3 +22,7 @@
 ## 안전 원칙
 
 공개 API에는 내부 파일 경로, 개별 에이전트 상세, 운영 메시지 원문을 노출하지 않습니다. 관리자 이벤트는 허용된 pipeline, layer, status, action만 저장하며 메시지 길이를 제한합니다.
+
+## 운영 고도화
+
+의존성 DAG, 이벤트 마스킹, correlation ID 기반 중복 억제, 이벤트 최신성 정렬, 의존 파이프라인 차단 전파는 `docs/SYSTEM_CONTROL_PLANE_OPERATIONS_HARDENING_KO.md`를 참조합니다.

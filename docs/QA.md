@@ -55,3 +55,11 @@ node tests/stitch-experience-pipeline.mjs
 - 공개 HTML은 정적 canonical·robots 폴백을 유지합니다.
 - 공개 API의 제품 버전 식별자는 의미 기반 이름만 사용합니다.
 - 의도적으로 유지하는 호환 사본은 동기화 계약으로 검증합니다.
+
+## UI Foundation 회귀 검증
+
+```bash
+node tests/ui-foundation-hardening-contract.mjs
+```
+
+검증 범위: 모든 HTML의 foundation CSS·runtime JS 연결, CSS 로드 순서, 진단 리포트의 12px 미만 텍스트 제거, 정책 문서 템플릿, 공개 푸터 단일화, 포털 샘플 배너, 요금제 중복 순번 제거, 모바일 메뉴 접근성 속성.

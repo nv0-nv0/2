@@ -1,0 +1,26 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+const root=process.cwd();
+const read=(rel)=>fs.readFileSync(path.join(root,rel),'utf8');
+const walk=(dir)=>fs.readdirSync(path.join(root,dir),{withFileTypes:true}).flatMap(e=>e.isDirectory()?walk(path.join(dir,e.name).replaceAll('\\','/')):[path.join(dir,e.name).replaceAll('\\','/')]);
+const rel=(file)=>path.relative(root,file).replaceAll('\\','/');
+const html=walk('apps').filter(f=>f.endsWith('.html'));
+const checks=[]; const add=(name,fn)=>{try{fn();checks.push({name,ok:true});}catch(error){checks.push({name,ok:false,error:error.message});}};
+const foundation=read('shared/nv0-ui-foundation.css'); const runtime=read('shared/nv0-ui-runtime.js');
+add('foundation:semantic-tokens',()=>{for(const token of ['--nv0-font-ui','--nv0-text','--nv0-muted','--nv0-border','--nv0-primary','--nv0-focus']) assert.match(foundation,new RegExp(token.replaceAll('-','\\-')));});
+add('foundation:body-font-floor',()=>assert.match(foundation,/body\[data-veridion-rebrand="clean"\]\{font-size:16px/));
+add('foundation:touch-target-floor',()=>assert.match(foundation,/min-height:48px/));
+add('foundation:mobile-breakpoints',()=>{for(const bp of ['max-width:960px','max-width:760px','max-width:520px']) assert.match(foundation,new RegExp(bp));});
+add('foundation:policy-reading-width',()=>assert.match(foundation,/--nv0-reading:74ch/));
+add('runtime:accessible-mobile-menu',()=>{assert.match(runtime,/aria-expanded/);assert.match(runtime,/aria-controls/);assert.match(runtime,/모바일 주요 메뉴/);assert.match(runtime,/event\.key === 'Escape'/);});
+add('runtime:portal-drawer',()=>{assert.match(runtime,/nv0-portal-menu-button/);assert.match(runtime,/포털 메뉴/);});
+for(const file of html){const source=fs.readFileSync(file,'utf8');const fileRel=rel(file);add(`${fileRel}:loads-foundation-last`,()=>{assert.match(source,/\/shared\/nv0-ui-foundation\.css\?v=2\.7\.0/);const lastCss=[...source.matchAll(/<link[^>]+href="([^"]+\.css\?v=2\.7\.0)"/g)].at(-1)?.[1];assert.equal(lastCss,'/shared/nv0-ui-foundation.css?v=2.7.0');});add(`${fileRel}:loads-ui-runtime`,()=>assert.match(source,/\/shared\/nv0-ui-runtime\.js\?v=2\.7\.0/));}
+add('report:no-sub-12px-font-size',()=>{const css=read('apps/public/demo/app.css');const offenders=[...css.matchAll(/font-size:(\d+)px/g)].map(m=>Number(m[1])).filter(n=>n<12);assert.deepEqual(offenders,[]);});
+add('plans:no-double-ordered-list-marker',()=>assert.doesNotMatch(read('apps/public/plans/index.html'),/<li>\s*[123]\.\s/));
+add('portal:explicit-sample-banner',()=>assert.match(read('apps/public/portal/index.html'),/class="vr-sample-banner" role="status" aria-live="polite"/));
+add('home:no-forced-primary-h1-break',()=>assert.doesNotMatch(read('apps/public/home/index.html'),/고객이<br\/><em>/));
+for(const file of ['apps/public/terms/index.html','apps/public/privacy/index.html','apps/public/refund/index.html','apps/public/business-info/index.html']) add(`${file}:policy-template`,()=>assert.match(read(file),/data-template="policy-document"/));
+add('public:no-decorative-static-82-score',()=>{for(const file of walk('apps/public').filter(f=>f.endsWith('.html'))) assert.doesNotMatch(fs.readFileSync(file,'utf8'),/<strong>82 \/ 100<\/strong>/,rel(file));});
+add('public:canonical-footer',()=>{const publicHtml=walk('apps/public').filter(f=>f.endsWith('.html'));for(const file of publicHtml){const value=fs.readFileSync(file,'utf8');assert.match(value,/온라인 사업자의 신뢰·준법·전환 위험을 공개 페이지 기준으로 점검합니다/);assert.match(value,/개인정보처리방침<\/a> · <a href="\/refund">환불 정책<\/a>/);}});
+const failures=checks.filter(x=>!x.ok);console.log(JSON.stringify({ok:failures.length===0,contract:'ui-foundation-hardening-v1',checked:checks.length,failed:failures.length,failures},null,2));if(failures.length) process.exit(1);

@@ -389,8 +389,10 @@ const packageFiles = [
   'server/routes/public.mjs',
   'server/routes/admin.mjs',
   'tests/system-control-plane-contract.mjs',
+  'tests/system-control-plane-operations-hardening-contract.mjs',
   'scripts/run-release-gate.mjs',
-  'docs/SYSTEM_CONTROL_PLANE_KO.md'
+  'docs/SYSTEM_CONTROL_PLANE_KO.md',
+  'docs/SYSTEM_CONTROL_PLANE_OPERATIONS_HARDENING_KO.md'
 ];
 const audit = runSystemControlPlanePackageAudit({
   files: packageFiles,
@@ -407,9 +409,9 @@ if (pathname === '/api/admin/system-control-plane/events' && req.method === 'POS
 if (!requireAdminPermission(req, res, session, 'ops.write')) return;
 const body = normalizeSystemControlEventPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {}, { source: 'admin-api' });
 const event = appendSystemControlEvent(db, body, { nowIso });
-appendAudit(db, req, 'admin.system_control_plane.event_recorded', { eventId: event.id, pipelineId: event.pipelineId, layerId: event.layerId, status: event.status, severity: event.severity, action: event.action });
+appendAudit(db, req, event.deduplicated ? 'admin.system_control_plane.event_deduplicated' : 'admin.system_control_plane.event_recorded', { eventId: event.id, duplicateOf: event.duplicateOf || null, deduplicated: event.deduplicated === true, pipelineId: event.pipelineId, layerId: event.layerId, status: event.status, severity: event.severity, action: event.action });
 await writeDb(db);
-return json(req, res, 201, { ok: true, event, controlPlane: buildSystemControlPlaneSnapshot(db, { nowIso, eventLimit: 20 }) });
+return json(req, res, event.deduplicated ? 200 : 201, { ok: true, deduplicated: event.deduplicated === true, event, controlPlane: buildSystemControlPlaneSnapshot(db, { nowIso, eventLimit: 20 }) });
 }
 if (pathname === '/api/admin/experience-orchestrator' && req.method === 'GET') {
 if (!requireAdminPermission(req, res, session, 'ops.read')) return;

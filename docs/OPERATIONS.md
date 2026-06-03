@@ -51,3 +51,7 @@ npm run ops:matrix
 ## 시스템 제어면 운영
 
 관리자는 `/api/admin/system-control-plane`에서 레이어·파이프라인 상태를 확인하고 `/api/admin/system-control-plane/events`에 장애·복구 이벤트를 기록합니다. 공개 상태는 `/api/public/system-control-plane`에서 내부 경로 없이 제공됩니다.
+
+## 제어면 운영 이벤트 안전성
+
+운영 이벤트 메모는 시크릿·토큰을 저장 전 마스킹합니다. correlation ID 또는 동일 fingerprint가 짧은 시간 안에 반복되면 중복 저장을 억제합니다. 상세 절차는 `docs/SYSTEM_CONTROL_PLANE_OPERATIONS_HARDENING_KO.md`를 확인합니다.
