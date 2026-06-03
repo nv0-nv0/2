@@ -98,3 +98,11 @@ Coolify에 과거 `NV0_ADMIN_MFA_REQUIRED=false`가 명시적으로 남아 있�
 ## Coolify TOTP 시크릿 preflight 정렬
 
 상용 컨테이너는 서버 import 전에 `scripts/check-commercial-totp-preflight.mjs`를 실행합니다. 실제 Base32 `NV0_ADMIN_TOTP_SECRET`이 누락되거나 placeholder이거나 형식이 잘못되면, 서버가 뜬 뒤 반복 종료되지 않고 시작 전에 복구 지침과 함께 차단됩니다. 시크릿 생성은 로컬 안전 환경에서 `npm run secrets:generate`를 사용하고, 실제 값은 Coolify Runtime Variable에만 저장합니다.
+
+### TOTP 입력 전달 오류 자동 보정
+
+상용 컨테이너는 `NV0_ADMIN_TOTP_SECRET`의 Base32 형식을 엄격하게 검증합니다. `KEY=value` 전체 줄, 따옴표, 공백, 줄바꿈, 시각적 하이픈처럼 동일한 Base32 값을 보존하는 전달 형식 오류는 엔트리포인트가 자동 보정합니다. `_`, `0`, `1`, `8`, `9` 등이 섞인 다른 애플리케이션 시크릿은 임의 변환하지 않고 차단합니다. Coolify Normal View에는 `tools/RUN_COPY_TOTP_FOR_NORMAL_VIEW.bat`, Developer View에는 `tools/RUN_COPY_TOTP_FOR_DEVELOPER_VIEW.bat`를 사용하십시오.
+
+## TOTP prelaunch 안전 대기 모드
+
+상용 prelaunch에서 관리자 TOTP 키가 없거나 형식이 잘못되면 서버는 트래픽을 제공하지 않는 안전 대기 모드로 유지됩니다. 실제 키를 출력하지 않는 진단은 `node scripts/diagnose-admin-totp-env.mjs`, Normal View용 키 생성은 `tools/RUN_COPY_TOTP_FOR_NORMAL_VIEW.bat`를 사용하십시오.

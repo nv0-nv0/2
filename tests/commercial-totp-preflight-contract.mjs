@@ -31,9 +31,24 @@ add('placeholder TOTP secret is rejected before server startup', () => {
   const secret = 'replace-with-base32-totp-secret';
   const result = run({ NV0_ADMIN_TOTP_SECRET: secret });
   assert.notEqual(result.status, 0);
-  assert.match(result.stderr, /finalized Base32 TOTP secret with at least 16 characters/);
-  assert.match(result.stderr, /npm run secrets:generate locally/);
+  assert.match(result.stderr, /NV0_ADMIN_TOTP_SECRET is invalid/);
+  assert.match(result.stderr, /generate-admin-totp-secret\.mjs --value-only locally/);
   assert.doesNotMatch(result.stdout + result.stderr, new RegExp(secret));
+});
+
+
+add('base64url-like application secret is rejected with a precise non-sensitive reason', () => {
+  const secret = 'app_X1taFrEQcXF2pSEKJbKymzNJqNrLP1ZPuoLl';
+  const result = run({ NV0_ADMIN_TOTP_SECRET: secret });
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /wrong_secret_type_base64url_like/);
+  assert.match(result.stderr, /different application secret/);
+  assert.doesNotMatch(result.stdout + result.stderr, new RegExp(secret));
+});
+
+add('assignment-line transport wrapper is accepted after safe normalization', () => {
+  const result = run({ NV0_ADMIN_TOTP_SECRET: 'NV0_ADMIN_TOTP_SECRET=JBSWY3DPEHPK3PXP' });
+  assert.equal(result.status, 0, result.stderr);
 });
 
 add('missing TOTP secret is rejected before server startup', () => {

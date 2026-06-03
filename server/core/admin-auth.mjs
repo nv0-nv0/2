@@ -77,8 +77,9 @@ export async function authenticateAdminAccount(db, email, password) {
 
 function decodeBase32(value = '') {
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
-  const clean = String(value || '').toUpperCase().replace(/[^A-Z2-7]/g, '');
-  let bits = ''; for (const char of clean) { const index = alphabet.indexOf(char); if (index < 0) continue; bits += index.toString(2).padStart(5, '0'); }
+  const clean = String(value || '').trim().toUpperCase().replace(/=+$/, '');
+  if (!clean || !/^[A-Z2-7]+$/.test(clean)) return Buffer.alloc(0);
+  let bits = ''; for (const char of clean) { const index = alphabet.indexOf(char); if (index < 0) return Buffer.alloc(0); bits += index.toString(2).padStart(5, '0'); }
   const bytes = []; for (let i = 0; i + 8 <= bits.length; i += 8) bytes.push(parseInt(bits.slice(i, i + 8), 2));
   return Buffer.from(bytes);
 }

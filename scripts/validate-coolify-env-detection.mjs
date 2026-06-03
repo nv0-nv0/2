@@ -52,6 +52,7 @@ add('bulk-env-boot-safe-prelaunch-profile', () => {
   assert.equal(env.NV0_DEPLOYMENT_STAGE, 'prelaunch');
   assert.equal(env.NV0_COMMERCIAL_LAUNCH_READY, 'false');
   assert.equal(env.NV0_RUN_PREFLIGHT, 'true');
+  assert.equal(env.NV0_TOTP_PREFLIGHT_FAILURE_MODE, 'auto');
   assert.equal(env.NV0_PAYMENT_PROVIDER, 'disabled');
   assert.equal(env.NV0_ALLOW_PRELAUNCH_ONLINE_PAYMENT, 'false');
   assert.equal(env.NV0_SCAN_PROVIDER, 'external_http');

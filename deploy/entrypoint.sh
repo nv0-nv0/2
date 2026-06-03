@@ -118,10 +118,57 @@ if [ "$PLATFORM_TARGET" = "commercial" ] && [ "$ADMIN_AUTH_MODE_NORMALIZED" = "a
 fi
 
 # Always validate the finalized commercial TOTP secret before importing the server.
-# This aligns the lightweight boot path with the deeper runtime validator and prevents
-# a misleading preflight ok=true followed by a repeated uncaught startup exception.
+# Safely normalize only transport mistakes that preserve the same Base32 value:
+# KEY=value pasted into a Value field, wrapping quotes, spaces, CRLF, or visual hyphens.
+# Never coerce a different application secret into a TOTP key.
+normalize_totp_transport_value() {
+  raw="${NV0_ADMIN_TOTP_SECRET:-}"
+  normalized="$(printf '%s' "$raw" \
+    | sed -e 's/^NV0_ADMIN_TOTP_SECRET[[:space:]]*=[[:space:]]*//' \
+          -e 's/^[[:space:]]*["'"'"']//; s/["'"'"'][[:space:]]*$//' \
+    | tr -d '[:space:]-' \
+    | tr '[:lower:]' '[:upper:]')"
+  if [ -n "$normalized" ] && [ "$normalized" != "$raw" ]; then
+    export NV0_ADMIN_TOTP_SECRET="$normalized"
+    export NV0_ADMIN_TOTP_TRANSPORT_NORMALIZED="true"
+    warn "normalized NV0_ADMIN_TOTP_SECRET transport formatting before validation; save the raw Base32 value only in Coolify Normal View."
+  fi
+}
+
+handle_commercial_totp_preflight_failure() {
+  mode="$(normalize_mode_value "${NV0_TOTP_PREFLIGHT_FAILURE_MODE:-auto}")"
+  delay="${NV0_PREFLIGHT_FAILURE_DELAY_SECONDS:-15}"
+  case "$delay" in *[!0-9]*|'') delay=15 ;; esac
+  if [ "$mode" = "auto" ]; then
+    if [ "$DEPLOYMENT_STAGE_NORMALIZED" = "prelaunch" ] && [ "$COMMERCIAL_LAUNCH_READY_NORMALIZED" != "true" ]; then
+      mode="hold"
+    else
+      mode="exit"
+    fi
+  fi
+  case "$mode" in
+    hold)
+      warn "commercial TOTP preflight failed; refusing to start the application and entering safe configuration hold mode. The container stays alive without serving traffic so Coolify does not create a restart-log storm. Save a dedicated Base32 NV0_ADMIN_TOTP_SECRET Runtime Variable and redeploy."
+      exec tail -f /dev/null
+      ;;
+    exit)
+      warn "commercial TOTP preflight failed; refusing to start the application. Waiting ${delay}s before exit."
+      sleep "$delay"
+      exit 78
+      ;;
+    *)
+      warn "invalid NV0_TOTP_PREFLIGHT_FAILURE_MODE='$mode'; allowed values are auto, hold, exit. Failing closed after ${delay}s."
+      sleep "$delay"
+      exit 78
+      ;;
+  esac
+}
+
 if [ "$PLATFORM_TARGET" = "commercial" ]; then
-  node scripts/check-commercial-totp-preflight.mjs
+  normalize_totp_transport_value
+  if ! node scripts/check-commercial-totp-preflight.mjs; then
+    handle_commercial_totp_preflight_failure
+  fi
 fi
 
 if [ "${NV0_RUN_PREFLIGHT:-false}" = "true" ]; then

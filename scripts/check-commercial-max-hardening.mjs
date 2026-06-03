@@ -26,8 +26,24 @@ has('docs/HOTFIX_MFA_PREFLIGHT_RECOVERY_KO.md', 'NV0_ADMIN_MFA_REQUIRED=true');
 has('deploy/entrypoint.sh', 'commercial profile forces NV0_ADMIN_MFA_REQUIRED=true; stale or missing Coolify value was normalized in-container.');
 has('deploy/entrypoint.sh', 'export NV0_ADMIN_MFA_RECOVERY_NORMALIZED="true"');
 has('deploy/entrypoint.sh', 'node scripts/check-commercial-totp-preflight.mjs');
-has('scripts/check-commercial-totp-preflight.mjs', 'npm run secrets:generate locally');
+has('scripts/check-commercial-totp-preflight.mjs', 'generate-admin-totp-secret.mjs --value-only locally');
 has('scripts/check-commercial-totp-preflight.mjs', 'Do not paste the secret into logs or chat.');
+
+
+has('server/config/validation.mjs', 'export function analyzeTotpSecretConfig');
+has('server/config/validation.mjs', 'wrong_secret_type_base64url_like');
+has('server/core/admin-auth.mjs', "if (!clean || !/^[A-Z2-7]+$/.test(clean)) return Buffer.alloc(0);");
+has('deploy/entrypoint.sh', 'normalize_totp_transport_value');
+has('deploy/entrypoint.sh', 'NV0_ADMIN_TOTP_TRANSPORT_NORMALIZED');
+has('deploy/entrypoint.sh', 'NV0_PREFLIGHT_FAILURE_DELAY_SECONDS');
+has('deploy/entrypoint.sh', 'NV0_TOTP_PREFLIGHT_FAILURE_MODE');
+has('deploy/entrypoint.sh', 'safe configuration hold mode');
+has('deploy/entrypoint.sh', 'commercial TOTP preflight failed; refusing to start the application and entering safe configuration hold mode.');
+has('scripts/diagnose-admin-totp-env.mjs', 'commercial-admin-totp-secret-safe-diagnostic');
+has('scripts/diagnose-admin-totp-env.mjs', 'secretPrinted: false');
+has('docs/HOTFIX_TOTP_PRELAUNCH_SAFE_HOLD_KO.md', 'node scripts/diagnose-admin-totp-env.mjs');
+has('scripts/generate-admin-totp-secret.mjs', "args.has('--value-only')");
+has('scripts/generate-admin-totp-secret.mjs', "args.has('--env-line')");
 
 // HTTP request hardening.
 has('server/middleware/security.mjs', "const DEFAULT_ALLOWED_METHODS = Object.freeze(['GET', 'HEAD', 'POST', 'OPTIONS']);");
@@ -128,12 +144,18 @@ for (const file of [
   'tests/commercial-mfa-entrypoint-normalization-contract.mjs',
   'docs/HOTFIX_MFA_RUNTIME_NORMALIZATION_KO.md',
   'docs/HOTFIX_TOTP_SECRET_PREFLIGHT_ALIGNMENT_KO.md',
-  'tests/commercial-totp-preflight-contract.mjs'
+  'tests/commercial-totp-preflight-contract.mjs',
+  'tests/commercial-totp-transport-hardening-contract.mjs',
+  'docs/HOTFIX_TOTP_TRANSPORT_HARDENING_KO.md',
+  'scripts/generate-admin-totp-secret.mjs',
+  'tools/copy-admin-totp-secret-normal-view.ps1',
+  'tools/copy-admin-totp-secret-developer-view.ps1'
 ]) add(`artifact:${file}`, () => assert.equal(exists(file), true, `${file} missing`));
 has('scripts/run-release-gate.mjs', "['check:commercial-max-hardening', 'node', ['scripts/check-commercial-max-hardening.mjs']]");
 has('scripts/run-release-gate.mjs', "['test:commercial-max-hardening', 'node', ['tests/commercial-max-hardening-contract.mjs']]");
 has('scripts/run-release-gate.mjs', "['test:commercial-mfa-entrypoint-normalization', 'node', ['tests/commercial-mfa-entrypoint-normalization-contract.mjs']]");
 has('scripts/run-release-gate.mjs', "['test:commercial-totp-preflight-alignment', 'node', ['tests/commercial-totp-preflight-contract.mjs']]");
+has('scripts/run-release-gate.mjs', "['test:commercial-totp-transport-hardening', 'node', ['tests/commercial-totp-transport-hardening-contract.mjs']]");
 has('scripts/check-operational-readiness-contract.mjs', 'docs/COMMERCIAL_MAXIMIZATION_REPORT_KO.md');
 has('scripts/validate-deploy-bundle.mjs', 'scripts/check-commercial-max-hardening.mjs');
 has('README.md', '상용화 극대화 하드닝');

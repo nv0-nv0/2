@@ -55,12 +55,68 @@ export function assertSecretConfig(name, value, { minLength = 24 } = {}) {
   return raw;
 }
 
-export function assertTotpSecretConfig(name, value) {
-  const raw = String(value || '').trim().replace(/\s+/g, '').toUpperCase();
-  if (isPlaceholderConfigValue(raw) || raw.length < 16 || !/^[A-Z2-7]+=*$/.test(raw)) {
-    throw new Error(`${name} must be a finalized Base32 TOTP secret with at least 16 characters.`);
+export function analyzeTotpSecretConfig(value) {
+  const original = String(value ?? '');
+  let raw = original.trim();
+  let removedAssignmentPrefix = false;
+  let removedWrappingQuotes = false;
+  let removedSeparators = false;
+
+  if (/^NV0_ADMIN_TOTP_SECRET\s*=/i.test(raw)) {
+    raw = raw.replace(/^NV0_ADMIN_TOTP_SECRET\s*=\s*/i, '');
+    removedAssignmentPrefix = true;
   }
-  return raw;
+  if ((raw.startsWith('"') && raw.endsWith('"')) || (raw.startsWith("'") && raw.endsWith("'"))) {
+    raw = raw.slice(1, -1).trim();
+    removedWrappingQuotes = true;
+  }
+  const compact = raw.replace(/[\s-]+/g, '');
+  removedSeparators = compact !== raw;
+  const normalized = compact.toUpperCase();
+  const unpadded = normalized.replace(/=+$/, '');
+  const trailingPadding = normalized.slice(unpadded.length);
+  const invalidCharacters = Array.from(new Set((normalized.match(/[^A-Z2-7=]/g) || []))).sort();
+  const paddingValid = trailingPadding.length <= 6 && /^[A-Z2-7]+={0,6}$/.test(normalized);
+  const base64UrlLike = /[_-]/.test(raw) || (/^[A-Za-z0-9_-]+$/.test(raw) && /[0189]/.test(raw));
+  const placeholder = isPlaceholderConfigValue(raw) || isPlaceholderConfigValue(normalized) || /replace[-_\s]*with|base32[-_\s]*totp[-_\s]*secret/i.test(raw);
+  const tooShort = unpadded.length < 16;
+  const tooLong = unpadded.length > 128;
+  const valid = !placeholder && !tooShort && !tooLong && invalidCharacters.length === 0 && paddingValid;
+  return {
+    valid,
+    normalized,
+    unpaddedLength: unpadded.length,
+    placeholder,
+    tooShort,
+    tooLong,
+    paddingValid,
+    invalidCharacters,
+    base64UrlLike,
+    removedAssignmentPrefix,
+    removedWrappingQuotes,
+    removedSeparators,
+    changed: normalized !== original
+  };
+}
+
+export function totpSecretInvalidReason(analysis) {
+  if (analysis.placeholder) return 'missing_or_placeholder';
+  if (analysis.tooShort) return 'too_short';
+  if (analysis.tooLong) return 'too_long';
+  if (analysis.base64UrlLike) return 'wrong_secret_type_base64url_like';
+  if (!analysis.paddingValid) return 'invalid_base32_padding';
+  return 'invalid_base32_characters';
+}
+
+export function assertTotpSecretConfig(name, value) {
+  const analysis = analyzeTotpSecretConfig(value);
+  if (!analysis.valid) {
+    const error = new Error(`${name} must be a finalized Base32 TOTP secret with 16 to 128 Base32 characters.`);
+    error.code = 'INVALID_TOTP_SECRET';
+    error.reason = totpSecretInvalidReason(analysis);
+    throw error;
+  }
+  return analysis.normalized;
 }
 
 function allowsPrelaunchPostgresFallback(env, commercialLaunchReady) {

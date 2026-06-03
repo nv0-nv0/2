@@ -18,3 +18,7 @@
 - [실서버 상용 전환 인수 검사](POST_DEPLOYMENT_ACCEPTANCE_KO.md)
 - [Coolify MFA stale-value 자동 복구](HOTFIX_MFA_RUNTIME_NORMALIZATION_KO.md)
 - [Coolify TOTP 시크릿 preflight 정렬](HOTFIX_TOTP_SECRET_PREFLIGHT_ALIGNMENT_KO.md)
+
+- [TOTP 입력 전달 경로 하드닝](HOTFIX_TOTP_TRANSPORT_HARDENING_KO.md)
+
+- [TOTP prelaunch 안전 대기 모드](HOTFIX_TOTP_PRELAUNCH_SAFE_HOLD_KO.md)

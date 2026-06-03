@@ -25,6 +25,19 @@ NV0_BACKUP_REMOTE_REQUIRE_ENCRYPTION=true
 NV0_BACKUP_ENCRYPTION_SECRET=32자_이상_랜덤값
 ```
 
+
+## TOTP 입력 오류 안전 처리
+
+```env
+NV0_TOTP_PREFLIGHT_FAILURE_MODE=auto
+NV0_PREFLIGHT_FAILURE_DELAY_SECONDS=15
+```
+
+- `prelaunch`에서 TOTP 키가 잘못되면 애플리케이션은 트래픽을 제공하지 않는 안전 대기 모드로 유지된다.
+- `commercial_launch`에서는 fail-closed 종료한다.
+- 실제 값을 노출하지 않는 진단은 `node scripts/diagnose-admin-totp-env.mjs`로 실행한다.
+- Coolify Normal View에는 `tools/RUN_COPY_TOTP_FOR_NORMAL_VIEW.bat`로 복사한 원시 Base32 값만 입력한다.
+
 ## 외부 연결 URL 제한
 
 | 환경변수 | 허용 프로토콜 |

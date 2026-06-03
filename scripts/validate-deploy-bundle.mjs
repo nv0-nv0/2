@@ -49,7 +49,7 @@ assert(/HEALTHCHECK[\s\S]*\/healthz/.test(dockerfile), 'Dockerfile /healthz heal
 const rootCompose = await read('docker-compose.yml');
 for (const token of [
   '${NV0_PLATFORM_TARGET:-mvp}', '${NV0_DEPLOYMENT_STAGE:-mvp}', '${NV0_COMMERCIAL_LAUNCH_READY:-false}', '${NV0_PERSISTENCE_MODE:-json}', '${NV0_SESSION_STORE:-file}', '${NV0_PAYMENT_PROVIDER:-disabled}',
-  '${NV0_STORAGE_MODE:-local_fs}', '${NV0_SCAN_PROVIDER:-builtin}', '${NV0_RUN_PREFLIGHT:-false}', '${NV0_ENABLE_TURNSTILE:-false}', '${NV0_ADMIN_MFA_REQUIRED:-true}',
+  '${NV0_STORAGE_MODE:-local_fs}', '${NV0_SCAN_PROVIDER:-builtin}', '${NV0_RUN_PREFLIGHT:-false}', '${NV0_ENABLE_TURNSTILE:-false}', '${NV0_ADMIN_MFA_REQUIRED:-true}', '${NV0_TOTP_PREFLIGHT_FAILURE_MODE:-auto}',
   'ports:', '"${APP_PORT:-3210}:3210"', 'expose:', '/healthz'
 ]) assert(rootCompose.includes(token), `root boot-safe compose missing: ${token}`);
 assert(!rootCompose.includes('env_file:'), 'root compose must not rely on env_file for Coolify UI detection');
@@ -62,7 +62,7 @@ assert(!rootCompose.includes('minio/minio'), 'root Coolify compose must not star
 const coolifyCompose = await read('deploy/docker-compose.coolify.yml');
 for (const token of [
   '${NV0_PLATFORM_TARGET:-mvp}', '${NV0_DEPLOYMENT_STAGE:-mvp}', '${NV0_COMMERCIAL_LAUNCH_READY:-false}', '${NV0_PERSISTENCE_MODE:-json}', '${NV0_SESSION_STORE:-file}', '${NV0_PAYMENT_PROVIDER:-disabled}',
-  '${NV0_STORAGE_MODE:-local_fs}', '${NV0_SCAN_PROVIDER:-builtin}', '${NV0_RUN_PREFLIGHT:-false}', '${NV0_ENABLE_TURNSTILE:-false}', '${NV0_ADMIN_MFA_REQUIRED:-true}',
+  '${NV0_STORAGE_MODE:-local_fs}', '${NV0_SCAN_PROVIDER:-builtin}', '${NV0_RUN_PREFLIGHT:-false}', '${NV0_ENABLE_TURNSTILE:-false}', '${NV0_ADMIN_MFA_REQUIRED:-true}', '${NV0_TOTP_PREFLIGHT_FAILURE_MODE:-auto}',
   'ports:', '"${APP_PORT:-3210}:3210"', 'expose:', '/healthz'
 ]) assert(coolifyCompose.includes(token), `coolify boot-safe compose missing: ${token}`);
 assert(!coolifyCompose.includes('env_file:'), 'coolify compose must not rely on env_file for UI detection');
@@ -91,7 +91,8 @@ for (const token of [
   'NV0_S3_BUCKET=nv0-production',
   'NV0_S3_REGION=auto',
   'NV0_S3_FORCE_PATH_STYLE=true',
-  'NV0_RUN_PREFLIGHT=true'
+  'NV0_RUN_PREFLIGHT=true',
+  'NV0_TOTP_PREFLIGHT_FAILURE_MODE=auto'
 ]) assert(envBulk.includes(token), `coolify env bulk missing: ${token}`);
 for (const forbidden of ['NV0_STORAGE_MODE=local_fs', 'https://s3.ap-northeast-2.amazonaws.com', 'NV0_S3_PUBLIC_BASE_URL=https://cdn.nv0.kr']) {
   assert(!envBulk.includes(forbidden), `coolify env bulk contains forbidden deployment value: ${forbidden}`);
