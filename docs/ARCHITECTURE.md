@@ -31,3 +31,7 @@ Stitch `Executive Trust Framework` 시안 10종은 `shared/stitch-route-manifest
 5. 릴리즈 계약 레이어
 
 `server/core/stitch-experience-pipeline.mjs`는 매핑 상태를 계산하고, `npm run check:stitch-experience-pipeline`과 `npm run test:stitch-experience-pipeline`은 정적·통합 회귀를 차단합니다. 내부 상태 API는 테스트 모드에서만 열리며 일반 고객 API에서는 404로 격리됩니다.
+
+## 시스템 제어면
+
+`server/core/system-control-plane.mjs`는 기존 엔진·에이전트를 레이어와 파이프라인으로 연결합니다. 공개 API는 안전 요약만 제공하고 관리자 API는 전체 상태, 감사, 운영 이벤트 기록을 제공합니다.

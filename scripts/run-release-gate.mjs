@@ -14,6 +14,8 @@ const steps = [
   ['test:commercial-totp-preflight-alignment', 'node', ['tests/commercial-totp-preflight-contract.mjs']],
   ['test:commercial-totp-transport-hardening', 'node', ['tests/commercial-totp-transport-hardening-contract.mjs']],
   ['test:commercial-totp-safe-hold', 'node', ['tests/commercial-totp-safe-hold-contract.mjs']],
+  ['test:commercial-runtime-startup-preflight', 'node', ['tests/commercial-runtime-startup-preflight-contract.mjs']],
+  ['test:system-control-plane', 'node', ['tests/system-control-plane-contract.mjs']],
   ['check:delivery-hygiene', 'node', ['scripts/check-delivery-hygiene.mjs']],
   ['check:static-html-quality', 'node', ['scripts/check-static-html-quality.mjs']],
   ['check:enhanced-html-accessibility', 'node', ['scripts/check-enhanced-html-accessibility.mjs']],

@@ -6,6 +6,7 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { analyzeTotpSecretConfig, assertTotpSecretConfig } from '../server/config/validation.mjs';
 import { verifyTotpCode } from '../server/core/admin-auth.mjs';
+import { commercialRuntimeEnv } from './fixtures/commercial-runtime-env.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const entrypoint = path.join(root, 'deploy/entrypoint.sh');
@@ -51,7 +52,7 @@ add('entrypoint safely normalizes assignment-line wrapper', () => {
     const result = spawnSync('sh', [entrypoint, 'sh', '-c', 'printf "%s|%s" "$NV0_ADMIN_TOTP_SECRET" "${NV0_ADMIN_TOTP_TRANSPORT_NORMALIZED:-}"'], {
       cwd: root,
       encoding: 'utf8',
-      env: { ...process.env, NV0_PLATFORM_TARGET: 'commercial', NV0_ADMIN_MFA_REQUIRED: 'true', NV0_ADMIN_TOTP_SECRET: 'NV0_ADMIN_TOTP_SECRET=jbsw-y3dp ehpk3pxp', NV0_RUN_PREFLIGHT: 'false', NV0_RUNTIME_DIR: runtime, NV0_FALLBACK_RUNTIME_DIR: runtime, NV0_REQUIRE_PERSISTENT_RUNTIME: 'false' }
+      env: { ...process.env, ...commercialRuntimeEnv(), NV0_ADMIN_TOTP_SECRET: 'NV0_ADMIN_TOTP_SECRET=jbsw-y3dp ehpk3pxp', NV0_RUN_PREFLIGHT: 'false', NV0_RUNTIME_DIR: runtime, NV0_FALLBACK_RUNTIME_DIR: runtime, NV0_REQUIRE_PERSISTENT_RUNTIME: 'false' }
     });
     assert.equal(result.status, 0, result.stderr);
     assert.equal(result.stdout, 'JBSWY3DPEHPK3PXP|true');

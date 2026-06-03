@@ -58,6 +58,7 @@ const ENGINE_DEFINITIONS = Object.freeze([
   ['stitch-state-coverage-engine','stitch-state-coverage','server/core/stitch-experience-pipeline.mjs','shared/veridion-rebrand.css','포커스, 로딩, 오류, 빈 상태, 권한 거부, 모바일 상태를 검수'],
   ['stitch-function-binding-engine','stitch-function-binding','server/core/stitch-experience-pipeline.mjs','server/routes/public.mjs','진단, 결제, 포털, 인사이트, 관리자 기능의 화면 연결을 유지'],
   ['stitch-release-contract-engine','stitch-release-contract','scripts/check-stitch-experience-pipeline.mjs','tests/stitch-experience-pipeline.mjs','Stitch 경험 파이프라인 계약을 최종 릴리즈 게이트에 연결'],
+  ['system-control-plane-engine','control-plane','server/core/system-control-plane.mjs','server/routes/admin.mjs','전체 시스템, 엔진, 에이전트, 레이어, 파이프라인 상태와 운영 이벤트를 중앙 관리'],
 ]);
 
 const AGENT_DEFINITIONS = Object.freeze([
@@ -173,7 +174,11 @@ const AGENT_DEFINITIONS = Object.freeze([
   ['route-surface-mapping-agent','stitch-route-experience-engine','route manifest','시안 10종과 실제 라우트의 연결 누락을 차단'],
   ['interaction-state-coverage-agent','stitch-state-coverage-engine','ui states','기본, 포커스, 로딩, 오류, 빈 상태, 권한 거부, 모바일 상태를 검수'],
   ['function-handoff-agent','stitch-function-binding-engine','route functions','진단부터 포털·결제·관리자 운영까지 화면과 기능 핸드오프를 검수'],
-  ['stitch-regression-gate-agent','stitch-release-contract-engine','verify release','Stitch 정적 계약 검사와 통합 테스트를 릴리즈 게이트에 고정']
+  ['stitch-regression-gate-agent','stitch-release-contract-engine','verify release','Stitch 정적 계약 검사와 통합 테스트를 릴리즈 게이트에 고정'],
+  ['layer-registry-agent','system-control-plane-engine','control plane snapshot','전체 엔진을 단일 책임 레이어에 배정하고 누락·중복을 차단'],
+  ['pipeline-dependency-agent','system-control-plane-engine','pipeline structure','핵심 파이프라인의 단계 연결과 fallback을 검증'],
+  ['control-event-agent','system-control-plane-engine','operator control event','운영 장애·복구·보류·재배포 이벤트를 민감정보 없이 기록'],
+  ['control-plane-audit-agent','system-control-plane-engine','verify release','중앙 제어면 계약을 최종 릴리즈 게이트에 연결']
 
 ]);
 
@@ -361,6 +366,15 @@ const EVENT_POLICIES = Object.freeze({
       ['failedAreasZero', payload => Number(payload.failedAreaCount || 0) === 0, '실패 영역은 0개여야 합니다.'],
       ['externalItems', payload => Number(payload.operatorItemCount || 0) >= 10, '운영자 최종 확인 항목 10개 이상이 필요합니다.'],
       ['engineCoverage', payload => Number(payload.engineCount || 0) >= 50 && Number(payload.agentCount || 0) >= 108, '최종 엔진·에이전트 커버리지가 필요합니다.']
+    ]
+  },
+  'system.control.event': {
+    domain: 'control-plane',
+    requiredAgents: ['layer-registry-agent','pipeline-dependency-agent','control-event-agent','control-plane-audit-agent'],
+    checks: [
+      ['pipelineRequired', payload => Boolean(payload.pipelineId), '운영 이벤트에는 pipelineId가 필요합니다.'],
+      ['layerRequired', payload => Boolean(payload.layerId), '운영 이벤트에는 layerId가 필요합니다.'],
+      ['statusKnown', payload => ['healthy','observing','degraded','blocked','recovered'].includes(String(payload.status || '')), '운영 이벤트 상태값이 올바르지 않습니다.']
     ]
   },
   'release.final': {

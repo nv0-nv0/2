@@ -22,3 +22,5 @@
 - [TOTP 입력 전달 경로 하드닝](HOTFIX_TOTP_TRANSPORT_HARDENING_KO.md)
 
 - [TOTP prelaunch 안전 대기 모드](HOTFIX_TOTP_PRELAUNCH_SAFE_HOLD_KO.md)
+
+- `SYSTEM_CONTROL_PLANE_KO.md`: 시스템·엔진·에이전트·레이어·파이프라인 중앙 제어면

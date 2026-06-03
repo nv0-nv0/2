@@ -59,8 +59,18 @@ function finalized(name) {
   if (!value) errors.push(`${name} is required`);
   else if (placeholder(value)) errors.push(`${name} must be finalized before commercial launch`);
 }
+function finalizedSecret(name, minLength) {
+  const value = String(env[name] || '').trim();
+  finalized(name);
+  if (value && !placeholder(value) && value.length < minLength) errors.push(`${name} must contain at least ${minLength} characters`);
+}
 
 if (commercial || env.NODE_ENV === 'production') {
+  finalizedSecret('NV0_SESSION_SECRET', 32);
+  finalizedSecret('NV0_SECURE_RECORDS_KEY', 32);
+  finalizedSecret('NV0_PRIVACY_HASH_KEY', 32);
+  finalizedSecret('NV0_BACKUP_ENCRYPTION_SECRET', 32);
+  finalizedSecret('NV0_BOOTSTRAP_ADMIN_PASSWORD', 15);
   for (const key of [
     'NV0_PLATFORM_TARGET',
     'NV0_ADMIN_AUTH_MODE',

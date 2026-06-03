@@ -14,6 +14,7 @@ import { buildTrustOpsCompleteDelivery } from '../core/trustops-complete-deliver
 import { applyEngineAgentGate, appendEngineAgentEvent } from '../core/engine-agent-orchestrator.mjs';
 import { buildUnifiedOrganismStatus, normalizeClientMetric } from '../core/unified-platform-organism.mjs';
 import { buildStitchExperiencePipelineSnapshot } from '../core/stitch-experience-pipeline.mjs';
+import { buildPublicSystemControlPlaneSummary } from '../core/system-control-plane.mjs';
 
 export function createPublicRouteHandler(ctx) {
   const {
@@ -252,6 +253,7 @@ return { requestId: scan?.requestId || null, siteId: scan?.siteId || null, targe
     '/api/public/commercial-readiness',
     '/api/public/product-agent-status',
     '/api/public/engine-agent-status',
+    '/api/public/system-control-plane',
     '/api/public/organism-status',
     '/api/public/product-intelligence',
     '/api/public/product-quality',
@@ -282,7 +284,7 @@ const pipeline = buildStitchExperiencePipelineSnapshot({ releaseGateConnected: t
 return json(req, res, pipeline.ready ? 200 : 503, { ok: pipeline.ready, pipeline }, { 'cache-control': 'no-store' });
 }
 if (pathname === '/api/public/diagnosis-engine' && req.method === 'GET') {
-return json(req, res, 200, { ok: true, phase: RELEASE_PHASE, engine: 'VERIDION Public Evidence Summary Check Engine', rulesVersion: RULES_VERSION, targetFetchEnabled: TARGET_FETCH_ENABLED, scanProvider: SCAN_PROVIDER, aiReviewProvider: AI_REVIEW_PROVIDER, geminiConfigured: AI_REVIEW_ENABLED, resultContract: { resultType: 'preliminary_check', legalConclusion: false, includesEvidenceSummary: true, includesConfidenceScore: true, includesManualReviewFlags: true, includesAutomationDisclosure: true, includesAutomatedActionPlan: true, includesAccuracyProfile: true, includesReportQualityGate: true, includesDemoAccuracyContract: true, includesPaidOutputQualityGate: true, serviceQualityVersion: SERVICE_QUALITY_VERSION, deploymentRiskGuardVersion: DEPLOYMENT_RISK_GUARD_VERSION }, endpoints: { scan: 'POST /api/public/scan', diagnose: 'POST /api/public/diagnose', board: 'GET /api/public/board', engine: 'GET /api/public/diagnosis-engine', productIntelligence: 'GET /api/public/product-intelligence', productQuality: 'GET /api/public/product-quality', productAgentStatus: 'GET /api/public/product-agent-status', experienceOrchestrator: 'GET /api/public/experience-orchestrator' }, smartProduct: { version: 'smart-ops-v1', nextBestAction: true, planFitScoring: true, journeyOrchestration: true, smartProductEndpoint: '/api/public/smart-product', experienceEndpoint: '/api/public/experience-orchestrator', userPath: ['무료 요약','요금제 선택','고객 포털','인사이트 확인'] }, insightUpdate: { boardName: '인사이트', cadenceLabel: '정기 업데이트' }, automation: { mode: TARGET_FETCH_AUTOMATION_LEVEL, robotsEnabled: TARGET_FETCH_ROBOTS_ENABLED, sitemapEnabled: TARGET_FETCH_SITEMAP_ENABLED, maxPages: TARGET_FETCH_MAX_PAGES, maxDiscoveryResources: TARGET_FETCH_MAX_DISCOVERY_RESOURCES, notice: '자동 확인 가능한 공개 항목은 모두 처리하고 자동 확정 불가 영역은 직접 확인으로 고지합니다.' }, checks: buildRuleCatalog().map(({ code, category, title, severity, penaltyMax }) => ({ code, category, title, severity, penaltyMax })) });
+return json(req, res, 200, { ok: true, phase: RELEASE_PHASE, engine: 'VERIDION Public Evidence Summary Check Engine', rulesVersion: RULES_VERSION, targetFetchEnabled: TARGET_FETCH_ENABLED, scanProvider: SCAN_PROVIDER, aiReviewProvider: AI_REVIEW_PROVIDER, geminiConfigured: AI_REVIEW_ENABLED, resultContract: { resultType: 'preliminary_check', legalConclusion: false, includesEvidenceSummary: true, includesConfidenceScore: true, includesManualReviewFlags: true, includesAutomationDisclosure: true, includesAutomatedActionPlan: true, includesAccuracyProfile: true, includesReportQualityGate: true, includesDemoAccuracyContract: true, includesPaidOutputQualityGate: true, serviceQualityVersion: SERVICE_QUALITY_VERSION, deploymentRiskGuardVersion: DEPLOYMENT_RISK_GUARD_VERSION }, endpoints: { scan: 'POST /api/public/scan', diagnose: 'POST /api/public/diagnose', board: 'GET /api/public/board', engine: 'GET /api/public/diagnosis-engine', productIntelligence: 'GET /api/public/product-intelligence', productQuality: 'GET /api/public/product-quality', productAgentStatus: 'GET /api/public/product-agent-status', experienceOrchestrator: 'GET /api/public/experience-orchestrator', systemControlPlane: 'GET /api/public/system-control-plane' }, smartProduct: { version: 'smart-ops-v1', nextBestAction: true, planFitScoring: true, journeyOrchestration: true, smartProductEndpoint: '/api/public/smart-product', experienceEndpoint: '/api/public/experience-orchestrator', userPath: ['무료 요약','요금제 선택','고객 포털','인사이트 확인'] }, insightUpdate: { boardName: '인사이트', cadenceLabel: '정기 업데이트' }, automation: { mode: TARGET_FETCH_AUTOMATION_LEVEL, robotsEnabled: TARGET_FETCH_ROBOTS_ENABLED, sitemapEnabled: TARGET_FETCH_SITEMAP_ENABLED, maxPages: TARGET_FETCH_MAX_PAGES, maxDiscoveryResources: TARGET_FETCH_MAX_DISCOVERY_RESOURCES, notice: '자동 확인 가능한 공개 항목은 모두 처리하고 자동 확정 불가 영역은 직접 확인으로 고지합니다.' }, checks: buildRuleCatalog().map(({ code, category, title, severity, penaltyMax }) => ({ code, category, title, severity, penaltyMax })) });
 }
 
 if (((pathname === '/api/public/diagnose' || pathname === '/api/public/scan') && req.method === 'POST') || (isLegacyDiagnosticStart && req.method === 'POST')) {
@@ -672,6 +674,11 @@ if (pathname === '/api/public/engine-agent-status' && req.method === 'GET') {
 const db = await readDb();
 const status = buildEngineAgentRuntimeStatus(db, { businessProfile: BUSINESS_PROFILE, nowIso: nowIso() });
 return json(req, res, 200, status);
+}
+if (pathname === '/api/public/system-control-plane' && req.method === 'GET') {
+const db = await readDb();
+const status = buildPublicSystemControlPlaneSummary(db, { nowIso });
+return json(req, res, 200, status, { 'cache-control': 'no-store' });
 }
 if (pathname === '/api/public/organism-status' && req.method === 'GET') {
 const db = await readDb();

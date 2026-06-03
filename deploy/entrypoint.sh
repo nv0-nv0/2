@@ -164,15 +164,52 @@ handle_commercial_totp_preflight_failure() {
   esac
 }
 
+handle_commercial_runtime_preflight_failure() {
+  mode="$(normalize_mode_value "${NV0_RUNTIME_PREFLIGHT_FAILURE_MODE:-${NV0_TOTP_PREFLIGHT_FAILURE_MODE:-auto}}")"
+  delay="${NV0_PREFLIGHT_FAILURE_DELAY_SECONDS:-15}"
+  case "$delay" in *[!0-9]*|'') delay=15 ;; esac
+  if [ "$mode" = "auto" ]; then
+    if [ "$DEPLOYMENT_STAGE_NORMALIZED" = "prelaunch" ] && [ "$COMMERCIAL_LAUNCH_READY_NORMALIZED" != "true" ]; then
+      mode="hold"
+    else
+      mode="exit"
+    fi
+  fi
+  case "$mode" in
+    hold)
+      warn "commercial runtime configuration preflight failed; refusing to start the application and entering safe configuration hold mode. The container stays alive without serving traffic. Run npm run secrets:generate locally, finalize the reported Coolify Runtime Variables, and redeploy."
+      exec tail -f /dev/null
+      ;;
+    exit)
+      warn "commercial runtime configuration preflight failed; refusing to start the application. Waiting ${delay}s before exit."
+      sleep "$delay"
+      exit 79
+      ;;
+    *)
+      warn "invalid NV0_RUNTIME_PREFLIGHT_FAILURE_MODE='$mode'; allowed values are auto, hold, exit. Failing closed after ${delay}s."
+      sleep "$delay"
+      exit 79
+      ;;
+  esac
+}
+
 if [ "$PLATFORM_TARGET" = "commercial" ]; then
   normalize_totp_transport_value
   if ! node scripts/check-commercial-totp-preflight.mjs; then
     handle_commercial_totp_preflight_failure
   fi
+  if ! node scripts/check-commercial-runtime-startup-preflight.mjs; then
+    handle_commercial_runtime_preflight_failure
+  fi
 fi
 
 if [ "${NV0_RUN_PREFLIGHT:-false}" = "true" ]; then
-  node scripts/preflight.mjs
+  if ! node scripts/preflight.mjs; then
+    if [ "$PLATFORM_TARGET" = "commercial" ]; then
+      handle_commercial_runtime_preflight_failure
+    fi
+    exit 1
+  fi
 fi
 
 if [ "$#" -gt 0 ]; then

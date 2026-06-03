@@ -47,3 +47,7 @@ npm run ops:matrix
 - 배송본에는 `runtime/data/db.seed.json`만 포함합니다.
 - `runtime-ui/`, `runtime/data/db.json`, 세션, 보안 레코드, 업로드, 백업, 리포트는 배송 ZIP에 포함하지 않습니다.
 - 로컬 검증 이후에는 `npm run clean:runtime`과 `npm run check:runtime-clean`을 실행합니다.
+
+## 시스템 제어면 운영
+
+관리자는 `/api/admin/system-control-plane`에서 레이어·파이프라인 상태를 확인하고 `/api/admin/system-control-plane/events`에 장애·복구 이벤트를 기록합니다. 공개 상태는 `/api/public/system-control-plane`에서 내부 경로 없이 제공됩니다.

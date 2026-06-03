@@ -7,6 +7,7 @@ import { buildProductionSentinel } from '../core/trustops-production-sentinel.mj
 import { buildTrustOpsFinalHandoff } from '../core/trustops-final-handoff.mjs';
 import { buildTrustOps100PointFinalScorecard } from '../core/trustops-100-point-finalizer.mjs';
 import { buildTrustOpsCompleteDelivery } from '../core/trustops-complete-delivery.mjs';
+import { appendSystemControlEvent, buildSystemControlPlaneSnapshot, normalizeSystemControlEventPayload, runSystemControlPlanePackageAudit } from '../core/system-control-plane.mjs';
 
 export function createAdminRouteHandler(ctx) {
   const {
@@ -374,6 +375,41 @@ const status = buildEngineAgentRuntimeStatus(db, { businessProfile: db.settings?
 appendAudit(db, req, 'admin.engine_agents.audit', { score: audit.score, ok: audit.ok, version: audit.version });
 await writeDb(db);
 return json(req, res, 200, { ok: audit.ok, audit, status });
+}
+if (pathname === '/api/admin/system-control-plane' && req.method === 'GET') {
+if (!requireAdminPermission(req, res, session, 'ops.read')) return;
+const controlPlane = buildSystemControlPlaneSnapshot(db, { nowIso });
+return json(req, res, controlPlane.ok ? 200 : 207, { ok: controlPlane.ok, controlPlane });
+}
+if (pathname === '/api/admin/system-control-plane/audit' && req.method === 'GET') {
+if (!requireAdminPermission(req, res, session, 'ops.read')) return;
+const packageFiles = [
+  'server/core/system-control-plane.mjs',
+  'server/core/engine-agent-orchestrator.mjs',
+  'server/routes/public.mjs',
+  'server/routes/admin.mjs',
+  'tests/system-control-plane-contract.mjs',
+  'scripts/run-release-gate.mjs',
+  'docs/SYSTEM_CONTROL_PLANE_KO.md'
+];
+const audit = runSystemControlPlanePackageAudit({
+  files: packageFiles,
+  routes: ['/api/public/system-control-plane','/api/admin/system-control-plane','/api/admin/system-control-plane/audit','/api/admin/system-control-plane/events'],
+  sourceText: await fs.readFile(path.join(process.cwd(), 'server/core/system-control-plane.mjs'), 'utf8'),
+  releaseGateText: await fs.readFile(path.join(process.cwd(), 'scripts/run-release-gate.mjs'), 'utf8')
+});
+const controlPlane = buildSystemControlPlaneSnapshot(db, { nowIso });
+appendAudit(db, req, 'admin.system_control_plane.audit', { score: audit.score, ok: audit.ok, version: audit.version });
+await writeDb(db);
+return json(req, res, 200, { ok: audit.ok, audit, controlPlane });
+}
+if (pathname === '/api/admin/system-control-plane/events' && req.method === 'POST') {
+if (!requireAdminPermission(req, res, session, 'ops.write')) return;
+const body = normalizeSystemControlEventPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {}, { source: 'admin-api' });
+const event = appendSystemControlEvent(db, body, { nowIso });
+appendAudit(db, req, 'admin.system_control_plane.event_recorded', { eventId: event.id, pipelineId: event.pipelineId, layerId: event.layerId, status: event.status, severity: event.severity, action: event.action });
+await writeDb(db);
+return json(req, res, 201, { ok: true, event, controlPlane: buildSystemControlPlaneSnapshot(db, { nowIso, eventLimit: 20 }) });
 }
 if (pathname === '/api/admin/experience-orchestrator' && req.method === 'GET') {
 if (!requireAdminPermission(req, res, session, 'ops.read')) return;

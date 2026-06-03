@@ -4,6 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { commercialRuntimeEnv } from './fixtures/commercial-runtime-env.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const entrypoint = path.join(root, 'deploy/entrypoint.sh');
@@ -19,11 +20,11 @@ function runCase(name, extraEnv) {
       cwd: root,
       env: {
         ...process.env,
+        ...commercialRuntimeEnv(),
         NV0_RUN_PREFLIGHT: 'false',
         NV0_RUNTIME_DIR: runtime,
         NV0_FALLBACK_RUNTIME_DIR: runtime,
         NV0_REQUIRE_PERSISTENT_RUNTIME: 'false',
-        NV0_ADMIN_TOTP_SECRET: 'JBSWY3DPEHPK3PXP',
         ...extraEnv
       },
       encoding: 'utf8'
@@ -44,7 +45,7 @@ add('commercial-missing-normalized', () => {
   const env = { NV0_PLATFORM_TARGET: 'commercial' };
   const runtime = fs.mkdtempSync(path.join(os.tmpdir(), 'nv0-mfa-entrypoint-'));
   try {
-    const cleanEnv = { ...process.env, NV0_RUN_PREFLIGHT: 'false', NV0_RUNTIME_DIR: runtime, NV0_FALLBACK_RUNTIME_DIR: runtime, NV0_REQUIRE_PERSISTENT_RUNTIME: 'false', NV0_ADMIN_TOTP_SECRET: 'JBSWY3DPEHPK3PXP', ...env };
+    const cleanEnv = { ...process.env, ...commercialRuntimeEnv(), NV0_RUN_PREFLIGHT: 'false', NV0_RUNTIME_DIR: runtime, NV0_FALLBACK_RUNTIME_DIR: runtime, NV0_REQUIRE_PERSISTENT_RUNTIME: 'false', ...env };
     delete cleanEnv.NV0_ADMIN_MFA_REQUIRED;
     const result = spawnSync('sh', [entrypoint, 'sh', '-c', 'printf "%s|%s" "${NV0_ADMIN_MFA_REQUIRED:-}" "${NV0_ADMIN_MFA_RECOVERY_NORMALIZED:-}"'], { cwd: root, env: cleanEnv, encoding: 'utf8' });
     assert.equal(result.status, 0, result.stderr || result.stdout);
