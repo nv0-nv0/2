@@ -30,6 +30,8 @@ const operatorTemplates = [
 const criticalTemplateKeys = [
   'NV0_EXPOSE_INTERNAL_PUBLIC_APIS',
   'NV0_SESSION_SECRET',
+  'NV0_ADMIN_MFA_REQUIRED',
+  'NV0_ADMIN_TOTP_SECRET',
   'NV0_PRIVACY_HASH_KEY',
   'NV0_SECURE_RECORDS_KEY',
   'NV0_SECURE_RECORDS_SALT',
@@ -58,7 +60,7 @@ const forwardedKeys = [
 
 for (const file of adminPages) {
   add(`${file}:skip-link`, () => assert.match(read(file), /<a class="skip-link" href="#main">본문 바로가기<\/a>/));
-  add(`${file}:focusable-main`, () => assert.match(read(file), /<main id="main" tabindex="-1" class="app-shell admin-clean-v311">/));
+  add(`${file}:focusable-main`, () => assert.match(read(file), /<main id="main" tabindex="-1" class="app-shell admin-clean-v311(?: [^"]+)?">/));
 }
 for (const file of demoPages) {
   add(`${file}:submit-primary-action`, () => assert.match(read(file), /<button id="scanBtn" type="submit" data-diagnosis-primary-action="true">/));

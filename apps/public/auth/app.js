@@ -24,7 +24,8 @@ function clearCredentialDefaults() {
     input.defaultValue = '';
     input.value = '';
     input.removeAttribute('value');
-    input.setAttribute('autocomplete', 'new-password');
+    const autocomplete = input === loginEmail ? 'username' : input === loginPassword ? 'current-password' : input === registerEmail || input === resetEmail || input === resetConfirmEmail ? 'email' : 'new-password';
+    input.setAttribute('autocomplete', autocomplete);
     input.setAttribute('data-vr-empty-default', 'true');
   });
 }
@@ -41,6 +42,13 @@ async function postJson(path, body){
   return data;
 }
 function targetPortal(){ const url = new URL(location.href); return url.searchParams.get('next') || '/portal'; }
+function validateCommercialPassword(password) {
+  const value = String(password || '');
+  if (value.length < 15) return '비밀번호는 15자 이상이어야 합니다.';
+  if (value.length > 128) return '비밀번호는 128자 이하여야 합니다.';
+  if (/^(.)\1+$/.test(value) || /^(0123456789|1234567890|abcdefghijklmnopqrstuvwxyz)+$/i.test(value)) return '추측하기 쉬운 비밀번호는 사용할 수 없습니다.';
+  return '';
+}
 
 loginForm?.addEventListener('submit', async (event)=>{
   event.preventDefault();
@@ -50,6 +58,8 @@ loginForm?.addEventListener('submit', async (event)=>{
 });
 registerForm?.addEventListener('submit', async (event)=>{
   event.preventDefault();
+  const passwordError=validateCommercialPassword(registerPassword?.value || '');
+  if(passwordError){ if(registerState) registerState.textContent=passwordError; return; }
   if (registerState) registerState.textContent='계정을 생성하는 중입니다...';
   try{ await postJson('/api/public/auth/register',{email:registerEmail?.value || '',password:registerPassword?.value || '',privacyConsent:!!privacyConsent?.checked}); location.href=targetPortal(); }
   catch(error){ if (registerState) registerState.textContent=error.message; }
@@ -62,6 +72,8 @@ resetRequestForm?.addEventListener('submit', async (event)=>{
 });
 resetForm?.addEventListener('submit', async (event)=>{
   event.preventDefault();
+  const passwordError=validateCommercialPassword(resetPassword?.value || '');
+  if(passwordError){ if(resetState) resetState.textContent=passwordError; return; }
   if (resetState) resetState.textContent='비밀번호를 변경하는 중입니다...';
   try{ const data=await postJson('/api/public/auth/reset-password',{email:resetConfirmEmail?.value || '',token:resetToken?.value || '',password:resetPassword?.value || ''}); if (resetState) resetState.textContent=data.message || '비밀번호가 변경되었습니다.'; }
   catch(error){ if (resetState) resetState.textContent=error.message; }

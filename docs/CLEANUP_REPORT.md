@@ -21,8 +21,13 @@
 
 ## Semantic migration
 
-현재 릴리즈 판정은 `2.3.0-executive-trust-report-system`과 단일 릴리즈 게이트를 기준으로 수행합니다. API 또는 내부 키 변경 사항은 `docs/COMPATIBILITY.md`에 정리했습니다.
+현재 릴리즈 판정은 `2.7.0-commercial-hardening-max`과 단일 릴리즈 게이트를 기준으로 수행합니다. API 또는 내부 키 변경 사항은 `docs/COMPATIBILITY.md`에 정리했습니다.
 
 ## Rollback
 
 정리 전 전체 스냅샷과 의미 기반 리팩터링 직전 기준선은 외부 ZIP으로 별도 보존합니다.
+
+## 2.7 배송 위생 보강
+- 참조되지 않는 `runtime-ui/` 로컬 스냅샷을 제거했습니다.
+- 정리·패키징·테스트 계약이 `runtime-ui/` 재유입을 차단하도록 보강했습니다.
+- 공개 HTML의 정적 메타데이터 폴백과 의미 기반 제품 버전 식별자를 추가했습니다.

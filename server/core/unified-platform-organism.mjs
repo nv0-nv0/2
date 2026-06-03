@@ -90,6 +90,7 @@ export function normalizeClientMetric(payload = {}, options = {}) {
     createdAt: nowIso,
     path,
     page: String(payload.page || '').replace(/[^a-z0-9_-]/gi, '').slice(0, 48) || 'public',
+    metricType: String(payload.metricType || 'performance').replace(/[^a-z0-9_-]/gi, '').slice(0, 32) || 'performance',
     navigationType: String(payload.navigationType || 'navigate').slice(0, 32),
     loadMs: clamp(Math.round(payload.loadMs || 0), 0, 120000),
     domInteractiveMs: clamp(Math.round(payload.domInteractiveMs || 0), 0, 120000),
@@ -98,6 +99,11 @@ export function normalizeClientMetric(payload = {}, options = {}) {
     cumulativeLayoutShift: clamp(Number(payload.cumulativeLayoutShift || 0), 0, 10),
     connection: String(payload.connection || '').slice(0, 24),
     userAgentBucket: String(payload.userAgentBucket || 'browser').slice(0, 24),
+    errorName: String(payload.errorName || '').replace(/[^a-z0-9_.-]/gi, '').slice(0, 64),
+    errorMessage: String(payload.errorMessage || '').replace(/https?:\/\/[^\s)]+/gi, '[URL]').replace(/[\w.+-]+@[\w.-]+\.[a-z]{2,}/gi, '[EMAIL]').replace(/[?#].*$/, '').slice(0, 240),
+    sourcePath: String(payload.sourcePath || '').replace(/https?:\/\/[^/]+/i, '').replace(/[?#].*$/, '').slice(0, 160),
+    line: clamp(Math.round(payload.line || 0), 0, 1000000),
+    column: clamp(Math.round(payload.column || 0), 0, 1000000),
     source: 'veridion-runtime-optimizer'
   };
   return metric;
@@ -175,7 +181,7 @@ export function buildUnifiedOrganismAudit(input = {}) {
   add('optimizer:exists', optimizer.includes('__NV0_RUNTIME_OPTIMIZER__') && optimizer.includes('sendBeacon'));
   add('server:organism-status-route', serverRoutes.includes('/api/public/organism-status') && serverRoutes.includes('buildUnifiedOrganismStatus'));
   add('server:client-metric-route', serverRoutes.includes('/api/public/client-metric') && serverRoutes.includes('normalizeClientMetric'));
-  add('package:clean-baseline-version', String(packageJson.version || '') === '2.3.0-executive-trust-report-system');
+  add('package:clean-baseline-version', String(packageJson.version || '') === '2.7.0-commercial-hardening-max');
   add('package:release-gate', packageJson.scripts?.['verify:release'] === 'node scripts/run-release-gate.mjs');
   add('package:delivery-final-updated', packageJson.scripts?.['delivery:final'] === 'npm run verify:release');
 

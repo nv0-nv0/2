@@ -23,8 +23,8 @@ import { buildAutomationDisclosure, buildAutomatedActionPlan } from './core/free
 import { buildDiagnosisAccuracyProfile, buildAdminOperatingProfile } from './core/product-quality-engine.mjs';
 import { createBackupOperations } from './core/backup-operations.mjs';
 import { buildOpenApiSpec as buildOpenApiSpecFromContext, buildHardeningMatrix as buildHardeningMatrixFromContext } from './core/hardening-matrix.mjs';
-import { authenticateAdminAccount, ensureAdminCollections, ensureBootstrapAdmin, getAdminPermissions, getAdminRoles } from './core/admin-auth.mjs';
-import { hashPassword, verifyPassword } from './core/passwords.mjs';
+import { authenticateAdminAccount, ensureAdminCollections, ensureBootstrapAdmin, getAdminPermissions, getAdminRoles, verifyTotpCode } from './core/admin-auth.mjs';
+import { hashPassword, verifyPassword, validateNewPassword } from './core/passwords.mjs';
 import { createPersistenceManager } from './infrastructure/persistence/persistence.mjs';
 import { createSessionStore } from './infrastructure/session/session-store.mjs';
 import { createRateLimitStore } from './infrastructure/ratelimit/rate-limit-store.mjs';
@@ -201,6 +201,8 @@ const AUTO_BACKUP_ON_STARTUP = process.env.NV0_AUTO_BACKUP_ON_STARTUP !== 'false
 const AUTO_BACKUP_INTERVAL_MS = Number(process.env.NV0_AUTO_BACKUP_INTERVAL_MS || 6 * 60 * 60_000);
 const AUDIT_LOG_RETENTION_COUNT = Number(process.env.NV0_AUDIT_LOG_RETENTION_COUNT || 200);
 const ADMIN_AUTH_MODE = process.env.NV0_ADMIN_AUTH_MODE || (PLATFORM.commercial ? 'account_rbac' : 'shared_key');
+const ADMIN_MFA_REQUIRED = process.env.NV0_ADMIN_MFA_REQUIRED === 'true';
+const ADMIN_TOTP_SECRET = String(process.env.NV0_ADMIN_TOTP_SECRET || '').trim();
 const STORAGE_MODE = process.env.NV0_STORAGE_MODE || (PLATFORM.commercial ? 's3' : 'local_fs');
 const PERSISTENCE_MODE = process.env.NV0_PERSISTENCE_MODE || (PLATFORM.commercial ? 'postgres_primary' : 'json');
 const DATABASE_URL = process.env.NV0_DATABASE_URL || '';
@@ -241,7 +243,7 @@ const GEMINI_MODEL = String(process.env.NV0_GEMINI_MODEL || 'gemini-2.5-flash').
 const AI_REVIEW_ENABLED = AI_REVIEW_PROVIDER === 'gemini' && !!GEMINI_API_KEY;
 const RELEASE_PHASE = 'clean-commercial-baseline';
 const BUILD_FINGERPRINT = Object.freeze({
-version: process.env.NV0_BUILD_VERSION || '2.3.0-executive-trust-report-system',
+version: process.env.NV0_BUILD_VERSION || '2.7.0-commercial-hardening-max',
 releasePhase: RELEASE_PHASE,
 buildTime: process.env.NV0_BUILD_TIME || new Date().toISOString(),
 deploymentEnvironment: DEPLOYMENT_STAGE,
@@ -349,6 +351,7 @@ adminSessions: [],
 auditLogs: [],
 refundRequests: [],
 operationalEvents: [],
+operationalJobs: [],
 idempotencyKeys: []
 };
 if (PLATFORM.commercial) {
@@ -381,6 +384,7 @@ adminSessions: [],
 auditLogs: [],
 refundRequests: [],
 operationalEvents: [],
+operationalJobs: [],
 idempotencyKeys: []
 };
 }
@@ -618,7 +622,9 @@ headers['strict-transport-security'] = 'max-age=31536000; includeSubDomains; pre
 }
 if (category === 'dynamic') headers['cache-control'] = 'no-store';
 if (category === 'public-page') headers['cache-control'] = PUBLIC_CACHE_SECONDS > 0 ? 'public, max-age=' + PUBLIC_CACHE_SECONDS + ', stale-while-revalidate=300' : 'no-cache, max-age=0, must-revalidate';
-if (category === 'static') headers['cache-control'] = PUBLIC_ASSET_CACHE_SECONDS > 0 ? 'public, max-age=' + PUBLIC_ASSET_CACHE_SECONDS + ', stale-while-revalidate=86400' : 'no-cache, max-age=0, must-revalidate';
+if (category === 'static-versioned') headers['cache-control'] = PUBLIC_ASSET_CACHE_SECONDS > 0 ? 'public, max-age=' + PUBLIC_ASSET_CACHE_SECONDS + ', immutable' : 'public, max-age=300';
+if (category === 'static-unversioned') headers['cache-control'] = 'no-cache, max-age=0, must-revalidate';
+if (category === 'static') headers['cache-control'] = 'no-cache, max-age=0, must-revalidate';
 if (category === 'upload') headers['cache-control'] = 'private, max-age=300';
 return headers;
 }
@@ -1317,7 +1323,9 @@ async function serveFile(req, res, absPath, contentType, categoryOverride = '') 
 try {
 const stat = await fs.stat(absPath);
 if (!stat.isFile()) return text(req, res, 404, 'Not found');
-const category = categoryOverride || (absPath.includes('/runtime/uploads/') ? 'upload' : 'static');
+const requestedCategory = categoryOverride || (absPath.includes('/runtime/uploads/') ? 'upload' : 'static');
+const versionedAsset = requestedCategory === 'static' && /(?:[?&]v=|[.-][a-f0-9]{8,}\.)/i.test(String(req.url || ''));
+const category = requestedCategory === 'static' ? (versionedAsset ? 'static-versioned' : 'static-unversioned') : requestedCategory;
 const etag = `W/\"${stat.size.toString(16)}-${Math.floor(stat.mtimeMs).toString(16)}\"`;
 const lastModified = stat.mtime.toUTCString();
 if (req.headers['if-none-match'] === etag || req.headers['if-modified-since'] === lastModified) {
@@ -1591,14 +1599,12 @@ function publicTopMenuHtml(urlPath = '/') {
 return `<a class="skip-link" href="#main">본문 바로가기</a><nav class="site-topbar" aria-label="주요 메뉴"><div class="site-topbar-inner">
 <a class="brand" href="/"><span class="brand-mark">VERIDION</span></a>
 <div class="site-menu">
-<a href="/service"${navAttrs(urlPath, '/service')}>서비스</a>
-<a href="/solutions"${navAttrs(urlPath, '/solutions')}>솔루션</a>
-<a href="/plans"${navAttrs(urlPath, '/plans')}>요금</a>
 <a href="/products/veridion/demo"${navAttrs(urlPath, '/products/veridion/demo')}>진단</a>
 <a href="/board"${navAttrs(urlPath, '/board')}>인사이트</a>
+<a href="/plans"${navAttrs(urlPath, '/plans')}>요금제</a>
 <a href="/portal"${navAttrs(urlPath, '/portal')}>고객 포털</a>
 </div>
-<div class="site-actions"><a class="login-link" href="/auth"${navAttrs(urlPath, '/auth')}>로그인</a><a class="top-cta" href="/products/veridion/demo"${navAttrs(urlPath, '/products/veridion/demo')}>무료 진단 시작</a></div>
+<div class="site-actions"><a class="login-link" href="/auth"${navAttrs(urlPath, '/auth')}>로그인</a><a class="top-cta" href="/products/veridion/demo"${navAttrs(urlPath, '/products/veridion/demo')}>사이트 무료 진단 실행</a></div>
 </div></nav>`;
 }
 function ensureMainId(body) {
@@ -1688,7 +1694,7 @@ return body.replace('</body>', '<script type="module" src="/shared/session-nav.j
 }
 function injectClientRiskGuard(body, urlPath) {
 if (urlPath.startsWith('/admin') || body.includes('data-veridion-rebrand="clean"') || body.includes('/shared/client-risk-guard.js')) return body;
-return body.replace('</body>', '<script src="/shared/client-risk-guard.js" defer></script></body>');
+return body.replace('</body>', '<script src="/shared/client-risk-guard.js?v=2.7.0" defer></script></body>');
 }
 function injectBusinessFooter(body, urlPath) {
 if (urlPath.startsWith('/admin') || body.includes('data-vr-page="true"') || body.includes('data-veridion-rebrand="clean"') || body.includes('vr-footer') || /<footer\b/i.test(body)) return body;
@@ -1707,7 +1713,7 @@ function renderPublicErrorPage(req, res, status, title, message, requestId = '')
 const safeTitle = escapeHtml(title);
 const safeMessage = escapeHtml(message);
 const safeRequestId = requestId ? escapeHtml(requestId) : '';
-const body = `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${safeTitle} | VERIDION</title><meta name="robots" content="noindex,nofollow,noarchive"><link rel="stylesheet" href="/shared/veridion-rebrand.css"></head><body>${publicTopMenuHtml('/')}<main id="main" tabindex="-1" class="vr-error-page"><section class="vr-error-card"><p class="eyebrow">서비스 안내</p><h1>${safeTitle}</h1><p>${safeMessage}</p>${safeRequestId ? `<p class="vr-error-request">요청 ID: ${safeRequestId}</p>` : ''}<div class="hero-actions"><a class="btn primary" href="/products/veridion/demo">무료 진단으로 이동</a><a class="btn secondary" href="/">홈으로 이동</a></div></section></main>${businessFooterHtml()}<script src="/shared/client-risk-guard.js" defer></script></body></html>`;
+const body = `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="color-scheme" content="light"><meta name="format-detection" content="telephone=no"><meta name="referrer" content="strict-origin-when-cross-origin"><title>${safeTitle} | VERIDION</title><meta name="robots" content="noindex,nofollow,noarchive"><link rel="stylesheet" href="/shared/veridion-rebrand.css?v=2.7.0"><link rel="stylesheet" href="/shared/stitch-institutional.css?v=2.7.0"></head><body><a class="skip-link" href="#main">본문 바로가기</a>${publicTopMenuHtml('/')}<main id="main" tabindex="-1" class="vr-error-page"><section class="vr-error-card"><p class="eyebrow">서비스 안내</p><h1>${safeTitle}</h1><p>${safeMessage}</p>${safeRequestId ? `<p class="vr-error-request">요청 ID: ${safeRequestId}</p>` : ''}<div class="hero-actions"><a class="btn primary" href="/products/veridion/demo">무료 진단으로 이동</a><a class="btn secondary" href="/">홈으로 이동</a></div></section></main>${businessFooterHtml()}<script src="/shared/client-risk-guard.js?v=2.7.0" defer></script></body></html>`;
 return html(req, res, status, body, { 'cache-control': 'no-store' }, 'public-page');
 }
 function adminNav() {
@@ -2303,7 +2309,8 @@ const targetCandidate = body.target || body.url || body.targetUrl || body.domain
 return {
 target: canonicalizePublicTarget(targetCandidate, { field: 'target' }),
 turnstileToken: asTrimmedString(body.turnstileToken, { field: 'turnstileToken', max: 2048 }),
-source: asTrimmedString(body.source, { field: 'source', max: 80 })
+source: asTrimmedString(body.source, { field: 'source', max: 80 }),
+bypassCache: asBoolean(body.bypassCache, false)
 };
 }
 function normalizeCheckoutPayload(body = {}) {
@@ -3539,9 +3546,9 @@ scan.scoreModel = { ...(scan.scoreModel || {}), confidenceLabel: '제한 결과'
 return scan;
 }
 
-async function scanResultFor(input, db = null) {
+async function scanResultFor(input, db = null, options = {}) {
 const startedAt = Date.now();
-const cached = findReusableScan(db, input);
+const cached = options.bypassCache ? null : findReusableScan(db, input);
 if (cached) return cached;
 const url = safeUrl(String(input).trim());
 const blockedTarget = url ? isBlockedTargetUrl(url) : false;
@@ -3599,6 +3606,7 @@ function buildReleaseReadiness(db) {
 const requiredEnv = ['NV0_PUBLIC_BASE_URL','NV0_SUPPORT_EMAIL'];
 if (PLATFORM.commercial) {
 requiredEnv.push('NV0_DATABASE_URL','NV0_REDIS_URL','NV0_ADMIN_IP_ALLOWLIST','NV0_SMTP_URL');
+if (ADMIN_MFA_REQUIRED) requiredEnv.push('NV0_ADMIN_TOTP_SECRET');
 if (COMMERCIAL_LAUNCH_READY) requiredEnv.push('NV0_TURNSTILE_SECRET','NV0_TURNSTILE_SITE_KEY','NV0_PORTONE_STORE_ID','NV0_PORTONE_CHANNEL_KEY','NV0_PORTONE_API_SECRET','NV0_PORTONE_WEBHOOK_SECRET','NV0_MAIL_ORDER_REGISTRATION_NUMBER');
 }
 const missingEnv = requiredEnv.filter(name => !String(process.env[name] || '').trim());
@@ -3623,6 +3631,7 @@ const gates = [
 { key: 'payment_provider_configured', ok: PRELAUNCH_MODE ? PAYMENT_PROVIDER === 'disabled' : (PAYMENT_PROVIDER !== 'demo' || !PLATFORM.commercial), label: PRELAUNCH_MODE ? '정식 결제 오픈 전 결제 기능 비활성화' : '상용 결제 제공자 사용' },
 { key: 'webhook_signature_strict', ok: !PLATFORM.commercial || (PAYMENT_PROVIDER !== 'portone_v2') || (PORTONE_WEBHOOK_VERIFY_MODE === 'strict' && !!PORTONE_WEBHOOK_SECRET), label: '결제 웹훅 서명 엄격 검증' },
 { key: 'admin_ip_policy_reviewed', ok: ADMIN_IP_ALLOWLIST.length > 0 || !PLATFORM.commercial, label: '관리자 IP 제한 정책 설정' },
+{ key: 'admin_mfa_ready', ok: !ADMIN_MFA_REQUIRED || Boolean(ADMIN_TOTP_SECRET), label: ADMIN_MFA_REQUIRED ? '관리자 2차 인증 TOTP 설정' : '관리자 2차 인증 선택 적용' },
 { key: 'missing_env', ok: missingEnv.length === 0, label: '필수 운영 환경변수 설정', missing: missingEnv },
 { key: 'placeholder_env_removed', ok: placeholderEnv.length === 0, label: '운영 환경변수 placeholder 제거', placeholder: placeholderEnv },
 { key: 'https_public_base_url', ok: !PLATFORM.commercial || /^https:\/\//.test(String(process.env.NV0_PUBLIC_BASE_URL || '')), label: '공개 URL HTTPS 사용' },
@@ -3664,7 +3673,7 @@ const checks = [
 { key: 'smtp_configured', ok: !isPlaceholderConfigValue(process.env.NV0_SMTP_URL) || !PLATFORM.commercial, label: '거래성 이메일 SMTP 설정' },
 { key: 'strict_webhook', ok: PAYMENT_PROVIDER !== 'portone_v2' || PORTONE_WEBHOOK_VERIFY_MODE === 'strict' || !PLATFORM.commercial, label: PAYMENT_PROVIDER === 'portone_v2' ? 'PortOne 웹훅 strict 검증' : '결제 공급자 비활성/비PortOne 상태' },
 { key: 'admin_ip_allowlist', ok: ADMIN_IP_ALLOWLIST.length > 0 || !PLATFORM.commercial, label: '관리자 IP allowlist 설정' },
-{ key: 'runtime_clean_enough', ok: (db.pendingJobs || []).length === 0 && (db.emailOutbox || []).filter(item => item.status === 'sending').length === 0, label: '배포 직전 서비스 환경 미완료 작업 없음' },
+{ key: 'runtime_clean_enough', ok: (db.pendingJobs || []).length === 0 && (db.operationalJobs || []).filter(item => ['queued','running','retry_scheduled'].includes(item.status)).length === 0 && (db.emailOutbox || []).filter(item => item.status === 'sending').length === 0, label: '배포 직전 서비스 환경 미완료 작업 없음' },
 { key: 'unresolved_refunds_empty', ok: (db.refundRequests || []).filter(item => ['requested','reviewing'].includes(item.status)).length === 0, label: '미처리 환불 요청 없음' },
 { key: 'failed_email_reviewed', ok: (db.emailOutbox || []).filter(item => item.status === 'failed').length === 0, label: '실패 이메일 없음' }
 ];
@@ -3704,6 +3713,125 @@ const item = { id: uid('ops'), at: nowIso(), level, event, meta: maskSensitive(m
 db.operationalEvents.unshift(item);
 db.operationalEvents = db.operationalEvents.slice(0, 500);
 return item;
+}
+
+const operationalJobRunners = new Map();
+const OPERATIONAL_JOB_TYPES = new Set(['backup', 'ops_report', 'maintenance_prune', 'email_outbox_process']);
+function ensureOperationalJobs(db) {
+  db.operationalJobs = Array.isArray(db.operationalJobs) ? db.operationalJobs : [];
+  return db.operationalJobs;
+}
+function sanitizeOperationalJobPayload(type, payload = {}) {
+  if (type === 'email_outbox_process') return { dryRun: payload.dryRun !== false, limit: Math.max(1, Math.min(Number(payload.limit || 20), 100)) };
+  return {};
+}
+function serializeOperationalJob(job = {}) {
+  return {
+    id: job.id || '', type: job.type || '', status: job.status || 'unknown',
+    createdAt: job.createdAt || null, startedAt: job.startedAt || null, finishedAt: job.finishedAt || null, nextAttemptAt: job.nextAttemptAt || null, attempts: Number(job.attempts || 0),
+    actor: job.actor || null, result: job.result || null, error: job.error || null
+  };
+}
+function listOperationalJobs(db, limit = 40) {
+  return ensureOperationalJobs(db).slice(0, Math.max(1, Math.min(Number(limit || 40), 100))).map(serializeOperationalJob);
+}
+async function executeOperationalJob(job) {
+  if (job.type === 'backup') return { backup: await createBackupSnapshot({ reason: 'admin_async_job' }) };
+  if (job.type === 'ops_report') {
+    const snapshot = await writeOpsReportSnapshot();
+    return { snapshot: { filePath: snapshot.filePath } };
+  }
+  if (job.type === 'maintenance_prune') {
+    const pruned = await pruneBackupSnapshots();
+    const live = await readDb();
+    const dataRetention = cleanupDataRetention(live, { dryRun: false });
+    await writeDb(live);
+    return { pruned, dataRetention };
+  }
+  if (job.type === 'email_outbox_process') {
+    const live = await readDb();
+    const result = await processEmailOutbox(live, sanitizeOperationalJobPayload(job.type, job.payload));
+    await writeDb(live);
+    return { result };
+  }
+  throw new Error(`지원하지 않는 운영 작업입니다: ${job.type}`);
+}
+const OPERATIONAL_JOB_MAX_ATTEMPTS = 3;
+const OPERATIONAL_JOB_LOCK_TTL_SECONDS = 15 * 60;
+function scheduleOperationalJob(jobId, delayMs = 0) {
+  const timer = setTimeout(() => runOperationalJob(jobId).catch(error => console.error('VERIDION operational job failed', { jobId, error: error?.message || String(error) })), Math.max(0, Number(delayMs || 0)));
+  timer.unref?.();
+}
+async function runOperationalJob(jobId) {
+  if (operationalJobRunners.has(jobId)) return operationalJobRunners.get(jobId);
+  const promise = (async () => {
+    const lockKey = `operational-job:${jobId}`;
+    const locked = await distributedLock.acquire(lockKey, OPERATIONAL_JOB_LOCK_TTL_SECONDS);
+    if (!locked) { scheduleOperationalJob(jobId, 1000); return null; }
+    try {
+      let db = await readDb();
+      const job = ensureOperationalJobs(db).find(item => item.id === jobId);
+      if (!job || !['queued', 'retry_scheduled', 'running'].includes(job.status)) return job ? serializeOperationalJob(job) : null;
+      const waitMs = Math.max(0, Date.parse(job.nextAttemptAt || '') - Date.now());
+      if (job.status === 'retry_scheduled' && waitMs > 0) { scheduleOperationalJob(jobId, waitMs); return serializeOperationalJob(job); }
+      job.status = 'running'; job.startedAt = nowIso(); job.finishedAt = null; job.nextAttemptAt = null; job.error = null; job.attempts = Number(job.attempts || 0) + 1;
+      appendOperationalEvent(db, 'info', 'operational_job.started', { jobId, type: job.type, attempts: job.attempts });
+      await writeDb(db);
+      try {
+        const result = await executeOperationalJob(job);
+        db = await readDb();
+        const fresh = ensureOperationalJobs(db).find(item => item.id === jobId);
+        if (fresh) { fresh.status = 'succeeded'; fresh.finishedAt = nowIso(); fresh.nextAttemptAt = null; fresh.result = sanitizePrivacyPayload(maskSensitive(result)); fresh.error = null; }
+        appendOperationalEvent(db, 'info', 'operational_job.succeeded', { jobId, type: job.type, attempts: fresh?.attempts || job.attempts });
+        await writeDb(db);
+        return fresh ? serializeOperationalJob(fresh) : null;
+      } catch (error) {
+        db = await readDb();
+        const fresh = ensureOperationalJobs(db).find(item => item.id === jobId);
+        const message = String(error?.message || error).slice(0, 500);
+        if (fresh && Number(fresh.attempts || 0) < OPERATIONAL_JOB_MAX_ATTEMPTS) {
+          const retryDelayMs = Math.min(30_000, 1000 * (2 ** Math.max(0, Number(fresh.attempts || 1) - 1)));
+          fresh.status = 'retry_scheduled'; fresh.finishedAt = null; fresh.nextAttemptAt = new Date(Date.now() + retryDelayMs).toISOString(); fresh.error = message;
+          appendOperationalEvent(db, 'warn', 'operational_job.retry_scheduled', { jobId, type: job.type, attempts: fresh.attempts, retryDelayMs, error: message });
+          await writeDb(db); scheduleOperationalJob(jobId, retryDelayMs);
+          return serializeOperationalJob(fresh);
+        }
+        if (fresh) { fresh.status = 'failed'; fresh.finishedAt = nowIso(); fresh.nextAttemptAt = null; fresh.error = message; }
+        appendOperationalEvent(db, 'error', 'operational_job.failed', { jobId, type: job.type, attempts: fresh?.attempts || job.attempts, error: message });
+        await writeDb(db);
+        return fresh ? serializeOperationalJob(fresh) : null;
+      }
+    } finally {
+      await distributedLock.release(lockKey).catch(error => console.error('VERIDION operational job lock release failed', { jobId, error: error?.message || String(error) }));
+    }
+  })().finally(() => operationalJobRunners.delete(jobId));
+  operationalJobRunners.set(jobId, promise);
+  return promise;
+}
+async function enqueueOperationalJob(type, payload = {}, actor = {}) {
+  if (!OPERATIONAL_JOB_TYPES.has(type)) throw new Error('지원하지 않는 운영 작업입니다.');
+  const db = await readDb();
+  const jobs = ensureOperationalJobs(db);
+  const job = {
+    id: uid('opjob'), type, payload: sanitizeOperationalJobPayload(type, payload), status: 'queued',
+    actor: { adminUserId: actor.adminUserId || null, adminEmail: actor.adminEmail ? maskEmail(actor.adminEmail) : null },
+    createdAt: nowIso(), startedAt: null, finishedAt: null, nextAttemptAt: null, attempts: 0, result: null, error: null
+  };
+  jobs.unshift(job); db.operationalJobs = jobs.slice(0, 300);
+  appendOperationalEvent(db, 'info', 'operational_job.queued', { jobId: job.id, type });
+  await writeDb(db); scheduleOperationalJob(job.id);
+  return serializeOperationalJob(job);
+}
+async function resumeOperationalJobs() {
+  const db = await readDb();
+  const jobs = ensureOperationalJobs(db);
+  const resumable = jobs.filter(job => ['queued', 'running', 'retry_scheduled'].includes(job.status));
+  for (const job of resumable) {
+    if (job.status === 'running') { job.status = 'queued'; job.startedAt = null; }
+  }
+  if (resumable.length) await writeDb(db);
+  resumable.forEach(job => scheduleOperationalJob(job.id));
+  return { resumed: resumable.length };
 }
 function appendAudit(db, req, event, meta = {}) {
 db.auditLogs ||= [];
@@ -3833,9 +3961,8 @@ async function buildOpsReport() {
 const db = await readDb();
 const backups = await listBackupSnapshots();
 const uploads = await fs.readdir(UPLOADS_DIR).catch(() => []);
-const sessionsSummary = serializeSessions().map(({ sid, ...rest }) => ({
-sidTail: sid.slice(-8),
-...rest
+const sessionsSummary = serializeSessions().map(({ sid, createdAt, lastSeenAt, expiresAt, adminUserId, adminEmail, adminDisplayName, roles = [], permissions = [] }) => ({
+sidTail: sid.slice(-8), createdAt, lastSeenAt, expiresAt, adminUserId: adminUserId || null, adminEmail: adminEmail ? maskEmail(adminEmail) : null, adminDisplayName: adminDisplayName || null, roles, permissions
 }));
 return {
 generatedAt: nowIso(),
@@ -4162,6 +4289,8 @@ function createRouteContext() {
 return {
 ADMIN_AUTH_LIMIT,
 ADMIN_AUTH_MODE,
+ADMIN_MFA_REQUIRED,
+ADMIN_TOTP_SECRET,
 ADMIN_AUTH_WINDOW_MS,
 ADMIN_KEY,
 AI_REVIEW_ENABLED,
@@ -4229,6 +4358,7 @@ appendWebhookInbox,
 asTrimmedString,
 assertCommercialRouteAllowed,
 authenticateAdminAccount,
+verifyTotpCode,
 backupSecurityConfigSummary,
 bodyBuffer,
 bodyJson,
@@ -4291,6 +4421,11 @@ customerSavedSites,
 customerSessionCookie,
 distributedLock,
 enqueueTransactionalEmail,
+enqueueOperationalJob,
+ensureOperationalJobs,
+listOperationalJobs,
+serializeOperationalJob,
+resumeOperationalJobs,
 ensureBootstrapAdmin,
 ensureFulfillmentForOrder,
 ensureRuntime,
@@ -4371,6 +4506,7 @@ text,
 toPublicBoardPost,
 uid,
 validateConfig,
+validateNewPassword,
 verifyPassword,
 verifyPortOneWebhook,
 verifyTurnstile,

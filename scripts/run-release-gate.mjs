@@ -5,8 +5,28 @@ import path from 'node:path';
 const root = process.cwd();
 const timeoutMs = Number(process.env.NV0_RELEASE_STEP_TIMEOUT_MS || 600000);
 const steps = [
+  ['clean:audit-evidence', 'node', ['scripts/clean-current-audit-evidence.mjs']],
   ['clean:runtime', 'npm', ['run','clean:runtime']],
   ['check:clean-baseline', 'npm', ['run','check:clean-baseline']],
+  ['check:delivery-hygiene', 'node', ['scripts/check-delivery-hygiene.mjs']],
+  ['check:static-html-quality', 'node', ['scripts/check-static-html-quality.mjs']],
+  ['check:enhanced-html-accessibility', 'node', ['scripts/check-enhanced-html-accessibility.mjs']],
+  ['check:deep-html-page-contract', 'node', ['scripts/check-page-contract-deep.mjs']],
+  ['check:external-asset-whitelist', 'node', ['scripts/check-external-asset-whitelist.mjs']],
+  ['check:public-navigation-state', 'node', ['scripts/check-public-navigation-state.mjs']],
+  ['check:url-input-ergonomics', 'node', ['scripts/check-url-input-ergonomics.mjs']],
+  ['check:semantic-identifiers', 'node', ['scripts/check-semantic-identifiers.mjs']],
+  ['check:duplicate-sync', 'node', ['scripts/check-duplicate-sync.mjs']],
+  ['check:release-version-sync', 'node', ['scripts/check-release-version-sync.mjs']],
+  ['check:canonical-domain-sync', 'node', ['scripts/check-canonical-domain-sync.mjs']],
+  ['check:static-seo-fallback', 'node', ['scripts/check-static-seo-fallback.mjs']],
+  ['check:generated-error-page', 'node', ['scripts/check-generated-error-page-contract.mjs']],
+  ['check:operator-documentation-current', 'node', ['scripts/check-operator-documentation-current.mjs']],
+  ['check:korean-first-ui', 'node', ['scripts/check-korean-first-ui.mjs']],
+  ['check:asset-integrity', 'npm', ['run','check:asset-integrity']],
+  ['check:stitch-experience-pipeline', 'node', ['scripts/check-stitch-experience-pipeline.mjs']],
+  ['test:stitch-experience-pipeline', 'node', ['tests/stitch-experience-pipeline.mjs']],
+  ['test:commercial-closeout', 'npm', ['run','test:commercial-closeout']],
   ['check:runtime-audits', 'npm', ['run','check:runtime-audits']],
   ['check:syntax', 'npm', ['run','check:syntax']],
   ['check:reference-integrity', 'npm', ['run','check:reference-integrity']],
@@ -31,9 +51,12 @@ const steps = [
   ['check:csp-inline-style', 'npm', ['run','check:csp-inline-style']],
   ['check:performance-budget', 'npm', ['run','check:performance-budget']],
   ['verify:security', 'npm', ['run','verify:security']],
+  ['test:security-host-guard-contract', 'node', ['tests/security-host-guard-contract.mjs']],
   ['check:public-api-isolation', 'npm', ['run','check:public-api-isolation']],
   ['check:public-product-pipeline', 'npm', ['run','check:public-product-pipeline']],
   ['validate:deploy', 'npm', ['run','validate:deploy']],
+  ['validate:commercial', 'npm', ['run','validate:commercial']],
+  ['validate:commercial-runtime', 'npm', ['run','validate:commercial-runtime']],
   ['check:compose-env-forwarding', 'npm', ['run','check:compose-env-forwarding']],
   ['validate:coolify-env', 'npm', ['run','validate:coolify-env']],
   ['check:release-secret-hygiene', 'npm', ['run','check:release-secret-hygiene']],
@@ -55,7 +78,7 @@ for (const [name, cmd, args] of steps) {
   if (!ok) break;
 }
 const failures = results.filter(item => !item.ok);
-const report = { ok: failures.length === 0 && results.length === steps.length, gate: 'veridion-2.3-executive-trust-report-system', startedAt, finishedAt: new Date().toISOString(), passed: results.filter(item => item.ok).length, attempted: results.length, total: steps.length, failed: failures.length, results };
+const report = { ok: failures.length === 0 && results.length === steps.length, gate: 'veridion-2.7-commercial-hardening-max', startedAt, finishedAt: new Date().toISOString(), passed: results.filter(item => item.ok).length, attempted: results.length, total: steps.length, failed: failures.length, results };
 fs.mkdirSync(path.join(root, 'docs/current'), { recursive: true });
 fs.writeFileSync(path.join(root, 'docs/current/RELEASE_GATE_REPORT.json'), JSON.stringify(report, null, 2) + '\n');
 console.log(JSON.stringify({ ok: report.ok, gate: report.gate, passed: report.passed, attempted: report.attempted, total: report.total, failed: report.failed, report: 'docs/current/RELEASE_GATE_REPORT.json' }, null, 2));

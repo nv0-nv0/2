@@ -132,6 +132,7 @@ export function createAccountRouteHandler(ctx) {
   toPublicBoardPost,
   uid,
   validateConfig,
+  validateNewPassword,
   verifyPassword,
   verifyPortOneWebhook,
   verifyTurnstile,
@@ -174,7 +175,8 @@ const email = normalizeEmail(body.email);
 const password = String(body.password || '');
 const consent = body.privacyConsent === true || body.privacyConsent === 'true';
 if (!isValidEmail(email)) return json(req, res, 400, { ok: false, error: '유효한 이메일이 필요합니다.' });
-if (password.length < 12) return json(req, res, 400, { ok: false, error: '비밀번호는 12자 이상이어야 합니다.' });
+const passwordCheck = validateNewPassword(password);
+if (!passwordCheck.ok) return json(req, res, 400, { ok: false, error: passwordCheck.error });
 if (!consent) return json(req, res, 400, { ok: false, error: '개인정보 처리방침 동의가 필요합니다.' });
 const db = await readDb();
 db.customers ||= [];
@@ -249,7 +251,8 @@ const email = normalizeEmail(body.email);
 const token = String(body.token || '').trim();
 const password = String(body.password || '');
 if (!isValidEmail(email) || !token) return json(req, res, 400, { ok: false, error: '이메일과 재설정 토큰이 필요합니다.' });
-if (password.length < 12) return json(req, res, 400, { ok: false, error: '비밀번호는 12자 이상이어야 합니다.' });
+const passwordCheck = validateNewPassword(password);
+if (!passwordCheck.ok) return json(req, res, 400, { ok: false, error: passwordCheck.error });
 const db = await readDb();
 const customer = (db.customers || []).find(item => normalizeEmail(item.email) === email && item.status !== 'disabled');
 const record = (db.passwordResetTokens || []).find(item => item.tokenHash === hashPasswordResetToken(token) && !item.usedAt);

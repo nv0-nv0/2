@@ -7,6 +7,8 @@ const failures = [];
 function exists(rel) { return fs.existsSync(path.join(root, rel)); }
 function list(rel) { const abs = path.join(root, rel); return fs.existsSync(abs) ? fs.readdirSync(abs).filter(name => !name.startsWith('.gitkeep')) : []; }
 
+if (exists('runtime-ui')) failures.push('runtime-ui/ must never be included in the delivery ZIP');
+
 const runtimeTestDirs = fs.readdirSync(root, { withFileTypes: true })
   .filter(entry => entry.isDirectory() && /^runtime-test-/.test(entry.name))
   .map(entry => entry.name)

@@ -306,7 +306,7 @@ function comboContext(scan = {}, variant = {}, options = {}) {
 
 
 const HUMAN_TONE_VERSION = 'expert-human-column-v1';
-const HUMAN_TONE_LEGACY_VERSION = 'p208-20min-reader-interest-final-cta-v1';
+const HUMAN_TONE_LEGACY_VERSION = 'reader-interest-final-cta-v1';
 const HARD_WORDS = [
   ['contentFingerprint', '중복 확인값'],
   ['fingerprint', '중복 확인값'],

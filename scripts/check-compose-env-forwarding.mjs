@@ -39,6 +39,8 @@ const forwardedKeys = [
   'NV0_MAX_JSON_BODY_BYTES',
   'NV0_MAX_MULTIPART_BODY_BYTES',
   'NV0_SESSION_SECRET',
+  'NV0_ADMIN_MFA_REQUIRED',
+  'NV0_ADMIN_TOTP_SECRET',
   'NV0_ADMIN_AUTH_LIMIT',
   'NV0_ADMIN_AUTH_WINDOW_MS',
   'NV0_DATA_RETENTION_DAYS',
@@ -74,6 +76,7 @@ add('session-secret-present-in-operator-templates', () => {
 });
 add('session-secret-generated-by-helper', () => assert.match(read('scripts/generate-commercial-secrets.mjs'), /NV0_SESSION_SECRET/));
 add('session-secret-generated-by-r2-helper', () => assert.match(read('scripts/generate-r2-coolify-env.mjs'), /NV0_SESSION_SECRET/));
+add('r2-helper-includes-admin-mfa', () => { const text = read('scripts/generate-r2-coolify-env.mjs'); assert.match(text, /NV0_ADMIN_MFA_REQUIRED=true/); assert.match(text, /NV0_ADMIN_TOTP_SECRET/); });
 add('r2-helper-locks-internal-public-apis', () => assert.match(read('scripts/generate-r2-coolify-env.mjs'), /NV0_EXPOSE_INTERNAL_PUBLIC_APIS=false/));
 add('r2-helper-includes-payment-redirect-allowlist', () => assert.match(read('scripts/generate-r2-coolify-env.mjs'), /NV0_PAYMENT_REDIRECT_ALLOWED_HOSTS=/));
 for (const file of bootSafeComposeFiles) {
@@ -92,6 +95,8 @@ const operatorTemplateFiles = [
 const operatorTemplateKeys = [
   'NV0_EXPOSE_INTERNAL_PUBLIC_APIS',
   'NV0_SESSION_SECRET',
+  'NV0_ADMIN_MFA_REQUIRED',
+  'NV0_ADMIN_TOTP_SECRET',
   'NV0_PRIVACY_HASH_KEY',
   'NV0_SECURE_RECORDS_KEY',
   'NV0_SECURE_RECORDS_SALT',

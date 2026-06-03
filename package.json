@@ -1,9 +1,9 @@
 {
   "name": "veridion-public-risk-diagnostic",
-  "version": "2.3.0-executive-trust-report-system",
+  "version": "2.7.0-commercial-hardening-max",
   "private": true,
   "type": "module",
-  "description": "VERIDION clean commercial baseline for public trust, disclosure and conversion-risk diagnosis",
+  "description": "VERIDION commercial hardening maximum closeout with Korean-first institutional UI, delivery hygiene, semantic identifiers, static metadata fallbacks, secure admin RBAC/MFA and reproducible release gates",
   "scripts": {
     "backup:runtime": "node scripts/backup-runtime.mjs",
     "check:accessibility": "node scripts/check-accessibility-basics.mjs",
@@ -33,7 +33,6 @@
     "clean:runtime": "node scripts/clean-release-runtime.mjs",
     "delivery:final": "npm run verify:release",
     "deploy:precheck": "npm run validate:coolify-env && npm run validate:deploy && npm run check:release-secret-hygiene && npm run check:operational-contract",
-    "dev": "npm start",
     "generate:r2-env": "node scripts/generate-r2-coolify-env.mjs",
     "help": "node scripts/project-help.mjs",
     "live:smoke": "node scripts/live-smoke.mjs",
@@ -47,7 +46,6 @@
     "reset:demo": "node scripts/reset-demo-state.mjs",
     "restore:drill": "node scripts/restore-drill.mjs",
     "restore:latest": "node scripts/restore-latest-backup.mjs",
-    "runtime:clean": "npm run clean:runtime && npm run check:runtime-clean",
     "secrets:generate": "node scripts/generate-commercial-secrets.mjs",
     "smoke": "node scripts/smoke.mjs",
     "start": "node server/index.mjs",
@@ -70,10 +68,12 @@
     "validate:price-catalog": "node scripts/validate-price-catalog.mjs",
     "validate:prod-env": "node scripts/validate-prod-env.mjs",
     "verify:prod": "node scripts/verify-prod.mjs",
-    "verify:quick": "npm run check:syntax && npm test && npm run test:e2e && npm run smoke",
+    "verify:quick": "npm run check:syntax && node scripts/check-stitch-experience-pipeline.mjs && node tests/stitch-experience-pipeline.mjs && npm test && npm run test:e2e && npm run smoke",
     "verify:release": "node scripts/run-release-gate.mjs",
     "verify:security": "node scripts/verify-security.mjs",
     "check:reference-integrity": "node scripts/check-reference-integrity.mjs",
-    "test:report-excellence": "node tests/report-excellence-scorecard.mjs"
+    "test:report-excellence": "node tests/diagnosis-experience-design-scorecard.mjs && node tests/report-excellence-scorecard.mjs",
+    "check:asset-integrity": "node scripts/check-asset-integrity-contract.mjs",
+    "test:commercial-closeout": "node tests/commercial-closeout-contract.mjs && node tests/operational-hardening-contract.mjs"
   }
 }

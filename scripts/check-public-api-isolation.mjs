@@ -41,7 +41,8 @@ const hidden = [
   '/api/public/live-verification-checklist',
   '/api/public/trustops-final-handoff',
   '/api/public/trustops-100-final',
-  '/api/public/trustops-complete-delivery'
+  '/api/public/trustops-complete-delivery',
+  '/api/public/stitch-experience-pipeline'
 ];
 const publicJsonBanlist = /TrustOps|phase\d+|prelaunch|rollback|canary|sentinel|live verification|SLA|MRR|API 키 관리|운영 큐|자동화 백로그|런칭 컨트롤|프로덕션 센티널/i;
 

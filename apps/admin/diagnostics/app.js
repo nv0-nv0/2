@@ -52,6 +52,35 @@ async function load() {
   }
 }
 
+async function waitForJob(jobId, label, pick) {
+  for (let attempt = 0; attempt < 120; attempt += 1) {
+    const res = await adminFetch(`/api/admin/jobs/status?id=${encodeURIComponent(jobId)}`);
+    const payload = await res.json();
+    const job = payload.job || {};
+    renderJson(payload);
+    if (job.status === 'succeeded') { setState(pick(job.result || {})); await load(); return job; }
+    if (job.status === 'failed') throw new Error(job.error || `${label} 처리에 실패했습니다.`);
+    setState(`${label} 예약 완료 · 처리 상태를 확인하고 있습니다. (${job.status || 'queued'})`);
+    await new Promise(resolve => setTimeout(resolve, 800));
+  }
+  throw new Error(`${label} 처리 시간이 길어지고 있습니다. 작업 목록에서 상태를 확인하세요.`);
+}
+
+async function runQueuedAction(endpoint, label, pick, options = {}) {
+  try {
+    setState(`${label} 작업을 예약하고 있습니다.`);
+    const body = { ...(options.body || {}), mode: 'async_enqueue' };
+    const res = await adminFetch(endpoint, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
+    const payload = await res.json();
+    if (!payload.jobId) throw new Error('운영 작업 번호를 받지 못했습니다.');
+    renderJson(payload);
+    await waitForJob(payload.jobId, label, pick);
+  } catch (error) {
+    setState(`${label} 실패. ${error.message}`);
+    renderJson({ ok: false, action: label, message: error.message });
+  }
+}
+
 async function runAction(endpoint, label, pick, options = {}) {
   try {
     setState(`${label} 실행 중입니다.`);
@@ -66,11 +95,11 @@ async function runAction(endpoint, label, pick, options = {}) {
   }
 }
 
-document.getElementById('backupBtn')?.addEventListener('click', () => runAction('/api/admin/backups/run', '보관본', payload => payload.backup?.dbTarget || '보관본 결과 경로를 확인하세요.'));
-document.getElementById('opsReportBtn')?.addEventListener('click', () => runAction('/api/admin/ops-report/run', '점검 리포트 생성', payload => payload.snapshot?.filePath || '점검 리포트 결과를 확인하세요.'));
+document.getElementById('backupBtn')?.addEventListener('click', () => runQueuedAction('/api/admin/backups/run', '보관본', payload => payload.backup?.dbTarget || '보관본 결과 경로를 확인하세요.'));
+document.getElementById('opsReportBtn')?.addEventListener('click', () => runQueuedAction('/api/admin/ops-report/run', '점검 리포트 생성', payload => payload.snapshot?.filePath || '점검 리포트 결과를 확인하세요.'));
 document.getElementById('selfTestBtn')?.addEventListener('click', () => runAction('/api/admin/ops/self-test', '운영 자가 점검', payload => payload.probes?.emailOutboxId ? `자가 점검 큐 생성: ${payload.probes.emailOutboxId}` : '자가 점검 결과를 확인하세요.'));
-document.getElementById('emailDryRunBtn')?.addEventListener('click', () => runAction('/api/admin/email-outbox/process', '메일 처리 미리보기', payload => `미리보기 ${payload.result?.processed || 0}건`, { body: { dryRun: true, limit: 20 } }));
-document.getElementById('emailLiveBtn')?.addEventListener('click', () => runAction('/api/admin/email-outbox/process', '메일 실처리', payload => `큐 처리 ${payload.result?.processed || 0}건`, { body: { dryRun: false, limit: 20 } }));
-document.getElementById('pruneBtn')?.addEventListener('click', () => runAction('/api/admin/maintenance/prune', '서비스 환경 정리', payload => JSON.stringify(payload.pruned || {})));
+document.getElementById('emailDryRunBtn')?.addEventListener('click', () => runQueuedAction('/api/admin/email-outbox/process', '메일 처리 미리보기', payload => `미리보기 ${payload.result?.processed || 0}건`, { body: { dryRun: true, limit: 20 } }));
+document.getElementById('emailLiveBtn')?.addEventListener('click', () => runQueuedAction('/api/admin/email-outbox/process', '메일 실처리', payload => `큐 처리 ${payload.result?.processed || 0}건`, { body: { dryRun: false, limit: 20 } }));
+document.getElementById('pruneBtn')?.addEventListener('click', () => runQueuedAction('/api/admin/maintenance/prune', '서비스 환경 정리', payload => JSON.stringify(payload.pruned || {})));
 
 load();

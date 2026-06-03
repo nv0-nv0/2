@@ -1,44 +1,7 @@
-import { mountTurnstile } from '/shared/turnstile.js';
-
-const state = document.getElementById('gateState');
-const keyInput = document.getElementById('adminKey');
-keyInput.value = '';
-
-const guard = await mountTurnstile({
-  containerId: 'turnstileBox',
-  tokenInputId: 'turnstileToken',
-  noticeId: 'turnstileState',
-  configUrl: '/api/admin/session'
-});
-
-async function login() {
-  const key = keyInput.value;
-  const turnstileToken = guard.getToken();
-  state.textContent = '인증 중...';
-  let data;
-  try {
-    const res = await fetch('/api/admin/session', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ key, turnstileToken })
-    });
-    data = await res.json().catch(() => ({}));
-    if (!res.ok) {
-      state.textContent = data.error || '실패';
-      keyInput.value = '';
-      guard.reset?.();
-      return;
-    }
-  } catch (error) {
-    state.textContent = `인증 요청을 완료하지 못했습니다: ${error.message}`;
-    keyInput.value = '';
-    guard.reset?.();
-    return;
-  }
-  location.href = '/admin/console';
-}
-
-document.getElementById('loginBtn').addEventListener('click', login);
-keyInput.addEventListener('keydown', event => {
-  if (event.key === 'Enter') login();
-});
+import { mountTurnstile } from '/shared/turnstile.js?v=2.7.0';
+const state=document.getElementById('gateState'); const form=document.getElementById('adminLoginForm'); const email=document.getElementById('adminEmail'); const password=document.getElementById('adminPassword'); const otp=document.getElementById('adminOtp'); const key=document.getElementById('adminKey'); const accountFields=document.getElementById('accountFields'); const legacyKeyField=document.getElementById('legacyKeyField'); const otpField=document.getElementById('otpField'); const modeHelp=document.getElementById('authModeHelp');
+let authMode='account_rbac'; let mfaRequired=false;
+const guard=await mountTurnstile({containerId:'turnstileBox',tokenInputId:'turnstileToken',noticeId:'turnstileState',configUrl:'/api/admin/session'});
+async function loadMode(){try{const res=await fetch('/api/admin/session',{credentials:'same-origin'}); const data=await res.json(); authMode=data.adminAuthMode||'account_rbac'; mfaRequired=!!data.adminMfaRequired; const account=authMode==='account_rbac'; accountFields.hidden=!account; legacyKeyField.hidden=account; otpField.hidden=!mfaRequired; modeHelp.textContent=account?(mfaRequired?'이메일·비밀번호와 6자리 일회용 인증번호를 입력하세요.':'이메일과 비밀번호를 입력하세요.'):'개발·복구 환경의 레거시 키 인증입니다.'; if(data.authenticated) location.href='/admin/console';}catch(error){state.textContent=`인증 설정을 불러오지 못했습니다: ${error.message}`;}}
+async function login(event){event?.preventDefault(); state.textContent='인증 중입니다.'; const payload=authMode==='account_rbac'?{email:email.value.trim(),password:password.value,otp:otp.value.trim(),turnstileToken:guard.getToken()}:{key:key.value,turnstileToken:guard.getToken()}; try{const res=await fetch('/api/admin/session',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)}); const data=await res.json().catch(()=>({})); if(!res.ok){state.textContent=data.error||'인증에 실패했습니다.'; password.value=''; otp.value=''; key.value=''; guard.reset?.(); return;} location.href='/admin/console';}catch(error){state.textContent=`인증 요청을 완료하지 못했습니다: ${error.message}`; guard.reset?.();}}
+form?.addEventListener('submit',login); await loadMode();

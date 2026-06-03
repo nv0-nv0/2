@@ -51,7 +51,7 @@ function classifyRedirectOwner(env) {
 }
 
 export function buildDeploymentRiskGuard(env = process.env, options = {}) {
-  const publicBaseUrl = String(env.NV0_PUBLIC_BASE_URL || options.publicBaseUrl || 'https://www.nv0.kr').trim().replace(/\/+$/, '');
+  const publicBaseUrl = String(env.NV0_PUBLIC_BASE_URL || options.publicBaseUrl || 'https://nv0.kr').trim().replace(/\/+$/, '');
   const publicOrigin = normalizeOrigin(publicBaseUrl);
   const publicHost = normalizeHostValue(publicBaseUrl);
   const appCanonicalRedirect = boolFlag(env, 'NV0_CANONICAL_HOST_REDIRECT', false);

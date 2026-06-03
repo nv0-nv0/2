@@ -16,7 +16,7 @@ const routeSources = [
 ].join('\n');
 
 const routePairs = [
-  ['/', 'apps/public/home/index.html', ['웹사이트의 신뢰와 준법을 진단하고', '전환율을 높이세요']],
+  ['/', 'apps/public/home/index.html', ['사이트 주소 하나로 고객이', '결제 직전에 멈추는 이유']],
   ['/demo', 'apps/public/demo/index.html', ['무료 진단', '핵심 안내 공백']],
   ['/documents', 'apps/public/documents/index.html', ['문서 생성', '고객 안내문']],
   ['/guides', 'apps/public/guides/index.html', ['가이드', '고객이 안심하는 페이지']],

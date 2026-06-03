@@ -29,3 +29,6 @@ docs/archive
 
 # Generated local audit evidence
 docs/current
+
+# Unintended local UI runtime snapshots must never ship
+runtime-ui

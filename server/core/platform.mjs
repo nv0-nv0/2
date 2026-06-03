@@ -28,6 +28,8 @@ export function createPlatformProfile(env = process.env) {
       if (paymentProvider === 'demo') failures.push('NV0_PAYMENT_PROVIDER must not be demo when NV0_PLATFORM_TARGET=commercial');
       if (storageMode === 'local_fs') failures.push('NV0_STORAGE_MODE must not be local_fs when NV0_PLATFORM_TARGET=commercial');
       if (adminAuthMode === 'shared_key') failures.push('NV0_ADMIN_AUTH_MODE must not be shared_key when NV0_PLATFORM_TARGET=commercial');
+      if (String(env.NV0_ADMIN_MFA_REQUIRED || '').trim() !== 'true') failures.push('NV0_ADMIN_MFA_REQUIRED must be true when NV0_PLATFORM_TARGET=commercial');
+      if (!String(env.NV0_ADMIN_TOTP_SECRET || '').trim()) failures.push('NV0_ADMIN_TOTP_SECRET is required when NV0_PLATFORM_TARGET=commercial');
       if (scanProvider === 'builtin') failures.push('NV0_SCAN_PROVIDER must not be builtin when NV0_PLATFORM_TARGET=commercial');
       if (String(env.NV0_PERSISTENCE_MODE || '').trim() !== 'postgres_primary') failures.push('NV0_PERSISTENCE_MODE must be postgres_primary when NV0_PLATFORM_TARGET=commercial');
       if (String(env.NV0_SESSION_STORE || '').trim() !== 'redis') failures.push('NV0_SESSION_STORE must be redis when NV0_PLATFORM_TARGET=commercial');

@@ -3,6 +3,8 @@ import path from 'node:path';
 
 const root = process.cwd();
 const runtimeDir = path.join(root, 'runtime');
+const runtimeUiDir = path.join(root, 'runtime-ui');
+fs.rmSync(runtimeUiDir, { recursive: true, force: true });
 const targets = [
   path.join(runtimeDir, 'backups'),
   path.join(runtimeDir, 'reports'),
@@ -35,5 +37,6 @@ console.log(JSON.stringify({
   cleaned: targets.map(p => path.relative(root, p)),
   restoredDbFromSeed: fs.existsSync(seedPath) ? path.relative(root, seedPath) : null,
   resetSessions: path.relative(root, sessionsPath),
+  removedLegacyRuntimeUi: !fs.existsSync(runtimeUiDir),
   note: 'runtime/uploads, runtime/backups, runtime/reports are intentionally empty; production data must live in the nv0_runtime Docker volume.'
 }, null, 2));

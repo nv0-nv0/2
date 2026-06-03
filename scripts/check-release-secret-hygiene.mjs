@@ -13,7 +13,9 @@ const secretPatterns = [
   { name: 'slack_token', pattern: /\bxox[baprs]-[A-Za-z0-9-]{20,}\b/g },
   { name: 'private_key_block', pattern: /-----BEGIN (?:RSA |EC |OPENSSH |)PRIVATE KEY-----/g },
   { name: 'portone_live_secret_literal', pattern: /PORTONE_(?:API_)?SECRET\s*=\s*(?!replace-|REPLACE_|$)[A-Za-z0-9_\-]{24,}/g },
-  { name: 'turnstile_secret_literal', pattern: /TURNSTILE_SECRET\s*=\s*(?!replace-|REPLACE_|test-|$)[A-Za-z0-9_\-]{24,}/g }
+  { name: 'turnstile_secret_literal', pattern: /TURNSTILE_SECRET\s*=\s*(?!replace-|REPLACE_|test-|$)[A-Za-z0-9_\-]{24,}/g },
+  { name: 'jwt_shape', pattern: /\beyJ[A-Za-z0-9_-]{8,}\.eyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{16,}\b/g },
+  { name: 'bearer_token_shape', pattern: /\bBearer\s+[A-Za-z0-9._~-]{32,}\b/g }
 ];
 
 function walk(dir) {
@@ -26,6 +28,17 @@ function walk(dir) {
     const rel = path.relative(root, full).replaceAll(path.sep, '/');
     let text = '';
     try { text = fs.readFileSync(full, 'utf8'); } catch { continue; }
+    const databaseCredentialPattern = /(?:postgres(?:ql)?|mysql|mongodb(?:\+srv)?):\/\/[^:\s/@]+:([^@\s]+)@/gi;
+    let databaseCredentialMatch;
+    while ((databaseCredentialMatch = databaseCredentialPattern.exec(text))) {
+      const credential = databaseCredentialMatch[1];
+      const normalizedCredential = String(credential || '').toLowerCase();
+      const placeholder = /\$\{|replace|change|ci[_-]?only|example|placeholder|set[_ -]?postgres/.test(normalizedCredential);
+      if (!placeholder) {
+        const line = text.slice(0, databaseCredentialMatch.index).split(/\r?\n/).length;
+        findings.push({ file: rel, line, type: 'database_url_embedded_credential', sample: databaseCredentialMatch[0].slice(0, 24) + '…' });
+      }
+    }
     for (const { name, pattern } of secretPatterns) {
       pattern.lastIndex = 0;
       let match;
@@ -42,7 +55,7 @@ walk(root);
 const report = {
   ok: findings.length === 0,
   checkedAt: new Date().toISOString(),
-  ruleVersion: 'release-secret-hygiene-v1',
+  ruleVersion: 'release-secret-hygiene-v2',
   findings
 };
 fs.mkdirSync(path.join(root, 'docs/current'), { recursive: true });

@@ -6,6 +6,14 @@ function randBase64(bytes = 32) {
 function randHex(bytes = 32) {
   return crypto.randomBytes(bytes).toString('hex');
 }
+function randBase32(bytes = 20) {
+  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+  const data = crypto.randomBytes(bytes);
+  let bits = '', out = '';
+  for (const byte of data) bits += byte.toString(2).padStart(8, '0');
+  for (let i = 0; i < bits.length; i += 5) out += alphabet[Number.parseInt(bits.slice(i, i + 5).padEnd(5, '0'), 2)];
+  return out;
+}
 function value(name, fallback = '') {
   const raw = String(process.env[name] || '').trim();
   return raw || fallback;
@@ -22,6 +30,7 @@ const secureKey = value('NV0_SECURE_RECORDS_KEY', randBase64(48));
 const secureSalt = value('NV0_SECURE_RECORDS_SALT', randHex(32));
 const privacyHashKey = value('NV0_PRIVACY_HASH_KEY', randBase64(48));
 const backupEncryptionSecret = value('NV0_BACKUP_ENCRYPTION_SECRET', randBase64(48));
+const adminTotpSecret = value('NV0_ADMIN_TOTP_SECRET', randBase32(20));
 
 const lines = [
   '# VERIDION strict commercial Coolify env - R2 primary profile',
@@ -40,7 +49,7 @@ const lines = [
   'NV0_COMMERCIAL_LAUNCH_READY=false',
   'NV0_RUN_PREFLIGHT=true',
   'NV0_EXPOSE_INTERNAL_PUBLIC_APIS=false',
-  'NV0_PUBLIC_BASE_URL=https://www.nv0.kr',
+  'NV0_PUBLIC_BASE_URL=https://nv0.kr',
   'NV0_CANONICAL_HOST_REDIRECT=false',
   'NV0_REDIRECT_OWNER=edge',
   'NV0_DEPLOYMENT_RISK_STRICT=false',
@@ -77,6 +86,8 @@ const lines = [
   'NV0_REFUND_REQUEST_WINDOW_DAYS=7',
   'NV0_RULES_VERSION=production-20260427',
   'NV0_ADMIN_AUTH_MODE=account_rbac',
+  'NV0_ADMIN_MFA_REQUIRED=true',
+  `NV0_ADMIN_TOTP_SECRET=${adminTotpSecret}`,
   'NV0_BOOTSTRAP_ADMIN_EMAIL=admin@nv0.kr',
   'NV0_BOOTSTRAP_ADMIN_NAME=VERIDION_Admin',
   `NV0_BOOTSTRAP_ADMIN_PASSWORD=${adminPassword}`,

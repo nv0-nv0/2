@@ -159,6 +159,42 @@ if (!window.__NV0_RUNTIME_OPTIMIZER__) {
     }).catch(() => {});
   }
 
+  function compactErrorMessage(value) {
+    return String(value || '클라이언트 오류')
+      .replace(/https?:\/\/[^\s)]+/gi, '[URL]')
+      .replace(/[\w.+-]+@[\w.-]+\.[a-z]{2,}/gi, '[EMAIL]')
+      .slice(0, 240);
+  }
+
+  function sendClientError({ name = 'Error', message = '', sourcePath = '', line = 0, column = 0 } = {}) {
+    sendMetric({
+      path: window.location.pathname,
+      page: body?.dataset?.page || 'public',
+      metricType: 'client_error',
+      errorName: String(name || 'Error').slice(0, 64),
+      errorMessage: compactErrorMessage(message),
+      sourcePath: String(sourcePath || '').replace(window.location.origin, '').replace(/[?#].*$/, '').slice(0, 160),
+      line: Number(line || 0),
+      column: Number(column || 0),
+      userAgentBucket: /Mobile|Android|iPhone|iPad/i.test(navigator.userAgent || '') ? 'mobile' : 'desktop'
+    });
+  }
+
+  function initErrorTelemetry() {
+    window.addEventListener('error', (event) => {
+      const target = event.target;
+      if (target && target !== window && (target.src || target.href)) {
+        sendClientError({ name: 'ResourceLoadError', message: '정적 자산을 불러오지 못했습니다.', sourcePath: target.src || target.href });
+        return;
+      }
+      sendClientError({ name: event.error?.name || 'Error', message: event.message || event.error?.message || '클라이언트 오류', sourcePath: event.filename || '', line: event.lineno, column: event.colno });
+    }, true);
+    window.addEventListener('unhandledrejection', (event) => {
+      const reason = event.reason;
+      sendClientError({ name: reason?.name || 'UnhandledRejection', message: reason?.message || String(reason || '처리되지 않은 비동기 오류') });
+    });
+  }
+
   function initMetrics() {
     const metric = collectMetric();
     const disposers = observeVitals(metric);
@@ -181,6 +217,7 @@ if (!window.__NV0_RUNTIME_OPTIMIZER__) {
     enhanceNavigation();
     revealCards();
     initMetrics();
+    initErrorTelemetry();
   }
 
   if (document.readyState === 'loading') {

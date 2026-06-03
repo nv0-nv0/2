@@ -23,7 +23,8 @@ for (const rel of [
   'runtime/uploads',
   'runtime/backups',
   'runtime/reports',
-  'runtime/stress-smoke'
+  'runtime/stress-smoke',
+  'runtime-ui'
 ]) removeRel(rel);
 
 for (const entry of fs.readdirSync(root, { withFileTypes: true })) {
@@ -38,6 +39,7 @@ console.log(JSON.stringify({
   ok: true,
   phase: 'clean-release-runtime-state-excluded',
   retained: ['runtime/data/db.seed.json'],
+  forbiddenSnapshotRoots: ['runtime-ui/'],
   removedActiveState: removed,
   note: 'Release packages must not include local runtime state or runtime-test-* directories. Server recreates local runtime files on first non-commercial JSON-mode start; commercial mode must use PostgreSQL/Redis/object storage.'
 }, null, 2));

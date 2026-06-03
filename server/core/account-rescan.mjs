@@ -16,7 +16,7 @@ export async function handleAccountRescan(ctx) {
   if (!site || !(db.customerSiteLinks || []).some(item => item.customerId === session.customer.id && item.siteId === site.id)) {
     return json(req, res, 404, { ok: false, error: '저장된 사이트를 찾을 수 없습니다.' });
   }
-  const result = await scanResultFor(site.domain, db);
+  const result = await scanResultFor(site.domain, db, { bypassCache: true });
   const canonical = ensureSiteRecord(db, result);
   Object.assign(site, {
     latestRiskScore: canonical.latestRiskScore,

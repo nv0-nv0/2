@@ -13,7 +13,7 @@ const rel = abs => path.relative(root, abs).replaceAll('\\', '/');
 const files = walk(root).map(rel).filter(file => !file.startsWith('.git/'));
 const pkg = JSON.parse(read('package.json'));
 
-add('package-version-clean-baseline', () => assert.equal(pkg.version, '2.3.0-executive-trust-report-system'));
+add('package-version-clean-baseline', () => assert.equal(pkg.version, '2.7.0-commercial-hardening-max'));
 add('single-terminal-release-gate', () => {
   assert.equal(pkg.scripts['verify:release'], 'node scripts/run-release-gate.mjs');
   assert.equal(pkg.scripts['release:predeploy'], 'npm run verify:release');
@@ -47,7 +47,7 @@ add('no-single-import-public-wrapper-debris', () => {
   assert.deepEqual(debris, []);
 });
 add('no-forbidden-runtime-state', () => {
-  const forbidden = files.filter(file => file === 'runtime/data/db.json' || file === 'runtime/data/sessions.json' || file.startsWith('runtime/data/secure-records/') || file.startsWith('runtime/uploads/') || file.startsWith('runtime/backups/') || file.startsWith('runtime/reports/') || file.startsWith('runtime-test-'));
+  const forbidden = files.filter(file => file === 'runtime/data/db.json' || file === 'runtime/data/sessions.json' || file.startsWith('runtime/data/secure-records/') || file.startsWith('runtime/uploads/') || file.startsWith('runtime/backups/') || file.startsWith('runtime/reports/') || file === 'runtime-ui' || file.startsWith('runtime-ui/') || file.startsWith('runtime-test-'));
   assert.deepEqual(forbidden, []);
 });
 add('no-real-root-env-files', () => {

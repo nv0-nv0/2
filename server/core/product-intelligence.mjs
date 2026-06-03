@@ -112,7 +112,7 @@ export function buildProductIntelligence({ scan = {}, site = null, riskScore = n
     `${recommendedPlan} 기준으로 다음 상품 선택`
   ];
   const intelligence = {
-    version: 'p152-smart-product-v1',
+    version: 'smart-product-v1',
     source,
     domain,
     riskScore: score,
@@ -147,7 +147,7 @@ export function buildProductDashboard(db = {}) {
   const orderCount = list(db.orders).length;
   return {
     ok: true,
-    version: 'p152-smart-product-v1',
+    version: 'smart-product-v1',
     productScore: clamp(70 + Math.min(10, siteCount) + Math.min(10, columnCount / 5) + Math.min(10, orderCount / 3)),
     latestRiskScore: score,
     operatingSignals: {

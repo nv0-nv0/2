@@ -59,7 +59,7 @@ Healthcheck Path: /readyz
 ## 배포 후 확인
 
 ```bash
-NV0_LIVE_BASE_URL=https://www.nv0.kr npm run live:smoke
+NV0_LIVE_BASE_URL=https://nv0.kr npm run live:smoke
 ```
 
 ## 주의

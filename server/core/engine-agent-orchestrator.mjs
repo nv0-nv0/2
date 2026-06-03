@@ -53,6 +53,11 @@ const ENGINE_DEFINITIONS = Object.freeze([
   ['split-gate-runner-engine','test-gate','scripts/run-release-gate.mjs','package.json','긴 통합 명령을 안정적인 순차 게이트로 실행하고 로그를 남김'],
   ['responsive-contract-engine','ui-contract','scripts/check-responsive-contract.mjs','shared/veridion-rebrand.css','모바일·태블릿·데스크톱 레이아웃 계약과 깨진 도형 후보를 검수'],
   ['operational-contract-engine','operations','scripts/check-operational-readiness-contract.mjs','deploy/env.production.template','실결제·개인정보·사업자정보·스토리지 운영 준비 계약을 검수'],
+  ['stitch-design-system-engine','stitch-design-system','shared/stitch-route-manifest.mjs','shared/stitch-institutional.css','Executive Trust Framework 토큰과 공통 컴포넌트 규칙을 유지'],
+  ['stitch-route-experience-engine','stitch-route-experience','server/core/stitch-experience-pipeline.mjs','apps/public/home/index.html','Stitch 시안 10종과 실제 공개·관리자 라우트를 연결'],
+  ['stitch-state-coverage-engine','stitch-state-coverage','server/core/stitch-experience-pipeline.mjs','shared/veridion-rebrand.css','포커스, 로딩, 오류, 빈 상태, 권한 거부, 모바일 상태를 검수'],
+  ['stitch-function-binding-engine','stitch-function-binding','server/core/stitch-experience-pipeline.mjs','server/routes/public.mjs','진단, 결제, 포털, 인사이트, 관리자 기능의 화면 연결을 유지'],
+  ['stitch-release-contract-engine','stitch-release-contract','scripts/check-stitch-experience-pipeline.mjs','tests/stitch-experience-pipeline.mjs','Stitch 경험 파이프라인 계약을 최종 릴리즈 게이트에 연결'],
 ]);
 
 const AGENT_DEFINITIONS = Object.freeze([
@@ -163,7 +168,12 @@ const AGENT_DEFINITIONS = Object.freeze([
   ['gate-timeout-agent','split-gate-runner-engine','verify:release','장시간 통합 명령의 환경 제한을 줄이도록 분할 실행 계약을 유지'],
   ['responsive-breakpoint-agent','responsive-contract-engine','responsive contract','360, 390, 768, 1024, 1440 기준 CSS/HTML 계약을 검수'],
   ['glyph-regression-agent','responsive-contract-engine','public screens','깨진 도형 후보와 과거 보정 CSS 재유입을 차단'],
-  ['commercial-env-contract-agent','operational-contract-engine','release predeploy','운영 결제·사업자·개인정보·스토리지 필수 환경값 계약을 검수']
+  ['commercial-env-contract-agent','operational-contract-engine','release predeploy','운영 결제·사업자·개인정보·스토리지 필수 환경값 계약을 검수'],
+  ['design-token-governance-agent','stitch-design-system-engine','shared css','Stitch 색상·간격·모서리·표 정책을 공통 CSS에서 유지'],
+  ['route-surface-mapping-agent','stitch-route-experience-engine','route manifest','시안 10종과 실제 라우트의 연결 누락을 차단'],
+  ['interaction-state-coverage-agent','stitch-state-coverage-engine','ui states','기본, 포커스, 로딩, 오류, 빈 상태, 권한 거부, 모바일 상태를 검수'],
+  ['function-handoff-agent','stitch-function-binding-engine','route functions','진단부터 포털·결제·관리자 운영까지 화면과 기능 핸드오프를 검수'],
+  ['stitch-regression-gate-agent','stitch-release-contract-engine','verify release','Stitch 정적 계약 검사와 통합 테스트를 릴리즈 게이트에 고정']
 
 ]);
 
@@ -331,6 +341,16 @@ const EVENT_POLICIES = Object.freeze({
       ['operatorRunbook', payload => Number(payload.runbookCount || 0) >= 12, '운영자 런북 12단계 이상이 필요합니다.'],
       ['safeMode', payload => Number(payload.safeModeCount || 0) >= 5, '고객 안전 모드 5개 이상이 필요합니다.'],
       ['kpis', payload => Number(payload.kpiCount || 0) >= 6, '오픈 KPI 6개 이상이 필요합니다.']
+    ]
+  },
+  'experience.pipeline.validate': {
+    domain: 'stitch-experience',
+    requiredAgents: ['design-token-governance-agent','route-surface-mapping-agent','interaction-state-coverage-agent','function-handoff-agent','stitch-regression-gate-agent'],
+    checks: [
+      ['allPrototypesMapped', payload => Number(payload.mappedPrototypeCount || 0) === 10, 'Stitch 시안 10종이 실제 라우트에 연결되어야 합니다.'],
+      ['routeCoverage', payload => Number(payload.surfaceCount || 0) >= 24, '공개·관리자 라우트 경험 표면이 연결되어야 합니다.'],
+      ['stateCoverage', payload => Number(payload.stateRequirementCount || 0) >= 10, '상태 UI 계약이 필요합니다.'],
+      ['noCustomerPublicExposure', payload => payload.customerPublicExposure !== true, '내부 경험 파이프라인 상태는 고객 공개 API에 노출할 수 없습니다.']
     ]
   },
   'trustops.100_final': {

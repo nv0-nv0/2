@@ -12,6 +12,8 @@ export function createAdminRouteHandler(ctx) {
   const {
   ADMIN_AUTH_LIMIT,
   ADMIN_AUTH_MODE,
+  ADMIN_MFA_REQUIRED,
+  ADMIN_TOTP_SECRET,
   ADMIN_AUTH_WINDOW_MS,
   ADMIN_KEY,
   AUDIT_LOG_RETENTION_COUNT,
@@ -49,6 +51,7 @@ export function createAdminRouteHandler(ctx) {
   appendAudit,
   asTrimmedString,
   authenticateAdminAccount,
+  verifyTotpCode,
   backupSecurityConfigSummary,
   bodyBuffer,
   bodyJson,
@@ -138,7 +141,7 @@ export function createAdminRouteHandler(ctx) {
 if (pathname === '/api/admin/session' && req.method === 'GET') {
 if (!adminIpAllowed(req)) return json(req, res, 403, { ok: false, authenticated: false, error: '관리자 접근 IP가 허용 목록에 없습니다.' });
 const session = await getSession(req);
-return json(req, res, 200, { ok: true, authenticated: !!session, csrfToken: session?.csrfToken || '', turnstileEnabled: ENABLE_TURNSTILE, turnstileSiteKey: ENABLE_TURNSTILE ? TURNSTILE_SITE_KEY : '', adminAuthMode: ADMIN_AUTH_MODE, platformTarget: PLATFORM.target, adminUser: session ? { id: session.adminUserId || null, email: session.adminEmail || null, displayName: session.adminDisplayName || null, roles: session.roles || [], permissions: session.permissions || [] } : null });
+return json(req, res, 200, { ok: true, authenticated: !!session, csrfToken: session?.csrfToken || '', turnstileEnabled: ENABLE_TURNSTILE, turnstileSiteKey: ENABLE_TURNSTILE ? TURNSTILE_SITE_KEY : '', adminAuthMode: ADMIN_AUTH_MODE, adminMfaRequired: ADMIN_MFA_REQUIRED, platformTarget: PLATFORM.target, adminUser: session ? { id: session.adminUserId || null, email: session.adminEmail || null, displayName: session.adminDisplayName || null, roles: session.roles || [], permissions: session.permissions || [] } : null });
 }
 if (pathname === '/api/admin/session' && req.method === 'POST') {
 if (!adminIpAllowed(req)) return json(req, res, 403, { ok: false, error: '관리자 접근 IP가 허용 목록에 없습니다.' });
@@ -159,6 +162,11 @@ if (ADMIN_AUTH_MODE === 'account_rbac') {
 const email = asTrimmedString(body?.email, { field: 'email', required: true, max: 200, pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ });
 const password = asTrimmedString(body?.password, { field: 'password', required: true, max: 200 });
 const auth = await authenticateAdminAccount(db, email, password);
+if (auth && ADMIN_MFA_REQUIRED && !verifyTotpCode(ADMIN_TOTP_SECRET, body?.otp)) {
+appendAudit(db, req, 'admin.auth.mfa_failed', { mode: 'account_rbac', email });
+await writeDb(db);
+return json(req, res, 401, { ok: false, error: '일회용 인증번호가 올바르지 않습니다.' });
+}
 if (!auth) {
 appendAudit(db, req, 'admin.auth.failed', { mode: 'account_rbac', email });
 await writeDb(db);
@@ -252,51 +260,6 @@ auditLogs: db.auditLogs.length
 session: { active: true, expiresAt: session.expiresAt }
 });
 }
-if (pathname === '/api/admin/diagnostics' && req.method === 'GET') {
-return json(req, res, 200, {
-ok: true,
-runtime: {
-pid: process.pid,
-uptimeSec: Math.round(process.uptime()),
-memoryRss: process.memoryUsage().rss,
-env: NODE_ENV,
-turnstileEnabled: TURNSTILE_PUBLIC_ENABLED,
-turnstileConfigured: TURNSTILE_CONFIGURED,
-trustProxyHeaders: TRUST_PROXY_HEADERS,
-csrfProtection: true,
-backupRetentionCount: BACKUP_RETENTION_COUNT,
-auditLogRetentionCount: AUDIT_LOG_RETENTION_COUNT,
-storageMode: STORAGE_MODE,
-backupRemoteEnabled: BACKUP_REMOTE_ENABLED,
-autoBackupEnabled: AUTO_BACKUP_ENABLED,
-backupEncryptionConfigured: !!BACKUP_ENCRYPTION_SECRET,
-scanProvider: SCAN_PROVIDER,
-paymentProvider: PAYMENT_PROVIDER,
-deploymentStage: DEPLOYMENT_STAGE,
-commercialLaunchReady: COMMERCIAL_LAUNCH_READY
-},
-storage: { uploadsDir: UPLOADS_DIR, runtimeDir: RUNTIME_DIR, backupsDir: BACKUPS_DIR, reportsDir: REPORTS_DIR },
-integrations: {
-scanProvider: { mode: SCAN_PROVIDER, urlConfigured: !!SCAN_PROVIDER_URL, fallbackEnabled: SCAN_PROVIDER_FALLBACK },
-paymentProvider: PAYMENT_PROVIDER === 'portone_v2' ? { mode: PAYMENT_PROVIDER, ...PORTONE_CLIENT.configSummary() } : { mode: PAYMENT_PROVIDER, urlConfigured: !!PAYMENT_PROVIDER_URL },
-storage: { mode: STORAGE_MODE, uploadsDir: UPLOADS_DIR, remoteBackup: backupSecurityConfigSummary() },
-email: { smtpConfigured: !!String(process.env.NV0_SMTP_URL || '').trim(), liveAdapter: true, maxRetryCount: EMAIL_MAX_RETRY_COUNT, retryBackoffMs: EMAIL_RETRY_BACKOFF_MS }
-},
-readiness: buildReleaseReadiness(db),
-launchChecklist: buildProductionLaunchChecklist(db),
-emailOutbox: {
-queued: (db.emailOutbox || []).filter(item => ['queued','retry_scheduled'].includes(item.status)).length,
-failed: (db.emailOutbox || []).filter(item => item.status === 'failed').length,
-recent: (db.emailOutbox || []).slice(0, 10).map(item => ({ id: item.id, to: maskEmail(item.to), subject: item.subject, status: item.status, retryCount: item.retryCount, deliveryMode: item.deliveryMode || null, createdAt: item.createdAt }))
-},
-recentOperationalEvents: (db.operationalEvents || []).slice(0, 10),
-recentAuditLogs: db.auditLogs.slice(0, 10),
-recentScans: db.scans.slice(0, 5),
-pendingAutoFixJobs: db.autoFixJobs.filter(item => item.status === 'pending').slice(0, 10)
-});
-}
-
-
 if (pathname === '/api/admin/trustops-autopilot' && req.method === 'GET') {
 if (!requireAdminPermission(req, res, session, 'ops.read')) return;
 const cockpit = buildTrustOpsAutopilotCockpit(db, { nowIso: nowIso() });
@@ -357,52 +320,6 @@ const profile = buildAdminOperatingProfile(db);
 appendAudit(db, req, 'admin.product_quality.checked', { score: profile.score, blockers: profile.blockers.length });
 await writeDb(db);
 return json(req, res, profile.ok ? 200 : 207, { ok: profile.ok, profile });
-}
-if (pathname === '/api/admin/audit-logs' && req.method === 'GET') {
-return json(req, res, 200, { ok: true, auditLogs: db.auditLogs.slice(0, 100) });
-}
-if (pathname === '/api/admin/ops-report' && req.method === 'GET') {
-if (!requireAdminPermission(req, res, session, 'ops.read')) return;
-const report = await buildOpsReport();
-return json(req, res, 200, { ok: true, report });
-}
-if (pathname === '/api/admin/ops-report/run' && req.method === 'POST') {
-if (!requireAdminPermission(req, res, session, 'ops.write')) return;
-const snapshot = await writeOpsReportSnapshot();
-const reloaded = await readDb();
-const audit = appendAudit(reloaded, req, 'admin.ops_report.created', { filePath: snapshot.filePath });
-await writeDb(reloaded);
-return json(req, res, 200, { ok: true, snapshot: { filePath: snapshot.filePath }, audit, report: snapshot.report });
-}
-if (pathname === '/api/admin/maintenance/prune' && req.method === 'POST') {
-if (!requireAdminPermission(req, res, session, 'ops.write')) return;
-const pruned = await pruneBackupSnapshots();
-const reloaded = await readDb();
-const dataRetention = cleanupDataRetention(reloaded, { dryRun: false });
-const audit = appendAudit(reloaded, req, 'admin.maintenance.pruned', { pruned, dataRetention });
-await writeDb(reloaded);
-return json(req, res, 200, { ok: true, pruned, dataRetention, audit });
-}
-if (pathname === '/api/admin/backups' && req.method === 'GET') {
-if (!requireAdminPermission(req, res, session, 'ops.read')) return;
-const backups = await listBackupSnapshots();
-return json(req, res, 200, { ok: true, backups });
-}
-if (pathname === '/api/admin/backups/restore' && req.method === 'POST') {
-if (!requireAdminPermission(req, res, session, 'ops.write')) return;
-const body = { name: asTrimmedString((await bodyJson(req, MAX_JSON_BODY_BYTES) || {}).name, { field: 'name', required: true, max: 255 }) };
-const restored = await restoreBackupSnapshot(body.name);
-const reloaded = await readDb();
-const audit = appendAudit(reloaded, req, 'admin.backup.restored', { name: body.name, ...restored });
-await writeDb(reloaded);
-return json(req, res, 200, { ok: true, restored, audit });
-}
-if (pathname === '/api/admin/backups/run' && req.method === 'POST') {
-if (!requireAdminPermission(req, res, session, 'ops.write')) return;
-const backup = await createBackupSnapshot({ reason: 'admin_api' });
-const audit = appendAudit(db, req, 'admin.backup.created', { ...backup, remote: backup.remote });
-await writeDb(db);
-return json(req, res, 200, { ok: true, backup, audit });
 }
 if (pathname === '/api/admin/settings' && req.method === 'GET') return json(req, res, 200, { ok: true, settings: db.settings });
 if (pathname === '/api/admin/settings' && req.method === 'POST') {
@@ -603,7 +520,7 @@ return json(req, res, 200, { ok: true, sites: db.sites, scans: db.scans.slice(0,
 }
 if (pathname === '/api/admin/sites/rescan' && req.method === 'POST') {
 const body = normalizeScanPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
-const result = await scanResultFor(body.target, db);
+const result = await scanResultFor(body.target, db, { bypassCache: body.bypassCache });
 const site = ensureSiteRecord(db, result);
 const subscription = ensureSubscriptionForSite(db, site, result.recommendedPlan);
 const guidance = createGuidanceDocument(db, site, result);
@@ -790,16 +707,6 @@ appendAudit(db, req, 'admin.order.fulfillment_generated', { orderId: order.id, a
 await writeDb(db);
 return json(req, res, 200, { ok: true, order: sanitizeOrderForPublic(order), asset });
 }
-if (pathname === '/api/admin/email-outbox' && req.method === 'GET') {
-return json(req, res, 200, {
-  ok: true,
-  emails: (db.emailOutbox || []).slice(0, 200).map(item => ({
-    ...item,
-    to: maskEmail(item.to),
-    body: String(item.body || '').slice(0, 500)
-  }))
-});
-}
 if (pathname === '/api/admin/email-outbox/status' && req.method === 'POST') {
 const body = normalizeEmailDeliveryPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
 const email = (db.emailOutbox || []).find(item => item.id === body.id);
@@ -822,70 +729,6 @@ if (order && ['approved','completed'].includes(body.status)) { order.refundStatu
 appendAudit(db, req, 'admin.refund.status_changed', { refundRequestId: request.id, orderId: request.orderId, status: body.status });
 await writeDb(db);
 return json(req, res, 200, { ok: true, refundRequest: request, order: order ? sanitizeOrderForPublic(order) : null });
-}
-if (pathname === '/api/admin/release-readiness' && req.method === 'GET') return json(req, res, 200, { ok: true, readiness: buildReleaseReadiness(db), operationalEvents: (db.operationalEvents || []).slice(0, 100) });
-if (pathname === '/api/admin/hardening-matrix' && req.method === 'GET') {
-if (!requireAdminPermission(req, res, session, 'ops.read')) return;
-return json(req, res, 200, buildHardeningMatrix(db));
-}
-if (pathname === '/api/admin/launch-checklist' && req.method === 'GET') {
-const checklist = buildProductionLaunchChecklist(db);
-appendAudit(db, req, 'admin.launch_checklist.viewed', { ok: checklist.ok, blockers: checklist.blockers.map(item => item.key) });
-await writeDb(db);
-return json(req, res, checklist.ok ? 200 : 503, { ok: checklist.ok, checklist });
-}
-if (pathname === '/api/admin/commercial-final-gate' && req.method === 'GET') {
-const gate = buildCommercialFinalGate(db);
-appendAudit(db, req, 'admin.commercial_final_gate.viewed', { ok: gate.ok, blockers: gate.blockers.map(item => item.key) });
-await writeDb(db);
-return json(req, res, gate.ok ? 200 : 503, { ok: gate.ok, gate });
-}
-if (pathname === '/api/admin/email-outbox/process' && req.method === 'POST') {
-const body = await bodyJson(req, MAX_JSON_BODY_BYTES) || {};
-const result = await processEmailOutbox(db, { dryRun: body.dryRun !== false, limit: Math.min(Number(body.limit || 20), 100) });
-appendAudit(db, req, 'admin.email_outbox.processed', { processed: result.processed, dryRun: body.dryRun !== false });
-await writeDb(db);
-return json(req, res, 200, result);
-}
-if (pathname === '/api/admin/ops/self-test' && req.method === 'POST') {
-const readiness = buildReleaseReadiness(db);
-const emailProbe = enqueueTransactionalEmail(db, { to: OPERATOR_ALERT_EMAIL, template: 'ops_self_test', subject: '[VERIDION] 운영 자가 점검', body: '운영 자가 점검 메일 처리 테스트입니다.' });
-appendAudit(db, req, 'admin.ops.self_test', { ready: readiness.ready, emailProbeId: emailProbe.id });
-await writeDb(db);
-return json(req, res, 200, { ok: true, readiness, probes: { emailOutboxId: emailProbe.id, dbWritable: true, runtime: 'ok' } });
-}
-if (pathname === '/api/admin/ops' && req.method === 'POST') {
-if (!requireAdminPermission(req, res, session, 'ops.write')) return;
-const body = normalizeOpsPayload(await bodyJson(req, MAX_JSON_BODY_BYTES) || {});
-const action = body.action;
-if (action === 'backup') {
-const backup = await createBackupSnapshot({ reason: 'admin_ops' });
-appendAudit(db, req, 'admin.ops.backup', { target: backup.dbTarget, remote: backup.remote });
-await writeDb(db);
-return json(req, res, 200, { ok: true, action, backup });
-}
-if (action === 'restore_latest') {
-const backups = await listBackupSnapshots();
-if (!backups.length) return json(req, res, 404, { ok: false, error: '복원할 보관본이 없습니다.' });
-const restored = await restoreBackupSnapshot(backups[0].name);
-const fresh = await readDb();
-appendAudit(fresh, req, 'admin.ops.restore_latest', { name: backups[0].name });
-await writeDb(fresh);
-return json(req, res, 200, { ok: true, action, restored });
-}
-if (action === 'prune') {
-const pruned = await pruneBackupSnapshots();
-appendAudit(db, req, 'admin.ops.prune', pruned);
-await writeDb(db);
-return json(req, res, 200, { ok: true, action, pruned });
-}
-if (action === 'report') {
-const report = await writeOpsReportSnapshot();
-appendAudit(db, req, 'admin.ops.report', { filePath: report.filePath });
-await writeDb(db);
-return json(req, res, 200, { ok: true, action, report });
-}
-return json(req, res, 400, { ok: false, error: '지원하지 않는 action 입니다.' });
 }
 return json(req, res, 404, { ok: false, error: 'Not found' });
   };

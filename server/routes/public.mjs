@@ -13,6 +13,7 @@ import { buildTrustOps100PointFinalScorecard } from '../core/trustops-100-point-
 import { buildTrustOpsCompleteDelivery } from '../core/trustops-complete-delivery.mjs';
 import { applyEngineAgentGate, appendEngineAgentEvent } from '../core/engine-agent-orchestrator.mjs';
 import { buildUnifiedOrganismStatus, normalizeClientMetric } from '../core/unified-platform-organism.mjs';
+import { buildStitchExperiencePipelineSnapshot } from '../core/stitch-experience-pipeline.mjs';
 
 export function createPublicRouteHandler(ctx) {
   const {
@@ -157,6 +158,7 @@ export function createPublicRouteHandler(ctx) {
   toPublicBoardPost,
   uid,
   validateConfig,
+  validateNewPassword,
   verifyPassword,
   verifyPortOneWebhook,
   verifyTurnstile,
@@ -267,15 +269,20 @@ return { requestId: scan?.requestId || null, siteId: scan?.siteId || null, targe
     '/api/public/live-verification-checklist',
     '/api/public/trustops-final-handoff',
     '/api/public/trustops-100-final',
-    '/api/public/trustops-complete-delivery'
+    '/api/public/trustops-complete-delivery',
+    '/api/public/stitch-experience-pipeline'
   ]);
   const allowInternalPublicApisForTest = process.env.NODE_ENV === 'test'
     && process.env.NV0_EXPOSE_INTERNAL_PUBLIC_APIS === 'true';
   if (!allowInternalPublicApisForTest && customerHiddenOperationalEndpoints.has(pathname)) {
     return json(req, res, 404, { ok: false, error: 'Not found' }, { 'cache-control': 'no-store' });
   }
+if (pathname === '/api/public/stitch-experience-pipeline' && req.method === 'GET') {
+const pipeline = buildStitchExperiencePipelineSnapshot({ releaseGateConnected: true });
+return json(req, res, pipeline.ready ? 200 : 503, { ok: pipeline.ready, pipeline }, { 'cache-control': 'no-store' });
+}
 if (pathname === '/api/public/diagnosis-engine' && req.method === 'GET') {
-return json(req, res, 200, { ok: true, phase: RELEASE_PHASE, engine: 'VERIDION Public Evidence Summary Check Engine', rulesVersion: RULES_VERSION, targetFetchEnabled: TARGET_FETCH_ENABLED, scanProvider: SCAN_PROVIDER, aiReviewProvider: AI_REVIEW_PROVIDER, geminiConfigured: AI_REVIEW_ENABLED, resultContract: { resultType: 'preliminary_check', legalConclusion: false, includesEvidenceSummary: true, includesConfidenceScore: true, includesManualReviewFlags: true, includesAutomationDisclosure: true, includesAutomatedActionPlan: true, includesAccuracyProfile: true, includesReportQualityGate: true, includesDemoAccuracyContract: true, includesPaidOutputQualityGate: true, serviceQualityVersion: SERVICE_QUALITY_VERSION, deploymentRiskGuardVersion: DEPLOYMENT_RISK_GUARD_VERSION }, endpoints: { scan: 'POST /api/public/scan', diagnose: 'POST /api/public/diagnose', board: 'GET /api/public/board', engine: 'GET /api/public/diagnosis-engine', productIntelligence: 'GET /api/public/product-intelligence', productQuality: 'GET /api/public/product-quality', productAgentStatus: 'GET /api/public/product-agent-status', experienceOrchestrator: 'GET /api/public/experience-orchestrator' }, smartProduct: { version: 'p153-smart-ops-v1', nextBestAction: true, planFitScoring: true, journeyOrchestration: true, smartProductEndpoint: '/api/public/smart-product', experienceEndpoint: '/api/public/experience-orchestrator', userPath: ['무료 요약','요금제 선택','고객 포털','인사이트 확인'] }, insightUpdate: { boardName: '인사이트', cadenceLabel: '정기 업데이트' }, automation: { mode: TARGET_FETCH_AUTOMATION_LEVEL, robotsEnabled: TARGET_FETCH_ROBOTS_ENABLED, sitemapEnabled: TARGET_FETCH_SITEMAP_ENABLED, maxPages: TARGET_FETCH_MAX_PAGES, maxDiscoveryResources: TARGET_FETCH_MAX_DISCOVERY_RESOURCES, notice: '자동 확인 가능한 공개 항목은 모두 처리하고 자동 확정 불가 영역은 직접 확인으로 고지합니다.' }, checks: buildRuleCatalog().map(({ code, category, title, severity, penaltyMax }) => ({ code, category, title, severity, penaltyMax })) });
+return json(req, res, 200, { ok: true, phase: RELEASE_PHASE, engine: 'VERIDION Public Evidence Summary Check Engine', rulesVersion: RULES_VERSION, targetFetchEnabled: TARGET_FETCH_ENABLED, scanProvider: SCAN_PROVIDER, aiReviewProvider: AI_REVIEW_PROVIDER, geminiConfigured: AI_REVIEW_ENABLED, resultContract: { resultType: 'preliminary_check', legalConclusion: false, includesEvidenceSummary: true, includesConfidenceScore: true, includesManualReviewFlags: true, includesAutomationDisclosure: true, includesAutomatedActionPlan: true, includesAccuracyProfile: true, includesReportQualityGate: true, includesDemoAccuracyContract: true, includesPaidOutputQualityGate: true, serviceQualityVersion: SERVICE_QUALITY_VERSION, deploymentRiskGuardVersion: DEPLOYMENT_RISK_GUARD_VERSION }, endpoints: { scan: 'POST /api/public/scan', diagnose: 'POST /api/public/diagnose', board: 'GET /api/public/board', engine: 'GET /api/public/diagnosis-engine', productIntelligence: 'GET /api/public/product-intelligence', productQuality: 'GET /api/public/product-quality', productAgentStatus: 'GET /api/public/product-agent-status', experienceOrchestrator: 'GET /api/public/experience-orchestrator' }, smartProduct: { version: 'smart-ops-v1', nextBestAction: true, planFitScoring: true, journeyOrchestration: true, smartProductEndpoint: '/api/public/smart-product', experienceEndpoint: '/api/public/experience-orchestrator', userPath: ['무료 요약','요금제 선택','고객 포털','인사이트 확인'] }, insightUpdate: { boardName: '인사이트', cadenceLabel: '정기 업데이트' }, automation: { mode: TARGET_FETCH_AUTOMATION_LEVEL, robotsEnabled: TARGET_FETCH_ROBOTS_ENABLED, sitemapEnabled: TARGET_FETCH_SITEMAP_ENABLED, maxPages: TARGET_FETCH_MAX_PAGES, maxDiscoveryResources: TARGET_FETCH_MAX_DISCOVERY_RESOURCES, notice: '자동 확인 가능한 공개 항목은 모두 처리하고 자동 확정 불가 영역은 직접 확인으로 고지합니다.' }, checks: buildRuleCatalog().map(({ code, category, title, severity, penaltyMax }) => ({ code, category, title, severity, penaltyMax })) });
 }
 
 if (((pathname === '/api/public/diagnose' || pathname === '/api/public/scan') && req.method === 'POST') || (isLegacyDiagnosticStart && req.method === 'POST')) {
@@ -297,7 +304,7 @@ if (!challenge.ok) return json(req, res, 400, { ok: false, error: '보안 확인
 }
 const db = await readDb();
 const session = await getCustomerSession(req, db);
-const scan = await scanResultFor(payload.target, db);
+const scan = await scanResultFor(payload.target, db, { bypassCache: payload.bypassCache });
 const site = ensureSiteRecord(db, scan);
 scan.siteId = scan.siteId || site.id;
 scan.requestId = scan.requestId || uid('scan');
@@ -678,7 +685,7 @@ const db = await readDb();
 db.clientMetrics = Array.isArray(db.clientMetrics) ? db.clientMetrics : [];
 db.clientMetrics.push(metric);
 if (db.clientMetrics.length > 200) db.clientMetrics = db.clientMetrics.slice(-200);
-appendAudit(db, req, 'public.client_metric.recorded', { path: metric.path, page: metric.page, loadMs: metric.loadMs, lcpMs: metric.largestContentfulPaintMs, cls: metric.cumulativeLayoutShift });
+appendAudit(db, req, 'public.client_metric.recorded', { metricType: metric.metricType, path: metric.path, page: metric.page, loadMs: metric.loadMs, lcpMs: metric.largestContentfulPaintMs, cls: metric.cumulativeLayoutShift, errorName: metric.errorName || null });
 await writeDb(db);
 return json(req, res, 200, { ok: true, accepted: true, metricId: metric.id }, { 'cache-control': 'no-store' });
 }
@@ -825,7 +832,8 @@ const email = normalizeEmail(body.email);
 const password = String(body.password || '');
 const consent = body.privacyConsent === true || body.privacyConsent === 'true';
 if (!isValidEmail(email)) return json(req, res, 400, { ok: false, error: '유효한 이메일이 필요합니다.' });
-if (password.length < 12) return json(req, res, 400, { ok: false, error: '비밀번호는 12자 이상이어야 합니다.' });
+const passwordCheck = validateNewPassword(password);
+if (!passwordCheck.ok) return json(req, res, 400, { ok: false, error: passwordCheck.error });
 if (!consent) return json(req, res, 400, { ok: false, error: '개인정보 처리방침 동의가 필요합니다.' });
 const db = await readDb();
 db.customers ||= [];
@@ -900,7 +908,8 @@ const email = normalizeEmail(body.email);
 const token = String(body.token || '').trim();
 const password = String(body.password || '');
 if (!isValidEmail(email) || !token) return json(req, res, 400, { ok: false, error: '이메일과 재설정 토큰이 필요합니다.' });
-if (password.length < 12) return json(req, res, 400, { ok: false, error: '비밀번호는 12자 이상이어야 합니다.' });
+const passwordCheck = validateNewPassword(password);
+if (!passwordCheck.ok) return json(req, res, 400, { ok: false, error: passwordCheck.error });
 const db = await readDb();
 const customer = (db.customers || []).find(item => normalizeEmail(item.email) === email && item.status !== 'disabled');
 const record = (db.passwordResetTokens || []).find(item => item.tokenHash === hashPasswordResetToken(token) && !item.usedAt);

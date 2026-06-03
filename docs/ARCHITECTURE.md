@@ -19,3 +19,15 @@
 ## Clean baseline policy
 
 과거 단계별 중첩 게이트와 보고서는 운영 패키지에서 제거했습니다. 현재 패키지는 `scripts/run-release-gate.mjs` 하나를 최종 릴리즈 진입점으로 사용합니다.
+
+## Stitch experience pipeline
+
+Stitch `Executive Trust Framework` 시안 10종은 `shared/stitch-route-manifest.mjs`에서 실제 화면과 연결합니다. 단순 시안 사본이 아니라 아래 5개 레이어로 운영합니다.
+
+1. 디자인 시스템 레이어
+2. 라우트 경험 레이어
+3. 상태 커버리지 레이어
+4. 기능 핸드오프 레이어
+5. 릴리즈 계약 레이어
+
+`server/core/stitch-experience-pipeline.mjs`는 매핑 상태를 계산하고, `npm run check:stitch-experience-pipeline`과 `npm run test:stitch-experience-pipeline`은 정적·통합 회귀를 차단합니다. 내부 상태 API는 테스트 모드에서만 열리며 일반 고객 API에서는 404로 격리됩니다.

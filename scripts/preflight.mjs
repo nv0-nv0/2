@@ -87,6 +87,8 @@ if (commercial || env.NODE_ENV === 'production') {
     else warnings.push('NV0_ADMIN_KEY is ignored in commercial prelaunch. Remove it before NV0_COMMERCIAL_LAUNCH_READY=true.');
   }
   if (env.NV0_ADMIN_AUTH_MODE !== 'account_rbac') errors.push('NV0_ADMIN_AUTH_MODE must be account_rbac');
+  if (env.NV0_ADMIN_MFA_REQUIRED !== 'true') errors.push('NV0_ADMIN_MFA_REQUIRED must be true for commercial deployments');
+  if (env.NV0_ADMIN_MFA_REQUIRED === 'true') finalized('NV0_ADMIN_TOTP_SECRET');
   if (env.NV0_PERSISTENCE_MODE !== 'postgres_primary') errors.push('NV0_PERSISTENCE_MODE must be postgres_primary');
   if (env.NV0_BACKUP_REMOTE_REQUIRE_ENCRYPTION !== 'true') errors.push('NV0_BACKUP_REMOTE_REQUIRE_ENCRYPTION must be true');
   if (env.NV0_SESSION_STORE !== 'redis' || env.NV0_RATE_LIMIT_STORE !== 'redis' || env.NV0_LOCK_PROVIDER !== 'redis') errors.push('Redis-backed session, rate limit, and lock are required');

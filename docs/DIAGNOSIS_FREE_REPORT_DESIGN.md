@@ -1,4 +1,4 @@
-# VERIDION Executive Trust Report Design v2.3
+# VERIDION Executive Trust Report Design
 
 ## 목표
 

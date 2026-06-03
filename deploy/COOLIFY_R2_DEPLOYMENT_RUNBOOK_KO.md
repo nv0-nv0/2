@@ -118,7 +118,7 @@ strict commercial Compose는 PostgreSQL과 Redis를 함께 기동합니다. 앱 
 라이브 스모크:
 
 ```bash
-NV0_LIVE_BASE_URL=https://www.nv0.kr npm run live:smoke
+NV0_LIVE_BASE_URL=https://nv0.kr npm run live:smoke
 ```
 
 ## 7. 실결제 활성화 승인 게이트

@@ -317,7 +317,7 @@ const body = normalizeScanPayload(await bodyJson(req, MAX_JSON_BODY_BYTES));
 const turnstile = await verifyTurnstile(req, body.turnstileToken);
 if (!turnstile.ok) return json(req, res, 400, { ok: false, error: 'Turnstile 검증에 실패했습니다.' });
 const db = await readDb();
-const result = await scanResultFor(body.target, db);
+const result = await scanResultFor(body.target, db, { bypassCache: body.bypassCache });
 const site = ensureSiteRecord(db, result);
 const customerSession = await getCustomerSession(req, db);
 if (customerSession?.customer) linkCustomerToSite(db, customerSession.customer.id, site, { label: site.domain, industry: site.industry });

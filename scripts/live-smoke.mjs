@@ -27,7 +27,7 @@ if (!baseUrl) {
     ok: true,
     skipped: true,
     reason: 'NV0_LIVE_BASE_URL is not set; offline package gate passed and live smoke remains operator-run.',
-    command: 'NV0_LIVE_BASE_URL=https://www.nv0.kr npm run live:smoke'
+    command: 'NV0_LIVE_BASE_URL=https://nv0.kr npm run live:smoke'
   }, null, 2));
   process.exit(0);
 }

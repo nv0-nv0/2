@@ -97,7 +97,7 @@ check('scripts/verify-prod.mjs:canonical-demo-and-current-page-markers', () => {
 check('delivery-runtime-is-clean', () => {
   const forbidden = [];
   for (const entry of fs.readdirSync(root, { withFileTypes: true })) if (entry.isDirectory() && entry.name.startsWith('runtime-test-')) forbidden.push(entry.name);
-  for (const relative of ['runtime/data/db.json', 'runtime/data/sessions.json', 'runtime/data/secure-records']) if (fs.existsSync(path.join(root, relative))) forbidden.push(relative);
+  for (const relative of ['runtime-ui', 'runtime/data/db.json', 'runtime/data/sessions.json', 'runtime/data/secure-records']) if (fs.existsSync(path.join(root, relative))) forbidden.push(relative);
   assert.deepEqual(forbidden, []);
 });
 const failures = checks.filter(item => !item.ok);

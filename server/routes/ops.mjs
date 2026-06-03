@@ -60,6 +60,10 @@ export function createOpsRouteHandler(ctx) {
   createGuidanceDocument,
   crypto,
   enqueueTransactionalEmail,
+  enqueueOperationalJob,
+  ensureOperationalJobs,
+  listOperationalJobs,
+  serializeOperationalJob,
   ensureBootstrapAdmin,
   ensureFulfillmentForOrder,
   ensureSiteRecord,
@@ -119,6 +123,7 @@ export function createOpsRouteHandler(ctx) {
     '/api/admin/launch-checklist',
     '/api/admin/commercial-final-gate',
     '/api/admin/email-outbox',
+    '/api/admin/jobs',
     '/api/admin/ops'
   ];
   return async function handleOpsRoutes(req, res, state = {}) {
@@ -175,6 +180,16 @@ pendingAutoFixJobs: db.autoFixJobs.filter(item => item.status === 'pending').sli
 if (pathname === '/api/admin/audit-logs' && req.method === 'GET') {
 return json(req, res, 200, { ok: true, auditLogs: db.auditLogs.slice(0, 100) });
 }
+if (pathname === '/api/admin/jobs' && req.method === 'GET') {
+if (!requireAdminPermission(req, res, session, 'ops.read')) return;
+return json(req, res, 200, { ok: true, jobs: listOperationalJobs(db, Number(url.searchParams.get('limit') || 40)) });
+}
+if (pathname === '/api/admin/jobs/status' && req.method === 'GET') {
+if (!requireAdminPermission(req, res, session, 'ops.read')) return;
+const id = asTrimmedString(url.searchParams.get('id'), { field: 'id', required: true, max: 100 });
+const job = ensureOperationalJobs(db).find(item => item.id === id);
+return job ? json(req, res, 200, { ok: true, job: serializeOperationalJob(job) }) : json(req, res, 404, { ok: false, error: '운영 작업을 찾을 수 없습니다.' });
+}
 if (pathname === '/api/admin/ops-report' && req.method === 'GET') {
 if (!requireAdminPermission(req, res, session, 'ops.read')) return;
 const report = await buildOpsReport();
@@ -182,6 +197,8 @@ return json(req, res, 200, { ok: true, report });
 }
 if (pathname === '/api/admin/ops-report/run' && req.method === 'POST') {
 if (!requireAdminPermission(req, res, session, 'ops.write')) return;
+const body = await bodyJson(req, MAX_JSON_BODY_BYTES) || {};
+if (body.mode === 'async_enqueue') { const job = await enqueueOperationalJob('ops_report', body, session); return json(req, res, 202, { ok: true, queued: true, jobId: job.id, job }); }
 const snapshot = await writeOpsReportSnapshot();
 const reloaded = await readDb();
 const audit = appendAudit(reloaded, req, 'admin.ops_report.created', { filePath: snapshot.filePath });
@@ -190,6 +207,8 @@ return json(req, res, 200, { ok: true, snapshot: { filePath: snapshot.filePath }
 }
 if (pathname === '/api/admin/maintenance/prune' && req.method === 'POST') {
 if (!requireAdminPermission(req, res, session, 'ops.write')) return;
+const body = await bodyJson(req, MAX_JSON_BODY_BYTES) || {};
+if (body.mode === 'async_enqueue') { const job = await enqueueOperationalJob('maintenance_prune', body, session); return json(req, res, 202, { ok: true, queued: true, jobId: job.id, job }); }
 const pruned = await pruneBackupSnapshots();
 const reloaded = await readDb();
 const dataRetention = cleanupDataRetention(reloaded, { dryRun: false });
@@ -213,6 +232,8 @@ return json(req, res, 200, { ok: true, restored, audit });
 }
 if (pathname === '/api/admin/backups/run' && req.method === 'POST') {
 if (!requireAdminPermission(req, res, session, 'ops.write')) return;
+const body = await bodyJson(req, MAX_JSON_BODY_BYTES) || {};
+if (body.mode === 'async_enqueue') { const job = await enqueueOperationalJob('backup', body, session); return json(req, res, 202, { ok: true, queued: true, jobId: job.id, job }); }
 const backup = await createBackupSnapshot({ reason: 'admin_api' });
 const audit = appendAudit(db, req, 'admin.backup.created', { ...backup, remote: backup.remote });
 await writeDb(db);
@@ -241,6 +262,7 @@ return json(req, res, 200, { ok: true, outbox: (db.emailOutbox || []).map(item =
 }
 if (pathname === '/api/admin/email-outbox/process' && req.method === 'POST') {
 const body = await bodyJson(req, MAX_JSON_BODY_BYTES) || {};
+if (body.mode === 'async_enqueue') { const job = await enqueueOperationalJob('email_outbox_process', body, session); return json(req, res, 202, { ok: true, queued: true, jobId: job.id, job }); }
 const result = await processEmailOutbox(db, { dryRun: body.dryRun !== false, limit: Math.min(Number(body.limit || 20), 100) });
 appendAudit(db, req, 'admin.email_outbox.processed', { processed: result.processed, dryRun: body.dryRun !== false });
 await writeDb(db);

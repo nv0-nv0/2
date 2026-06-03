@@ -207,7 +207,7 @@ export function runProductionSentinelAudit({ files = [], packageJson = {}, sourc
   ];
   const checks = [
     { key: 'requiredFiles', weight: 12, pass: requiredFiles.every(file => normalizedFiles.includes(file)), message: '현재 센티널 핵심 파일 존재' },
-    { key: 'packagePhase', weight: 10, pass: String(packageJson.version || '') === '2.3.0-executive-trust-report-system', message: 'clean baseline package version' },
+    { key: 'packagePhase', weight: 10, pass: String(packageJson.version || '') === '2.7.0-commercial-hardening-max', message: 'clean baseline package version' },
     { key: 'scripts', weight: 12, pass: scripts['verify:release'] === 'node scripts/run-release-gate.mjs' && scripts['release:predeploy'] === 'npm run verify:release' && Boolean(scripts['monitoring:rollback']), message: '센티널·롤백 단일 게이트 연결' },
     { key: 'routes', weight: 12, pass: source.includes('/api/public/trustops-production-sentinel') && source.includes('/api/admin/trustops-production-sentinel') && source.includes('/api/public/live-verification-checklist'), message: '공개·관리자 sentinel API 존재' },
     { key: 'backlog', weight: 10, pass: sentinel.backlogCount >= 220 && sentinel.sentinelBacklogCount === 50, message: 'production-sentinel 보강 백로그 50개 이상' },

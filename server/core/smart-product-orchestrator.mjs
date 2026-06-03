@@ -150,7 +150,7 @@ export function buildSmartProductOrchestration({ scan = {}, site = null, intelli
   const offerCodes = list(offers).map(item => item.code).filter(Boolean);
   return {
     ok: true,
-    version: 'p153-smart-ops-v1',
+    version: 'smart-ops-v1',
     source,
     domain,
     score,
@@ -197,7 +197,7 @@ export function buildSmartPublicSnapshot(db = {}, { offers = [], intelligence = 
   const productScore = clamp(68 + Math.min(12, scans.length) + Math.min(10, boards.length / 3) + Math.min(10, sites.length));
   return {
     ok: true,
-    version: 'p153-smart-ops-v1',
+    version: 'smart-ops-v1',
     productScore,
     signals: {
       scans: scans.length,

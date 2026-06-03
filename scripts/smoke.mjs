@@ -74,9 +74,9 @@ try {
   await ensureServer();
   await check('/healthz', 200, '"ok": true');
   await check('/readyz', 200, '"ready": true');
-  await check('/', 200, '웹사이트의 신뢰와 준법을 진단하고');
+  await check('/', 200, '사이트 주소 하나로 고객이');
   await checkRedirect('/demo', 301, '/products/veridion/demo');
-  await check('/products/veridion/demo', 200, '사이트 주소 하나로 신뢰');
+  await check('/products/veridion/demo', 200, '사이트 주소 하나로 고객이');
   await check('/admin', 200, '관리자');
   await check('/api/public/auth/session', 200, '"authenticated": false');
   await check('/api/public/system-items', 200, '"ok": true');

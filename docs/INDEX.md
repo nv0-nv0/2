@@ -11,3 +11,4 @@
 - `DIAGNOSIS_FREE_REPORT_DESIGN.md`: 무료 진단 결과 리포트의 25% 공개 정책과 화면 구조
 
 - [Executive trust report system](REPORT_SYSTEM.md)
+- [Stitch experience pipeline](STITCH_EXPERIENCE_PIPELINE.md)

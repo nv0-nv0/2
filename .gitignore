@@ -32,3 +32,6 @@ SHA256SUMS*
 # Generated local audit evidence
 docs/current/*
 !docs/current/.gitkeep
+
+# Unintended local UI runtime snapshots must never ship
+runtime-ui/

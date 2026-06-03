@@ -11,7 +11,7 @@ const html = read('apps/public/demo/index.html');
 const checks = [];
 function add(name, fn) { try { fn(); checks.push({ name, ok: true }); } catch (error) { checks.push({ name, ok: false, error: error.message }); } }
 
-add('sample-is-controlled-executive-brief', () => assert.match(html, /class="vrd-sample"[\s\S]*FREE PREVIEW · CONTROLLED DISCLOSURE[\s\S]*25% OPEN · 75% LOCKED[\s\S]*Evidence Ledger 잠금[\s\S]*Fix Specification 잠금/));
+add('sample-is-controlled-executive-brief', () => assert.match(html, /class="vrd-sample"[\s\S]*FREE PREVIEW · 통제 공개 · CONTROLLED DISCLOSURE[\s\S]*25% OPEN · 75% LOCKED[\s\S]*근거 원장 잠금[\s\S]*수정 명세서 잠금/));
 add('executive-report-renderers-exist', () => {
   for (const name of ['executiveReportModel','renderVr360DocumentControl','renderVr360ExecutiveHero','renderVr360ReportIndex','renderVr360ExecutiveBrief','renderVr360RiskMap','renderVr360Journey','renderVr360ControlSnapshot','renderVr360PriorityIssues','renderVr360DecisionMemo','renderVr360Unlock','renderPaidExecutiveReport','renderVr360TechnicalDetails','renderVr360StickyCta','renderVr360Result']) assert.match(js, new RegExp(`function ${name}\\(`), name);
 });
@@ -28,14 +28,14 @@ add('professional-document-control-present', () => {
 });
 add('executive-decision-structure-present', () => {
   assert.match(js, /MANAGEMENT DECISION/);
-  assert.match(js, /01 · EXECUTIVE DECISION/);
-  assert.match(js, /WHY IT MATTERS/);
-  assert.match(js, /WHAT IS VERIFIED/);
-  assert.match(js, /WHAT TO DO NEXT/);
+  assert.match(js, /01 · 경영진 판단 요약/);
+  assert.match(js, /중요한 이유/);
+  assert.match(js, /확인된 내용/);
+  assert.match(js, /다음 조치/);
 });
 add('free-preview-is-explicitly-limited', () => {
-  assert.match(js, /FREE EXECUTIVE BRIEF · 25% OPEN/);
-  assert.match(js, /CONTROLLED DISCLOSURE · 75% LOCKED/);
+  assert.match(js, /무료 경영진 요약 · 25% 공개/);
+  assert.match(js, /통제 공개 · 상세 분석 75% 잠금/);
   assert.match(js, /무료 화면은 전체 리포트의 약 25%만 공개합니다/);
   assert.match(js, /근거 URL, 페이지별 위치, 수정 문구, 실행 순서, 재점검 기준은 상세 리포트에서 공개됩니다/);
 });
@@ -90,7 +90,7 @@ add('aligned-fixed-grid-css', () => {
 add('mobile-responsive-css', () => assert.match(css, /@media\(max-width:760px\)[\s\S]*\.vrd-document-control\{grid-template-columns:repeat\(2[\s\S]*\.vrd-cover-grid\{grid-template-columns:1fr[\s\S]*\.vrd-priority-list article\{grid-template-columns:[\s\S]*\.vrd-sticky/));
 
 const failures = checks.filter(item => !item.ok);
-const report = { ok: failures.length === 0, contract: 'veridion-2.3-executive-trust-report-ui-contract', checkedAt: new Date().toISOString(), checked: checks.length, failed: failures.length, failures, checks };
+const report = { ok: failures.length === 0, contract: 'veridion-2.4-executive-trust-report-ui-contract', checkedAt: new Date().toISOString(), checked: checks.length, failed: failures.length, failures, checks };
 fs.mkdirSync(path.join(root, 'docs/current'), { recursive: true });
 fs.writeFileSync(path.join(root, 'docs/current/DIAGNOSIS_RESULT_UI_CONTRACT.json'), JSON.stringify(report, null, 2) + '\n');
 console.log(JSON.stringify(report, null, 2));

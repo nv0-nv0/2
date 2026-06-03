@@ -4,6 +4,8 @@ const env = {
   ...process.env,
   NV0_PLATFORM_TARGET: 'commercial',
   NV0_ADMIN_AUTH_MODE: 'account_rbac',
+  NV0_ADMIN_MFA_REQUIRED: 'true',
+  NV0_ADMIN_TOTP_SECRET: process.env.NV0_ADMIN_TOTP_SECRET || 'JBSWY3DPEHPK3PXP',
   NV0_PERSISTENCE_MODE: 'postgres_primary',
   NV0_SESSION_STORE: 'redis',
   NV0_RATE_LIMIT_STORE: 'redis',
@@ -26,6 +28,7 @@ console.log(JSON.stringify({
   platformTarget: profile.target,
   controls: {
     auth: env.NV0_ADMIN_AUTH_MODE,
+    adminMfaRequired: env.NV0_ADMIN_MFA_REQUIRED,
     persistence: env.NV0_PERSISTENCE_MODE,
     session: env.NV0_SESSION_STORE,
     rateLimit: env.NV0_RATE_LIMIT_STORE,
@@ -35,5 +38,4 @@ console.log(JSON.stringify({
     payment: env.NV0_PAYMENT_PROVIDER
   }
 }, null, 2));
-process.exit(0);
 process.exit(0);
