@@ -21,6 +21,18 @@ PLATFORM_TARGET="$(normalize_mode_value "$PLATFORM_TARGET")"
 PERSISTENCE_MODE="$(normalize_mode_value "$PERSISTENCE_MODE")"
 STORAGE_MODE="$(normalize_mode_value "$STORAGE_MODE")"
 
+# Commercial MFA is a non-optional security invariant. Coolify can retain an older
+# explicit NV0_ADMIN_MFA_REQUIRED=false value, which overrides Compose defaults.
+# Normalize that stale value to true inside the container so prelaunch can recover
+# without weakening the commercial MFA requirement. The operator must still save
+# NV0_ADMIN_MFA_REQUIRED=true in Coolify to remove this warning permanently.
+ADMIN_MFA_REQUIRED_NORMALIZED="$(normalize_mode_value "${NV0_ADMIN_MFA_REQUIRED:-}")"
+if [ "$PLATFORM_TARGET" = "commercial" ] && [ "$ADMIN_MFA_REQUIRED_NORMALIZED" != "true" ]; then
+  warn "commercial profile forces NV0_ADMIN_MFA_REQUIRED=true; stale or missing Coolify value was normalized in-container. Save NV0_ADMIN_MFA_REQUIRED=true in Coolify and redeploy to remove this warning."
+  export NV0_ADMIN_MFA_REQUIRED="true"
+  export NV0_ADMIN_MFA_RECOVERY_NORMALIZED="true"
+fi
+
 external_durable_mode() {
   [ "$PLATFORM_TARGET" = "commercial" ] && [ "$PERSISTENCE_MODE" = "postgres_primary" ] && [ "$STORAGE_MODE" != "local_fs" ]
 }

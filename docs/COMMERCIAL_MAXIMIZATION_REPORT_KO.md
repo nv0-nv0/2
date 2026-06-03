@@ -160,3 +160,17 @@
 10. 모니터링 알림 수신 확인
 
 실서버 전환 절차는 `POST_DEPLOYMENT_ACCEPTANCE_KO.md`를 따른다.
+
+
+## MFA stale-value 런타임 자기복구 보강
+
+Coolify에 과거 `NV0_ADMIN_MFA_REQUIRED=false`가 명시적으로 남아 있으면 Compose의 `${NV0_ADMIN_MFA_REQUIRED:-true}` 기본값보다 외부 값이 우선한다. 기존 MFA 핫픽스 6개 파일은 변경하지 않고, `deploy/entrypoint.sh`에 상용 런타임 fail-closed 정규화 계층을 추가했다.
+
+- `NV0_PLATFORM_TARGET=commercial`인데 MFA 값이 누락되거나 `true`가 아니면 컨테이너 내부에서 `NV0_ADMIN_MFA_REQUIRED=true`로 강제 정규화
+- 운영자에게 Coolify 화면에서도 `true`를 저장하고 재배포하라는 경고 출력
+- `NV0_ADMIN_MFA_RECOVERY_NORMALIZED=true` 표식으로 복구 경로 사용 여부 기록
+- 실제 Base32 `NV0_ADMIN_TOTP_SECRET`이 비어 있거나 placeholder면 preflight는 계속 차단
+- MVP 프로파일에서는 사용자가 지정한 값을 변경하지 않음
+- 정규화·비정규화·MVP 비개입 동작을 자동 계약 테스트로 추가
+
+세부 복구 절차는 `HOTFIX_MFA_RUNTIME_NORMALIZATION_KO.md`를 따른다.

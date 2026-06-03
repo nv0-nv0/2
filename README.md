@@ -90,3 +90,7 @@ Stitch `Executive Trust Framework` 시안 10종은 홈, 진단 결과, 요금제
 직전 MFA fail-closed 핫픽스는 비회귀 계약으로 고정했습니다. 추가로 HTTP 메서드 제한, 과대 URI 조기 차단, HEAD 전송 최적화, 정적 파일 실제 경로 검증, 서버 timeout·shutdown 보강, 상용 환경변수 범위·placeholder·URL 프로토콜 검증, 배송 ZIP 재검증과 파일별 SHA-256 증거 생성을 적용했습니다.
 
 상세 적용 내역은 `docs/COMMERCIAL_MAXIMIZATION_REPORT_KO.md`, 운영 환경변수 기준은 `docs/CONFIGURATION_REFERENCE_KO.md`, 실서버 전환 검수는 `docs/POST_DEPLOYMENT_ACCEPTANCE_KO.md`를 확인하세요.
+
+## Coolify MFA stale-value 자동 복구
+
+Coolify에 과거 `NV0_ADMIN_MFA_REQUIRED=false`가 명시적으로 남아 있으면 Compose 기본값보다 외부 값이 우선합니다. 상용 컨테이너 엔트리포인트는 이 값을 `true`로 fail-closed 정규화하고 경고를 출력합니다. 운영 화면에서도 `NV0_ADMIN_MFA_REQUIRED=true`를 저장하고 재배포해야 경고가 사라집니다. 실제 Base32 `NV0_ADMIN_TOTP_SECRET`은 별도로 등록해야 합니다.
