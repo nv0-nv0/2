@@ -9,7 +9,7 @@ const css = read('shared/veridion-rebrand.css');
 const htmlFiles = [
   'apps/public/home/index.html',
   'apps/public/demo/index.html',
-  'apps/public/veridion-demo/index.html',
+  'apps/public/demo/index.html',
   'apps/public/plans/index.html',
   'apps/public/checkout/index.html',
   'apps/public/auth/index.html',

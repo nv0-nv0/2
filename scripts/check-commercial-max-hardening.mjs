@@ -22,7 +22,7 @@ has('deploy/docker-compose.local-minio.yml', 'NV0_ADMIN_MFA_REQUIRED: ${NV0_ADMI
 has('scripts/preflight.mjs', 'Set NV0_ADMIN_MFA_REQUIRED=true in Coolify environment variables and redeploy.');
 has('scripts/validate-coolify-env-detection.mjs', 'admin MFA must default to true so an omitted Coolify variable cannot disable the commercial preflight control');
 has('deploy/COOLIFY_R2_DEPLOYMENT_RUNBOOK_KO.md', 'NV0_ADMIN_MFA_REQUIRED=true');
-has('docs/HOTFIX_MFA_PREFLIGHT_RECOVERY_KO.md', 'NV0_ADMIN_MFA_REQUIRED=true');
+has('docs/archive/hotfix/HOTFIX_MFA_PREFLIGHT_RECOVERY_KO.md', 'NV0_ADMIN_MFA_REQUIRED=true');
 has('deploy/entrypoint.sh', 'commercial profile forces NV0_ADMIN_MFA_REQUIRED=true; stale or missing Coolify value was normalized in-container.');
 has('deploy/entrypoint.sh', 'export NV0_ADMIN_MFA_RECOVERY_NORMALIZED="true"');
 has('deploy/entrypoint.sh', 'node scripts/check-commercial-totp-preflight.mjs');
@@ -41,7 +41,7 @@ has('deploy/entrypoint.sh', 'safe configuration hold mode');
 has('deploy/entrypoint.sh', 'commercial TOTP preflight failed; refusing to start the application and entering safe configuration hold mode.');
 has('scripts/diagnose-admin-totp-env.mjs', 'commercial-admin-totp-secret-safe-diagnostic');
 has('scripts/diagnose-admin-totp-env.mjs', 'secretPrinted: false');
-has('docs/HOTFIX_TOTP_PRELAUNCH_SAFE_HOLD_KO.md', 'node scripts/diagnose-admin-totp-env.mjs');
+has('docs/archive/hotfix/HOTFIX_TOTP_PRELAUNCH_SAFE_HOLD_KO.md', 'node scripts/diagnose-admin-totp-env.mjs');
 has('scripts/generate-admin-totp-secret.mjs', "args.has('--value-only')");
 has('scripts/generate-admin-totp-secret.mjs', "args.has('--env-line')");
 
@@ -64,7 +64,10 @@ has('server/index.mjs', 'await fs.realpath(abs)');
 has('server/index.mjs', "path.join(ROOT, 'shared'), '/shared/'");
 has('server/index.mjs', "path.join(ROOT, 'apps/public'), '/apps/public/'");
 has('server/index.mjs', "path.join(ROOT, 'apps/admin'), '/apps/admin/'");
-has('server/index.mjs', "'content-length': String(data.byteLength)");
+has('server/index.mjs', "'content-length': String(encoded.body.byteLength)");
+has('server/index.mjs', 'const encoded = publicResponseCompressor.compress(req, data');
+has('server/core/public-response-compression.mjs', 'brotliCompressSync');
+has('server/core/public-response-compression.mjs', 'gzipSync');
 
 // Native server resource controls and shutdown behavior.
 has('server/index.mjs', 'server.requestTimeout = REQUEST_TIMEOUT_MS;');
@@ -124,6 +127,20 @@ has('scripts/create-secure-release.mjs', 'verifiedZipEntries');
 has('scripts/create-secure-release.mjs', 'duplicateZipEntries');
 has('scripts/create-secure-release.mjs', 'sortPaths(files)');
 has('scripts/create-secure-release.mjs', "`${zipPath}.sha256.txt`");
+has('scripts/create-secure-release.mjs', "const filesManifestPath = `${zipPath}.files-manifest`;");
+has('scripts/create-secure-release.mjs', 'await fs.writeFile(filesManifestPath, filesManifestText);');
+
+// Release gate segmentation, checkpoint resume and child-process cleanup.
+has('scripts/run-release-gate.mjs', "const workerMode = String(process.env.NV0_RELEASE_WORKER || 'false')");
+has('scripts/run-release-gate.mjs', "NV0_RELEASE_MAX_STEPS_PER_RUN");
+has('scripts/run-release-gate.mjs', "process.env.NV0_RELEASE_SEGMENT_SIZE || 2");
+has('scripts/run-release-gate.mjs', "const resumableCheckpoint = ['running', 'resuming', 'partial'].includes(previousCheckpoint?.status);");
+has('scripts/run-release-gate.mjs', "process.argv.includes('--fresh')");
+has('scripts/run-release-gate.mjs', "NV0_RELEASE_QUIET: 'true'");
+has('scripts/run-release-gate.mjs', "stdio: ['ignore', 'pipe', 'pipe']");
+has('scripts/run-release-gate.mjs', "process.kill(-child.pid, signal)");
+has('scripts/run-release-gate.mjs', "CHECKPOINT_PROGRESS");
+
 has('scripts/check-delivery-hygiene.mjs', "contract: 'delivery-hygiene-v3'");
 has('scripts/check-delivery-hygiene.mjs', 'delivery must not contain symlinks');
 has('scripts/check-delivery-hygiene.mjs', "'.sql.gz'");
@@ -142,11 +159,11 @@ for (const file of [
   'docs/POST_DEPLOYMENT_ACCEPTANCE_KO.md',
   'tests/commercial-max-hardening-contract.mjs',
   'tests/commercial-mfa-entrypoint-normalization-contract.mjs',
-  'docs/HOTFIX_MFA_RUNTIME_NORMALIZATION_KO.md',
-  'docs/HOTFIX_TOTP_SECRET_PREFLIGHT_ALIGNMENT_KO.md',
+  'docs/archive/hotfix/HOTFIX_MFA_RUNTIME_NORMALIZATION_KO.md',
+  'docs/archive/hotfix/HOTFIX_TOTP_SECRET_PREFLIGHT_ALIGNMENT_KO.md',
   'tests/commercial-totp-preflight-contract.mjs',
   'tests/commercial-totp-transport-hardening-contract.mjs',
-  'docs/HOTFIX_TOTP_TRANSPORT_HARDENING_KO.md',
+  'docs/archive/hotfix/HOTFIX_TOTP_TRANSPORT_HARDENING_KO.md',
   'scripts/generate-admin-totp-secret.mjs',
   'tools/copy-admin-totp-secret-normal-view.ps1',
   'tools/copy-admin-totp-secret-developer-view.ps1'

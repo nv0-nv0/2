@@ -16,7 +16,7 @@ const requiredFiles = [
   'apps/public/portal/app.js',
   'apps/public/board/index.html',
   'apps/public/board/app.js',
-  'apps/public/veridion-demo/index.html',
+  'apps/public/demo/index.html',
   'apps/public/plans/index.html',
   'apps/public/auth/index.html',
   'Dockerfile',
@@ -25,7 +25,7 @@ const requiredFiles = [
 for (const file of requiredFiles) add(`exists:${file}`, exists(file));
 
 const pkg = JSON.parse(read('package.json'));
-add('package:clean-baseline-version', pkg.version === '2.7.0-commercial-hardening-max');
+add('package:clean-baseline-version', pkg.version === '2.7.1-commercial-optimization');
 
 const appHtmlFiles = [];
 for (const area of ['apps/public', 'apps/admin']) {
@@ -56,7 +56,7 @@ for (const file of appHtmlFiles) {
 }
 
 const publicClientFiles = appHtmlFiles.filter(f => f.includes('apps/public/'))
-  .concat(['apps/public/home/app.js','apps/public/veridion-demo/app.js','apps/public/checkout/app.js','apps/public/portal/app.js','apps/public/board/app.js'].filter(exists));
+  .concat(['apps/public/home/app.js','apps/public/checkout/app.js','apps/public/portal/app.js','apps/public/board/app.js'].filter(exists));
 const publicClient = publicClientFiles.map(read).join('\n') + '\n' + read('shared/veridion-rebrand.css');
 for (const token of forbiddenPublic) add(`public:no-old-copy:${token}`, !publicClient.includes(token));
 for (const token of forbiddenSource) add(`public:no-old-source:${token}`, !publicClient.includes(token));

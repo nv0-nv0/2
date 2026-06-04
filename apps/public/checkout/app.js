@@ -15,6 +15,7 @@ const summaryPlanName = document.getElementById('summaryPlanName');
 const summaryPlanPeriod = document.getElementById('summaryPlanPeriod');
 const summaryBasePrice = document.getElementById('summaryBasePrice');
 const summaryDelivery = document.getElementById('summaryDelivery');
+const summaryRenewal = document.getElementById('summaryRenewal');
 const summaryTargetCustomer = document.getElementById('summaryTargetCustomer');
 const summaryTotal = document.getElementById('summaryTotal');
 
@@ -89,6 +90,7 @@ function renderPriceSummary() {
     summaryPlanPeriod.textContent = '선택 상품에 맞춰 요약을 준비합니다.';
     summaryBasePrice.textContent = '-';
     summaryDelivery.textContent = '고객 포털에서 확인';
+    if (summaryRenewal) summaryRenewal.textContent = '선택 상품에 맞춰 표시합니다.';
     summaryTargetCustomer.textContent = '추천 대상 확인';
     summaryTotal.textContent = '-';
     return;
@@ -97,6 +99,7 @@ function renderPriceSummary() {
   summaryPlanPeriod.textContent = offer.summary || `${offer.period || '1회'} 제공 상품`;
   summaryBasePrice.textContent = priceLabel(offer);
   summaryDelivery.textContent = '결제 후 고객 포털에서 결과물 확인';
+  if (summaryRenewal) summaryRenewal.textContent = offer.renewalLabel || (offer.autoRecurringBilling === false ? '자동 결제 없음 · 매월 수동 갱신' : '상품별 갱신 조건 확인');
   summaryTargetCustomer.textContent = offer.targetCustomer || '사이트 구매 흐름을 더 탄탄하게 만들고 싶은 분';
   summaryTotal.textContent = priceLabel(offer);
   renderPaymentConfig();

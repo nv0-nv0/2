@@ -3,7 +3,7 @@ import fs from 'node:fs';
 const expected = [
   ['apps/public/home/index.html','homeTargetUrl','go'],
   ['apps/public/demo/index.html','targetUrl','go'],
-  ['apps/public/veridion-demo/index.html','targetUrl','go'],
+  ['apps/public/demo/index.html','targetUrl','go'],
   ['apps/public/checkout/index.html','targetDomain','next'],
   ['apps/public/portal/index.html','saveUrl','next'],
   ['apps/admin/orders/index.html','rescanUrl','go'],

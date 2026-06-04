@@ -37,7 +37,7 @@ for (const file of ['docker-compose.yml', 'deploy/docker-compose.coolify.yml', '
 const htmlFiles = [
   'apps/public/home/index.html',
   'apps/public/demo/index.html',
-  'apps/public/veridion-demo/index.html',
+  'apps/public/demo/index.html',
   'apps/public/plans/index.html',
   'apps/public/board/index.html',
   'apps/public/portal/index.html',

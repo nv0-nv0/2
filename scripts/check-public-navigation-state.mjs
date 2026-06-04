@@ -10,7 +10,6 @@ const check = (file, href, label) => {
   if (!pattern.test(text)) errors.push({ file, href, label, error: 'active-public-navigation-state-missing' });
 };
 check('apps/public/demo/index.html', '/products/veridion/demo', '진단');
-check('apps/public/veridion-demo/index.html', '/products/veridion/demo', '진단');
 check('apps/public/plans/index.html', '/plans', '요금제');
 check('apps/public/board/index.html', '/board', '인사이트');
 for (const file of [

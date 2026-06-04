@@ -69,7 +69,9 @@ if (duplicateZipEntries.length) throw new Error(`zip verification failed: duplic
 if (JSON.stringify(zipEntries) !== JSON.stringify(sortPaths(files))) throw new Error('zip verification failed: packaged entries differ from release allowlist');
 const sha256 = sha256File(zipPath);
 const fileManifest = entries.map(item => ({ path: item.rel, bytes: item.size, sha256: sha256File(item.abs) }));
-const filesSha256 = sha256Buffer(Buffer.from(fileManifest.map(item => `${item.sha256}  ${item.path}`).join('\n') + '\n'));
+const filesManifestText = fileManifest.map(item => `${item.sha256}  ${item.path}`).join('\n') + '\n';
+const filesManifestPath = `${zipPath}.files-manifest`;
+const filesSha256 = sha256Buffer(Buffer.from(filesManifestText));
 const manifest = {
   ok: true,
   contract: 'secure-release-reproducible-v3',
@@ -77,6 +79,7 @@ const manifest = {
   zipName,
   sha256,
   filesSha256,
+  filesManifestPath,
   fileCount: files.length,
   totalBytes: entries.reduce((sum, item) => sum + item.size, 0),
   maxSingleFileBytes,
@@ -88,5 +91,6 @@ const manifest = {
 };
 await fs.mkdir(path.join(root, 'docs/current'), { recursive: true });
 await fs.writeFile(path.join(root, 'docs/current/SECURE_RELEASE_MANIFEST.json'), JSON.stringify(manifest, null, 2) + '\n');
+await fs.writeFile(filesManifestPath, filesManifestText);
 await fs.writeFile(`${zipPath}.sha256.txt`, `${sha256}  ${zipName}\n${filesSha256}  ${zipName}.files-manifest\n`);
 console.log(JSON.stringify({ ...manifest, files: undefined }, null, 2));

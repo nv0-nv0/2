@@ -1,4 +1,5 @@
-export const STITCH_EXPERIENCE_VERSION = '2.7.0-executive-trust-framework';
+import { ASSET_VERSION } from './release-version.mjs';
+export const STITCH_EXPERIENCE_VERSION = `${ASSET_VERSION}-executive-trust-framework`;
 
 export const STITCH_DESIGN_SYSTEM = Object.freeze({
   id: 'executive-trust-framework',
@@ -52,7 +53,7 @@ export const STITCH_FUNCTION_BINDINGS = Object.freeze([
 
 export const STITCH_ROUTE_SURFACES = Object.freeze([
   Object.freeze({ route: '/', file: 'apps/public/home/index.html', screenIds: ['veridion_8', 'veridion_9'], kind: 'public', dynamic: false }),
-  Object.freeze({ route: '/products/veridion/demo', file: 'apps/public/veridion-demo/index.html', mirrors: ['apps/public/demo/index.html'], screenIds: ['veridion_4', 'veridion_7'], kind: 'public', dynamic: true }),
+  Object.freeze({ route: '/products/veridion/demo', file: 'apps/public/demo/index.html', screenIds: ['veridion_4', 'veridion_7'], kind: 'public', dynamic: true }),
   Object.freeze({ route: '/plans', file: 'apps/public/plans/index.html', screenIds: ['veridion_3'], kind: 'public', dynamic: true }),
   Object.freeze({ route: '/portal', file: 'apps/public/portal/index.html', screenIds: ['veridion_10'], kind: 'private-public-shell', dynamic: true }),
   Object.freeze({ route: '/auth', file: 'apps/public/auth/index.html', screenIds: ['veridion_6'], kind: 'private-public-shell', dynamic: true }),

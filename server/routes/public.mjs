@@ -653,17 +653,8 @@ if (pathname === '/api/public/server-availability' && req.method === 'GET') {
 return json(req, res, 200, {
   ok: true,
   available: true,
-  service: 'VERIDION',
-  phase: 'public-route-baseline',
-  serverTime: nowIso(),
-  host: req.headers.host || '',
-  checks: {
-    router: true,
-    publicApi: true,
-    staticPages: true
-  },
-  next: ['/portal', '/products/veridion/demo', '/api/public/commercial-readiness']
-});
+  service: 'VERIDION'
+}, { 'cache-control': 'no-store' });
 }
 if (pathname === '/api/public/product-agent-status' && req.method === 'GET') {
 const db = await readDb();

@@ -19,7 +19,7 @@ const adminPages = [
   'apps/admin/publications/index.html',
   'apps/admin/settings/index.html'
 ];
-const demoPages = ['apps/public/demo/index.html', 'apps/public/veridion-demo/index.html'];
+const demoPages = ['apps/public/demo/index.html'];
 const operatorTemplates = [
   'deploy/coolify.env.example',
   'deploy/coolify.env.bulk.txt',

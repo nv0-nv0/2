@@ -14,6 +14,22 @@ const envFiles = [
   'deploy/env.commercial.template'
 ];
 
+const fullCommercialProfiles = [
+  'deploy/coolify.env.example',
+  'deploy/env.production.template',
+  'deploy/env.production.nv0.kr.example',
+  'deploy/env.commercial.template'
+];
+const canonicalCommercialProfile = 'deploy/env.commercial.template';
+const coolifyBulkProfile = 'deploy/coolify.env.bulk.txt';
+const composeManagedBulkOmissions = new Set([
+  'NV0_DATABASE_URL',
+  'PGSSLMODE',
+  'POSTGRES_DB',
+  'POSTGRES_USER'
+]);
+const bootSafeCoolifyProfile = '.env.coolify.example';
+
 const requiredCommercialKeys = [
   'NODE_ENV',
   'PORT',
@@ -66,6 +82,7 @@ const forbiddenCommercialPairs = [
 
 const errors = [];
 const checked = [];
+const fileKeySets = new Map();
 for (const rel of envFiles) {
   const abs = path.join(ROOT, rel);
   try {
@@ -98,11 +115,49 @@ for (const rel of envFiles) {
       if (!raw.includes('NV0_PLATFORM_TARGET=commercial')) errors.push({ file: rel, error: 'not a commercial env file' });
     }
     if (duplicates.length) errors.push({ file: rel, error: `duplicate keys: ${duplicates.join(', ')}` });
-    checked.push({ file: rel, keyCount: keys.length, ok: true });
+    fileKeySets.set(rel, seen);
+    checked.push({ file: rel, keyCount: keys.length, profile: isLocalDevelopmentExample ? 'local-development' : 'full-commercial', ok: true });
   } catch (error) {
     errors.push({ file: rel, error: error.message });
   }
 }
 
-console.log(JSON.stringify({ ok: errors.length === 0, checked, errors }, null, 2));
+const sorted = values => [...values].sort();
+const difference = (left, right) => sorted([...left].filter(key => !right.has(key)));
+const canonicalKeys = fileKeySets.get(canonicalCommercialProfile) || new Set();
+for (const rel of fullCommercialProfiles) {
+  const keys = fileKeySets.get(rel) || new Set();
+  const missing = difference(canonicalKeys, keys);
+  const extra = difference(keys, canonicalKeys);
+  if (missing.length || extra.length) errors.push({ file: rel, error: `commercial profile key drift vs ${canonicalCommercialProfile}: missing=[${missing.join(', ')}] extra=[${extra.join(', ')}]` });
+}
+
+try {
+  const raw = await fs.readFile(path.join(ROOT, coolifyBulkProfile), 'utf8');
+  const keys = new Set(raw.split(/\r?\n/).map(line => line.trim()).filter(line => line && !line.startsWith('#') && line.includes('=')).map(line => line.slice(0, line.indexOf('=')).trim()));
+  const missing = difference(canonicalKeys, keys);
+  const extra = difference(keys, canonicalKeys);
+  const unexpectedMissing = missing.filter(key => !composeManagedBulkOmissions.has(key));
+  const unexpectedPresent = [...composeManagedBulkOmissions].filter(key => keys.has(key));
+  if (unexpectedMissing.length || extra.length || unexpectedPresent.length || missing.length !== composeManagedBulkOmissions.size) {
+    errors.push({ file: coolifyBulkProfile, error: `Coolify bulk profile drift: missing=[${missing.join(', ')}] extra=[${extra.join(', ')}] unexpectedMissing=[${unexpectedMissing.join(', ')}] unexpectedPresent=[${unexpectedPresent.join(', ')}]` });
+  }
+  checked.push({ file: coolifyBulkProfile, keyCount: keys.size, profile: 'coolify-bulk-compose-managed-db-omissions', omittedKeys: sorted(composeManagedBulkOmissions), ok: true });
+} catch (error) {
+  errors.push({ file: coolifyBulkProfile, error: error.message });
+}
+
+try {
+  const raw = await fs.readFile(path.join(ROOT, bootSafeCoolifyProfile), 'utf8');
+  const keys = new Set(raw.split(/\r?\n/).map(line => line.trim()).filter(line => line && !line.startsWith('#') && line.includes('=')).map(line => line.slice(0, line.indexOf('=')).trim()));
+  for (const key of ['NODE_ENV', 'PORT', 'NV0_PLATFORM_TARGET', 'NV0_PUBLIC_CACHE_SECONDS', 'NV0_PUBLIC_ASSET_CACHE_SECONDS']) {
+    if (!keys.has(key)) errors.push({ file: bootSafeCoolifyProfile, error: `missing boot-safe Coolify key: ${key}` });
+  }
+  if (!raw.includes('NV0_PUBLIC_ASSET_CACHE_SECONDS=31536000')) errors.push({ file: bootSafeCoolifyProfile, error: 'boot-safe asset cache must use 31536000 seconds for versioned assets' });
+  checked.push({ file: bootSafeCoolifyProfile, keyCount: keys.size, profile: 'boot-safe-coolify-minimal', ok: true });
+} catch (error) {
+  errors.push({ file: bootSafeCoolifyProfile, error: error.message });
+}
+
+console.log(JSON.stringify({ ok: errors.length === 0, checked, commercialProfileParity: { canonical: canonicalCommercialProfile, profiles: fullCommercialProfiles, keyCount: canonicalKeys.size }, errors }, null, 2));
 if (errors.length) process.exit(1);

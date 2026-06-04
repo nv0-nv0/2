@@ -13,7 +13,14 @@ const rel = abs => path.relative(root, abs).replaceAll('\\', '/');
 const files = walk(root).map(rel).filter(file => !file.startsWith('.git/'));
 const pkg = JSON.parse(read('package.json'));
 
-add('package-version-clean-baseline', () => assert.equal(pkg.version, '2.7.0-commercial-hardening-max'));
+add('package-version-clean-baseline', () => assert.equal(pkg.version, '2.7.1-commercial-optimization'));
+add('dependency-lockfile-reproducible', () => {
+  assert.equal(exists('package-lock.json'), true, 'package-lock.json');
+  const lock = JSON.parse(read('package-lock.json'));
+  assert.equal(lock.lockfileVersion, 3);
+  assert.equal(lock.version, pkg.version);
+  assert.equal(Object.keys(lock.packages || {}).length, 1, 'unexpected dependency packages in lockfile');
+});
 add('single-terminal-release-gate', () => {
   assert.equal(pkg.scripts['verify:release'], 'node scripts/run-release-gate.mjs');
   assert.equal(pkg.scripts['release:predeploy'], 'npm run verify:release');
@@ -32,7 +39,7 @@ add('no-stale-engine-script-paths', () => {
   assert.doesNotMatch(text, /scripts\/(?:run-phase|validate-phase|redteam-global-audit)/i);
 });
 add('no-git-metadata', () => assert.equal(exists('.git'), false));
-add('required-docs', () => { for (const file of ['docs/INDEX.md','docs/ARCHITECTURE.md','docs/DEPLOYMENT.md','docs/OPERATIONS.md','docs/QA.md','docs/ROLLBACK.md','docs/CLEANUP_REPORT.md','docs/COMPATIBILITY.md','docs/COMMERCIAL_MAXIMIZATION_REPORT_KO.md','docs/CONFIGURATION_REFERENCE_KO.md','docs/POST_DEPLOYMENT_ACCEPTANCE_KO.md']) assert.equal(exists(file), true, file); });
+add('required-docs', () => { for (const file of ['docs/INDEX.md','docs/ARCHITECTURE.md','docs/DEPLOYMENT.md','docs/OPERATIONS.md','docs/QA.md','docs/ROLLBACK.md','docs/CLEANUP_REPORT.md','docs/COMPATIBILITY.md','docs/COMMERCIAL_MAXIMIZATION_REPORT_KO.md','docs/CONFIGURATION_REFERENCE_KO.md','docs/POST_DEPLOYMENT_ACCEPTANCE_KO.md','shared/release-version.mjs','server/core/public-page-cache.mjs','server/core/public-response-compression.mjs']) assert.equal(exists(file), true, file); });
 add('canonical-stylesheet-only', () => {
   assert.equal(exists('shared/veridion-rebrand.css'), true);
   assert.equal(exists('shared/base.css'), false);

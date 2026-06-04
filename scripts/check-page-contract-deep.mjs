@@ -63,7 +63,7 @@ for (const file of htmlFiles) {
   if (!/<main\b[^>]*\bid\s*=\s*["']main["']/i.test(html)) push('missing-main-landmark');
   if (!/<h1\b[^>]*>[\s\S]*?<\/h1>/i.test(html)) push('missing-h1');
   if (!/<a\b[^>]*\bclass\s*=\s*["'][^"']*\bskip-link\b[^"']*["'][^>]*\bhref\s*=\s*["']#main["']/i.test(html) && !/<a\b[^>]*\bhref\s*=\s*["']#main["'][^>]*\bclass\s*=\s*["'][^"']*\bskip-link\b/i.test(html)) push('missing-skip-link');
-  if (!/\/shared\/stitch-institutional\.css\?v=2\.7\.0/i.test(html)) push('missing-versioned-stitch-css');
+  if (!/\/shared\/stitch-institutional\.css\?v=2\.7\.1/i.test(html)) push('missing-versioned-stitch-css');
   if (!/\bdata-design-system\s*=\s*["']executive-trust-framework["']/i.test(html)) push('missing-design-system-marker');
   if (duplicateIds.length) push('duplicate-id', duplicateIds);
   if (/\son[a-z]+\s*=/i.test(html)) push('inline-event-handler');

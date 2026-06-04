@@ -35,6 +35,7 @@ function populateCatalogCopy() {
     if (field === 'title') node.textContent = offer.title;
     if (field === 'priceLabel') node.textContent = `₩${formatCatalogWon(offer.price)}/${offer.period}`;
     if (field === 'cta') node.textContent = ctaCopy[code] || `${offer.title} 시작`;
+    if (field === 'renewal') node.textContent = offer.renewalLabel || '';
   });
 }
 function bindInlineDemoTargetForwarding() {

@@ -7,7 +7,7 @@ fs.mkdirSync(docsDir, { recursive: true });
 const checks = [];
 function add(name, ok, detail = {}) { checks.push({ name, ok: !!ok, ...detail }); }
 const routes = {
-  '/': 'apps/public/home/index.html', '/products/veridion/demo': 'apps/public/veridion-demo/index.html',
+  '/': 'apps/public/home/index.html', '/products/veridion/demo': 'apps/public/demo/index.html',
   '/plans': 'apps/public/plans/index.html', '/documents': 'apps/public/documents/index.html',
   '/checkout': 'apps/public/checkout/index.html', '/portal': 'apps/public/portal/index.html',
   '/board': 'apps/public/board/index.html', '/business-info': 'apps/public/business-info/index.html',

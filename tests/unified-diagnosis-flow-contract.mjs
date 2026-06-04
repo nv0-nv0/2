@@ -8,7 +8,6 @@ const read = rel => fs.readFileSync(path.join(root, rel), 'utf8');
 const files = {
   home: read('apps/public/home/index.html'),
   demo: read('apps/public/demo/index.html'),
-  alias: read('apps/public/veridion-demo/index.html'),
   demoJs: read('apps/public/demo/app.js'),
   homeJs: read('apps/public/home/app.js')
 };
@@ -18,12 +17,12 @@ function add(name, fn) {
   catch (error) { checks.push({ name, ok: false, error: error.message }); }
 }
 
-for (const [name, html] of Object.entries({ demo: files.demo, alias: files.alias })) {
+for (const [name, html] of Object.entries({ demo: files.demo })) {
   add(`${name}:unified-marker`, () => assert.match(html, /data-unified-diagnosis="home-and-demo"/));
   add(`${name}:same-form-id`, () => assert.match(html, /id="unifiedDiagnosisForm"/));
   add(`${name}:same-target-input`, () => assert.match(html, /id="targetUrl"/));
   add(`${name}:same-scan-submit-button`, () => assert.match(html, /id="scanBtn"[^>]*type="submit"/));
-  add(`${name}:bootstrap-guard-loaded`, () => assert.match(html, /<script src="\/apps\/public\/demo\/bootstrap\.js"><\/script>/));
+  add(`${name}:bootstrap-guard-loaded`, () => assert.match(html, /<script src="\/apps\/public\/demo\/bootstrap\.js(?:\?v=[^"]+)?"><\/script>/));
   add(`${name}:same-state-and-result`, () => {
     assert.match(html, /id="demoState"/);
     assert.match(html, /id="demoResult"/);
@@ -37,7 +36,7 @@ for (const [name, html] of Object.entries({ demo: files.demo, alias: files.alias
 add('home:delegates-to-dedicated-diagnosis-page', () => {
   assert.doesNotMatch(files.home, /id="unifiedDiagnosisForm"/);
   assert.match(files.home, /href="\/products\/veridion\/demo"/);
-  assert.match(files.home, /실제 무료 진단은 전용 화면에서 안정적으로 실행합니다/);
+  assert.match(files.home, /무료 진단 화면으로 이동합니다/);
 });
 add('home:loads-home-engine-only', () => {
   assert.match(files.home, /\/apps\/public\/home\/app\.js/);
@@ -54,8 +53,8 @@ add('demo-js:recent-and-toolbar-tools', () => {
   assert.match(files.demoJs, /window\.__veridionRunScan = runScan/);
 });
 add('home:copy-promises-clear-separation', () => {
-  assert.match(files.home, /메인에서는 핵심 가치와 결과 구조만 빠르게 확인하고/);
-  assert.match(files.home, /실제 무료 진단은 전용 화면에서 안정적으로 실행합니다/);
+  assert.match(files.home, /사이트 주소를 입력하면 무료 진단 화면으로 이동합니다/);
+  assert.match(files.home, /무료 진단 화면으로 이동합니다/);
 });
 
 const failures = checks.filter(x => !x.ok);

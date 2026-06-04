@@ -1,11 +1,13 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
+import { listPageRoutes } from '../server/config/page-registry.mjs';
 
 const root = process.cwd();
 const read = (...parts) => fs.readFileSync(path.join(root, ...parts), 'utf8');
 const exists = (...parts) => fs.existsSync(path.join(root, ...parts));
 const server = read('server/index.mjs');
+const registeredRoutes = new Set(listPageRoutes().map(item => item.route));
 const routeSources = [
   server,
   read('server/routes/public.mjs'),
@@ -23,7 +25,7 @@ const routePairs = [
   ['/plans', 'apps/public/plans/index.html', ['요금 안내', '기본 리포트']],
   ['/checkout', 'apps/public/checkout/index.html', ['결제 확인', '받을 결과물']],
   ['/portal', 'apps/public/portal/index.html', ['고객 포털', '우선 조치']],
-  ['/products/veridion/demo', 'apps/public/veridion-demo/index.html', ['무료 진단', '사이트 주소 하나']],
+  ['/products/veridion/demo', 'apps/public/demo/index.html', ['무료 진단', '사이트 주소 하나']],
   ['/solutions', 'apps/public/solutions/index.html', ['솔루션', '고지·환불·개인정보']],
   ['/terms', 'apps/public/terms/index.html', ['이용약관']],
   ['/privacy', 'apps/public/privacy/index.html', ['개인정보']],
@@ -32,14 +34,14 @@ const routePairs = [
 ];
 
 for (const [route, file, needles] of routePairs) {
-  assert.ok(server.includes(`'${route}'`) || server.includes(`"${route}"`) || server.includes(route), `route map missing ${route}`);
+  assert.ok(registeredRoutes.has(route), `route registry missing ${route}`);
   assert.ok(exists(file), `page file missing ${file}`);
   const html = read(file);
   assert.ok(needles.some(needle => html.includes(needle)), `page text missing ${route}`);
 }
 
 for (const route of ['/admin', '/admin/console', '/admin/orders', '/admin/publications', '/admin/library', '/admin/settings', '/admin/diagnostics']) {
-  assert.ok(server.includes(route), `admin route missing ${route}`);
+  assert.ok(registeredRoutes.has(route), `admin route missing ${route}`);
 }
 for (const route of ['/healthz', '/readyz', '/api/public/health', '/api/admin/session', '/api/public/experience-orchestrator', '/api/admin/experience-orchestrator']) {
   assert.ok(routeSources.includes(route), `system route missing ${route}`);

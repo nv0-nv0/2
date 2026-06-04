@@ -173,4 +173,4 @@ Coolify에 과거 `NV0_ADMIN_MFA_REQUIRED=false`가 명시적으로 남아 있�
 - MVP 프로파일에서는 사용자가 지정한 값을 변경하지 않음
 - 정규화·비정규화·MVP 비개입 동작을 자동 계약 테스트로 추가
 
-세부 복구 절차는 `HOTFIX_MFA_RUNTIME_NORMALIZATION_KO.md`를 따른다.
+세부 복구 절차는 `archive/hotfix/HOTFIX_MFA_RUNTIME_NORMALIZATION_KO.md`를 따른다.

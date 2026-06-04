@@ -85,9 +85,18 @@ function renderSites(account = {}) {
 }
 function renderAccountState(accountResponse) {
   const authenticated = accountResponse?.ok === true;
-  text('#portalConnectionState', authenticated ? '계정 연결됨' : '로그인 필요');
+  const connectionError = !authenticated && accountResponse?.status !== 401;
+  text('#portalConnectionState', authenticated ? '계정 연결됨' : connectionError ? '연결 오류' : '로그인 필요');
   text('#portalAccountState', authenticated ? '계정 연결됨' : '로그인');
-  text('#portalState', authenticated ? '저장 사이트와 최근 진단 이력을 불러왔습니다.' : '로그인 전에도 샘플 리포트로 확인 가능한 정보와 유료 전환 흐름을 먼저 볼 수 있습니다.');
+  text('#portalState', authenticated ? '저장 사이트와 최근 진단 이력을 불러왔습니다.' : connectionError ? '계정 정보를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요. 아래 값은 샘플입니다.' : '로그인 전에는 샘플 데이터로 화면 구성을 확인할 수 있습니다. 실제 저장은 로그인 후 가능합니다.');
+  text('#portalScoreTitle', authenticated ? '종합 점수 추이' : '샘플 종합 점수 추이');
+  text('#portalQuickTitle', authenticated ? '최근 진단 우선 조치' : '샘플 우선 조치 예시');
+  text('#portalRecommendationsTitle', authenticated ? '추천 개선 가이드' : '샘플 개선 가이드 예시');
+  $('#portalRiskGauge')?.setAttribute('aria-label', authenticated ? '최근 진단 점수 추이' : '샘플 점수 추이');
+  document.querySelectorAll('#saveSiteForm input, #saveSiteForm button').forEach((control) => {
+    control.disabled = !authenticated;
+    control.setAttribute('aria-disabled', String(!authenticated));
+  });
 }
 function renderInsights(board = {}) {
   const posts = Array.isArray(board.posts) ? board.posts.slice(0, 3) : [];

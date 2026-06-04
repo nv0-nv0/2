@@ -1,9 +1,9 @@
 {
   "name": "veridion-public-risk-diagnostic",
-  "version": "2.7.0-commercial-hardening-max",
+  "version": "2.7.1-commercial-optimization",
   "private": true,
   "type": "module",
-  "description": "VERIDION commercial hardening maximum closeout with Korean-first institutional UI, delivery hygiene, semantic identifiers, static metadata fallbacks, secure admin RBAC/MFA and reproducible release gates",
+  "description": "VERIDION commercial optimization and release hardening with Korean-first institutional UI, delivery hygiene, semantic identifiers, static metadata fallbacks, secure admin RBAC/MFA and reproducible release gates",
   "scripts": {
     "backup:runtime": "node scripts/backup-runtime.mjs",
     "check:accessibility": "node scripts/check-accessibility-basics.mjs",

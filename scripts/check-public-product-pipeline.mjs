@@ -6,7 +6,9 @@ import { spawn } from 'node:child_process';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const runtimeDir = path.join(root, 'runtime-test-public-product-pipeline');
-const baseUrl = (process.env.NV0_PUBLIC_BASE_URL || process.env.BASE_URL || 'http://127.0.0.1:3210').replace(/\/$/, '');
+const configuredBaseUrl = process.env.NV0_PUBLIC_BASE_URL || process.env.BASE_URL || '';
+const isolatedPort = 43_000 + Math.floor(Math.random() * 1_000);
+const baseUrl = (configuredBaseUrl || `http://127.0.0.1:${isolatedPort}`).replace(/\/$/, '');
 const localBase = /^http:\/\/127\.0\.0\.1:(\d+)$/.exec(baseUrl);
 const routes = ['/', '/service', '/solutions', '/plans', '/products/veridion/demo', '/portal', '/board', '/business-info', '/terms', '/privacy', '/refund'];
 const bannedPublicCopy = /위험 진단|요금 안내|내 사이트 관리|20분에 1회|자동 발행|TrustOps|프로덕션 센티널|런칭 컨트롤|운영 큐|자동화 백로그|rollback|canary|prelaunch|launchItems|sentinelItems|handoffItems|API 키 관리|보안 점수88|성능 점수76|SEO 점수90|접근성 점수75|법률 리스크|규제 리스크|과태료 리스크|NV0는/i;
@@ -21,7 +23,7 @@ async function ensureServer() {
   fs.rmSync(runtimeDir, { recursive: true, force: true });
   child = spawn(process.execPath, ['server/index.mjs'], {
     cwd: root,
-    env: { ...process.env, PORT: localBase[1], NODE_ENV: 'test', NV0_PLATFORM_TARGET: 'mvp', NV0_PAYMENT_PROVIDER: 'demo', NV0_ADMIN_KEY: process.env.NV0_ADMIN_KEY || 'pipeline-check-key', NV0_RUNTIME_DIR: runtimeDir, NV0_FALLBACK_RUNTIME_DIR: runtimeDir },
+    env: { ...process.env, HOST: '127.0.0.1', PORT: localBase[1], NODE_ENV: 'test', NV0_PLATFORM_TARGET: 'mvp', NV0_PAYMENT_PROVIDER: 'demo', NV0_ADMIN_KEY: process.env.NV0_ADMIN_KEY || 'pipeline-check-key', NV0_PUBLIC_BASE_URL: baseUrl, NV0_RUNTIME_DIR: runtimeDir, NV0_FALLBACK_RUNTIME_DIR: runtimeDir },
     stdio: 'ignore'
   });
   for (let i = 0; i < 40; i += 1) { await wait(200); if (await canReach(`${baseUrl}/healthz`)) return; }

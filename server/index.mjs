@@ -52,6 +52,10 @@ import { buildPublicColumnEnginePosts, publicColumnTypeLabel } from './core/publ
 import { PRODUCT_AGENT_SUITE_VERSION, publishProductInsightNow, publishProductInsightIfDue, ensureProductAgentSettings, latestProductInsightPublication, productInsightDueStatus, buildProductAgentRuntimeStatus, runProductAgentPackageAudit } from './core/product-agent-suite.mjs';
 import { ENGINE_AGENT_ORCHESTRATOR_VERSION, buildEngineAgentRuntimeStatus, runEngineAgentPackageAudit } from './core/engine-agent-orchestrator.mjs';
 import { COMMERCIAL_READINESS_VERSION, buildCommercialReadinessStatus, runCommercialReadinessAudit } from './core/commercial-readiness.mjs';
+import { canonicalPagePath, mapPageRoute } from './config/page-registry.mjs';
+import { ASSET_VERSION, PACKAGE_VERSION, versionedAsset as withAssetVersion } from '../shared/release-version.mjs';
+import { createPublicPageCache, requestMatchesEtag, responseEtag } from './core/public-page-cache.mjs';
+import { createPublicResponseCompressor } from './core/public-response-compression.mjs';
 const COMMERCIAL_OFFER_COMPATIBILITY_MARKERS = ['전문가 리포트', 'IndustryGuide', 'Certified'];
 const ENV_CONFIG = readEnvConfig(process.env);
 const __filename = fileURLToPath(import.meta.url);
@@ -243,7 +247,7 @@ const GEMINI_MODEL = String(process.env.NV0_GEMINI_MODEL || 'gemini-2.5-flash').
 const AI_REVIEW_ENABLED = AI_REVIEW_PROVIDER === 'gemini' && !!GEMINI_API_KEY;
 const RELEASE_PHASE = 'clean-commercial-baseline';
 const BUILD_FINGERPRINT = Object.freeze({
-version: process.env.NV0_BUILD_VERSION || '2.7.0-commercial-hardening-max',
+version: process.env.NV0_BUILD_VERSION || PACKAGE_VERSION,
 releasePhase: RELEASE_PHASE,
 buildTime: process.env.NV0_BUILD_TIME || new Date().toISOString(),
 deploymentEnvironment: DEPLOYMENT_STAGE,
@@ -263,6 +267,9 @@ const EMAIL_RETRY_BACKOFF_MS = Number(process.env.NV0_EMAIL_RETRY_BACKOFF_MS || 
 const ADMIN_IP_ALLOWLIST = ENV_CONFIG.adminIpAllowlist;
 const PUBLIC_CACHE_SECONDS = ENV_CONFIG.publicCacheSeconds;
 const PUBLIC_ASSET_CACHE_SECONDS = ENV_CONFIG.publicAssetCacheSeconds;
+const PUBLIC_PAGE_TEMPLATE_CACHE_ENABLED = NODE_ENV === 'production';
+const publicPageCache = createPublicPageCache({ enabled: PUBLIC_PAGE_TEMPLATE_CACHE_ENABLED, readTextFile: htmlPath => fs.readFile(htmlPath, 'utf8') });
+const publicResponseCompressor = createPublicResponseCompressor();
 const SERVER_HEADER = 'nv0';
 const ALLOWED_HOSTS = ENV_CONFIG.allowedHosts;
 const REQUEST_TIMEOUT_MS = ENV_CONFIG.requestTimeoutMs;
@@ -704,8 +711,23 @@ return true;
 }
 function html(req, res, status, payload, extraHeaders = {}, category = 'public-page') {
 const body = responseBuffer(payload);
-res.writeHead(status, { 'content-type': 'text/html; charset=utf-8', 'content-length': String(body.byteLength), ...baseHeaders(req, category), ...extraHeaders });
-return endResponse(req, res, body);
+const headers = { 'content-type': 'text/html; charset=utf-8', 'content-length': String(body.byteLength), ...baseHeaders(req, category), ...extraHeaders };
+const cacheControl = String(headers['cache-control'] || '');
+let encoded = { body, headers: {} };
+if (category === 'public-page' && status === 200 && !cacheControl.includes('no-store')) {
+  const etag = responseEtag(body);
+  headers.etag = etag;
+  encoded = publicResponseCompressor.compress(req, body, { contentType: headers['content-type'], cacheKey: `html:${etag}` });
+  Object.assign(headers, encoded.headers);
+  if (requestMatchesEtag(req, etag)) {
+    delete headers['content-length'];
+    res.writeHead(304, headers);
+    return res.end();
+  }
+}
+headers['content-length'] = String(encoded.body.byteLength);
+res.writeHead(status, headers);
+return endResponse(req, res, encoded.body);
 }
 function redirect(req, res, statusOrLocation, maybeLocation) {
 const status = Number.isInteger(statusOrLocation) ? statusOrLocation : 302;
@@ -1268,26 +1290,26 @@ return [
 ].join('\n');
 }
 function publicSitemapEntries(db = {}) {
-const today = new Date().toISOString().slice(0, 10);
+const contentLastmod = lastmodDate(process.env.NV0_PUBLIC_CONTENT_LASTMOD || BUILD_FINGERPRINT.buildTime);
 const staticEntries = [
-{ path: '/', priority: '1.0', changefreq: 'weekly', lastmod: today },
-{ path: '/products/veridion/demo', priority: '0.95', changefreq: 'weekly', lastmod: today },
-{ path: '/plans', priority: '0.9', changefreq: 'weekly', lastmod: today },
-{ path: '/board', priority: '0.85', changefreq: 'daily', lastmod: today },
-{ path: '/insights', priority: '0.84', changefreq: 'daily', lastmod: today },
-{ path: '/insights/refund-policy-checklist', priority: '0.8', changefreq: 'monthly', lastmod: today },
-{ path: '/insights/privacy-policy-checklist', priority: '0.8', changefreq: 'monthly', lastmod: today },
-{ path: '/insights/ecommerce-trust-checklist', priority: '0.8', changefreq: 'monthly', lastmod: today },
-{ path: '/insights/conversion-before-payment', priority: '0.8', changefreq: 'monthly', lastmod: today },
-{ path: '/insights/business-info-display', priority: '0.8', changefreq: 'monthly', lastmod: today },
-{ path: '/insights/mobile-checkout-trust', priority: '0.8', changefreq: 'monthly', lastmod: today },
-{ path: '/documents', priority: '0.82', changefreq: 'weekly', lastmod: today },
-{ path: '/guides', priority: '0.78', changefreq: 'weekly', lastmod: today },
-{ path: '/solutions', priority: '0.74', changefreq: 'weekly', lastmod: today },
-{ path: '/terms', priority: '0.45', changefreq: 'monthly', lastmod: today },
-{ path: '/privacy', priority: '0.45', changefreq: 'monthly', lastmod: today },
-{ path: '/refund', priority: '0.45', changefreq: 'monthly', lastmod: today },
-{ path: '/business-info', priority: '0.55', changefreq: 'monthly', lastmod: today }
+{ path: '/', priority: '1.0', changefreq: 'weekly', lastmod: contentLastmod },
+{ path: '/products/veridion/demo', priority: '0.95', changefreq: 'weekly', lastmod: contentLastmod },
+{ path: '/plans', priority: '0.9', changefreq: 'weekly', lastmod: contentLastmod },
+{ path: '/board', priority: '0.85', changefreq: 'daily', lastmod: contentLastmod },
+{ path: '/insights', priority: '0.84', changefreq: 'daily', lastmod: contentLastmod },
+{ path: '/insights/refund-policy-checklist', priority: '0.8', changefreq: 'monthly', lastmod: contentLastmod },
+{ path: '/insights/privacy-policy-checklist', priority: '0.8', changefreq: 'monthly', lastmod: contentLastmod },
+{ path: '/insights/ecommerce-trust-checklist', priority: '0.8', changefreq: 'monthly', lastmod: contentLastmod },
+{ path: '/insights/conversion-before-payment', priority: '0.8', changefreq: 'monthly', lastmod: contentLastmod },
+{ path: '/insights/business-info-display', priority: '0.8', changefreq: 'monthly', lastmod: contentLastmod },
+{ path: '/insights/mobile-checkout-trust', priority: '0.8', changefreq: 'monthly', lastmod: contentLastmod },
+{ path: '/documents', priority: '0.82', changefreq: 'weekly', lastmod: contentLastmod },
+{ path: '/guides', priority: '0.78', changefreq: 'weekly', lastmod: contentLastmod },
+{ path: '/solutions', priority: '0.74', changefreq: 'weekly', lastmod: contentLastmod },
+{ path: '/terms', priority: '0.45', changefreq: 'monthly', lastmod: contentLastmod },
+{ path: '/privacy', priority: '0.45', changefreq: 'monthly', lastmod: contentLastmod },
+{ path: '/refund', priority: '0.45', changefreq: 'monthly', lastmod: contentLastmod },
+{ path: '/business-info', priority: '0.55', changefreq: 'monthly', lastmod: contentLastmod }
 ];
 return staticEntries;
 }
@@ -1381,14 +1403,16 @@ const versionedAsset = requestedCategory === 'static' && /(?:[?&]v=|[.-][a-f0-9]
 const category = requestedCategory === 'static' ? (versionedAsset ? 'static-versioned' : 'static-unversioned') : requestedCategory;
 const etag = `W/\"${stat.size.toString(16)}-${Math.floor(stat.mtimeMs).toString(16)}\"`;
 const lastModified = stat.mtime.toUTCString();
+const varyHeaders = publicResponseCompressor.varyHeaders({ contentType, bodyBytes: stat.size });
 if (req.headers['if-none-match'] === etag || req.headers['if-modified-since'] === lastModified) {
-res.writeHead(304, { etag, 'last-modified': lastModified, ...baseHeaders(req, category) });
+res.writeHead(304, { etag, 'last-modified': lastModified, ...baseHeaders(req, category), ...varyHeaders });
 return res.end();
 }
 const data = await fs.readFile(absPath);
-res.writeHead(200, { 'content-type': contentType, 'content-length': String(data.byteLength), etag, 'last-modified': lastModified, ...baseHeaders(req, category) });
+const encoded = publicResponseCompressor.compress(req, data, { contentType, cacheKey: `static:${absPath}:${stat.size}:${Math.floor(stat.mtimeMs)}` });
+res.writeHead(200, { 'content-type': contentType, 'content-length': String(encoded.body.byteLength), etag, 'last-modified': lastModified, ...baseHeaders(req, category), ...encoded.headers });
 if (req.method === 'HEAD') return res.end();
-res.end(data);
+res.end(encoded.body);
 } catch {
 text(req, res, 404, 'Not found');
 }
@@ -1428,105 +1452,15 @@ return text(req, res, 404, 'Not found');
 }
 }
 function pageMap(urlPath) {
-const m = {
-'/': [PUBLIC_DIR, 'home'],
-'/guides': [PUBLIC_DIR, 'guides'],
-'/resources': [PUBLIC_DIR, 'guides'],
-'/board': [PUBLIC_DIR, 'board'],
-'/insights': [PUBLIC_DIR, 'insights'],
-'/insights/refund-policy-checklist': [PUBLIC_DIR, 'insights/refund-policy-checklist'],
-'/insights/privacy-policy-checklist': [PUBLIC_DIR, 'insights/privacy-policy-checklist'],
-'/insights/ecommerce-trust-checklist': [PUBLIC_DIR, 'insights/ecommerce-trust-checklist'],
-'/insights/conversion-before-payment': [PUBLIC_DIR, 'insights/conversion-before-payment'],
-'/insights/business-info-display': [PUBLIC_DIR, 'insights/business-info-display'],
-'/insights/mobile-checkout-trust': [PUBLIC_DIR, 'insights/mobile-checkout-trust'],
-'/board/post': [PUBLIC_DIR, 'board'],
-'/cases': [PUBLIC_DIR, 'cases'],
-'/documents': [PUBLIC_DIR, 'documents'],
-'/policy-documents': [PUBLIC_DIR, 'documents'],
-'/docs/veridion': [PUBLIC_DIR, 'documents'],
-'/solutions': [PUBLIC_DIR, 'solutions'],
-'/service': [PUBLIC_DIR, 'service'],
-'/products': [PUBLIC_DIR, 'plans'],
-'/demo': [PUBLIC_DIR, 'demo'],
-'/products/veridion/demo': [PUBLIC_DIR, 'veridion-demo'],
-'/plans': [PUBLIC_DIR, 'plans'],
-'/checkout': [PUBLIC_DIR, 'checkout'],
-'/portal': [PUBLIC_DIR, 'portal'],
-'/auth': [PUBLIC_DIR, 'auth'],
-'/terms': [PUBLIC_DIR, 'terms'],
-'/privacy': [PUBLIC_DIR, 'privacy'],
-'/refund': [PUBLIC_DIR, 'refund'],
-'/business-info': [PUBLIC_DIR, 'business-info'],
-'/risk_result.html': [PUBLIC_DIR, 'demo'],
-'/demo_risk_result.html': [PUBLIC_DIR, 'veridion-demo'],
-'/service_detail.html': [PUBLIC_DIR, 'service'],
-'/pricing.html': [PUBLIC_DIR, 'plans'],
-'/insight_board.html': [PUBLIC_DIR, 'board'],
-'/mypage.html': [PUBLIC_DIR, 'portal'],
-'/auth_management.html': [PUBLIC_DIR, 'auth'],
-'/risk-result': [PUBLIC_DIR, 'demo'],
-'/insight-board': [PUBLIC_DIR, 'board'],
-'/my-page': [PUBLIC_DIR, 'portal'],
-'/admin': [ADMIN_DIR, 'gate'],
-'/admin/console': [ADMIN_DIR, 'console'],
-'/admin/orders': [ADMIN_DIR, 'orders'],
-'/admin/publications': [ADMIN_DIR, 'publications'],
-'/admin/library': [ADMIN_DIR, 'library'],
-'/admin/settings': [ADMIN_DIR, 'settings'],
-'/admin/diagnostics': [ADMIN_DIR, 'diagnostics'],
-'/admin/console/orders': [ADMIN_DIR, 'orders'],
-'/admin/console/publications': [ADMIN_DIR, 'publications'],
-'/admin/console/library': [ADMIN_DIR, 'library'],
-'/admin/console/settings': [ADMIN_DIR, 'settings'],
-'/admin/console/diagnostics': [ADMIN_DIR, 'diagnostics']
-};
-return m[urlPath] || null;
+return mapPageRoute(urlPath, { publicDir: PUBLIC_DIR, adminDir: ADMIN_DIR });
 }
 function escapeHtml(value = '') {
 return String(value ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
 }
 
-function canonicalPagePath(urlPath = '/') {
-const aliases = {
-'/resources': '/guides',
-'/products': '/plans',
-'/risk_result.html': '/products/veridion/demo',
-'/demo_risk_result.html': '/products/veridion/demo',
-'/service_detail.html': '/service',
-'/pricing.html': '/plans',
-'/insight_board.html': '/board',
-'/mypage.html': '/portal',
-'/auth_management.html': '/auth',
-'/risk-result': '/products/veridion/demo',
-'/pricing': '/plans',
-'/contact': '/business-info',
-'/faq': '/board',
-'/about': '/business-info',
-'/privacy-policy': '/privacy',
-'/terms-of-use': '/terms',
-'/cancel': '/refund',
-'/return': '/refund',
-'/exchange': '/refund',
-'/insight-board': '/board',
-'/my-page': '/portal'
-};
-return aliases[urlPath] || urlPath || '/';
-}
 function canonicalRouteRedirect(urlPath = '/') {
-const aliases = {
-'/demo': '/products/veridion/demo',
-'/pricing': '/plans',
-'/contact': '/business-info',
-'/faq': '/board',
-'/about': '/business-info',
-'/privacy-policy': '/privacy',
-'/terms-of-use': '/terms',
-'/cancel': '/refund',
-'/return': '/refund',
-'/exchange': '/refund'
-};
-return aliases[urlPath] || null;
+const canonical = canonicalPagePath(urlPath);
+return canonical !== urlPath ? canonical : null;
 }
 function routeMeta(urlPath) {
 const base = seoBaseUrl();
@@ -1743,20 +1677,20 @@ return next;
 
 function injectAdoptedUi(body, urlPath) {
 if (urlPath.startsWith('/admin') || body.includes('data-veridion-rebrand="clean"') || body.includes('/shared/veridion-rebrand.css')) return body;
-return body.replace('</head>', '<link href="/shared/veridion-rebrand.css" rel="stylesheet"></head>');
+return body.replace('</head>', `<link href="${withAssetVersion('/shared/veridion-rebrand.css')}" rel="stylesheet"></head>`);
 }
 
 function injectSiteEnhancementsScript(body, urlPath) {
 if (urlPath.startsWith('/admin') || body.includes('data-veridion-rebrand="clean"') || body.includes('/shared/site-enhancements.js')) return body;
-return body.replace('</body>', '<script src="/shared/site-enhancements.js" defer></script></body>');
+return body.replace('</body>', `<script src="${withAssetVersion('/shared/site-enhancements.js')}" defer></script></body>`);
 }
 function injectSessionNavScript(body, urlPath) {
 if (urlPath.startsWith('/admin') || body.includes('data-veridion-rebrand="clean"') || body.includes('/shared/session-nav.js')) return body;
-return body.replace('</body>', '<script type="module" src="/shared/session-nav.js"></script></body>');
+return body.replace('</body>', `<script type="module" src="${withAssetVersion('/shared/session-nav.js')}"></script></body>`);
 }
 function injectClientRiskGuard(body, urlPath) {
 if (urlPath.startsWith('/admin') || body.includes('data-veridion-rebrand="clean"') || body.includes('/shared/client-risk-guard.js')) return body;
-return body.replace('</body>', '<script src="/shared/client-risk-guard.js?v=2.7.0" defer></script></body>');
+return body.replace('</body>', `<script src="/shared/client-risk-guard.js?v=${ASSET_VERSION}" defer></script></body>`);
 }
 function injectBusinessFooter(body, urlPath) {
 if (urlPath.startsWith('/admin') || body.includes('data-vr-page="true"') || body.includes('data-veridion-rebrand="clean"') || body.includes('vr-footer') || /<footer\b/i.test(body)) return body;
@@ -1775,7 +1709,7 @@ function renderPublicErrorPage(req, res, status, title, message, requestId = '')
 const safeTitle = escapeHtml(title);
 const safeMessage = escapeHtml(message);
 const safeRequestId = requestId ? escapeHtml(requestId) : '';
-const body = `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="color-scheme" content="light"><meta name="format-detection" content="telephone=no"><meta name="referrer" content="strict-origin-when-cross-origin"><title>${safeTitle} | VERIDION</title><meta name="robots" content="noindex,nofollow,noarchive"><link rel="stylesheet" href="/shared/veridion-rebrand.css?v=2.7.0"><link rel="stylesheet" href="/shared/stitch-institutional.css?v=2.7.0"></head><body><a class="skip-link" href="#main">본문 바로가기</a>${publicTopMenuHtml('/')}<main id="main" tabindex="-1" class="vr-error-page"><section class="vr-error-card"><p class="eyebrow">서비스 안내</p><h1>${safeTitle}</h1><p>${safeMessage}</p>${safeRequestId ? `<p class="vr-error-request">요청 ID: ${safeRequestId}</p>` : ''}<div class="hero-actions"><a class="btn primary" href="/products/veridion/demo">무료 진단으로 이동</a><a class="btn secondary" href="/">홈으로 이동</a></div></section></main>${businessFooterHtml()}<script src="/shared/client-risk-guard.js?v=2.7.0" defer></script></body></html>`;
+const body = `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="color-scheme" content="light"><meta name="format-detection" content="telephone=no"><meta name="referrer" content="strict-origin-when-cross-origin"><title>${safeTitle} | VERIDION</title><meta name="robots" content="noindex,nofollow,noarchive"><link rel="stylesheet" href="/shared/veridion-rebrand.css?v=${ASSET_VERSION}"><link rel="stylesheet" href="/shared/stitch-institutional.css?v=${ASSET_VERSION}"></head><body><a class="skip-link" href="#main">본문 바로가기</a>${publicTopMenuHtml('/')}<main id="main" tabindex="-1" class="vr-error-page"><section class="vr-error-card"><p class="eyebrow">서비스 안내</p><h1>${safeTitle}</h1><p>${safeMessage}</p>${safeRequestId ? `<p class="vr-error-request">요청 ID: ${safeRequestId}</p>` : ''}<div class="hero-actions"><a class="btn primary" href="/products/veridion/demo">무료 진단으로 이동</a><a class="btn secondary" href="/">홈으로 이동</a></div></section></main>${businessFooterHtml()}<script src="/shared/client-risk-guard.js?v=${ASSET_VERSION}" defer></script></body></html>`;
 return html(req, res, status, body, { 'cache-control': 'no-store' }, 'public-page');
 }
 function adminNav() {
@@ -1788,6 +1722,22 @@ return `<nav class="admin-nav">
 <a href="/admin/console/diagnostics">서비스 진단</a>
 <button id="logoutBtn" type="button">로그아웃</button>
 </nav>`;
+}
+async function readHtmlTemplate(htmlPath) { return publicPageCache.readTemplate(htmlPath); }
+function injectRenderedPageShell(body, urlPath) {
+if (urlPath.startsWith('/admin/console')) body = body.replace('<!--ADMIN_NAV-->', adminNav());
+body = injectSeoMeta(body, urlPath);
+body = injectStructuredData(body, urlPath);
+body = injectAdoptedUi(body, urlPath);
+body = ensureMainId(body);
+body = injectNoScriptNotice(body, urlPath);
+body = injectPublicTopMenu(body, urlPath);
+body = injectBusinessInfoPageProfile(body, urlPath);
+body = injectSessionNavScript(body, urlPath);
+body = injectSiteEnhancementsScript(body, urlPath);
+body = injectClientRiskGuard(body, urlPath);
+body = injectBusinessFooter(body, urlPath);
+return body;
 }
 async function renderPage(urlPath, req, res) {
 const redirectPath = canonicalRouteRedirect(urlPath);
@@ -1802,21 +1752,17 @@ if (urlPath.startsWith('/admin/console') || (urlPath.startsWith('/admin/') && ur
 if (!await requireAdmin(req, res)) return true;
 }
 const htmlPath = path.join(baseDir, slug, 'index.html');
-let body = await fs.readFile(htmlPath, 'utf8');
-if (urlPath.startsWith('/admin/console')) body = body.replace('<!--ADMIN_NAV-->', adminNav());
-body = injectSeoMeta(body, urlPath);
-body = injectStructuredData(body, urlPath);
-body = injectAdoptedUi(body, urlPath);
-body = ensureMainId(body);
-body = injectNoScriptNotice(body, urlPath);
-body = injectPublicTopMenu(body, urlPath);
-body = injectBusinessInfoPageProfile(body, urlPath);
-body = injectSessionNavScript(body, urlPath);
-body = injectSiteEnhancementsScript(body, urlPath);
-body = injectClientRiskGuard(body, urlPath);
-body = injectBusinessFooter(body, urlPath);
+const cacheablePublicPage = PUBLIC_PAGE_TEMPLATE_CACHE_ENABLED && !urlPath.startsWith('/admin');
+const pageCacheKey = `${urlPath}|${htmlPath}`;
+let body = cacheablePublicPage ? publicPageCache.getRendered(pageCacheKey) : '';
+const pageCacheHit = Boolean(body);
+if (!body) {
+  body = await readHtmlTemplate(htmlPath);
+  body = injectRenderedPageShell(body, urlPath);
+  if (cacheablePublicPage) publicPageCache.setRendered(pageCacheKey, body);
+}
 const category = urlPath.startsWith('/admin') ? 'dynamic' : 'public-page';
-html(req, res, 200, body, {}, category);
+html(req, res, 200, body, category === 'public-page' ? { 'x-vr-page-cache': pageCacheHit ? 'hit' : (cacheablePublicPage ? 'miss' : 'bypass') } : {}, category);
 return true;
 }
 function safeUrl(target) {

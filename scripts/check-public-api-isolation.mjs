@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const root = path.resolve(path.dirname(__filename), '..');
-const port = 3238;
+const port = 42_000 + Math.floor(Math.random() * 1_000);
 const runtimeDir = path.join(root, 'runtime-test-public-api-isolation');
 const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 fs.rmSync(runtimeDir, { recursive: true, force: true });

@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = rel => fs.readFileSync(path.join(root, rel), 'utf8');
 const demo = read('apps/public/demo/index.html');
-const active = read('apps/public/veridion-demo/index.html');
+const active = read('apps/public/demo/index.html');
 const css = read('apps/public/demo/app.css');
 const js = read('apps/public/demo/app.js');
 const gate = read('scripts/run-release-gate.mjs');

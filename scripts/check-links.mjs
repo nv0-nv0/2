@@ -1,12 +1,11 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { listPageRoutes } from '../server/config/page-registry.mjs';
 
 const root = process.cwd();
 const summaryOnly = process.argv.includes('--summary') || process.env.NV0_LINK_CHECK_SUMMARY === '1';
 const serverSource = fs.readFileSync(path.join(root, 'server/index.mjs'), 'utf8');
-const pageMapMatch = serverSource.match(/function pageMap\(urlPath\) \{[\s\S]*?const m = \{([\s\S]*?)\n\s*\};\n\s*return m\[urlPath\] \|\| null;\n\}/);
-if (!pageMapMatch) throw new Error('pageMap function block not found in server/index.mjs');
-const knownRoutes = new Set([...pageMapMatch[1].matchAll(/'([^']+)'\s*:/g)].map(m => m[1]));
+const knownRoutes = new Set(listPageRoutes().map(item => item.route));
 const files = [];
 for (const area of ['apps/public', 'apps/admin']) {
   for (const entry of fs.readdirSync(path.join(root, area), { withFileTypes: true })) {

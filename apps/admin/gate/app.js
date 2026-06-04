@@ -1,4 +1,4 @@
-import { mountTurnstile } from '/shared/turnstile.js?v=2.7.0';
+import { mountTurnstile } from '/shared/turnstile.js?v=2.7.1';
 const state=document.getElementById('gateState'); const form=document.getElementById('adminLoginForm'); const email=document.getElementById('adminEmail'); const password=document.getElementById('adminPassword'); const otp=document.getElementById('adminOtp'); const key=document.getElementById('adminKey'); const accountFields=document.getElementById('accountFields'); const legacyKeyField=document.getElementById('legacyKeyField'); const otpField=document.getElementById('otpField'); const modeHelp=document.getElementById('authModeHelp');
 let authMode='account_rbac'; let mfaRequired=false;
 const guard=await mountTurnstile({containerId:'turnstileBox',tokenInputId:'turnstileToken',noticeId:'turnstileState',configUrl:'/api/admin/session'});
